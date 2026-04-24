@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Style 4 Refined — R2 Eucalyptus</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f0f5f3;
+    color: #1e3030;
+    padding-bottom: 4rem;
+  }
+
+  :root {
+    --dark:   #2e4040;
+    --medium: #5a9080;
+    --light:  #a8c8bc;
+    --accent: #c4906a;
+    --bg:     #f0f5f3;
+    --white:  #ffffff;
+  }
+
+  .page-header {
+    background: var(--dark);
+    color: #e8f2f0;
+    padding: 2rem 2rem 1.6rem;
+    text-align: center;
+  }
+  .page-header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; margin-bottom: 0.3rem; }
+  .page-header p  { color: var(--light); font-size: 0.82rem; }
+
+  .section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.2rem 2rem 0;
+  }
+
+  .row-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--medium);
+    margin-bottom: 1rem; display: flex; align-items: center; gap: 0.6rem;
+  }
+  .rec-pill {
+    background: var(--dark); color: #e8f4f0;
+    font-size: 0.6rem; padding: 2px 10px; border-radius: 20px;
+  }
+
+  .card-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1.1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  /* Base card */
+  .card {
+    border-radius: 12px;
+    padding: 1.3rem 1.1rem 1.1rem;
+    cursor: pointer;
+    transition: transform 0.14s ease, box-shadow 0.14s ease;
+    background: var(--white);
+  }
+  .card-icon { font-size: 1.8rem; margin-bottom: 0.6rem; display: block; }
+  .card-label { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.2rem; }
+  .card-desc  { font-size: 0.7rem; line-height: 1.5; opacity: 0.68; }
+
+  /* ── Variant A: Dark Teal offset (#2e4040) ─ original */
+  .va {
+    border: 1.5px solid #2e4040;
+    box-shadow: 4px 4px 0px #2e4040;
+  }
+  .va:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #2e4040;
+  }
+
+  /* ── Variant B: Medium Eucalyptus offset (#5a9080) ── */
+  .vb {
+    border: 1.5px solid #5a9080;
+    box-shadow: 4px 4px 0px #5a9080;
+  }
+  .vb:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #5a9080;
+  }
+
+  /* ── Variant C: Light Eucalyptus offset (#7ab0a0) — softer ── */
+  .vc {
+    border: 1.5px solid #7ab0a0;
+    box-shadow: 4px 4px 0px #7ab0a0;
+  }
+  .vc:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #7ab0a0;
+  }
+
+  /* ── Variant D: Accent Clay offset (#c4906a) ── */
+  .vd {
+    border: 1.5px solid #c4906a;
+    box-shadow: 4px 4px 0px #c4906a;
+  }
+  .vd:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #c4906a;
+  }
+
+  /* ── Variant E: Per-card color — each card its own palette color ── */
+  .ve-1 { border: 1.5px solid #2e4040; box-shadow: 4px 4px 0px #2e4040; }
+  .ve-1:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #2e4040; }
+
+  .ve-2 { border: 1.5px solid #5a9080; box-shadow: 4px 4px 0px #5a9080; }
+  .ve-2:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #5a9080; }
+
+  .ve-3 { border: 1.5px solid #5a9080; box-shadow: 4px 4px 0px #5a9080; }
+  .ve-3:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #5a9080; }
+
+  .ve-4 { border: 1.5px solid #7ab0a0; box-shadow: 4px 4px 0px #7ab0a0; }
+  .ve-4:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #7ab0a0; }
+
+  .ve-5 { border: 1.5px solid #c4906a; box-shadow: 4px 4px 0px #c4906a; }
+  .ve-5:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #c4906a; }
+
+  /* ── Variant F: Medium Teal + Tinted card bg (rekomendasi) ── */
+  .vf {
+    background: linear-gradient(155deg, #f6fdfb 0%, #edf8f4 100%);
+    border: 1.5px solid #5a9080;
+    box-shadow: 4px 4px 0px #5a9080;
+  }
+  .vf:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #5a9080;
+  }
+
+  /* ── Variant G: Thicker offset, medium teal ── */
+  .vg {
+    background: linear-gradient(155deg, #f6fdfb 0%, #edf8f4 100%);
+    border: 2px solid #5a9080;
+    box-shadow: 5px 5px 0px #5a9080;
+  }
+  .vg:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 8px 8px 0px #5a9080;
+  }
+
+  /* ── Dark card variant with accent offset ── */
+  .vdark {
+    background: var(--dark);
+    color: #e8f4f0;
+    border: 1.5px solid #c4906a;
+    box-shadow: 4px 4px 0px #c4906a;
+  }
+  .vdark:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #c4906a;
+  }
+  .vdark .card-desc { color: #a8c8bc; opacity: 1; }
+
+  hr.div {
+    border: none; border-top: 1.5px solid #c8e0d8;
+    max-width: 1100px; margin: 0.5rem auto 2.2rem;
+  }
+
+  /* Context demo */
+  .demo-wrap {
+    max-width: 1100px; margin: 0 auto; padding: 0 2rem 3rem;
+  }
+  .demo-label {
+    font-size: 0.68rem; font-weight: 700; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--medium);
+    margin-bottom: 1rem;
+  }
+  .demo-bg {
+    padding: 1.8rem; border-radius: 16px; margin-bottom: 1.4rem;
+  }
+  .demo-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+  }
+  .demo-card {
+    border-radius: 12px; padding: 1.2rem 1rem;
+    cursor: pointer; transition: transform 0.14s, box-shadow 0.14s;
+    background: var(--white);
+  }
+  .demo-card-icon { font-size: 1.6rem; margin-bottom: 0.5rem; display: block; }
+  .demo-card-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.15rem; }
+  .demo-card-info { font-size: 0.7rem; line-height: 1.5; opacity: 0.7; }
+
+  .dc-medium {
+    background: linear-gradient(155deg, #f6fdfb, #edf8f4);
+    border: 1.5px solid #5a9080;
+    box-shadow: 4px 4px 0px #5a9080;
+  }
+  .dc-medium:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #5a9080; }
+
+  .dc-accent {
+    background: linear-gradient(155deg, #fdf8f4, #f5ece4);
+    border: 1.5px solid #c4906a;
+    box-shadow: 4px 4px 0px #c4906a;
+  }
+  .dc-accent:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #c4906a; }
+
+  .dc-dark {
+    background: var(--dark); color: #e8f4f0;
+    border: 1.5px solid #c4906a;
+    box-shadow: 4px 4px 0px #c4906a;
+  }
+  .dc-dark:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0px #c4906a; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Style 4 — Hard Offset, Refined</h1>
+  <p>Warna border & shadow diganti sesuai palette R2 Eucalyptus · Hover untuk lihat efeknya</p>
+</div>
+
+<div class="section">
+
+  <!-- A -->
+  <div class="row-label">A — Dark Teal #2e4040 (original, terlihat hitam)</div>
+  <div class="card-row">
+    <div class="card va"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf</div></div>
+    <div class="card va"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis</div></div>
+    <div class="card va"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data</div></div>
+    <div class="card va"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota</div></div>
+    <div class="card va"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan</div></div>
+  </div>
+
+  <hr class="div">
+
+  <!-- B -->
+  <div class="row-label">B — Medium Eucalyptus #5a9080 (lebih hidup)</div>
+  <div class="card-row">
+    <div class="card vb"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf</div></div>
+    <div class="card vb"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis</div></div>
+    <div class="card vb"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data</div></div>
+    <div class="card vb"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota</div></div>
+    <div class="card vb"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan</div></div>
+  </div>
+
+  <hr class="div">
+
+  <!-- C -->
+  <div class="row-label">C — Light Eucalyptus #7ab0a0 (paling soft)</div>
+  <div class="card-row">
+    <div class="card vc"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf</div></div>
+    <div class="card vc"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis</div></div>
+    <div class="card vc"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data</div></div>
+    <div class="card vc"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota</div></div>
+    <div class="card vc"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan</div></div>
+  </div>
+
+  <hr class="div">
+
+  <!-- D -->
+  <div class="row-label">D — Accent Clay #c4906a (warm contrast)</div>
+  <div class="card-row">
+    <div class="card vd"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf</div></div>
+    <div class="card vd"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis</div></div>
+    <div class="card vd"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data</div></div>
+    <div class="card vd"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota</div></div>
+    <div class="card vd"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan</div></div>
+  </div>
+
+  <hr class="div">
+
+  <!-- F -->
+  <div class="row-label rec">F — Tinted card + Medium Eucalyptus offset ✦ Rekomendasi</div>
+  <div class="card-row">
+    <div class="card vf"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf</div></div>
+    <div class="card vf"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis</div></div>
+    <div class="card vf"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data</div></div>
+    <div class="card vf"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota</div></div>
+    <div class="card vf"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan</div></div>
+  </div>
+
+  <hr class="div">
+
+  <!-- G -->
+  <div class="row-label">G — Offset lebih tebal (5px) + Medium Eucalyptus</div>
+  <div class="card-row">
+    <div class="card vg"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf</div></div>
+    <div class="card vg"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis</div></div>
+    <div class="card vg"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data</div></div>
+    <div class="card vg"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota</div></div>
+    <div class="card vg"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan</div></div>
+  </div>
+
+  <hr class="div">
+
+  <!-- Dark card -->
+  <div class="row-label">Bonus — Card gelap + Accent Clay offset (untuk section hero/dark)</div>
+  <div class="card-row">
+    <div class="card vdark"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf</div></div>
+    <div class="card vdark"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis</div></div>
+    <div class="card vdark"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data</div></div>
+    <div class="card vdark"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota</div></div>
+    <div class="card vdark"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan</div></div>
+  </div>
+
+</div>
+
+<hr class="div">
+
+<!-- Context demo -->
+<div class="demo-wrap">
+  <div class="demo-label">Konteks Nyata — Di Halaman Landing Page</div>
+
+  <div class="demo-bg" style="background:#f0f5f3;">
+    <div class="demo-label" style="margin-bottom:0.7rem;">Di atas background hijau pudar (body)</div>
+    <div class="demo-grid">
+      <div class="demo-card dc-medium">
+        <span class="demo-card-icon">🌱</span>
+        <div class="demo-card-name">Desain Program</div>
+        <div class="demo-card-info">Hexa-Helix · 3 fase · wakaf produktif</div>
+      </div>
+      <div class="demo-card dc-medium">
+        <span class="demo-card-icon">🎓</span>
+        <div class="demo-card-name">Ruang Belajar</div>
+        <div class="demo-card-info">13+ modul gratis · 3 jalur belajar</div>
+      </div>
+      <div class="demo-card dc-accent">
+        <span class="demo-card-icon">📖</span>
+        <div class="demo-card-name">Kisah</div>
+        <div class="demo-card-info">Perjalanan & latar belakang</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-bg" style="background:#2e4040;">
+    <div class="demo-label" style="color:#a8c8bc; margin-bottom:0.7rem;">Di atas background gelap (hero / stats)</div>
+    <div class="demo-grid">
+      <div class="demo-card dc-dark">
+        <span class="demo-card-icon">🌱</span>
+        <div class="demo-card-name" style="color:#e8f4f0;">Desain Program</div>
+        <div class="demo-card-info" style="color:#a8c8bc; opacity:1;">Hexa-Helix · 3 fase</div>
+      </div>
+      <div class="demo-card dc-dark">
+        <span class="demo-card-icon">🎓</span>
+        <div class="demo-card-name" style="color:#e8f4f0;">Ruang Belajar</div>
+        <div class="demo-card-info" style="color:#a8c8bc; opacity:1;">13+ modul gratis</div>
+      </div>
+      <div class="demo-card dc-dark">
+        <span class="demo-card-icon">🔬</span>
+        <div class="demo-card-name" style="color:#e8f4f0;">Living Lab</div>
+        <div class="demo-card-info" style="color:#a8c8bc; opacity:1;">Open data · transparansi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

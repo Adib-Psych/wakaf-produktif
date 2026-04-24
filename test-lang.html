@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Language Toggle Test</title>
+<style>
+  body { font-family: sans-serif; padding: 2rem; background: #f0f5f3; }
+  .lang-en { display: none; }
+  button { margin: 0.5rem; padding: 0.5rem 1.2rem; font-size: 1rem; cursor: pointer; }
+  #debug { background: #1e3030; color: #a8c8bc; padding: 1rem; margin-top: 1rem; font-family: monospace; font-size: 0.85rem; border-radius: 8px; }
+  .box { border: 2px solid #c4906a; border-radius: 8px; padding: 1.5rem; margin: 1rem 0; }
+</style>
+</head>
+<body>
+
+<div>
+  <button id="btn-id" onclick="setLang('id')" style="background:#2e4040;color:#fff;">ID</button>
+  <button id="btn-en" onclick="setLang('en')" style="background:#ccc;">EN</button>
+</div>
+
+<div class="box">
+  <p class="lang-id">🇮🇩 Ini konten Bahasa Indonesia. Jika kamu melihat ini saat EN aktif, ada masalah.</p>
+  <p class="lang-en">🇬🇧 This is English content. If you see this when EN is active, toggle works!</p>
+</div>
+
+<div class="box">
+  <span class="lang-id">ID span</span>
+  <span class="lang-en">EN span</span>
+</div>
+
+<div id="debug">Debug info akan muncul di sini setelah klik...</div>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el) {
+  const tag = el.tagName.toLowerCase();
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang) {
+  localStorage.setItem('lang', lang);
+  const hide = lang === 'id' ? 'en' : 'id';
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').style.background = lang === 'id' ? '#2e4040' : '#ccc';
+  document.getElementById('btn-en').style.background = lang === 'en' ? '#2e4040' : '#ccc';
+  document.getElementById('btn-id').style.color = lang === 'id' ? '#fff' : '#000';
+  document.getElementById('btn-en').style.color = lang === 'en' ? '#fff' : '#000';
+
+  // Debug info
+  const idEls = document.querySelectorAll('.lang-id');
+  const enEls = document.querySelectorAll('.lang-en');
+  let dbg = 'Lang set to: ' + lang + '\n';
+  dbg += 'URL: ' + location.href + '\n';
+  dbg += 'localStorage lang: ' + localStorage.getItem('lang') + '\n';
+  dbg += '.lang-id elements (' + idEls.length + '):\n';
+  idEls.forEach((el,i) => { dbg += '  ['+i+'] display=' + el.style.display + '\n'; });
+  dbg += '.lang-en elements (' + enEls.length + '):\n';
+  enEls.forEach((el,i) => { dbg += '  ['+i+'] display=' + el.style.display + '\n'; });
+  document.getElementById('debug').textContent = dbg;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const urlLang = new URLSearchParams(location.search).get('lang');
+  setLang(urlLang || localStorage.getItem('lang') || 'id');
+});
+</script>
+</body>
+</html>

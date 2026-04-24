@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Refined Palette — Fresh Oxide</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #eef2ee; color: #1e2e22; }
+
+  .page-header {
+    background: #2a3d2e; color: #e8f0e8;
+    padding: 2.2rem 2rem 1.8rem; text-align: center;
+  }
+  .page-header h1 { font-family: 'Playfair Display', serif; font-size: 1.75rem; margin-bottom: 0.3rem; }
+  .page-header p { color: #90b090; font-size: 0.85rem; }
+
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: #2a3d2e; border-bottom: 1px solid #3a5040;
+    display: flex; justify-content: center; gap: 2rem;
+    padding: 0.6rem 1rem; font-size: 0.75rem; font-weight: 600;
+  }
+  .sticky-nav a { color: #90b090; text-decoration: none; }
+  .sticky-nav a:hover { color: #e8f0e8; }
+
+  .section-label {
+    text-align: center; padding: 2.5rem 1rem 0.5rem;
+    font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: #7a9a7a;
+  }
+
+  /* PALETTE GRID */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+    gap: 1.5rem; padding: 0.75rem 2rem 2.5rem;
+    max-width: 1350px; margin: 0 auto;
+  }
+
+  .palette-card {
+    background: #fff; border-radius: 16px; overflow: hidden;
+    box-shadow: 0 2px 16px rgba(30,60,30,0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .palette-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(30,60,30,0.14); }
+
+  .swatch-row { display: flex; height: 68px; }
+  .swatch { flex: 1; position: relative; }
+  .swatch-label {
+    position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+    font-size: 0.52rem; font-weight: 700;
+    background: rgba(0,0,0,0.32); color: #fff;
+    padding: 2px 5px; border-radius: 3px; white-space: nowrap;
+  }
+
+  .palette-info { padding: 1rem 1.2rem 0.5rem; }
+  .palette-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.4rem; }
+  .rec-badge { font-size: 0.6rem; font-weight: 700; background: #e0f0e4; color: #2a6040; padding: 2px 8px; border-radius: 8px; }
+  .palette-desc { font-size: 0.76rem; color: #5a7060; line-height: 1.55; margin-bottom: 0.7rem; }
+  .palette-feel { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+  .feel-tag { font-size: 0.6rem; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #eef4ee; color: #3a6040; }
+
+  /* Mini UI */
+  .mini-ui { border-top: 1px solid #f0f0f0; }
+  .mini-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem; font-size: 0.68rem; font-weight: 600;
+  }
+  .mini-nav-logo { font-family: 'Playfair Display', serif; font-size: 0.8rem; }
+  .mini-nav-links { display: flex; gap: 0.6rem; opacity: 0.75; font-size: 0.62rem; }
+  .mini-nav-cta { padding: 0.25rem 0.6rem; border-radius: 20px; font-size: 0.62rem; font-weight: 700; border: none; cursor: pointer; }
+
+  .mini-hero { padding: 0.9rem 1rem 0.7rem; }
+  .mini-badge { display: inline-block; font-size: 0.55rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 2px 8px; border-radius: 20px; margin-bottom: 0.45rem; }
+  .mini-hero h2 { font-family: 'Playfair Display', serif; font-size: 0.88rem; line-height: 1.4; margin-bottom: 0.35rem; }
+  .mini-hero p { font-size: 0.67rem; line-height: 1.5; opacity: 0.72; margin-bottom: 0.6rem; }
+  .mini-btns { display: flex; gap: 0.35rem; }
+  .mini-btn { padding: 0.28rem 0.65rem; border-radius: 6px; font-size: 0.62rem; font-weight: 600; border: none; cursor: pointer; }
+  .mini-btn.outline { background: transparent; border: 1.5px solid currentColor; }
+
+  .mini-stats { display: flex; font-size: 0.6rem; text-align: center; }
+  .mini-stat { flex: 1; padding: 0.45rem 0.2rem; }
+  .mini-stat-num { font-weight: 800; font-size: 0.82rem; display: block; }
+
+  .mini-cards { display: flex; gap: 0.35rem; padding: 0.45rem 0.8rem 0.85rem; }
+  .mini-card { flex: 1; border-radius: 7px; padding: 0.5rem 0.55rem; font-size: 0.62rem; }
+  .mini-card-title { font-weight: 700; margin-bottom: 0.1rem; font-size: 0.64rem; }
+  .mini-card-desc { opacity: 0.65; font-size: 0.58rem; line-height: 1.3; }
+
+  /* DIVIDER */
+  hr.div { border: none; border-top: 2px solid #d0dcd0; max-width: 1350px; margin: 0 auto; }
+
+  /* FULL MOCKUP */
+  .mockup-wrap { max-width: 920px; margin: 0 auto; padding: 0.5rem 2rem 4rem; }
+  .mockup-note {
+    background: #fff; border-radius: 12px; padding: 1.1rem 1.4rem;
+    font-size: 0.8rem; line-height: 1.7; color: #4a6050;
+    box-shadow: 0 1px 8px rgba(30,60,30,0.08); margin-bottom: 1.5rem;
+  }
+  .mockup-note strong { color: #1e3022; }
+
+  .mockup-box { border-radius: 16px; overflow: hidden; box-shadow: 0 4px 40px rgba(30,60,30,0.14); }
+
+  .mock-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem; font-size: 0.78rem; font-weight: 600;
+  }
+  .mock-nav-logo { font-family: 'Playfair Display', serif; font-size: 1rem; }
+  .mock-nav-links { display: flex; gap: 1.4rem; font-size: 0.73rem; }
+  .mock-nav-cta { padding: 0.38rem 1rem; border-radius: 20px; font-size: 0.73rem; font-weight: 700; border: none; cursor: pointer; }
+
+  .mock-hero { padding: 2.8rem 2.2rem 2.2rem; }
+  .mock-hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 2rem; align-items: start; }
+  .mock-badge { display: inline-block; font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 12px; border-radius: 20px; margin-bottom: 0.8rem; }
+  .mock-hero h1 { font-family: 'Playfair Display', serif; font-size: 1.55rem; line-height: 1.38; margin-bottom: 0.65rem; }
+  .mock-hero p { font-size: 0.8rem; line-height: 1.7; margin-bottom: 1.1rem; }
+  .mock-btns { display: flex; gap: 0.55rem; flex-wrap: wrap; }
+  .mock-btn { padding: 0.5rem 1.1rem; border-radius: 8px; font-size: 0.76rem; font-weight: 700; border: none; cursor: pointer; }
+  .mock-btn.outline { background: transparent; border: 2px solid currentColor; }
+
+  .entry-cards { display: flex; flex-direction: column; gap: 0.55rem; padding-top: 0.3rem; }
+  .entry-card { border-radius: 10px; padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.7rem; }
+  .entry-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .entry-title { font-weight: 700; font-size: 0.8rem; margin-bottom: 0.1rem; }
+  .entry-sub { font-size: 0.67rem; opacity: 0.68; }
+
+  .mock-stats { display: flex; padding: 1.1rem 2.2rem; }
+  .mock-stat { flex: 1; text-align: center; }
+  .mock-stat-num { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 700; display: block; }
+  .mock-stat-label { font-size: 0.67rem; opacity: 0.7; margin-top: 0.1rem; }
+
+  .mock-about { padding: 1.6rem 2.2rem; display: grid; grid-template-columns: auto 1fr; gap: 1.1rem; align-items: center; border-top: 1px solid rgba(0,0,0,0.07); }
+  .mock-photo { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+  .mock-name { font-weight: 700; font-size: 0.92rem; margin-bottom: 0.12rem; }
+  .mock-role { font-size: 0.68rem; opacity: 0.58; margin-bottom: 0.35rem; }
+  .mock-bio { font-size: 0.74rem; line-height: 1.6; opacity: 0.82; }
+
+  .mock-quotes { padding: 1.6rem 2.2rem; }
+  .mock-quotes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 0.8rem; }
+  .mock-quote { border-radius: 10px; padding: 0.9rem 1rem; font-size: 0.71rem; line-height: 1.65; font-style: italic; }
+  .mock-quote-src { font-style: normal; font-weight: 600; font-size: 0.63rem; opacity: 0.62; margin-top: 0.4rem; }
+  .mock-section-title { font-family: 'Playfair Display', serif; font-size: 1rem; text-align: center; }
+
+  .mock-cta { padding: 1.8rem 2rem; text-align: center; }
+  .mock-cta h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; margin-bottom: 0.4rem; }
+  .mock-cta p { font-size: 0.75rem; opacity: 0.8; margin-bottom: 1rem; }
+  .mock-cta-btn { padding: 0.55rem 1.4rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700; border: none; cursor: pointer; }
+
+  .mock-footer { padding: 1rem 2rem; font-size: 0.67rem; text-align: center; opacity: 0.55; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Fresh Oxide — Refined Palette</h1>
+  <p>Hijau sage naik jadi nada utama · Clay/brown sebagai aksen hangat · Background sangat soft greenish</p>
+</div>
+
+<nav class="sticky-nav">
+  <a href="#variants">🎨 Variasi</a>
+  <a href="#mockup-r1">🌿 Mockup R1</a>
+  <a href="#mockup-r2">🪨 Mockup R2</a>
+  <a href="#mockup-r3">✦ Mockup R3</a>
+</nav>
+
+<!-- ===========================
+     PALETTE VARIANTS
+=========================== -->
+<div class="section-label" id="variants">🎨 Tiga Arah Refinement — Lebih Segar, Hijau Lebih Dominan</div>
+
+<div class="palette-grid">
+
+  <!-- R1: Sage-led, warm cream -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#2a3d30"><span class="swatch-label">#2a3d30</span></div>
+      <div class="swatch" style="background:#4d7a62"><span class="swatch-label">#4d7a62</span></div>
+      <div class="swatch" style="background:#8ab89a"><span class="swatch-label">#8ab89a</span></div>
+      <div class="swatch" style="background:#b87a5a"><span class="swatch-label">#b87a5a</span></div>
+      <div class="swatch" style="background:#f2f6f0"><span class="swatch-label">#f2f6f0</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">R1 — Sage Forest <span class="rec-badge">Paling segar</span></div>
+      <div class="palette-desc">Hijau forest gelap + sage medium + sage muda + clay/terracotta sebagai aksen. Background hijau sangat pudar. Terasa seperti kebun kopi yang hidup.</div>
+      <div class="palette-feel">
+        <span class="feel-tag">Segar</span><span class="feel-tag">Organik</span><span class="feel-tag">Hidup</span>
+      </div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#2a3d30; color:#e8f2e8;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Program</span><span>Belajar</span><span>Kisah</span></span>
+        <button class="mini-nav-cta" style="background:#b87a5a; color:#fff;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f2f6f0;">
+        <div class="mini-badge" style="background:#ddf0e4; color:#2a6040;">Wakaf Produktif</div>
+        <h2 style="color:#2a3d30;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#3a5a40;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#2a3d30; color:#e8f2e8;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#4d7a62; border-color:#4d7a62;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-stats" style="background:#2a3d30; color:#8ab89a;">
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">4.918</span><span>m² Kebun</span></div>
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">1.100</span><span>Pohon</span></div>
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">13+</span><span>Modul</span></div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#2a3d30; color:#8ab89a;">
+          <div class="mini-card-title">🌱 Program</div><div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#4d7a62; color:#fff;">
+          <div class="mini-card-title">🎓 Belajar</div><div class="mini-card-desc">13+ modul</div>
+        </div>
+        <div class="mini-card" style="background:#b87a5a; color:#fff;">
+          <div class="mini-card-title">📖 Kisah</div><div class="mini-card-desc">Perjalanan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- R2: Eucalyptus + Warm Stone -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#2e4040"><span class="swatch-label">#2e4040</span></div>
+      <div class="swatch" style="background:#5a9080"><span class="swatch-label">#5a9080</span></div>
+      <div class="swatch" style="background:#a8c8bc"><span class="swatch-label">#a8c8bc</span></div>
+      <div class="swatch" style="background:#c4906a"><span class="swatch-label">#c4906a</span></div>
+      <div class="swatch" style="background:#f0f5f3"><span class="swatch-label">#f0f5f3</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">R2 — Eucalyptus <span class="rec-badge">Paling kalem</span></div>
+      <div class="palette-desc">Teal-hijau gelap + eucalyptus medium + eucalyptus pudar + stone/clay aksen. Background teal sangat pudar. Terasa bersih, kalem, hampir spa-like.</div>
+      <div class="palette-feel">
+        <span class="feel-tag">Kalem</span><span class="feel-tag">Bersih</span><span class="feel-tag">Breathing room</span>
+      </div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#2e4040; color:#e8f2f0;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Program</span><span>Belajar</span><span>Kisah</span></span>
+        <button class="mini-nav-cta" style="background:#c4906a; color:#fff;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f0f5f3;">
+        <div class="mini-badge" style="background:#d8eeea; color:#2e6050;">Wakaf Produktif</div>
+        <h2 style="color:#2e4040;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#3a5858;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#2e4040; color:#e8f2f0;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#5a9080; border-color:#5a9080;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-stats" style="background:#2e4040; color:#a8c8bc;">
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">4.918</span><span>m² Kebun</span></div>
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">1.100</span><span>Pohon</span></div>
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">13+</span><span>Modul</span></div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#2e4040; color:#a8c8bc;">
+          <div class="mini-card-title">🌱 Program</div><div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#5a9080; color:#fff;">
+          <div class="mini-card-title">🎓 Belajar</div><div class="mini-card-desc">13+ modul</div>
+        </div>
+        <div class="mini-card" style="background:#c4906a; color:#fff;">
+          <div class="mini-card-title">📖 Kisah</div><div class="mini-card-desc">Perjalanan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- R3: Sage + Warm Ivory (most balanced) -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#324438"><span class="swatch-label">#324438</span></div>
+      <div class="swatch" style="background:#5e8a6a"><span class="swatch-label">#5e8a6a</span></div>
+      <div class="swatch" style="background:#9cc4a4"><span class="swatch-label">#9cc4a4</span></div>
+      <div class="swatch" style="background:#c8986a"><span class="swatch-label">#c8986a</span></div>
+      <div class="swatch" style="background:#f4f7f2"><span class="swatch-label">#f4f7f2</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">R3 — Sage × Warm Clay <span class="rec-badge">Rekomendasi</span></div>
+      <div class="palette-desc">Hijau sage gelap + sage medium + sage muda lembut + warm clay/amber sebagai aksen. Background sage sangat pudar. Segar tapi tetap hangat dan manusiawi.</div>
+      <div class="palette-feel">
+        <span class="feel-tag">Balance terbaik</span><span class="feel-tag">Segar + Hangat</span><span class="feel-tag">Professional</span>
+      </div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#324438; color:#e8f2ec;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Program</span><span>Belajar</span><span>Kisah</span></span>
+        <button class="mini-nav-cta" style="background:#c8986a; color:#fff;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f4f7f2;">
+        <div class="mini-badge" style="background:#ddeee2; color:#2a5a38;">Wakaf Produktif</div>
+        <h2 style="color:#324438;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#3a5840;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#324438; color:#e8f2ec;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#5e8a6a; border-color:#5e8a6a;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-stats" style="background:#324438; color:#9cc4a4;">
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">4.918</span><span>m² Kebun</span></div>
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">1.100</span><span>Pohon</span></div>
+        <div class="mini-stat"><span class="mini-stat-num" style="color:#fff;">13+</span><span>Modul</span></div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#324438; color:#9cc4a4;">
+          <div class="mini-card-title">🌱 Program</div><div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#5e8a6a; color:#fff;">
+          <div class="mini-card-title">🎓 Belajar</div><div class="mini-card-desc">13+ modul</div>
+        </div>
+        <div class="mini-card" style="background:#c8986a; color:#fff;">
+          <div class="mini-card-title">📖 Kisah</div><div class="mini-card-desc">Perjalanan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end palette-grid -->
+
+<hr class="div" style="margin: 0 2rem;">
+
+<!-- ===========================
+     FULL PAGE MOCKUPS
+=========================== -->
+
+<!-- MOCKUP R1 -->
+<div class="section-label" id="mockup-r1">🌿 Full Mockup — R1 Sage Forest</div>
+<div class="mockup-wrap">
+  <div class="mockup-box">
+    <div class="mock-nav" style="background:#2a3d30; color:#e8f2e8;">
+      <span class="mock-nav-logo">☕ Wakaf Produktif Kebun Kopi Ngantang</span>
+      <div class="mock-nav-links" style="color:#8ab89a;">
+        <span>Program</span><span>Belajar</span><span>Living Lab</span><span>Tim & Kontak</span><span>Kisah</span>
+      </div>
+      <button class="mock-nav-cta" style="background:#b87a5a; color:#fff;">Bergabung →</button>
+    </div>
+    <div class="mock-hero" style="background:#f2f6f0;">
+      <div class="mock-hero-grid">
+        <div>
+          <div class="mock-badge" style="background:#ddf0e4; color:#2a5a38;">Wakaf Produktif · Ngantang, Malang</div>
+          <h1 style="color:#2a3d30;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h1>
+          <p style="color:#3a5840;">Kebun kopi robusta seluas 4.918 m² di Ngantang diwakafkan — terbuka untuk siapa saja yang ingin belajar tentang kopi, perkebunan, dan kewirausahaan sosial.</p>
+          <div class="mock-btns">
+            <button class="mock-btn" style="background:#2a3d30; color:#8ab89a;">📖 Baca Kisahnya</button>
+            <button class="mock-btn" style="background:#4d7a62; color:#fff;">🎓 Mulai Belajar Gratis</button>
+          </div>
+        </div>
+        <div class="entry-cards">
+          <div class="entry-card" style="background:#eaf4ee;">
+            <span class="entry-icon">🌱</span>
+            <div><div class="entry-title" style="color:#2a3d30;">Desain Program</div><div class="entry-sub" style="color:#4a6a50;">Hexa-Helix · 3 fase · wakaf produktif</div></div>
+          </div>
+          <div class="entry-card" style="background:#ddf0e6;">
+            <span class="entry-icon">🎓</span>
+            <div><div class="entry-title" style="color:#2a3d30;">Ruang Belajar</div><div class="entry-sub" style="color:#3a6048;">13+ modul gratis · 3 jalur belajar</div></div>
+          </div>
+          <div class="entry-card" style="background:#faeee8;">
+            <span class="entry-icon">🔬</span>
+            <div><div class="entry-title" style="color:#2a3d30;">Living Lab</div><div class="entry-sub" style="color:#7a5040;">Open data · transparansi penuh</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mock-stats" style="background:#2a3d30; color:#8ab89a;">
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">4.918</span><div class="mock-stat-label">m² Luas Kebun</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">1.100</span><div class="mock-stat-label">Pohon Robusta</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">13+</span><div class="mock-stat-label">Modul Belajar</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">8</span><div class="mock-stat-label">Anggota Tim</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#b87a5a;">∞</span><div class="mock-stat-label">Dampak Wakaf</div></div>
+    </div>
+    <div class="mock-about" style="background:#f2f6f0;">
+      <div class="mock-photo" style="background:#ddf0e6; color:#2a3d30;">👤</div>
+      <div>
+        <div class="mock-name" style="color:#2a3d30;">Adib Asrori, M.Psi, Psikolog</div>
+        <div class="mock-role" style="color:#6a9070;">Wakif & Program Director · UN Stress Counsellor · @adib_psych</div>
+        <div class="mock-bio" style="color:#3a5840;">Kebun ini membiayai pendidikan saya. Kini, bersama tim kecil yang luar biasa, kami mengembalikannya — sebagai ruang belajar terbuka untuk semua. <a href="#" style="color:#4d7a62; font-weight:600;">Baca cerita lengkapnya →</a></div>
+      </div>
+    </div>
+    <div class="mock-quotes" style="background:#eaf4ee;">
+      <div class="mock-section-title" style="color:#2a3d30;">Suara dari Kebun</div>
+      <div class="mock-quotes-grid">
+        <div class="mock-quote" style="background:#f2f6f0; color:#2a3d30;">"Program ini membuka jalan bagi petani Ngantang untuk tidak hanya menjual hasil panen, tapi juga berbagi pengetahuan."<div class="mock-quote-src">— Komunitas Petani Ngantang</div></div>
+        <div class="mock-quote" style="background:#faeee8; color:#3a2820;">"Kolaborasi yang tulus — antara ilmu akademik, pengalaman lapangan, dan nilai-nilai keislaman yang kuat."<div class="mock-quote-src">— Bonsari Coffee</div></div>
+      </div>
+    </div>
+    <div class="mock-cta" style="background:#4d7a62; color:#fff;">
+      <h3>Ingin terlibat lebih jauh?</h3>
+      <p>Kami terbuka untuk riset, kemitraan, relawan, dan kolaborasi strategis.</p>
+      <button class="mock-cta-btn" style="background:#fff; color:#2a3d30;">✉️ Hubungi Kami</button>
+    </div>
+    <div class="mock-footer" style="background:#2a3d30; color:#5a8060;">© 2025 Wakaf Produktif Kebun Kopi Ngantang · Nazhir: Rumah Wakaf Indonesia</div>
+  </div>
+</div>
+
+<!-- MOCKUP R2 -->
+<div class="section-label" id="mockup-r2">🪨 Full Mockup — R2 Eucalyptus</div>
+<div class="mockup-wrap">
+  <div class="mockup-box">
+    <div class="mock-nav" style="background:#2e4040; color:#e8f2f0;">
+      <span class="mock-nav-logo">☕ Wakaf Produktif Kebun Kopi Ngantang</span>
+      <div class="mock-nav-links" style="color:#a8c8bc;">
+        <span>Program</span><span>Belajar</span><span>Living Lab</span><span>Tim & Kontak</span><span>Kisah</span>
+      </div>
+      <button class="mock-nav-cta" style="background:#c4906a; color:#fff;">Bergabung →</button>
+    </div>
+    <div class="mock-hero" style="background:#f0f5f3;">
+      <div class="mock-hero-grid">
+        <div>
+          <div class="mock-badge" style="background:#d8eeea; color:#2e5850;">Wakaf Produktif · Ngantang, Malang</div>
+          <h1 style="color:#2e4040;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h1>
+          <p style="color:#3a5555;">Kebun kopi robusta seluas 4.918 m² di Ngantang diwakafkan — terbuka untuk siapa saja yang ingin belajar tentang kopi, perkebunan, dan kewirausahaan sosial.</p>
+          <div class="mock-btns">
+            <button class="mock-btn" style="background:#2e4040; color:#a8c8bc;">📖 Baca Kisahnya</button>
+            <button class="mock-btn" style="background:#5a9080; color:#fff;">🎓 Mulai Belajar Gratis</button>
+          </div>
+        </div>
+        <div class="entry-cards">
+          <div class="entry-card" style="background:#e8f4f0;">
+            <span class="entry-icon">🌱</span>
+            <div><div class="entry-title" style="color:#2e4040;">Desain Program</div><div class="entry-sub" style="color:#3a6060;">Hexa-Helix · 3 fase · wakaf produktif</div></div>
+          </div>
+          <div class="entry-card" style="background:#d8eeea;">
+            <span class="entry-icon">🎓</span>
+            <div><div class="entry-title" style="color:#2e4040;">Ruang Belajar</div><div class="entry-sub" style="color:#2e5850;">13+ modul gratis · 3 jalur belajar</div></div>
+          </div>
+          <div class="entry-card" style="background:#faeee8;">
+            <span class="entry-icon">🔬</span>
+            <div><div class="entry-title" style="color:#2e4040;">Living Lab</div><div class="entry-sub" style="color:#7a5040;">Open data · transparansi penuh</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mock-stats" style="background:#2e4040; color:#a8c8bc;">
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">4.918</span><div class="mock-stat-label">m² Luas Kebun</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">1.100</span><div class="mock-stat-label">Pohon Robusta</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">13+</span><div class="mock-stat-label">Modul Belajar</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">8</span><div class="mock-stat-label">Anggota Tim</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#c4906a;">∞</span><div class="mock-stat-label">Dampak Wakaf</div></div>
+    </div>
+    <div class="mock-about" style="background:#f0f5f3;">
+      <div class="mock-photo" style="background:#d8eeea; color:#2e4040;">👤</div>
+      <div>
+        <div class="mock-name" style="color:#2e4040;">Adib Asrori, M.Psi, Psikolog</div>
+        <div class="mock-role" style="color:#5a8878;">Wakif & Program Director · UN Stress Counsellor · @adib_psych</div>
+        <div class="mock-bio" style="color:#3a5555;">Kebun ini membiayai pendidikan saya. Kini, bersama tim kecil yang luar biasa, kami mengembalikannya — sebagai ruang belajar terbuka untuk semua. <a href="#" style="color:#5a9080; font-weight:600;">Baca cerita lengkapnya →</a></div>
+      </div>
+    </div>
+    <div class="mock-quotes" style="background:#e8f4f0;">
+      <div class="mock-section-title" style="color:#2e4040;">Suara dari Kebun</div>
+      <div class="mock-quotes-grid">
+        <div class="mock-quote" style="background:#f0f5f3; color:#2e4040;">"Program ini membuka jalan bagi petani Ngantang untuk tidak hanya menjual hasil panen, tapi juga berbagi pengetahuan."<div class="mock-quote-src">— Komunitas Petani Ngantang</div></div>
+        <div class="mock-quote" style="background:#faeee8; color:#3a2820;">"Kolaborasi yang tulus — antara ilmu akademik, pengalaman lapangan, dan nilai-nilai keislaman yang kuat."<div class="mock-quote-src">— Bonsari Coffee</div></div>
+      </div>
+    </div>
+    <div class="mock-cta" style="background:#5a9080; color:#fff;">
+      <h3>Ingin terlibat lebih jauh?</h3>
+      <p>Kami terbuka untuk riset, kemitraan, relawan, dan kolaborasi strategis.</p>
+      <button class="mock-cta-btn" style="background:#fff; color:#2e4040;">✉️ Hubungi Kami</button>
+    </div>
+    <div class="mock-footer" style="background:#2e4040; color:#5a8878;">© 2025 Wakaf Produktif Kebun Kopi Ngantang · Nazhir: Rumah Wakaf Indonesia</div>
+  </div>
+</div>
+
+<!-- MOCKUP R3 -->
+<div class="section-label" id="mockup-r3">✦ Full Mockup — R3 Sage × Warm Clay (Rekomendasi)</div>
+<div class="mockup-wrap">
+  <div class="mockup-note">
+    ✦ Ini rekomendasi saya. Hijau sage cukup segar, tapi aksen clay/amber di CTA memberi kehangatan yang membuat tetap manusiawi — tidak terlalu dingin, tidak terlalu coklat.
+  </div>
+  <div class="mockup-box">
+    <div class="mock-nav" style="background:#324438; color:#e8f2ec;">
+      <span class="mock-nav-logo">☕ Wakaf Produktif Kebun Kopi Ngantang</span>
+      <div class="mock-nav-links" style="color:#9cc4a4;">
+        <span>Program</span><span>Belajar</span><span>Living Lab</span><span>Tim & Kontak</span><span>Kisah</span>
+      </div>
+      <button class="mock-nav-cta" style="background:#c8986a; color:#fff;">Bergabung →</button>
+    </div>
+    <div class="mock-hero" style="background:#f4f7f2;">
+      <div class="mock-hero-grid">
+        <div>
+          <div class="mock-badge" style="background:#ddeee4; color:#2a5838;">Wakaf Produktif · Ngantang, Malang</div>
+          <h1 style="color:#324438;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h1>
+          <p style="color:#3a5840;">Kebun kopi robusta seluas 4.918 m² di Ngantang diwakafkan — terbuka untuk siapa saja yang ingin belajar tentang kopi, perkebunan, dan kewirausahaan sosial.</p>
+          <div class="mock-btns">
+            <button class="mock-btn" style="background:#324438; color:#9cc4a4;">📖 Baca Kisahnya</button>
+            <button class="mock-btn" style="background:#c8986a; color:#fff;">🎓 Mulai Belajar Gratis</button>
+          </div>
+        </div>
+        <div class="entry-cards">
+          <div class="entry-card" style="background:#eaf2ec;">
+            <span class="entry-icon">🌱</span>
+            <div><div class="entry-title" style="color:#324438;">Desain Program</div><div class="entry-sub" style="color:#4a6a50;">Hexa-Helix · 3 fase · wakaf produktif</div></div>
+          </div>
+          <div class="entry-card" style="background:#ddeee4;">
+            <span class="entry-icon">🎓</span>
+            <div><div class="entry-title" style="color:#324438;">Ruang Belajar</div><div class="entry-sub" style="color:#3a6048;">13+ modul gratis · 3 jalur belajar</div></div>
+          </div>
+          <div class="entry-card" style="background:#faeee6;">
+            <span class="entry-icon">🔬</span>
+            <div><div class="entry-title" style="color:#324438;">Living Lab</div><div class="entry-sub" style="color:#7a5840;">Open data · transparansi penuh</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mock-stats" style="background:#324438; color:#9cc4a4;">
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">4.918</span><div class="mock-stat-label">m² Luas Kebun</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">1.100</span><div class="mock-stat-label">Pohon Robusta</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">13+</span><div class="mock-stat-label">Modul Belajar</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#fff;">8</span><div class="mock-stat-label">Anggota Tim</div></div>
+      <div class="mock-stat"><span class="mock-stat-num" style="color:#c8986a;">∞</span><div class="mock-stat-label">Dampak Wakaf</div></div>
+    </div>
+    <div class="mock-about" style="background:#f4f7f2;">
+      <div class="mock-photo" style="background:#ddeee4; color:#324438;">👤</div>
+      <div>
+        <div class="mock-name" style="color:#324438;">Adib Asrori, M.Psi, Psikolog</div>
+        <div class="mock-role" style="color:#6a9070;">Wakif & Program Director · UN Stress Counsellor · @adib_psych</div>
+        <div class="mock-bio" style="color:#3a5840;">Kebun ini membiayai pendidikan saya. Kini, bersama tim kecil yang luar biasa, kami mengembalikannya — sebagai ruang belajar terbuka untuk semua. <a href="#" style="color:#5e8a6a; font-weight:600;">Baca cerita lengkapnya →</a></div>
+      </div>
+    </div>
+    <div class="mock-quotes" style="background:#eaf2ec;">
+      <div class="mock-section-title" style="color:#324438;">Suara dari Kebun</div>
+      <div class="mock-quotes-grid">
+        <div class="mock-quote" style="background:#f4f7f2; color:#324438;">"Program ini membuka jalan bagi petani Ngantang untuk tidak hanya menjual hasil panen, tapi juga berbagi pengetahuan."<div class="mock-quote-src">— Komunitas Petani Ngantang</div></div>
+        <div class="mock-quote" style="background:#faeee6; color:#3a2818;">"Kolaborasi yang tulus — antara ilmu akademik, pengalaman lapangan, dan nilai-nilai keislaman yang kuat."<div class="mock-quote-src">— Bonsari Coffee</div></div>
+      </div>
+    </div>
+    <div class="mock-cta" style="background:#5e8a6a; color:#fff;">
+      <h3>Ingin terlibat lebih jauh?</h3>
+      <p>Kami terbuka untuk riset, kemitraan, relawan, dan kolaborasi strategis.</p>
+      <button class="mock-cta-btn" style="background:#fff; color:#324438;">✉️ Hubungi Kami</button>
+    </div>
+    <div class="mock-footer" style="background:#324438; color:#5a8060;">© 2025 Wakaf Produktif Kebun Kopi Ngantang · Nazhir: Rumah Wakaf Indonesia</div>
+  </div>
+</div>
+
+</body>
+</html>

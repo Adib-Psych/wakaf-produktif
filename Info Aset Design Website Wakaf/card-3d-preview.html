@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card 3D Style Preview — R2 Eucalyptus</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f0f5f3;
+    color: #1e3030;
+    padding-bottom: 4rem;
+  }
+
+  /* ── Palette R2 Eucalyptus ── */
+  :root {
+    --dark:    #2e4040;
+    --medium:  #5a9080;
+    --light:   #a8c8bc;
+    --accent:  #c4906a;
+    --bg:      #f0f5f3;
+    --bg-tint: #e8f4f0;
+    --bg-deep: #d8eeea;
+    --white:   #ffffff;
+    --text:    #1e3030;
+    --muted:   #5a7878;
+  }
+
+  .page-header {
+    background: var(--dark);
+    color: #e8f2f0;
+    padding: 2.2rem 2rem 1.8rem;
+    text-align: center;
+  }
+  .page-header h1 { font-family: 'Playfair Display', serif; font-size: 1.7rem; margin-bottom: 0.3rem; }
+  .page-header p  { color: var(--light); font-size: 0.85rem; }
+
+  .section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 0;
+  }
+  .section-title {
+    font-size: 0.7rem; font-weight: 700; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--medium);
+    margin-bottom: 1.4rem;
+  }
+
+  /* ── Card Grid ── */
+  .card-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.4rem;
+    margin-bottom: 2rem;
+  }
+
+  /* ── Base card styles ── */
+  .card {
+    border-radius: 14px;
+    padding: 1.4rem 1.2rem 1.2rem;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 0.7rem;
+    display: block;
+  }
+  .card-label {
+    font-weight: 700;
+    font-size: 0.88rem;
+    margin-bottom: 0.25rem;
+  }
+  .card-desc {
+    font-size: 0.72rem;
+    line-height: 1.5;
+    opacity: 0.72;
+  }
+
+  /* ─────────────────────────────────
+     STYLE 1 — Soft Lift
+     Subtle shadow yang terasa terangkat tipis.
+     Bersih, modern, tidak berlebihan.
+  ───────────────────────────────── */
+  .s1 {
+    background: var(--white);
+    box-shadow:
+      0 1px 2px rgba(30,60,50,0.06),
+      0 4px 12px rgba(30,60,50,0.10),
+      0 8px 24px rgba(30,60,50,0.06);
+    border: 1px solid rgba(168,200,188,0.3);
+  }
+  .s1:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 2px 4px rgba(30,60,50,0.08),
+      0 8px 20px rgba(30,60,50,0.14),
+      0 16px 40px rgba(30,60,50,0.08);
+  }
+
+  /* ─────────────────────────────────
+     STYLE 2 — Layered Shadow (Dua lapis)
+     Shadow ambient + key light.
+     Terasa lebih dalam, seperti benda fisik di atas meja.
+  ───────────────────────────────── */
+  .s2 {
+    background: var(--white);
+    box-shadow:
+      0 1px 1px rgba(30,60,50,0.06),       /* contact shadow */
+      0 2px 4px rgba(30,60,50,0.06),       /* near shadow */
+      0 6px 16px rgba(30,60,50,0.10),      /* mid shadow */
+      0 16px 32px rgba(30,60,50,0.07);     /* ambient */
+    border: 1px solid rgba(168,200,188,0.2);
+  }
+  .s2:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow:
+      0 2px 2px rgba(30,60,50,0.06),
+      0 4px 8px rgba(30,60,50,0.08),
+      0 12px 28px rgba(30,60,50,0.13),
+      0 24px 48px rgba(30,60,50,0.08);
+  }
+
+  /* ─────────────────────────────────
+     STYLE 3 — Emboss Light
+     Highlight tipis di tepi atas + kiri (cahaya dari kiri atas).
+     Gradien sangat halus di permukaan card.
+     Kesan: material solid yang terkena cahaya.
+  ───────────────────────────────── */
+  .s3 {
+    background: linear-gradient(145deg, #ffffff 0%, #f4faf7 100%);
+    box-shadow:
+      0 2px 4px rgba(30,60,50,0.08),
+      0 6px 18px rgba(30,60,50,0.10),
+      0 12px 32px rgba(30,60,50,0.06);
+    border-top: 1px solid rgba(255,255,255,0.9);
+    border-left: 1px solid rgba(255,255,255,0.7);
+    border-right: 1px solid rgba(168,200,188,0.2);
+    border-bottom: 1px solid rgba(168,200,188,0.3);
+  }
+  .s3:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 4px 8px rgba(30,60,50,0.10),
+      0 10px 28px rgba(30,60,50,0.13),
+      0 20px 48px rgba(30,60,50,0.08);
+  }
+
+  /* ─────────────────────────────────
+     STYLE 4 — Hard Offset (Retro 3D)
+     Offset shadow ke kanan-bawah seperti desain ilustratif.
+     Terasa playful tapi masih bersih.
+  ───────────────────────────────── */
+  .s4 {
+    background: var(--white);
+    border: 1.5px solid var(--dark);
+    box-shadow: 4px 4px 0px var(--dark);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .s4:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--dark);
+  }
+
+  /* ─────────────────────────────────
+     STYLE 5 — Tinted Depth (Rekomendasi)
+     Kombinasi: gradien tinted + dua lapis shadow + border highlight.
+     Warna card mengikuti palette, bukan putih polos.
+     Terasa hidup, segar, dan punya kedalaman.
+  ───────────────────────────────── */
+  .s5 {
+    background: linear-gradient(155deg, #f6fdfb 0%, #eaf5f0 100%);
+    box-shadow:
+      0 1px 2px rgba(30,60,50,0.07),
+      0 4px 10px rgba(30,60,50,0.09),
+      0 10px 28px rgba(30,60,50,0.07),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+    border: 1px solid rgba(90,144,128,0.18);
+  }
+  .s5:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 2px 4px rgba(30,60,50,0.08),
+      0 8px 18px rgba(30,60,50,0.12),
+      0 20px 44px rgba(30,60,50,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.95);
+  }
+
+  /* ─────────────────────────────────
+     STYLE 6 — Colored Depth
+     Card berwarna (pakai palette), bukan putih.
+     Shadow berwarna juga — lebih hidup.
+  ───────────────────────────────── */
+  .s6-green {
+    background: linear-gradient(145deg, #e4f5ef 0%, #d4edea 100%);
+    box-shadow:
+      0 2px 4px rgba(46,100,88,0.10),
+      0 6px 16px rgba(46,100,88,0.14),
+      0 14px 32px rgba(46,100,88,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    border: 1px solid rgba(90,144,128,0.2);
+  }
+  .s6-green:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 4px 8px rgba(46,100,88,0.12),
+      0 10px 24px rgba(46,100,88,0.16),
+      0 24px 48px rgba(46,100,88,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+  }
+  .s6-dark {
+    background: linear-gradient(145deg, #354a4a 0%, #2a3c3c 100%);
+    color: #e8f4f0;
+    box-shadow:
+      0 2px 4px rgba(20,40,40,0.20),
+      0 6px 18px rgba(20,40,40,0.22),
+      0 16px 40px rgba(20,40,40,0.14),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    border: 1px solid rgba(168,200,188,0.15);
+  }
+  .s6-dark:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 4px 8px rgba(20,40,40,0.24),
+      0 12px 28px rgba(20,40,40,0.26),
+      0 28px 56px rgba(20,40,40,0.16),
+      inset 0 1px 0 rgba(255,255,255,0.10);
+  }
+  .s6-accent {
+    background: linear-gradient(145deg, #f5e6d8 0%, #ead8c8 100%);
+    box-shadow:
+      0 2px 4px rgba(140,80,40,0.12),
+      0 6px 16px rgba(140,80,40,0.14),
+      0 14px 32px rgba(140,80,40,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.7);
+    border: 1px solid rgba(196,144,106,0.25);
+  }
+  .s6-accent:hover {
+    transform: translateY(-5px);
+    box-shadow:
+      0 4px 8px rgba(140,80,40,0.14),
+      0 10px 24px rgba(140,80,40,0.18),
+      0 24px 48px rgba(140,80,40,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+
+  /* ── Style label ── */
+  .style-badge {
+    display: inline-block;
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; padding: 3px 10px; border-radius: 20px;
+    background: var(--bg-deep); color: var(--dark);
+    margin-bottom: 0.8rem;
+  }
+  .rec { background: #2e4040; color: #e8f4f0; }
+
+  /* ── Divider ── */
+  hr.div {
+    border: none; border-top: 2px solid #d4e8e0;
+    max-width: 1200px; margin: 1rem auto 0;
+  }
+
+  /* ── Context demo: cards in a real section ── */
+  .demo-section {
+    max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 1rem;
+  }
+  .demo-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; color: var(--dark); margin-bottom: 0.35rem;
+  }
+  .demo-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+  .demo-bg-white  { background: var(--white);   padding: 1.8rem; border-radius: 16px; margin-bottom: 1.2rem; }
+  .demo-bg-tint   { background: var(--bg-tint);  padding: 1.8rem; border-radius: 16px; margin-bottom: 1.2rem; }
+  .demo-bg-dark   { background: var(--dark);     padding: 1.8rem; border-radius: 16px; margin-bottom: 1.2rem; }
+
+  .demo-label {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    margin-bottom: 0.9rem; opacity: 0.5;
+  }
+  .demo-card-row {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+  }
+  .demo-card {
+    border-radius: 12px; padding: 1.2rem 1rem 1rem;
+    cursor: pointer; transition: transform 0.18s, box-shadow 0.18s;
+  }
+  .demo-card-icon { font-size: 1.6rem; margin-bottom: 0.55rem; display: block; }
+  .demo-card-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.2rem; }
+  .demo-card-info { font-size: 0.72rem; line-height: 1.5; opacity: 0.72; }
+
+  /* ── Style 5 applied to demo (recommended) ── */
+  .demo-s5 {
+    background: linear-gradient(155deg, #f6fdfb 0%, #eaf5f0 100%);
+    box-shadow:
+      0 1px 2px rgba(30,60,50,0.07),
+      0 4px 10px rgba(30,60,50,0.09),
+      0 10px 28px rgba(30,60,50,0.07),
+      inset 0 1px 0 rgba(255,255,255,0.9);
+    border: 1px solid rgba(90,144,128,0.18);
+  }
+  .demo-s5:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 2px 4px rgba(30,60,50,0.08),
+      0 8px 18px rgba(30,60,50,0.12),
+      0 20px 44px rgba(30,60,50,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.95);
+  }
+  .demo-s5-dark {
+    background: linear-gradient(145deg, #354a4a 0%, #2a3c3c 100%);
+    color: #e8f4f0;
+    box-shadow:
+      0 2px 4px rgba(20,40,40,0.20),
+      0 6px 18px rgba(20,40,40,0.22),
+      0 16px 40px rgba(20,40,40,0.14),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    border: 1px solid rgba(168,200,188,0.15);
+  }
+  .demo-s5-dark:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 4px 8px rgba(20,40,40,0.24),
+      0 12px 28px rgba(20,40,40,0.26),
+      0 28px 56px rgba(20,40,40,0.16),
+      inset 0 1px 0 rgba(255,255,255,0.10);
+  }
+  .demo-s5-accent {
+    background: linear-gradient(145deg, #f5e6d8 0%, #ead8c8 100%);
+    box-shadow:
+      0 2px 4px rgba(140,80,40,0.12),
+      0 6px 16px rgba(140,80,40,0.14),
+      0 14px 32px rgba(140,80,40,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.7);
+    border: 1px solid rgba(196,144,106,0.25);
+  }
+  .demo-s5-accent:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 4px 8px rgba(140,80,40,0.14),
+      0 10px 24px rgba(140,80,40,0.18),
+      0 24px 48px rgba(140,80,40,0.10),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Card 3D Style Preview</h1>
+  <p>Palette R2 Eucalyptus · Pilih gaya kedalaman card yang paling sesuai</p>
+</div>
+
+<!-- ===== STYLE VARIANTS ===== -->
+<div class="section">
+  <div class="section-title">6 Gaya Kedalaman — Hover setiap card untuk lihat efeknya</div>
+
+  <!-- S1 -->
+  <span class="style-badge">Style 1 — Soft Lift</span>
+  <div class="card-row">
+    <div class="card s1"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf produktif</div></div>
+    <div class="card s1"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis · 3 jalur</div></div>
+    <div class="card s1"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data & transparansi</div></div>
+    <div class="card s1"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota · bergabung</div></div>
+    <div class="card s1"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan & latar belakang</div></div>
+  </div>
+
+  <hr class="div" style="margin-bottom:2rem;">
+
+  <!-- S2 -->
+  <span class="style-badge">Style 2 — Layered Shadow</span>
+  <div class="card-row">
+    <div class="card s2"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf produktif</div></div>
+    <div class="card s2"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis · 3 jalur</div></div>
+    <div class="card s2"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data & transparansi</div></div>
+    <div class="card s2"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota · bergabung</div></div>
+    <div class="card s2"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan & latar belakang</div></div>
+  </div>
+
+  <hr class="div" style="margin-bottom:2rem;">
+
+  <!-- S3 -->
+  <span class="style-badge">Style 3 — Emboss Light (highlight tepi)</span>
+  <div class="card-row">
+    <div class="card s3"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf produktif</div></div>
+    <div class="card s3"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis · 3 jalur</div></div>
+    <div class="card s3"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data & transparansi</div></div>
+    <div class="card s3"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota · bergabung</div></div>
+    <div class="card s3"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan & latar belakang</div></div>
+  </div>
+
+  <hr class="div" style="margin-bottom:2rem;">
+
+  <!-- S4 -->
+  <span class="style-badge">Style 4 — Hard Offset (Retro Bold)</span>
+  <div class="card-row">
+    <div class="card s4"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf produktif</div></div>
+    <div class="card s4"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis · 3 jalur</div></div>
+    <div class="card s4"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data & transparansi</div></div>
+    <div class="card s4"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota · bergabung</div></div>
+    <div class="card s4"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan & latar belakang</div></div>
+  </div>
+
+  <hr class="div" style="margin-bottom:2rem;">
+
+  <!-- S5 -->
+  <span class="style-badge rec">Style 5 — Tinted Depth ✦ Rekomendasi</span>
+  <div class="card-row">
+    <div class="card s5"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf produktif</div></div>
+    <div class="card s5"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis · 3 jalur</div></div>
+    <div class="card s5"><span class="card-icon">🔬</span><div class="card-label">Living Lab</div><div class="card-desc">Open data & transparansi</div></div>
+    <div class="card s5"><span class="card-icon">👥</span><div class="card-label">Tim & Kontak</div><div class="card-desc">8 anggota · bergabung</div></div>
+    <div class="card s5"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan & latar belakang</div></div>
+  </div>
+
+  <hr class="div" style="margin-bottom:2rem;">
+
+  <!-- S6 -->
+  <span class="style-badge">Style 6 — Colored Depth (warna per card)</span>
+  <div class="card-row">
+    <div class="card s6-green"><span class="card-icon">🌱</span><div class="card-label">Program</div><div class="card-desc">Desain & fase wakaf produktif</div></div>
+    <div class="card s6-green"><span class="card-icon">🎓</span><div class="card-label">Ruang Belajar</div><div class="card-desc">13+ modul gratis · 3 jalur</div></div>
+    <div class="card s6-dark" style="color:#e8f4f0;"><span class="card-icon">🔬</span><div class="card-label" style="color:#e8f4f0;">Living Lab</div><div class="card-desc">Open data & transparansi</div></div>
+    <div class="card s6-dark" style="color:#e8f4f0;"><span class="card-icon">👥</span><div class="card-label" style="color:#e8f4f0;">Tim & Kontak</div><div class="card-desc">8 anggota · bergabung</div></div>
+    <div class="card s6-accent"><span class="card-icon">📖</span><div class="card-label">Kisah</div><div class="card-desc">Perjalanan & latar belakang</div></div>
+  </div>
+</div>
+
+<hr class="div" style="margin: 2rem auto;">
+
+<!-- ===== CONTEXT DEMO ===== -->
+<div class="demo-section">
+  <div class="demo-title">Konteks Nyata — Style 5 di Berbagai Background</div>
+  <div class="demo-sub">Begini tampilan card Style 5 ketika diletakkan di section yang berbeda dalam satu halaman</div>
+
+  <!-- On white bg -->
+  <div class="demo-bg-white">
+    <div class="demo-label" style="color:#5a7878;">Section background: putih</div>
+    <div class="demo-card-row">
+      <div class="demo-card demo-s5">
+        <span class="demo-card-icon">🌱</span>
+        <div class="demo-card-name">Desain Program</div>
+        <div class="demo-card-info">Hexa-Helix · 3 fase · wakaf produktif</div>
+      </div>
+      <div class="demo-card demo-s5">
+        <span class="demo-card-icon">🎓</span>
+        <div class="demo-card-name">Ruang Belajar</div>
+        <div class="demo-card-info">13+ modul gratis · 3 jalur belajar</div>
+      </div>
+      <div class="demo-card demo-s5">
+        <span class="demo-card-icon">🔬</span>
+        <div class="demo-card-name">Living Lab</div>
+        <div class="demo-card-info">Open data · transparansi penuh</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- On tinted bg -->
+  <div class="demo-bg-tint">
+    <div class="demo-label" style="color:#5a7878;">Section background: eucalyptus tint</div>
+    <div class="demo-card-row">
+      <div class="demo-card demo-s5">
+        <span class="demo-card-icon">🌱</span>
+        <div class="demo-card-name">Desain Program</div>
+        <div class="demo-card-info">Hexa-Helix · 3 fase · wakaf produktif</div>
+      </div>
+      <div class="demo-card demo-s5">
+        <span class="demo-card-icon">🎓</span>
+        <div class="demo-card-name">Ruang Belajar</div>
+        <div class="demo-card-info">13+ modul gratis · 3 jalur belajar</div>
+      </div>
+      <div class="demo-card demo-s5-accent">
+        <span class="demo-card-icon">📖</span>
+        <div class="demo-card-name">Kisah</div>
+        <div class="demo-card-info">Perjalanan & latar belakang Adib</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- On dark bg -->
+  <div class="demo-bg-dark">
+    <div class="demo-label" style="color:#a8c8bc;">Section background: gelap (stats band / hero)</div>
+    <div class="demo-card-row">
+      <div class="demo-card demo-s5-dark">
+        <span class="demo-card-icon">🌱</span>
+        <div class="demo-card-name" style="color:#e8f4f0;">Desain Program</div>
+        <div class="demo-card-info" style="color:#a8c8bc;">Hexa-Helix · 3 fase</div>
+      </div>
+      <div class="demo-card demo-s5-dark">
+        <span class="demo-card-icon">🎓</span>
+        <div class="demo-card-name" style="color:#e8f4f0;">Ruang Belajar</div>
+        <div class="demo-card-info" style="color:#a8c8bc;">13+ modul gratis</div>
+      </div>
+      <div class="demo-card demo-s5-dark">
+        <span class="demo-card-icon">🔬</span>
+        <div class="demo-card-name" style="color:#e8f4f0;">Living Lab</div>
+        <div class="demo-card-info" style="color:#a8c8bc;">Open data · transparansi</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

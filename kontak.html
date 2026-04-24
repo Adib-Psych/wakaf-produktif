@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontak & Kolaborasi — Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Hubungi kami untuk riset kolaboratif, kemitraan, volunteer, liputan media, atau dukungan program Wakaf Produktif Kebun Kopi Ngantang.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+/* ── Lang visibility (JS-controlled) ── */
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════
+   NAVBAR
+══════════════════════════════════ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark);
+  border-bottom: 1px solid rgba(168,200,188,0.1);
+}
+.navbar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; padding: 0 2rem;
+  max-width: 1200px; margin: 0 auto;
+}
+.navbar-logo {
+  display: flex; align-items: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 800; color: #e8f4f0;
+  text-decoration: none;
+}
+.brand-tag {
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  box-shadow: 2px 2px 0px var(--accent);
+  background: linear-gradient(135deg, rgba(90,144,128,0.22), rgba(90,144,128,0.1));
+  color: #e8f4f0; white-space: nowrap;
+}
+.navbar-right { display: flex; align-items: center; gap: 0.5rem; }
+.navbar-nav { display: flex; align-items: center; gap: 0.1rem; list-style: none; }
+.navbar-nav li a {
+  font-size: 0.78rem; font-weight: 500; color: #a8c8bc;
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.navbar-nav li a:hover { color: #e8f4f0; background: rgba(255,255,255,0.07); }
+.navbar-nav li a.active { color: #e8f4f0; font-weight: 700; }
+.nav-soon {
+  font-size: 0.78rem; font-weight: 500;
+  color: rgba(168,200,188,0.35);
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  cursor: default; user-select: none; display: inline-block;
+}
+.btn-nav-cta {
+  background: var(--accent); color: #fff;
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem;
+}
+.nav-soon-cta {
+  background: rgba(196,144,106,0.25); color: rgba(255,255,255,0.3);
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem; cursor: default; user-select: none;
+}
+.lang-btn {
+  background: none; border: 1px solid rgba(168,200,188,0.35);
+  color: #a8c8bc; padding: 0.22rem 0.6rem;
+  border-radius: 5px; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.lang-btn:hover, .lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.rwi-nav-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px; padding: 0.35rem 0.7rem 0.35rem 0.45rem;
+  flex-shrink: 0;
+}
+.rwi-logo-box {
+  width: 96px; height: 48px; border-radius: 6px;
+  background: #fff; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; overflow: hidden;
+}
+.rwi-logo-box img { width: 96px; height: 48px; object-fit: contain; display: block; }
+.rwi-nav-text { line-height: 1.3; }
+.rwi-nav-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(168,200,188,0.55); }
+.rwi-nav-name  { font-size: 0.75rem; font-weight: 700; color: #d0e8e0; white-space: nowrap; }
+
+/* ══════════════════════════════════
+   PAGE HERO
+══════════════════════════════════ */
+.page-hero {
+  background: var(--dark);
+  padding: 4rem 2rem 3.5rem;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 45% 60% at 80% 40%, rgba(90,144,128,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 40% at 10% 80%, rgba(196,144,106,0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.page-hero-inner {
+  max-width: 1200px; margin: 0 auto; position: relative;
+}
+.page-hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(90,144,128,0.18);
+  border: 1px solid rgba(168,200,188,0.28);
+  color: var(--light);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.85rem; border-radius: 20px;
+  margin-bottom: 1.2rem;
+}
+.badge-dot { width: 5px; height: 5px; background: var(--medium); border-radius: 50%; animation: blink 2.2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.page-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700; color: #e8f4f0;
+  line-height: 1.28; margin-bottom: 1.1rem;
+}
+.page-hero h1 em { font-style: italic; color: var(--accent); }
+.page-hero-lead {
+  font-family: 'Lora', serif;
+  font-size: 1rem; line-height: 1.8;
+  color: rgba(168,200,188,0.8);
+  max-width: 900px;
+}
+
+/* ══════════════════════════════════
+   CONTACT CHANNELS
+══════════════════════════════════ */
+.channels-section {
+  padding: 3.5rem 2rem 4rem;
+}
+.channels-inner {
+  max-width: 1200px; margin: 0 auto;
+}
+.section-label {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.4rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  color: var(--dark); margin-bottom: 0.6rem;
+}
+.section-title em { font-style: italic; color: var(--accent); }
+.section-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.92rem; color: var(--muted); line-height: 1.8;
+  margin-bottom: 2.5rem;
+}
+
+.channels-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+}
+
+.channel-card {
+  background: linear-gradient(155deg, #f6fdfb 0%, #edf8f4 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 14px;
+  padding: 1.6rem;
+  transition: box-shadow 0.14s var(--ease), transform 0.14s var(--ease);
+  display: flex; flex-direction: column;
+}
+.channel-card:hover {
+  box-shadow: 6px 6px 0px var(--accent);
+  transform: translate(-1px,-1px);
+}
+
+.channel-icon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+.channel-type {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.3rem;
+}
+.channel-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--dark); line-height: 1.35;
+  margin-bottom: 0.7rem;
+}
+.channel-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.84rem; color: var(--muted);
+  line-height: 1.7; flex: 1; margin-bottom: 1.2rem;
+}
+.channel-cta {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: var(--dark); color: #e8f4f0;
+  padding: 0.5rem 1rem; border-radius: 8px;
+  font-size: 0.78rem; font-weight: 700;
+  transition: background 0.15s; width: fit-content;
+  margin-top: auto;
+}
+.channel-cta:hover { background: var(--medium); }
+.channel-note {
+  font-size: 0.68rem; color: var(--muted);
+  margin-top: 0.5rem; font-style: italic;
+}
+
+/* ══════════════════════════════════
+   SOCIAL LINKS
+══════════════════════════════════ */
+.social-section {
+  background: var(--bg-tint);
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--bg-deep);
+  border-bottom: 1px solid var(--bg-deep);
+}
+.social-inner {
+  max-width: 1200px; margin: 0 auto;
+}
+.social-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem; margin-top: 2rem;
+}
+.social-card {
+  background: #fff;
+  border: 1px solid var(--bg-deep);
+  border-radius: 12px; padding: 1.3rem;
+  display: flex; gap: 1rem; align-items: flex-start;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.social-card:hover {
+  border-color: var(--accent);
+  box-shadow: 2px 2px 0px rgba(196,144,106,0.25);
+}
+.social-handle-icon { font-size: 1.4rem; flex-shrink: 0; }
+.social-handle {
+  font-size: 0.88rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.2rem;
+}
+.social-platform {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.4rem;
+}
+.social-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+}
+
+/* ══════════════════════════════════
+   MESSAGE BLOCK
+══════════════════════════════════ */
+.message-section {
+  background: var(--dark);
+  padding: 3.5rem 2rem;
+  position: relative; overflow: hidden;
+}
+.message-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 40% 60% at 85% 40%, rgba(90,144,128,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.message-inner {
+  max-width: 1200px; margin: 0 auto; position: relative;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
+}
+.message-text {}
+.message-label {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.8rem;
+}
+.message-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.3rem, 2.5vw, 1.8rem);
+  color: #e8f4f0; line-height: 1.3;
+  margin-bottom: 1rem;
+}
+.message-title em { font-style: italic; color: var(--accent); }
+.message-prose {
+  font-family: 'Lora', serif;
+  font-size: 0.93rem; line-height: 1.85;
+  color: rgba(168,200,188,0.75);
+}
+.message-prose + .message-prose { margin-top: 0.8rem; }
+.message-pull {
+  font-family: 'Caveat', cursive;
+  font-size: 1.15rem; color: var(--accent);
+  border-left: 3px solid var(--accent);
+  padding: 0.8rem 1.2rem;
+  margin: 1.4rem 0;
+  background: rgba(196,144,106,0.07);
+  border-radius: 0 8px 8px 0;
+}
+
+.message-form-card {
+  background: linear-gradient(145deg, #354a4a, #2a3c3c);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 14px;
+  padding: 1.8rem;
+}
+.form-title {
+  font-size: 0.9rem; font-weight: 700;
+  color: #e8f4f0; margin-bottom: 0.3rem;
+}
+.form-sub {
+  font-family: 'Lora', serif;
+  font-size: 0.8rem; color: rgba(168,200,188,0.6);
+  margin-bottom: 1.5rem; line-height: 1.6;
+}
+.form-field { margin-bottom: 1rem; }
+.form-label {
+  font-size: 0.72rem; font-weight: 600;
+  color: rgba(168,200,188,0.7); margin-bottom: 0.35rem;
+  display: block;
+}
+.form-input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px;
+  color: #e8f4f0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  padding: 0.6rem 0.9rem;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--accent); background: rgba(255,255,255,0.09); }
+.form-input::placeholder { color: rgba(168,200,188,0.3); }
+textarea.form-input { resize: vertical; min-height: 100px; }
+.form-select {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px;
+  color: #e8f4f0;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.84rem;
+  padding: 0.6rem 0.9rem;
+  outline: none; cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a8c8bc' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  padding-right: 2.4rem;
+}
+.form-select option { background: var(--dark); color: #e8f4f0; }
+.form-btn {
+  width: 100%;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 8px;
+  padding: 0.75rem 1.4rem;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.88rem; font-weight: 700;
+  cursor: pointer; margin-top: 0.4rem;
+  transition: opacity 0.15s;
+}
+.form-btn:hover { opacity: 0.88; }
+.form-disclaimer {
+  font-size: 0.65rem; color: rgba(168,200,188,0.4);
+  margin-top: 0.7rem; text-align: center; line-height: 1.5;
+}
+
+/* ══════════════════════════════════
+   FAQ
+══════════════════════════════════ */
+.faq-section {
+  padding: 3rem 2rem 4rem;
+  background: var(--bg-tint);
+  border-top: 1px solid var(--bg-deep);
+}
+.faq-inner { max-width: 820px; margin: 0 auto; }
+.faq-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+.faq-item {
+  background: #fff;
+  border: 1px solid var(--bg-deep);
+  border-radius: 12px; overflow: hidden;
+}
+.faq-q {
+  padding: 1rem 1.3rem;
+  font-size: 0.88rem; font-weight: 700; color: var(--dark);
+  cursor: pointer; display: flex; justify-content: space-between; align-items: center;
+  user-select: none;
+}
+.faq-q:hover { background: var(--bg-tint); }
+.faq-chevron { font-size: 0.7rem; color: var(--accent); transition: transform 0.2s; }
+.faq-item.open .faq-chevron { transform: rotate(180deg); }
+.faq-a {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.28s var(--ease);
+}
+.faq-a-inner {
+  padding: 0 1.3rem 1rem;
+  font-family: 'Lora', serif;
+  font-size: 0.85rem; color: var(--muted); line-height: 1.75;
+}
+
+/* ══════════════════════════════════
+   CLOSING VERSE
+══════════════════════════════════ */
+.closing-section {
+  background: var(--dark);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  position: relative;
+}
+.closing-inner { max-width: 600px; margin: 0 auto; }
+.closing-verse {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.05rem; color: rgba(168,200,188,0.6);
+  line-height: 1.9;
+  margin-bottom: 0.5rem;
+}
+.closing-verse em { color: var(--accent); }
+.closing-source {
+  font-size: 0.65rem; letter-spacing: 0.1em;
+  color: rgba(168,200,188,0.3);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+.footer { background: #1a2e2e; padding: 1.8rem 2rem; }
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+}
+.footer-verse {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 0.78rem;
+  color: rgba(168,200,188,0.45); line-height: 1.7;
+  max-width: 440px;
+}
+.footer-brand { font-size: 0.75rem; font-weight: 800; color: rgba(168,200,188,0.5); margin-bottom: 0.2rem; }
+.footer-meta { font-size: 0.68rem; color: rgba(168,200,188,0.3); line-height: 1.6; text-align: right; }
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media (max-width: 900px) {
+  .channels-grid { grid-template-columns: 1fr 1fr; }
+  .social-grid { grid-template-columns: 1fr 1fr; }
+  .message-inner { grid-template-columns: 1fr; gap: 2rem; }
+}
+@media (max-width: 640px) {
+  .navbar-nav { display: none; }
+  .rwi-nav-badge { display: none; }
+  .page-hero { padding: 2.5rem 1.2rem 2rem; }
+  .channels-grid { grid-template-columns: 1fr; }
+  .social-grid { grid-template-columns: 1fr; }
+  .footer-inner { flex-direction: column; }
+  .footer-meta { text-align: left; }
+}
+
+/* ── Paragraf — rata kiri kanan (justified) ── */
+p,
+.page-hero-lead,
+.section-desc,
+.channel-desc,
+.social-desc,
+.message-prose,
+.opencall-desc,
+.faq-a-inner { text-align: justify; }
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <span class="brand-tag">Wakaf Produktif Kebun Kopi</span>
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="program.html">Program</a></li>
+          <li><a href="belajar.html"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="living-lab.html">Living Lab</a></li>
+          <li><a href="latar-belakang.html"><span class="lang-id">Kisah</span><span class="lang-en">Story</span></a></li>
+          <li><a href="kontak.html" class="active"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+          <li><span class="btn-nav-cta nav-soon-cta"><span class="lang-id">Bergabung →</span><span class="lang-en">Join →</span></span></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <div class="rwi-nav-badge">
+        <div class="rwi-logo-box">
+          <img src="RWI.png" alt="Rumah Wakaf Indonesia">
+        </div>
+        <div class="rwi-nav-text">
+          <div class="rwi-nav-label lang-id">Lembaga Nazir</div>
+          <div class="rwi-nav-label lang-en">Waqf Institution</div>
+          <div class="rwi-nav-name">Rumah Wakaf Indonesia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ PAGE HERO ══ -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-eyebrow">
+      <span class="badge-dot"></span>
+      <span class="lang-id">Kontak & Kolaborasi</span>
+      <span class="lang-en">Contact & Collaboration</span>
+    </div>
+    <h1>
+      <span class="lang-id">Pintu Ini <em>Selalu Terbuka</em></span>
+      <span class="lang-en">This Door Is <em>Always Open</em></span>
+    </h1>
+    <p class="page-hero-lead lang-id">
+      Tidak ada yang terlalu kecil untuk dimulai bersama. Baik Anda peneliti yang mencari data, jurnalis yang ingin bercerita, atau seseorang yang sekadar ingin tahu lebih banyak — kami di sini.
+    </p>
+    <p class="page-hero-lead lang-en">
+      Nothing is too small to start together. Whether you are a researcher seeking data, a journalist wanting to tell a story, or simply someone who wants to learn more — we are here.
+    </p>
+  </div>
+</section>
+
+<!-- ══ CONTACT CHANNELS ══ -->
+<section class="channels-section">
+  <div class="channels-inner">
+    <div class="section-label lang-id">Jalur Kontak</div>
+    <div class="section-label lang-en">Contact Channels</div>
+    <h2 class="section-title">
+      <span class="lang-id">Hubungi kami untuk hal yang <em>paling bermakna bagimu</em></span>
+      <span class="lang-en">Reach us for what <em>matters most to you</em></span>
+    </h2>
+    <p class="section-desc lang-id">
+      Setiap pertanyaan, tawaran kolaborasi, atau ajakan diskusi disambut dengan serius. Pilih jalur yang paling sesuai dengan kebutuhanmu.
+    </p>
+    <p class="section-desc lang-en">
+      Every question, collaboration offer, or invitation to discuss is taken seriously. Choose the channel that best fits your needs.
+    </p>
+    <div class="channels-grid">
+
+      <div class="channel-card">
+        <div class="channel-icon">🎓</div>
+        <div class="channel-type lang-id">Akademisi & Penelitian</div>
+        <div class="channel-type lang-en">Academic & Research</div>
+        <div class="channel-title lang-id">Riset Kolaboratif</div>
+        <div class="channel-title lang-en">Collaborative Research</div>
+        <p class="channel-desc lang-id">Tertarik meneliti model wakaf produktif, pertanian berkelanjutan, atau kesejahteraan komunitas agraris? Kami membuka akses data, kunjungan lapangan, dan kemitraan riset bersama.</p>
+        <p class="channel-desc lang-en">Interested in studying productive waqf models, sustainable agriculture, or agrarian community wellbeing? We offer data access, field visits, and joint research partnerships.</p>
+        <a href="mailto:asroriadib@gmail.com?subject=Riset%20Kolaboratif" class="channel-cta lang-id">✉️ Kirim Proposal →</a>
+        <a href="mailto:asroriadib@gmail.com?subject=Research%20Collaboration" class="channel-cta lang-en">✉️ Send Proposal →</a>
+        <div class="channel-note lang-id">Respons dalam 3–5 hari kerja</div>
+        <div class="channel-note lang-en">Response within 3–5 business days</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon">🤝</div>
+        <div class="channel-type lang-id">Organisasi & Lembaga</div>
+        <div class="channel-type lang-en">Organizations & Institutions</div>
+        <div class="channel-title lang-id">Kemitraan Strategis</div>
+        <div class="channel-title lang-en">Strategic Partnership</div>
+        <p class="channel-desc lang-id">Untuk lembaga, NGO, atau perusahaan yang ingin berkolaborasi — dari program CSR, dukungan pendanaan, pelatihan petani, hingga co-branding produk kopi wakaf.</p>
+        <p class="channel-desc lang-en">For institutions, NGOs, or companies wanting to collaborate — from CSR programs and funding support to farmer training and co-branding waqf coffee products.</p>
+        <a href="mailto:asroriadib@gmail.com?subject=Kemitraan%20Strategis" class="channel-cta lang-id">✉️ Diskusi Kemitraan →</a>
+        <a href="mailto:asroriadib@gmail.com?subject=Strategic%20Partnership" class="channel-cta lang-en">✉️ Discuss Partnership →</a>
+        <div class="channel-note lang-id">Kami tanggapi setiap tawaran serius</div>
+        <div class="channel-note lang-en">We respond to every serious offer</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon">📹</div>
+        <div class="channel-type lang-id">Media & Konten</div>
+        <div class="channel-type lang-en">Media & Content</div>
+        <div class="channel-title lang-id">Liputan & Dokumentasi</div>
+        <div class="channel-title lang-en">Coverage & Documentation</div>
+        <p class="channel-desc lang-id">Jurnalis, fotografer, filmmaker, atau kreator konten yang ingin mengangkat kisah kebun kopi wakaf ini — kami sambut dengan tangan terbuka dan akses yang terbuka.</p>
+        <p class="channel-desc lang-en">Journalists, photographers, filmmakers, or content creators who want to tell this waqf coffee garden story — we welcome you with open arms and open access.</p>
+        <a href="mailto:asroriadib@gmail.com?subject=Liputan%20Media" class="channel-cta lang-id">✉️ Ajukan Liputan →</a>
+        <a href="mailto:asroriadib@gmail.com?subject=Media%20Coverage" class="channel-cta lang-en">✉️ Propose Coverage →</a>
+        <div class="channel-note lang-id">Kunjungan kebun dapat diatur</div>
+        <div class="channel-note lang-en">Garden visits can be arranged</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon">🌿</div>
+        <div class="channel-type lang-id">Relawan & Keterlibatan</div>
+        <div class="channel-type lang-en">Volunteer & Engagement</div>
+        <div class="channel-title lang-id">Terlibat Langsung</div>
+        <div class="channel-title lang-en">Get Directly Involved</div>
+        <p class="channel-desc lang-id">Ingin berkontribusi langsung — membantu dokumentasi, pengembangan konten belajar, atau turun ke kebun? Ada banyak cara untuk menjadi bagian dari gerakan ini.</p>
+        <p class="channel-desc lang-en">Want to contribute directly — helping with documentation, learning content development, or going to the garden? There are many ways to become part of this movement.</p>
+        <a href="mailto:asroriadib@gmail.com?subject=Volunteer%20Bonsari" class="channel-cta lang-id">✉️ Ingin Terlibat →</a>
+        <a href="mailto:asroriadib@gmail.com?subject=Volunteer%20Bonsari" class="channel-cta lang-en">✉️ I Want to Help →</a>
+        <div class="channel-note lang-id">Cocok untuk mahasiswa & aktivis muda</div>
+        <div class="channel-note lang-en">Great for students & young activists</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon">☕</div>
+        <div class="channel-type lang-id">Produk Kopi</div>
+        <div class="channel-type lang-en">Coffee Products</div>
+        <div class="channel-title lang-id">Bonsari Coffee</div>
+        <div class="channel-title lang-en">Bonsari Coffee</div>
+        <p class="channel-desc lang-id">Untuk pembelian kopi Bonsari, kerjasama distributor, atau membuka Bon's Café di kota Anda — setiap cangkir yang terjual adalah kontribusi nyata untuk petani dan benefisiari wakaf.</p>
+        <p class="channel-desc lang-en">For Bonsari coffee purchases, distributor partnerships, or opening a Bon's Café in your city — every cup sold is a real contribution to farmers and waqf beneficiaries.</p>
+        <a href="https://instagram.com/bonsaricoffee" target="_blank" class="channel-cta lang-id">☕ @bonsaricoffee →</a>
+        <a href="https://instagram.com/bonsaricoffee" target="_blank" class="channel-cta lang-en">☕ @bonsaricoffee →</a>
+        <div class="channel-note lang-id">Satu cangkir, tiga dampak</div>
+        <div class="channel-note lang-en">One cup, three impacts</div>
+      </div>
+
+      <div class="channel-card">
+        <div class="channel-icon">💬</div>
+        <div class="channel-type lang-id">Pertanyaan Umum</div>
+        <div class="channel-type lang-en">General Inquiries</div>
+        <div class="channel-title lang-id">Ingin Tahu Lebih Banyak?</div>
+        <div class="channel-title lang-en">Want to Know More?</div>
+        <p class="channel-desc lang-id">Tidak menemukan kategori yang pas? Ceritakan saja apa yang ada di benakmu — pertanyaan, gagasan, kegelisahan, atau sekadar ingin menyapa. Pesan Anda dibaca dengan sungguh-sungguh.</p>
+        <p class="channel-desc lang-en">Can't find the right category? Just share what's on your mind — questions, ideas, concerns, or just a hello. Your message is read with genuine attention.</p>
+        <a href="mailto:asroriadib@gmail.com?subject=Halo%20dari%20Website" class="channel-cta lang-id">✉️ Kirim Pesan →</a>
+        <a href="mailto:asroriadib@gmail.com?subject=Hello%20from%20Website" class="channel-cta lang-en">✉️ Send Message →</a>
+        <div class="channel-note lang-id">Tidak ada pertanyaan yang terlalu kecil</div>
+        <div class="channel-note lang-en">No question is too small</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ SOCIAL PRESENCE ══ -->
+<section class="social-section">
+  <div class="social-inner">
+    <div class="section-label lang-id">Ikuti Perjalanan Ini</div>
+    <div class="section-label lang-en">Follow This Journey</div>
+    <h2 class="section-title">
+      <span class="lang-id">Temukan kami di <em>media sosial</em></span>
+      <span class="lang-en">Find us on <em>social media</em></span>
+    </h2>
+    <div class="social-grid">
+
+      <a href="https://instagram.com/adib_psych" target="_blank" class="social-card">
+        <div class="social-handle-icon">📸</div>
+        <div>
+          <div class="social-platform">Instagram</div>
+          <div class="social-handle">@adib_psych</div>
+          <p class="social-desc lang-id">Catatan lapangan langsung dari kebun, misi kemanusiaan, dan refleksi perjalanan Adib. Kisah yang jujur — dari orang yang pernah ke tempat-tempat yang baru saja hancur dan memilih pulang ke kebun kopi.</p>
+          <p class="social-desc lang-en">Field notes directly from the garden, humanitarian missions, and reflections from Adib's journey. Honest stories — from someone who has been to places just broken apart and chose to return to a coffee garden.</p>
+        </div>
+      </a>
+
+      <a href="https://instagram.com/bonsaricoffee" target="_blank" class="social-card">
+        <div class="social-handle-icon">☕</div>
+        <div>
+          <div class="social-platform">Instagram</div>
+          <div class="social-handle">@bonsaricoffee</div>
+          <p class="social-desc lang-id">Kopi Robusta Ngantang, dari kebun ke cangkir. Update produk, behind-the-scenes proses, dan cerita tentang petani yang menjaga pohon-pohon ini musim demi musim.</p>
+          <p class="social-desc lang-en">Ngantang Robusta coffee, from garden to cup. Product updates, behind-the-scenes process, and stories about farmers who tend these trees season after season.</p>
+        </div>
+      </a>
+
+      <a href="https://instagram.com/rumahwakaf.official" target="_blank" class="social-card">
+        <div class="social-handle-icon">🕌</div>
+        <div>
+          <div class="social-platform">Instagram</div>
+          <div class="social-handle">@rumahwakaf.official</div>
+          <p class="social-desc lang-id">Lembaga Nazir yang menjadi mitra resmi pengelolaan wakaf produktif ini. Ikuti untuk pembaruan terkait tata kelola, laporan nazir, dan program wakaf lainnya dari Rumah Wakaf Indonesia.</p>
+          <p class="social-desc lang-en">The official nazir institution managing this productive waqf. Follow for updates on governance, nazir reports, and other waqf programs from Rumah Wakaf Indonesia.</p>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ MESSAGE + FORM ══ -->
+<section class="message-section">
+  <div class="message-inner">
+    <div class="message-text">
+      <div class="message-label lang-id">Sepatah Kata</div>
+      <div class="message-label lang-en">A Few Words</div>
+      <h2 class="message-title">
+        <span class="lang-id">Setiap percakapan punya <em>nilai tersendiri.</em></span>
+        <span class="lang-en">Every conversation has <em>its own worth.</em></span>
+      </h2>
+      <p class="message-prose lang-id">
+        Ada banyak hal yang tidak bisa diselesaikan sendirian. Wakaf ini dimulai dengan kebun yang dirawat oleh sepasang orang tua yang tangannya tak pernah berhenti. Ia tumbuh karena ada orang-orang yang memilih untuk hadir — dalam percakapan, dalam data, dalam secangkir kopi yang dipesan.
+      </p>
+      <p class="message-prose lang-en">
+        Many things cannot be done alone. This waqf began with a garden tended by two people whose hands never stopped. It grows because people choose to show up — in conversation, in data, in a cup of coffee ordered.
+      </p>
+      <div class="message-pull lang-id">"Jika kamu menemukan halaman ini, itu sudah cukup menjadi tanda bahwa kamu peduli dengan hal yang tepat."</div>
+      <div class="message-pull lang-en">"If you found this page, that is already a sign you care about the right things."</div>
+      <p class="message-prose lang-id">Tulis pesan Anda. Kami akan membacanya. Dan jika ada yang bisa kami lakukan bersama — kami akan memulai dari situ.</p>
+      <p class="message-prose lang-en">Write your message. We will read it. And if there is something we can do together — we will start from there.</p>
+    </div>
+
+    <div class="message-form-card">
+      <div class="form-title lang-id">Kirim Pesan</div>
+      <div class="form-title lang-en">Send a Message</div>
+      <p class="form-sub lang-id">Form ini akan membuka email client Anda. Kami membaca setiap pesan yang masuk.</p>
+      <p class="form-sub lang-en">This form will open your email client. We read every message that comes in.</p>
+
+      <div class="form-field">
+        <label class="form-label lang-id" for="f-name">Nama Lengkap</label>
+        <label class="form-label lang-en" for="f-name">Full Name</label>
+        <input class="form-input" type="text" id="f-name" placeholder="Adib Asrori">
+      </div>
+      <div class="form-field">
+        <label class="form-label lang-id" for="f-email">Email</label>
+        <label class="form-label lang-en" for="f-email">Email</label>
+        <input class="form-input" type="email" id="f-email" placeholder="kamu@email.com">
+      </div>
+      <div class="form-field">
+        <label class="form-label lang-id" for="f-topic">Topik</label>
+        <label class="form-label lang-en" for="f-topic">Topic</label>
+        <select class="form-select" id="f-topic">
+          <option value="" class="lang-id">Pilih topik...</option>
+          <option value="riset" class="lang-id">🎓 Riset Kolaboratif</option>
+          <option value="mitra" class="lang-id">🤝 Kemitraan Strategis</option>
+          <option value="media" class="lang-id">📹 Liputan Media</option>
+          <option value="volunteer" class="lang-id">🌿 Volunteer</option>
+          <option value="kopi" class="lang-id">☕ Produk Kopi Bonsari</option>
+          <option value="lainnya" class="lang-id">💬 Lainnya</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label class="form-label lang-id" for="f-msg">Pesan</label>
+        <label class="form-label lang-en" for="f-msg">Message</label>
+        <textarea class="form-input" id="f-msg" placeholder="Ceritakan apa yang ada di benakmu..."></textarea>
+      </div>
+      <button class="form-btn" onclick="submitForm()">
+        <span class="lang-id">✉️ Kirim Pesan</span>
+        <span class="lang-en">✉️ Send Message</span>
+      </button>
+      <p class="form-disclaimer lang-id">Dengan mengirim pesan, email client Anda akan terbuka. Tidak ada data yang disimpan di server kami.</p>
+      <p class="form-disclaimer lang-en">Clicking send will open your email client. No data is stored on our servers.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="section-label lang-id">Pertanyaan Umum</div>
+    <div class="section-label lang-en">Frequently Asked Questions</div>
+    <h2 class="section-title">
+      <span class="lang-id">Yang sering <em>ditanyakan</em></span>
+      <span class="lang-en">What people often <em>ask</em></span>
+    </h2>
+    <div class="faq-list">
+
+      <div class="faq-item" id="faq1">
+        <div class="faq-q" onclick="toggleFaq('faq1')">
+          <span class="lang-id">Apakah kebun ini sudah benar-benar diwakafkan secara resmi?</span>
+          <span class="lang-en">Has this garden been formally donated as waqf?</span>
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner lang-id">Ya. MOU Program Wakaf Produktif Perkebunan Kopi & Durian Bonsari ditandatangani pada 27 November 2025 bersama Rumah Wakaf Indonesia sebagai lembaga nazir resmi. Proses legalisasi penuh (AIW/APAIW) sedang dalam proses sesuai regulasi yang berlaku.</div>
+          <div class="faq-a-inner lang-en">Yes. The MOU for the Bonsari Coffee & Durian Plantation Productive Waqf Program was signed on November 27, 2025, with Rumah Wakaf Indonesia as the official nazir institution. Full legalization (AIW/APAIW) is in process in accordance with applicable regulations.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" id="faq2">
+        <div class="faq-q" onclick="toggleFaq('faq2')">
+          <span class="lang-id">Siapa yang berhak menerima manfaat dari wakaf ini?</span>
+          <span class="lang-en">Who is entitled to receive benefits from this waqf?</span>
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner lang-id">Manfaat wakaf dirancang untuk tiga lapisan: petani penggarap yang mengelola kebun mendapatkan kesejahteraan yang layak; komunitas sekitar mendapat akses program pelatihan dan pendampingan; dan mauquf 'alaih — penerima manfaat akhir yang ditentukan bersama nazir, termasuk program sosial dan pendidikan.</div>
+          <div class="faq-a-inner lang-en">Waqf benefits are designed for three layers: tenant farmers who manage the garden receive fair welfare; the surrounding community gets access to training and assistance programs; and the mauquf 'alaih — final beneficiaries determined together with the nazir, including social and educational programs.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" id="faq3">
+        <div class="faq-q" onclick="toggleFaq('faq3')">
+          <span class="lang-id">Bagaimana cara membeli kopi Bonsari?</span>
+          <span class="lang-en">How can I buy Bonsari coffee?</span>
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner lang-id">Untuk saat ini, pembelian kopi Bonsari bisa dilakukan melalui Instagram @bonsaricoffee atau mengunjungi Bon's Café langsung. Sistem pembelian online sedang dalam pengembangan dan akan segera tersedia.</div>
+          <div class="faq-a-inner lang-en">Currently, Bonsari coffee can be purchased through Instagram @bonsaricoffee or by visiting Bon's Café directly. An online ordering system is under development and will be available soon.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" id="faq4">
+        <div class="faq-q" onclick="toggleFaq('faq4')">
+          <span class="lang-id">Apakah bisa mengunjungi kebun untuk penelitian atau dokumentasi?</span>
+          <span class="lang-en">Can I visit the garden for research or documentation?</span>
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner lang-id">Ya, kunjungan lapangan sangat terbuka untuk peneliti, jurnalis, mahasiswa, dan mitra yang serius. Koordinasikan terlebih dahulu melalui email dengan menyertakan tujuan kunjungan, institusi, dan tanggal yang diinginkan. Biasanya kami dapat mengatur kunjungan dalam 2–3 minggu.</div>
+          <div class="faq-a-inner lang-en">Yes, field visits are very open to serious researchers, journalists, students, and partners. Please coordinate in advance via email with your visit purpose, institution, and preferred dates. We can usually arrange visits within 2–3 weeks.</div>
+        </div>
+      </div>
+
+      <div class="faq-item" id="faq5">
+        <div class="faq-q" onclick="toggleFaq('faq5')">
+          <span class="lang-id">Apakah ada laporan keuangan atau dampak yang bisa diakses publik?</span>
+          <span class="lang-en">Are there financial or impact reports accessible to the public?</span>
+          <span class="faq-chevron">▼</span>
+        </div>
+        <div class="faq-a">
+          <div class="faq-a-inner lang-id">Laporan pertama dijadwalkan dipublikasikan pada akhir 2026 — mencakup hasil panen pertama, distribusi manfaat, dan laporan dampak sosial tahun pertama. Data baseline kebun sedang dalam proses verifikasi dan akan tersedia di halaman Living Lab pada pertengahan 2026.</div>
+          <div class="faq-a-inner lang-en">The first report is scheduled for publication at the end of 2026 — covering first harvest results, benefit distribution, and first-year social impact. Garden baseline data is being verified and will be available on the Living Lab page by mid-2026.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ CLOSING ══ -->
+<div class="closing-section">
+  <div class="closing-inner">
+    <div class="closing-verse lang-id">
+      "Dan Dia-lah yang menjadikan kamu <em>khalifah-khalifah di bumi</em> —<br>
+      dan Dia meninggikan sebagian dari kamu atas sebagian yang lain<br>
+      supaya Dia menguji kamu tentang apa yang diberikan-Nya kepadamu."
+    </div>
+    <div class="closing-verse lang-en">
+      "And it is He who has made you <em>successors upon the earth</em> —<br>
+      and has raised some of you above others in degrees<br>
+      that He may try you through what He has given you."
+    </div>
+    <div class="closing-source">— QS. Al-An'am: 165</div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        Lembaga Nazir: Rumah Wakaf Indonesia<br>
+        Ngantang, Malang, Jawa Timur
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+  const INLINE_BLOCK_TAGS = new Set(['a']);
+
+  function getDisplayType(el) {
+    const tag = el.tagName.toLowerCase();
+    if (INLINE_TAGS.has(tag))       return 'inline';
+    if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+    return 'block';
+  }
+
+  function setLang(lang) {
+    const hide = lang === 'id' ? 'en' : 'id';
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('a[href]').forEach(function(a) {
+      var h = a.getAttribute('href');
+      if (!h || h.indexOf('http') === 0 || h.indexOf('#') === 0 || h.indexOf('mailto') === 0) return;
+      a.setAttribute('href', h.split('?')[0] + '?lang=' + lang);
+    });
+    document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+    document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+    document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  }
+
+  function toggleFaq(id) {
+    const item = document.getElementById(id);
+    const body = item.querySelector('.faq-a');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item.open').forEach(i => {
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = '0';
+    });
+    if (!isOpen) {
+      item.classList.add('open');
+      body.style.maxHeight = body.scrollHeight + 'px';
+    }
+  }
+
+  function submitForm() {
+    const name = document.getElementById('f-name').value || '';
+    const topic = document.getElementById('f-topic').value || 'lainnya';
+    const msg = document.getElementById('f-msg').value || '';
+    const topicLabel = {
+      riset: 'Riset Kolaboratif',
+      mitra: 'Kemitraan Strategis',
+      media: 'Liputan Media',
+      volunteer: 'Volunteer Bonsari',
+      kopi: 'Produk Kopi Bonsari',
+      lainnya: 'Pertanyaan Umum'
+    };
+    const subject = encodeURIComponent('[Website Wakaf] ' + (topicLabel[topic] || topic));
+    const body = encodeURIComponent(
+      'Halo,\n\nNama: ' + name + '\nTopik: ' + (topicLabel[topic] || topic) + '\n\nPesan:\n' + msg + '\n\n---\nDikirim via Website Wakaf Produktif Kebun Kopi'
+    );
+    window.location.href = 'mailto:asroriadib@gmail.com?subject=' + subject + '&body=' + body;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() { setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id'); });
+</script>
+</body>
+</html>

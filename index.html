@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Wakaf Produktif Kebun Kopi Ngantang — Dari kebun yang menyekolahkan, menjadi kebun yang mendidik semua. Platform belajar kopi & perkebunan terbuka untuk semua.">
+<title>Wakaf Produktif Kebun Kopi Ngantang</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════
+   PALETTE R2 — EUCALYPTUS
+   dark   #2e4040  nav, hero bg, footer
+   medium #5a9080  links, accents
+   light  #a8c8bc  subtle accents
+   accent #c4906a  CTA, card offset
+   bg     #f0f5f3  body
+   tint   #e8f4f0  section bg
+   deep   #d8eeea  deeper tint
+═══════════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+/* ── Card D+F combo ──
+   Background: tinted eucalyptus gradient (F)
+   Border + offset shadow: clay accent (D)         */
+.card-df {
+  background: linear-gradient(155deg, #f6fdfb 0%, #edf8f4 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 12px;
+  transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+  cursor: pointer;
+}
+.card-df:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--accent);
+}
+/* Dark version for hero section */
+.card-df-dark {
+  background: linear-gradient(145deg, #354a4a 0%, #2a3c3c 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 12px;
+  color: #e8f4f0;
+  transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+  cursor: pointer;
+}
+.card-df-dark:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px var(--accent);
+}
+
+/* ══════════════════════════════════
+   NAVBAR
+══════════════════════════════════ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark);
+  border-bottom: 1px solid rgba(168,200,188,0.1);
+}
+.navbar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; padding: 0 2rem;
+  max-width: 1200px; margin: 0 auto;
+}
+.navbar-logo {
+  display: flex; align-items: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 800; color: #e8f4f0;
+  text-decoration: none;
+}
+.brand-tag {
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  box-shadow: 2px 2px 0px var(--accent);
+  background: linear-gradient(135deg, rgba(90,144,128,0.22), rgba(90,144,128,0.1));
+  color: #e8f4f0; white-space: nowrap;
+}
+.navbar-right { display: flex; align-items: center; gap: 0.5rem; }
+.navbar-nav { display: flex; align-items: center; gap: 0.1rem; list-style: none; }
+.navbar-nav li a {
+  font-size: 0.78rem; font-weight: 500; color: #a8c8bc;
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.navbar-nav li a:hover { color: #e8f4f0; background: rgba(255,255,255,0.07); }
+.navbar-nav li a.active { color: #e8f4f0; font-weight: 700; }
+.nav-soon {
+  font-size: 0.78rem; font-weight: 500;
+  color: rgba(168,200,188,0.35);
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  cursor: default; user-select: none; display: inline-block;
+}
+.btn-nav-cta {
+  background: var(--accent); color: #fff;
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem;
+}
+.nav-soon-cta {
+  background: rgba(196,144,106,0.25); color: rgba(255,255,255,0.3);
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem; cursor: default; user-select: none;
+}
+.lang-btn {
+  background: none; border: 1px solid rgba(168,200,188,0.35);
+  color: #a8c8bc; padding: 0.22rem 0.6rem;
+  border-radius: 5px; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.lang-btn:hover, .lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.rwi-nav-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px; padding: 0.35rem 0.7rem 0.35rem 0.45rem;
+  flex-shrink: 0;
+}
+.rwi-logo-box {
+  width: 96px; height: 48px; border-radius: 6px;
+  background: #fff; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; overflow: hidden;
+}
+.rwi-logo-box img { width: 96px; height: 48px; object-fit: contain; display: block; }
+.rwi-nav-text { line-height: 1.3; }
+.rwi-nav-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(168,200,188,0.55); }
+.rwi-nav-name  { font-size: 0.75rem; font-weight: 700; color: #d0e8e0; white-space: nowrap; }
+
+/* ══════════════════════════════════
+   HERO
+══════════════════════════════════ */
+.hero {
+  background: var(--dark);
+  padding: 5rem 2rem 4.5rem;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 50% at 85% 50%, rgba(90,144,128,0.13) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 55% at 5% 85%, rgba(196,144,106,0.09) 0%, transparent 55%);
+  pointer-events: none;
+}
+.hero-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.2fr 0.8fr;
+  gap: 3rem; align-items: center; position: relative;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(90,144,128,0.18);
+  border: 1px solid rgba(168,200,188,0.28);
+  color: var(--light);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.85rem; border-radius: 20px;
+  margin-bottom: 1.3rem;
+}
+.badge-dot {
+  width: 5px; height: 5px;
+  background: var(--medium); border-radius: 50%;
+  animation: blink 2.2s infinite;
+}
+@keyframes blink {
+  0%,100% { opacity:1; } 50% { opacity:0.35; }
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.75rem, 3.2vw, 2.5rem);
+  font-weight: 700; color: #e8f4f0;
+  line-height: 1.32; margin-bottom: 1.1rem;
+}
+.hero h1 em { font-style: italic; color: var(--accent); }
+
+.hero-lead {
+  font-size: 0.92rem; line-height: 1.78;
+  color: #a8c8bc; margin-bottom: 2rem;
+  max-width: 500px;
+  text-align: justify;
+}
+.hero-btns { display: flex; gap: 0.7rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.rwi-nav-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px; padding: 0.35rem 0.7rem 0.35rem 0.45rem;
+  flex-shrink: 0;
+}
+/* 2:1 logo container — lebar 2× tinggi */
+.rwi-logo-box {
+  width: 96px; height: 48px; border-radius: 6px;
+  background: #ffffff;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+}
+.rwi-logo-box img { width: 96px; height: 48px; object-fit: contain; display: block; }
+.rwi-nav-text { line-height: 1.3; }
+.rwi-nav-label {
+  font-size: 0.6rem; font-weight: 600; letter-spacing: 0.07em;
+  text-transform: uppercase; color: rgba(168,200,188,0.55);
+}
+.rwi-nav-name {
+  font-size: 0.75rem; font-weight: 700; color: #d0e8e0; white-space: nowrap;
+}
+
+.btn-primary {
+  background: var(--accent); color: #fff;
+  padding: 0.6rem 1.3rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.83rem;
+  border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+.btn-ghost {
+  background: var(--medium); color: #ffffff;
+  padding: 0.58rem 1.3rem; border-radius: 8px;
+  font-weight: 600; font-size: 0.83rem;
+  border: 1.5px solid var(--medium);
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  transition: opacity 0.15s, transform 0.15s;
+}
+.btn-ghost:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* Hero entry cards */
+.hero-entry-cards { display: flex; flex-direction: column; gap: 0.7rem; }
+.hero-entry-card {
+  display: flex; align-items: center; gap: 0.85rem;
+  padding: 0.95rem 1.1rem;
+}
+.entry-icon { font-size: 1.4rem; flex-shrink: 0; }
+.entry-title {
+  font-weight: 700; font-size: 0.88rem;
+  color: #e8f4f0; margin-bottom: 0.08rem;
+}
+.entry-sub { font-size: 0.7rem; color: #88b8a8; }
+
+/* ══════════════════════════════════
+   STATS BAND
+══════════════════════════════════ */
+.stats-band { background: var(--medium); padding: 2rem 2rem; }
+.stats-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(5,1fr);
+  gap: 1rem; text-align: center;
+}
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 3rem; font-weight: 300;
+  font-style: italic;
+  color: #fff; display: block; line-height: 1; margin-bottom: 0.25rem;
+  letter-spacing: -0.01em;
+}
+.stat-num.hi { color: var(--accent); }
+.stat-lbl {
+  font-size: 0.68rem; font-weight: 600;
+  color: rgba(255,255,255,0.72);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ══════════════════════════════════
+   MISSION
+══════════════════════════════════ */
+.mission { background: var(--white); padding: 4.5rem 2rem; }
+.mission-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+}
+.section-eyebrow {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.6rem;
+}
+.section-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem; line-height: 1.35;
+  color: var(--dark); margin-bottom: 1rem;
+}
+.body-prose {
+  font-size: 0.9rem; line-height: 1.82; color: #3a5555;
+}
+.body-prose p + p { margin-top: 0.75rem; }
+.text-link {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.8rem; font-weight: 700; color: var(--medium);
+  border-bottom: 2px solid var(--bg-deep); padding-bottom: 1px;
+  transition: border-color 0.15s; margin-top: 1.2rem;
+}
+.text-link:hover { border-color: var(--medium); }
+
+.mission-cards { display: flex; flex-direction: column; gap: 0.8rem; }
+.mission-card {
+  display: flex; align-items: flex-start; gap: 0.85rem;
+  padding: 1.15rem 1.2rem;
+}
+.mc-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 0.1rem; }
+.mc-title {
+  font-weight: 700; font-size: 0.86rem;
+  color: var(--dark); margin-bottom: 0.18rem;
+}
+.mc-desc { font-size: 0.74rem; line-height: 1.55; color: var(--muted); }
+
+/* ══════════════════════════════════
+   EXPLORE
+══════════════════════════════════ */
+.explore { background: var(--bg-tint); padding: 4.5rem 2rem; }
+.explore-inner { max-width: 1200px; margin: 0 auto; }
+.section-header { margin-bottom: 2.2rem; }
+.section-sub { font-size: 0.83rem; color: var(--muted); margin-top: 0.35rem; }
+
+.explore-grid {
+  display: grid; grid-template-columns: repeat(5,1fr); gap: 1.1rem;
+}
+.explore-card {
+  padding: 1.45rem 1.15rem 1.2rem;
+  display: flex; flex-direction: column;
+}
+.ec-icon { font-size: 1.9rem; margin-bottom: 0.7rem; }
+.ec-title {
+  font-weight: 700; font-size: 0.88rem;
+  color: var(--dark); margin-bottom: 0.25rem;
+}
+.ec-desc {
+  font-size: 0.72rem; line-height: 1.55;
+  color: var(--muted); flex: 1;
+}
+.ec-arrow {
+  font-size: 0.78rem; color: var(--accent);
+  font-weight: 700; margin-top: 0.85rem;
+  transition: transform 0.14s;
+}
+.card-df:hover .ec-arrow { transform: translate(2px,-2px); }
+
+/* ══════════════════════════════════
+   ABOUT
+══════════════════════════════════ */
+.about {
+  background: var(--dark); padding: 4.5rem 2rem;
+  border-top: none;
+}
+.about-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 300px 1fr;
+  gap: 3.5rem; align-items: start;
+}
+.about-photo {
+  width: 300px; height: 300px;
+  object-fit: cover; object-position: center center;
+  border-radius: 14px;
+  border: 3px solid rgba(168,200,188,0.4);
+  box-shadow: 6px 6px 0px var(--accent);
+  display: block; flex-shrink: 0;
+}
+.about-text {
+  display: flex; flex-direction: column;
+  min-height: 300px;
+}
+.about-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem; color: #f0f8f5; margin-bottom: 0.2rem;
+}
+.about-role { font-size: 0.75rem; color: var(--light); font-weight: 600; margin-bottom: 0.8rem; letter-spacing: 0.01em; }
+.about-quote {
+  font-family: 'Caveat', cursive; font-style: normal;
+  font-size: 1.18rem; line-height: 1.8; color: #c8e4dc;
+  flex: 1;
+}
+.about-cta { text-align: right; margin-top: 1.5rem; }
+.btn-outline {
+  white-space: nowrap;
+  border: 2px solid var(--light); color: var(--light);
+  padding: 0.5rem 1.2rem; border-radius: 8px;
+  font-weight: 700; font-size: 0.78rem;
+  transition: background 0.15s, color 0.15s; display: inline-block;
+}
+.btn-outline:hover { background: var(--light); color: var(--dark); }
+
+/* ══════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════ */
+.testimonials { background: var(--bg); padding: 4.5rem 2rem; }
+.testimonials-inner { max-width: 1200px; margin: 0 auto; }
+.testi-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  gap: 1.2rem; margin-top: 2.2rem;
+}
+.testi-card { padding: 1.5rem 1.4rem; border-radius: 12px; }
+.testi-mark {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem; line-height: 1; color: var(--light);
+  margin-bottom: 0.4rem;
+}
+.testi-text {
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: 0.86rem; line-height: 1.78; color: #3a5555;
+  margin-bottom: 0.9rem;
+}
+.testi-src {
+  font-size: 0.68rem; font-weight: 700;
+  color: var(--medium); text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+/* ══════════════════════════════════
+   CTA BAND
+══════════════════════════════════ */
+.cta-band {
+  background: var(--dark); padding: 4rem 2rem;
+  text-align: center; position: relative; overflow: hidden;
+}
+.cta-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(90,144,128,0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner { position: relative; max-width: 580px; margin: 0 auto; }
+.cta-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.85rem; color: #e8f4f0; margin-bottom: 0.7rem;
+}
+.cta-lead { font-size: 0.88rem; color: #a8c8bc; line-height: 1.72; margin-bottom: 1.9rem; }
+.cta-btns { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; }
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+.footer { background: #1e2e2e; padding: 2.2rem 2rem; }
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 1rem;
+}
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 800; color: #e8f4f0; }
+.footer-links { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+.footer-links a { font-size: 0.7rem; color: #527070; transition: color 0.15s; }
+.footer-links a:hover { color: #a8c8bc; }
+.footer-meta { font-size: 0.75rem; color: #a8c8bc; text-align: right; line-height: 1.6; }
+
+/* ══════════════════════════════════
+   LANG VISIBILITY — initial state only
+   (toggling handled entirely by JS)
+══════════════════════════════════ */
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media (max-width: 960px) {
+  .hero-grid         { grid-template-columns: 1fr; gap: 2.5rem; }
+  .hero-entry-cards  { flex-direction: row; flex-wrap: wrap; }
+  .hero-entry-card   { flex: 1; min-width: 150px; }
+  .mission-grid      { grid-template-columns: 1fr; gap: 2rem; }
+  .explore-grid      { grid-template-columns: repeat(3,1fr); }
+  .about-inner       { grid-template-columns: 220px 1fr; gap: 2rem; }
+  .about-photo       { width: 220px; height: 220px; }
+  .testi-grid        { grid-template-columns: 1fr 1fr; }
+  .stats-grid        { grid-template-columns: repeat(3,1fr); }
+}
+@media (max-width: 600px) {
+  .navbar-nav        { display: none; }
+  .explore-grid      { grid-template-columns: 1fr 1fr; }
+  .testi-grid        { grid-template-columns: 1fr; }
+  .stats-grid        { grid-template-columns: repeat(2,1fr); }
+  .about-inner       { grid-template-columns: 1fr; }
+  .about-photo       { width: 100%; height: auto; aspect-ratio: 1/1; margin: 0 auto; }
+  .about-cta         { text-align: left; }
+  .hero h1           { font-size: 1.55rem; }
+}
+
+/* ── Paragraf — rata kiri kanan (justified) ── */
+p,
+.hero-lead,
+.mission-text p,
+.about-desc,
+.testi-text { text-align: justify; }
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <span class="brand-tag">Wakaf Produktif Kebun Kopi</span>
+    </a>
+    <div class="navbar-right">
+      <!-- Nav links + toggle bahasa -->
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="program.html">Program</a></li>
+          <li><a href="belajar.html"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="living-lab.html">Living Lab</a></li>
+          <li><a href="latar-belakang.html"><span class="lang-id">Kisah</span><span class="lang-en">Story</span></a></li>
+          <li><a href="kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+          <li><span class="btn-nav-cta nav-soon-cta"><span class="lang-id">Bergabung →</span><span class="lang-en">Join →</span></span></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <!-- RWI badge — sejajar brand, ujung kanan -->
+      <div class="rwi-nav-badge">
+        <div class="rwi-logo-box">
+          <img src="RWI.png" alt="Rumah Wakaf Indonesia">
+        </div>
+        <div class="rwi-nav-text">
+          <div class="rwi-nav-label lang-id">Lembaga Nazir</div>
+          <div class="rwi-nav-label lang-en">Waqf Institution</div>
+          <div class="rwi-nav-name">Rumah Wakaf Indonesia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-grid">
+
+    <!-- Left -->
+    <div>
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span class="lang-id">Wakaf Produktif · Ngantang, Malang</span>
+        <span class="lang-en">Productive Waqf · Ngantang, Malang</span>
+      </div>
+
+      <h1>
+        <span class="lang-id">Dari Kebun yang <em>Menyekolahkan</em>,<br>Menjadi Kebun yang <em>Mendidik Semua</em></span>
+        <span class="lang-en">From the Garden That <em>Schooled Me</em>,<br>To the Garden That <em>Educates All</em></span>
+      </h1>
+
+      <p class="hero-lead lang-id">
+        Jauh sebelum dunia mengenalnya, kebun kopi di Ngantang ini sudah lebih dulu mendidik seorang anak manusia — tanpa papan tulis, tanpa ruang kelas, hanya akar, tanah, pohon-pohon kopi yang baru tumbuh, dan doa tulus seorang kakek yang tahu caranya mendidiknya tanpa banyak kata-kata. Anak itu tumbuh, pergi jauh, dan kelak menyusuri zona-zona konflik di bawah bendera PBB: merawat jiwa-jiwa yang luka di Sudan Selatan, di tenda-tenda pengungsian Afghanistan, di negeri-negeri yang jarang terdengar namanya. Kebun kopi inilah yang dulu menemani setiap langkah perjalanannya. Kini ia pulang — dan kebun ini diwakafkan: dikembalikan kepada semua, dengan harapan bahwa dari tanah yang sama, siapa pun bisa mulai perjalanannya sendiri.
+      </p>
+      <p class="hero-lead lang-en">
+        4,918 m² of land in Ngantang was once the first teacher of a child — no blackboard, no classroom. That child grew up, went far, and would one day traverse conflict zones under the UN flag: tending to wounded souls in South Sudan, in refugee camps across Afghanistan, in lands rarely spoken of. This coffee garden was the one that accompanied every step of that journey. Now he has returned — and this garden is endowed as waqf: given back to all, with the hope that from the same earth, anyone may begin their own journey.
+      </p>
+
+      <div class="hero-btns">
+        <a href="latar-belakang.html" class="btn-primary">
+          📖
+          <span class="lang-id">Baca Kisahnya</span>
+          <span class="lang-en">Read the Story</span>
+        </a>
+        <a href="belajar.html" class="btn-ghost">
+          🎓
+          <span class="lang-id">Mulai Belajar Gratis</span>
+          <span class="lang-en">Start Learning Free</span>
+        </a>
+      </div>
+
+
+    </div>
+
+    <!-- Right: entry cards -->
+    <div class="hero-entry-cards">
+      <a href="program.html" class="hero-entry-card card-df-dark">
+        <span class="entry-icon">🌱</span>
+        <div>
+          <div class="entry-title lang-id">Desain Program</div>
+          <div class="entry-title lang-en">Program Design</div>
+          <div class="entry-sub lang-id">Hexa-Helix · 3 fase · wakaf produktif</div>
+          <div class="entry-sub lang-en">Hexa-Helix · 3 phases · productive waqf</div>
+        </div>
+      </a>
+      <a href="belajar.html" class="hero-entry-card card-df-dark">
+        <span class="entry-icon">🎓</span>
+        <div>
+          <div class="entry-title lang-id">Ruang Belajar</div>
+          <div class="entry-title lang-en">Learning Space</div>
+          <div class="entry-sub lang-id">13+ modul gratis · 3 jalur belajar</div>
+          <div class="entry-sub lang-en">13+ free modules · 3 learning paths</div>
+        </div>
+      </a>
+      <a href="living-lab.html" class="hero-entry-card card-df-dark">
+        <span class="entry-icon">🔬</span>
+        <div>
+          <div class="entry-title lang-id">Living Lab</div>
+          <div class="entry-title lang-en">Living Lab</div>
+          <div class="entry-sub lang-id">Open data · transparansi penuh</div>
+          <div class="entry-sub lang-en">Open data · full transparency</div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<div class="stats-band">
+  <div class="stats-grid">
+    <div>
+      <span class="stat-num">4.918</span>
+      <span class="stat-lbl lang-id">m² Luas Kebun</span>
+      <span class="stat-lbl lang-en">m² Garden Area</span>
+    </div>
+    <div>
+      <span class="stat-num">1.100</span>
+      <span class="stat-lbl lang-id">Pohon Robusta</span>
+      <span class="stat-lbl lang-en">Robusta Trees</span>
+    </div>
+    <div>
+      <span class="stat-num">13+</span>
+      <span class="stat-lbl lang-id">Modul Belajar</span>
+      <span class="stat-lbl lang-en">Learning Modules</span>
+    </div>
+    <div>
+      <span class="stat-num">8</span>
+      <span class="stat-lbl lang-id">Anggota Tim</span>
+      <span class="stat-lbl lang-en">Team Members</span>
+    </div>
+    <div>
+      <span class="stat-num hi">∞</span>
+      <span class="stat-lbl lang-id">Dampak Wakaf</span>
+      <span class="stat-lbl lang-en">Waqf Impact</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MISSION ══ -->
+<section class="mission">
+  <div class="mission-grid">
+
+    <div>
+      <div class="section-eyebrow lang-id">Tentang Program</div>
+      <div class="section-eyebrow lang-en">About the Program</div>
+      <h2 class="section-h2 lang-id">Sebuah Kebun. Sebuah Ikrar. Sebuah Ruang Belajar untuk Semua.</h2>
+      <h2 class="section-h2 lang-en">One Garden. One Pledge. One Learning Space for All.</h2>
+      <div class="body-prose">
+        <p class="lang-id">Wakaf Produktif Kebun Kopi Ngantang adalah program pengelolaan lahan wakaf berbasis ilmu — menggabungkan agronomi, kewirausahaan sosial, dan dokumentasi terbuka dalam satu ekosistem yang berkelanjutan.</p>
+        <p class="lang-en">Wakaf Produktif Kebun Kopi Ngantang is a knowledge-based waqf land management program — combining agronomy, social entrepreneurship, and open documentation in one sustainable ecosystem.</p>
+        <p class="lang-id">Bukan sekadar perkebunan kopi. Ini adalah living lab — tempat belajar, bereksperimen, dan berbagi pengetahuan secara terbuka. Siapa pun bisa ikut.</p>
+        <p class="lang-en">Not just a coffee farm. This is a living lab — a place to learn, experiment, and share knowledge openly. Anyone can join.</p>
+      </div>
+      <a href="program.html" class="text-link lang-id">Lihat desain program lengkap →</a>
+      <a href="program.html" class="text-link lang-en">View full program design →</a>
+    </div>
+
+    <div class="mission-cards">
+      <div class="mission-card card-df">
+        <span class="mc-icon">🌿</span>
+        <div>
+          <div class="mc-title lang-id">Berbasis Ilmu Agronomi</div>
+          <div class="mc-title lang-en">Agronomically Grounded</div>
+          <div class="mc-desc lang-id">Pengelolaan kebun menggunakan praktik pertanian organik dan regeneratif yang terdokumentasi secara terbuka.</div>
+          <div class="mc-desc lang-en">Garden management using organic and regenerative practices, openly documented.</div>
+        </div>
+      </div>
+      <div class="mission-card card-df">
+        <span class="mc-icon">🤝</span>
+        <div>
+          <div class="mc-title lang-id">Model Hexa-Helix</div>
+          <div class="mc-title lang-en">Hexa-Helix Model</div>
+          <div class="mc-desc lang-id">Melibatkan akademisi, pemerintah, bisnis, masyarakat sipil, media, dan lembaga keagamaan dalam satu ekosistem kolaborasi.</div>
+          <div class="mc-desc lang-en">Engaging academia, government, business, civil society, media, and religious institutions in one collaborative ecosystem.</div>
+        </div>
+      </div>
+      <div class="mission-card card-df">
+        <span class="mc-icon">📚</span>
+        <div>
+          <div class="mc-title lang-id">Platform Belajar Terbuka</div>
+          <div class="mc-title lang-en">Open Learning Platform</div>
+          <div class="mc-desc lang-id">13+ modul belajar mandiri tentang kopi dan perkebunan — 100% gratis dan terbuka untuk semua.</div>
+          <div class="mc-desc lang-en">13+ self-paced modules on coffee and farming — 100% free and open to all.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ EXPLORE ══ -->
+<section class="explore">
+  <div class="explore-inner">
+    <div class="section-header">
+      <div class="section-eyebrow lang-id">Jelajahi</div>
+      <div class="section-eyebrow lang-en">Explore</div>
+      <h2 class="section-h2 lang-id">Ada apa saja di sini?</h2>
+      <h2 class="section-h2 lang-en">What's here?</h2>
+      <p class="section-sub lang-id">Lima pintu masuk — pilih yang paling relevan untukmu.</p>
+      <p class="section-sub lang-en">Five entry points — choose what's most relevant to you.</p>
+    </div>
+
+    <div class="explore-grid">
+
+      <a href="program.html" class="explore-card card-df">
+        <span class="ec-icon">🌱</span>
+        <div class="ec-title lang-id">Program</div>
+        <div class="ec-title lang-en">Program</div>
+        <div class="ec-desc lang-id">Desain program, model Hexa-Helix, tiga fase pengembangan, dan rencana ke depan.</div>
+        <div class="ec-desc lang-en">Program design, Hexa-Helix model, three development phases, and future plans.</div>
+        <div class="ec-arrow">→</div>
+      </a>
+
+      <a href="belajar.html" class="explore-card card-df">
+        <span class="ec-icon">🎓</span>
+        <div class="ec-title lang-id">Belajar</div>
+        <div class="ec-title lang-en">Learn</div>
+        <div class="ec-desc lang-id">13+ modul gratis tentang kopi robusta, pertanian organik, dan kewirausahaan sosial.</div>
+        <div class="ec-desc lang-en">13+ free modules on robusta coffee, organic farming, and social entrepreneurship.</div>
+        <div class="ec-arrow">→</div>
+      </a>
+
+      <a href="living-lab.html" class="explore-card card-df">
+        <span class="ec-icon">🔬</span>
+        <div class="ec-title lang-id">Living Lab</div>
+        <div class="ec-title lang-en">Living Lab</div>
+        <div class="ec-desc lang-id">Data kebun terbuka — 8 tahap on-farm, dokumentasi, dan riset yang bisa diakses semua orang.</div>
+        <div class="ec-desc lang-en">Open garden data — 8 on-farm stages, documentation, and research accessible to all.</div>
+        <div class="ec-arrow">→</div>
+      </a>
+
+      <a href="tim.html" class="explore-card card-df">
+        <span class="ec-icon">👥</span>
+        <div class="ec-title lang-id">Tim & Kontak</div>
+        <div class="ec-title lang-en">Team & Contact</div>
+        <div class="ec-desc lang-id">Siapa kami, tata kelola program, dan cara bergabung atau berkolaborasi.</div>
+        <div class="ec-desc lang-en">Who we are, program governance, and how to join or collaborate.</div>
+        <div class="ec-arrow">→</div>
+      </a>
+
+      <a href="latar-belakang.html" class="explore-card card-df">
+        <span class="ec-icon">📖</span>
+        <div class="ec-title lang-id">Kisah</div>
+        <div class="ec-title lang-en">Story</div>
+        <div class="ec-desc lang-id">Perjalanan panjang dari kebun masa kecil, perantauan kemanusiaan, hingga ikrar wakaf 2025.</div>
+        <div class="ec-desc lang-en">A long journey from a childhood garden, humanitarian service, to the 2025 waqf pledge.</div>
+        <div class="ec-arrow">→</div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ ABOUT ══ -->
+<section class="about">
+  <div class="about-inner">
+
+    <img class="about-photo"
+         src="images/adib-south-sudan-end-mission.jpg"
+         alt="Adib Asrori — End of Mission, South Sudan 2019">
+
+    <div class="about-text">
+      <div class="about-name">Adib Asrori, M.Psi, Psikolog</div>
+      <div class="about-role lang-id">Wakif · Direktur Program · Pekerja Kemanusiaan Internasional · @adib_psych</div>
+      <div class="about-role lang-en">Waqf Donor · Program Director · International Humanitarian Worker · @adib_psych</div>
+      <p class="about-quote lang-id">"Kutinggalkan kebun kopi ini bertahun-tahun lamanya — pergi ke tenda-tenda pengungsian, ke kota-kota yang luka oleh perang, ke lorong-lorong dunia yang jarang terdengar namanya. Selalu ada momen di mana kebun ini menemukanku kembali. Keputusan untuk mewakafkannya tidak lahir dari satu momen saja. Ada cerita yang lebih panjang di baliknya — tentang kakek, tentang kehilangan, tentang apa artinya mengembalikan — dengan sepenuh hati — semua yang pernah dengan diam-diam diberikan sebuah kebun tua."</p>
+      <p class="about-quote lang-en">"I left this garden for years — to refugee camps, to cities wounded by war, to corridors of the world rarely spoken of. There were always moments when this land found me again. The decision to dedicate it as waqf wasn't born in one instant. There's a longer story behind it — about a grandfather, about loss, about what it truly means to return — wholeheartedly — all that an old garden once quietly gave."</p>
+      <div class="about-cta">
+        <a href="latar-belakang.html" class="btn-outline lang-id">Baca kisah lengkap →</a>
+        <a href="latar-belakang.html" class="btn-outline lang-en">Read full story →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ TESTIMONIALS ══ -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <div class="section-header">
+      <div class="section-eyebrow lang-id">Suara dari Kebun</div>
+      <div class="section-eyebrow lang-en">Voices from the Garden</div>
+      <h2 class="section-h2 lang-id">Apa kata mereka yang sudah terlibat</h2>
+      <h2 class="section-h2 lang-en">What those involved have to say</h2>
+    </div>
+    <div class="testi-grid">
+
+      <div class="testi-card card-df">
+        <div class="testi-mark">"</div>
+        <p class="testi-text lang-id">Program ini membuka jalan bagi petani Ngantang untuk tidak hanya menjual hasil panen, tapi juga berbagi pengetahuan dan menjadi bagian dari ekosistem yang lebih besar.</p>
+        <p class="testi-text lang-en">This program opened a path for Ngantang farmers to not only sell their harvest, but also share knowledge and become part of a larger ecosystem.</p>
+        <div class="testi-src">Komunitas Petani Ngantang</div>
+      </div>
+
+      <div class="testi-card card-df">
+        <div class="testi-mark">"</div>
+        <p class="testi-text lang-id">Kolaborasi yang tulus — antara ilmu akademik, pengalaman lapangan bertahun-tahun, dan nilai-nilai keislaman yang kuat. Jarang ada program seperti ini.</p>
+        <p class="testi-text lang-en">A genuine collaboration — between academic knowledge, years of field experience, and strong Islamic values. Programs like this are rare.</p>
+        <div class="testi-src">Bonsari Coffee</div>
+      </div>
+
+      <div class="testi-card card-df">
+        <div class="testi-mark">"</div>
+        <p class="testi-text lang-id">Yang membuat saya terkesan adalah transparansinya — mereka mendokumentasikan prosesnya secara terbuka, termasuk tantangan dan kegagalan. Itu yang membuat ini kredibel.</p>
+        <p class="testi-text lang-en">What impressed me is the transparency — they document the process openly, including challenges and failures. That's what makes it credible.</p>
+        <div class="testi-src">Bon's Cafe, Malang</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-band">
+  <div class="cta-inner">
+    <h2 class="cta-h2 lang-id">Ingin terlibat lebih jauh?</h2>
+    <h2 class="cta-h2 lang-en">Want to get more involved?</h2>
+    <p class="cta-lead lang-id">Kami terbuka untuk riset kolaboratif, kemitraan strategis, relawan, pelatihan, dan berbagai bentuk dukungan lainnya. Mari tumbuh bersama.</p>
+    <p class="cta-lead lang-en">We welcome collaborative research, strategic partnerships, volunteers, training, and various forms of support. Let's grow together.</p>
+    <div class="cta-btns">
+      <a href="tim.html#kontak" class="btn-primary">
+        ✉️
+        <span class="lang-id">Hubungi Kami</span>
+        <span class="lang-en">Contact Us</span>
+      </a>
+      <a href="belajar.html" class="btn-ghost">
+        🎓
+        <span class="lang-id">Mulai Belajar</span>
+        <span class="lang-en">Start Learning</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+    <nav class="footer-links">
+      <a href="program.html">Program</a>
+      <a href="belajar.html"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a>
+      <a href="living-lab.html">Living Lab</a>
+      <a href="tim.html"><span class="lang-id">Tim &amp; Kontak</span><span class="lang-en">Team &amp; Contact</span></a>
+      <a href="latar-belakang.html"><span class="lang-id">Kisah</span><span class="lang-en">Story</span></a>
+    </nav>
+    <div class="footer-meta">
+      <div>Lembaga Nazir: Rumah Wakaf Indonesia</div>
+      <div>Ngantang, Malang, Jawa Timur</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Inline tags that should use display:inline when visible
+  const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+  // Anchor tags use inline-block
+  const INLINE_BLOCK_TAGS = new Set(['a']);
+
+  function getDisplayType(el) {
+    const tag = el.tagName.toLowerCase();
+    if (INLINE_TAGS.has(tag))       return 'inline';
+    if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+    return 'block';
+  }
+
+  function setLang(lang) {
+    const hide = lang === 'id' ? 'en' : 'id';
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('a[href]').forEach(function(a) {
+      var h = a.getAttribute('href');
+      if (!h || h.indexOf('http') === 0 || h.indexOf('#') === 0 || h.indexOf('mailto') === 0) return;
+      a.setAttribute('href', h.split('?')[0] + '?lang=' + lang);
+    });
+
+    // Hide inactive language
+    document.querySelectorAll('.lang-' + hide).forEach(el => {
+      el.style.display = 'none';
+    });
+
+    // Show active language with correct display type
+    document.querySelectorAll('.lang-' + lang).forEach(el => {
+      el.style.display = getDisplayType(el);
+    });
+
+    document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  }
+
+  // Initialise to Bahasa Indonesia on load
+  document.addEventListener('DOMContentLoaded', function () { setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id'); });
+</script>
+
+</div>
+</body>
+</html>

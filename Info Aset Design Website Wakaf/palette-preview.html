@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palette Options — Wakaf Produktif</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f4f4f0; color: #1a1a1a; }
+
+  /* ===== LAYOUT ===== */
+  .page-header {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+  }
+  .page-header h1 { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 0.5rem; }
+  .page-header p { color: #aaa; font-size: 0.95rem; max-width: 560px; margin: 0 auto; }
+
+  .section-label {
+    text-align: center;
+    padding: 3rem 1rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #888;
+  }
+
+  /* ===== PALETTE GRID ===== */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 1rem 2rem 3rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .palette-card {
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .palette-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,0.12); }
+
+  /* Color Swatches */
+  .swatch-row { display: flex; height: 80px; }
+  .swatch { flex: 1; position: relative; }
+  .swatch-label {
+    position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.05em;
+    background: rgba(0,0,0,0.35); color: #fff;
+    padding: 2px 5px; border-radius: 3px; white-space: nowrap;
+  }
+
+  .palette-info { padding: 1.2rem 1.4rem 0.5rem; }
+  .palette-name {
+    font-weight: 700; font-size: 1rem; margin-bottom: 0.25rem;
+  }
+  .palette-desc { font-size: 0.82rem; color: #666; line-height: 1.5; margin-bottom: 1rem; }
+
+  /* Mini UI Preview */
+  .mini-ui { border-top: 1px solid #f0f0f0; }
+
+  /* Nav Preview */
+  .mini-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.7rem 1rem; font-size: 0.72rem; font-weight: 600;
+  }
+  .mini-nav-logo { font-family: 'Playfair Display', serif; font-size: 0.85rem; }
+  .mini-nav-links { display: flex; gap: 0.8rem; opacity: 0.8; }
+  .mini-nav-cta {
+    padding: 0.3rem 0.7rem; border-radius: 20px;
+    font-size: 0.7rem; font-weight: 700; border: none; cursor: pointer;
+  }
+
+  /* Hero Preview */
+  .mini-hero {
+    padding: 1.2rem 1rem;
+  }
+  .mini-hero-badge {
+    display: inline-block; font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 0.6rem;
+  }
+  .mini-hero h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem; line-height: 1.4; margin-bottom: 0.5rem;
+  }
+  .mini-hero p { font-size: 0.75rem; line-height: 1.5; opacity: 0.75; margin-bottom: 0.8rem; }
+  .mini-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .mini-btn {
+    padding: 0.35rem 0.8rem; border-radius: 6px; font-size: 0.7rem; font-weight: 600;
+    border: none; cursor: pointer;
+  }
+  .mini-btn.outline { background: transparent; border: 1.5px solid currentColor; }
+
+  /* Card Row */
+  .mini-cards { display: flex; gap: 0.5rem; padding: 0 1rem 1rem; }
+  .mini-card {
+    flex: 1; border-radius: 8px; padding: 0.6rem 0.7rem; font-size: 0.7rem; line-height: 1.4;
+  }
+  .mini-card-title { font-weight: 700; margin-bottom: 0.2rem; font-size: 0.72rem; }
+  .mini-card-desc { opacity: 0.7; font-size: 0.66rem; }
+
+  /* Tag */
+  .tag {
+    display: inline-block; font-size: 0.6rem; font-weight: 700; letter-spacing: 0.05em;
+    padding: 2px 7px; border-radius: 10px; margin-bottom: 0.4rem;
+  }
+
+  /* "Current" badge */
+  .current-badge {
+    display: inline-block;
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+    background: #fef3c7; color: #92400e; padding: 3px 10px; border-radius: 10px;
+    margin-left: 8px; vertical-align: middle;
+  }
+
+  /* ===== REDESIGN CONCEPT SECTION ===== */
+  .concept-section {
+    max-width: 900px; margin: 0 auto; padding: 1rem 2rem 5rem;
+  }
+
+  .concept-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; color: #1a1a1a; margin-bottom: 0.4rem;
+  }
+  .concept-intro { color: #555; font-size: 0.9rem; line-height: 1.6; margin-bottom: 2rem; }
+
+  .concept-pages { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .page-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .page-label {
+    padding: 1rem 1.2rem;
+    display: flex; flex-direction: column; justify-content: center;
+    font-size: 0.78rem;
+  }
+  .page-label .page-name { font-weight: 700; font-size: 0.9rem; margin-bottom: 0.2rem; }
+  .page-label .page-file { font-size: 0.65rem; opacity: 0.6; font-family: monospace; }
+  .page-content { padding: 1rem 1.2rem; border-left: 1px solid #f0f0f0; }
+  .page-role { font-weight: 700; font-size: 0.82rem; margin-bottom: 0.4rem; }
+  .page-sections { font-size: 0.78rem; color: #555; line-height: 1.6; }
+  .page-sections strong { color: #1a1a1a; }
+  .page-note { font-size: 0.72rem; color: #888; margin-top: 0.4rem; font-style: italic; }
+
+  .concept-principle {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem; margin: 2rem 0;
+  }
+  .principle-card {
+    background: #fff; border-radius: 12px; padding: 1.2rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+  }
+  .principle-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+  .principle-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem; }
+  .principle-desc { font-size: 0.78rem; color: #666; line-height: 1.5; }
+
+  /* Divider */
+  .divider { border: none; border-top: 2px solid #e5e5e5; margin: 2rem 0; }
+
+  /* Scroll nav */
+  .sticky-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: #fff; border-bottom: 1px solid #e0e0e0;
+    display: flex; justify-content: center; gap: 1rem;
+    padding: 0.75rem 1rem; font-size: 0.78rem; font-weight: 600;
+  }
+  .sticky-nav a { color: #444; text-decoration: none; }
+  .sticky-nav a:hover { color: #000; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Palette & Redesign Preview</h1>
+  <p>Wakaf Produktif Kebun Kopi Ngantang — Opsi warna baru + konsep struktur redesign</p>
+</div>
+
+<nav class="sticky-nav">
+  <a href="#palettes">🎨 Opsi Palette</a>
+  <a href="#concept">🗂 Konsep Redesign</a>
+</nav>
+
+<!-- ==============================
+     BAGIAN 1: PALETTE OPTIONS
+=============================== -->
+<div class="section-label" id="palettes">🎨 Opsi Palette — Pilih yang paling sesuai karakter program</div>
+
+<div class="palette-grid">
+
+  <!-- PALETTE 0: CURRENT (reference) -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#1e3a5f"><span class="swatch-label">#1e3a5f</span></div>
+      <div class="swatch" style="background:#2563eb"><span class="swatch-label">#2563eb</span></div>
+      <div class="swatch" style="background:#f59e0b"><span class="swatch-label">#f59e0b</span></div>
+      <div class="swatch" style="background:#f97316"><span class="swatch-label">#f97316</span></div>
+      <div class="swatch" style="background:#f0f5fb"><span class="swatch-label">#f0f5fb</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">Navy × Amber <span class="current-badge">Saat ini</span></div>
+      <div class="palette-desc">Palet yang sudah ada. Navy gelap + amber hangat. Referensi untuk perbandingan.</div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#1e3a5f; color:#fff;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Kisah</span><span>Program</span><span>Belajar</span></span>
+        <button class="mini-nav-cta" style="background:#f59e0b; color:#1e3a5f;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f0f5fb;">
+        <div class="mini-hero-badge" style="background:#fef3c7; color:#92400e;">Wakaf Produktif</div>
+        <h2 style="color:#1e3a5f;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#3d5166;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#f59e0b; color:#fff;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#1e3a5f; border-color:#1e3a5f;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#1e3a5f; color:#fff;">
+          <div class="mini-card-title">📖 Kisah</div>
+          <div class="mini-card-desc">Perjalanan & latar belakang</div>
+        </div>
+        <div class="mini-card" style="background:#2563eb; color:#fff;">
+          <div class="mini-card-title">🌱 Program</div>
+          <div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#f59e0b; color:#1e3a5f;">
+          <div class="mini-card-title">🎓 Belajar</div>
+          <div class="mini-card-desc">13+ modul gratis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PALETTE A: Forest Earth -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#1c3829"><span class="swatch-label">#1c3829</span></div>
+      <div class="swatch" style="background:#2d5a3d"><span class="swatch-label">#2d5a3d</span></div>
+      <div class="swatch" style="background:#c9973a"><span class="swatch-label">#c9973a</span></div>
+      <div class="swatch" style="background:#e8c882"><span class="swatch-label">#e8c882</span></div>
+      <div class="swatch" style="background:#f2ede4"><span class="swatch-label">#f2ede4</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">A — Forest Earth 🌿</div>
+      <div class="palette-desc">Hijau hutan dalam + emas tanah. Karakter: organik, perkebunan, kebun nyata. Berbeda dari website personal tapi masih kalem dan hangat.</div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#1c3829; color:#fff;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Kisah</span><span>Program</span><span>Belajar</span></span>
+        <button class="mini-nav-cta" style="background:#c9973a; color:#fff;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f2ede4;">
+        <div class="mini-hero-badge" style="background:#d4edda; color:#1c3829;">Wakaf Produktif</div>
+        <h2 style="color:#1c3829;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#3d5a48;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#1c3829; color:#e8c882;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#2d5a3d; border-color:#2d5a3d;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#1c3829; color:#e8c882;">
+          <div class="mini-card-title">📖 Kisah</div>
+          <div class="mini-card-desc">Perjalanan & latar belakang</div>
+        </div>
+        <div class="mini-card" style="background:#2d5a3d; color:#fff;">
+          <div class="mini-card-title">🌱 Program</div>
+          <div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#c9973a; color:#fff;">
+          <div class="mini-card-title">🎓 Belajar</div>
+          <div class="mini-card-desc">13+ modul gratis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PALETTE B: Deep Teal + Copper -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#1a3f3f"><span class="swatch-label">#1a3f3f</span></div>
+      <div class="swatch" style="background:#2a6060"><span class="swatch-label">#2a6060</span></div>
+      <div class="swatch" style="background:#b87333"><span class="swatch-label">#b87333</span></div>
+      <div class="swatch" style="background:#e8d5b5"><span class="swatch-label">#e8d5b5</span></div>
+      <div class="swatch" style="background:#f0f5f4"><span class="swatch-label">#f0f5f4</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">B — Deep Teal × Copper 🍂</div>
+      <div class="palette-desc">Teal dalam + tembaga/copper. Karakter: sophisticated, tenang, membumi. Paling berbeda dari navy tapi masih kalem. Cocok untuk LMS akademik.</div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#1a3f3f; color:#fff;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Kisah</span><span>Program</span><span>Belajar</span></span>
+        <button class="mini-nav-cta" style="background:#b87333; color:#fff;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f0f5f4;">
+        <div class="mini-hero-badge" style="background:#d5eeee; color:#1a3f3f;">Wakaf Produktif</div>
+        <h2 style="color:#1a3f3f;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#2d5555;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#b87333; color:#fff;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#1a3f3f; border-color:#1a3f3f;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#1a3f3f; color:#e8d5b5;">
+          <div class="mini-card-title">📖 Kisah</div>
+          <div class="mini-card-desc">Perjalanan & latar belakang</div>
+        </div>
+        <div class="mini-card" style="background:#2a6060; color:#fff;">
+          <div class="mini-card-title">🌱 Program</div>
+          <div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#b87333; color:#fff;">
+          <div class="mini-card-title">🎓 Belajar</div>
+          <div class="mini-card-desc">13+ modul gratis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PALETTE C: Slate + Sage + Sienna -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#2d3f4c"><span class="swatch-label">#2d3f4c</span></div>
+      <div class="swatch" style="background:#5a7a6a"><span class="swatch-label">#5a7a6a</span></div>
+      <div class="swatch" style="background:#c4622d"><span class="swatch-label">#c4622d</span></div>
+      <div class="swatch" style="background:#e8ddd0"><span class="swatch-label">#e8ddd0</span></div>
+      <div class="swatch" style="background:#f5f0ea"><span class="swatch-label">#f5f0ea</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">C — Slate × Sage × Sienna 🏺</div>
+      <div class="palette-desc">Abu-abu kebiruan + hijau sage lembut + oranye bata/sienna. Karakter: hangat editorial, seperti majalah pertanian premium. Paling "earthy".</div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#2d3f4c; color:#fff;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Kisah</span><span>Program</span><span>Belajar</span></span>
+        <button class="mini-nav-cta" style="background:#c4622d; color:#fff;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f5f0ea;">
+        <div class="mini-hero-badge" style="background:#ddeedd; color:#2d5a3d;">Wakaf Produktif</div>
+        <h2 style="color:#2d3f4c;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#4a5e6a;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#c4622d; color:#fff;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#2d3f4c; border-color:#2d3f4c;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#2d3f4c; color:#e8ddd0;">
+          <div class="mini-card-title">📖 Kisah</div>
+          <div class="mini-card-desc">Perjalanan & latar belakang</div>
+        </div>
+        <div class="mini-card" style="background:#5a7a6a; color:#fff;">
+          <div class="mini-card-title">🌱 Program</div>
+          <div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#c4622d; color:#fff;">
+          <div class="mini-card-title">🎓 Belajar</div>
+          <div class="mini-card-desc">13+ modul gratis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PALETTE D: Warm Charcoal + Moss + Gold -->
+  <div class="palette-card">
+    <div class="swatch-row">
+      <div class="swatch" style="background:#2c3a2e"><span class="swatch-label">#2c3a2e</span></div>
+      <div class="swatch" style="background:#4a6b4e"><span class="swatch-label">#4a6b4e</span></div>
+      <div class="swatch" style="background:#c9a84c"><span class="swatch-label">#c9a84c</span></div>
+      <div class="swatch" style="background:#d4c9a8"><span class="swatch-label">#d4c9a8</span></div>
+      <div class="swatch" style="background:#f7f5ef"><span class="swatch-label">#f7f5ef</span></div>
+    </div>
+    <div class="palette-info">
+      <div class="palette-name">D — Charcoal Moss × Gold 🌾</div>
+      <div class="palette-desc">Charcoal kehijauan dalam + moss + emas hangat. Karakter: tenang, berdignitas, seperti ruang akademik yang dekat dengan alam. Dekat dengan global.css yang sudah ada.</div>
+    </div>
+    <div class="mini-ui">
+      <div class="mini-nav" style="background:#2c3a2e; color:#fff;">
+        <span class="mini-nav-logo">☕ Wakaf Kopi</span>
+        <span class="mini-nav-links"><span>Kisah</span><span>Program</span><span>Belajar</span></span>
+        <button class="mini-nav-cta" style="background:#c9a84c; color:#2c3a2e;">Bergabung →</button>
+      </div>
+      <div class="mini-hero" style="background:#f7f5ef;">
+        <div class="mini-hero-badge" style="background:#e8f5e8; color:#2c3a2e;">Wakaf Produktif</div>
+        <h2 style="color:#2c3a2e;">Dari Kebun yang Menyekolahkan, Menjadi Kebun yang Mendidik Semua</h2>
+        <p style="color:#4a5e4e;">Kebun kopi robusta 4.918 m² di Ngantang — kini menjadi ruang belajar terbuka.</p>
+        <div class="mini-btns">
+          <button class="mini-btn" style="background:#2c3a2e; color:#c9a84c;">Baca Kisahnya ↓</button>
+          <button class="mini-btn outline" style="color:#4a6b4e; border-color:#4a6b4e;">🎓 Mulai Belajar</button>
+        </div>
+      </div>
+      <div class="mini-cards">
+        <div class="mini-card" style="background:#2c3a2e; color:#d4c9a8;">
+          <div class="mini-card-title">📖 Kisah</div>
+          <div class="mini-card-desc">Perjalanan & latar belakang</div>
+        </div>
+        <div class="mini-card" style="background:#4a6b4e; color:#fff;">
+          <div class="mini-card-title">🌱 Program</div>
+          <div class="mini-card-desc">Desain & fase</div>
+        </div>
+        <div class="mini-card" style="background:#c9a84c; color:#2c3a2e;">
+          <div class="mini-card-title">🎓 Belajar</div>
+          <div class="mini-card-desc">13+ modul gratis</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end palette-grid -->
+
+<hr style="border:none; border-top: 3px solid #e0e0e0; margin: 0 2rem;">
+
+<!-- ==============================
+     BAGIAN 2: REDESIGN CONCEPT
+=============================== -->
+<div class="concept-section" id="concept">
+
+  <div class="section-label" style="text-align:left; padding: 2.5rem 0 0.5rem;">🗂 Konsep Struktur Redesign</div>
+  <h2 class="concept-title">Dari Memoir → Platform</h2>
+  <p class="concept-intro">
+    Prinsip utama: website ini harus bisa menyambut dua tipe pengunjung sekaligus —
+    <strong>mitra/peneliti</strong> yang ingin tahu <em>apa</em> program ini, dan
+    <strong>pelajar</strong> yang ingin langsung <em>belajar</em>.
+    Cerita Adib tetap ada, tapi sebagai undangan masuk lebih dalam, bukan sebagai pintu depan.
+  </p>
+
+  <div class="concept-principle">
+    <div class="principle-card">
+      <div class="principle-icon">🎯</div>
+      <div class="principle-title">Misi dulu, cerita kemudian</div>
+      <div class="principle-desc">Landing page dibuka dengan <em>apa yang bisa dilakukan pengunjung di sini</em>, bukan dengan kisah personal.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">🪴</div>
+      <div class="principle-title">Profil sebagai kredensial, bukan karakter utama</div>
+      <div class="principle-desc">Adib tetap tampil — tapi sebagai "Siapa di balik program ini", bukan headline halaman.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">📚</div>
+      <div class="principle-title">LMS sebagai jalur utama</div>
+      <div class="principle-desc">Tombol "Mulai Belajar" harus langsung terlihat di hero tanpa harus scroll jauh.</div>
+    </div>
+    <div class="principle-card">
+      <div class="principle-icon">🔗</div>
+      <div class="principle-title">Cerita tetap ada, dalam porsinya</div>
+      <div class="principle-desc">Prolog, surat untuk eyang, dan accordion 9 bab — semua pindah ke halaman <em>Kisah</em> yang dedicated.</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h3 style="font-size:1rem; font-weight:700; margin-bottom:1rem; color:#444;">Struktur Halaman yang Disarankan</h3>
+
+  <div class="concept-pages">
+
+    <!-- Landing Page -->
+    <div class="page-row">
+      <div class="page-label" style="background:#1c3829; color:#e8c882;">
+        <span class="page-name">🏠 Landing Page</span>
+        <span class="page-file">index.html</span>
+      </div>
+      <div class="page-content">
+        <div class="page-role">Pintu masuk yang seimbang antara emosi & fungsi</div>
+        <div class="page-sections">
+          <strong>Hero:</strong> Tagline misi + 2 CTA utama (Baca Kisah / Mulai Belajar) + satu kalimat yang merangkum apa itu Wakaf Produktif Kebun Kopi<br>
+          <strong>3 Jalur Masuk:</strong> Card besar untuk Kisah, Belajar, dan Bergabung — pengunjung pilih jalurnya sendiri<br>
+          <strong>Snapshot Program:</strong> 4 angka kunci (luas kebun, pohon, modul, dampak) — singkat, visual<br>
+          <strong>"Siapa di Balik Ini":</strong> Satu foto Adib + 2 kalimat + link ke halaman Kisah — bukan memoir, cukup perkenalan<br>
+          <strong>Suara dari Kebun:</strong> 2-3 kutipan mitra/komunitas<br>
+          <strong>CTA akhir:</strong> Bergabung / Hubungi Kami
+        </div>
+        <div class="page-note">❌ Yang dipindahkan: Prolog panjang, surat untuk eyang, accordion 9 bab — semua ke halaman Kisah</div>
+      </div>
+    </div>
+
+    <!-- Kisah -->
+    <div class="page-row">
+      <div class="page-label" style="background:#2d3f4c; color:#e8ddd0;">
+        <span class="page-name">📖 Kisah</span>
+        <span class="page-file">latar-belakang.html</span>
+      </div>
+      <div class="page-content">
+        <div class="page-role">Halaman memoir penuh — rumah untuk semua narasi personal</div>
+        <div class="page-sections">
+          <strong>Prolog penuh</strong> (dipindahkan dari landing page)<br>
+          <strong>9 bab accordion</strong> (dipindahkan dari landing page)<br>
+          <strong>"Sepotong Surat"</strong> — tetap di sini, konteksnya lebih tepat<br>
+          <strong>Profil profesional</strong> Adib — di halaman ini terasa natural, bukan aneh<br>
+          <strong>Timeline perjalanan</strong> UN system dll.
+        </div>
+        <div class="page-note">✅ Di halaman ini, narasi personal sangat tepat dan kuat</div>
+      </div>
+    </div>
+
+    <!-- Program -->
+    <div class="page-row">
+      <div class="page-label" style="background:#4a6b4e; color:#fff;">
+        <span class="page-name">🌱 Program</span>
+        <span class="page-file">program.html</span>
+      </div>
+      <div class="page-content">
+        <div class="page-role">Framework & operasional — tetap seperti sekarang, sudah cukup baik</div>
+        <div class="page-sections">
+          <strong>Hexa-Helix model</strong> (perlu penjelasan singkat di atas grid untuk pembaca awam)<br>
+          <strong>3 Fase timeline</strong><br>
+          <strong>Living Lab overview</strong><br>
+          <strong>Tantangan & insight</strong> — pertahankan kejujuran ini, bagus untuk kredibilitas
+        </div>
+        <div class="page-note">🔧 Minor: ganti "saya" → "kami" di beberapa bagian narasi program</div>
+      </div>
+    </div>
+
+    <!-- Belajar / LMS -->
+    <div class="page-row">
+      <div class="page-label" style="background:#c9973a; color:#fff;">
+        <span class="page-name">🎓 Belajar</span>
+        <span class="page-file">belajar.html</span>
+      </div>
+      <div class="page-content">
+        <div class="page-role">Halaman LMS — prioritas jangka menengah</div>
+        <div class="page-sections">
+          <strong>3 jalur belajar</strong> (sudah bagus strukturnya)<br>
+          <strong>Modul catalogue</strong> (sudah ada, tapi belum ada isinya)<br>
+          <strong>Tahap 1:</strong> Isi minimal 1 modul dengan konten nyata dulu (teks + link video YouTube)<br>
+          <strong>Tahap 2:</strong> Tambah halaman lesson individual per modul<br>
+          <strong>Tahap 3:</strong> Progress tracking (bisa pakai localStorage sederhana tanpa backend)
+        </div>
+        <div class="page-note">🚀 Prioritas: satu modul fully functional lebih baik dari 13 modul kosong</div>
+      </div>
+    </div>
+
+    <!-- Tim -->
+    <div class="page-row">
+      <div class="page-label" style="background:#2a6060; color:#fff;">
+        <span class="page-name">👥 Tim</span>
+        <span class="page-file">tim.html</span>
+      </div>
+      <div class="page-content">
+        <div class="page-role">Governance & mitra — sudah sangat baik strukturnya</div>
+        <div class="page-sections">
+          <strong>4 level governance</strong> (pertahankan)<br>
+          <strong>Foto nyata</strong> menggantikan emoji placeholder — ini yang paling mendesak<br>
+          <strong>Fix inkonsistensi:</strong> "14+ tahun" vs "17+ tahun" — pilih satu angka<br>
+          <strong>Vacant position</strong> — pertahankan, tanda transparansi yang bagus
+        </div>
+        <div class="page-note">📸 Aksi paling kritis: upload foto tim nyata</div>
+      </div>
+    </div>
+
+    <!-- Living Lab -->
+    <div class="page-row">
+      <div class="page-label" style="background:#3d5236; color:#c9a84c;">
+        <span class="page-name">🔬 Living Lab</span>
+        <span class="page-file">living-lab.html</span>
+      </div>
+      <div class="page-content">
+        <div class="page-role">Transparansi & data — baru bisa fully launch kalau data sudah nyata</div>
+        <div class="page-sections">
+          <strong>8-stage timeline</strong> — sudah bagus<br>
+          <strong>Ganti foto Unsplash</strong> dengan foto kebun asli<br>
+          <strong>Data dashboard:</strong> mulai dengan data sederhana nyata (misal: jumlah pohon per plot, pH tanah hasil survei)<br>
+          <strong>Remove badge "LIVE"</strong> sampai data benar-benar live
+        </div>
+        <div class="page-note">⚠️ Jangan publish dengan dummy data — mengurangi kredibilitas "open data"</div>
+      </div>
+    </div>
+
+    <!-- Kontak -->
+    <div class="page-row">
+      <div class="page-label" style="background:#444; color:#fff;">
+        <span class="page-name">✉️ Kontak</span>
+        <span class="page-file">kontak.html</span>
+      </div>
+      <div class="page-content">
+        <div class="page-role">Pintu kolaborasi — satu langkah dari publish</div>
+        <div class="page-sections">
+          <strong>Ganti placeholder:</strong> email <code>adib@example.com</code> dan nomor WA yang masih kosong<br>
+          <strong>6 kategori kolaborasi</strong> sudah bagus — pertahankan<br>
+          <strong>Form</strong> — pastikan ada backend atau Formspree/Netlify Forms untuk menerima pesan nyata
+        </div>
+        <div class="page-note">🔧 Paling mudah di-fix — satu jam sudah bisa live</div>
+      </div>
+    </div>
+
+  </div><!-- end concept-pages -->
+
+  <hr class="divider">
+
+  <h3 style="font-size:1rem; font-weight:700; margin-bottom:1rem; color:#444;">Urutan Prioritas yang Disarankan</h3>
+  <div style="font-size:0.85rem; line-height:2; color:#444;">
+    <div>🔴 <strong>Segera (sebelum apapun):</strong> Pilih palette warna → isi kontak nyata → pilih satu homepage canonical</div>
+    <div>🟡 <strong>Fase 1 — Redesign:</strong> Restrukturisasi landing page → pindahkan prolog/surat ke Kisah → foto tim nyata</div>
+    <div>🟢 <strong>Fase 2 — Konten:</strong> Satu modul LMS fully functional → data Living Lab nyata → foto kebun asli</div>
+    <div>🔵 <strong>Fase 3 — Scaling:</strong> Semua 13 modul → progress tracking → foto dokumentasi program</div>
+  </div>
+
+</div><!-- end concept-section -->
+
+</body>
+</html>

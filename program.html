@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Program — Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Grand Design 2026–2031: Dari kebun wakaf menjadi ekosistem kopi berdampak sosial. 5 pilar, roadmap 5 fase, tim pengelola, dan akuntabilitas program.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Caveat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════════════
+   PALETTE R2 — EUCALYPTUS
+═══════════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+/* ── Card D+F ── */
+.card-df {
+  background: linear-gradient(155deg, #f6fdfb 0%, #edf8f4 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 12px;
+  transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+}
+.card-df:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--accent); }
+.card-df-dark {
+  background: linear-gradient(145deg, #354a4a 0%, #2a3c3c 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 12px;
+  color: #e8f4f0;
+  transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+}
+.card-df-dark:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--accent); }
+
+/* ── Bilingual ── */
+.lang-en { display: none; }
+
+/* ══════════════════════════════════
+   NAVBAR
+══════════════════════════════════ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark);
+  border-bottom: 1px solid rgba(168,200,188,0.1);
+}
+.navbar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; padding: 0 2rem;
+  max-width: 1200px; margin: 0 auto;
+}
+.navbar-logo {
+  display: flex; align-items: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 800; color: #e8f4f0;
+  text-decoration: none;
+}
+.brand-tag {
+  padding: 0.18rem 0.6rem; border-radius: 6px;
+  border: 1px solid var(--accent); box-shadow: 2px 2px 0px var(--accent);
+  background: linear-gradient(135deg, rgba(90,144,128,0.22), rgba(90,144,128,0.1));
+  color: #e8f4f0; white-space: nowrap;
+}
+.navbar-right { display: flex; align-items: center; gap: 0.5rem; }
+.navbar-nav { display: flex; align-items: center; gap: 0.1rem; list-style: none; }
+.navbar-nav li a {
+  font-size: 0.78rem; font-weight: 500; color: #a8c8bc;
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.navbar-nav li a:hover { color: #e8f4f0; background: rgba(255,255,255,0.07); }
+.navbar-nav li a.active { color: #e8f4f0; font-weight: 700; }
+.nav-soon {
+  font-size: 0.78rem; font-weight: 500; color: rgba(168,200,188,0.35);
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  cursor: default; user-select: none; display: inline-block;
+}
+.btn-nav-cta {
+  background: var(--accent); color: #fff;
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700; margin-left: 0.4rem;
+}
+.nav-soon-cta {
+  background: rgba(196,144,106,0.25); color: rgba(255,255,255,0.3);
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem; cursor: default; user-select: none;
+}
+.lang-btn {
+  background: none; border: 1px solid rgba(168,200,188,0.35);
+  color: #a8c8bc; padding: 0.22rem 0.6rem;
+  border-radius: 5px; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.lang-btn:hover, .lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.rwi-nav-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px; padding: 0.35rem 0.7rem 0.35rem 0.45rem;
+  flex-shrink: 0;
+}
+.rwi-logo-box {
+  width: 96px; height: 48px; border-radius: 6px;
+  background: #fff; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; overflow: hidden;
+}
+.rwi-logo-box img { width: 96px; height: 48px; object-fit: contain; display: block; }
+.rwi-nav-text { line-height: 1.3; }
+.rwi-nav-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(168,200,188,0.55); }
+.rwi-nav-name  { font-size: 0.75rem; font-weight: 700; color: #d0e8e0; white-space: nowrap; }
+
+/* ══════════════════════════════════
+   SECTIONS
+══════════════════════════════════ */
+.section { padding: 4.5rem 2rem; }
+.section--white { background: var(--white); }
+.section--tint  { background: var(--bg-tint); }
+.section--dark  { background: var(--dark); }
+.section-inner  { max-width: 1200px; margin: 0 auto; }
+.section-eyebrow {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--medium); margin-bottom: 0.5rem;
+}
+.section-eyebrow--light { color: var(--light); }
+.section-h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  font-weight: 700; color: var(--dark);
+  line-height: 1.25; margin-bottom: 0.75rem;
+}
+.section-h2--light { color: #f0f8f5; }
+.section-h2 em { font-style: italic; color: var(--medium); }
+.section-h2--light em { color: var(--light); }
+.section-lead {
+  font-size: 0.95rem; color: var(--muted);
+  line-height: 1.75; margin-bottom: 2.5rem;
+}
+.section-lead--light { color: rgba(168,200,188,0.85); }
+.section-header { margin-bottom: 2.5rem; }
+
+/* ══════════════════════════════════
+   HERO
+══════════════════════════════════ */
+.page-hero {
+  background: var(--dark);
+  padding: 4.5rem 2rem 4rem;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 50% at 85% 50%, rgba(90,144,128,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 35% 55% at 5% 85%, rgba(196,144,106,0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.page-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+.page-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(90,144,128,0.18);
+  border: 1px solid rgba(168,200,188,0.28); color: var(--light);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.28rem 0.85rem;
+  border-radius: 20px; margin-bottom: 1.2rem;
+}
+.page-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 700; color: #f0f8f5;
+  line-height: 1.18; margin-bottom: 1.1rem;
+}
+.page-hero h1 em { font-style: italic; color: var(--accent); }
+.page-hero-desc {
+  font-size: 0.97rem; color: rgba(168,200,188,0.85);
+  max-width: 900px; line-height: 1.75; margin-bottom: 2.5rem;
+}
+
+/* Stats strip hero */
+.hero-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem; margin-top: 1rem;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.18);
+  border-radius: 10px; padding: 1.1rem 1.2rem;
+}
+.hero-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem; font-weight: 300; font-style: italic;
+  color: var(--accent); line-height: 1;
+  margin-bottom: 0.3rem;
+}
+.hero-stat-label {
+  font-size: 0.72rem; font-weight: 600;
+  color: rgba(168,200,188,0.7); line-height: 1.3;
+}
+
+/* ══════════════════════════════════
+   FASE CARDS
+══════════════════════════════════ */
+.fase-grid { display: flex; flex-direction: column; gap: 1.2rem; margin-bottom: 2.5rem; }
+.fase-card { padding: 1.8rem 2rem; position: relative; overflow: hidden; }
+.fase-card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 4px; background: var(--fase-color, var(--medium));
+}
+.fase-tag {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--fase-color, var(--medium));
+  margin-bottom: 0.3rem;
+}
+.fase-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.2rem;
+}
+.fase-period {
+  font-size: 0.72rem; color: var(--muted); margin-bottom: 0.8rem;
+}
+.fase-body {
+  font-family: 'Lora', serif;
+  font-size: 0.88rem; color: var(--muted); line-height: 1.8;
+  margin-bottom: 0.6rem;
+}
+.fase-lesson {
+  font-size: 0.82rem; color: var(--medium);
+  font-style: italic; border-left: 2px solid var(--bg-deep);
+  padding-left: 0.75rem; margin-top: 0.5rem;
+}
+
+/* Lesson cards */
+.lesson-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+.lesson-card { padding: 1.4rem 1.6rem; }
+.lesson-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+.lesson-num {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--medium); margin-bottom: 0.3rem;
+}
+.lesson-text { font-size: 0.86rem; color: var(--muted); line-height: 1.65; }
+
+/* ══════════════════════════════════
+   VISI & MISI
+══════════════════════════════════ */
+.visi-quote {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.1rem, 2.2vw, 1.4rem);
+  font-style: italic; color: var(--dark);
+  line-height: 1.6; border-left: 4px solid var(--accent);
+  padding-left: 1.5rem; margin: 2rem 0;
+}
+.misi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.misi-card { padding: 1.8rem; }
+.misi-icon { font-size: 1.6rem; margin-bottom: 0.75rem; }
+.misi-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.5rem;
+}
+.misi-desc { font-size: 0.86rem; color: var(--muted); line-height: 1.7; }
+
+/* ══════════════════════════════════
+   5 PILAR
+══════════════════════════════════ */
+.pilar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+.pilar-card {
+  padding: 1.8rem;
+  background: linear-gradient(145deg, #354a4a 0%, #2a3c3c 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 12px;
+  transition: transform 0.14s var(--ease), box-shadow 0.14s var(--ease);
+}
+.pilar-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px var(--accent); }
+.pilar-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.75rem; font-weight: 400; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 0.4rem;
+}
+.pilar-icon { font-size: 1.6rem; margin-bottom: 0.6rem; }
+.pilar-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: #e8f4f0; margin-bottom: 0.35rem;
+}
+.pilar-subtitle {
+  font-size: 0.72rem; color: var(--light);
+  font-style: italic; margin-bottom: 0.8rem;
+}
+.pilar-desc { font-size: 0.84rem; color: rgba(168,200,188,0.8); line-height: 1.7; }
+
+/* ══════════════════════════════════
+   SIKLUS TAHUNAN
+══════════════════════════════════ */
+.siklus-wrap {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 14px; padding: 1.8rem;
+}
+.siklus-label {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--light);
+  margin-bottom: 1rem; text-align: center;
+}
+.siklus-months {
+  display: grid; grid-template-columns: repeat(12, 1fr);
+  gap: 0.3rem; margin-bottom: 1rem;
+}
+.month-cell {
+  text-align: center; padding: 0.6rem 0.2rem;
+  border-radius: 6px; font-size: 0.65rem; font-weight: 700;
+  color: rgba(168,200,188,0.6);
+}
+.month-cell.prapanen  { background: rgba(90,144,128,0.25); color: var(--light); }
+.month-cell.panen     { background: rgba(196,144,106,0.55); color: #fff; }
+.month-cell.pascapanen{ background: rgba(90,144,128,0.45); color: #e8f4f0; }
+.month-cell.offseason { background: rgba(46,64,64,0.5); color: rgba(168,200,188,0.5); }
+.siklus-legend {
+  display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
+  font-size: 0.72rem; color: rgba(168,200,188,0.7);
+}
+.legend-dot {
+  display: inline-block; width: 10px; height: 10px;
+  border-radius: 3px; margin-right: 5px; vertical-align: middle;
+}
+
+/* ══════════════════════════════════
+   ROADMAP
+══════════════════════════════════ */
+.roadmap-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+.roadmap-card { padding: 1.5rem; }
+.roadmap-phase {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem; font-weight: 300; font-style: italic;
+  color: var(--accent); line-height: 1; margin-bottom: 0.3rem;
+}
+.roadmap-status {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 0.2rem 0.55rem;
+  border-radius: 20px; display: inline-block;
+  margin-bottom: 0.6rem;
+}
+.roadmap-status--active { background: rgba(196,144,106,0.25); color: var(--accent); }
+.roadmap-status--next   { background: rgba(90,144,128,0.18); color: var(--medium); }
+.roadmap-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.2rem;
+}
+.roadmap-period {
+  font-size: 0.7rem; color: var(--muted); margin-bottom: 0.8rem;
+}
+.roadmap-list { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+.roadmap-list li {
+  font-size: 0.78rem; color: var(--muted);
+  display: flex; align-items: baseline; gap: 0.5rem;
+  line-height: 1.4;
+}
+.roadmap-list li::before { content: '·'; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+.roadmap-tag {
+  font-size: 0.65rem; color: var(--accent);
+  font-weight: 700; margin-top: 0.8rem; display: block;
+}
+
+/* ══════════════════════════════════
+   TIM PENGELOLA
+══════════════════════════════════ */
+.tim-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+.tim-card { padding: 1.8rem; }
+.tim-icon { font-size: 1.8rem; margin-bottom: 0.6rem; }
+.tim-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.15rem;
+}
+.tim-role {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.7rem;
+}
+.tim-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.7; }
+
+.advisory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+.advisory-card { padding: 1.4rem; }
+.advisory-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+.advisory-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.1rem;
+}
+.advisory-role {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.07em;
+  text-transform: uppercase; color: var(--medium); margin-bottom: 0.5rem;
+}
+.advisory-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
+
+.gap-kritis {
+  background: rgba(196,144,106,0.1);
+  border: 1.5px solid rgba(196,144,106,0.5);
+  border-radius: 12px; padding: 1.4rem 1.6rem;
+  display: flex; gap: 1rem; align-items: flex-start;
+}
+.gap-kritis-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 0.1rem; }
+.gap-kritis-title {
+  font-weight: 700; font-size: 0.88rem;
+  color: var(--accent); margin-bottom: 0.3rem;
+}
+.gap-kritis-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
+
+/* ══════════════════════════════════
+   DATA & PROYEKSI
+══════════════════════════════════ */
+.data-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem; }
+.data-stat { padding: 1.5rem; text-align: center; }
+.data-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem; font-weight: 300; font-style: italic;
+  color: var(--accent); line-height: 1; margin-bottom: 0.4rem;
+}
+.data-label { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+.data-sublabel { font-size: 0.68rem; color: rgba(90,120,120,0.7); margin-top: 0.2rem; }
+
+.track-record {
+  display: flex; align-items: flex-end; gap: 1.2rem;
+  padding: 1.8rem; margin-bottom: 1.5rem;
+}
+.track-year { text-align: center; flex: 1; }
+.track-bar-wrap { height: 80px; display: flex; align-items: flex-end; justify-content: center; margin-bottom: 0.4rem; }
+.track-bar {
+  width: 32px; background: var(--medium); border-radius: 4px 4px 0 0;
+  transition: height 0.3s;
+}
+.track-bar.accent { background: var(--accent); }
+.track-bar.future { background: rgba(90,144,128,0.35); border: 1.5px dashed var(--medium); }
+.track-val { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-style: italic; color: var(--dark); }
+.track-yr  { font-size: 0.7rem; color: var(--muted); }
+
+.proyeksi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.proyeksi-card { padding: 1.5rem; text-align: center; }
+.proyeksi-label {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 0.5rem;
+}
+.proyeksi-kg {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-style: italic;
+  color: var(--accent); line-height: 1; margin-bottom: 0.2rem;
+}
+.proyeksi-rp { font-size: 0.88rem; font-weight: 700; color: var(--dark); margin-bottom: 0.4rem; }
+.proyeksi-note { font-size: 0.72rem; color: var(--muted); }
+
+/* ══════════════════════════════════
+   BONSARI
+══════════════════════════════════ */
+.bonsari-card {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2.5rem; align-items: center; padding: 2.5rem;
+}
+.bonsari-eyebrow {
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--medium); margin-bottom: 0.5rem;
+}
+.bonsari-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.8rem; line-height: 1.3;
+}
+.bonsari-title em { font-style: italic; color: var(--medium); }
+.bonsari-desc { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
+.bonsari-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.bonsari-stat { text-align: center; padding: 1.2rem; }
+.bonsari-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.7rem; font-style: italic;
+  color: var(--accent); line-height: 1; margin-bottom: 0.25rem;
+}
+.bonsari-stat-label { font-size: 0.72rem; color: var(--muted); line-height: 1.3; }
+
+/* ══════════════════════════════════
+   AKUNTABILITAS
+══════════════════════════════════ */
+.akun-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-bottom: 2rem; }
+.akun-card { padding: 1.8rem; }
+.akun-icon { font-size: 1.5rem; margin-bottom: 0.6rem; }
+.akun-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.5rem;
+}
+.akun-subtitle { font-size: 0.78rem; color: var(--medium); font-style: italic; margin-bottom: 0.8rem; }
+.akun-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+.akun-list li {
+  font-size: 0.83rem; color: var(--muted);
+  display: flex; gap: 0.6rem; align-items: baseline; line-height: 1.5;
+}
+.akun-list li::before { content: '✓'; color: var(--medium); font-weight: 700; flex-shrink: 0; }
+
+/* Distribusi scheme */
+.distribusi-wrap {
+  background: linear-gradient(145deg, #354a4a 0%, #2a3c3c 100%);
+  border: 1.5px solid var(--accent); box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 14px; padding: 2rem;
+}
+.distribusi-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: #f0f8f5; margin-bottom: 0.4rem;
+}
+.distribusi-subtitle { font-size: 0.78rem; color: var(--light); margin-bottom: 1.5rem; }
+.distribusi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.distribusi-item { text-align: center; }
+.distribusi-pct {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem; font-style: italic; font-weight: 300;
+  color: var(--accent); line-height: 1; margin-bottom: 0.3rem;
+}
+.distribusi-name { font-size: 0.78rem; font-weight: 700; color: #e8f4f0; margin-bottom: 0.2rem; }
+.distribusi-desc { font-size: 0.68rem; color: var(--light); }
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+.footer { background: #1e2e2e; padding: 2.2rem 2rem; }
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 1rem;
+}
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 800; color: #e8f4f0; }
+.footer-links { display: flex; gap: 1.1rem; flex-wrap: wrap; }
+.footer-links a { font-size: 0.7rem; color: #527070; transition: color 0.15s; }
+.footer-links a:hover { color: #a8c8bc; }
+.footer-meta { font-size: 0.75rem; color: #a8c8bc; text-align: right; line-height: 1.6; }
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media (max-width: 1024px) {
+  .pilar-grid { grid-template-columns: repeat(2, 1fr); }
+  .roadmap-grid { grid-template-columns: repeat(3, 1fr); }
+  .advisory-grid { grid-template-columns: repeat(2, 1fr); }
+  .bonsari-card { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .misi-grid { grid-template-columns: 1fr; }
+  .lesson-grid { grid-template-columns: 1fr; }
+  .tim-grid { grid-template-columns: 1fr; }
+  .data-stats { grid-template-columns: repeat(2, 1fr); }
+  .proyeksi-grid { grid-template-columns: 1fr; }
+  .distribusi-grid { grid-template-columns: repeat(2, 1fr); }
+  .akun-grid { grid-template-columns: 1fr; }
+  .siklus-months { grid-template-columns: repeat(6, 1fr); }
+}
+@media (max-width: 600px) {
+  .navbar-nav { display: none; }
+  .rwi-nav-badge { display: none; }
+  .pilar-grid { grid-template-columns: 1fr; }
+  .roadmap-grid { grid-template-columns: 1fr; }
+  .advisory-grid { grid-template-columns: 1fr; }
+  .hero-stats { grid-template-columns: 1fr 1fr; }
+  .distribusi-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Justified text ── */
+p, .page-hero-desc, .section-lead, .fase-body, .fase-lesson,
+.misi-desc, .pilar-desc, .tim-desc, .advisory-desc,
+.bonsari-desc, .akun-list li, .lesson-text { text-align: justify; }
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <span class="brand-tag">Wakaf Produktif Kebun Kopi</span>
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="program.html" class="active">Program</a></li>
+          <li><a href="belajar.html"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="living-lab.html">Living Lab</a></li>
+          <li><a href="latar-belakang.html"><span class="lang-id">Kisah</span><span class="lang-en">Story</span></a></li>
+          <li><a href="kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+          <li><span class="btn-nav-cta nav-soon-cta"><span class="lang-id">Bergabung →</span><span class="lang-en">Join →</span></span></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <div class="rwi-nav-badge">
+        <div class="rwi-logo-box">
+          <img src="RWI.png" alt="Rumah Wakaf Indonesia">
+        </div>
+        <div class="rwi-nav-text">
+          <div class="rwi-nav-label lang-id">Lembaga Nazir</div>
+          <div class="rwi-nav-label lang-en">Waqf Institution</div>
+          <div class="rwi-nav-name">Rumah Wakaf Indonesia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-eyebrow lang-id">Grand Design 2026–2031</div>
+    <div class="page-eyebrow lang-en">Grand Design 2026–2031</div>
+    <h1>
+      <span class="lang-id">Dari Kebun Wakaf<br>Menjadi <em>Ekosistem Kopi</em><br>Berdampak Sosial</span>
+      <span class="lang-en">From Waqf Garden<br>To <em>Coffee Ecosystem</em><br>With Social Impact</span>
+    </h1>
+    <p class="page-hero-desc lang-id">Pengelolaan produktif kebun kopi Robusta wakaf seluas 4.918 m² di Ngantang, Malang — membangun kemandirian petani lokal, rantai nilai kopi yang utuh, dan keberlanjutan aset wakaf yang terukur.</p>
+    <p class="page-hero-desc lang-en">Productive management of a 4,918 m² Robusta waqf coffee garden in Ngantang, Malang — building local farmer independence, a complete coffee value chain, and measurable waqf asset sustainability.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">4.918 m²</div>
+        <div class="hero-stat-label lang-id">Luas Kebun Wakaf</div>
+        <div class="hero-stat-label lang-en">Waqf Garden Area</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">~915</div>
+        <div class="hero-stat-label lang-id">Pohon Robusta Produktif</div>
+        <div class="hero-stat-label lang-en">Productive Robusta Trees</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">+346%</div>
+        <div class="hero-stat-label lang-id">Kenaikan Produksi 2024→2025</div>
+        <div class="hero-stat-label lang-en">Production Growth 2024→2025</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">2026–2031</div>
+        <div class="hero-stat-label lang-id">Cakrawala Program</div>
+        <div class="hero-stat-label lang-en">Program Horizon</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LATAR BELAKANG ══ -->
+<section class="section section--tint">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow lang-id">Latar Belakang & Pembelajaran</div>
+      <div class="section-eyebrow lang-en">Background & Learning</div>
+      <h2 class="section-h2">
+        <span class="lang-id">Tiga Fase Pengelolaan —<br><em>Apa yang Sudah Kita Pelajari</em></span>
+        <span class="lang-en">Three Management Phases —<br><em>What We Have Learned</em></span>
+      </h2>
+      <p class="section-lead lang-id">Sejak Juli 2022, kebun wakaf ini telah melewati tiga fase pengelolaan berbeda. Setiap fase meninggalkan pelajaran berharga yang menjadi fondasi program baru ini. Total ~Rp 49 juta diinvestasikan selama 39 bulan — dan dari sana diperoleh pemahaman konkret tentang apa yang benar-benar diperlukan untuk kebun wakaf yang berkelanjutan.</p>
+      <p class="section-lead lang-en">Since July 2022, this waqf garden has gone through three different management phases. Each phase left valuable lessons that form the foundation of this new program. A total of ~IDR 49 million was invested over 39 months — and that cost taught us what is truly needed for a sustainable waqf garden.</p>
+    </div>
+
+    <div class="fase-grid">
+      <div class="fase-card card-df" style="--fase-color: var(--muted);">
+        <div class="fase-tag lang-id">Fase 1 · Jul 2022 – Mar 2024</div>
+        <div class="fase-tag lang-en">Phase 1 · Jul 2022 – Mar 2024</div>
+        <div class="fase-title lang-id">Inisiasi & Pengenalan</div>
+        <div class="fase-title lang-en">Initiation & Exploration</div>
+        <div class="fase-period lang-id">~21 bulan · Pengelolaan langsung Wakif</div>
+        <div class="fase-period lang-en">~21 months · Direct management by Wakif</div>
+        <p class="fase-body lang-id">Fase eksplorasi: membangun pengetahuan dasar, uji coba pengelolaan awal, dan identifikasi kebutuhan operasional kebun. Proses pengelolaan menghasilkan pembelajaran intensif dari praktik langsung di lapangan.</p>
+        <p class="fase-body lang-en">Exploration phase: building foundational knowledge, testing early management, and identifying operational needs. Much was learned from direct field mistakes.</p>
+        <div class="fase-lesson lang-id">Pelajaran: Tanpa SOP dan pendampingan teknis yang terdokumentasi, setiap keputusan bergantung penuh pada memori individu — tidak bisa diwariskan.</div>
+        <div class="fase-lesson lang-en">Lesson: Without documented SOPs and technical guidance, every decision depends entirely on individual memory — and cannot be passed on.</div>
+      </div>
+
+      <div class="fase-card card-df" style="--fase-color: var(--medium);">
+        <div class="fase-tag lang-id">Fase 2 · Apr 2024 – Okt 2025</div>
+        <div class="fase-tag lang-en">Phase 2 · Apr 2024 – Oct 2025</div>
+        <div class="fase-title lang-id">Kemitraan Pengelola Komunitas</div>
+        <div class="fase-title lang-en">Community Manager Partnership</div>
+        <div class="fase-period lang-id">~18 bulan · Nadzir Formal Pertama</div>
+        <div class="fase-period lang-en">~18 months · First Formal Nazhir</div>
+        <p class="fase-body lang-id">Produksi mulai tercatat: 2024 ~100 KG → 2025 ~281 KG (naik 346%). Saldo operasional pertama kali positif di akhir fase. Pengelolaan berbasis jaringan komunitas lokal — kapasitas manajerial dan dokumentasi belum memadai untuk scale-up.</p>
+        <p class="fase-body lang-en">Production began to be recorded: 2024 ~100 KG → 2025 ~281 KG (up 346%). Operating balance positive for the first time at phase end. Community network-based management — but managerial capacity and documentation insufficient for scale-up.</p>
+        <div class="fase-lesson lang-id">Pelajaran: Pertumbuhan produksi tidak cukup tanpa sistem pelaporan, transfer pengetahuan, dan baseline data yang bisa diverifikasi.</div>
+        <div class="fase-lesson lang-en">Lesson: Production growth alone is insufficient without a reporting system, knowledge transfer, and verifiable baseline data.</div>
+      </div>
+
+      <div class="fase-card card-df" style="--fase-color: var(--accent);">
+        <div class="fase-tag lang-id">Fase 3 · Nov 2025 – Kini</div>
+        <div class="fase-tag lang-en">Phase 3 · Nov 2025 – Present</div>
+        <div class="fase-title lang-id">Kemitraan RWI</div>
+        <div class="fase-title lang-en">RWI Partnership</div>
+        <div class="fase-period lang-id">Aktif · Nadzir Formal Kedua</div>
+        <div class="fase-period lang-en">Active · Second Formal Nazhir</div>
+        <p class="fase-body lang-id">Pendanaan operasional mulai ditanggung RWI. Evaluasi Q1 2026 mengidentifikasi gap signifikan: tidak ada Grand Design, SOP, atau baseline data setelah 5 bulan. Momen untuk restrukturisasi tata kelola program.</p>
+        <p class="fase-body lang-en">RWI begins covering operational funding. Q1 2026 evaluation identifies significant gaps: no Grand Design, SOPs, or baseline data after 5 months. The moment to restructure program governance.</p>
+        <div class="fase-lesson lang-id">Titik Balik: Tim Wakif mengambil peran aktif sebagai pelaksana, tidak lagi hanya sebagai pemantau. Program ini merupakan hasil restrukturisasi tata kelola dari titik tersebut.</div>
+        <div class="fase-lesson lang-en">Turning Point: The Wakif team takes an active role as implementers — not just observers. The new program begins from here.</div>
+      </div>
+    </div>
+
+    <div class="lesson-grid">
+      <div class="lesson-card card-df">
+        <div class="lesson-icon">📋</div>
+        <div class="lesson-num lang-id">Pelajaran #1</div>
+        <div class="lesson-num lang-en">Lesson #1</div>
+        <div class="lesson-text lang-id">Program memerlukan Grand Design dan SOP sejak awal — bukan menyusulnya setelah masalah muncul.</div>
+        <div class="lesson-text lang-en">A program needs a Grand Design and SOPs from the start — not catching up after problems arise.</div>
+      </div>
+      <div class="lesson-card card-df">
+        <div class="lesson-icon">📊</div>
+        <div class="lesson-num lang-id">Pelajaran #2</div>
+        <div class="lesson-num lang-en">Lesson #2</div>
+        <div class="lesson-text lang-id">Tanpa baseline data (pH, peta pohon, NPK), tidak ada cara objektif mengukur kemajuan atau kegagalan.</div>
+        <div class="lesson-text lang-en">Without baseline data (pH, tree mapping, NPK), there is no objective way to measure progress or failure.</div>
+      </div>
+      <div class="lesson-card card-df">
+        <div class="lesson-icon">🤝</div>
+        <div class="lesson-num lang-id">Pelajaran #3</div>
+        <div class="lesson-num lang-en">Lesson #3</div>
+        <div class="lesson-text lang-id">Transfer pengetahuan ke petani lokal adalah kunci — program yang bergantung pada satu ahli tidak berkelanjutan.</div>
+        <div class="lesson-text lang-en">Knowledge transfer to local farmers is key — a program dependent on a single expert is not sustainable.</div>
+      </div>
+      <div class="lesson-card card-df">
+        <div class="lesson-icon">📈</div>
+        <div class="lesson-num lang-id">Pelajaran #4</div>
+        <div class="lesson-num lang-en">Lesson #4</div>
+        <div class="lesson-text lang-id">Akuntabilitas keuangan yang ketat — skema distribusi transparan dan pelaporan berkala — melindungi aset wakaf dan membangun kepercayaan semua pihak.</div>
+        <div class="lesson-text lang-en">Strict financial accountability — transparent distribution schemes and periodic reporting — protects waqf assets and builds trust among all stakeholders.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ VISI & MISI ══ -->
+<section class="section section--white">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow lang-id">Arah & Tujuan Program</div>
+      <div class="section-eyebrow lang-en">Program Direction & Goals</div>
+      <h2 class="section-h2">
+        <span class="lang-id">Visi & <em>Misi</em></span>
+        <span class="lang-en">Vision & <em>Mission</em></span>
+      </h2>
+      <p class="section-lead lang-id">Program ini bukan sekadar mengelola kebun kopi. Ini adalah upaya membangun model wakaf produktif yang bisa direplikasi — berbasis data, berakar pada komunitas lokal, dan memberikan manfaat yang dapat diukur.</p>
+      <p class="section-lead lang-en">This program is more than managing a coffee garden. It is an effort to build a replicable productive waqf model — data-driven, rooted in the local community, and delivering measurable impact.</p>
+    </div>
+
+    <div style="background: var(--bg-tint); border-radius: 14px; padding: 2rem 2.5rem; margin-bottom: 2.5rem;">
+      <div style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--medium); margin-bottom: 0.8rem;" class="lang-id">Visi Program 2031</div>
+      <div style="font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--medium); margin-bottom: 0.8rem;" class="lang-en">Program Vision 2031</div>
+      <blockquote class="visi-quote lang-id">Kebun kopi wakaf Ngantang menjadi model ekosistem agribisnis yang mandiri, terukur, dan berdampak bagi komunitas lokal.</blockquote>
+      <blockquote class="visi-quote lang-en">The Ngantang waqf coffee garden becomes a model of an independent, measurable, and community-impacting agribusiness ecosystem.</blockquote>
+      <p style="font-family: 'Lora', serif; font-size: 0.88rem; color: var(--muted); line-height: 1.8;" class="lang-id">Dimulai dari satu kebun 4.918 m², membangun sistem yang bisa diwariskan — baik ilmunya, ekonominya, maupun nilai sosialnya kepada generasi berikutnya melalui ekosistem TPQ, petani lokal, dan rantai nilai kopi yang utuh.</p>
+      <p style="font-family: 'Lora', serif; font-size: 0.88rem; color: var(--muted); line-height: 1.8;" class="lang-en">Starting from a single 4,918 m² garden, building a system that can be inherited — its knowledge, economy, and social values — to the next generation through the TPQ ecosystem, local farmers, and a complete coffee value chain.</p>
+    </div>
+
+    <div class="misi-grid">
+      <div class="misi-card card-df">
+        <div class="misi-icon">🌱</div>
+        <div class="misi-title lang-id">Produktivitas Berkelanjutan</div>
+        <div class="misi-title lang-en">Sustainable Productivity</div>
+        <p class="misi-desc lang-id">Meningkatkan hasil kebun secara bertahap dengan praktik agronomi berbasis data dan kearifan lokal — bukan solusi instan yang tidak bisa diulang.</p>
+        <p class="misi-desc lang-en">Gradually improving garden yields through data-driven agronomy and local wisdom — not one-off solutions that cannot be replicated.</p>
+      </div>
+      <div class="misi-card card-df">
+        <div class="misi-icon">👨‍🌾</div>
+        <div class="misi-title lang-id">Pemberdayaan Petani Lokal</div>
+        <div class="misi-title lang-en">Local Farmer Empowerment</div>
+        <p class="misi-desc lang-id">Petani lokal sebagai pemilik pengetahuan dan praktik kebun — bukan sekadar tenaga kerja harian. Transfer ilmu nyata, bukan hanya workshop.</p>
+        <p class="misi-desc lang-en">Local farmers as owners of garden knowledge and practice — not merely daily labor. Real knowledge transfer, not just workshops.</p>
+      </div>
+      <div class="misi-card card-df">
+        <div class="misi-icon">☕</div>
+        <div class="misi-title lang-id">Nilai Kopi yang Utuh</div>
+        <div class="misi-title lang-en">Full Coffee Value Chain</div>
+        <p class="misi-desc lang-id">Membangun rantai nilai dari kebun ke cangkir bersama Bonsari Coffee — memastikan nilai tambah kopi wakaf Ngantang terdokumentasi dan terlacak.</p>
+        <p class="misi-desc lang-en">Building the value chain from garden to cup with Bonsari Coffee — ensuring the added value of Ngantang waqf coffee is documented and traceable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 5 PILAR ══ -->
+<section class="section section--dark">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow section-eyebrow--light lang-id">Kerangka Program</div>
+      <div class="section-eyebrow section-eyebrow--light lang-en">Program Framework</div>
+      <h2 class="section-h2 section-h2--light">
+        <span class="lang-id">Grand Design — <em>5 Pilar Program</em></span>
+        <span class="lang-en">Grand Design — <em>5 Program Pillars</em></span>
+      </h2>
+      <p class="section-lead section-lead--light lang-id">Lima pilar ini bukan rangkaian kegiatan terpisah — melainkan satu kesatuan ekosistem yang saling menopang. Masing-masing pilar memiliki target konkret dan indikator keberhasilan yang dapat diukur.</p>
+      <p class="section-lead section-lead--light lang-en">These five pillars are not separate activities — they form one mutually supporting ecosystem. Each pillar has concrete targets and measurable success indicators.</p>
+    </div>
+
+    <div class="pilar-grid">
+      <div class="pilar-card">
+        <div class="pilar-num">Pilar 01</div>
+        <div class="pilar-icon">🌱</div>
+        <div class="pilar-title lang-id">Local Champion</div>
+        <div class="pilar-title lang-en">Local Champion</div>
+        <div class="pilar-subtitle lang-id">Petani lokal sebagai agen mandiri — bukan sekadar penerima instruksi</div>
+        <div class="pilar-subtitle lang-en">Local farmers as independent agents — not just instruction recipients</div>
+        <p class="pilar-desc lang-id">Identifikasi, latih, dan dukung petani lokal menjadi penggerak kebun. Transfer pengetahuan teknis langsung ke komunitas. Kebun wakaf sebagai laboratorium hidup bagi petani sekitar.</p>
+        <p class="pilar-desc lang-en">Identify, train, and support local farmers to become garden champions. Direct technical knowledge transfer to the community. The waqf garden as a living laboratory for surrounding farmers.</p>
+      </div>
+
+      <div class="pilar-card">
+        <div class="pilar-num">Pilar 02</div>
+        <div class="pilar-icon">☕</div>
+        <div class="pilar-title lang-id">Hulu–Hilir Kopi</div>
+        <div class="pilar-title lang-en">Full Coffee Value Chain</div>
+        <div class="pilar-subtitle lang-id">Dari biji di pohon hingga cangkir pelanggan — nilai penuh tetap di ekosistem wakaf</div>
+        <div class="pilar-subtitle lang-en">From bean on tree to customer's cup — full value stays within the waqf ecosystem</div>
+        <p class="pilar-desc lang-id">Integrasi produksi, pascapanen, processing, dan penjualan. Kemitraan Bonsari Coffee sebagai offtaker dan brand wakaf kopi Ngantang. Specialty grade sebagai differentiator jangka panjang.</p>
+        <p class="pilar-desc lang-en">Integration of production, post-harvest, processing, and sales. Bonsari Coffee partnership as offtaker and Ngantang waqf coffee brand. Specialty grade as long-term differentiator.</p>
+      </div>
+
+      <div class="pilar-card">
+        <div class="pilar-num">Pilar 03</div>
+        <div class="pilar-icon">🌿</div>
+        <div class="pilar-title lang-id">Bisnis Suplementari</div>
+        <div class="pilar-title lang-en">Supplementary Business</div>
+        <div class="pilar-subtitle lang-id">Tanaman sela sebagai buffer income selama masa restrukturisasi kopi</div>
+        <div class="pilar-subtitle lang-en">Intercropping as income buffer during coffee restructuring period</div>
+        <p class="pilar-desc lang-id">Robusta tetap komoditi inti. Tanaman sela dipilih yang kompatibel secara agronomi dengan kopi — rempah-rempah (jahe, kunyit, kapulaga), tanaman naungan perbaik tanah, atau tanaman buah bernilai tinggi sesuai kondisi lahan. Periode transisi 2–3 tahun perlu cushion finansial yang terencana.</p>
+        <p class="pilar-desc lang-en">Robusta remains the core commodity. Intercrops are selected for agronomic compatibility with coffee — spices (ginger, turmeric, cardamom), soil-improving shade trees, or high-value fruit suited to land conditions. The 2–3 year transition period needs a planned financial cushion.</p>
+      </div>
+
+      <div class="pilar-card">
+        <div class="pilar-num">Pilar 04</div>
+        <div class="pilar-icon">🕌</div>
+        <div class="pilar-title lang-id">Sinergi TPQ & Santri</div>
+        <div class="pilar-title lang-en">TPQ & Santri Synergy</div>
+        <div class="pilar-subtitle lang-id">Kebun wakaf sebagai bagian dari ekosistem pendidikan dan pemberdayaan santri</div>
+        <div class="pilar-subtitle lang-en">The waqf garden as part of the education and student empowerment ecosystem</div>
+        <p class="pilar-desc lang-id">Integrasi kebun dengan TPQ Darul Mujtaba. Santri dan keluarga TPQ sebagai bagian dari ekosistem program. Dimensi sosial-pendidikan wakaf produktif yang membedakan program ini dari agribisnis biasa.</p>
+        <p class="pilar-desc lang-en">Integration of the garden with TPQ Darul Mujtaba. Students and TPQ families as part of the program ecosystem. The socio-educational dimension of productive waqf that distinguishes this program from ordinary agribusiness.</p>
+      </div>
+
+      <div class="pilar-card">
+        <div class="pilar-num">Pilar 05</div>
+        <div class="pilar-icon">📊</div>
+        <div class="pilar-title lang-id">Transparansi & Akuntabilitas</div>
+        <div class="pilar-title lang-en">Transparency & Accountability</div>
+        <div class="pilar-subtitle lang-id">Tata kelola transparan dengan audit berkala dan pelaporan terstandar</div>
+        <div class="pilar-subtitle lang-en">Transparent governance with regular audits and standardized reporting</div>
+        <p class="pilar-desc lang-id">Setiap pengeluaran terdokumentasi dan terverifikasi. Laporan berkala kepada seluruh pemangku kepentingan. Skema distribusi hasil yang adil dan tertuang dalam akad — berlaku sejak program mencapai titik impas.</p>
+        <p class="pilar-desc lang-en">Every expenditure is documented and verified. Regular reporting to all stakeholders. A fair outcome distribution scheme stipulated in the deed — effective from when the program reaches breakeven.</p>
+      </div>
+
+      <!-- Siklus Tahunan — card ke-6 dalam grid 3-col -->
+      <div class="pilar-card" style="background: linear-gradient(145deg, #2a3c3c, #233333);">
+        <div class="pilar-num lang-id">☀️ Siklus Kebun</div>
+        <div class="pilar-num lang-en">☀️ Garden Cycle</div>
+        <div class="pilar-title lang-id" style="margin-bottom: 1rem;">Siklus Tahunan Kebun Kopi Ngantang</div>
+        <div class="pilar-title lang-en" style="margin-bottom: 1rem;">Annual Cycle — Ngantang Coffee Garden</div>
+        <div class="siklus-months">
+          <div class="month-cell prapanen">Jan</div>
+          <div class="month-cell prapanen">Feb</div>
+          <div class="month-cell prapanen">Mar</div>
+          <div class="month-cell prapanen">Apr</div>
+          <div class="month-cell prapanen">Mei</div>
+          <div class="month-cell panen">Jun</div>
+          <div class="month-cell panen">Jul</div>
+          <div class="month-cell panen">Agu</div>
+          <div class="month-cell pascapanen">Sep</div>
+          <div class="month-cell pascapanen">Okt</div>
+          <div class="month-cell offseason">Nov</div>
+          <div class="month-cell offseason">Des</div>
+        </div>
+        <div class="siklus-legend">
+          <span><span class="legend-dot" style="background: rgba(90,144,128,0.6);"></span><span class="lang-id">Pra-panen</span><span class="lang-en">Pre-harvest</span></span>
+          <span><span class="legend-dot" style="background: rgba(196,144,106,0.8);"></span><span class="lang-id">Panen</span><span class="lang-en">Harvest</span></span>
+          <span><span class="legend-dot" style="background: rgba(90,144,128,0.8);"></span><span class="lang-id">Pascapanen</span><span class="lang-en">Post-harvest</span></span>
+          <span><span class="legend-dot" style="background: rgba(46,64,64,0.8);"></span><span class="lang-id">Off-season</span><span class="lang-en">Off-season</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ROADMAP ══ -->
+<section class="section section--white">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow lang-id">Timeline Pelaksanaan</div>
+      <div class="section-eyebrow lang-en">Implementation Timeline</div>
+      <h2 class="section-h2">
+        <span class="lang-id">Roadmap Program — <em>Fase 0 hingga 4</em></span>
+        <span class="lang-en">Program Roadmap — <em>Phase 0 to 4</em></span>
+      </h2>
+      <p class="section-lead lang-id">Program dirancang dalam 5 fase progresif. Fase 0 adalah titik masuk yang harus diselesaikan sebelum program formal dimulai — dan panen Juni 2026 menjadi tahap validasi awal pelaksanaannya.</p>
+      <p class="section-lead lang-en">The program is designed in 5 progressive phases. Phase 0 is the entry point that must be completed before the formal program begins — and the June 2026 harvest is its first test.</p>
+    </div>
+
+    <div class="roadmap-grid">
+      <div class="roadmap-card card-df">
+        <div class="roadmap-phase">P0</div>
+        <div class="roadmap-status roadmap-status--active lang-id">Aktif Sekarang</div>
+        <div class="roadmap-status roadmap-status--active lang-en">Active Now</div>
+        <div class="roadmap-title lang-id">Stabilisasi & Konsolidasi</div>
+        <div class="roadmap-title lang-en">Stabilization & Consolidation</div>
+        <div class="roadmap-period">Apr – Agu 2026 · <span class="lang-id">5 bulan</span><span class="lang-en">5 months</span></div>
+        <ul class="roadmap-list">
+          <li class="lang-id">Pemetaan pohon produktif (baseline pertama)</li>
+          <li class="lang-en">Productive tree mapping (first baseline)</li>
+          <li class="lang-id">Konfirmasi Field Coordinator & Technical Lead</li>
+          <li class="lang-en">Confirm Field Coordinator & Technical Lead</li>
+          <li class="lang-id">Finalisasi RAB & sistem pencatatan harian</li>
+          <li class="lang-en">Finalize RAB & daily recording system</li>
+          <li class="lang-id">Panen Juni–Agustus 2026</li>
+          <li class="lang-en">June–August 2026 harvest</li>
+        </ul>
+        <span class="roadmap-tag lang-id">⚡ Panen Juni tidak bisa ditunda</span>
+        <span class="roadmap-tag lang-en">⚡ June harvest cannot be delayed</span>
+      </div>
+
+      <div class="roadmap-card card-df">
+        <div class="roadmap-phase">P1</div>
+        <div class="roadmap-status roadmap-status--next lang-id">Berikutnya</div>
+        <div class="roadmap-status roadmap-status--next lang-en">Next</div>
+        <div class="roadmap-title lang-id">Fondasi Operasional</div>
+        <div class="roadmap-title lang-en">Operational Foundation</div>
+        <div class="roadmap-period">Sep 2026 – Mar 2027 · <span class="lang-id">7 bulan</span><span class="lang-en">7 months</span></div>
+        <ul class="roadmap-list">
+          <li class="lang-id">SOP operasional lengkap aktif</li>
+          <li class="lang-en">Full operational SOPs active</li>
+          <li class="lang-id">Soil test & data awal kebun tersedia</li>
+          <li class="lang-en">Soil test & initial garden data available</li>
+          <li class="lang-id">Tim Inti Operasional berfungsi penuh</li>
+          <li class="lang-en">Core Operational Team fully functioning</li>
+          <li class="lang-id">Proposal formal ke RWI (Skenario B)</li>
+          <li class="lang-en">Formal proposal to RWI (Scenario B)</li>
+        </ul>
+        <span class="roadmap-tag lang-id">✅ Fondasi sebelum scale-up</span>
+        <span class="roadmap-tag lang-en">✅ Foundation before scale-up</span>
+      </div>
+
+      <div class="roadmap-card card-df">
+        <div class="roadmap-phase">P2</div>
+        <div class="roadmap-status roadmap-status--next lang-id">Direncanakan</div>
+        <div class="roadmap-status roadmap-status--next lang-en">Planned</div>
+        <div class="roadmap-title lang-id">Konsolidasi & Hilirisasi</div>
+        <div class="roadmap-title lang-en">Consolidation & Value Chain</div>
+        <div class="roadmap-period">Apr 2027 – Des 2028 · <span class="lang-id">21 bulan</span><span class="lang-en">21 months</span></div>
+        <ul class="roadmap-list">
+          <li class="lang-id">Integrasi penuh dengan Bonsari Coffee</li>
+          <li class="lang-en">Full integration with Bonsari Coffee</li>
+          <li class="lang-id">Program Local Champion aktif</li>
+          <li class="lang-en">Local Champion program active</li>
+          <li class="lang-id">Tanaman sela berjalan sebagai buffer income</li>
+          <li class="lang-en">Intercrops running as income buffer</li>
+          <li class="lang-id">Demplot riset berjalan</li>
+          <li class="lang-en">Research demplot running</li>
+        </ul>
+        <span class="roadmap-tag lang-id">📈 Pertumbuhan terukur</span>
+        <span class="roadmap-tag lang-en">📈 Measurable growth</span>
+      </div>
+
+      <div class="roadmap-card card-df">
+        <div class="roadmap-phase">P3</div>
+        <div class="roadmap-status roadmap-status--next lang-id">Direncanakan</div>
+        <div class="roadmap-status roadmap-status--next lang-en">Planned</div>
+        <div class="roadmap-title lang-id">Formalisasi & Pertumbuhan</div>
+        <div class="roadmap-title lang-en">Formalization & Growth</div>
+        <div class="roadmap-period">2029 – 2030 · <span class="lang-id">2 tahun</span><span class="lang-en">2 years</span></div>
+        <ul class="roadmap-list">
+          <li class="lang-id">Model bisnis terbukti & terdokumentasi</li>
+          <li class="lang-en">Business model proven & documented</li>
+          <li class="lang-id">Petani lokal sudah mandiri secara teknis</li>
+          <li class="lang-en">Local farmers technically independent</li>
+          <li class="lang-id">Kopi wakaf Ngantang punya identitas pasar</li>
+          <li class="lang-en">Ngantang waqf coffee has market identity</li>
+          <li class="lang-id">Surplus operasional pertama</li>
+          <li class="lang-en">First operating surplus</li>
+        </ul>
+        <span class="roadmap-tag lang-id">🏆 Profitabilitas dimulai</span>
+        <span class="roadmap-tag lang-en">🏆 Profitability begins</span>
+      </div>
+
+      <div class="roadmap-card card-df">
+        <div class="roadmap-phase">P4</div>
+        <div class="roadmap-status roadmap-status--next lang-id">Jangka Panjang</div>
+        <div class="roadmap-status roadmap-status--next lang-en">Long-term</div>
+        <div class="roadmap-title lang-id">Ekosistem & Dampak Sosial</div>
+        <div class="roadmap-title lang-en">Ecosystem & Social Impact</div>
+        <div class="roadmap-period">2031+ · <span class="lang-id">Jangka Panjang</span><span class="lang-en">Long-term</span></div>
+        <ul class="roadmap-list">
+          <li class="lang-id">Ekosistem kopi-TPQ-komunitas berjalan mandiri</li>
+          <li class="lang-en">Coffee-TPQ-community ecosystem self-sustaining</li>
+          <li class="lang-id">Model dapat direplikasi wakaf lain</li>
+          <li class="lang-en">Model replicable by other waqf programs</li>
+          <li class="lang-id">Aset wakaf terus tumbuh</li>
+          <li class="lang-en">Waqf assets continue to grow</li>
+          <li class="lang-id">Dampak lintas generasi</li>
+          <li class="lang-en">Cross-generational impact</li>
+        </ul>
+        <span class="roadmap-tag lang-id">🌍 Dampak sistemik</span>
+        <span class="roadmap-tag lang-en">🌍 Systemic impact</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TIM PENGELOLA ══ -->
+<section class="section section--tint">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow lang-id">Sumber Daya Manusia</div>
+      <div class="section-eyebrow lang-en">Human Resources</div>
+      <h2 class="section-h2">
+        <span class="lang-id">Tim Pengelola <em>Terpadu</em></span>
+        <span class="lang-en">Integrated <em>Management Team</em></span>
+      </h2>
+      <p class="section-lead lang-id">Program ini dijalankan oleh Tim Pengelola Terpadu — gabungan Tim Inti Operasional yang bekerja harian di kebun dan Advisory Board yang memberikan arah strategis serta dukungan teknis-bisnis.</p>
+      <p class="section-lead lang-en">This program is run by an Integrated Management Team — combining the Core Operational Team working daily in the field and an Advisory Board providing strategic direction and technical-business support.</p>
+    </div>
+
+    <div style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--medium); margin-bottom: 1rem;" class="lang-id">Tim Inti Operasional</div>
+    <div style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--medium); margin-bottom: 1rem;" class="lang-en">Core Operational Team</div>
+
+    <div class="tim-grid">
+      <div class="tim-card card-df">
+        <div class="tim-icon">👤</div>
+        <div class="tim-name">Adib Asrori</div>
+        <div class="tim-role lang-id">Wakif & Koordinator Program</div>
+        <div class="tim-role lang-en">Wakif & Program Coordinator</div>
+        <p class="tim-desc lang-id">Psikolog, arsitek master plan program. Bertanggung jawab atas koordinasi seluruh pemangku kepentingan, pengambilan keputusan strategis, dan liaison dengan RWI. Bertanggung jawab atas visi jangka panjang dan arah strategis program selaku Wakif.</p>
+        <p class="tim-desc lang-en">Psychologist, master plan architect. Responsible for coordinating all stakeholders, strategic decision-making, and liaison with RWI. The program's long-term vision stems from his commitment as the active sole Wakif.</p>
+      </div>
+      <div class="tim-card card-df">
+        <div class="tim-icon">🔧</div>
+        <div class="tim-name lang-id">Technical Lead</div>
+        <div class="tim-name lang-en">Technical Lead</div>
+        <div class="tim-role lang-id">Ahli Teknis Pertanian</div>
+        <div class="tim-role lang-en">Agricultural Technical Expert</div>
+        <p class="tim-desc lang-id">Kandidat: agronomis dan praktisi pertanian organik dengan spesialisasi kopi dan agen hayati. Bertanggung jawab atas rekomendasi teknis, metode rehabilitasi kebun, dan demplot uji coba. Konfirmasi final dalam proses.</p>
+        <p class="tim-desc lang-en">Candidate: agronomist and organic farming practitioner specializing in coffee and biological agents. Responsible for technical recommendations, garden rehabilitation methods, and trial demplot. Final confirmation in progress.</p>
+      </div>
+      <div class="tim-card card-df">
+        <div class="tim-icon">🌿</div>
+        <div class="tim-name lang-id">Field Coordinator</div>
+        <div class="tim-name lang-en">Field Coordinator</div>
+        <div class="tim-role lang-id">Koordinator Lapangan Harian</div>
+        <div class="tim-role lang-en">Daily Field Coordinator</div>
+        <p class="tim-desc lang-id">Bertanggung jawab atas monitoring harian kebun, koordinasi pekerja, dan implementasi SOP di lapangan. Kandidat: petani kopi lokal dengan pemahaman siklus kebun dan ekosistem komunitas Ngantang. Konfirmasi formal dalam proses.</p>
+        <p class="tim-desc lang-en">Responsible for daily garden monitoring, worker coordination, and SOP implementation in the field. Candidate: local coffee farmer with understanding of the garden cycle and Ngantang community ecosystem. Formal confirmation in progress.</p>
+      </div>
+    </div>
+
+    <div style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--medium); margin-bottom: 1rem;" class="lang-id">Advisory Board</div>
+    <div style="font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--medium); margin-bottom: 1rem;" class="lang-en">Advisory Board</div>
+
+    <div class="advisory-grid">
+      <div class="advisory-card card-df">
+        <div class="advisory-icon">💼</div>
+        <div class="advisory-name">Hendy Kurniansyah</div>
+        <div class="advisory-role lang-id">Bisnis & Strategi</div>
+        <div class="advisory-role lang-en">Business & Strategy</div>
+        <p class="advisory-desc lang-id">CEO Nomad House of Idea (est. 2005). Business analytics, strategic planning, project management.</p>
+        <p class="advisory-desc lang-en">CEO Nomad House of Idea (est. 2005). Business analytics, strategic planning, project management.</p>
+      </div>
+      <div class="advisory-card card-df">
+        <div class="advisory-icon">🌍</div>
+        <div class="advisory-name">Muhammad Anwar</div>
+        <div class="advisory-role lang-id">Community & Social Enterprise</div>
+        <div class="advisory-role lang-en">Community & Social Enterprise</div>
+        <p class="advisory-desc lang-id">Socio-creativepreneur, Founder Jelajah Kampung. Fasilitasi komunitas dan kerangka sosial program.</p>
+        <p class="advisory-desc lang-en">Socio-creativepreneur, Founder Jelajah Kampung. Community facilitation and social framework for the program.</p>
+      </div>
+      <div class="advisory-card card-df">
+        <div class="advisory-icon">🌱</div>
+        <div class="advisory-name">Ratna Elmi Sujono</div>
+        <div class="advisory-role lang-id">Agronomi</div>
+        <div class="advisory-role lang-en">Agronomy</div>
+        <p class="advisory-desc lang-id">Spesialisasi agronomi. Dukungan teknis ilmiah untuk program rehabilitasi dan budidaya kebun.</p>
+        <p class="advisory-desc lang-en">Agronomy specialist. Scientific technical support for garden rehabilitation and cultivation program.</p>
+      </div>
+      <div class="advisory-card card-df">
+        <div class="advisory-icon">📚</div>
+        <div class="advisory-name">KEN Sasmito Effendy</div>
+        <div class="advisory-role lang-id">Edukasi & Pemberdayaan</div>
+        <div class="advisory-role lang-en">Education & Empowerment</div>
+        <p class="advisory-desc lang-id">Penyuluhan petani dan program edukasi. Jembatan antara pengetahuan teknis dan praktik petani lokal.</p>
+        <p class="advisory-desc lang-en">Farmer extension and education programs. Bridge between technical knowledge and local farmer practice.</p>
+      </div>
+    </div>
+
+    <div class="gap-kritis">
+      <div class="gap-kritis-icon">⚠️</div>
+      <div>
+        <div class="gap-kritis-title lang-id">Gap Kritis — Tenaga Lapangan Harian</div>
+        <div class="gap-kritis-title lang-en">Critical Gap — Daily Field Personnel</div>
+        <p class="gap-kritis-desc lang-id">Posisi pengendali lapangan harian masih dalam konfirmasi — ini adalah prasyarat mutlak sebelum panen Juni 2026 dimulai. Tiga sumber kandidat sedang dievaluasi: jaringan Technical Lead, jaringan komunitas lokal, dan kandidat internal tim. Target konfirmasi: akhir April 2026.</p>
+        <p class="gap-kritis-desc lang-en">The daily field controller position is still being confirmed — this is an absolute prerequisite before the June 2026 harvest begins. Three candidate sources are being evaluated: Technical Lead network, local community network, and internal team candidates. Confirmation target: end of April 2026.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ DATA & PROYEKSI ══ -->
+<section class="section section--dark">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow section-eyebrow--light lang-id">Data & Proyeksi</div>
+      <div class="section-eyebrow section-eyebrow--light lang-en">Data & Projections</div>
+      <h2 class="section-h2 section-h2--light">
+        <span class="lang-id">Dampak yang <em>Terukur</em></span>
+        <span class="lang-en">Measurable <em>Impact</em></span>
+      </h2>
+      <p class="section-lead section-lead--light lang-id">Program ini berlandaskan data aktual, bukan estimasi optimistis. Rekam jejak 3 tahun menjadi landasan proyeksi yang realistis dan dapat dipertanggungjawabkan.</p>
+      <p class="section-lead section-lead--light lang-en">This program is built on real data — not optimistic estimates. A 3-year track record forms the basis for realistic and accountable projections.</p>
+    </div>
+
+    <div class="data-stats">
+      <div class="data-stat card-df-dark">
+        <div class="data-num">4.918 m²</div>
+        <div class="data-label lang-id">Luas Kebun</div>
+        <div class="data-label lang-en">Garden Area</div>
+        <div class="data-sublabel">Desa Sumberagung, Kec. Ngantang, Kab. Malang</div>
+      </div>
+      <div class="data-stat card-df-dark">
+        <div class="data-num">~915</div>
+        <div class="data-label lang-id">Pohon Produktif</div>
+        <div class="data-label lang-en">Productive Trees</div>
+        <div class="data-sublabel lang-id">Robusta aktif · Pemetaan riil dalam proses</div>
+        <div class="data-sublabel lang-en">Active Robusta · Real mapping in progress</div>
+      </div>
+      <div class="data-stat card-df-dark">
+        <div class="data-num">281 KG</div>
+        <div class="data-label lang-id">Produksi 2025</div>
+        <div class="data-label lang-en">2025 Production</div>
+        <div class="data-sublabel lang-id">+346% dari 2024 (~100 KG)</div>
+        <div class="data-sublabel lang-en">+346% from 2024 (~100 KG)</div>
+      </div>
+      <div class="data-stat card-df-dark">
+        <div class="data-num">Jun–Agu</div>
+        <div class="data-label lang-id">Target Panen 2026</div>
+        <div class="data-label lang-en">2026 Harvest Window</div>
+        <div class="data-sublabel lang-id">3 bulan · Persiapan dimulai April 2026</div>
+        <div class="data-sublabel lang-en">3 months · Preparation starts April 2026</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light);" class="lang-id">Track Record Produksi</div>
+    <div style="margin-bottom: 1rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light);" class="lang-en">Production Track Record</div>
+
+    <div class="track-record card-df-dark" style="justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+      <div class="track-year">
+        <div class="track-bar-wrap"><div class="track-bar" style="height: 8px;"></div></div>
+        <div class="track-val">~0 KG</div>
+        <div class="track-yr">2023</div>
+      </div>
+      <div class="track-year">
+        <div class="track-bar-wrap"><div class="track-bar" style="height: 28px;"></div></div>
+        <div class="track-val">~100 KG</div>
+        <div class="track-yr">2024</div>
+      </div>
+      <div class="track-year">
+        <div class="track-bar-wrap"><div class="track-bar accent" style="height: 80px;"></div></div>
+        <div class="track-val">281 KG</div>
+        <div class="track-yr">2025</div>
+      </div>
+      <div class="track-year">
+        <div class="track-bar-wrap"><div class="track-bar future" style="height: 50px;"></div></div>
+        <div class="track-val lang-id">TBD</div>
+        <div class="track-val lang-en">TBD</div>
+        <div class="track-yr">2026</div>
+      </div>
+    </div>
+
+    <div style="margin-bottom: 1rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light);" class="lang-id">Proyeksi Revenue Tahunan (~915 pohon)</div>
+    <div style="margin-bottom: 1rem; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--light);" class="lang-en">Annual Revenue Projections (~915 trees)</div>
+
+    <div class="proyeksi-grid">
+      <div class="proyeksi-card card-df-dark">
+        <div class="proyeksi-label lang-id">Optimistis</div>
+        <div class="proyeksi-label lang-en">Optimistic</div>
+        <div class="proyeksi-kg">~1.098 KG</div>
+        <div class="proyeksi-rp">Rp 65,9 Jt/th</div>
+        <div class="proyeksi-note lang-id">Manajemen intensif + metode teknis terstandar</div>
+        <div class="proyeksi-note lang-en">Intensive management + standardized technical methods</div>
+      </div>
+      <div class="proyeksi-card card-df-dark" style="border-color: var(--accent); box-shadow: 4px 4px 0px var(--accent);">
+        <div class="proyeksi-label lang-id">Moderat ★</div>
+        <div class="proyeksi-label lang-en">Moderate ★</div>
+        <div class="proyeksi-kg" style="font-size: 2rem;">~640 KG</div>
+        <div class="proyeksi-rp">Rp 38,4 Jt/th</div>
+        <div class="proyeksi-note lang-id">Skenario rekomendasi · benchmark nasional Robusta 0,4 KG/pohon</div>
+        <div class="proyeksi-note lang-en">Recommended scenario · national Robusta benchmark 0.4 KG/tree</div>
+      </div>
+      <div class="proyeksi-card card-df-dark">
+        <div class="proyeksi-label lang-id">Konservatif</div>
+        <div class="proyeksi-label lang-en">Conservative</div>
+        <div class="proyeksi-kg">~366 KG</div>
+        <div class="proyeksi-rp">Rp 22 Jt/th</div>
+        <div class="proyeksi-note lang-id">Harga farm-gate Rp 60.000/KG · kondisi cuaca normal</div>
+        <div class="proyeksi-note lang-en">Farm-gate price IDR 60,000/KG · normal weather conditions</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 0.8rem; font-size: 0.72rem; color: rgba(168,200,188,0.55); font-style: italic;" class="lang-id">* Proyeksi berdasarkan data aktual 2022–2026 dan benchmark nasional. Angka belum termasuk revenue stream tambahan (tanaman sela, P4S, agrowisata).</div>
+    <div style="margin-top: 0.8rem; font-size: 0.72rem; color: rgba(168,200,188,0.55); font-style: italic;" class="lang-en">* Projections based on actual 2022–2026 data and national benchmarks. Figures exclude additional revenue streams (intercrops, P4S, agrotourism).</div>
+  </div>
+</section>
+
+<!-- ══ BONSARI COFFEE ══ -->
+<section class="section section--white">
+  <div class="section-inner">
+    <div class="bonsari-card card-df">
+      <div>
+        <div class="bonsari-eyebrow lang-id">Mitra Rantai Nilai · Hilirisasi</div>
+        <div class="bonsari-eyebrow lang-en">Value Chain Partner · Downstream</div>
+        <h3 class="bonsari-title">
+          <span class="lang-id">Bonsari Coffee — <em>Mitra Hilir</em><br>Kopi Wakaf Ngantang</span>
+          <span class="lang-en">Bonsari Coffee — <em>Downstream Partner</em><br>Ngantang Waqf Coffee</span>
+        </h3>
+        <p class="bonsari-desc lang-id">Bonsari Coffee adalah offtaker dan mitra pengolahan utama kopi wakaf Ngantang. Kopi cherry dari kebun diproses dan didistribusikan melalui jaringan Bonsari — memastikan kualitas dan keterlacakan kopi wakaf dari hulu ke hilir. Bon's Cafe sebagai ujung retail ekosistem ini.</p>
+        <p class="bonsari-desc lang-en">Bonsari Coffee is the primary offtaker and processing partner for Ngantang waqf coffee. Coffee cherry from the garden is processed and distributed through the Bonsari network — ensuring the quality and traceability of waqf coffee from source to cup. Bon's Cafe serves as the retail endpoint of this ecosystem.</p>
+      </div>
+      <div class="bonsari-stats">
+        <div class="bonsari-stat card-df" style="background: var(--bg-tint);">
+          <div class="bonsari-stat-num">3</div>
+          <div class="bonsari-stat-label lang-id">Metode Processing<br>Natural · Washed · Honey</div>
+          <div class="bonsari-stat-label lang-en">Processing Methods<br>Natural · Washed · Honey</div>
+        </div>
+        <div class="bonsari-stat card-df" style="background: var(--bg-tint);">
+          <div class="bonsari-stat-num">100%</div>
+          <div class="bonsari-stat-label lang-id">Keterlacakan<br>Kebun ke Cangkir</div>
+          <div class="bonsari-stat-label lang-en">Traceability<br>Garden to Cup</div>
+        </div>
+        <div class="bonsari-stat card-df" style="background: var(--bg-tint);">
+          <div class="bonsari-stat-num">QC</div>
+          <div class="bonsari-stat-label lang-id">Quality Control<br>Cupping Terstandar</div>
+          <div class="bonsari-stat-label lang-en">Quality Control<br>Standardized Cupping</div>
+        </div>
+        <div class="bonsari-stat card-df" style="background: var(--bg-tint);">
+          <div class="bonsari-stat-num">☕</div>
+          <div class="bonsari-stat-label lang-id">Bon's Cafe<br>Ujung Retail Ekosistem</div>
+          <div class="bonsari-stat-label lang-en">Bon's Cafe<br>Ecosystem Retail Endpoint</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AKUNTABILITAS ══ -->
+<section class="section section--tint">
+  <div class="section-inner">
+    <div class="section-header">
+      <div class="section-eyebrow lang-id">Tata Kelola Program</div>
+      <div class="section-eyebrow lang-en">Program Governance</div>
+      <h2 class="section-h2">
+        <span class="lang-id">Akuntabilitas & <em>Transparansi</em></span>
+        <span class="lang-en">Accountability & <em>Transparency</em></span>
+      </h2>
+      <p class="section-lead lang-id">Akuntabilitas program dijamin melalui sistem pelaporan yang terstruktur. Tata kelola program ini dirancang untuk memastikan setiap rupiah aset wakaf dapat dipertanggungjawabkan kepada seluruh pemangku kepentingan.</p>
+      <p class="section-lead lang-en">Trust is built through systems, not promises. This program's governance is designed to ensure every rupiah of waqf assets is accountable to all stakeholders.</p>
+    </div>
+
+    <div class="akun-grid">
+      <div class="akun-card card-df">
+        <div class="akun-icon">📋</div>
+        <div class="akun-title lang-id">Sistem Pelaporan Berkala</div>
+        <div class="akun-title lang-en">Regular Reporting System</div>
+        <div class="akun-subtitle lang-id">Laporan operasional dan keuangan yang terstruktur dan terjadwal</div>
+        <div class="akun-subtitle lang-en">Structured and scheduled operational and financial reports</div>
+        <ul class="akun-list">
+          <li class="lang-id">Catatan harian kebun via sistem digital (dimulai Juni 2026)</li>
+          <li class="lang-en">Daily garden records via digital system (starting June 2026)</li>
+          <li class="lang-id">Laporan bulanan kepada Wakif dan RWI</li>
+          <li class="lang-en">Monthly reports to Wakif and RWI</li>
+          <li class="lang-id">Evaluasi kuartalan dengan seluruh pemangku kepentingan</li>
+          <li class="lang-en">Quarterly evaluation with all stakeholders</li>
+          <li class="lang-id">Laporan tahunan publik untuk transparansi wakaf</li>
+          <li class="lang-en">Public annual report for waqf transparency</li>
+        </ul>
+      </div>
+
+      <div class="akun-card card-df">
+        <div class="akun-icon">📊</div>
+        <div class="akun-title lang-id">Baseline Data & M&E</div>
+        <div class="akun-title lang-en">Baseline Data & M&E</div>
+        <div class="akun-subtitle lang-id">Pengukuran berbasis data — bukan asumsi</div>
+        <div class="akun-subtitle lang-en">Data-based measurement — not assumptions</div>
+        <ul class="akun-list">
+          <li class="lang-id">Pemetaan pohon produktif (jumlah riil, kondisi per pohon)</li>
+          <li class="lang-en">Productive tree mapping (real count, condition per tree)</li>
+          <li class="lang-id">Soil test: pH, NPK, EC — diukur sebelum setiap siklus pemupukan</li>
+          <li class="lang-en">Soil test: pH, NPK, EC — measured before each fertilization cycle</li>
+          <li class="lang-id">Dokumentasi visual setiap aktivitas lapangan</li>
+          <li class="lang-en">Visual documentation of every field activity</li>
+          <li class="lang-id">Target dan capaian dibandingkan secara transparan</li>
+          <li class="lang-en">Targets and achievements compared transparently</li>
+        </ul>
+      </div>
+
+      <div class="akun-card card-df">
+        <div class="akun-icon">🤝</div>
+        <div class="akun-title lang-id">Struktur Kemitraan</div>
+        <div class="akun-title lang-en">Partnership Structure</div>
+        <div class="akun-subtitle lang-id">Peran dan tanggung jawab yang jelas antar pihak</div>
+        <div class="akun-subtitle lang-en">Clear roles and responsibilities between parties</div>
+        <ul class="akun-list">
+          <li class="lang-id">Wakif: pemilik aset, pengambil keputusan strategis</li>
+          <li class="lang-en">Wakif: asset owner, strategic decision-maker</li>
+          <li class="lang-id">RWI: Nadzir formal, penanggung biaya operasional (Fase 1+)</li>
+          <li class="lang-en">RWI: Formal Nazhir, operational cost bearer (Phase 1+)</li>
+          <li class="lang-id">Tim Wakif: pelaksana harian dan teknis program</li>
+          <li class="lang-en">Wakif Team: daily and technical program implementers</li>
+          <li class="lang-id">Bonsari Coffee: mitra hilirisasi dan pasca-panen</li>
+          <li class="lang-en">Bonsari Coffee: downstream and post-harvest partner</li>
+        </ul>
+      </div>
+
+      <div class="akun-card card-df">
+        <div class="akun-icon">🛡️</div>
+        <div class="akun-title lang-id">Manajemen Risiko</div>
+        <div class="akun-title lang-en">Risk Management</div>
+        <div class="akun-subtitle lang-id">Proteksi terhadap risiko yang sudah teridentifikasi</div>
+        <div class="akun-subtitle lang-en">Protection against identified risks</div>
+        <ul class="akun-list">
+          <li class="lang-id">Dokumentasi semua keputusan teknis dan keuangan</li>
+          <li class="lang-en">Documentation of all technical and financial decisions</li>
+          <li class="lang-id">Konfirmasi metode teknis sebelum penerapan masif</li>
+          <li class="lang-en">Technical method confirmation before mass implementation</li>
+          <li class="lang-id">Tidak ada pengeluaran besar tanpa RAB yang disetujui</li>
+          <li class="lang-en">No major expenditure without approved RAB</li>
+          <li class="lang-id">Evaluasi berkala kondisi kebun vs target setiap fase</li>
+          <li class="lang-en">Regular evaluation of garden conditions vs. targets each phase</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Skema Distribusi -->
+    <div class="distribusi-wrap">
+      <div class="distribusi-title lang-id">📌 Skema Distribusi Hasil — Akad MOU</div>
+      <div class="distribusi-title lang-en">📌 Outcome Distribution Scheme — MOU Deed</div>
+      <div class="distribusi-subtitle lang-id">Pembagian surplus pasca-BEP. Sebelum BEP, seluruh hasil dikembalikan ke operasional program.</div>
+      <div class="distribusi-subtitle lang-en">Post-breakeven surplus distribution. Before BEP, all results are returned to program operations.</div>
+      <div class="distribusi-grid">
+        <div class="distribusi-item">
+          <div class="distribusi-pct">10%</div>
+          <div class="distribusi-name">Nazhir</div>
+          <div class="distribusi-desc lang-id">RWI · pengelola formal</div>
+          <div class="distribusi-desc lang-en">RWI · formal manager</div>
+        </div>
+        <div class="distribusi-item">
+          <div class="distribusi-pct">30%</div>
+          <div class="distribusi-name lang-id">Wakif</div>
+          <div class="distribusi-name lang-en">Wakif</div>
+          <div class="distribusi-desc lang-id">Pengembalian aset wakaf</div>
+          <div class="distribusi-desc lang-en">Waqf asset return</div>
+        </div>
+        <div class="distribusi-item">
+          <div class="distribusi-pct">30%</div>
+          <div class="distribusi-name lang-id">Mauquf Alaih</div>
+          <div class="distribusi-name lang-en">Mauquf Alaih</div>
+          <div class="distribusi-desc lang-id">TPQ & penerima manfaat</div>
+          <div class="distribusi-desc lang-en">TPQ & beneficiaries</div>
+        </div>
+        <div class="distribusi-item">
+          <div class="distribusi-pct">30%</div>
+          <div class="distribusi-name lang-id">Dana Pengembangan</div>
+          <div class="distribusi-name lang-en">Development Fund</div>
+          <div class="distribusi-desc lang-id">Reinvestasi & pertumbuhan</div>
+          <div class="distribusi-desc lang-en">Reinvestment & growth</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-brand">Wakaf Produktif · Kebun Kopi Ngantang</div>
+    <nav class="footer-links">
+      <a href="program.html" class="lang-id">Program</a>
+      <a href="program.html" class="lang-en">Program</a>
+      <a href="belajar.html"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a>
+      <a href="living-lab.html">Living Lab</a>
+      <a href="latar-belakang.html"><span class="lang-id">Kisah</span><span class="lang-en">Story</span></a>
+      <a href="kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a>
+    </nav>
+    <div class="footer-meta">
+      <div class="lang-id">Lembaga Nazir: Rumah Wakaf Indonesia</div>
+      <div class="lang-en">Nazhir Institution: Rumah Wakaf Indonesia</div>
+      <div>Ngantang, Malang, Jawa Timur</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+  const INLINE_BLOCK_TAGS = new Set(['a']);
+  function getDisplayType(el) {
+    const tag = el.tagName.toLowerCase();
+    if (INLINE_TAGS.has(tag))       return 'inline';
+    if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+    return 'block';
+  }
+  function setLang(lang) {
+    const hide = lang === 'id' ? 'en' : 'id';
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('a[href]').forEach(function(a) {
+      var h = a.getAttribute('href');
+      if (!h || h.indexOf('http') === 0 || h.indexOf('#') === 0 || h.indexOf('mailto') === 0) return;
+      a.setAttribute('href', h.split('?')[0] + '?lang=' + lang);
+    });
+    document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+    document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+    document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  }
+  document.addEventListener('DOMContentLoaded', function() {
+    setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  });
+</script>
+
+</body>
+</html>

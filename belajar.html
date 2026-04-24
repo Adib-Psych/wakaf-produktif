@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruang Belajar — Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Platform pembelajaran terbuka dan gratis: modul tentang pertanian berkelanjutan, kewirausahaan sosial, dan riset berbasis komunitas.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+/* ── Lang visibility (JS-controlled) ── */
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════
+   NAVBAR
+══════════════════════════════════ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark);
+  border-bottom: 1px solid rgba(168,200,188,0.1);
+}
+.navbar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; padding: 0 2rem;
+  max-width: 1200px; margin: 0 auto;
+}
+.navbar-logo {
+  display: flex; align-items: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 800; color: #e8f4f0;
+  text-decoration: none;
+}
+.brand-tag {
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  box-shadow: 2px 2px 0px var(--accent);
+  background: linear-gradient(135deg, rgba(90,144,128,0.22), rgba(90,144,128,0.1));
+  color: #e8f4f0; white-space: nowrap;
+}
+.navbar-right { display: flex; align-items: center; gap: 0.5rem; }
+.navbar-nav { display: flex; align-items: center; gap: 0.1rem; list-style: none; }
+.navbar-nav li a {
+  font-size: 0.78rem; font-weight: 500; color: #a8c8bc;
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.navbar-nav li a:hover { color: #e8f4f0; background: rgba(255,255,255,0.07); }
+.navbar-nav li a.active { color: #e8f4f0; font-weight: 700; }
+.nav-soon {
+  font-size: 0.78rem; font-weight: 500;
+  color: rgba(168,200,188,0.35);
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  cursor: default; user-select: none; display: inline-block;
+}
+.btn-nav-cta {
+  background: var(--accent); color: #fff;
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem;
+}
+.nav-soon-cta {
+  background: rgba(196,144,106,0.25); color: rgba(255,255,255,0.3);
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem; cursor: default; user-select: none;
+}
+.lang-btn {
+  background: none; border: 1px solid rgba(168,200,188,0.35);
+  color: #a8c8bc; padding: 0.22rem 0.6rem;
+  border-radius: 5px; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.lang-btn:hover, .lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.rwi-nav-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px; padding: 0.35rem 0.7rem 0.35rem 0.45rem;
+  flex-shrink: 0;
+}
+.rwi-logo-box {
+  width: 96px; height: 48px; border-radius: 6px;
+  background: #fff; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; overflow: hidden;
+}
+.rwi-logo-box img { width: 96px; height: 48px; object-fit: contain; display: block; }
+.rwi-nav-text { line-height: 1.3; }
+.rwi-nav-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(168,200,188,0.55); }
+.rwi-nav-name  { font-size: 0.75rem; font-weight: 700; color: #d0e8e0; white-space: nowrap; }
+
+/* ══════════════════════════════════
+   PAGE HERO
+══════════════════════════════════ */
+.page-hero {
+  background: var(--dark);
+  padding: 4rem 2rem 3.5rem;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 45% 60% at 80% 40%, rgba(90,144,128,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 40% at 10% 80%, rgba(196,144,106,0.08) 0%, transparent 55%);
+  pointer-events: none;
+}
+.page-hero-inner {
+  max-width: 1200px; margin: 0 auto; position: relative;
+}
+.page-hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(90,144,128,0.18);
+  border: 1px solid rgba(168,200,188,0.28);
+  color: var(--light);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.85rem; border-radius: 20px;
+  margin-bottom: 1.2rem;
+}
+.badge-dot { width: 5px; height: 5px; background: var(--medium); border-radius: 50%; animation: blink 2.2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.35} }
+.page-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+  font-weight: 700; color: #e8f4f0;
+  line-height: 1.28; margin-bottom: 1.1rem;
+}
+.page-hero h1 em { font-style: italic; color: var(--accent); }
+.page-hero-lead {
+  font-family: 'Lora', serif;
+  font-size: 1rem; line-height: 1.8;
+  color: rgba(168,200,188,0.8);
+  max-width: 900px;
+}
+.hero-tags {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  margin-top: 1.8rem;
+}
+.hero-tag {
+  background: rgba(90,144,128,0.15);
+  border: 1px solid rgba(168,200,188,0.22);
+  color: var(--light);
+  font-size: 0.7rem; font-weight: 600;
+  padding: 0.25rem 0.75rem; border-radius: 20px;
+}
+
+/* ══════════════════════════════════
+   STATS STRIP
+══════════════════════════════════ */
+.stats-strip {
+  background: var(--bg-tint);
+  border-bottom: 1px solid var(--bg-deep);
+  padding: 2rem;
+}
+.stats-strip-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+.stat-item { text-align: center; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.4rem; font-weight: 300; font-style: italic;
+  color: var(--accent); line-height: 1;
+}
+.stat-label {
+  font-size: 0.72rem; color: var(--muted); font-weight: 500;
+  margin-top: 0.3rem;
+}
+
+/* ══════════════════════════════════
+   SECTION INTRO
+══════════════════════════════════ */
+.section-intro {
+  padding: 3rem 2rem 1.5rem;
+}
+.section-intro-inner {
+  max-width: 1200px; margin: 0 auto;
+}
+.section-label {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.4rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.2rem, 2.5vw, 1.6rem);
+  color: var(--dark); margin-bottom: 0.6rem;
+}
+.section-title em { font-style: italic; color: var(--accent); }
+.section-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.92rem; color: var(--muted); line-height: 1.8;
+}
+
+/* ══════════════════════════════════
+   MODULE GRID
+══════════════════════════════════ */
+.modules-section { padding: 1.5rem 2rem 4rem; }
+.modules-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.4rem;
+}
+
+.module-card {
+  background: linear-gradient(155deg, #f6fdfb 0%, #edf8f4 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 14px;
+  padding: 1.4rem;
+  transition: box-shadow 0.14s var(--ease), transform 0.14s var(--ease);
+  display: flex; flex-direction: column;
+}
+.module-card:hover {
+  box-shadow: 6px 6px 0px var(--accent);
+  transform: translate(-1px, -1px);
+}
+.module-card.coming-soon {
+  opacity: 0.55;
+  box-shadow: 4px 4px 0px rgba(196,144,106,0.35);
+  border-color: rgba(196,144,106,0.4);
+}
+
+.module-icon {
+  font-size: 1.6rem; margin-bottom: 0.9rem;
+}
+.module-track {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.4rem;
+}
+.module-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.8rem; font-style: italic;
+  color: var(--muted); margin-bottom: 0.25rem;
+}
+.module-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--dark); line-height: 1.35;
+  margin-bottom: 0.7rem;
+}
+.module-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.84rem; color: var(--muted);
+  line-height: 1.7; flex: 1;
+  margin-bottom: 1rem;
+}
+.module-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-top: auto; padding-top: 0.8rem;
+  border-top: 1px solid rgba(196,144,106,0.18);
+}
+.module-level {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.65rem; font-weight: 700;
+  padding: 0.18rem 0.55rem; border-radius: 20px;
+}
+.level-dasar { background: rgba(90,144,128,0.12); color: var(--medium); }
+.level-menengah { background: rgba(196,144,106,0.12); color: var(--accent); }
+.level-lanjut { background: rgba(46,64,64,0.1); color: var(--dark); }
+
+.module-duration {
+  font-size: 0.68rem; color: var(--muted); font-weight: 500;
+}
+.module-badge {
+  display: inline-block;
+  font-size: 0.6rem; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  background: rgba(168,200,188,0.2); color: var(--muted);
+  padding: 0.15rem 0.5rem; border-radius: 4px;
+  margin-top: 0.3rem;
+}
+.module-badge.soon { background: rgba(196,144,106,0.1); color: var(--accent); }
+
+/* ══════════════════════════════════
+   TRACK SECTION HEADERS
+══════════════════════════════════ */
+.track-header {
+  max-width: 1200px; margin: 2.5rem auto 0.8rem;
+  padding: 0 2rem;
+  display: flex; align-items: center; gap: 0.8rem;
+}
+.track-header:first-child { margin-top: 0; }
+.track-line {
+  flex: 1; height: 1px; background: var(--bg-deep);
+}
+.track-label-pill {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--bg-tint);
+  border: 1px solid var(--bg-deep);
+  color: var(--muted);
+  padding: 0.22rem 0.8rem; border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ══════════════════════════════════
+   APPROACH SECTION
+══════════════════════════════════ */
+.approach-section {
+  background: var(--dark);
+  padding: 3.5rem 2rem;
+  position: relative; overflow: hidden;
+}
+.approach-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 50% 70% at 90% 50%, rgba(90,144,128,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+.approach-inner {
+  max-width: 1200px; margin: 0 auto; position: relative;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start;
+}
+.approach-text {}
+.approach-label {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.8rem;
+}
+.approach-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  color: #e8f4f0; line-height: 1.3;
+  margin-bottom: 1rem;
+}
+.approach-title em { font-style: italic; color: var(--accent); }
+.approach-prose {
+  font-family: 'Lora', serif;
+  font-size: 0.93rem; line-height: 1.85;
+  color: rgba(168,200,188,0.75);
+}
+.approach-prose + .approach-prose { margin-top: 0.8rem; }
+.approach-pull {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.05rem; color: var(--accent);
+  border-left: 3px solid var(--accent);
+  padding: 0.8rem 1.2rem;
+  margin: 1.4rem 0;
+  background: rgba(196,144,106,0.07);
+  border-radius: 0 8px 8px 0;
+}
+.approach-cards { display: flex; flex-direction: column; gap: 1rem; }
+.approach-card {
+  background: linear-gradient(145deg, #354a4a, #2a3c3c);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 12px; padding: 1.2rem 1.4rem;
+}
+.approach-card-icon { font-size: 1.4rem; margin-bottom: 0.5rem; }
+.approach-card-title {
+  font-size: 0.88rem; font-weight: 700;
+  color: #e8f4f0; margin-bottom: 0.4rem;
+}
+.approach-card-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.82rem; color: rgba(168,200,188,0.7); line-height: 1.65;
+}
+
+/* ══════════════════════════════════
+   TARGET AUDIENCE
+══════════════════════════════════ */
+.audience-section {
+  padding: 3rem 2rem 3.5rem;
+  background: var(--bg-tint);
+  border-top: 1px solid var(--bg-deep);
+}
+.audience-inner {
+  max-width: 1200px; margin: 0 auto;
+}
+.audience-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1.2rem; margin-top: 2rem;
+}
+.audience-card {
+  background: #fff;
+  border: 1px solid var(--bg-deep);
+  border-radius: 12px;
+  padding: 1.2rem; text-align: center;
+}
+.audience-emoji { font-size: 2rem; margin-bottom: 0.6rem; }
+.audience-role {
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.35rem;
+}
+.audience-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+}
+
+/* ══════════════════════════════════
+   CTA
+══════════════════════════════════ */
+.cta-section {
+  background: var(--dark);
+  padding: 3rem 2rem; text-align: center;
+}
+.cta-inner { max-width: 600px; margin: 0 auto; }
+.cta-eyebrow {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.7rem;
+}
+.cta-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem; color: #e8f4f0;
+  margin-bottom: 0.8rem;
+}
+.cta-title em { font-style: italic; color: var(--accent); }
+.cta-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.9rem; color: rgba(168,200,188,0.75);
+  line-height: 1.75; margin-bottom: 1.8rem;
+}
+.cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.btn-primary {
+  background: var(--accent); color: #fff;
+  padding: 0.7rem 1.6rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 700;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid rgba(168,200,188,0.4);
+  color: var(--light);
+  padding: 0.7rem 1.6rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 600;
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-outline:hover { border-color: var(--light); color: #e8f4f0; }
+.btn-disabled {
+  background: rgba(196,144,106,0.15);
+  color: rgba(255,255,255,0.25);
+  padding: 0.7rem 1.6rem; border-radius: 8px;
+  font-size: 0.85rem; font-weight: 700;
+  cursor: default;
+}
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+.footer {
+  background: #1a2e2e;
+  padding: 1.8rem 2rem;
+}
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+}
+.footer-verse {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 0.78rem;
+  color: rgba(168,200,188,0.45); line-height: 1.7;
+  max-width: 440px;
+}
+.footer-brand {
+  font-size: 0.75rem; font-weight: 800;
+  color: rgba(168,200,188,0.5); margin-bottom: 0.2rem;
+}
+.footer-meta {
+  font-size: 0.68rem; color: rgba(168,200,188,0.3);
+  line-height: 1.6; text-align: right;
+}
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media (max-width: 900px) {
+  .modules-inner { grid-template-columns: repeat(2, 1fr); }
+  .approach-inner { grid-template-columns: 1fr; gap: 2rem; }
+  .audience-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats-strip-inner { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .navbar-nav { display: none; }
+  .rwi-nav-badge { display: none; }
+  .modules-inner { grid-template-columns: 1fr; }
+  .audience-grid { grid-template-columns: 1fr 1fr; }
+  .page-hero { padding: 2.5rem 1.2rem 2rem; }
+  .modules-section { padding: 1rem 1.2rem 3rem; }
+  .footer-inner { flex-direction: column; }
+  .footer-meta { text-align: left; }
+}
+
+/* ── Paragraf — rata kiri kanan (justified) ── */
+p,
+.page-hero-lead,
+.section-desc,
+.module-desc,
+.approach-prose,
+.approach-card-desc,
+.audience-desc,
+.cta-desc,
+.footer-inner .footer-verse { text-align: justify; }
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <span class="brand-tag">Wakaf Produktif Kebun Kopi</span>
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="program.html">Program</a></li>
+          <li><a href="belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="living-lab.html">Living Lab</a></li>
+          <li><a href="latar-belakang.html"><span class="lang-id">Kisah</span><span class="lang-en">Story</span></a></li>
+          <li><a href="kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+          <li><span class="btn-nav-cta nav-soon-cta"><span class="lang-id">Bergabung →</span><span class="lang-en">Join →</span></span></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <div class="rwi-nav-badge">
+        <div class="rwi-logo-box">
+          <img src="RWI.png" alt="Rumah Wakaf Indonesia">
+        </div>
+        <div class="rwi-nav-text">
+          <div class="rwi-nav-label lang-id">Lembaga Nazir</div>
+          <div class="rwi-nav-label lang-en">Waqf Institution</div>
+          <div class="rwi-nav-name">Rumah Wakaf Indonesia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ PAGE HERO ══ -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-eyebrow">
+      <span class="badge-dot"></span>
+      <span class="lang-id">Platform Pembelajaran Terbuka</span>
+      <span class="lang-en">Open Learning Platform</span>
+    </div>
+    <h1>
+      <span class="lang-id">Ruang Belajar, <em>Terbuka untuk Semua</em></span>
+      <span class="lang-en">A Learning Space, <em>Open to Everyone</em></span>
+    </h1>
+    <p class="page-hero-lead lang-id">
+      Pengetahuan tentang kebun, kopi, dan wakaf produktif ini tidak boleh berhenti di satu tempat. Mulai dari petani muda, peneliti, hingga siapapun yang ingin memahami bagaimana sebidang tanah bisa menjadi gerakan — ruang ini untuk semua.
+    </p>
+    <p class="page-hero-lead lang-en">
+      Knowledge about gardens, coffee, and productive waqf must not stay in one place. From young farmers to researchers, to anyone who wants to understand how a plot of land can become a movement — this space is for everyone.
+    </p>
+    <div class="hero-tags">
+      <span class="hero-tag lang-id">☕ Pertanian Berkelanjutan</span>
+      <span class="hero-tag lang-en">☕ Sustainable Agriculture</span>
+      <span class="hero-tag lang-id">🌱 Kewirausahaan Sosial</span>
+      <span class="hero-tag lang-en">🌱 Social Entrepreneurship</span>
+      <span class="hero-tag lang-id">📊 Riset Berbasis Komunitas</span>
+      <span class="hero-tag lang-en">📊 Community-Based Research</span>
+      <span class="hero-tag lang-id">🤝 Wakaf Produktif</span>
+      <span class="hero-tag lang-en">🤝 Productive Waqf</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<div class="stats-strip">
+  <div class="stats-strip-inner">
+    <div class="stat-item">
+      <div class="stat-num">13+</div>
+      <div class="stat-label lang-id">Modul Pembelajaran</div>
+      <div class="stat-label lang-en">Learning Modules</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">3</div>
+      <div class="stat-label lang-id">Trek Kurikulum</div>
+      <div class="stat-label lang-en">Curriculum Tracks</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">100%</div>
+      <div class="stat-label lang-id">Gratis & Terbuka</div>
+      <div class="stat-label lang-en">Free & Open Access</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">ID / EN</div>
+      <div class="stat-label lang-id">Dua Bahasa</div>
+      <div class="stat-label lang-en">Bilingual</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TRACK 1: KEBUN & KOPI ══ -->
+<div class="track-header">
+  <div class="track-line"></div>
+  <div class="track-label-pill lang-id">🌿 Trek 1 — Kebun & Kopi</div>
+  <div class="track-label-pill lang-en">🌿 Track 1 — Garden & Coffee</div>
+  <div class="track-line"></div>
+</div>
+
+<section class="modules-section" style="padding-top: 1rem; padding-bottom: 1rem;">
+  <div class="modules-inner">
+
+    <!-- Modul 1 -->
+    <div class="module-card">
+      <div class="module-icon">🌱</div>
+      <div class="module-track lang-id">Trek Kebun & Kopi</div>
+      <div class="module-track lang-en">Garden & Coffee Track</div>
+      <div class="module-num lang-id">Modul 01</div>
+      <div class="module-num lang-en">Module 01</div>
+      <div class="module-title lang-id">Mengenal Kopi Robusta Ngantang</div>
+      <div class="module-title lang-en">Understanding Ngantang Robusta Coffee</div>
+      <p class="module-desc lang-id">Kenali karakter unik Robusta lereng Malang — dari ekosistem vulkanik, ketinggian ideal, hingga cita rasa yang membedakannya dari kopi-kopi lain di Indonesia.</p>
+      <p class="module-desc lang-en">Discover the unique character of Malang slope Robusta — from its volcanic ecosystem and ideal altitude to the flavor profile that sets it apart from other Indonesian coffees.</p>
+      <div class="module-meta">
+        <span class="module-level level-dasar lang-id">● Dasar</span>
+        <span class="module-level level-dasar lang-en">● Beginner</span>
+        <span class="module-duration lang-id">~45 menit</span>
+        <span class="module-duration lang-en">~45 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 2 -->
+    <div class="module-card">
+      <div class="module-icon">🌦️</div>
+      <div class="module-track lang-id">Trek Kebun & Kopi</div>
+      <div class="module-track lang-en">Garden & Coffee Track</div>
+      <div class="module-num lang-id">Modul 02</div>
+      <div class="module-num lang-en">Module 02</div>
+      <div class="module-title lang-id">Siklus Musim dan Ritme Panen</div>
+      <div class="module-title lang-en">Seasonal Cycles and Harvest Rhythms</div>
+      <p class="module-desc lang-id">Bagaimana hujan, suhu, dan cahaya matahari menentukan waktu berbunga dan panen. Panduan kalender tahunan kebun kopi Ngantang beserta strategi adaptasi iklim.</p>
+      <p class="module-desc lang-en">How rain, temperature, and sunlight determine flowering and harvest time. An annual calendar guide for Ngantang coffee gardens and climate adaptation strategies.</p>
+      <div class="module-meta">
+        <span class="module-level level-dasar lang-id">● Dasar</span>
+        <span class="module-level level-dasar lang-en">● Beginner</span>
+        <span class="module-duration lang-id">~60 menit</span>
+        <span class="module-duration lang-en">~60 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 3 -->
+    <div class="module-card">
+      <div class="module-icon">✋</div>
+      <div class="module-track lang-id">Trek Kebun & Kopi</div>
+      <div class="module-track lang-en">Garden & Coffee Track</div>
+      <div class="module-num lang-id">Modul 03</div>
+      <div class="module-num lang-en">Module 03</div>
+      <div class="module-title lang-id">Praktik Pertanian Regeneratif</div>
+      <div class="module-title lang-en">Regenerative Farming Practices</div>
+      <p class="module-desc lang-id">Dari pemupukan organik, manajemen tanah berkelanjutan, hingga pengurangan limbah pasca-panen. Standar pertanian yang diterapkan di Bonsari Coffee Farm.</p>
+      <p class="module-desc lang-en">From organic fertilization and sustainable soil management to post-harvest waste reduction. The farming standards applied at Bonsari Coffee Farm.</p>
+      <div class="module-meta">
+        <span class="module-level level-menengah lang-id">● Menengah</span>
+        <span class="module-level level-menengah lang-en">● Intermediate</span>
+        <span class="module-duration lang-id">~90 menit</span>
+        <span class="module-duration lang-en">~90 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 4 -->
+    <div class="module-card">
+      <div class="module-icon">☕</div>
+      <div class="module-track lang-id">Trek Kebun & Kopi</div>
+      <div class="module-track lang-en">Garden & Coffee Track</div>
+      <div class="module-num lang-id">Modul 04</div>
+      <div class="module-num lang-en">Module 04</div>
+      <div class="module-title lang-id">Dari Biji Hijau ke Cangkir</div>
+      <div class="module-title lang-en">From Green Bean to Cup</div>
+      <p class="module-desc lang-id">Perjalanan biji kopi — sortasi, wet/dry processing, pengeringan, roasting, hingga penyajian. Memahami rantai nilai kopi untuk meningkatkan pendapatan petani.</p>
+      <p class="module-desc lang-en">The journey of a coffee bean — sorting, wet/dry processing, drying, roasting, and brewing. Understanding the coffee value chain to improve farmer income.</p>
+      <div class="module-meta">
+        <span class="module-level level-menengah lang-id">● Menengah</span>
+        <span class="module-level level-menengah lang-en">● Intermediate</span>
+        <span class="module-duration lang-id">~75 menit</span>
+        <span class="module-duration lang-en">~75 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 5 (Coming Soon) -->
+    <div class="module-card coming-soon">
+      <div class="module-icon">🔬</div>
+      <div class="module-track lang-id">Trek Kebun & Kopi</div>
+      <div class="module-track lang-en">Garden & Coffee Track</div>
+      <div class="module-num lang-id">Modul 05</div>
+      <div class="module-num lang-en">Module 05</div>
+      <div class="module-title lang-id">Analisis Tanah & Nutrisi Tanaman</div>
+      <div class="module-title lang-en">Soil Analysis & Plant Nutrition</div>
+      <p class="module-desc lang-id">Membaca hasil analisis tanah, memahami pH optimal, dan merancang program pemupukan berbasis data. Kolaborasi dengan lembaga riset lokal.</p>
+      <p class="module-desc lang-en">Reading soil analysis results, understanding optimal pH, and designing data-based fertilization programs. In collaboration with local research institutions.</p>
+      <div class="module-meta">
+        <span class="module-level level-lanjut lang-id">● Lanjut</span>
+        <span class="module-level level-lanjut lang-en">● Advanced</span>
+        <span class="module-badge soon lang-id">Segera Hadir</span>
+        <span class="module-badge soon lang-en">Coming Soon</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ TRACK 2: WAKAF & EKONOMI SOSIAL ══ -->
+<div class="track-header">
+  <div class="track-line"></div>
+  <div class="track-label-pill lang-id">🤝 Trek 2 — Wakaf & Ekonomi Sosial</div>
+  <div class="track-label-pill lang-en">🤝 Track 2 — Waqf & Social Economy</div>
+  <div class="track-line"></div>
+</div>
+
+<section class="modules-section" style="padding-top: 1rem; padding-bottom: 1rem;">
+  <div class="modules-inner">
+
+    <!-- Modul 6 -->
+    <div class="module-card">
+      <div class="module-icon">🕌</div>
+      <div class="module-track lang-id">Trek Wakaf & Ekonomi Sosial</div>
+      <div class="module-track lang-en">Waqf & Social Economy Track</div>
+      <div class="module-num lang-id">Modul 06</div>
+      <div class="module-num lang-en">Module 06</div>
+      <div class="module-title lang-id">Memahami Wakaf Produktif</div>
+      <div class="module-title lang-en">Understanding Productive Waqf</div>
+      <p class="module-desc lang-id">Wakaf bukan sekadar tanah atau bangunan ibadah. Kenali sejarah, landasan fiqih, dan transformasi wakaf produktif modern sebagai instrumen ekonomi Islam yang kuat.</p>
+      <p class="module-desc lang-en">Waqf is more than land or worship buildings. Explore the history, fiqh foundations, and transformation of modern productive waqf as a powerful Islamic economic instrument.</p>
+      <div class="module-meta">
+        <span class="module-level level-dasar lang-id">● Dasar</span>
+        <span class="module-level level-dasar lang-en">● Beginner</span>
+        <span class="module-duration lang-id">~60 menit</span>
+        <span class="module-duration lang-en">~60 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 7 -->
+    <div class="module-card">
+      <div class="module-icon">📋</div>
+      <div class="module-track lang-id">Trek Wakaf & Ekonomi Sosial</div>
+      <div class="module-track lang-en">Waqf & Social Economy Track</div>
+      <div class="module-num lang-id">Modul 07</div>
+      <div class="module-num lang-en">Module 07</div>
+      <div class="module-title lang-id">Tata Kelola Nazir yang Transparan</div>
+      <div class="module-title lang-en">Transparent Nazir Governance</div>
+      <p class="module-desc lang-id">Bagaimana lembaga nazir seperti Rumah Wakaf Indonesia mengelola aset wakaf, melaporkan keuangan, dan memastikan manfaat sampai ke mauquf 'alaih secara berkelanjutan.</p>
+      <p class="module-desc lang-en">How nazir institutions like Rumah Wakaf Indonesia manage waqf assets, report finances, and ensure benefits reach the mauquf 'alaih sustainably.</p>
+      <div class="module-meta">
+        <span class="module-level level-menengah lang-id">● Menengah</span>
+        <span class="module-level level-menengah lang-en">● Intermediate</span>
+        <span class="module-duration lang-id">~75 menit</span>
+        <span class="module-duration lang-en">~75 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 8 -->
+    <div class="module-card">
+      <div class="module-icon">💼</div>
+      <div class="module-track lang-id">Trek Wakaf & Ekonomi Sosial</div>
+      <div class="module-track lang-en">Waqf & Social Economy Track</div>
+      <div class="module-num lang-id">Modul 08</div>
+      <div class="module-num lang-en">Module 08</div>
+      <div class="module-title lang-id">Kewirausahaan Sosial Berbasis Aset Wakaf</div>
+      <div class="module-title lang-en">Social Enterprise on Waqf Assets</div>
+      <p class="module-desc lang-id">Model bisnis sosial yang tumbuh dari aset wakaf — studi kasus Bonsari Coffee: dari kebun ke kafe, dari kafe ke dampak tiga lapis bagi petani, komunitas, dan benefisiari.</p>
+      <p class="module-desc lang-en">Social business models built on waqf assets — the Bonsari Coffee case: from garden to café, from café to three-layer impact for farmers, community, and beneficiaries.</p>
+      <div class="module-meta">
+        <span class="module-level level-menengah lang-id">● Menengah</span>
+        <span class="module-level level-menengah lang-en">● Intermediate</span>
+        <span class="module-duration lang-id">~90 menit</span>
+        <span class="module-duration lang-en">~90 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 9 (Coming Soon) -->
+    <div class="module-card coming-soon">
+      <div class="module-icon">📈</div>
+      <div class="module-track lang-id">Trek Wakaf & Ekonomi Sosial</div>
+      <div class="module-track lang-en">Waqf & Social Economy Track</div>
+      <div class="module-num lang-id">Modul 09</div>
+      <div class="module-num lang-en">Module 09</div>
+      <div class="module-title lang-id">Mengukur Dampak Sosial Program Wakaf</div>
+      <div class="module-title lang-en">Measuring Social Impact of Waqf Programs</div>
+      <p class="module-desc lang-id">Framework pengukuran dampak sosial — dari SROI, teori perubahan, hingga indikator kemandirian komunitas. Panduan praktis untuk nazir dan pengelola program.</p>
+      <p class="module-desc lang-en">Social impact measurement frameworks — from SROI and theory of change to community independence indicators. A practical guide for nazir institutions and program managers.</p>
+      <div class="module-meta">
+        <span class="module-level level-lanjut lang-id">● Lanjut</span>
+        <span class="module-level level-lanjut lang-en">● Advanced</span>
+        <span class="module-badge soon lang-id">Segera Hadir</span>
+        <span class="module-badge soon lang-en">Coming Soon</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ TRACK 3: RISET & DATA ══ -->
+<div class="track-header">
+  <div class="track-line"></div>
+  <div class="track-label-pill lang-id">📊 Trek 3 — Riset & Data Terbuka</div>
+  <div class="track-label-pill lang-en">📊 Track 3 — Research & Open Data</div>
+  <div class="track-line"></div>
+</div>
+
+<section class="modules-section" style="padding-top: 1rem; padding-bottom: 3rem;">
+  <div class="modules-inner">
+
+    <!-- Modul 10 -->
+    <div class="module-card">
+      <div class="module-icon">🗺️</div>
+      <div class="module-track lang-id">Trek Riset & Data Terbuka</div>
+      <div class="module-track lang-en">Research & Open Data Track</div>
+      <div class="module-num lang-id">Modul 10</div>
+      <div class="module-num lang-en">Module 10</div>
+      <div class="module-title lang-id">Riset Berbasis Komunitas: Prinsip Dasar</div>
+      <div class="module-title lang-en">Community-Based Research: Core Principles</div>
+      <p class="module-desc lang-id">CBPR (Community-Based Participatory Research) dan bagaimana ia diterapkan di konteks desa-kebun. Masyarakat bukan hanya objek penelitian — mereka adalah mitra riset.</p>
+      <p class="module-desc lang-en">CBPR (Community-Based Participatory Research) and how it applies in village-garden contexts. The community is not just a research subject — they are research partners.</p>
+      <div class="module-meta">
+        <span class="module-level level-menengah lang-id">● Menengah</span>
+        <span class="module-level level-menengah lang-en">● Intermediate</span>
+        <span class="module-duration lang-id">~80 menit</span>
+        <span class="module-duration lang-en">~80 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 11 -->
+    <div class="module-card">
+      <div class="module-icon">📸</div>
+      <div class="module-track lang-id">Trek Riset & Data Terbuka</div>
+      <div class="module-track lang-en">Research & Open Data Track</div>
+      <div class="module-num lang-id">Modul 11</div>
+      <div class="module-num lang-en">Module 11</div>
+      <div class="module-title lang-id">Dokumentasi Lapangan yang Bermakna</div>
+      <div class="module-title lang-en">Meaningful Field Documentation</div>
+      <p class="module-desc lang-id">Teknik pengumpulan data kualitatif di lapangan — observasi, wawancara mendalam, foto etnografis. Membangun data yang jujur dan manusiawi, bukan sekadar angka.</p>
+      <p class="module-desc lang-en">Qualitative field data collection — observation, in-depth interviews, ethnographic photography. Building honest, human data, not just numbers.</p>
+      <div class="module-meta">
+        <span class="module-level level-menengah lang-id">● Menengah</span>
+        <span class="module-level level-menengah lang-en">● Intermediate</span>
+        <span class="module-duration lang-id">~70 menit</span>
+        <span class="module-duration lang-en">~70 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 12 -->
+    <div class="module-card">
+      <div class="module-icon">🧠</div>
+      <div class="module-track lang-id">Trek Riset & Data Terbuka</div>
+      <div class="module-track lang-en">Research & Open Data Track</div>
+      <div class="module-num lang-id">Modul 12</div>
+      <div class="module-num lang-en">Module 12</div>
+      <div class="module-title lang-id">Kesehatan Mental Petani & Komunitas Desa</div>
+      <div class="module-title lang-en">Farmer & Rural Community Mental Health</div>
+      <p class="module-desc lang-id">Riset dan praktik psikologi klinis di konteks agraria — stres petani, kekeringan, ketidakpastian panen, dan model dukungan psikososial berbasis komunitas.</p>
+      <p class="module-desc lang-en">Clinical psychology research and practice in agrarian contexts — farmer stress, drought, harvest uncertainty, and community-based psychosocial support models.</p>
+      <div class="module-meta">
+        <span class="module-level level-lanjut lang-id">● Lanjut</span>
+        <span class="module-level level-lanjut lang-en">● Advanced</span>
+        <span class="module-duration lang-id">~100 menit</span>
+        <span class="module-duration lang-en">~100 mins</span>
+      </div>
+    </div>
+
+    <!-- Modul 13 (Coming Soon) -->
+    <div class="module-card coming-soon">
+      <div class="module-icon">🌐</div>
+      <div class="module-track lang-id">Trek Riset & Data Terbuka</div>
+      <div class="module-track lang-en">Research & Open Data Track</div>
+      <div class="module-num lang-id">Modul 13</div>
+      <div class="module-num lang-en">Module 13</div>
+      <div class="module-title lang-id">Data Terbuka & Transparansi Wakaf</div>
+      <div class="module-title lang-en">Open Data & Waqf Transparency</div>
+      <p class="module-desc lang-id">Bagaimana merancang sistem data terbuka untuk program wakaf — format, lisensi, visualisasi, dan cara memanfaatkan data untuk akuntabilitas publik. Panduan teknis dan etisnya.</p>
+      <p class="module-desc lang-en">How to design an open data system for waqf programs — formats, licensing, visualization, and how to use data for public accountability. Both technical and ethical guidelines.</p>
+      <div class="module-meta">
+        <span class="module-level level-lanjut lang-id">● Lanjut</span>
+        <span class="module-level level-lanjut lang-en">● Advanced</span>
+        <span class="module-badge soon lang-id">Segera Hadir</span>
+        <span class="module-badge soon lang-en">Coming Soon</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ APPROACH SECTION ══ -->
+<section class="approach-section">
+  <div class="approach-inner">
+    <div class="approach-text">
+      <div class="approach-label lang-id">Filosofi Belajar</div>
+      <div class="approach-label lang-en">Learning Philosophy</div>
+      <h2 class="approach-title">
+        <span class="lang-id">Bukan Hanya Membaca, <em>Tapi Merasakan</em></span>
+        <span class="lang-en">Not Just Reading, <em>But Feeling</em></span>
+      </h2>
+      <p class="approach-prose lang-id">
+        Setiap modul di sini lahir dari pengalaman nyata — bukan dari ruang kuliah saja. Adib menulis tentang pertanian karena ia pernah berdiri di antara pohon-pohon itu. Ia menulis tentang trauma karena ia pernah duduk bersama orang-orang yang baru saja kehilangan segalanya.
+      </p>
+      <p class="approach-prose lang-en">
+        Every module here was born from real experience — not just a lecture hall. Adib writes about farming because he has stood among those trees. He writes about trauma because he has sat with people who have just lost everything.
+      </p>
+      <div class="approach-pull lang-id">"Pengetahuan yang paling berguna adalah yang bisa kau gunakan sebelum matahari terbenam hari ini."</div>
+      <div class="approach-pull lang-en">"The most useful knowledge is the kind you can put to use before today's sun sets."</div>
+      <p class="approach-prose lang-id">Semua materi disediakan dalam Bahasa Indonesia dan Bahasa Inggris, gratis, dan dapat diakses tanpa akun. Karena ilmu yang bermanfaat adalah salah satu dari tiga amal yang tidak terputus.</p>
+      <p class="approach-prose lang-en">All materials are available in Indonesian and English, free of charge, and accessible without an account. Because beneficial knowledge is one of the three deeds that do not end.</p>
+    </div>
+    <div class="approach-cards">
+      <div class="approach-card">
+        <div class="approach-card-icon">🌾</div>
+        <div class="approach-card-title lang-id">Berbasis Pengalaman Lapangan</div>
+        <div class="approach-card-title lang-en">Field Experience-Based</div>
+        <p class="approach-card-desc lang-id">Materi disusun dari catatan lapangan, bukan semata teori. Setiap konsep didukung oleh contoh nyata dari kebun, komunitas, dan misi kemanusiaan.</p>
+        <p class="approach-card-desc lang-en">Content is drawn from field notes, not just theory. Every concept is supported by real examples from the garden, community, and humanitarian missions.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-card-icon">🔓</div>
+        <div class="approach-card-title lang-id">Terbuka & Bebas Akses</div>
+        <div class="approach-card-title lang-en">Open & Freely Accessible</div>
+        <p class="approach-card-desc lang-id">Tanpa biaya. Tanpa registrasi. Tanpa batas. Karena demokratisasi pengetahuan tentang keberlanjutan adalah bagian dari misi wakaf itu sendiri.</p>
+        <p class="approach-card-desc lang-en">No cost. No registration. No limits. Because democratizing knowledge about sustainability is part of the waqf mission itself.</p>
+      </div>
+      <div class="approach-card">
+        <div class="approach-card-icon">🤝</div>
+        <div class="approach-card-title lang-id">Kolaboratif & Berkembang</div>
+        <div class="approach-card-title lang-en">Collaborative & Growing</div>
+        <p class="approach-card-desc lang-id">Modul baru ditambahkan seiring perkembangan Living Lab. Setiap temuan di kebun bisa menjadi pelajaran baru — dan Anda bisa menjadi bagian dari proses itu.</p>
+        <p class="approach-card-desc lang-en">New modules are added as the Living Lab evolves. Every finding in the garden can become a new lesson — and you can be part of that process.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ AUDIENCE ══ -->
+<section class="audience-section">
+  <div class="audience-inner">
+    <div class="section-label lang-id">Untuk Siapa Ruang Ini?</div>
+    <div class="section-label lang-en">Who Is This Space For?</div>
+    <h2 class="section-title">
+      <span class="lang-id">Siapapun yang ingin memahami <em>kopi, tanah, dan wakaf</em></span>
+      <span class="lang-en">Anyone who wants to understand <em>coffee, land, and waqf</em></span>
+    </h2>
+    <div class="audience-grid">
+      <div class="audience-card">
+        <div class="audience-emoji">🧑‍🌾</div>
+        <div class="audience-role lang-id">Petani Muda</div>
+        <div class="audience-role lang-en">Young Farmers</div>
+        <p class="audience-desc lang-id">Praktik pertanian berkelanjutan dan manajemen kebun berbasis data.</p>
+        <p class="audience-desc lang-en">Sustainable farming practices and data-based garden management.</p>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🎓</div>
+        <div class="audience-role lang-id">Peneliti & Akademisi</div>
+        <div class="audience-role lang-en">Researchers & Academics</div>
+        <p class="audience-desc lang-id">Akses data terbuka, studi kasus, dan kolaborasi riset berbasis komunitas.</p>
+        <p class="audience-desc lang-en">Access to open data, case studies, and community-based research collaboration.</p>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🌿</div>
+        <div class="audience-role lang-id">Aktivis & Praktisi Sosial</div>
+        <div class="audience-role lang-en">Social Activists & Practitioners</div>
+        <p class="audience-desc lang-id">Model kewirausahaan sosial dan pengukuran dampak untuk program pemberdayaan.</p>
+        <p class="audience-desc lang-en">Social enterprise models and impact measurement for empowerment programs.</p>
+      </div>
+      <div class="audience-card">
+        <div class="audience-emoji">🕌</div>
+        <div class="audience-role lang-id">Pengelola Wakaf</div>
+        <div class="audience-role lang-en">Waqf Managers</div>
+        <p class="audience-desc lang-id">Panduan tata kelola nazir, transparansi aset, dan model wakaf produktif.</p>
+        <p class="audience-desc lang-en">Nazir governance guides, asset transparency, and productive waqf models.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<div class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-eyebrow lang-id">Langkah Berikutnya</div>
+    <div class="cta-eyebrow lang-en">Next Steps</div>
+    <h2 class="cta-title">
+      <span class="lang-id">Pelajaran terbaik ada di <em>kebun itu sendiri.</em></span>
+      <span class="lang-en">The best lessons are in <em>the garden itself.</em></span>
+    </h2>
+    <p class="cta-desc lang-id">Lihat data terbuka dari Living Lab kami, atau kenali lebih dalam program wakaf yang menggerakkan semua ini.</p>
+    <p class="cta-desc lang-en">View the open data from our Living Lab, or learn more about the waqf program that drives all of this.</p>
+    <div class="cta-btns">
+      <a href="program.html" class="btn-primary">
+        <span class="lang-id">🌱 Lihat Program</span>
+        <span class="lang-en">🌱 View Program</span>
+      </a>
+      <a href="latar-belakang.html" class="btn-outline">
+        <span class="lang-id">📖 Baca Kisah</span>
+        <span class="lang-en">📖 Read the Story</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        Lembaga Nazir: Rumah Wakaf Indonesia<br>
+        Ngantang, Malang, Jawa Timur
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+  const INLINE_BLOCK_TAGS = new Set(['a']);
+
+  function getDisplayType(el) {
+    const tag = el.tagName.toLowerCase();
+    if (INLINE_TAGS.has(tag))       return 'inline';
+    if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+    return 'block';
+  }
+
+  function setLang(lang) {
+    const hide = lang === 'id' ? 'en' : 'id';
+    localStorage.setItem('lang', lang);
+    document.querySelectorAll('a[href]').forEach(function(a) {
+      var h = a.getAttribute('href');
+      if (!h || h.indexOf('http') === 0 || h.indexOf('#') === 0 || h.indexOf('mailto') === 0) return;
+      a.setAttribute('href', h.split('?')[0] + '?lang=' + lang);
+    });
+    document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+    document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+    document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  }
+
+  document.addEventListener('DOMContentLoaded', function() { setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id'); });
+</script>
+</body>
+</html>

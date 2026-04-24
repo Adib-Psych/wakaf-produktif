@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Living Lab — Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Dokumentasi transparan perjalanan kebun kopi wakaf Ngantang: siklus fenologi, log aktivitas, data historis panen, dan proyeksi ke depan.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+/* ── Lang visibility ── */
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════
+   NAVBAR
+══════════════════════════════════ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark);
+  border-bottom: 1px solid rgba(168,200,188,0.1);
+}
+.navbar-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 68px; padding: 0 2rem;
+  max-width: 1200px; margin: 0 auto;
+}
+.navbar-logo {
+  display: flex; align-items: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.82rem; font-weight: 800; color: #e8f4f0;
+  text-decoration: none;
+}
+.brand-tag {
+  padding: 0.18rem 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--accent);
+  box-shadow: 2px 2px 0px var(--accent);
+  background: linear-gradient(135deg, rgba(90,144,128,0.22), rgba(90,144,128,0.1));
+  color: #e8f4f0; white-space: nowrap;
+}
+.navbar-right { display: flex; align-items: center; gap: 0.5rem; }
+.navbar-nav { display: flex; align-items: center; gap: 0.1rem; list-style: none; }
+.navbar-nav li a {
+  font-size: 0.78rem; font-weight: 500; color: #a8c8bc;
+  padding: 0.35rem 0.7rem; border-radius: 6px;
+  transition: color 0.15s, background 0.15s;
+}
+.navbar-nav li a:hover { color: #e8f4f0; background: rgba(255,255,255,0.07); }
+.navbar-nav li a.active { color: #e8f4f0; font-weight: 700; }
+.btn-nav-cta {
+  background: var(--accent); color: #fff;
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem;
+}
+.nav-soon-cta {
+  background: rgba(196,144,106,0.25); color: rgba(255,255,255,0.3);
+  padding: 0.35rem 0.9rem; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  margin-left: 0.4rem; cursor: default; user-select: none;
+}
+.lang-btn {
+  background: none; border: 1px solid rgba(168,200,188,0.35);
+  color: #a8c8bc; padding: 0.22rem 0.6rem;
+  border-radius: 5px; font-size: 0.72rem; font-weight: 600;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+.lang-btn:hover, .lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.rwi-nav-badge {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 8px; padding: 0.35rem 0.7rem 0.35rem 0.45rem;
+  flex-shrink: 0;
+}
+.rwi-logo-box {
+  width: 96px; height: 48px; border-radius: 6px;
+  background: #fff; display: flex; align-items: center;
+  justify-content: center; flex-shrink: 0; overflow: hidden;
+}
+.rwi-logo-box img { width: 96px; height: 48px; object-fit: contain; display: block; }
+.rwi-nav-text { line-height: 1.3; }
+.rwi-nav-label { font-size: 0.6rem; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: rgba(168,200,188,0.55); }
+.rwi-nav-name  { font-size: 0.75rem; font-weight: 700; color: #d0e8e0; white-space: nowrap; }
+
+/* ══════════════════════════════════
+   HERO
+══════════════════════════════════ */
+.page-hero {
+  background: var(--dark);
+  padding: 4rem 2rem 3.5rem;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 50% 70% at 85% 30%, rgba(90,144,128,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 30% 40% at 5% 85%, rgba(196,144,106,0.09) 0%, transparent 55%);
+  pointer-events: none;
+}
+.page-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+.page-hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  background: rgba(90,144,128,0.18);
+  border: 1px solid rgba(168,200,188,0.28);
+  color: var(--light);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.28rem 0.85rem; border-radius: 20px;
+  margin-bottom: 1.2rem;
+}
+.badge-dot-live {
+  width: 7px; height: 7px; background: #5fca7c; border-radius: 50%;
+  animation: blink-green 1.4s infinite;
+}
+@keyframes blink-green { 0%,100%{opacity:1} 50%{opacity:0.3} }
+.page-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.9rem, 3.8vw, 3rem);
+  font-weight: 700; color: #e8f4f0;
+  line-height: 1.26; margin-bottom: 1.1rem;
+}
+.page-hero h1 em { font-style: italic; color: var(--accent); }
+.page-hero-lead {
+  font-family: 'Lora', serif;
+  font-size: 1rem; line-height: 1.8;
+  color: rgba(168,200,188,0.8);
+  max-width: 820px;
+  text-align: justify;
+}
+.hero-stats {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1rem; margin-top: 2.4rem;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(168,200,188,0.18);
+  border-radius: 12px; padding: 1rem 1.2rem;
+  text-align: center;
+}
+.hero-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.8rem; font-weight: 300; font-style: italic;
+  color: var(--accent); line-height: 1;
+}
+.hero-stat-label {
+  font-size: 0.68rem; color: rgba(168,200,188,0.65);
+  font-weight: 500; margin-top: 0.3rem; line-height: 1.4;
+}
+
+/* ══════════════════════════════════
+   SECTION COMMONS
+══════════════════════════════════ */
+.section-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+.section-label {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.4rem;
+}
+.section-label-light {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--light);
+  margin-bottom: 0.4rem;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+  color: var(--dark); margin-bottom: 0.65rem; line-height: 1.3;
+}
+.section-title em { font-style: italic; color: var(--accent); }
+.section-title-light {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.3rem, 2.5vw, 1.75rem);
+  color: #e8f4f0; margin-bottom: 0.65rem; line-height: 1.3;
+}
+.section-title-light em { font-style: italic; color: var(--accent); }
+.section-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.92rem; color: var(--muted); line-height: 1.8;
+  margin-bottom: 2rem; text-align: justify;
+}
+.section-desc-light {
+  font-family: 'Lora', serif;
+  font-size: 0.92rem; color: rgba(168,200,188,0.75); line-height: 1.8;
+  margin-bottom: 2rem; text-align: justify;
+}
+
+/* ══════════════════════════════════
+   NARASI SECTION
+══════════════════════════════════ */
+.narasi-section {
+  padding: 3.5rem 2rem 3rem;
+  border-bottom: 1px solid var(--bg-deep);
+}
+.narasi-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.8rem; margin-top: 2rem;
+}
+.narasi-card {
+  background: var(--white);
+  border: 1px solid var(--bg-deep);
+  border-radius: 14px; padding: 1.5rem;
+}
+.narasi-icon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+.narasi-card-title {
+  font-size: 0.95rem; font-weight: 700;
+  color: var(--dark); margin-bottom: 0.5rem;
+}
+.narasi-card-desc {
+  font-family: 'Lora', serif;
+  font-size: 0.84rem; color: var(--muted); line-height: 1.75;
+  text-align: justify;
+}
+.narasi-list {
+  list-style: none; margin-top: 0.6rem;
+  display: flex; flex-direction: column; gap: 0.35rem;
+}
+.narasi-list li {
+  font-family: 'Lora', serif;
+  font-size: 0.82rem; color: var(--muted);
+  display: flex; align-items: flex-start; gap: 0.5rem;
+}
+.narasi-list li::before {
+  content: '→';
+  color: var(--medium); font-weight: 700;
+  flex-shrink: 0; margin-top: 0.05rem;
+}
+
+/* ══════════════════════════════════
+   STATUS TERKINI (INFOGRAFIK)
+══════════════════════════════════ */
+.status-section {
+  padding: 3.5rem 2rem 3rem;
+  background: var(--bg-tint);
+  border-bottom: 1px solid var(--bg-deep);
+}
+.status-board {
+  display: grid; grid-template-columns: 1fr 1.6fr 1fr;
+  gap: 1.4rem; margin-top: 2rem;
+}
+
+/* Current Phase Card */
+.phase-card {
+  background: linear-gradient(145deg, #2a3c3c 0%, #233434 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 5px 5px 0px var(--accent);
+  border-radius: 16px; padding: 1.8rem 1.5rem;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+}
+.phase-card-eyebrow {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+.phase-icon { font-size: 2.4rem; margin-bottom: 0.6rem; }
+.phase-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem; font-weight: 700;
+  color: #e8f4f0; line-height: 1.3;
+  margin-bottom: 0.4rem;
+}
+.phase-period {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1rem; font-style: italic;
+  color: var(--accent); margin-bottom: 0.8rem;
+}
+.phase-badge-now {
+  background: rgba(95,202,124,0.2);
+  border: 1px solid rgba(95,202,124,0.4);
+  color: #5fca7c;
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.7rem; border-radius: 20px;
+  display: inline-flex; align-items: center; gap: 0.4rem;
+}
+.dot-live-green {
+  width: 6px; height: 6px; background: #5fca7c; border-radius: 50%;
+  animation: blink-green 1.4s infinite;
+}
+
+/* Activity Tracker Card */
+.activity-card {
+  background: var(--white);
+  border: 1px solid var(--bg-deep);
+  border-radius: 16px; padding: 1.5rem;
+}
+.activity-card-title {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 1.1rem;
+}
+.act-list { display: flex; flex-direction: column; gap: 0.75rem; }
+.act-item {
+  display: flex; align-items: flex-start; gap: 0.75rem;
+  padding: 0.65rem 0.8rem; border-radius: 10px;
+  background: var(--bg);
+}
+.act-status {
+  font-size: 0.58rem; font-weight: 800; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 0.18rem 0.55rem;
+  border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  margin-top: 0.1rem;
+}
+.s-done    { background: rgba(90,144,128,0.15); color: #2e6050; }
+.s-ongoing { background: rgba(196,144,106,0.15); color: #8a5030; }
+.s-planned { background: rgba(90,120,120,0.12); color: var(--muted); }
+.s-upcoming{ background: rgba(44,95,122,0.12); color: #2c5f7a; }
+.act-label { font-size: 0.82rem; color: var(--text); font-weight: 500; line-height: 1.4; }
+.act-sub   { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+
+/* Milestone Card */
+.milestone-card {
+  background: linear-gradient(155deg, #f6fdfb 0%, #edf8f4 100%);
+  border: 1.5px solid var(--accent);
+  box-shadow: 4px 4px 0px var(--accent);
+  border-radius: 16px; padding: 1.8rem 1.5rem;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+}
+.milestone-eyebrow {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 0.7rem;
+}
+.milestone-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+.milestone-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; font-weight: 700;
+  color: var(--dark); line-height: 1.3;
+  margin-bottom: 0.35rem;
+}
+.milestone-when {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem; font-style: italic;
+  color: var(--accent); margin-bottom: 0.4rem;
+}
+.milestone-note {
+  font-size: 0.72rem; color: var(--muted);
+  font-family: 'Lora', serif; line-height: 1.5;
+}
+
+/* ══════════════════════════════════
+   FENOLOGI SECTION
+══════════════════════════════════ */
+.fenologi-section {
+  background: var(--dark);
+  padding: 4rem 2rem;
+  position: relative; overflow: hidden;
+}
+.fenologi-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 50% 80% at 50% 50%, rgba(90,144,128,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.fenologi-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+  margin-top: 2.5rem;
+}
+.fenologi-wheel-wrap { display: flex; justify-content: center; position: relative; }
+.fenologi-svg { width: 320px; height: 320px; }
+/* .fenologi-center-label defined in botanical decoration section below */
+.center-month {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem; font-weight: 700;
+  color: var(--accent); display: block; line-height: 1;
+}
+.center-year {
+  font-size: 0.7rem; color: rgba(168,200,188,0.6);
+  font-weight: 500; letter-spacing: 0.08em;
+  text-transform: uppercase; display: block;
+  margin-top: 0.15rem;
+}
+.center-phase-text {
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: 0.72rem; color: var(--light);
+  display: block; margin-top: 0.4rem;
+  max-width: 90px;
+}
+.fenologi-legend { display: flex; flex-direction: column; gap: 0.9rem; }
+.legend-item {
+  display: flex; align-items: flex-start; gap: 0.9rem;
+}
+.legend-swatch {
+  width: 14px; height: 14px; border-radius: 4px;
+  flex-shrink: 0; margin-top: 0.15rem;
+}
+.legend-content {}
+.legend-phase {
+  font-size: 0.82rem; font-weight: 700;
+  color: #e8f4f0; line-height: 1.3;
+}
+.legend-months {
+  font-size: 0.68rem; color: rgba(168,200,188,0.55);
+  font-family: 'Lora', serif; font-style: italic;
+  margin-top: 0.1rem;
+}
+.legend-desc {
+  font-size: 0.74rem; color: rgba(168,200,188,0.65);
+  font-family: 'Lora', serif; line-height: 1.55;
+  margin-top: 0.2rem; text-align: justify;
+}
+.fenologi-note {
+  margin-top: 2.5rem;
+  padding: 1rem 1.3rem;
+  background: rgba(90,144,128,0.12);
+  border: 1px solid rgba(168,200,188,0.2);
+  border-radius: 10px;
+  font-family: 'Lora', serif; font-style: italic;
+  font-size: 0.82rem; color: rgba(168,200,188,0.7);
+  line-height: 1.7; text-align: justify;
+}
+
+/* ══════════════════════════════════
+   LOG AKTIVITAS
+══════════════════════════════════ */
+.log-section {
+  padding: 3.5rem 2rem 4rem;
+  border-bottom: 1px solid var(--bg-deep);
+}
+.log-year-tabs {
+  display: flex; gap: 0.5rem; margin-top: 1.8rem; margin-bottom: 2rem;
+  border-bottom: 2px solid var(--bg-deep);
+  padding-bottom: 0;
+}
+.year-tab {
+  padding: 0.5rem 1.2rem;
+  font-size: 0.82rem; font-weight: 700;
+  color: var(--muted); cursor: pointer;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px; transition: all 0.15s;
+  background: none; border-top: none; border-left: none; border-right: none;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  border-radius: 0;
+}
+.year-tab:hover { color: var(--dark); }
+.year-tab.active {
+  color: var(--dark); font-weight: 800;
+  border-bottom-color: var(--accent);
+}
+.year-tab[data-year="2026"].active {
+  color: #2a6e35;
+  background: rgba(90,200,100,0.12);
+  border: 1.5px solid rgba(70,170,80,0.45);
+  border-bottom: 3px solid rgba(70,170,80,0.70);
+  box-shadow: 3px 3px 0px rgba(70,170,80,0.25);
+  border-radius: 6px 6px 0 0;
+  padding: 0.5rem 1.2rem;
+}
+/* Active year 2026 — banner & section highlight */
+.active-year-banner {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: rgba(90,200,100,0.12);
+  border: 1.5px solid rgba(70,170,80,0.40);
+  box-shadow: 4px 4px 0px rgba(70,170,80,0.20);
+  border-radius: 10px; padding: 0.75rem 1.1rem;
+  margin-bottom: 1.5rem;
+}
+.active-year-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(50,160,65,0.80); flex-shrink: 0;
+}
+.active-year-label {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #2a6e35;
+}
+.active-year-desc {
+  font-family: 'Lora', serif; font-size: 0.75rem;
+  color: #3a7040; font-style: italic; margin-left: auto;
+}
+.year-content { display: none; }
+.year-content.active { display: block; }
+
+.phase-block { margin-bottom: 2.2rem; }
+.phase-block-header {
+  display: flex; align-items: center; gap: 0.7rem;
+  margin-bottom: 1.1rem; padding-bottom: 0.7rem;
+  border-bottom: 1px solid var(--bg-deep);
+}
+.phase-block-icon { font-size: 1.1rem; }
+.phase-block-title {
+  font-size: 0.85rem; font-weight: 800;
+  color: var(--dark); text-transform: uppercase; letter-spacing: 0.06em;
+}
+.phase-block-period {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem; font-style: italic;
+  color: var(--muted); margin-left: auto;
+}
+.act-log-list { display: flex; flex-direction: column; gap: 0.7rem; }
+.act-log-item {
+  background: var(--white);
+  border: 1px solid var(--bg-deep);
+  border-radius: 10px; overflow: hidden;
+  transition: border-color 0.15s;
+}
+.act-log-item:hover { border-color: rgba(196,144,106,0.35); }
+.act-log-split {
+  display: grid; grid-template-columns: 1fr 1fr;
+}
+.act-log-progress {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-right: 1px solid var(--bg-deep);
+}
+.act-log-theory {
+  padding: 0.85rem 1.1rem;
+  background: rgba(90,144,128,0.04); /* default — overridden by status classes */
+}
+
+/* ── Status-based background coloring ── */
+/* Selesai: merah light — progress 40%, theory 20% */
+.act-log-item.status-done .act-log-progress { background: rgba(210,60,60,0.40); }
+.act-log-item.status-done .act-log-theory   { background: rgba(210,60,60,0.20); }
+.act-log-item.status-done .act-log-progress { border-right-color: rgba(180,50,50,0.30); }
+
+/* Berjalan: sage green — progress 60%, theory 40% */
+.act-log-item.status-ongoing .act-log-progress { background: rgba(90,200,100,0.35); }
+.act-log-item.status-ongoing .act-log-theory   { background: rgba(90,200,100,0.18); }
+.act-log-item.status-ongoing .act-log-progress { border-right-color: rgba(70,170,80,0.30); }
+
+/* Direncanakan: gelap/abu-abu muted — sangat subtle */
+.act-log-item.status-planned .act-log-progress { background: rgba(100,120,120,0.10); }
+.act-log-item.status-planned .act-log-theory   { background: rgba(100,120,120,0.06); }
+
+/* Akan Datang: biru-teal muted */
+.act-log-item.status-upcoming .act-log-progress { background: rgba(65,105,145,0.12); }
+.act-log-item.status-upcoming .act-log-theory   { background: rgba(65,105,145,0.07); }
+
+/* ── Terracotta Hangat — harmonisasi teks & aksen untuk status-done ── */
+.act-log-item.status-done .act-log-status       { background: rgba(160,50,30,0.15) !important; color: #8b2e12 !important; }
+.act-log-item.status-done .act-log-title        { color: #5c1e10; }
+.act-log-item.status-done .act-log-detail       { color: #7a3020; }
+.act-log-item.status-done .act-log-meta         { color: #7a3020; }
+.act-log-item.status-done .act-log-meta strong  { color: #8b2e12; }
+.act-log-item.status-done .theory-label         { color: #8b3525; }
+.act-log-item.status-done .theory-body          { color: #6b2c1e; }
+.act-log-item.status-done .theory-tag           { background: rgba(160,50,30,0.12); border-color: rgba(160,50,30,0.25); color: #7a2e18; }
+.act-log-item.status-done .report-link          { color: #8b3525; border-bottom-color: rgba(160,50,30,0.30); }
+.theory-label {
+  font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--medium);
+  margin-bottom: 0.45rem;
+}
+.theory-body {
+  font-family: 'Lora', serif;
+  font-size: 0.76rem; color: var(--muted); line-height: 1.7;
+  text-align: justify;
+}
+.theory-tag {
+  display: inline-block;
+  background: rgba(90,144,128,0.1); border: 1px solid rgba(90,144,128,0.2);
+  border-radius: 6px; padding: 0.18rem 0.55rem;
+  font-size: 0.63rem; color: #2e6050; font-weight: 700;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  margin-top: 0.45rem; margin-right: 0.3rem;
+}
+.act-log-status {
+  font-size: 0.58rem; font-weight: 800; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 0.2rem 0.55rem;
+  border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+.act-log-body { flex: 1; }
+.act-log-title {
+  font-size: 0.86rem; font-weight: 600;
+  color: var(--text); line-height: 1.4;
+}
+.act-log-detail {
+  font-family: 'Lora', serif;
+  font-size: 0.77rem; color: var(--muted); line-height: 1.65;
+  margin-top: 0.2rem; text-align: justify;
+}
+.act-log-meta {
+  font-size: 0.68rem; color: var(--muted);
+  white-space: nowrap; flex-shrink: 0; margin-top: 0.15rem;
+  text-align: right; min-width: 90px;
+}
+.act-log-meta strong { color: var(--accent); display: block; font-size: 0.72rem; }
+.report-link {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  font-size: 0.65rem; font-weight: 700;
+  color: var(--medium); margin-top: 0.35rem;
+  padding: 0.1rem 0; border-bottom: 1px solid rgba(90,144,128,0.3);
+  cursor: pointer; transition: color 0.15s;
+}
+.report-link:hover { color: var(--dark); }
+
+/* year summary bar */
+.year-summary {
+  display: flex; gap: 1rem; margin-bottom: 1.8rem; flex-wrap: wrap;
+}
+.year-sum-pill {
+  background: var(--bg-tint);
+  border: 1px solid var(--bg-deep);
+  border-radius: 8px; padding: 0.5rem 1rem;
+  font-size: 0.75rem; color: var(--muted);
+}
+.year-sum-pill strong { color: var(--accent); }
+
+/* ══════════════════════════════════
+   DATA HISTORIS PANEN
+══════════════════════════════════ */
+.harvest-section {
+  padding: 3.5rem 2rem 4rem;
+  background: var(--bg-tint);
+}
+.harvest-track {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  gap: 0.5rem; align-items: center;
+  margin-top: 2rem;
+}
+.harvest-node {
+  background: var(--white);
+  border: 1px solid var(--bg-deep);
+  border-radius: 12px; padding: 1rem 1.1rem;
+  box-shadow: 3px 3px 0 var(--bg-deep);
+  display: flex; flex-direction: column;
+}
+.harvest-kg {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem; font-style: italic;
+  color: var(--accent); line-height: 1.1;
+  margin-bottom: 0.45rem;
+}
+.harvest-year {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.09em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+.harvest-bar-wrap {
+  width: 100%; height: 8px;
+  background: var(--bg-deep); border-radius: 4px;
+  overflow: visible; margin-bottom: 0.45rem;
+  position: relative;
+}
+.harvest-bar {
+  height: 100%; border-radius: 4px;
+  transition: width 0.6s var(--ease);
+}
+.harvest-bar.b-no-data {
+  width: 8%;
+  background: repeating-linear-gradient(90deg, var(--light) 0px, var(--light) 4px, transparent 4px, transparent 8px);
+  border: none;
+}
+.harvest-bar.b-2024 { width: 34%; background: var(--light); }
+.harvest-bar.b-2025 { width: 94%; background: var(--medium); }
+.harvest-bar.b-target {
+  width: 100%; background: transparent;
+  border: 2px dashed var(--accent); border-radius: 4px; height: 8px;
+  box-sizing: border-box;
+}
+.harvest-note { font-size: 0.65rem; color: var(--muted); font-style: italic; }
+.harvest-tag {
+  font-size: 0.57rem; font-weight: 800; letter-spacing: 0.07em;
+  text-transform: uppercase; padding: 0.14rem 0.5rem;
+  border-radius: 20px; margin-top: 0.45rem;
+  display: inline-block; align-self: flex-start;
+}
+.t-nodata  { background: rgba(90,120,120,0.10); color: var(--muted); }
+.t-start   { background: rgba(90,144,128,0.12); color: #2e6050; }
+.t-growth  { background: rgba(90,144,128,0.22); color: #1e5040; }
+.t-target  { background: rgba(196,144,106,0.15); color: #7a4a1a; }
+.harvest-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; color: var(--accent);
+  line-height: 1; padding: 0 0.1rem;
+}
+.harvest-context {
+  margin-top: 2rem;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+.harvest-ctx-card {
+  background: var(--white);
+  border: 1px solid var(--bg-deep);
+  border-radius: 12px; padding: 1rem 1.2rem;
+  text-align: center;
+}
+.ctx-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem; font-style: italic;
+  color: var(--accent);
+}
+.ctx-label { font-size: 0.7rem; color: var(--muted); margin-top: 0.2rem; line-height: 1.45; }
+
+/* ══════════════════════════════════
+   FOOTER
+══════════════════════════════════ */
+.footer { background: #1a2e2e; padding: 1.8rem 2rem; }
+.footer-inner {
+  max-width: 1200px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; flex-wrap: wrap;
+}
+.footer-verse {
+  font-family: 'Playfair Display', serif;
+  font-style: italic; font-size: 0.78rem;
+  color: rgba(168,200,188,0.45); line-height: 1.7;
+  max-width: 440px;
+}
+.footer-brand { font-size: 0.75rem; font-weight: 800; color: rgba(168,200,188,0.5); margin-bottom: 0.2rem; }
+.footer-meta { font-size: 0.68rem; color: rgba(168,200,188,0.3); line-height: 1.6; text-align: right; }
+
+/* ══════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════ */
+@media (max-width: 960px) {
+  .fenologi-layout { grid-template-columns: 1fr; gap: 2rem; }
+  .fenologi-wheel-wrap { justify-content: center; }
+  .status-board { grid-template-columns: 1fr; }
+  .harvest-track { grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 0.4rem; }
+  .narasi-grid { grid-template-columns: 1fr; }
+  .harvest-context { grid-template-columns: 1fr; }
+  .act-log-split { grid-template-columns: 1fr; }
+  .act-log-progress { border-right: none; border-bottom: 1px solid var(--bg-deep); }
+}
+@media (max-width: 768px) {
+  .harvest-track { grid-template-columns: 1fr 1fr; row-gap: 0.8rem; }
+  .harvest-arrow { display: none; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .navbar-nav { display: none; }
+  .rwi-nav-badge { display: none; }
+  .page-hero { padding: 2.5rem 1.2rem 2rem; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { flex-direction: column; }
+  .footer-meta { text-align: left; }
+  .harvest-track { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── Paragraf justified ── */
+p, .page-hero-lead, .section-desc, .section-desc-light,
+.narasi-card-desc, .act-log-detail,
+.legend-desc, .fenologi-note { text-align: justify; }
+
+/* ── Fenologi botanical decoration ── */
+.feno-bg-leaf {
+  position: absolute; pointer-events: none; z-index: 0;
+  opacity: 0.07;
+}
+.feno-leaf-tr { right: -50px; top: -40px; width: 300px; transform: rotate(18deg); }
+.feno-leaf-bl { left: -45px; bottom: 10px; width: 250px; transform: rotate(-38deg) scaleX(-1); }
+.feno-leaf-br { right: 10%; bottom: -30px; width: 170px; transform: rotate(12deg); }
+.fenologi-layout { position: relative; z-index: 1; }
+.fenologi-center-label {
+  position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  text-align: center; pointer-events: none;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-logo">
+      <span class="brand-tag">Wakaf Produktif Kebun Kopi</span>
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="program.html">Program</a></li>
+          <li><a href="belajar.html"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="living-lab.html" class="active">Living Lab</a></li>
+          <li><a href="latar-belakang.html"><span class="lang-id">Kisah</span><span class="lang-en">Story</span></a></li>
+          <li><a href="kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+          <li><span class="btn-nav-cta nav-soon-cta"><span class="lang-id">Bergabung →</span><span class="lang-en">Join →</span></span></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <div class="rwi-nav-badge">
+        <div class="rwi-logo-box">
+          <img src="RWI.png" alt="Rumah Wakaf Indonesia">
+        </div>
+        <div class="rwi-nav-text">
+          <div class="rwi-nav-label lang-id">Lembaga Nazir</div>
+          <div class="rwi-nav-label lang-en">Waqf Institution</div>
+          <div class="rwi-nav-name">Rumah Wakaf Indonesia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ══ HERO ══ -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="page-hero-eyebrow">
+      <span class="badge-dot-live"></span>
+      <span class="lang-id">Living Lab Aktif · Fase Baseline 2026</span>
+      <span class="lang-en">Living Lab Active · Baseline Phase 2026</span>
+    </div>
+    <h1>
+      <span class="lang-id">Kebun Kopi yang Terbuka <em>untuk Siapapun</em></span>
+      <span class="lang-en">A Coffee Garden Open <em>for Everyone</em></span>
+    </h1>
+    <p class="page-hero-lead lang-id">
+      Setiap intervensi, setiap keputusan, setiap hasil panen — dicatat dan dibuka untuk publik. Living Lab bukan laporan tahunan; ia adalah dokumentasi hidup yang tumbuh bersama kebun ini, dari tahun ke tahun.
+    </p>
+    <p class="page-hero-lead lang-en">
+      Every intervention, every decision, every harvest — documented and open to the public. Living Lab is not an annual report; it is a living documentation that grows alongside this garden, year after year.
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">3 Th</div>
+        <div class="hero-stat-label lang-id">Perjalanan Terdokumentasi</div>
+        <div class="hero-stat-label lang-en">Documented Journey</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">915</div>
+        <div class="hero-stat-label lang-id">Pohon Kopi Robusta</div>
+        <div class="hero-stat-label lang-en">Robusta Coffee Trees</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">281 KG</div>
+        <div class="hero-stat-label lang-id">Panen Tercatat 2025</div>
+        <div class="hero-stat-label lang-en">Recorded Harvest 2025</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">+346%</div>
+        <div class="hero-stat-label lang-id">Kenaikan Panen 2024→2025</div>
+        <div class="hero-stat-label lang-en">Harvest Growth 2024→2025</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ NARASI ══ -->
+<section class="narasi-section">
+  <div class="section-inner">
+    <div class="section-label lang-id">Tentang Halaman Ini</div>
+    <div class="section-label lang-en">About This Page</div>
+    <h2 class="section-title">
+      <span class="lang-id">Apa itu Living Lab — dan apa yang bisa kamu <em>ikuti di sini</em>?</span>
+      <span class="lang-en">What is Living Lab — and what can you <em>follow here</em>?</span>
+    </h2>
+    <div class="narasi-grid">
+      <div class="narasi-card">
+        <div class="narasi-icon">🔬</div>
+        <div class="narasi-card-title lang-id">Apa itu Living Lab</div>
+        <div class="narasi-card-title lang-en">What is Living Lab</div>
+        <p class="narasi-card-desc lang-id">Living Lab adalah komitmen kami untuk mendokumentasikan perjalanan kebun ini secara transparan dan terbuka. Bukan sekadar laporan formal — melainkan rekaman nyata dari setiap langkah yang diambil: apa yang direncanakan, apa yang dikerjakan, dan apa yang bisa dipelajari.</p>
+        <p class="narasi-card-desc lang-en">Living Lab is our commitment to documenting this garden's journey transparently and openly. Not just a formal report — but a real record of every step taken: what was planned, what was done, and what can be learned.</p>
+      </div>
+      <div class="narasi-card">
+        <div class="narasi-icon">🎯</div>
+        <div class="narasi-card-title lang-id">Mengapa Ini Penting</div>
+        <div class="narasi-card-title lang-en">Why This Matters</div>
+        <p class="narasi-card-desc lang-id">Wakaf yang baik bukan hanya yang sah secara hukum — tapi yang bisa dipertanggungjawabkan kepada siapa saja yang peduli. Living Lab adalah cara kami menjaga amanah itu secara nyata: bukan dengan retorika, tapi dengan data.</p>
+        <p class="narasi-card-desc lang-en">A good waqf is not just legally valid — it must be accountable to anyone who cares. Living Lab is how we maintain that trust concretely: not with rhetoric, but with data.</p>
+      </div>
+      <div class="narasi-card">
+        <div class="narasi-icon">📖</div>
+        <div class="narasi-card-title lang-id">Yang Bisa Kamu Ikuti</div>
+        <div class="narasi-card-title lang-en">What You Can Follow</div>
+        <ul class="narasi-list lang-id">
+          <li>Status dan fase kebun saat ini</li>
+          <li>Siklus fenologi kopi tahunan</li>
+          <li>Log aktivitas per fase (Pre-Panen, Panen, Post-Panen)</li>
+          <li>Data historis hasil panen dari tahun ke tahun</li>
+          <li>Proyeksi dan rencana ke depan</li>
+        </ul>
+        <ul class="narasi-list lang-en">
+          <li>Current garden status and phase</li>
+          <li>Annual coffee phenological cycle</li>
+          <li>Activity log by phase (Pre-Harvest, Harvest, Post-Harvest)</li>
+          <li>Historical harvest data year by year</li>
+          <li>Forward projections and plans</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATUS TERKINI ══ -->
+<section class="status-section">
+  <div class="section-inner">
+    <div class="section-label lang-id">Status Kebun Sekarang</div>
+    <div class="section-label lang-en">Current Garden Status</div>
+    <h2 class="section-title">
+      <span class="lang-id">Kita sedang berada di <em>Fase Pembentukan Buah</em></span>
+      <span class="lang-en">We are currently in the <em>Fruit Formation Phase</em></span>
+    </h2>
+    <div class="status-board">
+
+      <!-- Fase Saat Ini -->
+      <div class="phase-card">
+        <div class="phase-card-eyebrow lang-id">FASE SAAT INI</div>
+        <div class="phase-card-eyebrow lang-en">CURRENT PHASE</div>
+        <div class="phase-icon">🌱</div>
+        <div class="phase-name lang-id">Pembentukan Buah</div>
+        <div class="phase-name lang-en">Fruit Formation</div>
+        <div class="phase-period">Apr – Mei 2026</div>
+        <div class="phase-badge-now">
+          <span class="dot-live-green"></span>
+          <span class="lang-id">Berlangsung Kini</span>
+          <span class="lang-en">Active Now</span>
+        </div>
+        <div style="margin-top:1.1rem; font-family:'Lora',serif; font-size:0.75rem; color:rgba(168,200,188,0.6); line-height:1.6; text-align:center;">
+          <span class="lang-id">Buah masih hijau. Estimasi panen dimulai Juni–Juli 2026.</span>
+          <span class="lang-en">Fruit still green. Harvest estimated June–July 2026.</span>
+        </div>
+      </div>
+
+      <!-- Aktivitas -->
+      <div class="activity-card">
+        <div class="activity-card-title lang-id">📋 Aktivitas Fase Ini</div>
+        <div class="activity-card-title lang-en">📋 Phase Activities</div>
+        <div class="act-list">
+          <div class="act-item">
+            <span class="act-status s-done lang-id">✓ Selesai</span>
+            <span class="act-status s-done lang-en">✓ Done</span>
+            <div>
+              <div class="act-label lang-id">Kunjungan Lapangan & Assessment TDS</div>
+              <div class="act-label lang-en">Field Visit & TDS Assessment</div>
+              <div class="act-sub">20 Apr 2026</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <span class="act-status s-ongoing lang-id">⟳ Berjalan</span>
+            <span class="act-status s-ongoing lang-en">⟳ Ongoing</span>
+            <div>
+              <div class="act-label lang-id">Pengadaan Pupuk Kandang</div>
+              <div class="act-label lang-en">Organic Fertilizer Procurement</div>
+              <div class="act-sub lang-id">Target sebelum Jun 2026</div>
+              <div class="act-sub lang-en">Target before Jun 2026</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <span class="act-status s-planned lang-id">◎ Direncanakan</span>
+            <span class="act-status s-planned lang-en">◎ Planned</span>
+            <div>
+              <div class="act-label lang-id">Pruning Selektif</div>
+              <div class="act-label lang-en">Selective Pruning</div>
+              <div class="act-sub">Mei – Jun 2026</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <span class="act-status s-upcoming lang-id">↗ Akan Datang</span>
+            <span class="act-status s-upcoming lang-en">↗ Upcoming</span>
+            <div>
+              <div class="act-label lang-id">Panen Perdana Post-Wakaf</div>
+              <div class="act-label lang-en">First Post-Waqf Harvest</div>
+              <div class="act-sub lang-id">Estimasi Jun–Agt 2026 (±4 ronde)</div>
+              <div class="act-sub lang-en">Estimated Jun–Aug 2026 (±4 rounds)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Milestone Berikutnya -->
+      <div class="milestone-card">
+        <div class="milestone-eyebrow lang-id">MILESTONE BERIKUTNYA</div>
+        <div class="milestone-eyebrow lang-en">NEXT MILESTONE</div>
+        <div class="milestone-icon">☕</div>
+        <div class="milestone-name lang-id">Panen Perdana Post-Wakaf</div>
+        <div class="milestone-name lang-en">First Post-Waqf Harvest</div>
+        <div class="milestone-when">Jun – Agt 2026</div>
+        <div class="milestone-note lang-id">Panen pertama sejak lahan resmi menjadi wakaf produktif di bawah RWI. Data hasil akan dipublikasikan secara terbuka.</div>
+        <div class="milestone-note lang-en">First harvest since the land officially became productive waqf under RWI. Yield data will be published openly.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══ FENOLOGI KOPI ══ -->
+<section class="fenologi-section">
+
+  <!-- Dekorasi daun kopi botanical di background -->
+  <svg class="feno-bg-leaf feno-leaf-tr" viewBox="0 0 200 310" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M100,10 C150,10 185,50 185,108 C185,166 150,222 100,252 C62,228 24,168 14,110 C4,46 52,10 100,10 Z" fill="#a8c8bc"/>
+    <line x1="100" y1="10" x2="83" y2="248" stroke="#c0ddd0" stroke-width="3"/>
+    <line x1="89" y1="190" x2="168" y2="72" stroke="#c0ddd0" stroke-width="1.8"/>
+    <line x1="87" y1="148" x2="172" y2="108" stroke="#c0ddd0" stroke-width="1.5"/>
+    <line x1="90" y1="110" x2="28" y2="58" stroke="#c0ddd0" stroke-width="1.5"/>
+    <line x1="95" y1="75" x2="25" y2="35" stroke="#c0ddd0" stroke-width="1.2"/>
+  </svg>
+  <svg class="feno-bg-leaf feno-leaf-bl" viewBox="0 0 180 275" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M90,8 C138,8 172,46 172,100 C172,154 138,206 90,232 C56,210 20,158 10,102 C0,44 44,8 90,8 Z" fill="#a8c8bc"/>
+    <line x1="90" y1="8" x2="74" y2="228" stroke="#c0ddd0" stroke-width="2.5"/>
+    <line x1="80" y1="168" x2="155" y2="62" stroke="#c0ddd0" stroke-width="1.5"/>
+    <line x1="78" y1="122" x2="160" y2="92" stroke="#c0ddd0" stroke-width="1.2"/>
+  </svg>
+  <svg class="feno-bg-leaf feno-leaf-br" viewBox="0 0 150 225" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path d="M75,6 C114,6 142,36 142,82 C142,128 114,172 75,196 C46,174 18,130 10,84 C2,36 38,6 75,6 Z" fill="#c4906a"/>
+    <line x1="75" y1="6" x2="62" y2="192" stroke="#ddb090" stroke-width="2"/>
+  </svg>
+
+  <div class="section-inner">
+    <div class="section-label-light lang-id">Siklus Tahunan</div>
+    <div class="section-label-light lang-en">Annual Cycle</div>
+    <h2 class="section-title-light">
+      <span class="lang-id">Fenologi Kopi Robusta — <em>Roda yang Berulang</em></span>
+      <span class="lang-en">Robusta Coffee Phenology — <em>The Recurring Wheel</em></span>
+    </h2>
+    <p class="section-desc-light lang-id">
+      Fenologi adalah siklus biologis tanaman yang mengikuti musim secara teratur setiap tahun. Kebun kopi Robusta Ngantang mengikuti pola ini: dari pemulihan pasca-panen, tumbuhnya tunas baru, pembentukan buah, hingga panen — lalu berulang lagi. Living Lab mendokumentasikan apa yang terjadi di setiap fase, setiap tahunnya.
+    </p>
+    <p class="section-desc-light lang-en">
+      Phenology is the cyclical biological process of plants that follows seasons regularly each year. The Ngantang Robusta coffee garden follows this pattern: from post-harvest recovery, new bud growth, fruit formation, to harvest — then repeating. Living Lab documents what happens at each phase, each year.
+    </p>
+
+    <div class="fenologi-layout">
+      <!-- SVG Wheel -->
+      <div class="fenologi-wheel-wrap">
+        <svg id="fenologi-svg" class="fenologi-svg" viewBox="0 0 320 320"></svg>
+        <div class="fenologi-center-label">
+          <span class="center-month">April</span>
+          <span class="center-year">2026</span>
+          <span class="center-phase-text lang-id">Pembentukan Buah</span>
+          <span class="center-phase-text lang-en">Fruit Formation</span>
+        </div>
+      </div>
+
+      <!-- pohon dihapus --><div style="display:none"><svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="above-ground"><rect x="0" y="0" width="200" height="145"/></clipPath>
+              <clipPath id="below-ground"><rect x="0" y="145" width="200" height="85"/></clipPath>
+            </defs>
+
+            <!-- ── TANAH & AKAR ── -->
+            <!-- Soil fill -->
+            <rect x="0" y="145" width="200" height="85" fill="#3a2e1e" opacity="0.55" rx="0"/>
+            <!-- Ground line -->
+            <line x1="0" y1="145" x2="200" y2="145" stroke="#6b5030" stroke-width="1.5" opacity="0.6"/>
+            <!-- Soil texture dots -->
+            <circle cx="30"  cy="158" r="1.5" fill="#5a4020" opacity="0.4"/>
+            <circle cx="70"  cy="162" r="1.2" fill="#5a4020" opacity="0.3"/>
+            <circle cx="115" cy="155" r="1.5" fill="#5a4020" opacity="0.4"/>
+            <circle cx="155" cy="165" r="1.2" fill="#5a4020" opacity="0.3"/>
+            <circle cx="50"  cy="172" r="1"   fill="#5a4020" opacity="0.3"/>
+            <circle cx="140" cy="175" r="1"   fill="#5a4020" opacity="0.3"/>
+
+            <!-- Roots — main + sub-branches -->
+            <g clip-path="url(#below-ground)" opacity="0.75">
+              <!-- Root center-left -->
+              <path d="M96,145 C90,155 80,165 68,178 C60,188 48,195 38,205" stroke="#7a5535" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M68,178 C62,182 54,184 46,188" stroke="#6b4828" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M55,192 C50,196 44,198 36,200" stroke="#5a3e22" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M46,188 C40,194 35,198 28,202" stroke="#5a3e22" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- Root center-right -->
+              <path d="M104,145 C110,155 120,165 132,178 C140,188 152,195 162,205" stroke="#7a5535" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <path d="M132,178 C138,182 146,184 154,188" stroke="#6b4828" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M145,192 C150,196 156,198 164,200" stroke="#5a3e22" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M154,188 C160,194 165,198 172,202" stroke="#5a3e22" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- Root straight down -->
+              <path d="M100,145 C100,158 100,172 99,188 C98,198 97,210 97,222" stroke="#7a5535" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <path d="M99,188 C95,195 90,200 85,208" stroke="#5a3e22" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M99,188 C103,195 108,200 113,208" stroke="#5a3e22" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- Root shallow left -->
+              <path d="M94,148 C82,150 68,152 54,156 C42,158 32,162 22,168" stroke="#6b4828" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M54,156 C50,162 46,168 40,174" stroke="#5a3e22" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <!-- Root shallow right -->
+              <path d="M106,148 C118,150 132,152 146,156 C158,158 168,162 178,168" stroke="#6b4828" stroke-width="2" fill="none" stroke-linecap="round"/>
+              <path d="M146,156 C150,162 154,168 160,174" stroke="#5a3e22" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            </g>
+
+            <!-- ── BATANG UTAMA ── -->
+            <path d="M100,145 C99,128 101,108 100,88 C99,70 101,52 100,28"
+              stroke="#7a5535" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <!-- Trunk highlights (texture) -->
+            <path d="M97,138 C96,120 98,100 97,82" stroke="#9a6848" stroke-width="2" fill="none" opacity="0.4" stroke-linecap="round"/>
+            <path d="M103,130 C104,112 102,92 103,74" stroke="#5a3820" stroke-width="1.5" fill="none" opacity="0.3" stroke-linecap="round"/>
+
+            <!-- ── CABANG BAWAH L (y~120) — CERI MERAH ── -->
+            <g class="ct-bgl1">
+              <path d="M100,120 C88,112 72,104 52,97" stroke="#7a5535" stroke-width="5" fill="none" stroke-linecap="round"/>
+              <!-- Leaf pairs -->
+              <ellipse class="ct-leaf" cx="70" cy="101" rx="15" ry="6.5" fill="#2e6038" transform="rotate(-38,70,101)"/>
+              <ellipse class="ct-leaf" cx="70" cy="101" rx="15" ry="6.5" fill="#3a7044" transform="rotate(-15,70,101)"/>
+              <ellipse class="ct-leaf" cx="54" cy="94"  rx="16" ry="6.5" fill="#2e6038" transform="rotate(-42,54,94)"/>
+              <ellipse class="ct-leaf" cx="54" cy="94"  rx="16" ry="6.5" fill="#3a7044" transform="rotate(-10,54,94)"/>
+              <ellipse class="ct-leaf" cx="84" cy="108" rx="13" ry="5.5" fill="#3d7848" transform="rotate(-28,84,108)"/>
+              <!-- Ceri merah cluster -->
+              <circle class="ct-c1" cx="57"  cy="97"  r="5"   fill="#c04030"/>
+              <circle class="ct-c2" cx="64"  cy="102" r="4.5" fill="#b03828"/>
+              <circle class="ct-c3" cx="52"  cy="103" r="4.5" fill="#cc4533"/>
+              <circle class="ct-c1" cx="72"  cy="104" r="4"   fill="#c04030"/>
+            </g>
+
+            <!-- ── CABANG BAWAH R (y~120) — CERI MERAH ── -->
+            <g class="ct-bgr1">
+              <path d="M100,120 C112,112 128,104 148,97" stroke="#7a5535" stroke-width="5" fill="none" stroke-linecap="round"/>
+              <ellipse class="ct-leaf" cx="130" cy="101" rx="15" ry="6.5" fill="#2e6038" transform="rotate(38,130,101)"/>
+              <ellipse class="ct-leaf" cx="130" cy="101" rx="15" ry="6.5" fill="#3a7044" transform="rotate(15,130,101)"/>
+              <ellipse class="ct-leaf" cx="146" cy="94"  rx="16" ry="6.5" fill="#2e6038" transform="rotate(42,146,94)"/>
+              <ellipse class="ct-leaf" cx="146" cy="94"  rx="16" ry="6.5" fill="#3a7044" transform="rotate(10,146,94)"/>
+              <ellipse class="ct-leaf" cx="116" cy="108" rx="13" ry="5.5" fill="#3d7848" transform="rotate(28,116,108)"/>
+              <circle class="ct-c3" cx="143" cy="97"  r="5"   fill="#c04030"/>
+              <circle class="ct-c4" cx="136" cy="102" r="4.5" fill="#b03828"/>
+              <circle class="ct-c2" cx="148" cy="103" r="4.5" fill="#cc4533"/>
+              <circle class="ct-c1" cx="128" cy="104" r="4"   fill="#c04030"/>
+            </g>
+
+            <!-- ── CABANG TENGAH L (y~94) — BUAH MUDA HIJAU ── -->
+            <g class="ct-bgl2">
+              <path d="M100,94 C88,86 74,79 58,73" stroke="#6b4828" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <ellipse class="ct-leaf" cx="76"  cy="77" rx="15" ry="6" fill="#2e6038" transform="rotate(-35,76,77)"/>
+              <ellipse class="ct-leaf" cx="76"  cy="77" rx="15" ry="6" fill="#3a7848" transform="rotate(-8,76,77)"/>
+              <ellipse class="ct-leaf" cx="60"  cy="70" rx="16" ry="6.5" fill="#2e6038" transform="rotate(-40,60,70)"/>
+              <ellipse class="ct-leaf" cx="60"  cy="70" rx="14" ry="5.5" fill="#4a8858" transform="rotate(-12,60,70)"/>
+              <!-- Buah muda hijau (fase April) -->
+              <circle class="ct-c3" cx="62"  cy="74"  r="4.5" fill="#6aaa28" opacity="0.9"/>
+              <circle class="ct-c4" cx="70"  cy="79"  r="4"   fill="#7db848" opacity="0.9"/>
+              <circle class="ct-c1" cx="57"  cy="68"  r="4"   fill="#5a9820" opacity="0.85"/>
+            </g>
+
+            <!-- ── CABANG TENGAH R (y~94) — BUAH MUDA HIJAU ── -->
+            <g class="ct-bgr2">
+              <path d="M100,94 C112,86 126,79 142,73" stroke="#6b4828" stroke-width="4" fill="none" stroke-linecap="round"/>
+              <ellipse class="ct-leaf" cx="124" cy="77" rx="15" ry="6" fill="#2e6038" transform="rotate(35,124,77)"/>
+              <ellipse class="ct-leaf" cx="124" cy="77" rx="15" ry="6" fill="#3a7848" transform="rotate(8,124,77)"/>
+              <ellipse class="ct-leaf" cx="140" cy="70" rx="16" ry="6.5" fill="#2e6038" transform="rotate(40,140,70)"/>
+              <ellipse class="ct-leaf" cx="140" cy="70" rx="14" ry="5.5" fill="#4a8858" transform="rotate(12,140,70)"/>
+              <circle class="ct-c2" cx="138" cy="74"  r="4.5" fill="#6aaa28" opacity="0.9"/>
+              <circle class="ct-c3" cx="130" cy="79"  r="4"   fill="#7db848" opacity="0.9"/>
+              <circle class="ct-c4" cx="143" cy="68"  r="4"   fill="#5a9820" opacity="0.85"/>
+            </g>
+
+            <!-- ── CABANG ATAS L (y~68) ── -->
+            <g class="ct-bgl3">
+              <path d="M100,68 C89,61 76,55 62,50" stroke="#5a3e28" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <ellipse class="ct-leaf" cx="80"  cy="54" rx="14" ry="5.5" fill="#3a7044" transform="rotate(-30,80,54)"/>
+              <ellipse class="ct-leaf" cx="80"  cy="54" rx="13" ry="5"   fill="#5a9060" transform="rotate(-5,80,54)"/>
+              <ellipse class="ct-leaf" cx="64"  cy="48" rx="14" ry="5.5" fill="#3a7044" transform="rotate(-38,64,48)"/>
+              <ellipse class="ct-leaf" cx="64"  cy="48" rx="13" ry="5"   fill="#4a8858" transform="rotate(-10,64,48)"/>
+            </g>
+
+            <!-- ── CABANG ATAS R (y~68) ── -->
+            <g class="ct-bgr3">
+              <path d="M100,68 C111,61 124,55 138,50" stroke="#5a3e28" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <ellipse class="ct-leaf" cx="120" cy="54" rx="14" ry="5.5" fill="#3a7044" transform="rotate(30,120,54)"/>
+              <ellipse class="ct-leaf" cx="120" cy="54" rx="13" ry="5"   fill="#5a9060" transform="rotate(5,120,54)"/>
+              <ellipse class="ct-leaf" cx="136" cy="48" rx="14" ry="5.5" fill="#3a7044" transform="rotate(38,136,48)"/>
+              <ellipse class="ct-leaf" cx="136" cy="48" rx="13" ry="5"   fill="#4a8858" transform="rotate(10,136,48)"/>
+            </g>
+
+            <!-- ── MAHKOTA ATAS ── -->
+            <g class="ct-bgtop">
+              <ellipse class="ct-leaf" cx="100" cy="28" rx="22" ry="9"   fill="#2e6038"/>
+              <ellipse class="ct-leaf" cx="84"  cy="24" rx="18" ry="7.5" fill="#3a7044" transform="rotate(-20,84,24)"/>
+              <ellipse class="ct-leaf" cx="116" cy="24" rx="18" ry="7.5" fill="#3a7044" transform="rotate(20,116,24)"/>
+              <ellipse class="ct-leaf" cx="100" cy="16" rx="16" ry="7"   fill="#4a8858"/>
+              <ellipse class="ct-leaf" cx="88"  cy="11" rx="13" ry="5.5" fill="#3a7044" transform="rotate(-15,88,11)"/>
+              <ellipse class="ct-leaf" cx="112" cy="11" rx="13" ry="5.5" fill="#3a7044" transform="rotate(15,112,11)"/>
+              <ellipse class="ct-leaf" cx="100" cy="6"  rx="10" ry="4.5" fill="#5a9060"/>
+            </g>
+
+          </svg>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div>
+        <div class="fenologi-legend">
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#7a9e96;"></div>
+            <div class="legend-content">
+              <div class="legend-phase lang-id">Pemulihan & Dormansi</div>
+              <div class="legend-phase lang-en">Recovery & Dormancy</div>
+              <div class="legend-months lang-id">Jan, Nov, Des</div>
+              <div class="legend-months lang-en">Jan, Nov, Dec</div>
+              <div class="legend-desc lang-id">Pohon beristirahat setelah panen. Fase penting untuk memulihkan energi tanaman sebelum siklus berikutnya dimulai.</div>
+              <div class="legend-desc lang-en">Trees rest after harvest. A critical phase for restoring plant energy before the next cycle begins.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#5a9080;"></div>
+            <div class="legend-content">
+              <div class="legend-phase lang-id">Pertumbuhan Vegetatif</div>
+              <div class="legend-phase lang-en">Vegetative Growth</div>
+              <div class="legend-months">Feb – Mar</div>
+              <div class="legend-desc lang-id">Tunas baru tumbuh. Daun dan cabang berkembang aktif — fondasi untuk musim berbuah berikutnya.</div>
+              <div class="legend-desc lang-en">New buds emerge. Leaves and branches develop actively — the foundation for the next fruiting season.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#7db848;"></div>
+            <div class="legend-content">
+              <div class="legend-phase lang-id">Pembentukan Buah ← Sekarang</div>
+              <div class="legend-phase lang-en">Fruit Formation ← Now</div>
+              <div class="legend-months">Apr – Mei</div>
+              <div class="legend-desc lang-id">Buah kopi terbentuk dan mulai berkembang. Masa kritis untuk nutrisi dan perlindungan tanaman.</div>
+              <div class="legend-desc lang-en">Coffee fruit forms and begins developing. A critical time for plant nutrition and protection.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#c8a840;"></div>
+            <div class="legend-content">
+              <div class="legend-phase lang-id">Pematangan Buah</div>
+              <div class="legend-phase lang-en">Fruit Ripening</div>
+              <div class="legend-months">Jun</div>
+              <div class="legend-desc lang-id">Buah mulai menguning — tanda panen segera dimulai. Pengawasan intensif dibutuhkan.</div>
+              <div class="legend-desc lang-en">Fruit begins to yellow — a sign harvest is about to begin. Intensive monitoring is needed.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#c4906a;"></div>
+            <div class="legend-content">
+              <div class="legend-phase lang-id">Panen Utama</div>
+              <div class="legend-phase lang-en">Main Harvest</div>
+              <div class="legend-months">Jul – Agt</div>
+              <div class="legend-desc lang-id">Panen dilakukan bertahap dalam 4 ronde. Buah dipetik selektif sesuai tingkat kematangan untuk menjaga kualitas.</div>
+              <div class="legend-desc lang-en">Harvest is done in 4 rounds. Cherries are selectively picked by ripeness to maintain quality.</div>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="legend-swatch" style="background:#3d7868;"></div>
+            <div class="legend-content">
+              <div class="legend-phase lang-id">Post-Panen & Intervensi</div>
+              <div class="legend-phase lang-en">Post-Harvest & Intervention</div>
+              <div class="legend-months">Sep – Okt</div>
+              <div class="legend-desc lang-id">Pruning total, pemulihan tanah, dan intervensi rehabilitasi. Fase ini menentukan produktivitas musim berikutnya.</div>
+              <div class="legend-desc lang-en">Full pruning, soil recovery, and rehabilitation interventions. This phase determines the next season's productivity.</div>
+            </div>
+          </div>
+        </div>
+        <div class="fenologi-note lang-id">
+          Siklus ini berulang setiap tahun — dan Living Lab akan terus mendokumentasikan apa yang terjadi di setiap fasenya. Dalam 5–10 tahun ke depan, halaman ini menjadi rekaman lengkap perjalanan kebun dari nol hingga menjadi aset wakaf yang produktif.
+        </div>
+        <div class="fenologi-note lang-en">
+          This cycle repeats every year — and Living Lab will continue to document what happens at each phase. Over the next 5–10 years, this page becomes a complete record of the garden's journey from zero to a productive waqf asset.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ LOG AKTIVITAS ══ -->
+<section class="log-section">
+  <div class="section-inner">
+    <div class="section-label lang-id">Dokumentasi Perjalanan</div>
+    <div class="section-label lang-en">Journey Documentation</div>
+    <h2 class="section-title">
+      <span class="lang-id">Log Aktivitas Kebun — <em>Per Tahun & Fase</em></span>
+      <span class="lang-en">Garden Activity Log — <em>By Year & Phase</em></span>
+    </h2>
+    <p class="section-desc lang-id">Rekaman seluruh aktivitas dan intervensi di kebun, diorganisir berdasarkan tahun dan fase fenologi. Setiap entri mencatat apa yang dilakukan, kapan, dan apa hasilnya.</p>
+    <p class="section-desc lang-en">A record of all garden activities and interventions, organized by year and phenological phase. Each entry records what was done, when, and what the outcome was.</p>
+
+    <!-- Year Tabs -->
+    <div class="log-year-tabs">
+      <button class="year-tab" data-year="2024" onclick="switchYear('2024')">2024</button>
+      <button class="year-tab" data-year="2025" onclick="switchYear('2025')">2025</button>
+      <button class="year-tab active" data-year="2026" onclick="switchYear('2026')">
+        2026 <span style="font-size:0.6rem;background:rgba(70,170,80,0.18);color:#2a6e35;padding:0.1rem 0.45rem;border-radius:10px;margin-left:0.3rem;font-weight:800;" class="lang-id">Aktif</span><span style="font-size:0.6rem;background:rgba(70,170,80,0.18);color:#2a6e35;padding:0.1rem 0.45rem;border-radius:10px;margin-left:0.3rem;font-weight:800;" class="lang-en">Active</span>
+      </button>
+    </div>
+
+    <!-- 2024 -->
+    <div class="year-content" id="year-2024">
+      <div class="year-summary">
+        <div class="year-sum-pill lang-id"><strong>~100 KG</strong> Green Bean Tercatat</div>
+        <div class="year-sum-pill lang-en"><strong>~100 KG</strong> Green Bean Recorded</div>
+        <div class="year-sum-pill lang-id">Panen <strong>Perdana</strong></div>
+        <div class="year-sum-pill lang-en"><strong>First</strong> Harvest</div>
+        <div class="year-sum-pill lang-id">Nadzir: <strong>MWC NU</strong></div>
+        <div class="year-sum-pill lang-en">Manager: <strong>MWC NU</strong></div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">🌱</span>
+          <span class="phase-block-title lang-id">Pre-Panen</span>
+          <span class="phase-block-title lang-en">Pre-Harvest</span>
+          <span class="phase-block-period lang-id">Jan – Jun 2024</span>
+          <span class="phase-block-period lang-en">Jan – Jun 2024</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Pembersihan Intensif Kebun</div>
+              <div class="act-log-title lang-en">Intensive Garden Clearing</div>
+              <div class="act-log-detail lang-id">Pembersihan menyeluruh pertama yang terdokumentasi. 55 person-days kerja lapangan mencakup pembersihan gulma dan sanitasi lahan secara sistematis.</div>
+              <div class="act-log-detail lang-en">First fully documented comprehensive clearing. 55 person-days of field work covering weed clearing and systematic land sanitation.</div>
+            </div>
+            <div class="act-log-meta"><strong>Feb 2024</strong>55 person-days</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">☕</span>
+          <span class="phase-block-title lang-id">Panen</span>
+          <span class="phase-block-title lang-en">Harvest</span>
+          <span class="phase-block-period lang-id">Jul – Agt 2024</span>
+          <span class="phase-block-period lang-en">Jul – Aug 2024</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Panen Perdana Terdokumentasi</div>
+              <div class="act-log-title lang-en">First Documented Harvest</div>
+              <div class="act-log-detail lang-id">Panen pertama yang tercatat secara formal. Menghasilkan sekitar 100 KG green bean — angka awal yang menjadi baseline untuk pertumbuhan ke depan.</div>
+              <div class="act-log-detail lang-en">First formally recorded harvest. Yielding approximately 100 KG green bean — an initial figure that became the baseline for future growth.</div>
+            </div>
+            <div class="act-log-meta"><strong>~100 KG</strong>Green Bean</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">🌿</span>
+          <span class="phase-block-title lang-id">Post-Panen</span>
+          <span class="phase-block-title lang-en">Post-Harvest</span>
+          <span class="phase-block-period lang-id">Sep – Des 2024</span>
+          <span class="phase-block-period lang-en">Sep – Dec 2024</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Replanting 330 Bibit (tidak berhasil)</div>
+              <div class="act-log-title lang-en">Replanting 330 Seedlings (unsuccessful)</div>
+              <div class="act-log-detail lang-id">Upaya peremajaan dengan 330 bibit baru. Seluruh bibit tidak bertahan — pelajaran penting: replanting membutuhkan pengawalan intensif dan jadwal yang tepat.</div>
+              <div class="act-log-detail lang-en">Rejuvenation attempt with 330 new seedlings. All seedlings did not survive — an important lesson: replanting requires intensive supervision and proper timing.</div>
+            </div>
+            <div class="act-log-meta"><strong>Okt 2024</strong>Pembelajaran</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2025 -->
+    <div class="year-content" id="year-2025">
+      <div class="year-summary">
+        <div class="year-sum-pill lang-id"><strong>281 KG</strong> Green Bean Tercatat</div>
+        <div class="year-sum-pill lang-en"><strong>281 KG</strong> Green Bean Recorded</div>
+        <div class="year-sum-pill lang-id"><strong>+346%</strong> dari 2024</div>
+        <div class="year-sum-pill lang-en"><strong>+346%</strong> from 2024</div>
+        <div class="year-sum-pill lang-id">MOU Wakaf: <strong>27 Nov 2025</strong></div>
+        <div class="year-sum-pill lang-en">Waqf MOU: <strong>27 Nov 2025</strong></div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">☕</span>
+          <span class="phase-block-title lang-id">Panen</span>
+          <span class="phase-block-title lang-en">Harvest</span>
+          <span class="phase-block-period lang-id">Jul – Agt 2025</span>
+          <span class="phase-block-period lang-en">Jul – Aug 2025</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Panen 2025 — Lonjakan Signifikan</div>
+              <div class="act-log-title lang-en">2025 Harvest — Significant Surge</div>
+              <div class="act-log-detail lang-id">281 KG green bean — kenaikan 346% dari tahun sebelumnya. Produktivitas mencapai 0,31 KG/pohon, mendekati rata-rata nasional 0,4 KG/pohon. Fondasi nyata mulai terbangun.</div>
+              <div class="act-log-detail lang-en">281 KG green bean — a 346% increase from the previous year. Productivity reached 0.31 KG/tree, approaching the national average of 0.4 KG/tree. A real foundation is beginning to form.</div>
+            </div>
+            <div class="act-log-meta"><strong>281 KG</strong>+346%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">📜</span>
+          <span class="phase-block-title lang-id">Post-Panen & Milestone</span>
+          <span class="phase-block-title lang-en">Post-Harvest & Milestone</span>
+          <span class="phase-block-period lang-id">Sep – Des 2025</span>
+          <span class="phase-block-period lang-en">Sep – Dec 2025</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Penandatanganan MOU Wakaf Produktif</div>
+              <div class="act-log-title lang-en">Productive Waqf MOU Signing</div>
+              <div class="act-log-detail lang-id">Alhamdulillah — ikrar resmi ditandatangani bersama Rumah Wakaf Indonesia. Perkebunan Kopi & Durian Bonsari resmi menjadi wakaf produktif. Tonggak paling bermakna dalam perjalanan ini.</div>
+              <div class="act-log-detail lang-en">Alhamdulillah — the formal pledge was signed with Rumah Wakaf Indonesia. Bonsari Coffee & Durian Farm officially became productive waqf. The most meaningful milestone of this journey.</div>
+            </div>
+            <div class="act-log-meta"><strong>27 Nov 2025</strong>Milestone</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026 -->
+    <div class="year-content active" id="year-2026">
+      <div class="active-year-banner">
+        <div class="active-year-dot"></div>
+        <span class="active-year-label lang-id">Tahun Berjalan — 2026</span>
+        <span class="active-year-label lang-en">Current Year — 2026</span>
+        <span class="active-year-desc lang-id">Rehabilitasi aktif & intervensi Tenaga Ahli sedang berlangsung</span>
+        <span class="active-year-desc lang-en">Active rehabilitation & Technical Advisor interventions underway</span>
+      </div>
+      <div class="year-summary">
+        <div class="year-sum-pill lang-id">Fase: <strong>Pembentukan Buah</strong></div>
+        <div class="year-sum-pill lang-en">Phase: <strong>Fruit Formation</strong></div>
+        <div class="year-sum-pill lang-id">Intervensi Tenaga Ahli: <strong>Jan–Mar</strong></div>
+        <div class="year-sum-pill lang-en">Technical Advisor Interventions: <strong>Jan–Mar</strong></div>
+        <div class="year-sum-pill lang-id">Tenaga Ahli Kebun: <strong>T.A. Aktif</strong></div>
+        <div class="year-sum-pill lang-en">Technical Advisor: <strong>Active</strong></div>
+        <div class="year-sum-pill lang-id">Target Panen: <strong>Jun–Agt 2026</strong></div>
+        <div class="year-sum-pill lang-en">Harvest Target: <strong>Jun–Aug 2026</strong></div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">🌱</span>
+          <span class="phase-block-title lang-id">Pre-Panen</span>
+          <span class="phase-block-title lang-en">Pre-Harvest</span>
+          <span class="phase-block-period lang-id">Apr – Jun 2026</span>
+          <span class="phase-block-period lang-en">Apr – Jun 2026</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Pemupukan Makro & Penyemprotan Nutrisi Awal — Tenaga Ahli</div>
+              <div class="act-log-title lang-en">Macro Fertilization & Initial Nutrient Spray — Technical Advisor</div>
+              <div class="act-log-detail lang-id">Intervensi teknis pertama di bawah bimbingan Tenaga Ahli. Aplikasi pupuk makro (Karate Plus Boron, Ponska Plus, Fertiphos, NPK Yaramila 16.16.16) dan mikro (MKP, Vita Flex, CNG, MGs, Ultradap, ZnS), serta treatment khusus SNC, NPGP, CN cair & serbuk. Penyemprotan rutin setiap 10 hari — tiap sesi 12 tangki (220 liter).</div>
+              <div class="act-log-detail lang-en">First technical intervention under specialist guidance. Applied macro fertilizers (Karate Plus Boron, Ponska Plus, Fertiphos, NPK Yaramila 16.16.16), micro nutrients (MKP, Vita Flex, CNG, MGs, Ultradap, ZnS), and special treatments SNC, NPGP, CN liquid & powder. Routine spray every 10 days — 12 tanks (220 liters) per session.</div>
+            </div>
+            <div class="act-log-meta"><strong>8 Jan 2026</strong>T.A.</div>
+          </div>
+
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Penggemburan Tanah + Aplikasi Kompos Ayam (65 Sak)</div>
+              <div class="act-log-title lang-en">Soil Aeration + Poultry Compost Application (65 Sacks)</div>
+              <div class="act-log-detail lang-id">Penggemburan tanah menggunakan garpu di seluruh area tajuk pohon — memotong sebagian akar serabut untuk memacu pertumbuhan akar baru. Bersamaan dengan tabur 65 sak kompos ayam petelur (3–5 KG/pohon). Kedalaman garpu maksimal 20 cm, posisi menghadap batang. Dilaksanakan selama 3 minggu oleh tim lapangan.</div>
+              <div class="act-log-detail lang-en">Soil aeration using forks across the canopy area — partially cutting fibrous roots to stimulate new root growth. Concurrent with distribution of 65 sacks of poultry compost (3–5 KG/tree). Max fork depth 20 cm, facing the trunk. Carried out over 3 weeks by the field team.</div>
+            </div>
+            <div class="act-log-meta"><strong>31 Jan–20 Feb</strong>2026</div>
+          </div>
+
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Pemasangan Meter Air PDAM Desa</div>
+              <div class="act-log-title lang-en">Village PDAM Water Meter Installation</div>
+              <div class="act-log-detail lang-id">Infrastruktur air bersih terpasang di kebun — menggantikan pengambilan air manual dari rumah Wakif menggunakan jerigen. Mendukung operasional penyemprotan rutin 220 liter/sesi secara jauh lebih efisien dan konsisten.</div>
+              <div class="act-log-detail lang-en">Clean water infrastructure installed at the garden — replacing manual water transport from the Wakif's house via jerrycans. Enables efficient, consistent routine spraying of 220 liters per session.</div>
+            </div>
+            <div class="act-log-meta"><strong>7 Mar 2026</strong>Infrastruktur</div>
+          </div>
+
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Pengocoran Fish Extract Perdana</div>
+              <div class="act-log-title lang-en">First Fish Extract Soil Drench Application</div>
+              <div class="act-log-detail lang-id">Pengocoran 100 cc fish extract per pohon + 900 cc air = 1 liter/pohon. Fish extract diproduksi mandiri di Wonosalam (1.000 liter; bahan: air kelapa 250L, molase 100L, limbah ikan laut 500 KG, bioactivator 20 KG). Setelah serangkaian intervensi ini, tunas baru dan bunga perdana mulai bermunculan di ujung cabang — tanda rejuvenasi nyata mulai terlihat.</div>
+              <div class="act-log-detail lang-en">Application of 100cc fish extract per tree + 900cc water = 1 liter/tree. Fish extract self-produced in Wonosalam (1,000 liters; ingredients: coconut water 250L, molasses 100L, sea fish waste 500 KG, bioactivator 20 KG). After this series of interventions, new buds and first flowers began emerging at branch tips — visible signs of rejuvenation underway.</div>
+            </div>
+            <div class="act-log-meta"><strong>15 Mar 2026</strong>T.A.</div>
+          </div>
+
+          <div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Kunjungan Lapangan Perdana & Assessment Baseline</div>
+              <div class="act-log-title lang-en">First Field Visit & Baseline Assessment</div>
+              <div class="act-log-detail lang-id">Bersama Tenaga Ahli Kebun (15+ tahun pengalaman). Sampling TDS tanah di 5 titik — hasil: tanah berpasir dengan defisiensi mineral. Evaluasi kondisi 915 pohon. Proyeksi panen ditetapkan: Juni–Juli 2026, ±4 ronde.</div>
+              <div class="act-log-detail lang-en">Together with Technical Advisor (15+ years experience). Soil TDS sampling at 5 points — result: sandy soil with mineral deficiency. Assessment of 915 tree conditions. Harvest projection set: June–July 2026, ±4 rounds.</div>
+              <span class="report-link lang-id">📄 Lihat Laporan Kunjungan →</span>
+              <span class="report-link lang-en">📄 View Visit Report →</span>
+            </div>
+            <div class="act-log-meta"><strong>20 Apr 2026</strong>Kunjungan ke-1</div>
+          </div>
+          <div class="act-log-item">
+            <span class="act-log-status s-ongoing lang-id">⟳ Berjalan</span>
+            <span class="act-log-status s-ongoing lang-en">⟳ Ongoing</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Pengadaan Pupuk Kandang (Prioritas Utama)</div>
+              <div class="act-log-title lang-en">Organic Fertilizer Procurement (Top Priority)</div>
+              <div class="act-log-detail lang-id">Pupuk kandang menjadi prioritas karena tanah berpasir — kandungan P tinggi dari pupuk organik sangat dibutuhkan untuk meningkatkan mineral tanah sebelum panen.</div>
+              <div class="act-log-detail lang-en">Organic fertilizer is a priority due to sandy soil — high P content from organic fertilizer is urgently needed to improve soil minerals before harvest.</div>
+            </div>
+            <div class="act-log-meta"><strong>Target</strong>Sebelum Jun</div>
+          </div>
+          <div class="act-log-item">
+            <span class="act-log-status s-planned lang-id">◎ Direncanakan</span>
+            <span class="act-log-status s-planned lang-en">◎ Planned</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Pruning Selektif</div>
+              <div class="act-log-title lang-en">Selective Pruning</div>
+              <div class="act-log-detail lang-id">Pemangkasan cabang tidak produktif — memfokuskan nutrisi ke cabang berbuah. Alat pruning (kerasi manual/mesin) sedang diadakan.</div>
+              <div class="act-log-detail lang-en">Pruning of unproductive branches — focusing nutrients to fruit-bearing branches. Pruning tools (manual/machine shears) being procured.</div>
+            </div>
+            <div class="act-log-meta"><strong>Mei–Jun</strong>2026</div>
+          </div>
+          <div class="act-log-item">
+            <span class="act-log-status s-planned lang-id">◎ Direncanakan</span>
+            <span class="act-log-status s-planned lang-en">◎ Planned</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Identifikasi OPT (Hama & Penyakit)</div>
+              <div class="act-log-title lang-en">Pest & Disease Identification (OPT)</div>
+              <div class="act-log-detail lang-id">Survei menyeluruh hama dan penyakit tanaman — belum dilakukan pada kunjungan pertama. Akan dilaksanakan pada kunjungan lapangan berikutnya bersama Tenaga Ahli.</div>
+              <div class="act-log-detail lang-en">Comprehensive pest and disease survey — not yet conducted during the first visit. To be carried out during the next field visit with the Technical Advisor.</div>
+            </div>
+            <div class="act-log-meta"><strong>Kunjungan</strong>Berikutnya</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">☕</span>
+          <span class="phase-block-title lang-id">Panen</span>
+          <span class="phase-block-title lang-en">Harvest</span>
+          <span class="phase-block-period lang-id">Jun – Agt 2026</span>
+          <span class="phase-block-period lang-en">Jun – Aug 2026</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-upcoming lang-id">↗ Akan Datang</span>
+            <span class="act-log-status s-upcoming lang-en">↗ Upcoming</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Panen Perdana Post-Wakaf (±4 Ronde)</div>
+              <div class="act-log-title lang-en">First Post-Waqf Harvest (±4 Rounds)</div>
+              <div class="act-log-detail lang-id">Panen dilakukan bertahap karena kopi tidak masak serentak. Estimasi 4 ronde pemetikan selektif dari Juni hingga Agustus 2026. Hasil akan didokumentasikan per ronde dan dipublikasikan terbuka.</div>
+              <div class="act-log-detail lang-en">Harvest is done in stages because coffee does not ripen uniformly. Estimated 4 rounds of selective picking from June to August 2026. Results will be documented per round and published openly.</div>
+            </div>
+            <div class="act-log-meta"><strong>Est. Jun–Agt</strong>±4 Ronde</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">🌿</span>
+          <span class="phase-block-title lang-id">Post-Panen & Intervensi</span>
+          <span class="phase-block-title lang-en">Post-Harvest & Intervention</span>
+          <span class="phase-block-period lang-id">Sep – Okt 2026</span>
+          <span class="phase-block-period lang-en">Sep – Oct 2026</span>
+        </div>
+        <div class="act-log-list">
+          <div class="act-log-item">
+            <span class="act-log-status s-planned lang-id">◎ Direncanakan</span>
+            <span class="act-log-status s-planned lang-en">◎ Planned</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Pruning Total + Pemulihan Tanah</div>
+              <div class="act-log-title lang-en">Full Pruning + Soil Recovery</div>
+              <div class="act-log-detail lang-id">Pruning total 30–50 cm dari batang — memaksa pohon berproduksi lebih pada siklus berikutnya. Bersamaan dengan program pemulihan tanah (olah tanah, pupuk organik siklus kedua).</div>
+              <div class="act-log-detail lang-en">Full pruning 30–50 cm from the trunk — forcing trees to produce more in the next cycle. Concurrent with soil recovery program (tillage, second-cycle organic fertilizer).</div>
+            </div>
+            <div class="act-log-meta"><strong>Sep–Okt</strong>2026</div>
+          </div>
+          <div class="act-log-item">
+            <span class="act-log-status s-planned lang-id">◎ Direncanakan</span>
+            <span class="act-log-status s-planned lang-en">◎ Planned</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Baseline Riset Post-Intervensi</div>
+              <div class="act-log-title lang-en">Post-Intervention Research Baseline</div>
+              <div class="act-log-detail lang-id">Pengambilan data tanah, kondisi pohon, dan hasil panen pasca-intervensi — membandingkan dengan baseline April 2026. Data ini terbuka untuk peneliti dan akademisi.</div>
+              <div class="act-log-detail lang-en">Soil data collection, tree condition, and post-intervention harvest results — comparing with the April 2026 baseline. This data is open to researchers and academics.</div>
+            </div>
+            <div class="act-log-meta"><strong>Okt–Nov</strong>2026</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ DATA HISTORIS PANEN ══ -->
+<section class="harvest-section">
+  <div class="section-inner">
+    <div class="section-label lang-id">Perjalanan Produksi</div>
+    <div class="section-label lang-en">Production Journey</div>
+    <h2 class="section-title">
+      <span class="lang-id">Trajectory Panen — dari <em>Nol Menuju Produktif</em></span>
+      <span class="lang-en">Harvest Trajectory — from <em>Zero to Productive</em></span>
+    </h2>
+    <p class="section-desc lang-id">Data hasil panen green bean per tahun sejak kebun mulai terdokumentasi. Angka ini bukan hanya statistik — ia adalah bukti bahwa tanah yang dirawat dengan konsisten akan berbicara sendiri.</p>
+    <p class="section-desc lang-en">Green bean harvest data per year since the garden began to be documented. These numbers are not just statistics — they are proof that land cared for consistently will speak for itself.</p>
+
+    <div class="harvest-track">
+      <div class="harvest-node">
+        <div class="harvest-year">2022–23</div>
+        <div class="harvest-kg lang-id">Data Hilang</div>
+        <div class="harvest-kg lang-en">No Data</div>
+        <div class="harvest-bar-wrap"><div class="harvest-bar b-no-data"></div></div>
+        <div class="harvest-note lang-id">Belum terdokumentasi</div>
+        <div class="harvest-note lang-en">Not documented</div>
+        <span class="harvest-tag t-nodata lang-id">Tidak Tercatat</span>
+        <span class="harvest-tag t-nodata lang-en">Unrecorded</span>
+      </div>
+      <div class="harvest-arrow">→</div>
+      <div class="harvest-node">
+        <div class="harvest-year">2024</div>
+        <div class="harvest-kg">~100 KG</div>
+        <div class="harvest-bar-wrap"><div class="harvest-bar b-2024"></div></div>
+        <div class="harvest-note lang-id">Panen perdana tercatat</div>
+        <div class="harvest-note lang-en">First recorded harvest</div>
+        <span class="harvest-tag t-start lang-id">Dimulai</span>
+        <span class="harvest-tag t-start lang-en">Started</span>
+      </div>
+      <div class="harvest-arrow">→</div>
+      <div class="harvest-node">
+        <div class="harvest-year">2025</div>
+        <div class="harvest-kg">281 KG</div>
+        <div class="harvest-bar-wrap"><div class="harvest-bar b-2025"></div></div>
+        <div class="harvest-note">+346% dari 2024</div>
+        <span class="harvest-tag t-growth lang-id">Tumbuh Pesat</span>
+        <span class="harvest-tag t-growth lang-en">Strong Growth</span>
+      </div>
+      <div class="harvest-arrow">→</div>
+      <div class="harvest-node">
+        <div class="harvest-year">2026</div>
+        <div class="harvest-kg" style="color:var(--muted);">Target</div>
+        <div class="harvest-bar-wrap"><div class="harvest-bar b-target"></div></div>
+        <div class="harvest-note lang-id">Bergantung hasil intervensi</div>
+        <div class="harvest-note lang-en">Subject to intervention results</div>
+        <span class="harvest-tag t-target lang-id">Proyeksi</span>
+        <span class="harvest-tag t-target lang-en">Projected</span>
+      </div>
+    </div>
+
+    <div class="harvest-context">
+      <div class="harvest-ctx-card">
+        <div class="ctx-num">0,31 KG</div>
+        <div class="ctx-label lang-id">Per pohon (2025)<br>Mendekati rata-rata nasional 0,4 KG/pohon</div>
+        <div class="ctx-label lang-en">Per tree (2025)<br>Approaching national average of 0.4 KG/tree</div>
+      </div>
+      <div class="harvest-ctx-card">
+        <div class="ctx-num">Rp 31K</div>
+        <div class="ctx-label lang-id">Biaya per KG (2025)<br>Turun dari Rp 189K/KG pada 2024</div>
+        <div class="ctx-label lang-en">Cost per KG (2025)<br>Down from Rp 189K/KG in 2024</div>
+      </div>
+      <div class="harvest-ctx-card">
+        <div class="ctx-num">915</div>
+        <div class="ctx-label lang-id">Pohon terdata<br>787 Kebun Wakaf · 128 Rumah Wakif</div>
+        <div class="ctx-label lang-en">Trees documented<br>787 Waqf Garden · 128 Wakif's Home</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        Lembaga Nazir: Rumah Wakaf Indonesia<br>
+        Dusun Kebonsari, Ngantang, Malang, Jawa Timur
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ══ LANGUAGE TOGGLE ══ */
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+
+function getDisplayType(el) {
+  const tag = el.tagName.toLowerCase();
+  if (INLINE_TAGS.has(tag))       return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+
+function setLang(lang) {
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('a[href]').forEach(function(a) {
+    var h = a.getAttribute('href');
+    if (!h || h.indexOf('http') === 0 || h.indexOf('#') === 0 || h.indexOf('mailto') === 0) return;
+    a.setAttribute('href', h.split('?')[0] + '?lang=' + lang);
+  });
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  buildTheoryColumns();
+  buildFenologi();
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+});
+
+/* ══ THEORY COLUMNS ══ */
+var theoryData = {
+  '2024': [
+    {
+      id: 'Gulma bersaing langsung dengan kopi untuk cahaya, air tanah, dan nitrogen. Kanopi yang tertutup gulma dapat menekan fotosintesis pohon hingga 30–40%, dan gulma yang membusuk meningkatkan kelembapan berlebih yang menjadi media jamur patogen. Pembersihan awal adalah prasyarat dasar — tanpa sanitasi lahan, tidak ada intervensi pemupukan yang dapat bekerja efektif.',
+      en: 'Weeds directly compete with coffee for light, soil water, and nitrogen. A weed-covered canopy can suppress tree photosynthesis by 30–40%, while decaying weeds increase excess moisture that breeds fungal pathogens. Initial clearing is the baseline prerequisite — without land sanitation, no fertilization intervention can work effectively.',
+      tags: ['Sanitasi Kebun', 'Prasyarat Intervensi']
+    },
+    {
+      id: 'Produktivitas 0,11 KG/pohon berada di bawah 30% rata-rata nasional robusta Indonesia (0,4–0,8 KG/pohon). Angka ini mencerminkan kondisi pohon yang kelelahan: cabang primer menua mendominasi, beban buah terpusat di ujung, dan tanah belum dipulihkan. Sebagai baseline pertama, angka ini berharga — membuktikan bahwa kebun masih produktif dan memiliki kapasitas tumbuh dengan intervensi yang tepat.',
+      en: 'Productivity of 0.11 KG/tree falls below 30% of Indonesia\'s national robusta average (0.4–0.8 KG/tree). This reflects exhausted tree conditions: aging primary branches dominate, fruit load is concentrated at branch tips, and soil is unrestored. As the first baseline, this figure is valuable — it proves the garden is still productive and has growth capacity with proper intervention.',
+      tags: ['Baseline 0,11 KG/Pohon', 'Cabang Primer Menua']
+    },
+    {
+      id: 'Kegagalan replanting umumnya disebabkan oleh tiga faktor: transplant shock akibat perubahan mendadak kondisi lingkungan, pemilihan waktu yang tidak tepat (musim kering), dan bibit yang tidak melalui proses hardening off. Bibit kopi muda sangat sensitif terhadap fluktuasi kelembapan tanah. Pelajaran kunci: replanting ideal di awal musim hujan, dengan naungan sementara 3–4 bulan dan penyiraman harian selama masa adaptasi.',
+      en: 'Replanting failures are typically caused by three factors: transplant shock from sudden environmental changes, poor timing (dry season), and seedlings without proper hardening off. Young coffee seedlings are highly sensitive to soil moisture fluctuations. Key lesson: ideal replanting is done at the rainy season onset, with 3–4 months of temporary shade and daily watering during the adaptation period.',
+      tags: ['Transplant Shock', 'Timing: Awal Musim Hujan']
+    }
+  ],
+  '2025': [
+    {
+      id: 'Lonjakan 346% ini adalah respons kumulatif sanitasi lahan 2024: kanopi terbuka meningkatkan penetrasi cahaya, akar pulih dari tekanan gulma, dan pohon mengalokasikan lebih banyak fotosintat ke buah. Produktivitas 0,31 KG/pohon mendekati rata-rata nasional mengkonfirmasi potensi genetik tanaman yang kuat. Dengan intervensi nutrisi intensif, target realistis berikutnya adalah 0,5–0,6 KG/pohon atau setara 457–549 KG total.',
+      en: 'This 346% surge is a cumulative response to 2024 land sanitation: open canopy increased light penetration, roots recovered from weed pressure, and trees allocated more photosynthate to fruit. Productivity of 0.31 KG/tree approaching national average confirms strong genetic potential. With intensive nutritional intervention, the next realistic target is 0.5–0.6 KG/tree or 457–549 KG total.',
+      tags: ['Efek Kumulatif Sanitasi', 'Target: 0,5+ KG/Pohon']
+    },
+    {
+      id: 'Dari perspektif agronomi jangka panjang, kepastian status lahan adalah prasyarat untuk program rehabilitasi multi-tahun yang efektif. Investasi dalam perbaikan tanah, replanting, dan peremajaan pohon baru menghasilkan dampak nyata setelah 3–5 tahun — horizon yang hanya feasible jika pengelolaan terjamin. Status wakaf produktif juga membuka akses ke riset akademik dan dukungan institusional yang tidak tersedia untuk kebun biasa.',
+      en: 'From a long-term agronomy perspective, land tenure certainty is a prerequisite for effective multi-year rehabilitation programs. Investment in soil improvement, replanting, and tree rejuvenation only yields meaningful results after 3–5 years — a horizon only feasible with guaranteed management. Productive waqf status also opens access to academic research and institutional support unavailable to ordinary gardens.',
+      tags: ['Horizon Rehabilitasi 3–5 Tahun', 'Wakaf = Jaminan Keberlanjutan']
+    }
+  ],
+  '2026': [
+    {
+      id: 'Di fase Pemulihan (Januari), pohon kopi dalam kondisi stres fisiologis pasca-panen. Nitrogen (N) dari NPK dan Ponska merangsang pertumbuhan vegetatif dan pembentukan tunas baru. Fosfor (P) dari Fertiphos kritis untuk perkembangan akar dan transfer energi seluler. Boron dari Karate Plus sering diabaikan namun vital: defisiensi boron adalah penyebab utama gugurnya bunga kopi secara prematur. Aplikasi di musim hujan memaksimalkan penyerapan akar melalui irigasi alami.',
+      en: 'In the Recovery phase (January), coffee trees are in post-harvest physiological stress. Nitrogen (N) from NPK and Ponska stimulates vegetative growth and new bud formation. Phosphorus (P) from Fertiphos is critical for root development and cellular energy transfer. Boron from Karate Plus is often overlooked but vital: boron deficiency is the primary cause of premature coffee flower drop. Rainy season application maximizes root absorption through natural irrigation.',
+      tags: ['N untuk Vegetatif', 'Boron = Anti-Gugur Bunga']
+    },
+    {
+      id: 'Penggemburan dengan garpu memotong sebagian akar serabut tua secara terkontrol — respons fisiologis pohon adalah membentuk akar baru yang lebih muda, aktif, dan efisien menyerap hara. Pada tanah berpasir, bahan organik dari kompos adalah satu-satunya cara meningkatkan Kapasitas Tukar Kation (KTK) — kemampuan tanah mengikat mineral bagi akar. Kompos ayam petelur kaya nitrogen organik dan mikroba tanah yang mengaktifkan siklus hara alami.',
+      en: 'Forking cuts older fibrous roots in a controlled way — the tree\'s physiological response is to form new, younger, more nutrient-efficient roots. In sandy soil, organic matter from compost is the only way to increase the soil\'s Cation Exchange Capacity (CEC) — its ability to bind minerals for root uptake. Poultry compost is rich in organic nitrogen and soil microbes that activate the natural nutrient cycle.',
+      tags: ['Root Pruning → Akar Baru', 'KTK Tanah Berpasir']
+    },
+    {
+      id: 'Kopi robusta sangat sensitif terhadap stres air di fase pembungaan (Februari–Maret). Bahkan kekeringan singkat 3–5 hari pada periode ini dapat memicu gugurnya bunga secara massal — fenomena yang dikenal sebagai flower drop. Konsistensi jadwal penyemprotan nutrisi setiap 10 hari, yang logistis hanya mungkin dengan akses air terjamin, adalah fondasi dari seluruh program intervensi yang direncanakan.',
+      en: 'Robusta coffee is highly sensitive to water stress during the flowering phase (February–March). Even brief 3–5 day droughts during this period can trigger mass flower drop. A consistent 10-day nutrient spray schedule, logistically possible only with guaranteed water access, is the foundation of the entire planned intervention program.',
+      tags: ['Cegah Flower Drop', 'Jadwal Konsisten 10 Hari']
+    },
+    {
+      id: 'Fish extract mengandung asam amino bebas, sitokinin alami, dan auksin — hormon pertumbuhan yang mendorong transisi dari fase vegetatif ke generatif (pembungaan). Di fase Vegetatif→Buah Muda (Maret–April), aplikasi ini membantu bunga yang sudah terbentuk berkembang menjadi putik dan buah muda. Kandungan nitrogen organik juga mempercepat pemulihan jaringan daun pasca-panen.',
+      en: 'Fish extract contains free amino acids, natural cytokinins, and auxins — growth hormones that drive the transition from vegetative to generative phase (flowering). In the Vegetative→Young Fruit phase (March–April), this application helps formed flowers develop into buds and young fruit. The organic nitrogen content also accelerates leaf tissue recovery after harvest.',
+      tags: ['Sitokinin → Transisi Bunga', 'Asam Amino Organik']
+    },
+    {
+      id: 'TDS (Total Dissolved Solids) tanah mengukur konsentrasi ion mineral terlarut — indikator langsung ketersediaan hara bagi akar. Hasil negatif di seluruh 5 titik pada tanah berpasir mengkonfirmasi defisiensi mineral. pH 6–7 sebenarnya ideal untuk robusta (optimal 5,5–6,5), artinya masalah bukan keasaman — melainkan rendahnya kandungan bahan organik sebagai reservoir mineral. Program pupuk organik berkelanjutan adalah solusi utama.',
+      en: 'Soil TDS (Total Dissolved Solids) measures dissolved mineral ion concentration — a direct indicator of nutrient availability to roots. Negative results at all 5 sampling points in sandy soil confirms mineral deficiency. pH 6–7 is actually ideal for robusta (optimal 5.5–6.5), meaning the issue is not acidity — but low organic matter content that serves as the mineral reservoir. A sustained organic fertilization program is the primary solution.',
+      tags: ['TDS Negatif = Defisiensi Mineral', 'pH 6–7 Sudah Optimal']
+    },
+    {
+      id: 'Pada fase Pembentukan Buah (April–Mei), kebutuhan nutrisi bergeser dari N ke P dan K. Fosfor (P) mendukung sintesis sel buah dan produksi ATP untuk pengisian biji. Kalium (K) mengatur transport gula dari daun ke buah — meningkatkan brix dan kualitas citarasa biji kopi. Pupuk kandang menyediakan P dan K secara slow-release, jauh lebih aman dari pupuk kimia yang berisiko membakar akar di tanah berpasir yang miskin organik.',
+      en: 'In the Fruit Formation phase (April–May), nutritional needs shift from N to P and K. Phosphorus (P) supports fruit cell synthesis and ATP production for seed filling. Potassium (K) regulates sugar transport from leaves to fruit — increasing brix and coffee bean flavor quality. Manure provides P and K as slow-release, far safer than chemical fertilizers that risk burning roots in organically depleted sandy soil.',
+      tags: ['P & K untuk Buah Muda', 'Slow-Release = Aman Tanah Berpasir']
+    },
+    {
+      id: 'Pruning di fase Buah Muda — bukan saat bunga aktif — aman dilakukan dan memberi manfaat ganda: meningkatkan penetrasi cahaya ke cabang produktif dan mengurangi beban karbon pohon. Sinar matahari langsung ke buah muda meningkatkan akumulasi gula dan konsentrasi kafein. Cabang primer tua yang hanya berbuah di ujung adalah kandidat utama pemangkasan — memfokuskan nutrisi ke cabang sekunder yang lebih muda dan produktif.',
+      en: 'Pruning during the Young Fruit phase — not during active flowering — is safe and provides dual benefits: increased sunlight penetration to productive branches and reduced tree carbon load. Direct sunlight on young fruit increases sugar accumulation and caffeine concentration. Old primary branches that only fruit at their tips are prime pruning candidates — redirecting nutrients to younger, more productive secondary branches.',
+      tags: ['Penetrasi Cahaya ke Buah', 'Cabang Sekunder > Cabang Tua']
+    },
+    {
+      id: 'Hama utama kopi robusta Jawa Timur: Coffee Berry Borer (Hypothenemus hampei) yang mengebor masuk ke biji dalam buah, karat daun Hemileia vastatrix, dan antraknos buah Colletotrichum. CBB saja dapat menyebabkan kerugian 30–80% dari total panen jika tidak dikendalikan sejak dini. Identifikasi di fase Buah Muda adalah timing kritis — pengendalian biologis masih sangat efektif, jauh sebelum buah matang dan opsi menjadi terbatas.',
+      en: 'Primary East Java robusta pests: Coffee Berry Borer (Hypothenemus hampei) that bores into beans inside fruit, leaf rust Hemileia vastatrix, and anthracnose Colletotrichum. CBB alone can cause 30–80% harvest loss if not controlled early. Identification in the Young Fruit phase is critical timing — biological control is still highly effective, long before fruit matures and control options become limited.',
+      tags: ['CBB = Risiko 30–80%', 'Identifikasi Dini Kritis']
+    },
+    {
+      id: 'Pemetikan selektif (selective picking) menghasilkan biji dengan kadar gula (brix) lebih tinggi dan profil rasa lebih kompleks dibanding strip picking. Robusta dipetik saat merah penuh untuk kualitas optimal. Empat ronde diperlukan karena buah dalam satu cluster tidak masak serentak — interval optimal 10–14 hari antar ronde memaksimalkan volume buah merah yang dipetik. Pencatatan data per ronde membangun arsip historis panen yang berharga untuk perencanaan tahun-tahun berikutnya.',
+      en: 'Selective picking produces beans with higher sugar content (brix) and more complex flavor compared to strip picking. Robusta is picked at full red for optimal quality. Four rounds are needed because fruit within a cluster does not ripen simultaneously — optimal 10–14 day intervals between rounds maximize red-ripe fruit volume. Per-round data recording builds a valuable harvest archive for future planning.',
+      tags: ['Selective Picking = Kualitas', 'Interval 10–14 Hari/Ronde']
+    },
+    {
+      id: 'Pruning total 30–50 cm dari batang (stumping) adalah teknik rejuvenasi standar untuk kopi berumur >10 tahun dengan cabang primer yang menua. Pohon yang di-stump membentuk tunas air (water shoots) dari batang utama yang sehat — tunas inilah yang menjadi cabang produktif generasi berikutnya. Dibutuhkan 8–12 bulan dari stumping hingga pohon siap berbunga kembali: stumping September–Oktober 2026 memproyeksikan produksi optimal pada 2027–2028.',
+      en: 'Full pruning 30–50 cm from the trunk (stumping) is the standard rejuvenation technique for coffee >10 years old with aging primary branches. Stumped trees form water shoots from the healthy main trunk — these become the next generation of productive branches. It takes 8–12 months from stumping until trees are ready to flower again: September–October 2026 stumping projects optimal production in 2027–2028.',
+      tags: ['Stumping = Rejuvenasi', '8–12 Bulan ke Panen Baru']
+    },
+    {
+      id: 'Data soil profile komparatif — antara kondisi awal (April 2026) dan pasca-satu siklus intervensi penuh (Oktober 2026) — memiliki nilai ilmiah signifikan untuk agronomi kopi organik. Perubahan TDS, pH, kandungan organik, dan produktivitas pohon dapat mengkuantifikasi dampak nyata program rehabilitasi. Data ini terbuka untuk peneliti, akademisi, dan program wakaf produktif lain yang ingin mereplikasi pendekatan ini.',
+      en: 'Comparative soil profile data — between initial conditions (April 2026) and after one full intervention cycle (October 2026) — holds significant scientific value for organic coffee agronomy. Changes in TDS, pH, organic content, and tree productivity can quantify the real impact of the rehabilitation program. This data is open to researchers, academics, and other productive waqf programs wishing to replicate this approach.',
+      tags: ['Data Longitudinal Terbuka', 'Soil Health Before/After']
+    }
+  ]
+};
+
+function buildTheoryColumns() {
+  ['2024', '2025', '2026'].forEach(function(year) {
+    var section = document.getElementById('year-' + year);
+    if (!section) return;
+    var items = section.querySelectorAll('.act-log-item');
+    var theories = theoryData[year] || [];
+    items.forEach(function(item, i) {
+      var theory = theories[i];
+      if (!theory) return;
+      // Deteksi status sebelum innerHTML diganti
+      var statusEl = item.querySelector('.act-log-status');
+      var statusCls = 'status-planned';
+      if (statusEl) {
+        if (statusEl.classList.contains('s-done'))       statusCls = 'status-done';
+        else if (statusEl.classList.contains('s-ongoing'))  statusCls = 'status-ongoing';
+        else if (statusEl.classList.contains('s-upcoming')) statusCls = 'status-upcoming';
+      }
+      item.classList.add(statusCls);
+      var orig = item.innerHTML;
+      var tagsHtml = theory.tags.map(function(t) {
+        return '<span class="theory-tag">' + t + '</span>';
+      }).join('');
+      item.innerHTML =
+        '<div class="act-log-split">' +
+          '<div class="act-log-progress">' + orig + '</div>' +
+          '<div class="act-log-theory">' +
+            '<div class="theory-label lang-id">🔬 Panduan Teoritis</div>' +
+            '<div class="theory-label lang-en">🔬 Theoretical Context</div>' +
+            '<p class="theory-body lang-id">' + theory.id + '</p>' +
+            '<p class="theory-body lang-en">' + theory.en + '</p>' +
+            '<div>' + tagsHtml + '</div>' +
+          '</div>' +
+        '</div>';
+    });
+  });
+}
+
+/* ══ YEAR TAB SWITCHER ══ */
+function switchYear(year) {
+  document.querySelectorAll('.year-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.year-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('year-' + year).classList.add('active');
+  document.querySelector('[data-year="' + year + '"]').classList.add('active');
+}
+
+/* ══ FENOLOGI WHEEL ══ */
+function buildFenologi() {
+  const svg = document.getElementById('fenologi-svg');
+  if (!svg) return;
+
+  const CX = 160, CY = 160, R1 = 78, R2 = 126, R_LABEL = 144;
+  const currentMonth = 3; // April = index 3 (0=Jan)
+
+  const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+  const phaseColors = [
+    '#7a9e96', // Jan  — Pemulihan
+    '#5a9080', // Feb  — Vegetatif
+    '#5a9080', // Mar  — Vegetatif
+    '#7db848', // Apr  — Buah Muda (current)
+    '#7db848', // Mei  — Buah Muda
+    '#c8a840', // Jun  — Pematangan
+    '#c4906a', // Jul  — PANEN
+    '#c4906a', // Agt  — PANEN
+    '#3d7868', // Sep  — Post-Panen
+    '#3d7868', // Okt  — Post-Panen
+    '#7a9e96', // Nov  — Pemulihan
+    '#7a9e96', // Des  — Pemulihan
+  ];
+
+  let html = '';
+
+  // Draw gap between segments
+  const GAP = 1.5; // degrees
+
+  for (let i = 0; i < 12; i++) {
+    const startDeg = i * 30 - 90 + GAP / 2;
+    const endDeg   = (i + 1) * 30 - 90 - GAP / 2;
+    const s = startDeg * Math.PI / 180;
+    const e = endDeg   * Math.PI / 180;
+
+    const x1 = CX + R2 * Math.cos(s);
+    const y1 = CY + R2 * Math.sin(s);
+    const x2 = CX + R2 * Math.cos(e);
+    const y2 = CY + R2 * Math.sin(e);
+    const x3 = CX + R1 * Math.cos(e);
+    const y3 = CY + R1 * Math.sin(e);
+    const x4 = CX + R1 * Math.cos(s);
+    const y4 = CY + R1 * Math.sin(s);
+
+    const isNow = (i === currentMonth);
+    const opacity  = isNow ? 1 : 0.72;
+    const stroke   = isNow ? '#ffffff' : 'rgba(46,64,64,0.6)';
+    const sw       = isNow ? 2.5 : 0.8;
+    const color    = phaseColors[i];
+
+    html += `<path d="M${f(x1)},${f(y1)} A${R2},${R2},0,0,1,${f(x2)},${f(y2)} L${f(x3)},${f(y3)} A${R1},${R1},0,0,0,${f(x4)},${f(y4)} Z"
+      fill="${color}" opacity="${opacity}" stroke="${stroke}" stroke-width="${sw}"/>`;
+
+    // Label
+    const midDeg = i * 30 - 90 + 15;
+    const midRad = midDeg * Math.PI / 180;
+    const lx = CX + R_LABEL * Math.cos(midRad);
+    const ly = CY + R_LABEL * Math.sin(midRad);
+    const fs   = isNow ? 9.5 : 8;
+    const fw   = isNow ? 'bold' : 'normal';
+    const fc   = isNow ? '#c4906a' : 'rgba(168,200,188,0.7)';
+
+    html += `<text x="${f(lx)}" y="${f(ly)}" text-anchor="middle" dominant-baseline="middle"
+      font-size="${fs}" font-weight="${fw}" fill="${fc}"
+      font-family="Plus Jakarta Sans, sans-serif">${months[i]}</text>`;
+
+    // Current month glow ring
+    if (isNow) {
+      const glowR = (R1 + R2) / 2;
+      html += `<circle cx="${CX}" cy="${CY}" r="${glowR}" fill="none"
+        stroke="rgba(125,184,72,0.25)" stroke-width="${R2-R1}" opacity="0.3"/>`;
+    }
+  }
+
+  // Inner circle background
+  html = `<circle cx="${CX}" cy="${CY}" r="${R1-1}" fill="#233434" opacity="0.95"/>` + html;
+
+  // "Now" pointer
+  const nowDeg = currentMonth * 30 - 90 + 15;
+  const nowRad = nowDeg * Math.PI / 180;
+  const px = CX + (R1 - 8) * Math.cos(nowRad);
+  const py = CY + (R1 - 8) * Math.sin(nowRad);
+  html += `<circle cx="${f(px)}" cy="${f(py)}" r="4" fill="#7db848" opacity="0.9"/>`;
+
+  svg.innerHTML = html;
+}
+
+function f(n) { return n.toFixed(1); }
+</script>
+</body>
+</html>
