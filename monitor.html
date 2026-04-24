@@ -297,8 +297,11 @@ tr:hover td{background:rgba(90,144,128,0.03)}
           <span class="nav-icon">📊</span> Dashboard KPI
         </div>
         <div class="nav-item" onclick="showTab('laporan',this)">
-          <span class="nav-icon">📋</span> Log Laporan
+          <span class="nav-icon">📋</span> Log Laporan Harian
           <span class="nav-badge" id="badge-laporan">0</span>
+        </div>
+        <div class="nav-item" onclick="showTab('mingguan',this)">
+          <span class="nav-icon">📊</span> Log Laporan Mingguan
         </div>
         <div class="nav-item" onclick="showTab('evaluasi',this)">
           <span class="nav-icon">✅</span> Penilaian Eksekusi
@@ -446,6 +449,119 @@ tr:hover td{background:rgba(90,144,128,0.03)}
               </thead>
               <tbody id="laporan-tbody">
                 <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB 2B: LOG LAPORAN MINGGUAN ─── -->
+      <div class="tab-panel" id="tab-mingguan">
+        <div class="page-header">
+          <h1>Log Laporan Mingguan</h1>
+          <p>Rangkuman mingguan → sumber data untuk Living Lab (3 kolom)</p>
+        </div>
+
+        <!-- Form Input Mingguan -->
+        <div class="table-wrap" style="margin-bottom:1.5rem">
+          <div class="table-header">
+            <h3>Tambah Entri Mingguan</h3>
+          </div>
+          <div style="padding:1rem">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-bottom:0.8rem">
+              <div>
+                <label style="font-size:0.75rem;font-weight:600;color:var(--muted);display:block;margin-bottom:0.3rem">Periode Minggu</label>
+                <input type="text" id="mg-periode" placeholder="e.g. 20–26 April 2026" style="width:100%;padding:0.5rem 0.7rem;border:1px solid var(--light);border-radius:6px;font-size:0.82rem">
+              </div>
+              <div>
+                <label style="font-size:0.75rem;font-weight:600;color:var(--muted);display:block;margin-bottom:0.3rem">Tanggal Evaluasi</label>
+                <input type="date" id="mg-tanggal" style="width:100%;padding:0.5rem 0.7rem;border:1px solid var(--light);border-radius:6px;font-size:0.82rem">
+              </div>
+            </div>
+
+            <!-- Kolom 1: Bahasa Petani -->
+            <div style="margin-bottom:0.8rem">
+              <label style="font-size:0.75rem;font-weight:600;color:var(--accent);display:block;margin-bottom:0.3rem">
+                Kolom 1 — Rangkuman Bahasa Petani
+              </label>
+              <textarea id="mg-col1" rows="3" placeholder="Ringkasan aktivitas minggu ini dalam bahasa asli pelapor (Mas Anto)..." style="width:100%;padding:0.5rem 0.7rem;border:1px solid var(--light);border-radius:6px;font-size:0.82rem;resize:vertical"></textarea>
+              <span style="font-size:0.65rem;color:var(--muted)">Otomatis dirangkum dari Log Laporan Harian</span>
+            </div>
+
+            <!-- Kolom 2: Bahasa Agronomi -->
+            <div style="margin-bottom:0.8rem">
+              <label style="font-size:0.75rem;font-weight:600;color:var(--medium);display:block;margin-bottom:0.3rem">
+                Kolom 2 — Terjemahan Bahasa Agronomi → Living Lab Kolom 1
+              </label>
+              <textarea id="mg-col2" rows="3" placeholder="Terjemahan ilmiah: istilah agronomi, teknik budidaya kopi..." style="width:100%;padding:0.5rem 0.7rem;border:1px solid var(--light);border-radius:6px;font-size:0.82rem;resize:vertical"></textarea>
+              <span style="font-size:0.65rem;color:var(--muted)">Diterjemahkan oleh Claude → masuk ke Kolom 1 Living Lab (Intervensi)</span>
+            </div>
+
+            <!-- Kolom 3: Penilaian Eksekusi -->
+            <div style="margin-bottom:0.8rem">
+              <label style="font-size:0.75rem;font-weight:600;color:var(--dark);display:block;margin-bottom:0.3rem">
+                Kolom 3 — Penilaian Eksekusi (5 Elemen) → Living Lab Kolom 3
+              </label>
+              <div style="background:var(--bg-tint);border-radius:8px;padding:0.8rem;font-size:0.82rem">
+                <div style="margin-bottom:0.6rem">
+                  <label style="font-size:0.7rem;font-weight:700;color:var(--dark)">① Kesesuaian Grand Design</label>
+                  <textarea id="mg-e1" rows="2" placeholder="Apakah aktivitas sesuai timeline grand design?" style="width:100%;padding:0.4rem 0.6rem;border:1px solid var(--light);border-radius:4px;font-size:0.8rem;margin-top:0.2rem;resize:vertical"></textarea>
+                </div>
+                <div style="margin-bottom:0.6rem">
+                  <label style="font-size:0.7rem;font-weight:700;color:var(--dark)">② Kajian Ilmiah & Sumber</label>
+                  <textarea id="mg-e2" rows="2" placeholder="Bukti ilmiah yang mendukung intervensi..." style="width:100%;padding:0.4rem 0.6rem;border:1px solid var(--light);border-radius:4px;font-size:0.8rem;margin-top:0.2rem;resize:vertical"></textarea>
+                </div>
+                <div style="margin-bottom:0.6rem">
+                  <label style="font-size:0.7rem;font-weight:700;color:var(--dark)">③ Badge Verdict</label>
+                  <select id="mg-e3" style="width:100%;padding:0.4rem 0.6rem;border:1px solid var(--light);border-radius:4px;font-size:0.8rem;margin-top:0.2rem">
+                    <option value="">— Pilih Badge —</option>
+                    <option value="sesuai">✅ Sesuai — Praktik sesuai standar</option>
+                    <option value="perlu-penyesuaian">⚠️ Perlu Penyesuaian — Ada catatan teknis</option>
+                    <option value="tidak-sesuai">❌ Tidak Sesuai — Butuh koreksi</option>
+                    <option value="data-kurang">❓ Data Kurang — Tidak bisa dievaluasi</option>
+                  </select>
+                </div>
+                <div style="margin-bottom:0.6rem">
+                  <label style="font-size:0.7rem;font-weight:700;color:var(--dark)">④ Rekomendasi Tindak Lanjut</label>
+                  <textarea id="mg-e3-rekom" rows="2" placeholder="Langkah konkret yang perlu dilakukan..." style="width:100%;padding:0.4rem 0.6rem;border:1px solid var(--light);border-radius:4px;font-size:0.8rem;margin-top:0.2rem;resize:vertical"></textarea>
+                </div>
+                <div>
+                  <label style="font-size:0.7rem;font-weight:700;color:var(--dark)">⑤ Verifikasi Lapangan Diperlukan</label>
+                  <textarea id="mg-e5" rows="2" placeholder="Bukti lapangan yang perlu dikumpulkan..." style="width:100%;padding:0.4rem 0.6rem;border:1px solid var(--light);border-radius:4px;font-size:0.8rem;margin-top:0.2rem;resize:vertical"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:0.6rem;justify-content:flex-end">
+              <button onclick="simpanMingguan()" style="padding:0.55rem 1.2rem;background:var(--medium);color:#fff;border:none;border-radius:6px;font-size:0.82rem;font-weight:600">
+                💾 Simpan Entri
+              </button>
+              <button onclick="pushMingguanToLivingLab()" style="padding:0.55rem 1.2rem;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:0.82rem;font-weight:600">
+                🚀 Push ke Living Lab
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabel Riwayat Mingguan -->
+        <div class="table-wrap">
+          <div class="table-header">
+            <h3>Riwayat Laporan Mingguan</h3>
+            <span class="badge badge-blue" id="mg-count">0 entri</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:120px">Periode</th>
+                  <th style="width:30%">Bahasa Petani</th>
+                  <th style="width:30%">Bahasa Agronomi</th>
+                  <th style="width:25%">Penilaian Eksekusi</th>
+                  <th style="width:60px">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="mg-tbody">
+                <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Belum ada entri mingguan</td></tr>
               </tbody>
             </table>
           </div>
@@ -977,6 +1093,7 @@ function initApp() {
   if (statusEl) statusEl.textContent = SHEETS_API_URL ? '☁️ GSheets aktif' : '💾 Local only';
 
   loadLaporan();
+  renderMingguan();
   renderKeuangan();
   renderInventaris();
   renderCatatan();
@@ -989,8 +1106,8 @@ function initApp() {
 //  TAB NAVIGATION
 // ══════════════════════════════════════════════
 const TAB_TITLES = {
-  dashboard:'Dashboard KPI', laporan:'Log Laporan Harian', evaluasi:'Penilaian Eksekusi',
-  prapanen:'Pra-Panen & Jadwal', personil:'Personil & Kehadiran',
+  dashboard:'Dashboard KPI', laporan:'Log Laporan Harian', mingguan:'Log Laporan Mingguan',
+  evaluasi:'Penilaian Eksekusi', prapanen:'Pra-Panen & Jadwal', personil:'Personil & Kehadiran',
   keuangan:'Keuangan Kebun', inventaris:'Inventaris Kebun', catatan:'Catatan & To-Do'
 };
 
@@ -1119,6 +1236,108 @@ function renderEvalLaporanSelect(data) {
   const sel = document.getElementById('eval-laporan-ref');
   const opts = log.map(e => `<option value="${e.id}">[${e.tanggal}] ${e.pelapor} — ${(e.aktivitas||'').slice(0,40)}</option>`).join('');
   sel.innerHTML = '<option value="">— Pilih laporan —</option>' + opts;
+}
+
+// ══════════════════════════════════════════════
+//  LOG LAPORAN MINGGUAN
+// ══════════════════════════════════════════════
+const MG_KEY = 'monitor_mingguan';
+
+function loadMingguan() {
+  return JSON.parse(localStorage.getItem(MG_KEY) || '[]');
+}
+
+function simpanMingguan() {
+  const periode = document.getElementById('mg-periode').value.trim();
+  const tanggal = document.getElementById('mg-tanggal').value;
+  const col1 = document.getElementById('mg-col1').value.trim();
+  const col2 = document.getElementById('mg-col2').value.trim();
+  const badge = document.getElementById('mg-e3').value;
+
+  if (!periode || !col1) {
+    alert('Periode dan Kolom 1 (Bahasa Petani) wajib diisi.');
+    return;
+  }
+
+  const entri = {
+    id: Date.now().toString(36),
+    periode,
+    tanggal: tanggal || new Date().toISOString().slice(0,10),
+    col1_petani: col1,
+    col2_agronomi: col2,
+    eval: {
+      e1_grand_design: document.getElementById('mg-e1').value.trim(),
+      e2_kajian_ilmiah: document.getElementById('mg-e2').value.trim(),
+      e3_badge: badge,
+      e4_rekomendasi: document.getElementById('mg-e3-rekom').value.trim(),
+      e5_verifikasi: document.getElementById('mg-e5').value.trim()
+    },
+    created: new Date().toISOString()
+  };
+
+  const list = loadMingguan();
+  list.unshift(entri);
+  localStorage.setItem(MG_KEY, JSON.stringify(list));
+
+  // Clear form
+  ['mg-periode','mg-tanggal','mg-col1','mg-col2','mg-e1','mg-e2','mg-e3-rekom','mg-e5'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('mg-e3').selectedIndex = 0;
+
+  renderMingguan();
+  sheetsPost('mingguan', list);
+  flashSaved(document.getElementById('sync-status'));
+}
+
+function renderMingguan() {
+  const list = loadMingguan();
+  const tbody = document.getElementById('mg-tbody');
+  document.getElementById('mg-count').textContent = list.length + ' entri';
+
+  if (!list.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Belum ada entri mingguan</td></tr>';
+    return;
+  }
+
+  const badgeMap = {
+    'sesuai': '<span style="color:var(--ok);font-weight:700">✅ Sesuai</span>',
+    'perlu-penyesuaian': '<span style="color:var(--warn);font-weight:700">⚠️ Perlu Penyesuaian</span>',
+    'tidak-sesuai': '<span style="color:var(--danger);font-weight:700">❌ Tidak Sesuai</span>',
+    'data-kurang': '<span style="color:var(--muted);font-weight:700">❓ Data Kurang</span>'
+  };
+
+  tbody.innerHTML = list.map((e, i) => {
+    const badge = badgeMap[e.eval?.e3_badge] || '—';
+    const evalSummary = [
+      e.eval?.e1_grand_design ? '<small>①GD: ' + e.eval.e1_grand_design.slice(0,60) + '</small>' : '',
+      e.eval?.e2_kajian_ilmiah ? '<small>②Ilmiah: ' + e.eval.e2_kajian_ilmiah.slice(0,60) + '</small>' : '',
+      badge ? '<small>③' + badge + '</small>' : '',
+      e.eval?.e4_rekomendasi ? '<small>④Rekom: ' + e.eval.e4_rekomendasi.slice(0,60) + '</small>' : '',
+      e.eval?.e5_verifikasi ? '<small>⑤Verif: ' + e.eval.e5_verifikasi.slice(0,60) + '</small>' : ''
+    ].filter(Boolean).join('<br>');
+
+    return `<tr>
+      <td style="white-space:nowrap;font-weight:600;font-size:0.78rem">${e.periode}<br><span style="font-weight:400;color:var(--muted);font-size:0.7rem">${e.tanggal}</span></td>
+      <td style="font-size:0.8rem;line-height:1.4">${e.col1_petani || '—'}</td>
+      <td style="font-size:0.8rem;line-height:1.4">${e.col2_agronomi || '—'}</td>
+      <td style="font-size:0.72rem;line-height:1.5">${evalSummary || '—'}</td>
+      <td><button onclick="hapusMingguan(${i})" style="border:none;background:none;color:var(--danger);cursor:pointer;font-size:0.8rem" title="Hapus">🗑️</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function hapusMingguan(idx) {
+  if (!confirm('Hapus entri mingguan ini?')) return;
+  const list = loadMingguan();
+  list.splice(idx, 1);
+  localStorage.setItem(MG_KEY, JSON.stringify(list));
+  renderMingguan();
+}
+
+function pushMingguanToLivingLab() {
+  alert('🚀 Push ke Living Lab akan diimplementasikan via GitHub API.\n\nData dari Kolom 2 → Living Lab Kolom 1 (Intervensi)\nData dari Kolom 3 → Living Lab Kolom 3 (Penilaian)\nLiving Lab Kolom 2 (Kajian Teori) diisi otomatis.');
+  // TODO: Implement GitHub API push to living-lab.html
 }
 
 // ══════════════════════════════════════════════
