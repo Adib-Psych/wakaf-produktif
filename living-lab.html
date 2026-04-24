@@ -530,7 +530,7 @@ span.lang-en { display: none; }
 }
 .act-log-item:hover { border-color: rgba(196,144,106,0.35); }
 .act-log-split {
-  display: grid; grid-template-columns: 1.15fr 1fr 1fr;
+  display: grid; grid-template-columns: 1.4fr 1fr 1fr;
 }
 .act-log-progress {
   display: flex; align-items: flex-start; gap: 1rem;
@@ -575,6 +575,20 @@ span.lang-en { display: none; }
   border-radius: 0 6px 6px 0;
   font-family: 'Lora', serif;
   font-size: 0.72rem; color: var(--text); line-height: 1.6;
+}
+.eval-verify {
+  margin-top: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  background: rgba(65,105,145,0.08);
+  border-left: 2.5px solid rgba(65,105,145,0.45);
+  border-radius: 0 6px 6px 0;
+  font-family: 'Lora', serif;
+  font-size: 0.72rem; color: var(--text); line-height: 1.6;
+}
+.eval-verify-label {
+  font-size: 0.58rem; font-weight: 800; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #4169a0;
+  margin-bottom: 0.3rem; margin-top: 0.75rem;
 }
 /* Status-scoped eval colors */
 .act-log-item.status-done .act-log-eval      { background: rgba(210,60,60,0.10); }
@@ -1878,246 +1892,310 @@ var evalData = {
   '2024': [
     {
       grandDesign: {
-        id: 'Sesuai — langkah paling mendasar dan tepat sebagai pembukaan program rehabilitasi. Tanpa sanitasi lahan, tidak ada intervensi berikutnya yang bisa bekerja efektif.',
-        en: 'Aligned — the most fundamental and correct first step of the rehabilitation program. Without land sanitation, no subsequent intervention can work effectively.'
+        id: 'Sesuai. Sanitasi lahan adalah prasyarat mutlak rehabilitasi kebun — langkah pembuka yang paling tepat sebelum intervensi nutrisi apapun dapat bekerja.',
+        en: 'Aligned. Land sanitation is the absolute prerequisite for garden rehabilitation — the most appropriate opening step before any nutritional intervention can work.'
       },
       agronomi: {
-        id: 'Valid untuk kondisi kebun yang terbengkalai. 55 person-days cukup proporsional untuk lahan skala ini. Prioritas berikutnya: pemupukan dasar sebelum musim berbuah.',
-        en: 'Valid for a neglected garden condition. 55 person-days is proportional for this scale. Next priority: baseline fertilization before the fruiting season.'
+        id: 'Sesuai standar GAP Kopi Indonesia (Dirjen Perkebunan, Permentan No.49/2014). Pembersihan vegetasi kompetitor meningkatkan penetrasi cahaya 40–60% dan mengurangi persaingan N, P, K. 55 hari kerja proporsional untuk lahan ~1–2 ha. Catatan: tidak ada data kondisi gulma sebelum/sesudah yang terdokumentasi — membatasi kemampuan evaluasi dampak aktual.',
+        en: 'Consistent with Indonesian Coffee GAP standards (Dirjen Perkebunan, Permentan No.49/2014). Removal of competing vegetation increases light penetration 40–60% and reduces N, P, K competition. 55 person-days proportional for ~1–2 ha. Note: no documented pre/post weed condition data exists — limiting ability to evaluate actual impact.'
       },
-      badge: 'sesuai',
+      badge: 'perhatian',
       tindakLanjut: {
-        id: 'Jadikan protokol ini standar pembersihan rutin 2× setahun (sebelum & sesudah panen). Dokumentasikan kondisi gulma dengan foto agar perbandingan antar tahun terukur.',
-        en: 'Standardize this as a routine clearing protocol 2× yearly (pre & post-harvest). Document weed conditions photographically for measurable year-on-year comparison.'
+        id: 'Jadikan protokol 2× setahun (Mei & Oktober). Ke depan: foto kondisi kebun sebelum & sesudah per blok wajib, disertai catatan area yang dibersihkan.',
+        en: 'Standardize as 2× yearly protocol (May & October). Going forward: before/after garden condition photos per block are mandatory, with records of area cleared.'
+      },
+      verifikasi: {
+        id: 'Data historis tidak terverifikasi. Tidak ada foto, tidak ada catatan area spesifik. Klasifikasi resmi: aktivitas terlaksana berdasarkan laporan, volume tidak dapat dikonfirmasi secara independen.',
+        en: 'Historical data unverified. No photos, no specific area records. Official classification: activity executed based on report, volume cannot be independently confirmed.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai — baseline terukur pertama yang sangat berharga. Angka ~100 KG dari kebun terbengkalai membuktikan pohon masih responsif dan punya kapasitas tumbuh.',
-        en: 'Aligned — the first measurable baseline, highly valuable. ~100 KG from a neglected garden proves the trees are still responsive and have growth capacity.'
+        id: 'Sesuai sebagai pencatatan baseline pertama. Angka panen 2024 adalah titik nol seluruh program — tanpa ini, tidak ada tolok ukur untuk menilai kemajuan.',
+        en: 'Aligned as the first baseline record. The 2024 harvest figure is the program\'s zero point — without it, there is no benchmark to measure progress against.'
       },
       agronomi: {
-        id: 'Produktivitas 0,11 KG/pohon jauh di bawah potensi robusta (0,4–0,8 KG/pohon). Ini bukan kegagalan — ini titik awal. Angka ini menjadi referensi kenaikan untuk semua tahun berikutnya.',
-        en: 'Productivity of 0.11 KG/tree is far below robusta potential (0.4–0.8 KG/tree). This is not failure — it is the starting point. This figure becomes the reference for all future year growth.'
+        id: 'Produktivitas 0,11 KG/pohon berada di bawah 30% rata-rata nasional robusta (0,4–0,8 KG/pohon, Dirjen Perkebunan 2022). Konsisten dengan kondisi kebun tanpa input >3 tahun. Angka ini HANYA valid sebagai baseline resmi jika didukung bukti timbang atau transaksi — bukan estimasi.',
+        en: 'Productivity of 0.11 KG/tree falls below 30% of national robusta average (0.4–0.8 KG/tree, Dirjen Perkebunan 2022). Consistent with a garden without inputs for >3 years. This figure is ONLY valid as an official baseline if supported by weighing or transaction evidence — not estimates.'
       },
       badge: 'perhatian',
       tindakLanjut: {
-        id: 'Simpan data ini sebagai baseline resmi. Pertanyaan ke T.A.: pada kondisi tanah berpasir seperti ini, berapa target realistis KG/pohon setelah satu siklus intervensi penuh?',
-        en: 'Archive this as the official baseline. Question for T.A.: given sandy soil conditions, what is the realistic KG/tree target after one full intervention cycle?'
+        id: 'Angka baseline ini adalah referensi seluruh program — harus dikonfirmasi. Mulai 2026: setiap panen wajib memiliki nota timbang per ronde dan bukti transaksi.',
+        en: 'This baseline figure is the reference for the entire program — it must be confirmed. From 2026: every harvest must have per-round weighing records and transaction evidence.'
+      },
+      verifikasi: {
+        id: 'DIPERLUKAN: apakah ada nota pembelian dari Bonsari Coffee, tengkulak, atau catatan timbang manual 2024? Jika tidak ada, angka ~100 KG harus diklasifikasikan sebagai "estimasi tidak terverifikasi" dalam semua laporan resmi program.',
+        en: 'REQUIRED: are there purchase receipts from Bonsari Coffee, a broker, or manual weighing records for 2024? If not, the ~100 KG figure must be classified as "unverified estimate" in all official program reports.'
       }
     },
     {
       grandDesign: {
-        id: 'Prematur — replanting dilakukan sebelum program pemulihan tanah dimulai dan sebelum T.A. bergabung. Hasilnya dapat diprediksi: tanah berpasir tanpa hara tidak bisa menopang bibit muda.',
-        en: 'Premature — replanting was done before the soil recovery program started and before the T.A. joined. The outcome was predictable: sandy soil without nutrients cannot support young seedlings.'
+        id: 'Di luar grand design saat itu — dilakukan sebelum program terstruktur dan sebelum T.A. bergabung. Bukan kegagalan program, melainkan lesson learned pra-program yang penting untuk didokumentasikan dan dijadikan panduan ke depan.',
+        en: 'Outside the grand design at that time — done before the structured program and before T.A. joined. Not a program failure, but an important pre-program lesson learned to document and use as guidance going forward.'
       },
       agronomi: {
-        id: 'Tiga faktor kegagalan klasik terpenuhi sekaligus: tidak ada hardening off, timing kering, tanah defisien. Untuk pohon 40+ tahun di tanah berpasir, replanting harus menunggu setelah dua siklus pemupukan organik.',
-        en: 'Three classic failure factors met simultaneously: no hardening off, dry timing, deficient soil. For 40+ year trees on sandy soil, replanting must wait until after two organic fertilization cycles.'
+        id: 'Tiga faktor kegagalan teridentifikasi konsisten dengan ICCRI Panduan Pembibitan dan Penanaman Kopi (2018): (1) tanpa hardening off — bibit langsung dari pembibitan ke lapang, (2) timing musim kering — stres air akut, (3) tanah berpasir tanpa amandemen organik. Protokol ICCRI: replanting optimal November–Desember (awal musim hujan), hardening off 4–6 minggu, amandemen 5 KG kompos/lubang tanam minimum.',
+        en: 'Three failure factors identified consistent with ICCRI Coffee Nursery and Planting Guidelines (2018): (1) no hardening off — seedlings moved directly from nursery to field, (2) dry season timing — acute water stress, (3) sandy soil without organic amendment. ICCRI protocol: optimal replanting November–December (early rainy season), 4–6 week hardening off, minimum 5 KG compost amendment per planting hole.'
       },
       badge: 'perhatian',
       tindakLanjut: {
-        id: 'Tunda rencana replanting berikutnya hingga setelah program pupuk kandang 2026 selesai minimal satu siklus penuh. Diskusikan timing ideal dengan T.A. dan pertimbangkan lokasi tanam strategis.',
-        en: 'Defer the next replanting plan until after the 2026 organic fertilizer program completes at least one full cycle. Discuss ideal timing with T.A. and consider strategic planting locations.'
+        id: 'Standar baku ke depan: replanting HANYA November–Desember, setelah ≥2 siklus pupuk organik, dengan hardening off 4–6 minggu. T.A. wajib terlibat dalam seleksi lokasi tanam.',
+        en: 'Standard going forward: replanting ONLY in November–December, after ≥2 organic fertilizer cycles, with 4–6 week hardening off. T.A. must be involved in planting site selection.'
+      },
+      verifikasi: {
+        id: 'Data historis tidak lengkap. Yang perlu dikonfirmasi: (1) berapa bibit yang ditanam? (2) berapa yang bertahan hidup? (3) di lokasi mana? Data survival rate ini kritis untuk perencanaan replanting berikutnya.',
+        en: 'Historical data incomplete. What needs confirmation: (1) how many seedlings were planted? (2) how many survived? (3) at which locations? This survival rate data is critical for planning the next replanting cycle.'
       }
     }
   ],
   '2025': [
     {
       grandDesign: {
-        id: 'Sesuai — kenaikan 346% adalah bukti nyata bahwa sanitasi lahan 2024 bekerja. Ini mengkonfirmasi bahwa pendekatan program sudah di jalur yang tepat.',
-        en: 'Aligned — the 346% increase is concrete proof that 2024 land sanitation worked. This confirms the program approach is on the right track.'
+        id: 'Sesuai — kenaikan signifikan mengkonfirmasi respons positif terhadap sanitasi 2024. Namun besarnya klaim kenaikan memerlukan verifikasi data primer sebelum dapat dijadikan acuan resmi program dan dasar proyeksi 2026.',
+        en: 'Aligned — significant increase confirms positive response to 2024 sanitation. However, the magnitude of the claimed increase requires primary data verification before it can serve as an official program reference and 2026 projection basis.'
       },
       agronomi: {
-        id: 'Produktivitas 0,31 KG/pohon mendekati rata-rata nasional (0,4 KG/pohon) tanpa intervensi pupuk khusus — ini luar biasa. Dengan program T.A. penuh di 2026, target 0,5–0,6 KG/pohon sangat realistis.',
-        en: 'Productivity of 0.31 KG/tree approaching national average (0.4 KG/tree) without special fertilization — this is remarkable. With the full T.A. program in 2026, a target of 0.5–0.6 KG/tree is very realistic.'
+        id: 'Respons produktivitas terhadap land sanitation terdokumentasi dalam literatur (ICCRI, 2019). Tipikal kenaikan year-after-sanitation adalah 50–200% tergantung kondisi awal. Kenaikan >300% tidak lazim dan memerlukan konfirmasi data independen. 0,31 KG/pohon mendekati batas bawah rata-rata nasional (0,4 KG/pohon, Dirjen Perkebunan 2022) — angka yang realistis jika pohon masih dalam kondisi produktif dan tanpa input pupuk tambahan.',
+        en: 'Productivity response to land sanitation is documented in literature (ICCRI, 2019). Typical year-after-sanitation increase is 50–200% depending on initial conditions. Increases >300% are uncommon and require independent data confirmation. 0.31 KG/tree approaches the lower national average boundary (0.4 KG/tree, Dirjen Perkebunan 2022) — a realistic figure if trees remain productive and without additional fertilizer input.'
       },
-      badge: 'sesuai',
+      badge: 'perhatian',
       tindakLanjut: {
-        id: 'Pertahankan momentum. Pastikan T.A. mendapat data panen 2025 sebagai referensi proyeksi 2026. Catat juga distribusi ronde pemetikan untuk perbaikan jadwal tahun berikutnya.',
-        en: 'Maintain momentum. Ensure T.A. receives 2025 harvest data as the 2026 projection reference. Also record picking round distribution to improve the following year\'s schedule.'
+        id: 'Angka panen 2025 adalah referensi utama target 2026 — harus terverifikasi. Mulai 2026: sistem pencatatan per ronde wajib (tanggal, KG kotor, KG bersih, % buah merah vs. hijau).',
+        en: '2025 harvest figures are the primary reference for 2026 targets — they must be verified. From 2026: per-round recording system mandatory (date, gross KG, clean KG, % red vs. green fruit).'
+      },
+      verifikasi: {
+        id: 'PRIORITAS TINGGI: Konfirmasi angka panen 2025 dengan bukti primer — nota timbang per ronde, nota jual/pembelian Bonsari Coffee, atau rekap tertulis T.A. Tanpa verifikasi ini, klaim kenaikan tidak dapat dijadikan dasar keputusan program secara resmi.',
+        en: 'HIGH PRIORITY: Confirm 2025 harvest figures with primary evidence — per-round weighing records, Bonsari Coffee sale/purchase receipts, or T.A. written summary. Without this verification, the increase claim cannot formally serve as the basis for program decisions.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai — ini adalah tonggak paling fundamental program. Status wakaf memungkinkan perencanaan jangka panjang yang tidak mungkin dilakukan tanpa kepastian hukum lahan.',
-        en: 'Aligned — this is the most fundamental milestone of the program. Waqf status enables long-term planning that is impossible without legal land certainty.'
+        id: 'Sesuai — ini adalah fondasi legal seluruh program. Status wakaf produktif memungkinkan perencanaan investasi jangka panjang yang tidak mungkin dilakukan tanpa kepastian hukum lahan.',
+        en: 'Aligned — this is the legal foundation of the entire program. Productive waqf status enables long-term investment planning that is impossible without legal land certainty.'
       },
       agronomi: {
-        id: 'Tidak berkaitan langsung dengan teknis agronomi, namun secara tidak langsung sangat kritis: kepastian lahan adalah prasyarat untuk investasi infrastruktur (sistem irigasi, gudang pupuk, alat) yang amortisasinya butuh 5–10 tahun.',
-        en: 'Not directly related to agronomic technique, but indirectly critical: land certainty is a prerequisite for infrastructure investment (irrigation systems, fertilizer storage, tools) requiring 5–10 year amortization.'
+        id: 'Tidak terkait langsung teknis agronomi. Namun dari perspektif manajemen pertanian, kepastian lahan adalah prasyarat untuk amortisasi investasi infrastruktur (irigasi, gudang, alat mesin pertanian) yang membutuhkan horizon 5–10 tahun. Sesuai framework pertanian berkelanjutan (FAO Sustainable Land Management Guidelines, 2011).',
+        en: 'Not directly related to agronomic technique. However, from a farm management perspective, land tenure certainty is a prerequisite for amortizing infrastructure investments (irrigation, storage, farm machinery) requiring a 5–10 year horizon. Consistent with sustainable farming framework (FAO Sustainable Land Management Guidelines, 2011).'
       },
       badge: 'sesuai',
       tindakLanjut: {
-        id: 'Pastikan T.A. memahami horizon program 3–5 tahun dan dilibatkan dalam penyusunan rencana tahunan bersama RWI. Pertimbangkan roadmap replanting sistematis yang memanfaatkan status wakaf.',
-        en: 'Ensure T.A. understands the 3–5 year program horizon and is involved in drafting the annual plan together with RWI. Consider a systematic replanting roadmap that leverages waqf status.'
+        id: 'Pastikan dokumen akta wakaf tersimpan dengan baik dan salinannya ada di tangan Wakif. Buat ringkasan status legal yang bisa disampaikan ke calon mitra (RWI, akademisi, donatur).',
+        en: 'Ensure waqf deed documents are properly stored and copies are held by the Wakif. Create a legal status summary that can be shared with prospective partners (RWI, academics, donors).'
+      },
+      verifikasi: {
+        id: 'Konfirmasi dokumen: (1) apakah akta wakaf sudah resmi ditandatangani dan terdaftar di Kemenag? (2) apakah ada nomor registrasi resmi? Status ini perlu dikonfirmasi secara tertulis untuk keperluan pelaporan program kepada semua stakeholder.',
+        en: 'Document confirmation: (1) is the waqf deed formally signed and registered with Kemenag (Ministry of Religious Affairs)? (2) is there an official registration number? This status needs written confirmation for program reporting purposes to all stakeholders.'
       }
     }
   ],
   '2026': [
     {
       grandDesign: {
-        id: 'Sesuai — intervensi ini berada tepat di fase Pemulihan pasca-panen (Januari), sesuai dengan grand design rehabilitasi bertahap. Langkah pertama T.A. yang terstruktur.',
-        en: 'Aligned — this intervention is exactly in the post-harvest Recovery phase (January), consistent with the staged rehabilitation grand design. The T.A.\'s first structured step.'
+        id: 'Sesuai — intervensi pertama T.A. di fase Pemulihan pasca-panen (Januari) sesuai timeline grand design. Kombinasi makro+mikro+biostimulant adalah paket intervensi yang tepat untuk fase ini.',
+        en: 'Aligned — the T.A.\'s first intervention in the post-harvest Recovery phase (January) is consistent with the grand design timeline. The macro+micro+biostimulant combination is the appropriate intervention package for this phase.'
       },
       agronomi: {
-        id: 'Valid untuk Robusta di 793 mdpl. Kombinasi makro (N-P-K) + mikro (Boron, ZnS) + biostimulant sudah komprehensif. Aplikasi di musim hujan Januari memaksimalkan penyerapan. Rotasi semprot 10 hari adalah protokol standar industri.',
-        en: 'Valid for Robusta at 793 masl. Macro (N-P-K) + micro (Boron, ZnS) + biostimulant combination is comprehensive. January rainy season application maximizes absorption. 10-day spray rotation is standard industry protocol.'
+        id: 'Formulasi sesuai rekomendasi ICCRI untuk robusta dataran menengah (600–900 mdpl): NPK 16.16.16 sebagai base fertilizer, Boron kritis mencegah flower drop (defisiensi B adalah penyebab utama gugur bunga prematur pada Coffea canephora — Wintgens, Coffee: Growing, Processing, Sustainable Production, 2004). Rotasi semprot 10 hari sesuai Pedoman Teknis Pemupukan Kopi (Dirjen Perkebunan, 2014). Catatan: dosis aktual per pohon belum terdokumentasi.',
+        en: 'Formulation consistent with ICCRI recommendations for mid-elevation robusta (600–900 masl): NPK 16.16.16 as base fertilizer, Boron critical to prevent flower drop (B deficiency is the primary cause of premature flower drop in Coffea canephora — Wintgens, Coffee: Growing, Processing, Sustainable Production, 2004). 10-day spray rotation consistent with Coffee Fertilization Technical Guidelines (Dirjen Perkebunan, 2014). Note: actual dosage per tree not yet documented.'
       },
       badge: 'sesuai',
       tindakLanjut: {
-        id: 'Catat tanggal setiap sesi semprot dan volume aktual yang digunakan. Monitor respons tunas dalam 3–4 minggu ke depan dan dokumentasikan dengan foto untuk laporan T.A. berikutnya.',
-        en: 'Record each spray session date and actual volume used. Monitor bud response within 3–4 weeks and document with photos for the next T.A. report.'
+        id: 'Catat tanggal setiap sesi semprot, volume larutan per sesi, dan jumlah pohon tercakup. Foto respons tunas 3–4 minggu pasca-aplikasi adalah bukti efektivitas yang paling konkret.',
+        en: 'Record each spray session date, solution volume per session, and number of trees covered. Photos of bud response 3–4 weeks post-application are the most concrete evidence of effectiveness.'
+      },
+      verifikasi: {
+        id: 'Diperlukan: (1) catatan tanggal setiap dari 12 sesi semprot, (2) volume aktual per sesi, (3) foto respons tunas 3–4 minggu pasca-aplikasi, (4) konfirmasi kehadiran T.A. di sesi pertama. Tanpa item 4, intervensi dikategorikan: "dilaksanakan tim lapangan tanpa supervisi T.A." — konsekuensi akuntabilitas program.',
+        en: 'Required: (1) date records for each of the 12 spray sessions, (2) actual volume per session, (3) photos of bud response 3–4 weeks post-application, (4) confirmation of T.A. presence at the first session. Without item 4, the intervention is categorized as: "executed by field team without T.A. supervision" — program accountability consequence.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai — intervensi kritis untuk mengatasi masalah struktural tanah berpasir yang teridentifikasi. Dilaksanakan sebelum fase pembungaan — timing tepat.',
-        en: 'Aligned — a critical intervention to address the identified structural sandy soil problem. Executed before the flowering phase — correct timing.'
+        id: 'Sesuai — intervensi struktural kritis untuk mengatasi masalah tanah berpasir yang teridentifikasi. Timing sebelum fase pembungaan sudah tepat.',
+        en: 'Aligned — a critical structural intervention to address the identified sandy soil problem. Timing before the flowering phase is correct.'
       },
       agronomi: {
-        id: 'Tepat secara ilmiah untuk pohon 40+ tahun. Root pruning terkontrol (maks 20 cm) merangsang regenerasi akar tanpa melukai sistem perakaran utama. 65 sak kompos untuk 915 pohon = 3–5 KG/pohon, sesuai dosis standar.',
-        en: 'Scientifically sound for 40+ year trees. Controlled root pruning (max 20 cm) stimulates root regeneration without damaging the main root system. 65 sacks for 915 trees = 3–5 KG/tree, matching standard dosage.'
-      },
-      badge: 'sesuai',
-      tindakLanjut: {
-        id: 'Saat kunjungan T.A. berikutnya: minta evaluasi visual kondisi akar baru di 5–10 pohon sampel. Catat perubahan tekstur tanah di area yang mendapat kompos vs. yang belum.',
-        en: 'At the next T.A. visit: request visual evaluation of new root conditions in 5–10 sample trees. Record soil texture changes in composted vs. uncomposted areas.'
-      }
-    },
-    {
-      grandDesign: {
-        id: 'Sesuai — infrastruktur prasyarat yang memungkinkan konsistensi seluruh program. Tanpa air terjamin, jadwal semprot 10 hari tidak mungkin dipertahankan.',
-        en: 'Aligned — prerequisite infrastructure enabling the consistency of the entire program. Without guaranteed water, a 10-day spray schedule cannot be maintained.'
-      },
-      agronomi: {
-        id: 'Tidak terkait langsung teknis tanaman, namun secara operasional sangat kritis. Verifikasi: debit air PDAM perlu dipastikan cukup untuk 220L/sesi × frekuensi semprot.',
-        en: 'Not directly related to plant technique, but operationally critical. Verify: PDAM water flow must be confirmed sufficient for 220L/session × spray frequency.'
-      },
-      badge: 'sesuai',
-      tindakLanjut: {
-        id: 'Ukur debit aktual meter air dan bandingkan dengan kebutuhan program. Pertimbangkan tandon cadangan 500–1.000L untuk menjaga jadwal saat ada gangguan supply PDAM.',
-        en: 'Measure actual water meter flow and compare with program needs. Consider a 500–1,000L reserve tank to maintain the schedule during PDAM supply disruptions.'
-      }
-    },
-    {
-      grandDesign: {
-        id: 'Sesuai — aplikasi fish extract tepat di transisi vegetatif→generatif (Maret–April). Muncul tunas dan bunga setelah intervensi ini mengkonfirmasi program berjalan sesuai rencana.',
-        en: 'Aligned — fish extract application correctly timed at the vegetative→generative transition (March–April). Emerging buds and flowers after this intervention confirm the program is on track.'
-      },
-      agronomi: {
-        id: 'Valid dan relevan untuk kondisi kebun ini. Sitokinin alami dalam fish extract efektif mendorong pembungaan pada pohon tua yang cenderung mempertahankan fase vegetatif terlalu lama. Produksi mandiri di Wonosalam menjamin kesegaran bahan aktif.',
-        en: 'Valid and relevant for this garden\'s conditions. Natural cytokinins in fish extract effectively induce flowering in older trees that tend to stay in vegetative phase too long. Self-production in Wonosalam guarantees freshness of active ingredients.'
-      },
-      badge: 'sesuai',
-      tindakLanjut: {
-        id: 'Dokumentasikan jumlah bunga per cluster di 10–15 pohon sampel sekarang. Data ini penting untuk estimasi panen Juni–Juli. Tanyakan ke T.A.: apakah perlu aplikasi fish extract kedua sebelum panen?',
-        en: 'Document flower count per cluster in 10–15 sample trees now. This data is important for June–July harvest estimation. Ask T.A.: is a second fish extract application needed before harvest?'
-      }
-    },
-    {
-      grandDesign: {
-        id: 'Sesuai — assessment baseline kritis sebelum panen pertama post-wakaf. Namun data TDS negatif di seluruh 5 titik mengindikasikan masalah tanah yang lebih serius dari yang diperkirakan.',
-        en: 'Aligned — critical baseline assessment before the first post-waqf harvest. However, negative TDS data at all 5 points indicates a more serious soil problem than initially anticipated.'
-      },
-      agronomi: {
-        id: 'Metodologi TDS 5 titik cukup untuk gambaran umum, namun untuk keputusan pemupukan presisi perlu ditambah dengan analisis lab (N-P-K aktual, bahan organik %, KTK). pH 6–7 sudah optimal — masalah utama ada di kandungan organik yang sangat rendah.',
-        en: 'TDS at 5 points is sufficient for a general picture, but precision fertilization decisions require additional lab analysis (actual N-P-K, organic matter %, CEC). pH 6–7 is already optimal — the main issue is very low organic content.'
+        id: 'Root pruning dengan garpu (maks 20 cm kedalaman) sesuai teknik stimulasi akar kopi tua (Wintgens, 2004). CATATAN KRITIS DOSIS: 65 sak untuk 915 pohon = 3–5 KG/pohon. ICCRI merekomendasikan 5–10 KG/pohon untuk program rehabilitasi penuh (ICCRI Panduan Pemupukan Organik Kopi, 2018). Dosis yang diberikan berada di batas bawah — memadai sebagai langkah pertama namun harus ditingkatkan ke 7–10 KG/pohon di siklus berikutnya untuk hasil optimal.',
+        en: 'Root pruning with fork (max 20 cm depth) is consistent with root stimulation techniques for aging coffee trees (Wintgens, 2004). CRITICAL DOSAGE NOTE: 65 sacks for 915 trees = 3–5 KG/tree. ICCRI recommends 5–10 KG/tree for a full rehabilitation program (ICCRI Organic Coffee Fertilization Guidelines, 2018). The dosage applied is at the lower limit — adequate as a first step but must be increased to 7–10 KG/tree in the next cycle for optimal results.'
       },
       badge: 'perhatian',
       tindakLanjut: {
-        id: 'Konsultasikan hasil TDS ke T.A. atau BPTP Jatim untuk rekomendasi amandemen tanah spesifik. Pertimbangkan uji lab tanah dasar (bisa melalui Dinas Pertanian Kabupaten Malang) sebelum program pupuk siklus kedua dimulai.',
-        en: 'Consult TDS results with T.A. or BPTP East Java for specific soil amendment recommendations. Consider basic soil lab testing (available through Malang Regency Agriculture Office) before the second fertilizer cycle begins.'
+        id: 'Tingkatkan dosis ke 7–10 KG/pohon di siklus pupuk organik berikutnya. Konsultasikan ke T.A.: apakah perlu amandemen tambahan (kapur pertanian, biochar) untuk mempercepat perbaikan KTK tanah berpasir?',
+        en: 'Increase dosage to 7–10 KG/tree in the next organic fertilizer cycle. Consult T.A.: are additional amendments needed (agricultural lime, biochar) to accelerate CEC improvement in sandy soil?'
+      },
+      verifikasi: {
+        id: 'Diperlukan: (1) konfirmasi jumlah sak aktual yang digunakan, (2) apakah distribusi merata ke seluruh 915 pohon atau hanya sebagian?, (3) foto penggemburan dan aplikasi kompos di minimal 10 pohon sampel, (4) catatan pelaksanaan 3 minggu (31 Jan–20 Feb): siapa yang mengerjakan, area mana per minggu.',
+        en: 'Required: (1) confirm actual number of sacks used, (2) was distribution even across all 915 trees or only partial?, (3) photos of forking and compost application at minimum 10 sample trees, (4) execution records for the 3-week period (31 Jan–20 Feb): who worked, which area per week.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai dan kritis — tanah berpasir dengan TDS negatif membutuhkan P organik segera sebelum panen. Keterlambatan pengadaan berisiko langsung terhadap kualitas buah yang sedang berkembang.',
-        en: 'Aligned and critical — sandy soil with negative TDS urgently needs organic P before harvest. Procurement delays directly risk the quality of developing fruit.'
+        id: 'Sesuai — infrastruktur prasyarat yang memungkinkan konsistensi seluruh program penyemprotan. Tanpa sumber air terjamin, jadwal 10 hari tidak bisa dipertahankan.',
+        en: 'Aligned — prerequisite infrastructure enabling the consistency of the entire spray program. Without a guaranteed water source, the 10-day schedule cannot be maintained.'
       },
       agronomi: {
-        id: 'Urgent. Di fase Pembentukan Buah, tanaman membutuhkan P dan K tinggi untuk pengisian biji. Pupuk kandang slow-release jauh lebih aman dari kimia di tanah berpasir. Setiap minggu keterlambatan = nutrisi yang hilang dari jendela kritis ini.',
-        en: 'Urgent. In the Fruit Formation phase, plants need high P and K for seed filling. Slow-release manure is far safer than chemical fertilizers on sandy soil. Each week of delay = nutrients lost from this critical window.'
+        id: 'Tidak terkait langsung teknis tanaman. Secara operasional kritis: kebutuhan air program = 220 L/sesi × ~36 sesi/tahun = ~7.920 L/tahun minimum. Debit PDAM desa perlu dikonfirmasi cukup. Pertimbangkan tandon cadangan 500–1.000 L sebagai buffer gangguan supply.',
+        en: 'Not directly plant-technical. Operationally critical: program water requirement = 220 L/session × ~36 sessions/year = ~7,920 L/year minimum. Village PDAM flow capacity needs to be confirmed as sufficient. Consider a 500–1,000 L reserve tank for supply disruption buffering.'
+      },
+      badge: 'sesuai',
+      tindakLanjut: {
+        id: 'Ukur debit aktual meter PDAM dan bandingkan dengan kebutuhan. Pasang tandon cadangan 500–1.000 L — investasi kecil yang melindungi seluruh program dari gangguan air.',
+        en: 'Measure actual PDAM meter flow rate and compare with program needs. Install a 500–1,000 L reserve tank — a small investment protecting the entire program from water disruptions.'
+      },
+      verifikasi: {
+        id: 'Diperlukan: (1) foto meter air PDAM yang terpasang dan kondisi instalasi, (2) pengukuran debit aktual (L/menit), (3) konfirmasi biaya langganan bulanan dan siapa yang menanggung, (4) konfirmasi kapasitas cukup untuk 220 L/sesi × frekuensi program.',
+        en: 'Required: (1) photo of installed PDAM water meter and installation condition, (2) actual flow rate measurement (L/minute), (3) confirmation of monthly subscription cost and who covers it, (4) confirmation of capacity sufficient for 220 L/session × program frequency.'
+      }
+    },
+    {
+      grandDesign: {
+        id: 'Sesuai — aplikasi biostimulant di transisi vegetatif→generatif (Maret–April) sesuai grand design. Namun efektivitasnya pada robusta spesifik perlu dikonfirmasi melalui observasi respons bunga yang terdokumentasi.',
+        en: 'Aligned — biostimulant application at the vegetative→generative transition (March–April) is consistent with grand design. However, its effectiveness on robusta specifically needs confirmation through documented flower response observation.'
+      },
+      agronomi: {
+        id: 'Fish extract mengandung asam amino bebas, sitokinin alami, dan auksin yang mendorong transisi generatif. Efektivitasnya sebagai biostimulant terdokumentasi pada berbagai tanaman (Battacharyya et al., 2015, Bioresource Technology). CATATAN: studi spesifik pada Coffea canephora robusta masih terbatas — efek bervariasi tergantung umur pohon dan kondisi tanah. Produksi mandiri di Wonosalam positif dari sisi kesegaran, namun konsistensi konsentrasi bahan aktif antar batch perlu dipastikan.',
+        en: 'Fish extract contains free amino acids, natural cytokinins, and auxins that promote generative transition. Its effectiveness as a biostimulant is documented for various crops (Battacharyya et al., 2015, Bioresource Technology). NOTE: specific studies on Coffea canephora robusta remain limited — effects vary by tree age and soil condition. In-house Wonosalam production is positive for freshness, but consistency of active ingredient concentration across batches must be ensured.'
+      },
+      badge: 'perhatian',
+      tindakLanjut: {
+        id: 'Tanyakan ke T.A.: formula dan dosis aktual fish extract yang digunakan. Dokumentasikan jumlah bunga per cluster di 15 pohon sampel sekarang sebagai data respons baseline.',
+        en: 'Ask T.A.: actual fish extract formula and dosage used. Document flower count per cluster in 15 sample trees now as baseline response data.'
+      },
+      verifikasi: {
+        id: 'Diperlukan: (1) formula aktual fish extract (cara buat, konsentrasi, bahan), (2) dosis aplikasi per pohon atau per liter semprot, (3) jumlah pohon yang mendapat aplikasi, (4) observasi bunga: hitung bunga per cluster di 15 pohon sampel 2 minggu pasca-aplikasi dan bandingkan dengan 15 pohon yang tidak mendapat fish extract.',
+        en: 'Required: (1) actual fish extract formula (preparation method, concentration, ingredients), (2) application dosage per tree or per spray liter, (3) number of trees that received application, (4) flower observation: count flowers per cluster in 15 sample trees 2 weeks post-application and compare with 15 trees that did not receive fish extract.'
+      }
+    },
+    {
+      grandDesign: {
+        id: 'Sesuai — assessment baseline kritis yang seharusnya dilakukan lebih awal. Data TDS negatif di seluruh 5 titik adalah informasi strategis yang mengubah prioritas dan skala program pupuk organik.',
+        en: 'Aligned — a critical baseline assessment that should have been done earlier. Negative TDS data at all 5 points is strategic information that changes the priority and scale of the organic fertilizer program.'
+      },
+      agronomi: {
+        id: 'Metodologi TDS 5 titik memberikan gambaran umum yang cukup (FAO Soil Testing Guidelines). Untuk keputusan pemupukan presisi diperlukan analisis lab lengkap: N-total, P tersedia, K dapat ditukar, KTK, dan % bahan organik (Balai Penelitian Tanah, Petunjuk Teknis Analisis Kimia Tanah, 2005). pH 6–7 sudah dalam rentang optimal robusta (5,5–7,0 — ICCRI, 2014). Masalah utama teridentifikasi: kandungan organik sangat rendah — ini harus menjadi prioritas utama seluruh program.',
+        en: 'TDS at 5 points provides a sufficient general picture (FAO Soil Testing Guidelines). Precision fertilization decisions require a full lab analysis: total-N, available P, exchangeable K, CEC, and organic matter % (Balai Penelitian Tanah, Soil Chemical Analysis Technical Guidelines, 2005). pH 6–7 is already within optimal robusta range (5.5–7.0 — ICCRI, 2014). Main problem identified: very low organic content — this must be the top priority of the entire program.'
+      },
+      badge: 'perhatian',
+      tindakLanjut: {
+        id: 'Lakukan analisis lab tanah melalui BPTP Jawa Timur (Malang) atau Dinas Pertanian Kab. Malang sebelum siklus pupuk kedua. Biaya ~Rp 150.000–250.000/sampel — investasi kecil untuk keputusan besar.',
+        en: 'Conduct soil lab analysis through BPTP East Java (Malang) or Malang Regency Agriculture Office before the second fertilizer cycle. Cost ~IDR 150,000–250,000/sample — a small investment for major decisions.'
+      },
+      verifikasi: {
+        id: 'Data TDS ada. Yang masih kurang: (1) foto alat TDS dan proses pengukuran di lapangan, (2) koordinat GPS atau sketsa peta ke-5 titik sampel, (3) nilai TDS aktual per titik (bukan hanya "negatif"), (4) catatan interpretasi T.A. dan rekomendasi amandemen spesifik.',
+        en: 'TDS data exists. What is still missing: (1) photos of TDS instrument and field measurement process, (2) GPS coordinates or sketch map of the 5 sample points, (3) actual TDS values per point (not just "negative"), (4) T.A. interpretation notes and specific amendment recommendations.'
+      }
+    },
+    {
+      grandDesign: {
+        id: 'Kritis dan mendesak. Di fase Pembentukan Buah (April–Juni), tanaman membutuhkan P dan K organik segera. Setiap minggu keterlambatan adalah jendela nutrisi kritis yang tidak dapat dikembalikan.',
+        en: 'Critical and urgent. In the Fruit Formation phase (April–June), plants urgently need organic P and K. Each week of delay is a critical nutrient window that cannot be recovered.'
+      },
+      agronomi: {
+        id: 'Fase pembentukan biji membutuhkan peningkatan P dan K signifikan (Wintgens, 2004; ICCRI Panduan Pemupukan Kopi, 2014). Pupuk kandang slow-release aman untuk tanah berpasir yang rentan burning dari pupuk kimia. Dosis target: 7–10 KG/pohon (ICCRI). Keterlambatan melewati akhir April dapat menurunkan kualitas dan berat biji secara langsung dan terukur. Ini adalah aktivitas dengan dampak terbesar terhadap hasil panen 2026.',
+        en: 'Seed formation phase requires significantly increased P and K (Wintgens, 2004; ICCRI Coffee Fertilization Guidelines, 2014). Slow-release manure is safe for sandy soil prone to burning from chemical fertilizers. Target dose: 7–10 KG/tree (ICCRI). Delays beyond end of April can directly and measurably reduce bean quality and weight. This is the activity with the greatest impact on the 2026 harvest outcome.'
       },
       badge: 'eskalasi',
       tindakLanjut: {
-        id: 'Eskalasi ke T.A.: konfirmasi jumlah minimum sak yang dibutuhkan sebelum Juni dan supplier terdekat di Ngantang/Malang. Jika pupuk kandang belum tersedia, tanyakan apakah ada alternatif organik cepat (kompos jadi, biochar) sebagai bridging.',
-        en: 'Escalate to T.A.: confirm minimum sacks needed before June and nearest supplier in Ngantang/Malang. If manure is unavailable, ask whether there are fast organic alternatives (ready compost, biochar) as a bridge.'
+        id: 'TINDAKAN SEGERA: (1) konfirmasi dengan T.A. kebutuhan minimum sak sebelum akhir April, (2) identifikasi supplier terdekat di Ngantang/Malang, (3) jika pupuk kandang tidak tersedia, minta T.A. rekomendasikan alternatif organik cepat sebagai bridging solution.',
+        en: 'IMMEDIATE ACTION: (1) confirm with T.A. minimum sacks needed before end of April, (2) identify nearest supplier in Ngantang/Malang, (3) if manure unavailable, ask T.A. to recommend fast organic alternatives as a bridging solution.'
+      },
+      verifikasi: {
+        id: 'Status: BELUM TERLAKSANA (ongoing). Verifikasi diperlukan setelah eksekusi: (1) nota pembelian pupuk kandang (jumlah sak, supplier, tanggal beli), (2) foto distribusi ke pohon, (3) total pohon yang mendapat aplikasi, (4) dosis aktual per pohon yang tercapai.',
+        en: 'Status: NOT YET EXECUTED (ongoing). Verification required after execution: (1) manure purchase receipt (number of sacks, supplier, purchase date), (2) distribution photos to trees, (3) total trees that received application, (4) actual dosage per tree achieved.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai — pruning di fase Buah Muda (Mei–Juni) adalah timing ideal. Tidak mengganggu pembungaan aktif dan memberikan manfaat ganda: cahaya lebih dan fokus nutrisi ke buah.',
-        en: 'Aligned — pruning in the Young Fruit phase (May–June) is the ideal timing. Does not interfere with active flowering and provides dual benefits: more light and nutrient focus to fruit.'
+        id: 'Sesuai — pruning di fase Buah Muda (Mei–Juni) adalah timing ideal, tidak mengganggu pembungaan aktif. Namun keberhasilan intervensi ini sepenuhnya bergantung pada supervisi T.A. langsung di lapangan.',
+        en: 'Aligned — pruning in the Young Fruit phase (May–June) is the ideal timing, not interfering with active flowering. However, the success of this intervention is entirely dependent on direct T.A. supervision in the field.'
       },
       agronomi: {
-        id: 'Valid untuk kondisi pohon 40+ tahun dengan cabang primer dominan. Prioritaskan pemangkasan cabang yang tertutupi dan tidak produktif. Hindari pruning berat — cukup 15–25% dari total cabang per siklus.',
-        en: 'Valid for 40+ year trees with dominant primary branches. Prioritize pruning of shaded and unproductive branches. Avoid heavy pruning — 15–25% of total branches per cycle is sufficient.'
+        id: 'Pruning bertahap 15–25% dari total cabang per siklus direkomendasikan untuk kopi tua yang belum pernah dipangkas (Wintgens, 2004). PERINGATAN: pruning berat (>30%) pada pohon 40+ tahun dengan kondisi tanah masih dalam perbaikan dapat menyebabkan stres fisiologis dan menurunkan panen tahun berjalan. Prioritaskan: cabang tertutupi (tidak mendapat sinar), cabang mati, dan cabang primer dengan sangat sedikit cabang sekunder. Kesalahan pruning tidak dapat dikoreksi dalam satu musim.',
+        en: 'Gradual pruning of 15–25% of total branches per cycle is recommended for aged coffee trees that have never been pruned (Wintgens, 2004). WARNING: heavy pruning (>30%) on 40+ year trees with soil still being rehabilitated can cause physiological stress and reduce current year harvest. Prioritize: shaded branches (no sunlight), dead branches, and primary branches with very few secondary branches. Pruning errors cannot be corrected within one season.'
       },
-      badge: 'sesuai',
+      badge: 'perhatian',
       tindakLanjut: {
-        id: 'T.A. perlu supervisi langsung atau minimal briefing foto sebelum eksekusi. Siapkan dokumentasi foto "sebelum & sesudah" untuk 10–15 pohon sampel. Jika pruning manual, pastikan alat bersih untuk mencegah penyakit.',
-        en: 'T.A. needs direct supervision or at minimum a photo briefing before execution. Prepare before & after photo documentation for 10–15 sample trees. If manual pruning, ensure clean tools to prevent disease transmission.'
+        id: 'T.A. HARUS hadir dan supervisi langsung sebelum dan saat eksekusi. Tidak ada pruning signifikan tanpa konfirmasi T.A. Siapkan foto "sebelum & sesudah" untuk 15–20 pohon sampel.',
+        en: 'T.A. MUST be present and directly supervise before and during execution. No significant pruning without T.A. confirmation. Prepare before & after photos for 15–20 sample trees.'
+      },
+      verifikasi: {
+        id: 'Aktivitas BELUM TERLAKSANA (planned). Verifikasi setelah eksekusi: (1) konfirmasi T.A. hadir saat supervisi, (2) persentase cabang yang dipotong per pohon (harus ≤25%), (3) foto before/after 15–20 pohon sampel, (4) catatan eksekutor dan jumlah hari kerja, (5) kondisi luka potongan — bersih/tidak (indikator risiko penyakit masuk).',
+        en: 'Activity NOT YET EXECUTED (planned). Verification after execution: (1) confirm T.A. present during supervision, (2) percentage of branches cut per tree (must be ≤25%), (3) before/after photos of 15–20 sample trees, (4) records of executor and person-days, (5) condition of cut wounds — clean/not (disease entry risk indicator).'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai dalam grand design — namun timing sudah mendekati kritis. Buah muda sudah mulai terbentuk. Identifikasi OPT idealnya dilakukan lebih awal (Februari–Maret). Ini perlu dipercepat.',
-        en: 'Aligned in grand design — but timing is now approaching critical. Young fruit is already forming. OPT identification should ideally be done earlier (Feb–March). This needs acceleration.'
+        id: 'Sesuai dalam grand design — namun timing sudah kritis. Buah muda mulai terbentuk. Identifikasi OPT idealnya Februari–Maret. Penundaan lebih jauh akan menutup jendela pengendalian biologis yang efektif.',
+        en: 'Aligned in grand design — but timing is now critical. Young fruit is forming. OPT identification ideally should have been done February–March. Further delay will close the effective biological control window.'
       },
       agronomi: {
-        id: 'Kritis untuk kebun robusta Jawa Timur. CBB (Coffee Berry Borer) bisa merusak 30–80% panen jika tidak terdeteksi dini. Fase Buah Muda adalah jendela terakhir untuk pengendalian biologis yang efektif dan murah.',
-        en: 'Critical for East Java robusta gardens. CBB can damage 30–80% of harvest if not detected early. The Young Fruit phase is the last window for effective and affordable biological control.'
+        id: 'Coffee Berry Borer (Hypothenemus hampei) dapat menyebabkan kerugian 30–80% panen jika tidak dikendalikan dini (Puslitkoka, Hama dan Penyakit Kopi Indonesia, 2012). Fase Buah Muda (<0,5 cm) adalah fase optimal untuk pengendalian biologis dengan Beauveria bassiana — efisiensi >70% (BPTP Jawa Timur). Setelah buah mencapai ukuran penuh, CBB masuk ke dalam biji dan pengendalian biologis tidak lagi efektif. Karat daun (Hemileia vastatrix) dan antraknos (Colletotrichum) perlu dipantau bersamaan.',
+        en: 'Coffee Berry Borer (Hypothenemus hampei) can cause 30–80% harvest losses if not controlled early (Puslitkoka, Indonesian Coffee Pests and Diseases, 2012). The Young Fruit phase (<0.5 cm) is optimal for biological control with Beauveria bassiana — efficiency >70% (BPTP East Java). Once fruit reaches full size, CBB enters the bean and biological control is no longer effective. Leaf rust (Hemileia vastatrix) and anthracnose (Colletotrichum) need simultaneous monitoring.'
       },
       badge: 'eskalasi',
       tindakLanjut: {
-        id: 'Jadwalkan kunjungan OPT dengan T.A. sesegera mungkin — idealnya sebelum akhir Mei. Jika CBB atau karat daun ditemukan, konsultasikan ke BPTP Jawa Timur (Malang) atau Puslitkoka (Jember) untuk protokol pengendalian biologis spesifik kondisi ini.',
-        en: 'Schedule OPT visit with T.A. as soon as possible — ideally before end of May. If CBB or leaf rust is found, consult BPTP East Java (Malang) or Puslitkoka (Jember) for biological control protocols specific to these conditions.'
+        id: 'JADWALKAN SEGERA dengan T.A. — idealnya sebelum akhir Mei 2026. Jika CBB ditemukan: hubungi BPTP Jawa Timur (Malang) atau Puslitkoka (Jember) untuk protokol Beauveria bassiana spesifik kondisi ini.',
+        en: 'SCHEDULE IMMEDIATELY with T.A. — ideally before end of May 2026. If CBB is found: contact BPTP East Java (Malang) or Puslitkoka (Jember) for Beauveria bassiana protocol specific to these conditions.'
+      },
+      verifikasi: {
+        id: 'Aktivitas BELUM TERLAKSANA (planned). Verifikasi setelah eksekusi: (1) tanggal kunjungan OPT T.A., (2) metode identifikasi (visual per pohon? sampling cluster?), (3) temuan: ada/tidak CBB, karat daun, antraknos — persentase pohon terinfeksi, (4) rekomendasi T.A. untuk pengendalian, (5) tindak lanjut pengendalian yang disepakati dan dilaksanakan.',
+        en: 'Activity NOT YET EXECUTED (planned). Verification after execution: (1) date of T.A. OPT visit, (2) identification method used (visual per tree? cluster sampling?), (3) findings: presence/absence of CBB, leaf rust, anthracnose — percentage of infected trees, (4) T.A. control recommendations, (5) agreed and executed follow-up control measures.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai — milestone utama 2026. Panen pertama sejak lahan resmi menjadi wakaf produktif. Hasil akan menjadi tolok ukur dampak nyata seluruh program intervensi T.A.',
-        en: 'Aligned — the main 2026 milestone. First harvest since the land officially became productive waqf. Results will benchmark the real impact of the entire T.A. intervention program.'
+        id: 'Sesuai — milestone utama 2026. Panen pertama pasca-wakaf dengan intervensi T.A. penuh. Hasil akan menjadi tolok ukur nyata dampak seluruh investasi program tahun ini. Keberhasilan panen bergantung pada eksekusi seluruh intervensi sebelumnya.',
+        en: 'Aligned — the main 2026 milestone. First post-waqf harvest with full T.A. intervention. Results will be the real benchmark for the entire year\'s program investment impact. Harvest success depends on execution of all prior interventions.'
       },
       agronomi: {
-        id: '4 ronde selektif sudah tepat untuk robusta. Interval 10–14 hari antar ronde optimal. Petik saat buah merah penuh untuk kualitas brix maksimal. Hindari strip picking untuk menjaga produktivitas cabang jangka panjang.',
-        en: '4 selective rounds are correct for robusta. 10–14 day intervals between rounds are optimal. Pick at full red for maximum brix quality. Avoid strip picking to preserve long-term branch productivity.'
+        id: 'Pemetikan selektif menghasilkan kualitas lebih tinggi dibanding strip picking pada robusta (Specialty Coffee Association, 2021). Interval optimal antar ronde: 10–14 hari (ICCRI). Petik saat buah merah penuh untuk brix maksimal. 4 ronde diperlukan karena maturation dalam satu cluster tidak serentak. Target realistis 2026: 0,5 KG/pohon — namun ini bergantung penuh pada eksekusi pupuk kandang, OPT, dan pruning yang terjadwal. Jika salah satu dari tiga intervensi tersebut tidak terlaksana, revisi target ke bawah.',
+        en: 'Selective picking yields higher quality than strip picking for robusta (Specialty Coffee Association, 2021). Optimal interval between rounds: 10–14 days (ICCRI). Pick at full red for maximum brix. 4 rounds needed as maturation within a cluster is not simultaneous. Realistic 2026 target: 0.5 KG/tree — but this is fully dependent on execution of manure, OPT, and pruning as scheduled. If any of these three interventions is not executed, revise target downward.'
       },
-      badge: 'sesuai',
+      badge: 'perhatian',
       tindakLanjut: {
-        id: 'Siapkan form pencatatan per ronde: tanggal, KG kotor, KG bersih (setelah sortir), kondisi buah (% merah vs. hijau vs. overripe). Pertimbangkan uji brix sederhana untuk dokumentasi kualitas. Data ini terbuka untuk publik.',
-        en: 'Prepare per-round recording forms: date, gross KG, clean KG (after sorting), fruit condition (% red vs. green vs. overripe). Consider simple brix testing for quality documentation. This data will be published openly.'
+        id: 'Siapkan form pencatatan per ronde SEBELUM panen dimulai: tanggal, KG kotor, KG bersih, % merah vs. hijau, identitas pemetik. Konfirmasi dengan Bonsari Coffee proses serah terima dan dokumentasi transaksi.',
+        en: 'Prepare per-round recording forms BEFORE harvest begins: date, gross KG, clean KG, % red vs. green, picker identity. Confirm with Bonsari Coffee the handover process and transaction documentation.'
+      },
+      verifikasi: {
+        id: 'Aktivitas BELUM TERLAKSANA (upcoming, Jun–Agt 2026). Persiapan yang harus dilakukan SEKARANG: (1) cetak form pencatatan panen per ronde, (2) siapkan alat timbang yang sudah dikalibrasi, (3) konfirmasi mekanisme pencatatan transaksi dengan Bonsari Coffee, (4) tetapkan petugas pencatat yang bertanggung jawab per ronde.',
+        en: 'Activity NOT YET EXECUTED (upcoming, Jun–Aug 2026). Preparations that must be done NOW: (1) print per-round harvest recording forms, (2) prepare calibrated weighing scale, (3) confirm transaction recording mechanism with Bonsari Coffee, (4) designate responsible recording officer per round.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai — stumping September–Oktober adalah timing ideal: 8–12 bulan setelah stumping = pohon siap berbunga kembali Mei–Juni 2027, dan produktif penuh 2027–2028.',
-        en: 'Aligned — September–October stumping is the ideal timing: 8–12 months post-stumping = trees ready to re-flower May–June 2027, and fully productive in 2027–2028.'
+        id: 'Sesuai — stumping September–Oktober adalah timing ideal: 8–12 bulan recovery sebelum pembungaan Mei–Juni 2027. Intervensi jangka panjang paling penting dalam grand design, namun juga paling invasif dan berisiko jika tidak diawasi dengan benar.',
+        en: 'Aligned — September–October stumping is the ideal timing: 8–12 months recovery before May–June 2027 flowering. The most important long-term intervention in the grand design, but also the most invasive and risky if not properly supervised.'
       },
       agronomi: {
-        id: 'Tepat untuk pohon 40+ tahun dengan cabang primer menua. Stumping 30–50 cm dari batang adalah teknik standar rejuvenasi robusta. Lakukan bersamaan dengan olah tanah dan pupuk organik siklus kedua untuk mendukung tunas air yang baru.',
-        en: 'Sound for 40+ year trees with aging primary branches. Stumping at 30–50 cm from trunk is the standard robusta rejuvenation technique. Execute simultaneously with soil tillage and second-cycle organic fertilizer to support emerging water shoots.'
+        id: 'Stumping (pemotongan 30–50 cm dari tanah) adalah teknik standar rejuvenasi robusta >10–15 tahun (ICCRI Panduan Pemangkasan Kopi, 2018; Wintgens, 2004). PERINGATAN PENTING: tidak semua pohon perlu di-stump — pohon yang merespons positif intervensi nutrisi 2026 mungkin cukup dengan pruning berat saja. Seleksi pohon oleh T.A. adalah mutlak. Recovery 8–12 bulan ke bunga adalah patokan ICCRI kondisi normal — pada tanah berpasir yang masih dalam perbaikan, timeline bisa lebih panjang.',
+        en: 'Stumping (cutting at 30–50 cm from ground) is the standard rejuvenation technique for robusta >10–15 years old (ICCRI Coffee Pruning Guidelines, 2018; Wintgens, 2004). IMPORTANT WARNING: not all trees need stumping — trees showing positive response to 2026 nutritional interventions may be sufficient with heavy pruning alone. Tree selection by T.A. is non-negotiable. The 8–12 month recovery benchmark is for normal ICCRI conditions — on sandy soil still being rehabilitated, the timeline may be longer.'
       },
-      badge: 'sesuai',
+      badge: 'perhatian',
       tindakLanjut: {
-        id: 'T.A. harus hadir dan supervisi langsung — ini intervensi paling invasif dalam program. Dokumentasi before/after wajib untuk seluruh pohon yang di-stump. Siapkan juga program pemulihan (penyiraman, naungan sementara) untuk tunas air.',
-        en: 'T.A. must be present and directly supervise — this is the most invasive intervention in the program. Before/after documentation is mandatory for all stumped trees. Also prepare a recovery program (watering, temporary shade) for water shoots.'
+        id: 'T.A. WAJIB memimpin seleksi pohon sebelum stumping. Siapkan program pemulihan: penyiraman 2× seminggu + naungan sementara 40–60% selama 3 bulan pertama pasca-stumping.',
+        en: 'T.A. MUST lead tree selection before stumping. Prepare recovery program: watering 2× weekly + 40–60% temporary shade for the first 3 months post-stumping.'
+      },
+      verifikasi: {
+        id: 'Aktivitas BELUM TERLAKSANA (planned, Sep–Okt 2026). Sebelum eksekusi wajib ada: (1) daftar pohon yang akan di-stump berdasarkan seleksi T.A., (2) rencana tertulis program pemulihan pasca-stumping. Setelah eksekusi: (3) foto before/after tiap pohon, (4) konfirmasi kehadiran T.A. saat supervisi, (5) monitoring tunas air setiap 2 minggu selama 3 bulan pertama.',
+        en: 'Activity NOT YET EXECUTED (planned, Sep–Oct 2026). Before execution, must have: (1) list of trees to stump based on T.A. selection, (2) written post-stumping recovery program plan. After execution: (3) before/after photos per tree, (4) T.A. supervision presence confirmed, (5) water shoot monitoring every 2 weeks for first 3 months.'
       }
     },
     {
       grandDesign: {
-        id: 'Sesuai — data komparatif sebelum/sesudah satu siklus intervensi penuh memiliki nilai ilmiah dan program yang sangat tinggi. Ini mengunci warisan metodologi program untuk replikasi wakaf produktif lain.',
-        en: 'Aligned — comparative data before/after one full intervention cycle holds high scientific and programmatic value. This locks in the program\'s methodological legacy for other productive waqf replications.'
+        id: 'Sesuai — data komparatif sebelum/sesudah satu siklus intervensi penuh adalah dokumentasi ilmiah paling berharga program ini. Nilainya melampaui satu kebun dan menjadi kontribusi program wakaf produktif ke pengetahuan publik.',
+        en: 'Aligned — before/after comparative data from one full intervention cycle is the most scientifically valuable documentation of this program. Its value extends beyond one garden and becomes the productive waqf program\'s contribution to public knowledge.'
       },
       agronomi: {
-        id: 'Metodologi before/after valid. Untuk nilai sitasi akademis, tambahkan: sampling tanah lab (N-P-K, KTK, bahan organik), produktivitas per pohon per cluster, dan uji brix green bean. Data ini cukup untuk publikasi di jurnal agronomi atau prosiding seminar.',
-        en: 'Before/after methodology is valid. For academic citation value, add: soil lab sampling (N-P-K, CEC, organic matter), productivity per tree per cluster, and green bean brix testing. This data is sufficient for publication in agronomy journals or seminar proceedings.'
+        id: 'Metodologi before/after valid untuk penelitian agronomi lapangan (FAO Field Data Collection Guidelines). Untuk nilai ilmiah yang dapat dikutip, parameter wajib: N-total, P tersedia, K dapat ditukar, KTK, % bahan organik, pH, tekstur tanah (pasir-debu-liat), dan produktivitas per pohon per cluster. Titik sampling yang sama persis (GPS atau patok fisik) harus digunakan. Kolaborasi dengan Puslitkoka Jember atau Departemen Agronomi Universitas Brawijaya akan meningkatkan kredibilitas data secara signifikan.',
+        en: 'Before/after methodology is valid for field agronomy research (FAO Field Data Collection Guidelines). For citable scientific value, required parameters: total-N, available P, exchangeable K, CEC, organic matter %, pH, soil texture (sand-silt-clay), and productivity per tree per cluster. The exact same sampling points (GPS or physical stakes) must be used. Collaboration with Puslitkoka Jember or Brawijaya University Agronomy Department will significantly increase data credibility.'
       },
       badge: 'sesuai',
       tindakLanjut: {
-        id: 'Diskusikan dengan T.A. protokol sampling yang bisa dikutip secara akademis. Pertimbangkan menghubungi Puslitkoka Jember atau Departemen Agronomi Universitas Brawijaya untuk kolaborasi riset atau validasi metodologi.',
-        en: 'Discuss with T.A. a sampling protocol that can be academically cited. Consider contacting Puslitkoka Jember or the Agronomy Department of Brawijaya University for research collaboration or methodology validation.'
+        id: 'Pasang patok fisik atau catat GPS ke-5 titik sampling April 2026 SEKARANG agar dapat diulang tepat di Oktober 2026. Hubungi Puslitkoka Jember atau Departemen Agronomi UB untuk kolaborasi validasi metodologi.',
+        en: 'Install physical stakes or record GPS coordinates of the 5 April 2026 sampling points NOW so they can be exactly repeated in October 2026. Contact Puslitkoka Jember or UB Agronomy Department for methodology validation collaboration.'
+      },
+      verifikasi: {
+        id: 'Aktivitas BELUM TERLAKSANA (planned, Oktober 2026). Persiapan SEKARANG: (1) catat/patok GPS ke-5 titik sampling April 2026, (2) simpan nilai TDS dan pH April 2026 sebagai baseline resmi, (3) rencanakan pengiriman sampel tanah ke lab. Budget analisis: ~Rp 750.000–1.250.000 untuk 5 sampel (BPTP Jatim atau Balai Penelitian Tanah Bogor).',
+        en: 'Activity NOT YET EXECUTED (planned, October 2026). Preparations NOW: (1) record/stake GPS coordinates of the 5 April 2026 sampling points, (2) store April 2026 TDS and pH values as official baseline, (3) plan soil sample delivery to lab. Analysis budget: ~IDR 750,000–1,250,000 for 5 samples (BPTP East Java or Bogor Soil Research Institute).'
       }
     }
   ]
@@ -2164,18 +2242,25 @@ function buildTheoryColumns() {
             '<p class="eval-body lang-id">' + ev.grandDesign.id + '</p>' +
             '<p class="eval-body lang-en">' + ev.grandDesign.en + '</p>' +
 
-            '<div class="eval-label lang-id">② Ketepatan Agronomi</div>' +
-            '<div class="eval-label lang-en">② Agronomic Accuracy</div>' +
+            '<div class="eval-label lang-id">② Kajian Ilmiah & Sumber</div>' +
+            '<div class="eval-label lang-en">② Scientific Review & Sources</div>' +
             '<p class="eval-body lang-id">' + ev.agronomi.id + '</p>' +
             '<p class="eval-body lang-en">' + ev.agronomi.en + '</p>' +
 
             '<span class="eval-badge b-' + ev.badge + ' lang-id">' + badgeLabel.id + '</span>' +
             '<span class="eval-badge b-' + ev.badge + ' lang-en">' + badgeLabel.en + '</span>' +
 
-            '<div class="eval-label lang-id">④ Tindak Lanjut</div>' +
-            '<div class="eval-label lang-en">④ Follow-up Action</div>' +
+            '<div class="eval-label lang-id">④ Rekomendasi Tindak Lanjut</div>' +
+            '<div class="eval-label lang-en">④ Follow-up Recommendation</div>' +
             '<div class="eval-followup lang-id">' + ev.tindakLanjut.id + '</div>' +
             '<div class="eval-followup lang-en">' + ev.tindakLanjut.en + '</div>' +
+
+            (ev.verifikasi ?
+              '<div class="eval-verify-label lang-id">⑤ Verifikasi Lapangan Diperlukan</div>' +
+              '<div class="eval-verify-label lang-en">⑤ Field Verification Required</div>' +
+              '<div class="eval-verify lang-id">' + ev.verifikasi.id + '</div>' +
+              '<div class="eval-verify lang-en">' + ev.verifikasi.en + '</div>'
+            : '') +
           '</div>';
       }
 
