@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor Internal — Kebun Wakaf Produktif</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --sidebar-w: 230px;
+  --danger:  #d64545;
+  --warn:    #d4a020;
+  --ok:      #3aaa60;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;background:var(--bg);color:var(--text)}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit}
+
+/* ══ LOGIN SCREEN ══ */
+#login-screen {
+  position:fixed;inset:0;background:var(--dark);
+  display:flex;align-items:center;justify-content:center;z-index:1000;
+}
+.login-box {
+  background:rgba(255,255,255,0.05);border:1px solid rgba(168,200,188,0.2);
+  border-radius:16px;padding:2.5rem 2rem;width:340px;text-align:center;
+}
+.login-box h2{font-family:'Playfair Display',serif;color:#e8f4f0;font-size:1.4rem;margin-bottom:0.3rem}
+.login-box p{color:var(--light);font-size:0.8rem;margin-bottom:1.6rem}
+.login-box input{
+  width:100%;padding:0.7rem 1rem;border-radius:8px;
+  border:1px solid rgba(168,200,188,0.25);background:rgba(255,255,255,0.08);
+  color:#e8f4f0;font-size:0.9rem;margin-bottom:0.8rem;outline:none;
+  transition:border-color 0.2s;
+}
+.login-box input:focus{border-color:var(--medium)}
+.login-box button{
+  width:100%;padding:0.75rem;background:var(--medium);color:#fff;
+  border:none;border-radius:8px;font-weight:700;font-size:0.9rem;
+  transition:background 0.2s;
+}
+.login-box button:hover{background:#4a7e6e}
+.login-error{color:#ff8a80;font-size:0.78rem;margin-top:0.4rem;min-height:1.2rem}
+.login-icon{font-size:2rem;margin-bottom:1rem}
+
+/* ══ APP LAYOUT ══ */
+#app{display:none;height:100vh;overflow:hidden}
+.app-layout{display:flex;height:100%}
+
+/* ══ SIDEBAR ══ */
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;
+  background:var(--dark);display:flex;flex-direction:column;
+  height:100vh;overflow-y:auto;
+}
+.sidebar-brand{
+  padding:1.2rem 1rem 1rem;
+  border-bottom:1px solid rgba(168,200,188,0.1);
+}
+.sidebar-brand .brand-name{
+  font-size:0.78rem;font-weight:800;color:#e8f4f0;line-height:1.3;
+}
+.sidebar-brand .brand-sub{font-size:0.65rem;color:var(--light);opacity:0.7;margin-top:0.15rem}
+.sidebar-brand .brand-badge{
+  display:inline-flex;align-items:center;gap:0.3rem;
+  background:rgba(196,144,106,0.2);border:1px solid rgba(196,144,106,0.35);
+  border-radius:20px;padding:0.2rem 0.6rem;margin-top:0.5rem;
+  font-size:0.6rem;font-weight:700;color:var(--accent);letter-spacing:0.08em;text-transform:uppercase;
+}
+.sidebar-badge-dot{width:5px;height:5px;background:#5fca7c;border-radius:50%;animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+.sidebar-nav{flex:1;padding:0.8rem 0.5rem}
+.nav-section-label{
+  font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;
+  color:rgba(168,200,188,0.4);padding:0.6rem 0.6rem 0.3rem;
+}
+.nav-item{
+  display:flex;align-items:center;gap:0.7rem;
+  padding:0.55rem 0.75rem;border-radius:8px;margin-bottom:2px;
+  color:rgba(168,200,188,0.7);font-size:0.8rem;font-weight:500;
+  cursor:pointer;transition:all 0.15s;
+}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:#e8f4f0}
+.nav-item.active{background:rgba(90,144,128,0.25);color:#e8f4f0;font-weight:700}
+.nav-item .nav-icon{font-size:0.95rem;width:1.2rem;text-align:center;flex-shrink:0}
+.nav-badge{
+  margin-left:auto;background:var(--accent);color:#fff;
+  font-size:0.58rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:10px;
+}
+
+.sidebar-footer{
+  padding:0.8rem;border-top:1px solid rgba(168,200,188,0.1);
+}
+.sidebar-logout{
+  display:flex;align-items:center;gap:0.5rem;
+  color:rgba(168,200,188,0.5);font-size:0.75rem;cursor:pointer;
+  padding:0.4rem 0.5rem;border-radius:6px;transition:all 0.15s;
+}
+.sidebar-logout:hover{color:#ff8a80;background:rgba(214,69,69,0.1)}
+.last-sync{font-size:0.62rem;color:rgba(168,200,188,0.3);margin-bottom:0.5rem;padding:0 0.5rem}
+
+/* ══ MAIN CONTENT ══ */
+.main-content{flex:1;overflow-y:auto;background:var(--bg)}
+
+.tab-panel{display:none;padding:1.8rem 2rem;min-height:100%}
+.tab-panel.active{display:block}
+
+.page-header{margin-bottom:1.6rem}
+.page-header h1{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--text);margin-bottom:0.25rem}
+.page-header p{color:var(--muted);font-size:0.8rem}
+
+/* ══ KPI CARDS ══ */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.6rem}
+.kpi-card{
+  background:var(--white);border-radius:12px;padding:1.2rem;
+  border:1px solid rgba(90,144,128,0.12);
+  box-shadow:0 2px 8px rgba(46,64,64,0.05);
+}
+.kpi-card .kpi-label{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.5rem}
+.kpi-card .kpi-value{font-size:1.8rem;font-weight:800;color:var(--dark);line-height:1}
+.kpi-card .kpi-unit{font-size:0.75rem;color:var(--muted);margin-top:0.2rem}
+.kpi-card .kpi-icon{font-size:1.4rem;margin-bottom:0.4rem}
+.kpi-card.accent .kpi-value{color:var(--accent)}
+.kpi-card.green .kpi-value{color:var(--ok)}
+
+/* ══ TABLES ══ */
+.table-wrap{background:var(--white);border-radius:12px;border:1px solid rgba(90,144,128,0.12);overflow:hidden}
+.table-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.2rem;border-bottom:1px solid var(--bg-tint)}
+.table-header h3{font-size:0.85rem;font-weight:700;color:var(--text)}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg-tint);padding:0.65rem 1rem;text-align:left;font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)}
+td{padding:0.7rem 1rem;border-bottom:1px solid rgba(90,144,128,0.06);font-size:0.8rem;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(90,144,128,0.03)}
+
+/* ══ BADGES ══ */
+.badge{display:inline-block;padding:0.18rem 0.55rem;border-radius:20px;font-size:0.65rem;font-weight:700}
+.badge-green{background:rgba(58,170,96,0.12);color:#2a8040}
+.badge-warn{background:rgba(212,160,32,0.12);color:#a07010}
+.badge-red{background:rgba(214,69,69,0.12);color:#b03030}
+.badge-blue{background:rgba(60,120,200,0.1);color:#2a60b0}
+.badge-gray{background:rgba(90,120,120,0.1);color:var(--muted)}
+
+/* ══ FORMS ══ */
+.form-card{background:var(--white);border-radius:12px;border:1px solid rgba(90,144,128,0.12);padding:1.4rem;margin-bottom:1rem}
+.form-card h3{font-size:0.85rem;font-weight:700;margin-bottom:1rem;color:var(--text)}
+.form-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.8rem;margin-bottom:0.8rem}
+.form-group{display:flex;flex-direction:column;gap:0.3rem}
+.form-group label{font-size:0.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.form-group input,.form-group select,.form-group textarea{
+  padding:0.55rem 0.75rem;border:1px solid rgba(90,144,128,0.25);border-radius:8px;
+  font-size:0.82rem;color:var(--text);background:var(--bg);outline:none;
+  transition:border-color 0.2s;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  border-color:var(--medium);background:var(--white);
+}
+.form-group textarea{resize:vertical;min-height:70px}
+.btn{padding:0.55rem 1.1rem;border-radius:8px;font-weight:700;font-size:0.8rem;border:none;transition:all 0.15s}
+.btn-primary{background:var(--medium);color:#fff}
+.btn-primary:hover{background:#4a7e6e}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-danger:hover{background:#b03030}
+.btn-sm{padding:0.3rem 0.7rem;font-size:0.72rem}
+.btn-outline{background:transparent;border:1px solid var(--medium);color:var(--medium)}
+.btn-outline:hover{background:var(--medium);color:#fff}
+
+/* ══ CHECKLIST ══ */
+.checklist{display:flex;flex-direction:column;gap:0.5rem}
+.check-item{
+  display:flex;align-items:flex-start;gap:0.8rem;
+  background:var(--white);border-radius:10px;padding:0.8rem 1rem;
+  border:1px solid rgba(90,144,128,0.1);
+  cursor:pointer;transition:all 0.15s;
+}
+.check-item:hover{border-color:var(--medium)}
+.check-item.done{background:rgba(58,170,96,0.05);border-color:rgba(58,170,96,0.2)}
+.check-item.done .check-label{text-decoration:line-through;color:var(--muted)}
+.check-box{
+  width:18px;height:18px;border-radius:5px;border:2px solid rgba(90,144,128,0.35);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  margin-top:1px;transition:all 0.15s;
+}
+.check-item.done .check-box{background:var(--ok);border-color:var(--ok);color:#fff;font-size:0.7rem}
+.check-label{font-size:0.82rem;font-weight:500;color:var(--text);line-height:1.4}
+.check-meta{font-size:0.7rem;color:var(--muted);margin-top:0.1rem}
+
+/* ══ SECTIONS / CARDS ══ */
+.section-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.2rem;margin-bottom:1.2rem}
+.card{background:var(--white);border-radius:12px;border:1px solid rgba(90,144,128,0.12);overflow:hidden}
+.card-header{padding:0.9rem 1.2rem;border-bottom:1px solid var(--bg-tint);display:flex;align-items:center;justify-content:space-between}
+.card-header h3{font-size:0.82rem;font-weight:700;color:var(--text)}
+.card-body{padding:1rem 1.2rem}
+
+/* ══ EVALUASI ══ */
+.eval-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.eval-item{background:var(--white);border-radius:10px;padding:0.9rem 1rem;border:1px solid rgba(90,144,128,0.1)}
+.eval-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:0.6rem}
+.eval-options{display:flex;gap:0.4rem;flex-wrap:wrap}
+.eval-opt{
+  padding:0.28rem 0.65rem;border-radius:20px;font-size:0.7rem;font-weight:600;
+  border:1px solid rgba(90,144,128,0.2);cursor:pointer;
+  background:transparent;color:var(--muted);transition:all 0.15s;
+}
+.eval-opt:hover{border-color:var(--medium);color:var(--medium)}
+.eval-opt.selected{background:var(--medium);color:#fff;border-color:var(--medium)}
+.eval-opt.sel-ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.eval-opt.sel-warn{background:var(--warn);color:#fff;border-color:var(--warn)}
+.eval-opt.sel-bad{background:var(--danger);color:#fff;border-color:var(--danger)}
+
+/* ══ PROGRESS BAR ══ */
+.progress-wrap{margin:0.4rem 0}
+.progress-label{display:flex;justify-content:space-between;font-size:0.72rem;color:var(--muted);margin-bottom:0.3rem}
+.progress-bar{height:6px;background:var(--bg-tint);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--medium);border-radius:3px;transition:width 0.5s ease}
+.progress-fill.warn{background:var(--warn)}
+.progress-fill.danger{background:var(--danger)}
+
+/* ══ EMPTY STATE ══ */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--muted)}
+.empty-state .empty-icon{font-size:2.5rem;margin-bottom:0.8rem;opacity:0.4}
+.empty-state p{font-size:0.82rem}
+
+/* ══ ALERTS ══ */
+.alert{padding:0.75rem 1rem;border-radius:8px;font-size:0.8rem;margin-bottom:1rem;display:flex;gap:0.6rem;align-items:flex-start}
+.alert-warn{background:rgba(212,160,32,0.1);border:1px solid rgba(212,160,32,0.25);color:#806800}
+.alert-ok{background:rgba(58,170,96,0.1);border:1px solid rgba(58,170,96,0.2);color:#2a6040}
+
+/* ══ TOPBAR ══ */
+.topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0.8rem 2rem;background:var(--white);
+  border-bottom:1px solid rgba(90,144,128,0.1);
+  position:sticky;top:0;z-index:10;
+}
+.topbar-left{display:flex;align-items:center;gap:0.6rem}
+.topbar-title{font-weight:700;font-size:0.9rem;color:var(--text)}
+.topbar-right{display:flex;align-items:center;gap:0.8rem}
+.sync-btn{
+  display:flex;align-items:center;gap:0.4rem;
+  background:var(--bg-tint);border:1px solid rgba(90,144,128,0.2);
+  color:var(--medium);border-radius:8px;padding:0.4rem 0.8rem;
+  font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s;
+}
+.sync-btn:hover{background:var(--medium);color:#fff;border-color:var(--medium)}
+.topbar-date{font-size:0.75rem;color:var(--muted)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .kpi-grid{grid-template-columns:1fr 1fr}
+  .eval-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN SCREEN ═══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-icon">🌿</div>
+    <h2>Monitor Internal</h2>
+    <p>Kebun Wakaf Produktif Ngantang</p>
+    <input type="password" id="pwd-input" placeholder="Masukkan kata sandi..." />
+    <button onclick="doLogin()">Masuk</button>
+    <div class="login-error" id="login-error"></div>
+  </div>
+</div>
+
+<!-- ═══ MAIN APP ═══ -->
+<div id="app">
+  <div class="app-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-name">☕ Wakaf Produktif</div>
+        <div class="brand-sub">Kebun Kopi Ngantang</div>
+        <span class="brand-badge"><span class="sidebar-badge-dot"></span>Internal Dashboard</span>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Utama</div>
+        <div class="nav-item active" onclick="showTab('dashboard',this)">
+          <span class="nav-icon">📊</span> Dashboard KPI
+        </div>
+        <div class="nav-item" onclick="showTab('laporan',this)">
+          <span class="nav-icon">📋</span> Log Laporan
+          <span class="nav-badge" id="badge-laporan">0</span>
+        </div>
+        <div class="nav-item" onclick="showTab('evaluasi',this)">
+          <span class="nav-icon">✅</span> Penilaian Eksekusi
+        </div>
+
+        <div class="nav-section-label" style="margin-top:0.8rem">Operasional</div>
+        <div class="nav-item" onclick="showTab('prapanen',this)">
+          <span class="nav-icon">🌱</span> Pra-Panen & Jadwal
+        </div>
+        <div class="nav-item" onclick="showTab('personil',this)">
+          <span class="nav-icon">👥</span> Personil & Kehadiran
+        </div>
+        <div class="nav-item" onclick="showTab('keuangan',this)">
+          <span class="nav-icon">💰</span> Keuangan
+        </div>
+
+        <div class="nav-section-label" style="margin-top:0.8rem">Lainnya</div>
+        <div class="nav-item" onclick="showTab('inventaris',this)">
+          <span class="nav-icon">📦</span> Inventaris Kebun
+        </div>
+        <div class="nav-item" onclick="showTab('catatan',this)">
+          <span class="nav-icon">📝</span> Catatan & To-Do
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="last-sync" id="last-sync-time">Memuat data...</div>
+        <div class="sidebar-logout" onclick="doLogout()">
+          🚪 Keluar
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-left">
+          <span class="topbar-title" id="topbar-title">Dashboard KPI</span>
+        </div>
+        <div class="topbar-right">
+          <div class="topbar-date" id="topbar-date"></div>
+          <button class="sync-btn" onclick="loadLaporan()">🔄 Sync Data</button>
+        </div>
+      </div>
+
+      <!-- ─── TAB 1: DASHBOARD ─── -->
+      <div class="tab-panel active" id="tab-dashboard">
+        <div class="kpi-grid" id="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">📋</div>
+            <div class="kpi-label">Total Laporan</div>
+            <div class="kpi-value" id="kpi-total">—</div>
+            <div class="kpi-unit">entri tercatat</div>
+          </div>
+          <div class="kpi-card green">
+            <div class="kpi-icon">⏱️</div>
+            <div class="kpi-label">Total Jam Kerja</div>
+            <div class="kpi-value" id="kpi-jam">—</div>
+            <div class="kpi-unit">jam akumulasi</div>
+          </div>
+          <div class="kpi-card accent">
+            <div class="kpi-icon">🌳</div>
+            <div class="kpi-label">Pohon Dikerjakan</div>
+            <div class="kpi-value" id="kpi-pohon">—</div>
+            <div class="kpi-unit">pohon total</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">📅</div>
+            <div class="kpi-label">Laporan Terakhir</div>
+            <div class="kpi-value" id="kpi-lastdate" style="font-size:1rem;margin-top:0.3rem">—</div>
+            <div class="kpi-unit" id="kpi-lastpelapor">—</div>
+          </div>
+        </div>
+
+        <div class="section-grid">
+          <div class="card">
+            <div class="card-header">
+              <h3>📈 Aktivitas Terkini</h3>
+              <span class="badge badge-green" id="status-badge">Live</span>
+            </div>
+            <div class="card-body" id="recent-activity">
+              <div class="empty-state">
+                <div class="empty-icon">🔄</div>
+                <p>Memuat data laporan...</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header"><h3>🗓️ Status Musim</h3></div>
+            <div class="card-body">
+              <div style="margin-bottom:1rem">
+                <div class="progress-wrap">
+                  <div class="progress-label"><span>Fase Pra-Panen</span><span id="prog-pct">0%</span></div>
+                  <div class="progress-bar"><div class="progress-fill" id="prog-bar" style="width:0%"></div></div>
+                </div>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:0.5rem;font-size:0.8rem">
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--muted)">Estimasi Panen</span>
+                  <strong>Juni – Agustus 2026</strong>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--muted)">Status Kebun</span>
+                  <span class="badge badge-warn">Pra-Panen</span>
+                </div>
+                <div style="display:flex;justify-content:space-between">
+                  <span style="color:var(--muted)">Estimasi Pohon</span>
+                  <strong>~915 pohon</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3>📊 Laporan Per Pelapor</h3></div>
+          <div class="card-body" id="pelapor-summary">
+            <div class="empty-state"><div class="empty-icon">📊</div><p>Memuat data...</p></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB 2: LOG LAPORAN ─── -->
+      <div class="tab-panel" id="tab-laporan">
+        <div class="page-header">
+          <h1>Log Laporan Harian</h1>
+          <p>Data laporan lapangan dari voice note Mas Anto / Bonsari Coffee</p>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header">
+            <h3>Semua Entri</h3>
+            <span class="badge badge-blue" id="laporan-count">0 entri</span>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th><th>Tanggal</th><th>Pelapor</th><th>Aktivitas</th>
+                  <th>Jam Kerja</th><th>Pohon</th><th>Catatan</th><th>Sumber</th>
+                </tr>
+              </thead>
+              <tbody id="laporan-tbody">
+                <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Memuat data...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB 3: PENILAIAN EKSEKUSI ─── -->
+      <div class="tab-panel" id="tab-evaluasi">
+        <div class="page-header">
+          <h1>Penilaian Eksekusi</h1>
+          <p>Evaluasi harian kualitas pelaksanaan kerja kebun</p>
+        </div>
+
+        <div class="form-card">
+          <h3>📅 Pilih Tanggal Evaluasi</h3>
+          <div class="form-row" style="align-items:flex-end">
+            <div class="form-group">
+              <label>Tanggal</label>
+              <input type="date" id="eval-date" />
+            </div>
+            <div class="form-group">
+              <label>Laporan Terkait</label>
+              <select id="eval-laporan-ref">
+                <option value="">— Pilih laporan —</option>
+              </select>
+            </div>
+            <div>
+              <button class="btn btn-outline btn-sm" onclick="loadEvalData()">Muat Data Laporan</button>
+            </div>
+          </div>
+          <div id="eval-laporan-preview" style="display:none;margin-top:0.8rem;padding:0.8rem;background:var(--bg-tint);border-radius:8px;font-size:0.8rem"></div>
+        </div>
+
+        <div class="eval-grid">
+          <div class="eval-item">
+            <div class="eval-label">✅ Kehadiran & Ketepatan Waktu</div>
+            <div class="eval-options">
+              <button class="eval-opt" data-key="kehadiran" data-val="hadir_tepat" onclick="setEval(this,'sel-ok')">Hadir Tepat</button>
+              <button class="eval-opt" data-key="kehadiran" data-val="hadir_telat" onclick="setEval(this,'sel-warn')">Hadir Telat</button>
+              <button class="eval-opt" data-key="kehadiran" data-val="tidak_hadir" onclick="setEval(this,'sel-bad')">Tidak Hadir</button>
+            </div>
+          </div>
+          <div class="eval-item">
+            <div class="eval-label">📋 Kelengkapan Laporan</div>
+            <div class="eval-options">
+              <button class="eval-opt" data-key="laporan" data-val="lengkap" onclick="setEval(this,'sel-ok')">Lengkap</button>
+              <button class="eval-opt" data-key="laporan" data-val="sebagian" onclick="setEval(this,'sel-warn')">Sebagian</button>
+              <button class="eval-opt" data-key="laporan" data-val="tidak_ada" onclick="setEval(this,'sel-bad')">Tidak Ada</button>
+            </div>
+          </div>
+          <div class="eval-item">
+            <div class="eval-label">🎯 Pencapaian Target Pohon</div>
+            <div class="eval-options">
+              <button class="eval-opt" data-key="target" data-val="tercapai" onclick="setEval(this,'sel-ok')">Tercapai</button>
+              <button class="eval-opt" data-key="target" data-val="sebagian" onclick="setEval(this,'sel-warn')">Sebagian</button>
+              <button class="eval-opt" data-key="target" data-val="tidak" onclick="setEval(this,'sel-bad')">Tidak Tercapai</button>
+            </div>
+          </div>
+          <div class="eval-item">
+            <div class="eval-label">🔧 Kualitas Pekerjaan</div>
+            <div class="eval-options">
+              <button class="eval-opt" data-key="kualitas" data-val="baik" onclick="setEval(this,'sel-ok')">Baik</button>
+              <button class="eval-opt" data-key="kualitas" data-val="cukup" onclick="setEval(this,'sel-warn')">Cukup</button>
+              <button class="eval-opt" data-key="kualitas" data-val="perlu_perbaikan" onclick="setEval(this,'sel-bad')">Perlu Perbaikan</button>
+            </div>
+          </div>
+          <div class="eval-item">
+            <div class="eval-label">💬 Komunikasi & Koordinasi</div>
+            <div class="eval-options">
+              <button class="eval-opt" data-key="komunikasi" data-val="aktif" onclick="setEval(this,'sel-ok')">Aktif</button>
+              <button class="eval-opt" data-key="komunikasi" data-val="pasif" onclick="setEval(this,'sel-warn')">Pasif</button>
+              <button class="eval-opt" data-key="komunikasi" data-val="tidak_ada" onclick="setEval(this,'sel-bad')">Tidak Ada</button>
+            </div>
+          </div>
+          <div class="eval-item">
+            <div class="eval-label">📦 Penggunaan Alat & Material</div>
+            <div class="eval-options">
+              <button class="eval-opt" data-key="alat" data-val="efisien" onclick="setEval(this,'sel-ok')">Efisien</button>
+              <button class="eval-opt" data-key="alat" data-val="normal" onclick="setEval(this,'sel-warn')">Normal</button>
+              <button class="eval-opt" data-key="alat" data-val="boros" onclick="setEval(this,'sel-bad')">Boros/Rusak</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>📝 Catatan Evaluasi Harian</h3>
+          <div class="form-group" style="margin-bottom:0.8rem">
+            <label>Observasi / Tindak Lanjut</label>
+            <textarea id="eval-notes" placeholder="Tulis observasi, hal yang perlu difollow-up, atau catatan khusus hari ini..."></textarea>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div id="eval-score-display" style="font-size:0.82rem;color:var(--muted)">Skor: belum diisi</div>
+            <button class="btn btn-primary" onclick="saveEval()">💾 Simpan Evaluasi</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-header"><h3>📜 Riwayat Evaluasi</h3></div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead><tr><th>Tanggal</th><th>Kehadiran</th><th>Laporan</th><th>Target</th><th>Kualitas</th><th>Skor</th><th>Catatan</th><th></th></tr></thead>
+              <tbody id="eval-tbody"><tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Belum ada evaluasi</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB 4: PRA-PANEN ─── -->
+      <div class="tab-panel" id="tab-prapanen">
+        <div class="page-header">
+          <h1>Pra-Panen & Jadwal</h1>
+          <p>Checklist persiapan panen Juni–Agustus 2026</p>
+        </div>
+        <div class="alert alert-warn">
+          ⚠️ Target panen: <strong>Juni 2026</strong> — sekitar <span id="days-to-harvest">—</span> hari lagi. Pastikan semua checklist selesai sebelum panen dimulai.
+        </div>
+        <div class="section-grid">
+          <div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">🌿 Persiapan Tanaman</div>
+            <div class="checklist" id="checklist-tanaman"></div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">🔧 Persiapan Alat & Sarana</div>
+            <div class="checklist" id="checklist-alat"></div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">👥 Persiapan SDM</div>
+            <div class="checklist" id="checklist-sdm"></div>
+          </div>
+          <div>
+            <div style="font-size:0.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.6rem">📦 Pasca-Panen</div>
+            <div class="checklist" id="checklist-pascapanen"></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3>➕ Tambah Item Checklist</h3>
+          <div class="form-row" style="align-items:flex-end">
+            <div class="form-group">
+              <label>Kategori</label>
+              <select id="new-check-cat">
+                <option value="tanaman">Persiapan Tanaman</option>
+                <option value="alat">Alat & Sarana</option>
+                <option value="sdm">SDM</option>
+                <option value="pascapanen">Pasca-Panen</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:2">
+              <label>Item</label>
+              <input type="text" id="new-check-label" placeholder="Nama tugas/item..." />
+            </div>
+            <div class="form-group">
+              <label>Target Selesai</label>
+              <input type="date" id="new-check-date" />
+            </div>
+            <div><button class="btn btn-primary btn-sm" onclick="addCheckItem()">Tambah</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB 5: PERSONIL ─── -->
+      <div class="tab-panel" id="tab-personil">
+        <div class="page-header">
+          <h1>Personil & Kehadiran</h1>
+          <p>Ringkasan aktivitas tim lapangan berdasarkan data laporan</p>
+        </div>
+        <div class="kpi-grid" id="personil-kpi"></div>
+        <div class="table-wrap">
+          <div class="table-header"><h3>📋 Rekapitulasi Per Personil</h3></div>
+          <table>
+            <thead><tr><th>Nama</th><th>Total Hari Lapor</th><th>Total Jam</th><th>Total Pohon</th><th>Laporan Terakhir</th><th>Status</th></tr></thead>
+            <tbody id="personil-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Memuat data...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:1.2rem">
+          <div class="table-wrap">
+            <div class="table-header"><h3>📜 Log Aktivitas Personil</h3></div>
+            <div style="overflow-x:auto">
+              <table>
+                <thead><tr><th>Tanggal</th><th>Pelapor</th><th>Aktivitas</th><th>Jam</th><th>Pohon</th></tr></thead>
+                <tbody id="personil-log-tbody">
+                  <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:2rem">Memuat...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB 6: KEUANGAN ─── -->
+      <div class="tab-panel" id="tab-keuangan">
+        <div class="page-header">
+          <h1>Keuangan Kebun</h1>
+          <p>Pencatatan pengeluaran dan pemasukan operasional</p>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card green">
+            <div class="kpi-icon">💵</div>
+            <div class="kpi-label">Total Pemasukan</div>
+            <div class="kpi-value" id="fin-masuk">Rp 0</div>
+          </div>
+          <div class="kpi-card" style="--accent-color:var(--danger)">
+            <div class="kpi-icon">💸</div>
+            <div class="kpi-label">Total Pengeluaran</div>
+            <div class="kpi-value" id="fin-keluar" style="color:var(--danger)">Rp 0</div>
+          </div>
+          <div class="kpi-card accent">
+            <div class="kpi-icon">📊</div>
+            <div class="kpi-label">Saldo Bersih</div>
+            <div class="kpi-value" id="fin-saldo">Rp 0</div>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h3>➕ Catat Transaksi</h3>
+          <div class="form-row" style="align-items:flex-end">
+            <div class="form-group">
+              <label>Tanggal</label>
+              <input type="date" id="fin-date" />
+            </div>
+            <div class="form-group">
+              <label>Jenis</label>
+              <select id="fin-type">
+                <option value="keluar">Pengeluaran</option>
+                <option value="masuk">Pemasukan</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Kategori</label>
+              <select id="fin-cat">
+                <option>Pupuk</option><option>Alat</option><option>Upah</option>
+                <option>Transport</option><option>Hasil Panen</option><option>Lainnya</option>
+              </select>
+            </div>
+            <div class="form-group" style="flex:2">
+              <label>Keterangan</label>
+              <input type="text" id="fin-desc" placeholder="Deskripsi transaksi..." />
+            </div>
+            <div class="form-group">
+              <label>Jumlah (Rp)</label>
+              <input type="number" id="fin-amount" placeholder="0" min="0" />
+            </div>
+            <div><button class="btn btn-primary btn-sm" onclick="addFinancial()">Simpan</button></div>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <div class="table-header">
+            <h3>📜 Riwayat Transaksi</h3>
+            <button class="btn btn-outline btn-sm" onclick="exportKeuangan()">⬇ Export</button>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead><tr><th>Tanggal</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th><th></th></tr></thead>
+              <tbody id="fin-tbody">
+                <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Belum ada transaksi</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── TAB 7: INVENTARIS ─── -->
+      <div class="tab-panel" id="tab-inventaris">
+        <div class="page-header">
+          <h1>Inventaris Kebun</h1>
+          <p>Stok pupuk, alat, dan bahan operasional</p>
+        </div>
+        <div class="form-card">
+          <h3>➕ Tambah / Update Item</h3>
+          <div class="form-row" style="align-items:flex-end">
+            <div class="form-group" style="flex:2">
+              <label>Nama Item</label>
+              <input type="text" id="inv-name" placeholder="Pupuk NPK, Sprayer, dll..." />
+            </div>
+            <div class="form-group">
+              <label>Kategori</label>
+              <select id="inv-cat">
+                <option>Pupuk</option><option>Pestisida</option><option>Alat</option>
+                <option>Kemasan</option><option>Lainnya</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Jumlah</label>
+              <input type="number" id="inv-qty" placeholder="0" min="0" />
+            </div>
+            <div class="form-group">
+              <label>Satuan</label>
+              <input type="text" id="inv-unit" placeholder="kg, pcs, liter..." />
+            </div>
+            <div class="form-group">
+              <label>Batas Minimum</label>
+              <input type="number" id="inv-min" placeholder="0" min="0" />
+            </div>
+            <div><button class="btn btn-primary btn-sm" onclick="addInventaris()">Simpan</button></div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <div class="table-header"><h3>📦 Daftar Inventaris</h3></div>
+          <table>
+            <thead><tr><th>Nama Item</th><th>Kategori</th><th>Stok</th><th>Minimum</th><th>Status</th><th>Update Terakhir</th><th></th></tr></thead>
+            <tbody id="inv-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem">Belum ada item inventaris</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ─── TAB 8: CATATAN ─── -->
+      <div class="tab-panel" id="tab-catatan">
+        <div class="page-header">
+          <h1>Catatan & To-Do</h1>
+          <p>Notepad internal dan daftar tindak lanjut</p>
+        </div>
+        <div class="section-grid">
+          <div>
+            <div class="form-card" style="margin-bottom:0">
+              <h3>📝 Catatan Cepat</h3>
+              <div class="form-group" style="margin-bottom:0.8rem">
+                <textarea id="note-text" style="min-height:120px" placeholder="Tulis catatan, observasi lapangan, atau informasi penting..."></textarea>
+              </div>
+              <div style="display:flex;gap:0.5rem">
+                <input type="text" id="note-tag" placeholder="Tag (opsional)" style="padding:0.45rem 0.7rem;border:1px solid rgba(90,144,128,0.25);border-radius:8px;font-size:0.8rem;flex:1;outline:none" />
+                <button class="btn btn-primary btn-sm" onclick="addNote()">Simpan Catatan</button>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="form-card" style="margin-bottom:0">
+              <h3>☑️ To-Do List</h3>
+              <div style="display:flex;gap:0.5rem;margin-bottom:0.8rem">
+                <input type="text" id="todo-text" placeholder="Tambah tugas baru..." style="padding:0.45rem 0.7rem;border:1px solid rgba(90,144,128,0.25);border-radius:8px;font-size:0.8rem;flex:1;outline:none" />
+                <button class="btn btn-primary btn-sm" onclick="addTodo()">+</button>
+              </div>
+              <div class="checklist" id="todo-list" style="max-height:300px;overflow-y:auto">
+                <div class="empty-state" style="padding:1.5rem">
+                  <div class="empty-icon" style="font-size:1.5rem">☑️</div>
+                  <p>Belum ada to-do</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:1.2rem">
+          <div class="table-wrap">
+            <div class="table-header">
+              <h3>📒 Riwayat Catatan</h3>
+              <input type="text" id="note-search" placeholder="Cari catatan..." onkeyup="filterNotes()" style="padding:0.3rem 0.6rem;border:1px solid rgba(90,144,128,0.2);border-radius:6px;font-size:0.75rem;outline:none;background:var(--bg)" />
+            </div>
+            <div id="notes-list" style="padding:0.5rem 1rem">
+              <div class="empty-state"><div class="empty-icon">📝</div><p>Belum ada catatan</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════════
+const PASS = 'wakafkopi26';
+
+function doLogin() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === PASS) {
+    sessionStorage.setItem('monitor_auth', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  } else {
+    document.getElementById('login-error').textContent = 'Kata sandi salah. Coba lagi.';
+    document.getElementById('pwd-input').value = '';
+  }
+}
+document.getElementById('pwd-input').addEventListener('keydown', e => { if (e.key==='Enter') doLogin(); });
+
+function doLogout() {
+  sessionStorage.removeItem('monitor_auth');
+  location.reload();
+}
+
+// Check on load
+window.addEventListener('load', () => {
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('eval-date').value = new Date().toISOString().slice(0,10);
+  document.getElementById('fin-date').value  = new Date().toISOString().slice(0,10);
+  const today = new Date();
+  const harvest = new Date('2026-06-01');
+  const daysLeft = Math.ceil((harvest - today) / (1000*60*60*24));
+  document.getElementById('days-to-harvest').textContent = daysLeft + ' hari';
+  // Pra-panen progress (asumsi start Oct 2025)
+  const start = new Date('2025-10-01');
+  const pct = Math.min(100, Math.max(0, Math.round(((today - start)/(harvest - start))*100)));
+  document.getElementById('prog-pct').textContent = pct + '%';
+  document.getElementById('prog-bar').style.width = pct + '%';
+  if (sessionStorage.getItem('monitor_auth') === '1') {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  }
+});
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+let laporanData = null;
+let evalState = {};
+
+function initApp() {
+  loadLaporan();
+  renderKeuangan();
+  renderInventaris();
+  renderCatatan();
+  renderTodo();
+  renderEvalHistory();
+  renderChecklist();
+}
+
+// ══════════════════════════════════════════════
+//  TAB NAVIGATION
+// ══════════════════════════════════════════════
+const TAB_TITLES = {
+  dashboard:'Dashboard KPI', laporan:'Log Laporan Harian', evaluasi:'Penilaian Eksekusi',
+  prapanen:'Pra-Panen & Jadwal', personil:'Personil & Kehadiran',
+  keuangan:'Keuangan Kebun', inventaris:'Inventaris Kebun', catatan:'Catatan & To-Do'
+};
+
+function showTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('topbar-title').textContent = TAB_TITLES[id] || id;
+}
+
+// ══════════════════════════════════════════════
+//  LAPORAN DATA (from laporan.json)
+// ══════════════════════════════════════════════
+function loadLaporan() {
+  document.getElementById('last-sync-time').textContent = 'Sync: ' + new Date().toLocaleTimeString('id-ID');
+  fetch('data/laporan.json?_=' + Date.now())
+    .then(r => r.json())
+    .then(data => {
+      laporanData = data;
+      renderDashboard(data);
+      renderLaporanTable(data);
+      renderPersonil(data);
+      renderEvalLaporanSelect(data);
+    })
+    .catch(() => {
+      document.getElementById('recent-activity').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><p>Gagal memuat laporan.json</p></div>';
+    });
+}
+
+function renderDashboard(data) {
+  const s = data.summary;
+  const log = data.log || [];
+  document.getElementById('kpi-total').textContent   = log.length;
+  document.getElementById('kpi-jam').textContent     = (s.total_jam_kerja || 0).toFixed(1);
+  document.getElementById('kpi-pohon').textContent   = s.total_pohon_dikerjakan || 0;
+  document.getElementById('kpi-lastdate').textContent = s.last_report_date ? fmtDate(s.last_report_date) : '—';
+  document.getElementById('kpi-lastpelapor').textContent = s.pelapor_terakhir || '—';
+  document.getElementById('badge-laporan').textContent = log.length;
+  document.getElementById('laporan-count').textContent = log.length + ' entri';
+
+  // Recent activity (last 5)
+  const recent = [...log].reverse().slice(0, 5);
+  if (!recent.length) {
+    document.getElementById('recent-activity').innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><p>Belum ada laporan</p></div>';
+    return;
+  }
+  document.getElementById('recent-activity').innerHTML = recent.map(e => `
+    <div style="display:flex;align-items:flex-start;gap:0.8rem;padding:0.6rem 0;border-bottom:1px solid var(--bg-tint)">
+      <div style="background:rgba(90,144,128,0.12);border-radius:8px;padding:0.4rem 0.5rem;font-size:0.75rem;font-weight:700;color:var(--medium);white-space:nowrap">${fmtDate(e.tanggal)}</div>
+      <div>
+        <div style="font-size:0.8rem;font-weight:600;color:var(--text)">${e.aktivitas || '—'}</div>
+        <div style="font-size:0.72rem;color:var(--muted)">${e.pelapor} · ${e.jam_kerja||0} jam · ${e.pohon||0} pohon</div>
+      </div>
+    </div>`).join('');
+
+  // Pelapor summary
+  const byPelapor = {};
+  log.forEach(e => {
+    if (!byPelapor[e.pelapor]) byPelapor[e.pelapor] = {laporan:0, jam:0, pohon:0};
+    byPelapor[e.pelapor].laporan++;
+    byPelapor[e.pelapor].jam += e.jam_kerja||0;
+    byPelapor[e.pelapor].pohon += e.pohon||0;
+  });
+  document.getElementById('pelapor-summary').innerHTML = Object.entries(byPelapor).map(([name,d]) => `
+    <div style="display:flex;align-items:center;gap:1rem;padding:0.7rem 0;border-bottom:1px solid var(--bg-tint)">
+      <div style="width:32px;height:32px;background:var(--bg-tint);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0">👤</div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:0.82rem">${name}</div>
+        <div style="font-size:0.72rem;color:var(--muted)">${d.laporan} laporan · ${d.jam.toFixed(1)} jam · ${d.pohon} pohon</div>
+      </div>
+      <span class="badge badge-green">${d.laporan}×</span>
+    </div>`).join('') || '<div class="empty-state"><div class="empty-icon">👤</div><p>Belum ada data pelapor</p></div>';
+}
+
+function renderLaporanTable(data) {
+  const log = data.log || [];
+  if (!log.length) {
+    document.getElementById('laporan-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Belum ada laporan masuk</td></tr>';
+    return;
+  }
+  document.getElementById('laporan-tbody').innerHTML = [...log].reverse().map(e => `
+    <tr>
+      <td><span class="badge badge-gray">#${e.id}</span></td>
+      <td style="white-space:nowrap">${fmtDate(e.tanggal)}</td>
+      <td><strong>${e.pelapor}</strong></td>
+      <td>${e.aktivitas || '—'}</td>
+      <td>${e.jam_kerja || 0} jam</td>
+      <td>${e.pohon || 0} pohon</td>
+      <td style="max-width:200px;white-space:normal;font-size:0.75rem;color:var(--muted)">${(e.catatan||'').slice(0,80)}${(e.catatan||'').length>80?'…':''}</td>
+      <td><span class="badge ${e.sumber==='voice_note'?'badge-blue':'badge-gray'}">${e.sumber==='voice_note'?'🎙️ VN':'✍️ Teks'}</span></td>
+    </tr>`).join('');
+}
+
+function renderPersonil(data) {
+  const log = data.log || [];
+  const byPelapor = {};
+  log.forEach(e => {
+    if (!byPelapor[e.pelapor]) byPelapor[e.pelapor] = {hari:0, jam:0, pohon:0, last:''};
+    byPelapor[e.pelapor].hari++;
+    byPelapor[e.pelapor].jam += e.jam_kerja||0;
+    byPelapor[e.pelapor].pohon += e.pohon||0;
+    if (!byPelapor[e.pelapor].last || e.tanggal > byPelapor[e.pelapor].last) byPelapor[e.pelapor].last = e.tanggal;
+  });
+  const tbody = document.getElementById('personil-tbody');
+  if (!Object.keys(byPelapor).length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Belum ada data laporan</td></tr>';
+    document.getElementById('personil-log-tbody').innerHTML = tbody.innerHTML;
+    return;
+  }
+  tbody.innerHTML = Object.entries(byPelapor).map(([name,d]) => `
+    <tr>
+      <td><strong>${name}</strong></td>
+      <td>${d.hari} hari</td>
+      <td>${d.jam.toFixed(1)} jam</td>
+      <td>${d.pohon} pohon</td>
+      <td>${fmtDate(d.last)}</td>
+      <td><span class="badge badge-green">Aktif</span></td>
+    </tr>`).join('');
+  document.getElementById('personil-log-tbody').innerHTML = [...log].reverse().slice(0,20).map(e => `
+    <tr><td>${fmtDate(e.tanggal)}</td><td>${e.pelapor}</td><td>${e.aktivitas||'—'}</td><td>${e.jam_kerja||0}</td><td>${e.pohon||0}</td></tr>`).join('');
+}
+
+function renderEvalLaporanSelect(data) {
+  const log = data.log || [];
+  const sel = document.getElementById('eval-laporan-ref');
+  const opts = log.map(e => `<option value="${e.id}">[${e.tanggal}] ${e.pelapor} — ${(e.aktivitas||'').slice(0,40)}</option>`).join('');
+  sel.innerHTML = '<option value="">— Pilih laporan —</option>' + opts;
+}
+
+// ══════════════════════════════════════════════
+//  EVALUASI
+// ══════════════════════════════════════════════
+function setEval(btn, cls) {
+  const key = btn.dataset.key;
+  document.querySelectorAll(`[data-key="${key}"]`).forEach(b => {
+    b.className = 'eval-opt';
+  });
+  btn.classList.add('eval-opt', cls, 'selected');
+  evalState[key] = btn.dataset.val;
+  updateEvalScore();
+}
+
+function updateEvalScore() {
+  const scoreMap = { hadir_tepat:3, hadir_telat:1, tidak_hadir:0, lengkap:3, sebagian:1, tidak_ada:0,
+    tercapai:3, sebagian:1, tidak:0, baik:3, cukup:1, perlu_perbaikan:0,
+    aktif:3, pasif:1, efisien:3, normal:2, boros:0 };
+  const keys = ['kehadiran','laporan','target','kualitas','komunikasi','alat'];
+  let total = 0, filled = 0;
+  keys.forEach(k => { if (evalState[k]) { total += scoreMap[evalState[k]]||0; filled++; } });
+  const max = filled * 3;
+  const pct = max > 0 ? Math.round((total/max)*100) : 0;
+  let label = pct >= 80 ? '🟢 Baik' : pct >= 50 ? '🟡 Cukup' : '🔴 Perlu Perhatian';
+  document.getElementById('eval-score-display').textContent = `Skor: ${total}/${max} (${pct}%) — ${label}`;
+}
+
+function loadEvalData() {
+  const ref = document.getElementById('eval-laporan-ref').value;
+  if (!ref || !laporanData) return;
+  const entry = laporanData.log.find(e => e.id === ref);
+  if (!entry) return;
+  const prev = document.getElementById('eval-laporan-preview');
+  prev.style.display = 'block';
+  prev.innerHTML = `<strong>${entry.pelapor}</strong> — ${fmtDate(entry.tanggal)}<br>
+    Aktivitas: ${entry.aktivitas||'—'}<br>
+    Jam: ${entry.jam_kerja||0} | Pohon: ${entry.pohon||0}<br>
+    <span style="color:var(--muted)">${entry.catatan||''}</span>`;
+}
+
+function saveEval() {
+  const date = document.getElementById('eval-date').value;
+  if (!date) { alert('Pilih tanggal terlebih dahulu'); return; }
+  const evals = JSON.parse(localStorage.getItem('monitor_evals')||'[]');
+  const scoreMap = { hadir_tepat:3, hadir_telat:1, tidak_hadir:0, lengkap:3, sebagian:1, tidak_ada:0,
+    tercapai:3, sebagian:1, tidak:0, baik:3, cukup:1, perlu_perbaikan:0,
+    aktif:3, pasif:1, efisien:3, normal:2, boros:0 };
+  let total = 0, max = 0;
+  Object.values(evalState).forEach(v => { total += scoreMap[v]||0; max += 3; });
+  const entry = {
+    id: Date.now(), date,
+    ...evalState,
+    notes: document.getElementById('eval-notes').value,
+    score: total, max, pct: max>0?Math.round((total/max)*100):0,
+    laporanRef: document.getElementById('eval-laporan-ref').value,
+  };
+  // replace if same date
+  const idx = evals.findIndex(e => e.date === date);
+  if (idx >= 0) evals[idx] = entry; else evals.push(entry);
+  evals.sort((a,b) => b.date.localeCompare(a.date));
+  localStorage.setItem('monitor_evals', JSON.stringify(evals));
+  evalState = {};
+  document.querySelectorAll('.eval-opt').forEach(b => b.className = 'eval-opt');
+  document.getElementById('eval-notes').value = '';
+  document.getElementById('eval-score-display').textContent = 'Skor: belum diisi';
+  renderEvalHistory();
+  alert('✅ Evaluasi disimpan!');
+}
+
+function renderEvalHistory() {
+  const evals = JSON.parse(localStorage.getItem('monitor_evals')||'[]');
+  if (!evals.length) { document.getElementById('eval-tbody').innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem">Belum ada evaluasi</td></tr>'; return; }
+  const valLabel = {hadir_tepat:'✅ Tepat', hadir_telat:'⚠️ Telat', tidak_hadir:'❌ Absen', lengkap:'✅ Lengkap', sebagian:'⚠️ Sebagian', tidak_ada:'❌ Nihil', tercapai:'✅ Tercapai', sebagian:'⚠️ Sebagian', tidak:'❌ Tidak', baik:'✅ Baik', cukup:'⚠️ Cukup', perlu_perbaikan:'❌ Perlu Perbaikan'};
+  document.getElementById('eval-tbody').innerHTML = evals.map(e => `
+    <tr>
+      <td style="white-space:nowrap">${fmtDate(e.date)}</td>
+      <td>${valLabel[e.kehadiran]||e.kehadiran||'—'}</td>
+      <td>${valLabel[e.laporan]||e.laporan||'—'}</td>
+      <td>${valLabel[e.target]||e.target||'—'}</td>
+      <td>${valLabel[e.kualitas]||e.kualitas||'—'}</td>
+      <td><span class="badge ${e.pct>=80?'badge-green':e.pct>=50?'badge-warn':'badge-red'}">${e.pct}%</span></td>
+      <td style="font-size:0.75rem;color:var(--muted)">${(e.notes||'').slice(0,60)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="deleteEval(${e.id})">✕</button></td>
+    </tr>`).join('');
+}
+
+function deleteEval(id) {
+  if (!confirm('Hapus evaluasi ini?')) return;
+  const evals = JSON.parse(localStorage.getItem('monitor_evals')||'[]').filter(e => e.id !== id);
+  localStorage.setItem('monitor_evals', JSON.stringify(evals));
+  renderEvalHistory();
+}
+
+// ══════════════════════════════════════════════
+//  PRA-PANEN CHECKLIST
+// ══════════════════════════════════════════════
+const CHECKLIST_DEFAULTS = {
+  tanaman: [
+    {label:'Pemangkasan (pruning) seluruh blok', date:'2026-05-15'},
+    {label:'Pembersihan gulma terakhir sebelum panen', date:'2026-05-25'},
+    {label:'Pemupukan akhir pre-harvest', date:'2026-05-01'},
+    {label:'Identifikasi blok matang (pemetaan panen)', date:'2026-05-20'},
+  ],
+  alat: [
+    {label:'Servis dan uji sprayer', date:'2026-05-10'},
+    {label:'Siapkan keranjang/wadah panen', date:'2026-05-25'},
+    {label:'Siapkan terpal penjemuran', date:'2026-05-25'},
+    {label:'Cek mesin pulper (kupas kopi)', date:'2026-05-20'},
+  ],
+  sdm: [
+    {label:'Konfirmasi kehadiran Mas Anto untuk musim panen', date:'2026-05-15'},
+    {label:'Rekrut tenaga tambahan panen (jika perlu)', date:'2026-05-20'},
+    {label:'Briefing teknik petik selektif', date:'2026-05-28'},
+  ],
+  pascapanen: [
+    {label:'Siapkan tempat fermentasi', date:'2026-05-25'},
+    {label:'Siapkan area penjemuran (raised bed)', date:'2026-05-20'},
+    {label:'Koordinasi dengan Bonsari Coffee untuk processing', date:'2026-05-15'},
+    {label:'Siapkan karung/kemasan green bean', date:'2026-06-01'},
+  ]
+};
+
+function renderChecklist() {
+  ['tanaman','alat','sdm','pascapanen'].forEach(cat => {
+    const saved = JSON.parse(localStorage.getItem('checklist_'+cat) || 'null') || CHECKLIST_DEFAULTS[cat].map(i=>({...i,done:false}));
+    renderChecklistCat(cat, saved);
+  });
+}
+
+function renderChecklistCat(cat, items) {
+  const el = document.getElementById('checklist-'+cat);
+  if (!el) return;
+  el.innerHTML = items.map((item,i) => `
+    <div class="check-item${item.done?' done':''}" onclick="toggleCheck('${cat}',${i})">
+      <div class="check-box">${item.done?'✓':''}</div>
+      <div>
+        <div class="check-label">${item.label}</div>
+        <div class="check-meta">${item.date?'Target: '+fmtDate(item.date):''}</div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleCheck(cat, idx) {
+  const items = JSON.parse(localStorage.getItem('checklist_'+cat) || 'null') || CHECKLIST_DEFAULTS[cat].map(i=>({...i,done:false}));
+  items[idx].done = !items[idx].done;
+  localStorage.setItem('checklist_'+cat, JSON.stringify(items));
+  renderChecklistCat(cat, items);
+}
+
+function addCheckItem() {
+  const cat   = document.getElementById('new-check-cat').value;
+  const label = document.getElementById('new-check-label').value.trim();
+  const date  = document.getElementById('new-check-date').value;
+  if (!label) return;
+  const items = JSON.parse(localStorage.getItem('checklist_'+cat) || 'null') || CHECKLIST_DEFAULTS[cat].map(i=>({...i,done:false}));
+  items.push({label, date, done:false});
+  localStorage.setItem('checklist_'+cat, JSON.stringify(items));
+  renderChecklistCat(cat, items);
+  document.getElementById('new-check-label').value = '';
+}
+
+// ══════════════════════════════════════════════
+//  KEUANGAN
+// ══════════════════════════════════════════════
+function addFinancial() {
+  const entry = {
+    id: Date.now(),
+    date:   document.getElementById('fin-date').value,
+    type:   document.getElementById('fin-type').value,
+    cat:    document.getElementById('fin-cat').value,
+    desc:   document.getElementById('fin-desc').value,
+    amount: parseInt(document.getElementById('fin-amount').value)||0,
+  };
+  if (!entry.date || !entry.amount) { alert('Isi tanggal dan jumlah'); return; }
+  const data = JSON.parse(localStorage.getItem('monitor_keuangan')||'[]');
+  data.unshift(entry);
+  localStorage.setItem('monitor_keuangan', JSON.stringify(data));
+  document.getElementById('fin-desc').value = '';
+  document.getElementById('fin-amount').value = '';
+  renderKeuangan();
+}
+
+function renderKeuangan() {
+  const data = JSON.parse(localStorage.getItem('monitor_keuangan')||'[]');
+  let masuk=0, keluar=0;
+  data.forEach(d => { if(d.type==='masuk') masuk+=d.amount; else keluar+=d.amount; });
+  const saldo = masuk - keluar;
+  document.getElementById('fin-masuk').textContent  = 'Rp ' + masuk.toLocaleString('id-ID');
+  document.getElementById('fin-keluar').textContent = 'Rp ' + keluar.toLocaleString('id-ID');
+  document.getElementById('fin-saldo').textContent  = 'Rp ' + saldo.toLocaleString('id-ID');
+  document.getElementById('fin-saldo').style.color  = saldo >= 0 ? 'var(--ok)' : 'var(--danger)';
+  if (!data.length) { document.getElementById('fin-tbody').innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Belum ada transaksi</td></tr>'; return; }
+  document.getElementById('fin-tbody').innerHTML = data.map(d => `
+    <tr>
+      <td>${fmtDate(d.date)}</td>
+      <td><span class="badge ${d.type==='masuk'?'badge-green':'badge-red'}">${d.type==='masuk'?'⬆ Masuk':'⬇ Keluar'}</span></td>
+      <td>${d.cat}</td>
+      <td>${d.desc||'—'}</td>
+      <td><strong>Rp ${d.amount.toLocaleString('id-ID')}</strong></td>
+      <td><button class="btn btn-danger btn-sm" onclick="delFin(${d.id})">✕</button></td>
+    </tr>`).join('');
+}
+
+function delFin(id) {
+  if (!confirm('Hapus transaksi ini?')) return;
+  const data = JSON.parse(localStorage.getItem('monitor_keuangan')||'[]').filter(d=>d.id!==id);
+  localStorage.setItem('monitor_keuangan', JSON.stringify(data));
+  renderKeuangan();
+}
+
+function exportKeuangan() {
+  const data = JSON.parse(localStorage.getItem('monitor_keuangan')||'[]');
+  const csv = ['Tanggal,Jenis,Kategori,Keterangan,Jumlah',...data.map(d=>`${d.date},${d.type},${d.cat},"${d.desc}",${d.amount}`)].join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='keuangan_kebun.csv'; a.click();
+}
+
+// ══════════════════════════════════════════════
+//  INVENTARIS
+// ══════════════════════════════════════════════
+function addInventaris() {
+  const name = document.getElementById('inv-name').value.trim();
+  if (!name) return;
+  const data = JSON.parse(localStorage.getItem('monitor_inventaris')||'[]');
+  const existing = data.findIndex(d => d.name.toLowerCase() === name.toLowerCase());
+  const entry = {
+    id: Date.now(), name,
+    cat:    document.getElementById('inv-cat').value,
+    qty:    parseFloat(document.getElementById('inv-qty').value)||0,
+    unit:   document.getElementById('inv-unit').value,
+    min:    parseFloat(document.getElementById('inv-min').value)||0,
+    updated: new Date().toISOString().slice(0,10)
+  };
+  if (existing >= 0) data[existing] = {...data[existing],...entry,id:data[existing].id};
+  else data.push(entry);
+  localStorage.setItem('monitor_inventaris', JSON.stringify(data));
+  ['inv-name','inv-qty','inv-unit','inv-min'].forEach(id=>document.getElementById(id).value='');
+  renderInventaris();
+}
+
+function renderInventaris() {
+  const data = JSON.parse(localStorage.getItem('monitor_inventaris')||'[]');
+  if (!data.length) { document.getElementById('inv-tbody').innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:2rem">Belum ada item</td></tr>'; return; }
+  document.getElementById('inv-tbody').innerHTML = data.map(d => {
+    const low = d.qty <= d.min;
+    const ok  = d.qty > d.min * 1.5;
+    return `<tr>
+      <td><strong>${d.name}</strong></td>
+      <td>${d.cat}</td>
+      <td>${d.qty} ${d.unit}</td>
+      <td>${d.min} ${d.unit}</td>
+      <td><span class="badge ${low?'badge-red':ok?'badge-green':'badge-warn'}">${low?'⚠ Hampir Habis':ok?'✅ Cukup':'⚡ Perlu Restock'}</span></td>
+      <td>${fmtDate(d.updated)}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="delInv(${d.id})">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function delInv(id) {
+  if (!confirm('Hapus item ini?')) return;
+  const data = JSON.parse(localStorage.getItem('monitor_inventaris')||'[]').filter(d=>d.id!==id);
+  localStorage.setItem('monitor_inventaris', JSON.stringify(data));
+  renderInventaris();
+}
+
+// ══════════════════════════════════════════════
+//  CATATAN & TODO
+// ══════════════════════════════════════════════
+function addNote() {
+  const text = document.getElementById('note-text').value.trim();
+  if (!text) return;
+  const notes = JSON.parse(localStorage.getItem('monitor_notes')||'[]');
+  notes.unshift({ id:Date.now(), text, tag:document.getElementById('note-tag').value, date:new Date().toISOString().slice(0,10) });
+  localStorage.setItem('monitor_notes', JSON.stringify(notes));
+  document.getElementById('note-text').value = '';
+  document.getElementById('note-tag').value = '';
+  renderCatatan();
+}
+
+function renderCatatan(filter='') {
+  const notes = JSON.parse(localStorage.getItem('monitor_notes')||'[]').filter(n => !filter || n.text.toLowerCase().includes(filter)||n.tag.toLowerCase().includes(filter));
+  if (!notes.length) { document.getElementById('notes-list').innerHTML = '<div class="empty-state"><div class="empty-icon">📝</div><p>Belum ada catatan</p></div>'; return; }
+  document.getElementById('notes-list').innerHTML = notes.map(n => `
+    <div style="padding:0.8rem 0;border-bottom:1px solid var(--bg-tint)">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1rem">
+        <div style="flex:1">
+          <div style="font-size:0.82rem;color:var(--text);line-height:1.5">${n.text}</div>
+          <div style="font-size:0.7rem;color:var(--muted);margin-top:0.3rem">${fmtDate(n.date)}${n.tag?` · <span class="badge badge-blue">${n.tag}</span>`:''}</div>
+        </div>
+        <button class="btn btn-danger btn-sm" onclick="delNote(${n.id})">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function delNote(id) {
+  const notes = JSON.parse(localStorage.getItem('monitor_notes')||'[]').filter(n=>n.id!==id);
+  localStorage.setItem('monitor_notes', JSON.stringify(notes));
+  renderCatatan();
+}
+
+function filterNotes() {
+  renderCatatan(document.getElementById('note-search').value.toLowerCase());
+}
+
+function addTodo() {
+  const text = document.getElementById('todo-text').value.trim();
+  if (!text) return;
+  const todos = JSON.parse(localStorage.getItem('monitor_todos')||'[]');
+  todos.unshift({id:Date.now(), text, done:false});
+  localStorage.setItem('monitor_todos', JSON.stringify(todos));
+  document.getElementById('todo-text').value = '';
+  renderTodo();
+}
+
+function renderTodo() {
+  const todos = JSON.parse(localStorage.getItem('monitor_todos')||'[]');
+  if (!todos.length) { document.getElementById('todo-list').innerHTML = '<div class="empty-state" style="padding:1.5rem"><div class="empty-icon" style="font-size:1.5rem">☑️</div><p>Belum ada to-do</p></div>'; return; }
+  document.getElementById('todo-list').innerHTML = todos.map(t => `
+    <div class="check-item${t.done?' done':''}" onclick="toggleTodo(${t.id})">
+      <div class="check-box">${t.done?'✓':''}</div>
+      <div style="flex:1">
+        <div class="check-label">${t.text}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="event.stopPropagation();delTodo(${t.id})">✕</button>
+    </div>`).join('');
+}
+
+function toggleTodo(id) {
+  const todos = JSON.parse(localStorage.getItem('monitor_todos')||'[]');
+  const t = todos.find(t=>t.id===id);
+  if (t) t.done = !t.done;
+  localStorage.setItem('monitor_todos', JSON.stringify(todos));
+  renderTodo();
+}
+
+function delTodo(id) {
+  const todos = JSON.parse(localStorage.getItem('monitor_todos')||'[]').filter(t=>t.id!==id);
+  localStorage.setItem('monitor_todos', JSON.stringify(todos));
+  renderTodo();
+}
+
+// ══════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,dd] = d.split('-');
+  const bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+  return `${parseInt(dd)} ${bulan[parseInt(m)-1]} ${y}`;
+}
+
+document.getElementById('todo-text').addEventListener('keydown', e => { if (e.key==='Enter') addTodo(); });
+</script>
+</body>
+</html>
