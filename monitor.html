@@ -340,7 +340,10 @@ tr:hover td{background:rgba(90,144,128,0.03)}
         </div>
         <div class="topbar-right">
           <div class="topbar-date" id="topbar-date"></div>
-          <button class="sync-btn" onclick="loadLaporan()">🔄 Sync Data</button>
+          <span id="sync-status" style="font-size:0.7rem;color:var(--muted);padding:0 0.4rem"></span>
+          <button class="sync-btn" onclick="loadLaporan()">🔄 Laporan</button>
+          <button class="sync-btn" onclick="syncAllToSheets()" id="gsheets-sync-btn" title="Push semua data lokal ke Google Sheets">☁️ Simpan GSheets</button>
+          <button class="sync-btn" onclick="syncAllFromSheets()" id="gsheets-load-btn" title="Muat data terkini dari Google Sheets">⬇️ Muat GSheets</button>
         </div>
       </div>
 
@@ -807,6 +810,117 @@ tr:hover td{background:rgba(90,144,128,0.03)}
 
 <script>
 // ══════════════════════════════════════════════
+//  KONFIGURASI GOOGLE SHEETS SYNC
+//  Isi URL setelah deploy Google Apps Script
+//  Panduan: lihat file laporan_sheets_api.gs
+// ══════════════════════════════════════════════
+const SHEETS_API_URL = ''; // 👈 Ganti dengan URL deployment Google Apps Script kamu
+
+// ──────────────────────────────────────────────
+//  Sheets: kirim data ke GAS (POST → write sheet)
+// ──────────────────────────────────────────────
+async function sheetsPost(sheet, data) {
+  if (!SHEETS_API_URL) return false;
+  try {
+    await fetch(SHEETS_API_URL, {
+      method: 'POST',
+      body: JSON.stringify({ sheet, data }),
+    });
+    updateSyncStatus('✅ ' + sheet + ' tersimpan');
+    return true;
+  } catch(e) {
+    updateSyncStatus('⚠️ Gagal simpan ke GSheets');
+    return false;
+  }
+}
+
+// ──────────────────────────────────────────────
+//  Sheets: baca data dari GAS (GET → read sheet)
+// ──────────────────────────────────────────────
+async function sheetsGet(sheet) {
+  if (!SHEETS_API_URL) return null;
+  try {
+    const res = await fetch(SHEETS_API_URL + '?sheet=' + encodeURIComponent(sheet));
+    const data = await res.json();
+    return Array.isArray(data) ? data : null;
+  } catch(e) {
+    return null;
+  }
+}
+
+// ──────────────────────────────────────────────
+//  Update status bar di topbar
+// ──────────────────────────────────────────────
+function updateSyncStatus(msg) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.textContent = msg;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => {
+    el.textContent = SHEETS_API_URL ? '☁️ GSheets aktif' : '💾 Local only';
+  }, 3000);
+}
+
+// ──────────────────────────────────────────────
+//  Push SEMUA data lokal → Google Sheets
+// ──────────────────────────────────────────────
+async function syncAllToSheets() {
+  if (!SHEETS_API_URL) {
+    alert('Google Sheets belum dikonfigurasi.\n\nIsi SHEETS_API_URL di source code monitor.html.\nLihat file laporan_sheets_api.gs untuk panduan setup.');
+    return;
+  }
+  updateSyncStatus('⏳ Menyimpan...');
+  const keuangan   = JSON.parse(localStorage.getItem('monitor_keuangan')||'[]');
+  const inventaris = JSON.parse(localStorage.getItem('monitor_inventaris')||'[]');
+  const evals      = JSON.parse(localStorage.getItem('monitor_evals')||'[]');
+  const notes      = JSON.parse(localStorage.getItem('monitor_notes')||'[]');
+  const todos      = JSON.parse(localStorage.getItem('monitor_todos')||'[]');
+  const checklist  = [];
+  ['tanaman','alat','sdm','pascapanen'].forEach(cat => {
+    const items = JSON.parse(localStorage.getItem('checklist_'+cat)||'null') ||
+                  CHECKLIST_DEFAULTS[cat].map(i=>({...i,done:false}));
+    items.forEach(item => checklist.push({cat,...item}));
+  });
+  await Promise.all([
+    sheetsPost('Keuangan',   keuangan),
+    sheetsPost('Inventaris', inventaris),
+    sheetsPost('Evaluasi',   evals),
+    sheetsPost('Catatan',    notes),
+    sheetsPost('Todo',       todos),
+    sheetsPost('Checklist',  checklist),
+  ]);
+  updateSyncStatus('✅ Semua data tersimpan ke GSheets');
+}
+
+// ──────────────────────────────────────────────
+//  Muat semua data dari Google Sheets → lokal
+// ──────────────────────────────────────────────
+async function syncAllFromSheets() {
+  if (!SHEETS_API_URL) {
+    alert('Google Sheets belum dikonfigurasi.\n\nIsi SHEETS_API_URL di source code monitor.html.\nLihat file laporan_sheets_api.gs untuk panduan setup.');
+    return;
+  }
+  updateSyncStatus('⏳ Memuat dari GSheets...');
+  const [keuangan, inventaris, evals, notes, todos, checklist] = await Promise.all([
+    sheetsGet('Keuangan'), sheetsGet('Inventaris'), sheetsGet('Evaluasi'),
+    sheetsGet('Catatan'),  sheetsGet('Todo'),       sheetsGet('Checklist'),
+  ]);
+  if (keuangan)   { localStorage.setItem('monitor_keuangan',   JSON.stringify(keuangan));   renderKeuangan(); }
+  if (inventaris) { localStorage.setItem('monitor_inventaris', JSON.stringify(inventaris)); renderInventaris(); }
+  if (evals)      { localStorage.setItem('monitor_evals',      JSON.stringify(evals));      renderEvalHistory(); }
+  if (notes)      { localStorage.setItem('monitor_notes',      JSON.stringify(notes));      renderCatatan(); }
+  if (todos)      { localStorage.setItem('monitor_todos',      JSON.stringify(todos));      renderTodo(); }
+  if (checklist && checklist.length) {
+    ['tanaman','alat','sdm','pascapanen'].forEach(cat => {
+      const items = checklist.filter(c => c.cat === cat).map(({cat:_, ...rest}) => rest);
+      if (items.length) localStorage.setItem('checklist_'+cat, JSON.stringify(items));
+    });
+    renderChecklist();
+  }
+  updateSyncStatus('✅ Data dimuat dari GSheets');
+}
+
+// ══════════════════════════════════════════════
 //  AUTH
 // ══════════════════════════════════════════════
 const PASS = 'wakafkopi26';
@@ -858,6 +972,10 @@ let laporanData = null;
 let evalState = {};
 
 function initApp() {
+  // Tampilkan status GSheets di topbar
+  const statusEl = document.getElementById('sync-status');
+  if (statusEl) statusEl.textContent = SHEETS_API_URL ? '☁️ GSheets aktif' : '💾 Local only';
+
   loadLaporan();
   renderKeuangan();
   renderInventaris();
@@ -1068,6 +1186,7 @@ function saveEval() {
   document.getElementById('eval-notes').value = '';
   document.getElementById('eval-score-display').textContent = 'Skor: belum diisi';
   renderEvalHistory();
+  sheetsPost('Evaluasi', evals);
   alert('✅ Evaluasi disimpan!');
 }
 
@@ -1093,6 +1212,7 @@ function deleteEval(id) {
   const evals = JSON.parse(localStorage.getItem('monitor_evals')||'[]').filter(e => e.id !== id);
   localStorage.setItem('monitor_evals', JSON.stringify(evals));
   renderEvalHistory();
+  sheetsPost('Evaluasi', evals);
 }
 
 // ══════════════════════════════════════════════
@@ -1149,6 +1269,7 @@ function toggleCheck(cat, idx) {
   items[idx].done = !items[idx].done;
   localStorage.setItem('checklist_'+cat, JSON.stringify(items));
   renderChecklistCat(cat, items);
+  _syncChecklist();
 }
 
 function addCheckItem() {
@@ -1161,6 +1282,17 @@ function addCheckItem() {
   localStorage.setItem('checklist_'+cat, JSON.stringify(items));
   renderChecklistCat(cat, items);
   document.getElementById('new-check-label').value = '';
+  _syncChecklist();
+}
+
+function _syncChecklist() {
+  const all = [];
+  ['tanaman','alat','sdm','pascapanen'].forEach(cat => {
+    const items = JSON.parse(localStorage.getItem('checklist_'+cat)||'null') ||
+                  CHECKLIST_DEFAULTS[cat].map(i=>({...i,done:false}));
+    items.forEach(item => all.push({cat, ...item}));
+  });
+  sheetsPost('Checklist', all);
 }
 
 // ══════════════════════════════════════════════
@@ -1182,6 +1314,7 @@ function addFinancial() {
   document.getElementById('fin-desc').value = '';
   document.getElementById('fin-amount').value = '';
   renderKeuangan();
+  sheetsPost('Keuangan', data);
 }
 
 function renderKeuangan() {
@@ -1210,6 +1343,7 @@ function delFin(id) {
   const data = JSON.parse(localStorage.getItem('monitor_keuangan')||'[]').filter(d=>d.id!==id);
   localStorage.setItem('monitor_keuangan', JSON.stringify(data));
   renderKeuangan();
+  sheetsPost('Keuangan', data);
 }
 
 function exportKeuangan() {
@@ -1240,6 +1374,7 @@ function addInventaris() {
   localStorage.setItem('monitor_inventaris', JSON.stringify(data));
   ['inv-name','inv-qty','inv-unit','inv-min'].forEach(id=>document.getElementById(id).value='');
   renderInventaris();
+  sheetsPost('Inventaris', data);
 }
 
 function renderInventaris() {
@@ -1265,6 +1400,7 @@ function delInv(id) {
   const data = JSON.parse(localStorage.getItem('monitor_inventaris')||'[]').filter(d=>d.id!==id);
   localStorage.setItem('monitor_inventaris', JSON.stringify(data));
   renderInventaris();
+  sheetsPost('Inventaris', data);
 }
 
 // ══════════════════════════════════════════════
@@ -1279,6 +1415,7 @@ function addNote() {
   document.getElementById('note-text').value = '';
   document.getElementById('note-tag').value = '';
   renderCatatan();
+  sheetsPost('Catatan', notes);
 }
 
 function renderCatatan(filter='') {
@@ -1300,6 +1437,7 @@ function delNote(id) {
   const notes = JSON.parse(localStorage.getItem('monitor_notes')||'[]').filter(n=>n.id!==id);
   localStorage.setItem('monitor_notes', JSON.stringify(notes));
   renderCatatan();
+  sheetsPost('Catatan', notes);
 }
 
 function filterNotes() {
@@ -1314,6 +1452,7 @@ function addTodo() {
   localStorage.setItem('monitor_todos', JSON.stringify(todos));
   document.getElementById('todo-text').value = '';
   renderTodo();
+  sheetsPost('Todo', todos);
 }
 
 function renderTodo() {
@@ -1335,12 +1474,14 @@ function toggleTodo(id) {
   if (t) t.done = !t.done;
   localStorage.setItem('monitor_todos', JSON.stringify(todos));
   renderTodo();
+  sheetsPost('Todo', todos);
 }
 
 function delTodo(id) {
   const todos = JSON.parse(localStorage.getItem('monitor_todos')||'[]').filter(t=>t.id!==id);
   localStorage.setItem('monitor_todos', JSON.stringify(todos));
   renderTodo();
+  sheetsPost('Todo', todos);
 }
 
 // ══════════════════════════════════════════════
