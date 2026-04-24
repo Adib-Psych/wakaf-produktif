@@ -533,9 +533,22 @@ span.lang-en { display: none; }
   display: grid; grid-template-columns: 1.4fr 1fr 1fr;
 }
 .act-log-progress {
-  display: flex; align-items: flex-start; gap: 1rem;
+  display: flex; flex-direction: column;
   padding: 0.85rem 1rem;
   border-right: 1px solid var(--bg-deep);
+}
+.act-log-progress-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+.act-log-progress-titles { flex: 1; min-width: 0; }
+.act-log-progress-badge { flex-shrink: 0; }
+.act-log-progress-body { flex: 1; }
+.act-log-progress-footer {
+  margin-top: 0.6rem;
+  display: flex; justify-content: flex-end;
+  align-items: center;
 }
 .act-log-theory {
   padding: 0.85rem 1.1rem;
@@ -649,10 +662,10 @@ span.lang-en { display: none; }
 .act-log-status {
   font-size: 0.58rem; font-weight: 800; letter-spacing: 0.07em;
   text-transform: uppercase; padding: 0.2rem 0.55rem;
-  border-radius: 20px; white-space: nowrap; flex-shrink: 0;
-  margin-top: 0.15rem;
+  border-radius: 20px; white-space: nowrap;
+  display: inline-block;
 }
-.act-log-body { flex: 1; }
+.act-log-body { }
 .act-log-title {
   font-size: 0.86rem; font-weight: 600;
   color: var(--text); line-height: 1.4;
@@ -660,14 +673,23 @@ span.lang-en { display: none; }
 .act-log-detail {
   font-family: 'Lora', serif;
   font-size: 0.77rem; color: var(--muted); line-height: 1.65;
-  margin-top: 0.2rem; text-align: justify;
+  margin-top: 0.25rem; text-align: justify;
 }
 .act-log-meta {
   font-size: 0.68rem; color: var(--muted);
-  white-space: nowrap; flex-shrink: 0; margin-top: 0.15rem;
-  text-align: right; min-width: 90px;
+  text-align: right;
 }
-.act-log-meta strong { color: var(--accent); display: block; font-size: 0.72rem; }
+.act-log-meta strong { color: var(--accent); font-size: 0.72rem; font-weight: 700; }
+.act-log-progress-header {
+  display: flex; flex-wrap: wrap; gap: 0.25rem;
+  margin-bottom: 0.45rem;
+}
+.act-log-progress-footer {
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(0,0,0,0.06);
+  display: flex; justify-content: flex-end;
+}
 .report-link {
   display: inline-flex; align-items: center; gap: 0.3rem;
   font-size: 0.65rem; font-weight: 700;
@@ -1896,8 +1918,8 @@ var evalData = {
         en: 'Aligned. Land sanitation is the absolute prerequisite for garden rehabilitation — the most appropriate opening step before any nutritional intervention can work.'
       },
       agronomi: {
-        id: 'Sesuai standar GAP Kopi Indonesia (Dirjen Perkebunan, Permentan No.49/2014). Pembersihan vegetasi kompetitor meningkatkan penetrasi cahaya 40–60% dan mengurangi persaingan N, P, K. 55 hari kerja proporsional untuk lahan ~1–2 ha. Catatan: tidak ada data kondisi gulma sebelum/sesudah yang terdokumentasi — membatasi kemampuan evaluasi dampak aktual.',
-        en: 'Consistent with Indonesian Coffee GAP standards (Dirjen Perkebunan, Permentan No.49/2014). Removal of competing vegetation increases light penetration 40–60% and reduces N, P, K competition. 55 person-days proportional for ~1–2 ha. Note: no documented pre/post weed condition data exists — limiting ability to evaluate actual impact.'
+        id: 'Tindakan SESUAI STANDAR GAP Kopi Indonesia (Dirjen Perkebunan, Permentan No.49/2014): 55 person-days untuk ~1–2 ha adalah proporsi yang tepat dan memadai. DEVIASI PENCATATAN: Tidak ada data kondisi gulma sebelum/sesudah yang terdokumentasi — membatasi kemampuan verifikasi dampak aktual. Tidak ada pengukuran intensitas cahaya pre/post yang dicatat.',
+        en: 'Action MEETS Indonesian Coffee GAP standards (Dirjen Perkebunan, Permentan No.49/2014): 55 person-days for ~1–2 ha is a proportional and adequate input. DOCUMENTATION DEVIATION: No pre/post weed condition data recorded — limits impact verification capacity. No pre/post light intensity measurements were taken.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -1915,8 +1937,8 @@ var evalData = {
         en: 'Aligned as the first baseline record. The 2024 harvest figure is the program\'s zero point — without it, there is no benchmark to measure progress against.'
       },
       agronomi: {
-        id: 'Produktivitas 0,11 KG/pohon berada di bawah 30% rata-rata nasional robusta (0,4–0,8 KG/pohon, Dirjen Perkebunan 2022). Konsisten dengan kondisi kebun tanpa input >3 tahun. Angka ini HANYA valid sebagai baseline resmi jika didukung bukti timbang atau transaksi — bukan estimasi.',
-        en: 'Productivity of 0.11 KG/tree falls below 30% of national robusta average (0.4–0.8 KG/tree, Dirjen Perkebunan 2022). Consistent with a garden without inputs for >3 years. This figure is ONLY valid as an official baseline if supported by weighing or transaction evidence — not estimates.'
+        id: 'Angka 0,11 KG/pohon (est. ~100 KG untuk 915 pohon) REALISTIS secara agronomi — konsisten dengan kondisi kebun tanpa input lebih dari 3 tahun (Dirjen Perkebunan, 2022). PERTANYAAN VALIDITAS: Angka ini sah sebagai baseline resmi HANYA jika didukung bukti timbang atau nota transaksi. Tanpa bukti primer, klasifikasinya adalah "estimasi tidak terverifikasi" — tidak valid untuk keputusan program.',
+        en: 'Figure of 0.11 KG/tree (est. ~100 KG for 915 trees) AGRONOMICALLY PLAUSIBLE — consistent with a garden without inputs for more than 3 years (Dirjen Perkebunan, 2022). VALIDITY QUESTION: This figure is valid as an official baseline ONLY if supported by weighing records or transaction receipts. Without primary evidence, classification is "unverified estimate" — not valid data for program decisions.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -1934,8 +1956,8 @@ var evalData = {
         en: 'Outside the grand design at that time — done before the structured program and before T.A. joined. Not a program failure, but an important pre-program lesson learned to document and use as guidance going forward.'
       },
       agronomi: {
-        id: 'Tiga faktor kegagalan teridentifikasi konsisten dengan ICCRI Panduan Pembibitan dan Penanaman Kopi (2018): (1) tanpa hardening off — bibit langsung dari pembibitan ke lapang, (2) timing musim kering — stres air akut, (3) tanah berpasir tanpa amandemen organik. Protokol ICCRI: replanting optimal November–Desember (awal musim hujan), hardening off 4–6 minggu, amandemen 5 KG kompos/lubang tanam minimum.',
-        en: 'Three failure factors identified consistent with ICCRI Coffee Nursery and Planting Guidelines (2018): (1) no hardening off — seedlings moved directly from nursery to field, (2) dry season timing — acute water stress, (3) sandy soil without organic amendment. ICCRI protocol: optimal replanting November–December (early rainy season), 4–6 week hardening off, minimum 5 KG compost amendment per planting hole.'
+        id: 'PROSEDUR TIDAK SESUAI STANDAR. Tiga deviasi dari ICCRI Panduan Pembibitan Kopi (2018): (1) Tidak ada hardening off — bibit langsung ke lapang; (2) Timing tidak tepat: musim kering, bukan November–Desember awal hujan sesuai ICCRI; (3) Tanah berpasir tanpa amandemen organik minimum 5 KG/lubang. Kegagalan 100% dapat secara langsung dikaitkan dengan ketiga deviasi ini — bukan kegagalan tanaman, melainkan kegagalan prosedur yang dapat dicegah.',
+        en: 'PROCEDURE DID NOT MEET STANDARDS. Three deviations from ICCRI Coffee Planting Guidelines (2018): (1) No hardening off — seedlings transferred directly to field; (2) Wrong timing: dry season, not November–December early rains as per ICCRI; (3) Sandy soil without minimum 5 KG organic amendment per planting hole. 100% failure is directly attributable to all three deviations — not a plant failure, but a preventable procedural failure.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -1955,8 +1977,8 @@ var evalData = {
         en: 'Aligned — significant increase confirms positive response to 2024 sanitation. However, the magnitude of the claimed increase requires primary data verification before it can serve as an official program reference and 2026 projection basis.'
       },
       agronomi: {
-        id: 'Respons produktivitas terhadap land sanitation terdokumentasi dalam literatur (ICCRI, 2019). Tipikal kenaikan year-after-sanitation adalah 50–200% tergantung kondisi awal. Kenaikan >300% tidak lazim dan memerlukan konfirmasi data independen. 0,31 KG/pohon mendekati batas bawah rata-rata nasional (0,4 KG/pohon, Dirjen Perkebunan 2022) — angka yang realistis jika pohon masih dalam kondisi produktif dan tanpa input pupuk tambahan.',
-        en: 'Productivity response to land sanitation is documented in literature (ICCRI, 2019). Typical year-after-sanitation increase is 50–200% depending on initial conditions. Increases >300% are uncommon and require independent data confirmation. 0.31 KG/tree approaches the lower national average boundary (0.4 KG/tree, Dirjen Perkebunan 2022) — a realistic figure if trees remain productive and without additional fertilizer input.'
+        id: 'Kenaikan 346% (100→281 KG) melampaui rentang tipikal respons land sanitation (50–200%, ICCRI 2019) — tidak mustahil, namun luar biasa tinggi. 0,31 KG/pohon mendekati rata-rata nasional (0,4 KG/pohon, Dirjen Perkebunan 2022) — realistis jika pohon masih produktif. CATATAN KRITIS: Tidak ada pupuk atau intervensi teknis antara 2024–2025. Penilaian prosedur tidak dapat diselesaikan tanpa bukti timbang atau transaksi yang mengkonfirmasi angka ini.',
+        en: '346% increase (100→281 KG) exceeds the typical land sanitation response range (50–200%, ICCRI 2019) — not impossible, but unusually high. 0.31 KG/tree approaches national average (0.4 KG/tree, Dirjen Perkebunan 2022) — realistic if trees remain productive. CRITICAL NOTE: No fertilizer or technical intervention between 2024–2025. Procedure assessment cannot be completed without primary weighing or transaction evidence confirming this figure.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -1974,8 +1996,8 @@ var evalData = {
         en: 'Aligned — this is the legal foundation of the entire program. Productive waqf status enables long-term investment planning that is impossible without legal land certainty.'
       },
       agronomi: {
-        id: 'Tidak terkait langsung teknis agronomi. Namun dari perspektif manajemen pertanian, kepastian lahan adalah prasyarat untuk amortisasi investasi infrastruktur (irigasi, gudang, alat mesin pertanian) yang membutuhkan horizon 5–10 tahun. Sesuai framework pertanian berkelanjutan (FAO Sustainable Land Management Guidelines, 2011).',
-        en: 'Not directly related to agronomic technique. However, from a farm management perspective, land tenure certainty is a prerequisite for amortizing infrastructure investments (irrigation, storage, farm machinery) requiring a 5–10 year horizon. Consistent with sustainable farming framework (FAO Sustainable Land Management Guidelines, 2011).'
+        id: 'BUKAN EVALUASI TEKNIS AGRONOMI. Dari sisi legalitas program: penandatanganan MOU adalah pemenuhan syarat formal yang memungkinkan amortisasi investasi jangka panjang (5–10 tahun). Tidak ada deviasi prosedural agronomi yang dapat dievaluasi dari aktivitas ini.',
+        en: 'NOT AN AGRONOMIC TECHNICAL EVALUATION. From a program legality standpoint: MOU signing fulfills the formal prerequisite enabling long-term investment amortization (5–10 years). No agronomic procedural deviations are evaluable from this activity.'
       },
       badge: 'sesuai',
       tindakLanjut: {
@@ -1995,8 +2017,8 @@ var evalData = {
         en: 'Aligned — the T.A.\'s first intervention in the post-harvest Recovery phase (January) is consistent with the grand design timeline. The macro+micro+biostimulant combination is the appropriate intervention package for this phase.'
       },
       agronomi: {
-        id: 'Formulasi sesuai rekomendasi ICCRI untuk robusta dataran menengah (600–900 mdpl): NPK 16.16.16 sebagai base fertilizer, Boron kritis mencegah flower drop (defisiensi B adalah penyebab utama gugur bunga prematur pada Coffea canephora — Wintgens, Coffee: Growing, Processing, Sustainable Production, 2004). Rotasi semprot 10 hari sesuai Pedoman Teknis Pemupukan Kopi (Dirjen Perkebunan, 2014). Catatan: dosis aktual per pohon belum terdokumentasi.',
-        en: 'Formulation consistent with ICCRI recommendations for mid-elevation robusta (600–900 masl): NPK 16.16.16 as base fertilizer, Boron critical to prevent flower drop (B deficiency is the primary cause of premature flower drop in Coffea canephora — Wintgens, Coffee: Growing, Processing, Sustainable Production, 2004). 10-day spray rotation consistent with Coffee Fertilization Technical Guidelines (Dirjen Perkebunan, 2014). Note: actual dosage per tree not yet documented.'
+        id: 'FORMULASI SESUAI STANDAR untuk base fertilizer robusta dataran menengah (ICCRI). Boron dalam Karate Plus tepat untuk pencegahan flower drop pada Coffea canephora (Wintgens, 2004). Interval semprot 10 hari sesuai Pedoman Teknis Pemupukan Kopi (Dirjen Perkebunan, 2014). DEVIASI PENCATATAN: Dosis aktual per pohon tidak tercatat — tanpa data ini, kesesuaian dengan rekomendasi dosis ICCRI tidak dapat dikonfirmasi.',
+        en: 'FORMULATION MEETS STANDARDS for mid-elevation robusta base fertilization (ICCRI). Boron in Karate Plus correct for flower drop prevention in Coffea canephora (Wintgens, 2004). 10-day spray interval consistent with Coffee Fertilization Technical Guidelines (Dirjen Perkebunan, 2014). DOCUMENTATION DEVIATION: Actual dosage per tree not recorded — without this data, ICCRI dosage recommendations cannot be confirmed as met.'
       },
       badge: 'sesuai',
       tindakLanjut: {
@@ -2014,8 +2036,8 @@ var evalData = {
         en: 'Aligned — a critical structural intervention to address the identified sandy soil problem. Timing before the flowering phase is correct.'
       },
       agronomi: {
-        id: 'Root pruning dengan garpu (maks 20 cm kedalaman) sesuai teknik stimulasi akar kopi tua (Wintgens, 2004). CATATAN KRITIS DOSIS: 65 sak untuk 915 pohon = 3–5 KG/pohon. ICCRI merekomendasikan 5–10 KG/pohon untuk program rehabilitasi penuh (ICCRI Panduan Pemupukan Organik Kopi, 2018). Dosis yang diberikan berada di batas bawah — memadai sebagai langkah pertama namun harus ditingkatkan ke 7–10 KG/pohon di siklus berikutnya untuk hasil optimal.',
-        en: 'Root pruning with fork (max 20 cm depth) is consistent with root stimulation techniques for aging coffee trees (Wintgens, 2004). CRITICAL DOSAGE NOTE: 65 sacks for 915 trees = 3–5 KG/tree. ICCRI recommends 5–10 KG/tree for a full rehabilitation program (ICCRI Organic Coffee Fertilization Guidelines, 2018). The dosage applied is at the lower limit — adequate as a first step but must be increased to 7–10 KG/tree in the next cycle for optimal results.'
+        id: 'TEKNIK SESUAI STANDAR: Kedalaman garpu maks 20 cm sesuai teknik stimulasi akar kopi tua (Wintgens, 2004). DEVIASI DOSIS TERIDENTIFIKASI: 65 sak untuk 915 pohon = 3–5 KG/pohon. ICCRI merekomendasikan 5–10 KG/pohon untuk program rehabilitasi penuh (ICCRI Panduan Pemupukan Organik Kopi, 2018). Dosis berada di batas bawah — valid sebagai langkah pertama, namun perlu ditingkatkan ke 7–10 KG/pohon di siklus berikutnya.',
+        en: 'TECHNIQUE MEETS STANDARDS: Max 20 cm fork depth consistent with root stimulation technique for aging coffee trees (Wintgens, 2004). DOSAGE DEVIATION IDENTIFIED: 65 sacks for 915 trees = 3–5 KG/tree. ICCRI recommends 5–10 KG/tree for a full rehabilitation program (ICCRI Organic Coffee Fertilization Guidelines, 2018). Dosage is at the lower limit — valid as a first step, but must be increased to 7–10 KG/tree in the next cycle.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -2033,8 +2055,8 @@ var evalData = {
         en: 'Aligned — prerequisite infrastructure enabling the consistency of the entire spray program. Without a guaranteed water source, the 10-day schedule cannot be maintained.'
       },
       agronomi: {
-        id: 'Tidak terkait langsung teknis tanaman. Secara operasional kritis: kebutuhan air program = 220 L/sesi × ~36 sesi/tahun = ~7.920 L/tahun minimum. Debit PDAM desa perlu dikonfirmasi cukup. Pertimbangkan tandon cadangan 500–1.000 L sebagai buffer gangguan supply.',
-        en: 'Not directly plant-technical. Operationally critical: program water requirement = 220 L/session × ~36 sessions/year = ~7,920 L/year minimum. Village PDAM flow capacity needs to be confirmed as sufficient. Consider a 500–1,000 L reserve tank for supply disruption buffering.'
+        id: 'BUKAN EVALUASI TEKNIS BUDIDAYA. Dari sisi operasional program: infrastruktur air tersedia — prasyarat konsistensi jadwal semprot 10 hari terpenuhi. Tidak ada standar teknis agronomi tanaman yang dilanggar atau perlu diverifikasi untuk aktivitas ini.',
+        en: 'NOT A CROP PRODUCTION TECHNICAL EVALUATION. From program operations: water infrastructure is available — prerequisite for consistent 10-day spray schedule is met. No crop agronomic technical standards are violated or need verification for this activity.'
       },
       badge: 'sesuai',
       tindakLanjut: {
@@ -2052,8 +2074,8 @@ var evalData = {
         en: 'Aligned — biostimulant application at the vegetative→generative transition (March–April) is consistent with grand design. However, its effectiveness on robusta specifically needs confirmation through documented flower response observation.'
       },
       agronomi: {
-        id: 'Fish extract mengandung asam amino bebas, sitokinin alami, dan auksin yang mendorong transisi generatif. Efektivitasnya sebagai biostimulant terdokumentasi pada berbagai tanaman (Battacharyya et al., 2015, Bioresource Technology). CATATAN: studi spesifik pada Coffea canephora robusta masih terbatas — efek bervariasi tergantung umur pohon dan kondisi tanah. Produksi mandiri di Wonosalam positif dari sisi kesegaran, namun konsistensi konsentrasi bahan aktif antar batch perlu dipastikan.',
-        en: 'Fish extract contains free amino acids, natural cytokinins, and auxins that promote generative transition. Its effectiveness as a biostimulant is documented for various crops (Battacharyya et al., 2015, Bioresource Technology). NOTE: specific studies on Coffea canephora robusta remain limited — effects vary by tree age and soil condition. In-house Wonosalam production is positive for freshness, but consistency of active ingredient concentration across batches must be ensured.'
+        id: 'DOSIS SESUAI PROTOKOL LAPANGAN: 100 cc fish extract + 900 cc air per pohon adalah proporsi yang diterima untuk pengocoran biostimulant organik. CATATAN RISIKO: Fish extract produksi mandiri memiliki risiko variabilitas kandungan aktif antar batch — formulasi Wonosalam belum diuji konsentrasi fitohormon. Observasi tunas baru dan bunga perdana pasca-aplikasi adalah indikator respons fenotip yang valid, namun tidak cukup untuk mengklaim kausalitas tanpa kelompok kontrol.',
+        en: 'DOSAGE CONSISTENT WITH FIELD PROTOCOL: 100 cc fish extract + 900 cc water per tree is a generally accepted proportion for organic biostimulant soil drench. RISK NOTE: Self-produced fish extract carries risk of active ingredient variability between batches — Wonosalam formulation has not been tested for phytohormone concentration. Post-application observation of new buds and first flowers is a valid phenotypic response indicator, but insufficient to claim causality without a control group.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -2071,8 +2093,8 @@ var evalData = {
         en: 'Aligned — a critical baseline assessment that should have been done earlier. Negative TDS data at all 5 points is strategic information that changes the priority and scale of the organic fertilizer program.'
       },
       agronomi: {
-        id: 'Metodologi TDS 5 titik memberikan gambaran umum yang cukup (FAO Soil Testing Guidelines). Untuk keputusan pemupukan presisi diperlukan analisis lab lengkap: N-total, P tersedia, K dapat ditukar, KTK, dan % bahan organik (Balai Penelitian Tanah, Petunjuk Teknis Analisis Kimia Tanah, 2005). pH 6–7 sudah dalam rentang optimal robusta (5,5–7,0 — ICCRI, 2014). Masalah utama teridentifikasi: kandungan organik sangat rendah — ini harus menjadi prioritas utama seluruh program.',
-        en: 'TDS at 5 points provides a sufficient general picture (FAO Soil Testing Guidelines). Precision fertilization decisions require a full lab analysis: total-N, available P, exchangeable K, CEC, and organic matter % (Balai Penelitian Tanah, Soil Chemical Analysis Technical Guidelines, 2005). pH 6–7 is already within optimal robusta range (5.5–7.0 — ICCRI, 2014). Main problem identified: very low organic content — this must be the top priority of the entire program.'
+        id: 'METODOLOGI MEMADAI UNTUK SKRINING AWAL: Sampling TDS di 5 titik cukup sebagai indikator umum kesehatan tanah (FAO Soil Testing Guidelines). pH 6–7 dalam rentang optimal robusta (5,5–7,0, ICCRI 2014). KETERBATASAN TERIDENTIFIKASI: TDS saja tidak memberikan profil N-P-K, KTK, atau % bahan organik yang dibutuhkan untuk keputusan pemupukan presisi (Balai Penelitian Tanah, 2005). Baseline ini valid untuk menentukan prioritas intervensi (organik dulu), namun tidak mencukupi untuk pemupukan berbasis analisis penuh.',
+        en: 'METHODOLOGY ADEQUATE FOR INITIAL SCREENING: TDS sampling at 5 points is sufficient as a general soil health indicator (FAO Soil Testing Guidelines). pH 6–7 within optimal robusta range (5.5–7.0, ICCRI 2014). IDENTIFIED LIMITATIONS: TDS alone does not provide N-P-K profile, CEC, or organic matter % needed for precision fertilization decisions (Balai Penelitian Tanah, 2005). This baseline is valid for intervention priority setting (organics first), but insufficient for full analysis-based fertilization.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -2090,8 +2112,8 @@ var evalData = {
         en: 'Critical and urgent. In the Fruit Formation phase (April–June), plants urgently need organic P and K. Each week of delay is a critical nutrient window that cannot be recovered.'
       },
       agronomi: {
-        id: 'Fase pembentukan biji membutuhkan peningkatan P dan K signifikan (Wintgens, 2004; ICCRI Panduan Pemupukan Kopi, 2014). Pupuk kandang slow-release aman untuk tanah berpasir yang rentan burning dari pupuk kimia. Dosis target: 7–10 KG/pohon (ICCRI). Keterlambatan melewati akhir April dapat menurunkan kualitas dan berat biji secara langsung dan terukur. Ini adalah aktivitas dengan dampak terbesar terhadap hasil panen 2026.',
-        en: 'Seed formation phase requires significantly increased P and K (Wintgens, 2004; ICCRI Coffee Fertilization Guidelines, 2014). Slow-release manure is safe for sandy soil prone to burning from chemical fertilizers. Target dose: 7–10 KG/tree (ICCRI). Delays beyond end of April can directly and measurably reduce bean quality and weight. This is the activity with the greatest impact on the 2026 harvest outcome.'
+        id: 'BELUM TERLAKSANA — EVALUASI PADA STATUS BERJALAN: Pupuk kandang belum diadakan per laporan terakhir. Standar yang harus dipenuhi: dosis 7–10 KG/pohon (ICCRI Panduan Pemupukan Kopi, 2014). Setiap minggu keterlambatan melewati akhir April adalah jendela nutrisi fase pembentukan biji yang tidak dapat dikembalikan (Wintgens, 2004). Evaluasi kelayakan prosedur baru dapat dilakukan setelah ada laporan konfirmasi terlaksana beserta data dosis aktual.',
+        en: 'NOT YET EXECUTED — EVALUATION ON ONGOING STATUS: Organic fertilizer has not been procured per the latest report. Standards to be met: dosage 7–10 KG/tree (ICCRI Coffee Fertilization Guidelines, 2014). Every week of delay past end of April is an irreversible nutrient window loss during seed formation phase (Wintgens, 2004). Procedure adequacy evaluation can only be done after execution is reported with actual dosage data.'
       },
       badge: 'eskalasi',
       tindakLanjut: {
@@ -2109,8 +2131,8 @@ var evalData = {
         en: 'Aligned — pruning in the Young Fruit phase (May–June) is the ideal timing, not interfering with active flowering. However, the success of this intervention is entirely dependent on direct T.A. supervision in the field.'
       },
       agronomi: {
-        id: 'Pruning bertahap 15–25% dari total cabang per siklus direkomendasikan untuk kopi tua yang belum pernah dipangkas (Wintgens, 2004). PERINGATAN: pruning berat (>30%) pada pohon 40+ tahun dengan kondisi tanah masih dalam perbaikan dapat menyebabkan stres fisiologis dan menurunkan panen tahun berjalan. Prioritaskan: cabang tertutupi (tidak mendapat sinar), cabang mati, dan cabang primer dengan sangat sedikit cabang sekunder. Kesalahan pruning tidak dapat dikoreksi dalam satu musim.',
-        en: 'Gradual pruning of 15–25% of total branches per cycle is recommended for aged coffee trees that have never been pruned (Wintgens, 2004). WARNING: heavy pruning (>30%) on 40+ year trees with soil still being rehabilitated can cause physiological stress and reduce current year harvest. Prioritize: shaded branches (no sunlight), dead branches, and primary branches with very few secondary branches. Pruning errors cannot be corrected within one season.'
+        id: 'BELUM TERLAKSANA — EVALUASI DIRENCANAKAN: Pruning belum dilakukan per laporan terakhir. Standar yang harus dipenuhi saat dilaksanakan: (1) batas aman 15–25% total cabang per siklus untuk pohon tua (Wintgens, 2004); (2) hindari >30% pada pohon 40+ tahun dengan tanah masih dalam rehabilitasi; (3) prioritas cabang: tertutupi, mati, primer tanpa cabang sekunder. Tanpa supervisi T.A. langsung di lapangan, risiko over-pruning tidak dapat dimitigasi.',
+        en: 'NOT YET EXECUTED — EVALUATION PLANNED: Pruning has not been performed per the latest report. Standards to be met when executed: (1) safe limit 15–25% of total branches per cycle for aging trees (Wintgens, 2004); (2) avoid >30% on 40+ year trees with soil still under rehabilitation; (3) branch priorities: shaded, dead, primary with very few secondary branches. Without direct T.A. field supervision, over-pruning risk cannot be mitigated.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -2128,8 +2150,8 @@ var evalData = {
         en: 'Aligned in grand design — but timing is now critical. Young fruit is forming. OPT identification ideally should have been done February–March. Further delay will close the effective biological control window.'
       },
       agronomi: {
-        id: 'Coffee Berry Borer (Hypothenemus hampei) dapat menyebabkan kerugian 30–80% panen jika tidak dikendalikan dini (Puslitkoka, Hama dan Penyakit Kopi Indonesia, 2012). Fase Buah Muda (<0,5 cm) adalah fase optimal untuk pengendalian biologis dengan Beauveria bassiana — efisiensi >70% (BPTP Jawa Timur). Setelah buah mencapai ukuran penuh, CBB masuk ke dalam biji dan pengendalian biologis tidak lagi efektif. Karat daun (Hemileia vastatrix) dan antraknos (Colletotrichum) perlu dipantau bersamaan.',
-        en: 'Coffee Berry Borer (Hypothenemus hampei) can cause 30–80% harvest losses if not controlled early (Puslitkoka, Indonesian Coffee Pests and Diseases, 2012). The Young Fruit phase (<0.5 cm) is optimal for biological control with Beauveria bassiana — efficiency >70% (BPTP East Java). Once fruit reaches full size, CBB enters the bean and biological control is no longer effective. Leaf rust (Hemileia vastatrix) and anthracnose (Colletotrichum) need simultaneous monitoring.'
+        id: 'BELUM TERLAKSANA — JENDELA OPTIMAL MULAI TERTUTUP: OPT belum diidentifikasi per laporan terakhir. Berdasarkan fenologi April (fase pembentukan buah), jendela optimal pengendalian biologis CBB dengan Beauveria bassiana (efisiensi >70%, BPTP Jawa Timur) adalah saat buah berdiameter <0,5 cm. Setelah buah mencapai ukuran penuh, pengendalian biologis tidak lagi efektif (Puslitkoka, 2012). Setiap minggu keterlambatan identifikasi mempersempit pilihan pengendalian.',
+        en: 'NOT YET EXECUTED — OPTIMAL WINDOW CLOSING: OPT has not been identified per the latest report. Based on April phenology (fruit formation phase), the optimal biological control window for CBB with Beauveria bassiana (efficiency >70%, BPTP East Java) is when fruit diameter is <0.5 cm. Once fruit reaches full size, biological control is no longer effective (Puslitkoka, 2012). Every week of delay in identification narrows control options.'
       },
       badge: 'eskalasi',
       tindakLanjut: {
@@ -2147,8 +2169,8 @@ var evalData = {
         en: 'Aligned — the main 2026 milestone. First post-waqf harvest with full T.A. intervention. Results will be the real benchmark for the entire year\'s program investment impact. Harvest success depends on execution of all prior interventions.'
       },
       agronomi: {
-        id: 'Pemetikan selektif menghasilkan kualitas lebih tinggi dibanding strip picking pada robusta (Specialty Coffee Association, 2021). Interval optimal antar ronde: 10–14 hari (ICCRI). Petik saat buah merah penuh untuk brix maksimal. 4 ronde diperlukan karena maturation dalam satu cluster tidak serentak. Target realistis 2026: 0,5 KG/pohon — namun ini bergantung penuh pada eksekusi pupuk kandang, OPT, dan pruning yang terjadwal. Jika salah satu dari tiga intervensi tersebut tidak terlaksana, revisi target ke bawah.',
-        en: 'Selective picking yields higher quality than strip picking for robusta (Specialty Coffee Association, 2021). Optimal interval between rounds: 10–14 days (ICCRI). Pick at full red for maximum brix. 4 rounds needed as maturation within a cluster is not simultaneous. Realistic 2026 target: 0.5 KG/tree — but this is fully dependent on execution of manure, OPT, and pruning as scheduled. If any of these three interventions is not executed, revise target downward.'
+        id: 'BELUM TERLAKSANA — EVALUASI PRASYARAT: Panen belum dilaksanakan. Prosedur standar yang harus dipenuhi: (1) petik selektif buah merah penuh, bukan strip picking (Specialty Coffee Association, 2021); (2) interval antar ronde 10–14 hari (ICCRI); (3) minimal 4 ronde pemetikan. TARGET BERSYARAT: 0,5 KG/pohon hanya realistis jika pupuk kandang, OPT, dan pruning selesai sesuai jadwal. Jika salah satu tidak terlaksana, target harus direvisi ke bawah sebelum panen dimulai.',
+        en: 'NOT YET EXECUTED — PREREQUISITE EVALUATION: Harvest has not been conducted. Standard procedures to be met: (1) selective full-red picking, not strip picking (Specialty Coffee Association, 2021); (2) 10–14 day interval between rounds (ICCRI); (3) minimum 4 picking rounds. CONDITIONAL TARGET: 0.5 KG/tree is only realistic if manure, OPT, and pruning are completed on schedule. If any of these three is not executed, target must be revised downward before harvest begins.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -2166,8 +2188,8 @@ var evalData = {
         en: 'Aligned — September–October stumping is the ideal timing: 8–12 months recovery before May–June 2027 flowering. The most important long-term intervention in the grand design, but also the most invasive and risky if not properly supervised.'
       },
       agronomi: {
-        id: 'Stumping (pemotongan 30–50 cm dari tanah) adalah teknik standar rejuvenasi robusta >10–15 tahun (ICCRI Panduan Pemangkasan Kopi, 2018; Wintgens, 2004). PERINGATAN PENTING: tidak semua pohon perlu di-stump — pohon yang merespons positif intervensi nutrisi 2026 mungkin cukup dengan pruning berat saja. Seleksi pohon oleh T.A. adalah mutlak. Recovery 8–12 bulan ke bunga adalah patokan ICCRI kondisi normal — pada tanah berpasir yang masih dalam perbaikan, timeline bisa lebih panjang.',
-        en: 'Stumping (cutting at 30–50 cm from ground) is the standard rejuvenation technique for robusta >10–15 years old (ICCRI Coffee Pruning Guidelines, 2018; Wintgens, 2004). IMPORTANT WARNING: not all trees need stumping — trees showing positive response to 2026 nutritional interventions may be sufficient with heavy pruning alone. Tree selection by T.A. is non-negotiable. The 8–12 month recovery benchmark is for normal ICCRI conditions — on sandy soil still being rehabilitated, the timeline may be longer.'
+        id: 'BELUM TERLAKSANA — EVALUASI DIRENCANAKAN (Sep–Okt 2026): Tindakan belum dilaksanakan. Standar yang harus dipenuhi: (1) timing Sep–Okt adalah optimal — 8–12 bulan recovery sebelum pembungaan Mei–Jun 2027 (Wintgens, 2004); (2) pruning berat 30–50 cm dari batang WAJIB dilakukan di bawah supervisi T.A. langsung — risiko ireversibel pada pohon 40+ tahun; (3) program pemulihan tanah bersamaan diperlukan untuk meredam stres pasca-pruning.',
+        en: 'NOT YET EXECUTED — EVALUATION PLANNED (Sep–Oct 2026): Action not yet taken. Standards to be met: (1) Sep–Oct timing is optimal — 8–12 months recovery before May–Jun 2027 flowering (Wintgens, 2004); (2) heavy pruning 30–50 cm from trunk MUST be done under direct T.A. supervision — irreversible risk on 40+ year trees; (3) concurrent soil recovery program required to buffer post-pruning stress.'
       },
       badge: 'perhatian',
       tindakLanjut: {
@@ -2185,8 +2207,8 @@ var evalData = {
         en: 'Aligned — before/after comparative data from one full intervention cycle is the most scientifically valuable documentation of this program. Its value extends beyond one garden and becomes the productive waqf program\'s contribution to public knowledge.'
       },
       agronomi: {
-        id: 'Metodologi before/after valid untuk penelitian agronomi lapangan (FAO Field Data Collection Guidelines). Untuk nilai ilmiah yang dapat dikutip, parameter wajib: N-total, P tersedia, K dapat ditukar, KTK, % bahan organik, pH, tekstur tanah (pasir-debu-liat), dan produktivitas per pohon per cluster. Titik sampling yang sama persis (GPS atau patok fisik) harus digunakan. Kolaborasi dengan Puslitkoka Jember atau Departemen Agronomi Universitas Brawijaya akan meningkatkan kredibilitas data secara signifikan.',
-        en: 'Before/after methodology is valid for field agronomy research (FAO Field Data Collection Guidelines). For citable scientific value, required parameters: total-N, available P, exchangeable K, CEC, organic matter %, pH, soil texture (sand-silt-clay), and productivity per tree per cluster. The exact same sampling points (GPS or physical stakes) must be used. Collaboration with Puslitkoka Jember or Brawijaya University Agronomy Department will significantly increase data credibility.'
+        id: 'BELUM TERLAKSANA — PROTOKOL RISET DIRENCANAKAN (Okt–Nov 2026): Data belum dikumpulkan. Untuk validitas sebagai referensi ilmiah: (1) titik sampling harus identik dengan April 2026 (GPS atau patok fisik); (2) parameter minimum: N-total, P tersedia, K dapat ditukar, KTK, % bahan organik, pH, tekstur tanah, produktivitas per pohon per cluster (Balai Penelitian Tanah, 2005); (3) kolaborasi dengan Puslitkoka Jember atau Departemen Agronomi UB akan meningkatkan kredibilitas data secara signifikan.',
+        en: 'NOT YET EXECUTED — RESEARCH PROTOCOL PLANNED (Oct–Nov 2026): Data not yet collected. For validity as a citable scientific reference: (1) sampling points must be identical to April 2026 (GPS or physical stakes); (2) minimum parameters: total-N, available P, exchangeable K, CEC, organic matter %, pH, soil texture, productivity per tree per cluster (Balai Penelitian Tanah, 2005); (3) collaboration with Puslitkoka Jember or UB Agronomy Department will significantly increase data credibility.'
       },
       badge: 'sesuai',
       tindakLanjut: {
@@ -2242,8 +2264,8 @@ function buildTheoryColumns() {
             '<p class="eval-body lang-id">' + ev.grandDesign.id + '</p>' +
             '<p class="eval-body lang-en">' + ev.grandDesign.en + '</p>' +
 
-            '<div class="eval-label lang-id">② Kajian Ilmiah & Sumber</div>' +
-            '<div class="eval-label lang-en">② Scientific Review & Sources</div>' +
+            '<div class="eval-label lang-id">② Penilaian Eksekusi</div>' +
+            '<div class="eval-label lang-en">② Execution Assessment</div>' +
             '<p class="eval-body lang-id">' + ev.agronomi.id + '</p>' +
             '<p class="eval-body lang-en">' + ev.agronomi.en + '</p>' +
 
@@ -2264,9 +2286,24 @@ function buildTheoryColumns() {
           '</div>';
       }
 
+      // Restructure Column 1 into header / body / footer for column layout
+      var tmpDiv = document.createElement('div');
+      tmpDiv.innerHTML = orig;
+      var statusNodes = tmpDiv.querySelectorAll('.act-log-status');
+      var bodyNode    = tmpDiv.querySelector('.act-log-body');
+      var metaNode    = tmpDiv.querySelector('.act-log-meta');
+      var statusHtml  = Array.from(statusNodes).map(function(el){ return el.outerHTML; }).join('');
+      var bodyHtml    = bodyNode ? bodyNode.innerHTML : orig;
+      var metaHtml    = metaNode ? metaNode.outerHTML : '';
+
+      var progressHtml =
+        '<div class="act-log-progress-header">' + statusHtml + '</div>' +
+        '<div class="act-log-progress-body">' + bodyHtml + '</div>' +
+        (metaHtml ? '<div class="act-log-progress-footer">' + metaHtml + '</div>' : '');
+
       item.innerHTML =
         '<div class="act-log-split">' +
-          '<div class="act-log-progress">' + orig + '</div>' +
+          '<div class="act-log-progress">' + progressHtml + '</div>' +
           '<div class="act-log-theory">' +
             '<div class="theory-label lang-id">🔬 Panduan Teoritis</div>' +
             '<div class="theory-label lang-en">🔬 Theoretical Context</div>' +
