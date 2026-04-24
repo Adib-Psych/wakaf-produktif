@@ -866,6 +866,77 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
   text-align: center; pointer-events: none;
 }
 
+/* ══════════════════════════════════
+   LIVE FEED — Catatan Harian Lapangan
+══════════════════════════════════ */
+.live-feed-block {
+  border: 1.5px solid var(--medium);
+  background: linear-gradient(145deg, rgba(90,144,128,0.06), rgba(168,200,188,0.08));
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.live-feed-block::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, var(--medium), var(--accent), var(--medium));
+  opacity: 0.7;
+}
+.live-feed-period {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  color: var(--medium) !important; font-weight: 700 !important;
+}
+.live-dot-pulse {
+  width: 8px; height: 8px;
+  background: #5fca7c; border-radius: 50%;
+  animation: blink-green 1.4s infinite;
+  flex-shrink: 0;
+}
+.live-feed-summary {
+  display: flex; gap: 0.8rem; padding: 0 1.5rem 0.8rem;
+  flex-wrap: wrap;
+}
+.live-sum-chip {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: rgba(90,144,128,0.12);
+  border: 1px solid rgba(90,144,128,0.25);
+  border-radius: 20px; padding: 0.25rem 0.75rem;
+  font-size: 0.72rem; font-weight: 600; color: var(--dark);
+}
+.live-sum-chip strong { color: var(--medium); }
+.live-entry-date {
+  font-size: 0.65rem; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--medium);
+  padding: 0.6rem 0 0.2rem; margin-top: 0.3rem;
+  border-top: 1px dashed rgba(90,144,128,0.2);
+}
+.live-entry-date:first-child { border-top: none; margin-top: 0; }
+.act-log-item.live-item {
+  border-left: 3px solid var(--medium);
+  background: rgba(255,255,255,0.5);
+}
+.live-pelapor {
+  font-size: 0.68rem; font-weight: 700; color: var(--accent);
+  margin-bottom: 0.15rem;
+}
+.live-catatan {
+  font-family: 'Lora', serif;
+  font-size: 0.8rem; color: var(--muted);
+  font-style: italic; margin-top: 0.3rem;
+  line-height: 1.6;
+}
+.live-feed-empty {
+  text-align: center; padding: 2rem 1rem;
+  color: var(--muted); font-size: 0.85rem;
+}
+.live-feed-error {
+  text-align: center; padding: 1.5rem 1rem;
+  color: #b56b4a; font-size: 0.82rem;
+}
+.live-updated {
+  text-align: right; padding: 0.5rem 1.5rem 1rem;
+  font-size: 0.65rem; color: var(--muted); font-style: italic;
+}
 </style>
 </head>
 <body>
@@ -1528,6 +1599,25 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         <div class="year-sum-pill lang-en">Harvest Target: <strong>Jun–Aug 2026</strong></div>
       </div>
 
+      <!-- ══ LIVE FEED dari laporan.json ══ -->
+      <div class="phase-block live-feed-block" id="live-feed-container" style="display:none;">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">📡</span>
+          <span class="phase-block-title lang-id">Catatan Harian Lapangan</span>
+          <span class="phase-block-title lang-en">Daily Field Reports</span>
+          <span class="phase-block-period live-feed-period">
+            <span class="live-dot-pulse"></span>
+            <span class="lang-id">Live dari Lapangan</span>
+            <span class="lang-en">Live from Field</span>
+          </span>
+        </div>
+        <div class="live-feed-summary" id="live-feed-summary"></div>
+        <div class="act-log-list" id="live-feed-entries">
+          <div class="live-feed-loading lang-id" style="text-align:center;padding:1.5rem;color:var(--muted);font-size:0.85rem;">Memuat laporan harian...</div>
+          <div class="live-feed-loading lang-en" style="text-align:center;padding:1.5rem;color:var(--muted);font-size:0.85rem;">Loading daily reports...</div>
+        </div>
+      </div>
+
       <div class="phase-block">
         <div class="phase-block-header">
           <span class="phase-block-icon">🌱</span>
@@ -1815,6 +1905,7 @@ function setLang(lang) {
 document.addEventListener('DOMContentLoaded', function() {
   buildTheoryColumns();
   buildFenologi();
+  loadLiveFeed();
   setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
 });
 
@@ -2410,6 +2501,128 @@ function buildFenologi() {
   html += `<circle cx="${f(px)}" cy="${f(py)}" r="4" fill="#7db848" opacity="0.9"/>`;
 
   svg.innerHTML = html;
+}
+
+/* ══ LIVE FEED — Fetch laporan.json ══ */
+var LAPORAN_URL = 'https://adib-psych.github.io/wakaf-produktif/data/laporan.json';
+
+function loadLiveFeed() {
+  fetch(LAPORAN_URL + '?t=' + Date.now())
+    .then(function(r) { return r.json(); })
+    .then(function(data) { renderLiveFeed(data); })
+    .catch(function(err) {
+      console.warn('Live feed error:', err);
+      var container = document.getElementById('live-feed-container');
+      container.style.display = 'block';
+      document.getElementById('live-feed-entries').innerHTML =
+        '<div class="live-feed-error lang-id">Tidak dapat memuat laporan harian. Coba refresh halaman.</div>' +
+        '<div class="live-feed-error lang-en">Could not load daily reports. Try refreshing the page.</div>';
+    });
+}
+
+function renderLiveFeed(data) {
+  var container = document.getElementById('live-feed-container');
+  var entriesEl = document.getElementById('live-feed-entries');
+  var summaryEl = document.getElementById('live-feed-summary');
+
+  if (!data || !data.log || data.log.length === 0) {
+    container.style.display = 'none';
+    return;
+  }
+
+  container.style.display = 'block';
+
+  // Summary chips
+  var totalJam = data.summary ? data.summary.total_jam_kerja : 0;
+  var totalPohon = data.summary ? data.summary.total_pohon_dikerjakan : 0;
+  var totalEntries = data.log.length;
+
+  summaryEl.innerHTML =
+    '<span class="live-sum-chip lang-id"><strong>' + totalEntries + '</strong>&nbsp;Laporan</span>' +
+    '<span class="live-sum-chip lang-en"><strong>' + totalEntries + '</strong>&nbsp;Reports</span>' +
+    '<span class="live-sum-chip lang-id"><strong>' + totalJam + '</strong>&nbsp;Jam Kerja</span>' +
+    '<span class="live-sum-chip lang-en"><strong>' + totalJam + '</strong>&nbsp;Work Hours</span>' +
+    '<span class="live-sum-chip lang-id"><strong>' + totalPohon + '</strong>&nbsp;Pohon Dikerjakan</span>' +
+    '<span class="live-sum-chip lang-en"><strong>' + totalPohon + '</strong>&nbsp;Trees Worked</span>';
+
+  // Sort entries newest first
+  var entries = data.log.slice().sort(function(a, b) {
+    return (b.tanggal || '').localeCompare(a.tanggal || '');
+  });
+
+  // Group by date
+  var grouped = {};
+  entries.forEach(function(e) {
+    var d = e.tanggal || 'Tanpa Tanggal';
+    if (!grouped[d]) grouped[d] = [];
+    grouped[d].push(e);
+  });
+
+  var html = '';
+  var dates = Object.keys(grouped);
+
+  // Show max 15 entries / 7 dates
+  var dateCount = 0;
+  dates.forEach(function(date) {
+    if (dateCount >= 7) return;
+    dateCount++;
+
+    // Date header
+    var dateObj = new Date(date + 'T00:00:00');
+    var dayNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    var dayNamesEn = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    var monthNames = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+    var dateLabel = isNaN(dateObj.getTime()) ? date :
+      dayNames[dateObj.getDay()] + ', ' + dateObj.getDate() + ' ' + monthNames[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
+    var dateLabelEn = isNaN(dateObj.getTime()) ? date :
+      dayNamesEn[dateObj.getDay()] + ', ' + dateObj.getDate() + ' ' + monthNames[dateObj.getMonth()] + ' ' + dateObj.getFullYear();
+
+    html += '<div class="live-entry-date"><span class="lang-id">' + dateLabel + '</span><span class="lang-en">' + dateLabelEn + '</span></div>';
+
+    grouped[date].forEach(function(entry) {
+      var jamStr = entry.jam_kerja ? entry.jam_kerja + ' jam' : '';
+      var jamStrEn = entry.jam_kerja ? entry.jam_kerja + ' hrs' : '';
+      var pohonStr = entry.pohon ? entry.pohon + ' pohon' : '';
+      var pohonStrEn = entry.pohon ? entry.pohon + ' trees' : '';
+      var metaStr = [jamStr, pohonStr].filter(Boolean).join(' · ');
+      var metaStrEn = [jamStrEn, pohonStrEn].filter(Boolean).join(' · ');
+
+      var timeStr = '';
+      if (entry.timestamp) {
+        var ts = new Date(entry.timestamp);
+        if (!isNaN(ts.getTime())) {
+          timeStr = String(ts.getHours()).padStart(2,'0') + ':' + String(ts.getMinutes()).padStart(2,'0');
+        }
+      }
+
+      html += '<div class="act-log-item live-item">' +
+        '<span class="act-log-status s-done">✓</span>' +
+        '<div class="act-log-body">' +
+          '<div class="live-pelapor">' + (entry.pelapor || 'Anonim') + (timeStr ? ' · ' + timeStr : '') + '</div>' +
+          '<div class="act-log-title">' + (entry.aktivitas || '-') + '</div>' +
+          (entry.catatan ? '<div class="live-catatan">"' + entry.catatan + '"</div>' : '') +
+        '</div>' +
+        '<div class="act-log-meta">' +
+          (metaStr ? '<strong class="lang-id">' + metaStr + '</strong><strong class="lang-en">' + metaStrEn + '</strong>' : '') +
+        '</div>' +
+      '</div>';
+    });
+  });
+
+  // Updated timestamp
+  var updatedStr = data.meta && data.meta.updated ? data.meta.updated.replace('T', ' · ') : '';
+  if (updatedStr) {
+    html += '<div class="live-updated">' +
+      '<span class="lang-id">Terakhir diperbarui: ' + updatedStr + '</span>' +
+      '<span class="lang-en">Last updated: ' + updatedStr + '</span>' +
+    '</div>';
+  }
+
+  entriesEl.innerHTML = html;
+
+  // Re-apply current language visibility
+  var lang = localStorage.getItem('lang') || 'id';
+  setLang(lang);
 }
 
 function f(n) { return n.toFixed(1); }
