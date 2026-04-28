@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Research Invitation Brief — Kebun Wakaf Kopi Ngantang</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+/* NAVBAR */
+.navbar { position: sticky; top: 0; z-index: 200; background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1); }
+.navbar-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; padding: 0 2rem; max-width: 1200px; margin: 0 auto; }
+.brand-tag { padding: 0.2rem 0.75rem; border-radius: 6px; border: 1px solid var(--accent); box-shadow: 2px 2px 0 var(--accent); background: linear-gradient(135deg,rgba(90,144,128,.22),rgba(90,144,128,.1)); color: #e8f4f0; font-size: .82rem; font-weight: 800; white-space: nowrap; }
+.navbar-right { display: flex; align-items: center; gap: .8rem; }
+.doc-tag { display: flex; align-items: center; gap: .4rem; color: var(--accent); font-size: .7rem; font-weight: 700; letter-spacing: .04em; white-space: nowrap; opacity: .85; transition: opacity .2s; }
+.doc-tag:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.navbar-divider { width: 1px; height: 28px; background: rgba(168,200,188,.18); flex-shrink: 0; }
+.rwi-badge { display: inline-flex; align-items: center; gap: .55rem; }
+.rwi-logo { width: 68px; height: 34px; border-radius: 5px; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+.rwi-logo img { width: 68px; height: 34px; object-fit: contain; }
+.rwi-text .lbl { font-size: .55rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(168,200,188,.45); }
+.rwi-text .nm  { font-size: .68rem; font-weight: 600; color: rgba(208,232,224,.8); white-space: nowrap; }
+
+/* HERO */
+.hero { background: var(--dark); position: relative; overflow: hidden; padding: 5rem 2rem 4rem; }
+.hero::before { content:''; position:absolute; inset:0; background: radial-gradient(ellipse 55% 80% at 90% 20%,rgba(90,144,128,.16) 0%,transparent 60%), radial-gradient(ellipse 35% 45% at 5% 90%,rgba(196,144,106,.1) 0%,transparent 55%); pointer-events:none; }
+.hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+.hero-grid { display: grid; grid-template-columns: 1fr 420px; gap: 3rem; align-items: center; }
+.hero-eyebrow { display: inline-flex; align-items: center; gap: .5rem; background: rgba(90,144,128,.18); border: 1px solid rgba(168,200,188,.28); color: var(--light); font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: .28rem .9rem; border-radius: 20px; margin-bottom: 1.4rem; }
+.pulse { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.3);opacity:.7} }
+.hero h1 { font-family:'Playfair Display',serif; font-size: clamp(2rem,3.5vw,2.9rem); font-weight:700; color:#e8f4f0; line-height:1.22; margin-bottom:1.2rem; }
+.hero h1 em { font-style:italic; color:var(--accent); }
+.hero-lead { font-family:'Lora',serif; font-size:.96rem; line-height:1.85; color:rgba(168,200,188,.82); max-width:700px; text-align:justify; }
+.hero-stats { display:grid; grid-template-columns:1fr 1fr; gap:.9rem; margin-top:2.4rem; }
+.stat { background:rgba(255,255,255,.05); border:1px solid rgba(168,200,188,.16); border-radius:14px; padding:1.2rem 1.4rem; text-align:center; }
+.stat-num { font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:300; font-style:italic; color:var(--accent); line-height:1; }
+.stat-unit { font-size:.72rem; color:var(--accent); opacity:.8; font-weight:600; }
+.stat-label { font-size:.62rem; color:rgba(168,200,188,.6); font-weight:500; margin-top:.35rem; line-height:1.4; }
+
+/* HERO PHOTO */
+.hero-photo { position:relative; }
+.hero-photo-frame { width:100%; height:360px; border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.4); border:2px solid rgba(168,200,188,.15); }
+.hero-photo-frame img { width:100%; height:100%; object-fit:cover; object-position:center 30%; }
+.hero-photo-badge { position:absolute; bottom:-1rem; left:-1rem; width:160px; height:110px; border-radius:12px; overflow:hidden; box-shadow:0 6px 24px rgba(0,0,0,.5); border:2px solid rgba(168,200,188,.2); }
+.hero-photo-badge img { width:100%; height:100%; object-fit:cover; object-position:center 60%; }
+.hero-photo-badge-overlay { position:absolute; inset:0; background:linear-gradient(transparent 30%,rgba(20,35,35,.85)); display:flex; flex-direction:column; justify-content:flex-end; padding:.55rem .7rem; }
+.hero-photo-badge-overlay strong { color:var(--accent); font-size:1.15rem; display:block; font-family:'Cormorant Garamond',serif; font-weight:300; font-style:italic; line-height:1; }
+.hero-photo-badge-overlay span { font-size:.58rem; color:rgba(168,200,188,.85); font-weight:600; margin-top:.15rem; display:block; }
+
+/* SECTION COMMONS */
+.si { max-width:1200px; margin:0 auto; padding:0 2rem; }
+.slabel { font-size:.62rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--medium); margin-bottom:.4rem; }
+.slabel-lt { font-size:.62rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--light); margin-bottom:.4rem; }
+.stitle { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.5vw,1.85rem); color:var(--dark); margin-bottom:.7rem; line-height:1.28; }
+.stitle-lt { font-family:'Playfair Display',serif; font-size:clamp(1.4rem,2.5vw,1.85rem); color:#e8f4f0; margin-bottom:.7rem; line-height:1.28; }
+.slead { font-family:'Lora',serif; font-size:.95rem; color:var(--muted); line-height:1.75; max-width:700px; }
+.slead-lt { font-family:'Lora',serif; font-size:.95rem; color:rgba(168,200,188,.75); line-height:1.75; max-width:700px; }
+.divider { width:48px; height:3px; background:var(--accent); border-radius:2px; margin:.8rem 0 1.6rem; }
+
+/* PROFILE */
+.profile-sec { padding:4.5rem 0; }
+.profile-grid { display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; margin-top:2.5rem; }
+.card { background:var(--white); border-radius:16px; overflow:hidden; box-shadow:0 2px 20px rgba(46,64,64,.07); }
+.card-head { background:var(--dark); padding:.9rem 1.2rem; }
+.card-head-text { font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--light); }
+.ptable { width:100%; border-collapse:collapse; }
+.ptable tr:not(:last-child) td { border-bottom:1px solid var(--bg-deep); }
+.ptable td { padding:.85rem 1.2rem; vertical-align:top; font-size:.86rem; }
+.ptable td:first-child { font-weight:600; color:var(--muted); font-size:.78rem; text-transform:uppercase; letter-spacing:.04em; width:38%; white-space:nowrap; }
+.badge-ok  { display:inline-block; padding:.2rem .65rem; border-radius:20px; font-size:.7rem; font-weight:700; background:rgba(90,144,128,.12); color:var(--medium); border:1px solid rgba(90,144,128,.25); }
+.badge-warn{ display:inline-block; padding:.2rem .65rem; border-radius:20px; font-size:.7rem; font-weight:700; background:rgba(196,144,106,.12); color:var(--accent); border:1px solid rgba(196,144,106,.25); }
+.hl  { color:var(--medium) !important; font-weight:600 !important; }
+.acc { color:var(--accent) !important; font-weight:700 !important; }
+.map-frame { width:100%; height:260px; border:none; display:block; }
+.map-footer { padding:.9rem 1.2rem; display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--bg-deep); }
+.map-coords { font-size:.76rem; color:var(--muted); font-family:monospace; }
+.map-link { font-size:.72rem; font-weight:700; color:var(--medium); }
+.map-link:hover { color:var(--dark); }
+
+/* GALLERY */
+.gallery-sec { padding:4.5rem 0; background:var(--dark); }
+.photo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:2rem; }
+.photo { border-radius:12px; overflow:hidden; position:relative; }
+.photo img { width:100%; height:240px; object-fit:cover; object-position:center; transition:transform .4s; display:block; }
+.photo:hover img { transform:scale(1.04); }
+.photo-cap { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(20,35,35,.88)); padding:1.5rem .9rem .75rem; font-size:.72rem; font-weight:600; color:rgba(232,244,240,.9); }
+.photo-lg { grid-column:span 2; }
+.photo-lg img { height:320px; }
+.photo-tag { position:absolute; top:.6rem; left:.6rem; background:rgba(196,144,106,.88); color:#fff; font-size:.6rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; padding:.18rem .55rem; border-radius:4px; }
+
+/* DATA */
+.data-sec { padding:4.5rem 0; }
+.data-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:2.5rem; }
+.dcard { background:var(--white); border-radius:16px; padding:1.8rem; box-shadow:0 2px 20px rgba(46,64,64,.06); }
+.dcard-title { font-size:.7rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--medium); margin-bottom:1.4rem; }
+.prod-row { display:flex; align-items:center; gap:.8rem; margin-bottom:.8rem; }
+.prod-yr { font-size:.75rem; font-weight:700; color:var(--muted); width:2.5rem; flex-shrink:0; }
+.bar-wrap { flex:1; height:24px; background:var(--bg-deep); border-radius:4px; overflow:hidden; }
+.bar { height:100%; border-radius:4px; display:flex; align-items:center; padding-left:.5rem; }
+.bar span { font-size:.68rem; font-weight:700; color:var(--white); }
+.bar-0 { width:4%; background:rgba(90,144,128,.25); }
+.bar-24 { width:36%; background:var(--medium); }
+.bar-25 { width:100%; background:var(--dark); }
+.prod-kg { font-size:.75rem; font-weight:700; color:var(--text); width:4rem; text-align:right; flex-shrink:0; }
+.cost-box { background:var(--bg-tint); border-radius:12px; padding:1.2rem 1.4rem; margin-top:1.4rem; display:flex; align-items:center; gap:1rem; }
+.cost-num { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; font-style:italic; color:var(--medium); white-space:nowrap; }
+.cost-lbl { font-size:.78rem; color:var(--muted); line-height:1.5; }
+.cost-lbl strong { color:var(--medium); }
+.ftable { width:100%; border-collapse:collapse; font-size:.83rem; }
+.ftable th { padding:.5rem .6rem; text-align:left; font-size:.65rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-bottom:2px solid var(--bg-deep); }
+.ftable td { padding:.65rem .6rem; border-bottom:1px solid var(--bg-tint); vertical-align:top; }
+.ftable tr:last-child td { font-weight:700; border-top:2px solid var(--bg-deep); border-bottom:none; }
+.ftable .r { text-align:right; font-variant-numeric:tabular-nums; }
+.proy-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; margin-top:2rem; }
+.pcard { border-radius:14px; padding:1.6rem 1.2rem; text-align:center; }
+.pcard-k { background:var(--bg-tint); border:1px solid var(--bg-deep); }
+.pcard-m { background:rgba(90,144,128,.1); border:1px solid rgba(90,144,128,.2); }
+.pcard-o { background:var(--dark); border:1px solid rgba(168,200,188,.15); }
+.pcard-lbl { font-size:.62rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.8rem; }
+.pcard-k .pcard-lbl { color:var(--muted); }
+.pcard-m .pcard-lbl { color:var(--medium); }
+.pcard-o .pcard-lbl { color:var(--light); }
+.pcard-kg { font-family:'Cormorant Garamond',serif; font-size:2.6rem; font-weight:300; font-style:italic; line-height:1; }
+.pcard-k .pcard-kg { color:var(--muted); }
+.pcard-m .pcard-kg { color:var(--medium); }
+.pcard-o .pcard-kg { color:var(--accent); }
+.pcard-unit { font-size:.65rem; font-weight:600; margin-bottom:.3rem; }
+.pcard-k .pcard-unit { color:var(--muted); }
+.pcard-m .pcard-unit { color:var(--medium); }
+.pcard-o .pcard-unit { color:rgba(168,200,188,.6); }
+.pcard-rev { font-size:.82rem; font-weight:700; margin-top:.6rem; padding-top:.6rem; border-top:1px solid; }
+.pcard-k .pcard-rev { color:var(--muted); border-color:var(--bg-deep); }
+.pcard-m .pcard-rev { color:var(--dark); border-color:rgba(90,144,128,.2); }
+.pcard-o .pcard-rev { color:#e8f4f0; border-color:rgba(168,200,188,.15); }
+.pcard-sub { font-size:.6rem; margin-top:.25rem; }
+.pcard-k .pcard-sub, .pcard-m .pcard-sub { color:var(--muted); }
+.pcard-o .pcard-sub { color:rgba(168,200,188,.4); }
+
+/* RISET */
+.riset-sec { padding:4.5rem 0; background:var(--bg-tint); }
+.riset-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-top:2.5rem; }
+.rcard { background:var(--white); border-radius:16px; padding:1.6rem; box-shadow:0 2px 16px rgba(46,64,64,.06); border-top:3px solid transparent; transition:transform .2s,box-shadow .2s; }
+.rcard:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(46,64,64,.1); }
+.rcard:nth-child(1) { border-top-color:var(--medium); }
+.rcard:nth-child(2) { border-top-color:var(--accent); }
+.rcard:nth-child(3) { border-top-color:#7b9e87; }
+.rcard:nth-child(4) { border-top-color:#9b7e6a; }
+.rcard:nth-child(5) { border-top-color:#4a8878; }
+.rcard:nth-child(6) { border-top-color:#b8a070; }
+.rcard-icon { font-size:1.6rem; margin-bottom:.9rem; }
+.rcard-num { font-family:'Cormorant Garamond',serif; font-size:.75rem; font-weight:400; color:var(--muted); margin-bottom:.25rem; }
+.rcard-title { font-size:.9rem; font-weight:700; color:var(--dark); margin-bottom:.75rem; line-height:1.4; }
+.tags { display:flex; flex-wrap:wrap; gap:.35rem; }
+.tag { font-size:.62rem; font-weight:600; padding:.18rem .55rem; border-radius:4px; background:var(--bg); color:var(--muted); }
+
+/* POLA */
+.pola-sec { padding:4.5rem 0; }
+.pola-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1.2rem; margin-top:2rem; }
+.polacard { display:flex; gap:1rem; align-items:flex-start; background:var(--white); border-radius:14px; padding:1.4rem; box-shadow:0 2px 14px rgba(46,64,64,.05); border-left:4px solid var(--accent); }
+.pola-n { font-family:'Cormorant Garamond',serif; font-size:2.2rem; font-weight:300; font-style:italic; color:rgba(196,144,106,.3); line-height:1; flex-shrink:0; }
+.pola-t { font-size:.88rem; font-weight:700; color:var(--dark); margin-bottom:.4rem; }
+.pola-d { font-size:.8rem; color:var(--muted); line-height:1.6; }
+
+/* SUPPORT */
+.support-sec { padding:4.5rem 0; background:var(--bg-tint); }
+.support-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:2rem; }
+.sitem { display:flex; align-items:flex-start; gap:.9rem; }
+.sicon { width:40px; height:40px; border-radius:10px; background:rgba(90,144,128,.12); display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+.sitem-t { font-size:.84rem; font-weight:700; color:var(--dark); margin-bottom:.25rem; }
+.sitem-d { font-size:.78rem; color:var(--muted); line-height:1.55; }
+
+/* CTA */
+.cta-sec { padding:5rem 0; background:var(--dark); position:relative; overflow:hidden; }
+.cta-sec::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 90% at 80% 50%,rgba(90,144,128,.12) 0%,transparent 65%); pointer-events:none; }
+.cta-inner { max-width:860px; margin:0 auto; text-align:center; position:relative; }
+.cta-eyebrow { display:inline-block; background:rgba(196,144,106,.15); border:1px solid rgba(196,144,106,.3); color:var(--accent); font-size:.62rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; padding:.28rem .9rem; border-radius:20px; margin-bottom:1.4rem; }
+.cta-title { font-family:'Playfair Display',serif; font-size:clamp(1.6rem,3vw,2.4rem); font-weight:700; color:#e8f4f0; margin-bottom:1.2rem; line-height:1.3; }
+.cta-title em { font-style:italic; color:var(--accent); }
+.cta-lead { font-family:'Lora',serif; font-size:.94rem; line-height:1.8; color:rgba(168,200,188,.78); }
+.cta-note { background:rgba(196,144,106,.08); border:1px solid rgba(196,144,106,.2); border-radius:12px; padding:1.2rem 1.6rem; margin:1.8rem 0; text-align:left; font-size:.84rem; line-height:1.7; color:rgba(168,200,188,.7); }
+.cta-note strong { color:rgba(196,144,106,.9); }
+.sn { font-family:'Cormorant Garamond',serif; font-size:1.1rem; font-style:italic; color:var(--accent); }
+.cta-btn { display:inline-flex; align-items:center; gap:.6rem; background:var(--accent); color:#fff; padding:.85rem 2rem; border-radius:8px; font-size:.88rem; font-weight:700; transition:background .2s,transform .2s; margin-top:.5rem; }
+.cta-btn:hover { background:#b07d58; transform:translateY(-1px); }
+
+/* CLOSING */
+.closing-sec { padding:4rem 0; }
+.closing-card { background:var(--white); border-radius:20px; padding:2.5rem 3rem; box-shadow:0 4px 28px rgba(46,64,64,.08); display:grid; grid-template-columns:3px 1fr; gap:2rem; }
+.closing-bar { background:linear-gradient(to bottom,var(--accent),var(--medium)); border-radius:2px; }
+.closing-text { font-family:'Lora',serif; font-size:.96rem; line-height:1.9; color:var(--muted); }
+.closing-text p + p { margin-top:1rem; }
+.closing-text em { font-style:italic; color:var(--dark); }
+.sig { margin-top:1.8rem; padding-top:1.4rem; border-top:1px solid var(--bg-deep); }
+.sig-name { font-size:.92rem; font-weight:700; color:var(--dark); }
+.sig-role { font-size:.78rem; color:var(--muted); }
+
+/* FOOTER */
+.footer { background:var(--dark); padding:2.5rem; text-align:center; border-top:1px solid rgba(168,200,188,.08); }
+.footer p { font-size:.75rem; color:rgba(168,200,188,.45); line-height:1.7; }
+.footer a { color:rgba(168,200,188,.6); text-decoration:underline; }
+.footer a:hover { color:var(--light); }
+
+/* RESPONSIVE */
+@media (max-width:900px) {
+  .hero-grid,.profile-grid,.data-grid,.pola-grid { grid-template-columns:1fr; }
+  .hero-photo { display:none; }
+  .riset-grid,.support-grid { grid-template-columns:repeat(2,1fr); }
+  .photo-grid { grid-template-columns:1fr 1fr; }
+  .photo-lg { grid-column:span 2; }
+  .photo-lg img { height:280px; }
+  .proy-grid { grid-template-columns:1fr; }
+  .closing-card { padding:1.8rem; }
+}
+@media (max-width:600px) {
+  .rwi-badge,.doc-tag { display:none; }
+  .hero { padding:3rem 1.5rem; }
+  .hero-stats { grid-template-columns:1fr 1fr; }
+  .si { padding:0 1.2rem; }
+  .profile-sec,.data-sec,.riset-sec,.pola-sec,.support-sec,.cta-sec,.closing-sec,.gallery-sec { padding:3rem 0; }
+  .riset-grid,.support-grid { grid-template-columns:1fr; }
+  .photo-grid { grid-template-columns:1fr; }
+  .photo-lg { grid-column:span 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="https://adib-psych.github.io/wakaf-produktif/" target="_blank" class="brand-tag">Wakaf Produktif</a>
+    <div class="navbar-right">
+      <a href="Research Invitation Brief — Kebun Wakaf Ngantang FINAL.pdf" target="_blank" class="doc-tag">📄 Research Invitation Brief</a>
+      <div class="navbar-divider"></div>
+      <div class="rwi-badge">
+        <div class="rwi-logo"><img src="RWI.png" alt="RWI" onerror="this.parentElement.style.display='none'"></div>
+        <div class="rwi-text">
+          <div class="lbl">Lembaga Nazir</div>
+          <div class="nm">Rumah Wakaf Indonesia</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-eyebrow"><span class="pulse"></span> Kebun Kopi Ngantang, Malang · Wakaf Produktif</div>
+        <h1>Undangan Kolaborasi<br>Riset <em>Agroforestri</em><br>Wakaf Produktif</h1>
+        <p class="hero-lead">Program Wakaf Produktif Perkebunan Kopi Ngantang berada pada titik yang langka dalam siklus pengelolaan aset agroforestri: pergantian manajemen yang terdokumentasi, tepat sebelum intervensi pertama dimulai, setelah 39 bulan pengelolaan lintas tiga fase tanpa satu pun pengukuran agronomi dasar yang dilakukan secara formal. Kondisi pra-intervensi yang otentik ini tidak dapat direplikasi setelah panen Juni 2026 berjalan.</p>
+        <div class="hero-stats">
+          <div class="stat"><div class="stat-num">39</div><div class="stat-unit">Bulan</div><div class="stat-label">Program berjalan tanpa baseline agronomi</div></div>
+          <div class="stat"><div class="stat-num">~915</div><div class="stat-unit">Pohon</div><div class="stat-label">Robusta produktif, genetik asli terjaga</div></div>
+          <div class="stat"><div class="stat-num">3</div><div class="stat-unit">Fase</div><div class="stat-label">Pergantian manajemen terdokumentasi</div></div>
+          <div class="stat"><div class="stat-num">0</div><div class="stat-unit">Pengukuran</div><div class="stat-label">pH, NPK, EC, peta pohon — belum pernah diukur</div></div>
+        </div>
+      </div>
+      <div class="hero-photo">
+        <div class="hero-photo-frame">
+          <img src="foto-kebun/foto0_adib_mama.jpg" alt="Adib & Mama di Kebun Wakaf Ngantang — Juni 2024" onerror="this.src='foto-kebun/foto3_bidang1_misty.jpg'" style="object-position:center 48%;">
+        </div>
+        <div class="hero-photo-badge">
+          <img src="foto-kebun/foto2_cherry_bag.jpg" alt="Panen Cherry" style="object-position:center 30%;">
+          <div class="hero-photo-badge-overlay">
+            <strong>+346%</strong>
+            <span>Produksi 2024 → 2025</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROFILE -->
+<section class="profile-sec">
+  <div class="si">
+    <div class="slabel">Identitas Program</div>
+    <h2 class="stitle">Profil Kebun &amp; Program Wakaf</h2>
+    <div class="divider"></div>
+    <p class="slead">Data per April 2026 — mencakup aspek legal, teknis, dan historis yang tersedia untuk keperluan riset.</p>
+    <div class="profile-grid" style="margin-top:2.5rem;">
+      <div class="card">
+        <div class="card-head"><span class="card-head-text">🌿 Identitas &amp; Legal</span></div>
+        <table class="ptable">
+          <tr><td>Nama Program</td><td class="hl">Wakaf Produktif Perkebunan Kopi Ngantang</td></tr>
+          <tr><td>Kategori</td><td>Wakaf Produktif — Sektor Pertanian &amp; Agroforestri</td></tr>
+          <tr><td>Wakif</td><td><a href="https://adib-psych.github.io/myjourney/home.html" target="_blank" style="color:var(--medium);">Adib Asrori, M.Psi., Psikolog ↗</a></td></tr>
+          <tr><td>Nadzir</td><td><a href="https://www.rumahwakaf.org/" target="_blank" style="color:var(--medium);">Rumah Wakaf Indonesia (RWI) ↗</a></td></tr>
+          <tr><td>Status Legal</td><td><span class="badge-ok">✓ Aktif</span>&nbsp; MOU Wakif–Nadzir dengan Rumah Wakaf Indonesia (2022)</td></tr>
+          <tr><td>Apa itu Wakaf?</td><td><a href="https://www.bwi.go.id/tentang-wakaf/" target="_blank" style="color:var(--medium);">Lihat penjelasan BWI ↗</a></td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-text">📍 Lokasi &amp; Teknis</span></div>
+        <table class="ptable">
+          <tr><td>Lokasi</td><td>Dusun Bonsari, Desa Ngantang, Kec. Ngantang, Kab. Malang, Jawa Timur</td></tr>
+          <tr><td>Koordinat GPS</td><td><a href="https://maps.app.goo.gl/rWY8AxaZYL7osPbR7" target="_blank" style="color:var(--medium);font-family:monospace;font-size:.8rem;">-7.8525, 112.3748 ↗</a></td></tr>
+          <tr><td>Ketinggian</td><td>±700–870 mdpl <span class="badge-warn">estimasi</span></td></tr>
+          <tr><td>Luas Kebun</td><td>±2.200 m² (3 bidang)</td></tr>
+          <tr><td>Pohon Produktif</td><td class="acc">~915 pohon Robusta</td></tr>
+          <tr><td>Baseline Data</td><td><span class="badge-warn">⚠ Belum tersedia</span>&nbsp; pH, NPK, EC, peta pohon belum pernah diukur</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="card" style="margin-top:1.5rem;border-radius:16px;overflow:hidden;">
+      <iframe class="map-frame" src="https://maps.google.com/maps?q=-7.8525,112.3748&z=14&output=embed" allowfullscreen loading="lazy" title="Lokasi Kebun Wakaf Ngantang"></iframe>
+      <div class="map-footer">
+        <span class="map-coords">-7.8525, 112.3748 · ±700–870 mdpl · DAS Brantas · berdekatan batas selatan TAHURA Anjasmoro</span>
+        <a href="https://maps.app.goo.gl/rWY8AxaZYL7osPbR7" target="_blank" class="map-link">Buka di Google Maps →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery-sec">
+  <div class="si">
+    <div class="slabel-lt">Dokumentasi Visual</div>
+    <h2 class="stitle-lt">Kebun Wakaf Ngantang</h2>
+    <div class="divider"></div>
+    <p class="slead-lt">Foto baseline kebun — diambil pada periode 2023–2024 sebagai dokumentasi kondisi sebelum intervensi manajemen baru dimulai.</p>
+    <div class="photo-grid">
+      <div class="photo photo-lg">
+        <span class="photo-tag">Panen</span>
+        <img src="foto-kebun/foto1_panen_cherry.jpg" alt="Panen Cherry Agustus 2024" loading="lazy" style="object-position:40% 85%; transform:scale(1.18); transform-origin:center bottom;">
+        <div class="photo-cap">Panen Cherry — Agustus 2024 · ~281 KG musim ini (+346% dari 2024)</div>
+      </div>
+      <div class="photo">
+        <span class="photo-tag">Cherry</span>
+        <img src="foto-kebun/foto2_cherry_bag.jpg" alt="Cherry Agustus 2024" loading="lazy">
+        <div class="photo-cap">Buah Cherry Robusta — Agustus 2024</div>
+      </div>
+      <div class="photo">
+        <span class="photo-tag">Bidang 1</span>
+        <img src="foto-kebun/foto3_bidang1_misty.jpg" alt="Bidang 1 Juni 2024" loading="lazy">
+        <div class="photo-cap">Bidang 1 — Juni 2024 · Kondisi existing pagi hari</div>
+      </div>
+      <div class="photo">
+        <span class="photo-tag">Landscape</span>
+        <img src="foto-kebun/foto4_kebun_bluesky.jpg" alt="Kebun Maret 2024" loading="lazy">
+        <div class="photo-cap">Kebun — Maret 2024 · Pohon Robusta existing</div>
+      </div>
+      <div class="photo photo-lg">
+        <span class="photo-tag">Overview</span>
+        <img src="foto-kebun/foto6_kebun_landscape.jpg" alt="Landscape Kebun" loading="lazy">
+        <div class="photo-cap">Overview kebun — Maret 2024 · ±2.200 m², 3 bidang</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA -->
+<section class="data-sec">
+  <div class="si">
+    <div class="slabel">Data Program</div>
+    <h2 class="stitle">Riwayat 39 Bulan &amp; Proyeksi</h2>
+    <div class="divider"></div>
+    <p class="slead">Data keuangan dan produksi dari tiga fase manajemen — seluruhnya terdokumentasi dan tersedia untuk peneliti sebagai baseline riset.</p>
+    <div class="data-grid">
+      <div class="dcard">
+        <div class="dcard-title">📈 Trajectory Produksi Kopi</div>
+        <div class="prod-row"><span class="prod-yr">2023</span><div class="bar-wrap"><div class="bar bar-0"><span>—</span></div></div><span class="prod-kg">0 KG</span></div>
+        <div class="prod-row"><span class="prod-yr">2024</span><div class="bar-wrap"><div class="bar bar-24"><span>~100</span></div></div><span class="prod-kg">~100 KG</span></div>
+        <div class="prod-row"><span class="prod-yr">2025</span><div class="bar-wrap"><div class="bar bar-25"><span>+346% ↑</span></div></div><span class="prod-kg">~281 KG</span></div>
+        <div class="cost-box">
+          <div class="cost-num">Rp 30.712</div>
+          <div class="cost-lbl">Cost/KG di 2025 — <strong>di bawah farm-gate Rp 53.000/KG</strong>. Pertama kali margin positif tercapai.</div>
+        </div>
+      </div>
+      <div class="dcard">
+        <div class="dcard-title">💰 Data Keuangan Lintas Fase</div>
+        <table class="ftable">
+          <thead><tr><th>Fase</th><th>Durasi</th><th class="r">Pengeluaran</th></tr></thead>
+          <tbody>
+            <tr><td>Fase 1a — Adib (undocumented)</td><td>15 bln</td><td class="r">~Rp 15 Jt</td></tr>
+            <tr><td>Fase 1b — Adib (documented)</td><td>6 bln</td><td class="r">Rp 14,49 Jt</td></tr>
+            <tr><td>Fase 2 — MWC NU Malang</td><td>18 bln</td><td class="r">Rp 19,58 Jt</td></tr>
+            <tr><td>TOTAL</td><td>~39 bln</td><td class="r">~Rp 49,1 Jt</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:.74rem;color:var(--muted);margin-top:1rem;line-height:1.6;">Total pendapatan kumulatif: ~Rp 34,6 Jt vs pengeluaran ~Rp 49,1 Jt. Saldo positif pertama kali tercapai di akhir Fase 2.</p>
+      </div>
+    </div>
+    <div style="margin-top:3rem;">
+      <div class="slabel">Proyeksi Realistis</div>
+      <h3 style="font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--dark);margin:.3rem 0 .4rem;">Tiga Skenario — ~915 Pohon · Harga ≤ Rp 60.000/KG</h3>
+      <div class="proy-grid">
+        <div class="pcard pcard-k"><div class="pcard-lbl">Konservatif</div><div class="pcard-kg">366</div><div class="pcard-unit">KG/tahun · 0,4 KG/pohon</div><div class="pcard-rev">Rp 22 Jt/tahun</div><div class="pcard-sub">Benchmark nasional smallholder</div></div>
+        <div class="pcard pcard-m"><div class="pcard-lbl">Moderat</div><div class="pcard-kg">640</div><div class="pcard-unit">KG/tahun · 0,7 KG/pohon</div><div class="pcard-rev">Rp 38,4 Jt/tahun</div><div class="pcard-sub">Dengan perbaikan manajemen</div></div>
+        <div class="pcard pcard-o"><div class="pcard-lbl">Optimistis</div><div class="pcard-kg">1.098</div><div class="pcard-unit">KG/tahun · 1,2 KG/pohon</div><div class="pcard-rev">Rp 65,9 Jt/tahun</div><div class="pcard-sub">Best practice agroforestri</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RISET -->
+<section class="riset-sec">
+  <div class="si">
+    <div class="slabel">Peluang Kolaborasi</div>
+    <h2 class="stitle">6 Kluster Riset Prioritas</h2>
+    <div class="divider"></div>
+    <p class="slead">Kondisi program membuka peluang riset yang langka: 39 bulan riwayat terdokumentasi, tanpa intervensi agronomi formal, menjelang musim panen pertama di bawah manajemen baru.</p>
+    <div class="riset-grid">
+      <div class="rcard"><div class="rcard-icon">🌱</div><div class="rcard-num">Kluster 01</div><div class="rcard-title">Agronomi &amp; Fisiologi Tanaman</div><div class="tags"><span class="tag">Soil mapping</span><span class="tag">pH &amp; NPK baseline</span><span class="tag">Pruning impact</span><span class="tag">Fenologi kopi</span></div></div>
+      <div class="rcard"><div class="rcard-icon">☕</div><div class="rcard-num">Kluster 02</div><div class="rcard-title">Pascapanen &amp; Specialty Coffee</div><div class="tags"><span class="tag">Processing methods</span><span class="tag">Sensory analysis</span><span class="tag">Value chain</span><span class="tag">SDG tanaman</span></div></div>
+      <div class="rcard"><div class="rcard-icon">📊</div><div class="rcard-num">Kluster 03</div><div class="rcard-title">Ekonomi Wakaf Produktif</div><div class="tags"><span class="tag">Cost-benefit</span><span class="tag">Sustainability model</span><span class="tag">Break-even analysis</span></div></div>
+      <div class="rcard"><div class="rcard-icon">🏛️</div><div class="rcard-num">Kluster 04</div><div class="rcard-title">Kelembagaan &amp; Tata Kelola</div><div class="tags"><span class="tag">Nadzir effectiveness</span><span class="tag">Akuntabilitas</span><span class="tag">SOP design</span></div></div>
+      <div class="rcard"><div class="rcard-icon">🌿</div><div class="rcard-num">Kluster 05</div><div class="rcard-title">Ekologi &amp; Konservasi</div><div class="tags"><span class="tag">Agroforestri</span><span class="tag">DAS Brantas</span><span class="tag">Biodiversitas</span><span class="tag">Karbon stok</span></div></div>
+      <div class="rcard"><div class="rcard-icon">📚</div><div class="rcard-num">Kluster 06</div><div class="rcard-title">Pendidikan &amp; Kapasitas</div><div class="tags"><span class="tag">Knowledge transfer</span><span class="tag">Learning design</span><span class="tag">Community-based</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- POLA -->
+<section class="pola-sec">
+  <div class="si">
+    <div class="slabel">Konteks &amp; Justifikasi Riset</div>
+    <h2 class="stitle">Empat Pola yang Membuat Riset Ini Penting</h2>
+    <div class="divider"></div>
+    <p class="slead" style="margin-bottom:2rem;">Selama 39 bulan, empat pola berulang terjadi lintas tiga fase manajemen — bukan sekadar catatan kegagalan, melainkan justifikasi ilmiah mengapa kondisi pra-intervensi saat ini bernilai untuk diteliti.</p>
+    <div class="pola-grid">
+      <div class="polacard"><div class="pola-n">01</div><div><div class="pola-t">Tenaga Ahli Tanpa Pendampingan Lapangan</div><div class="pola-d">Rekomendasi teknis diberikan tanpa kehadiran di lapangan secara konsisten. Intervensi dilakukan berdasarkan persepsi tanpa observasi langsung dan tanpa evaluasi dampak.</div></div></div>
+      <div class="polacard"><div class="pola-n">02</div><div><div class="pola-t">Tidak Ada Baseline Data Agronomi</div><div class="pola-d">pH, NPK, EC tanah, dan peta pohon belum pernah diukur di satu pun fase. Program tidak bisa dievaluasi secara objektif karena tidak ada titik awal yang terukur.</div></div></div>
+      <div class="polacard"><div class="pola-n">03</div><div><div class="pola-t">Transfer Pengetahuan yang Gagal</div><div class="pola-d">Pergantian fase manajemen tidak disertai alih pengetahuan yang terstruktur — ke petani maupun ke pengelola berikutnya. Good practices hilang bersama pergantian personil.</div></div></div>
+      <div class="polacard"><div class="pola-n">04</div><div><div class="pola-t">Riset sebagai Perisai Akuntabilitas</div><div class="pola-d">Justifikasi R&D digunakan untuk menutupi ketiadaan hasil terukur. Lahan wakaf berpotensi menjadi demplot riset komersial mitra teknis tanpa transparansi kepada Wakif.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SUPPORT -->
+<section class="support-sec">
+  <div class="si">
+    <div class="slabel">Apa yang Tersedia</div>
+    <h2 class="stitle">Fasilitas &amp; Dukungan untuk Peneliti</h2>
+    <div class="divider"></div>
+    <div class="support-grid">
+      <div class="sitem"><div class="sicon">📂</div><div><div class="sitem-t">Data Historis Lengkap</div><div class="sitem-d">Catatan keuangan 39 bulan, data produksi per musim panen, dokumentasi foto baseline, dan riwayat intervensi teknis lintas 3 fase.</div></div></div>
+      <div class="sitem"><div class="sicon">🌾</div><div><div class="sitem-t">Akses Lapangan Penuh</div><div class="sitem-d">Akses ke 3 bidang kebun (~2.200 m²) di Ngantang, termasuk kemungkinan pengambilan sampel tanah dan tanaman untuk analisis laboratorium.</div></div></div>
+      <div class="sitem"><div class="sicon">🤝</div><div><div class="sitem-t">Jaringan Pendukung</div><div class="sitem-d">Koordinasi dengan RWI sebagai Nadzir, petani lokal Ngantang, dan jaringan Bonsari Coffee untuk akses pasar dan proses pengolahan.</div></div></div>
+      <div class="sitem"><div class="sicon">⏱️</div><div><div class="sitem-t">Timing yang Langka</div><div class="sitem-d">Kondisi pra-intervensi otentik — sebelum manajemen baru melakukan intervensi agronomi pertama. Window ini tidak dapat direplikasi setelah Juni 2026.</div></div></div>
+      <div class="sitem"><div class="sicon">🔬</div><div><div class="sitem-t">Desain Riset Bersama</div><div class="sitem-d">Terbuka untuk co-design protokol riset yang saling menguntungkan — peneliti mendapat data lapangan unik, program mendapat basis pengetahuan untuk SOP berbasis bukti.</div></div></div>
+      <div class="sitem"><div class="sicon">📝</div><div><div class="sitem-t">Fleksibilitas Format</div><div class="sitem-d">Terbuka untuk berbagai bentuk kolaborasi: skripsi/tesis/disertasi, riset institusional, pengabdian masyarakat, maupun riset mandiri dengan dukungan program.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="cta-inner">
+    <div class="cta-eyebrow">Langkah Selanjutnya</div>
+    <h2 class="cta-title">Mulai Percakapan,<br>Bukan <em>Komitmen</em></h2>
+    <p class="cta-lead">Kami tidak mengharapkan kesepakatan langsung. Namun kami percaya bahwa kolaborasi yang bermakna dimulai dari kejujuran — termasuk tentang apa yang masing-masing pihak butuhkan dan tawarkan.</p>
+    <div class="cta-note"><strong>Catatan transparansi:</strong> Pengalaman 39 bulan program ini mengajarkan bahwa kolaborasi tanpa kerangka kesepakatan yang jelas cenderung tidak memberikan hasil optimal bagi siapapun. Apabila penjajakan berlanjut menjadi kolaborasi aktif, kami akan menyiapkan dokumen kesepakatan sederhana sebagai fondasi akuntabilitas bersama.</div>
+    <a href="mailto:asroriadib@gmail.com?subject=Penjajakan%20Kolaborasi%20Riset%20Kebun%20Wakaf%20Ngantang" class="cta-btn">✉️ asroriadib@gmail.com</a>
+    <p style="margin-top:1rem;font-size:.75rem;color:rgba(168,200,188,.4);"><a href="https://adib-psych.github.io/myjourney/home.html" target="_blank" style="color:rgba(168,200,188,.5);text-decoration:underline;text-underline-offset:3px;">Adib Asrori, M.Psi., Psikolog</a> · Wakif Program Wakaf Produktif Perkebunan Kopi Ngantang</p>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="closing-sec">
+  <div class="si">
+    <div class="slabel">Catatan Penutup</div>
+    <h2 class="stitle" style="margin-bottom:1.5rem;">Mengapa Kebun Ini</h2>
+    <div class="closing-card">
+      <div class="closing-bar"></div>
+      <div class="closing-text">
+        <p>Ada sebab mengapa kebun ini bukan sekadar laporan kerja bagi yang menanggung amanahnya. Di antara pohon-pohon kopi inilah ia pertama kali belajar tentang hidup — dari seorang kakek yang tak pernah sekalipun marah, yang mengajarkan nilai dengan cara hadir, bukan bersuara.</p>
+        <p>Wakaf bukan investasi yang menunggu panen. Wakaf adalah doa yang diwujudkan dalam tanah — dan janji kepada mereka yang akan datang setelah kita.</p>
+        <p><em>Barangkali memang begitulah cara ilmu pengetahuan terbaik lahir: dari pertemuan antara pertanyaan yang tepat, kondisi lapangan yang tersedia, dan orang-orang yang bersedia bertanya bersama. Kebun kecil ini menunggu untuk ditanya.</em></p>
+        <div class="sig">
+          <div class="sig-name"><a href="https://adib-psych.github.io/myjourney/home.html" target="_blank" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">Adib Asrori, M.Psi., Psikolog</a></div>
+          <div class="sig-role">Wakif · Program Wakaf Produktif Perkebunan Kopi Ngantang · April 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p>Research Invitation Brief — Kebun Wakaf Kopi Ngantang · Dusun Bonsari, Ngantang, Malang<br>
+  Nadzir: <a href="https://www.rumahwakaf.org/" target="_blank">Rumah Wakaf Indonesia (RWI)</a> ·
+  Living Lab: <a href="https://adib-psych.github.io/wakaf-produktif/living-lab.html" target="_blank">adib-psych.github.io/wakaf-produktif</a> ·
+  Kontak: <a href="mailto:asroriadib@gmail.com">asroriadib@gmail.com</a><br>
+  <span style="opacity:.5;">Dokumen ini bersifat undangan penjajakan kolaborasi, bukan perjanjian yang mengikat. April 2026.</span></p>
+</footer>
+
+</body>
+</html>
