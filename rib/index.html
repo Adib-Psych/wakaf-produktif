@@ -156,20 +156,12 @@ a   { color: inherit; text-decoration: none; }
 
 /* RISET */
 .riset-sec { padding:4.5rem 0; background:var(--bg-tint); }
-.riset-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1.2rem; margin-top:2.5rem; }
-.rcard { background:var(--white); border-radius:16px; padding:1.6rem; box-shadow:0 2px 16px rgba(46,64,64,.06); border-top:3px solid transparent; transition:transform .2s,box-shadow .2s; }
-.rcard:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(46,64,64,.1); }
-.rcard:nth-child(1) { border-top-color:var(--medium); }
-.rcard:nth-child(2) { border-top-color:var(--accent); }
-.rcard:nth-child(3) { border-top-color:#7b9e87; }
-.rcard:nth-child(4) { border-top-color:#9b7e6a; }
-.rcard:nth-child(5) { border-top-color:#4a8878; }
-.rcard:nth-child(6) { border-top-color:#b8a070; }
-.rcard-icon { font-size:1.6rem; margin-bottom:.9rem; }
-.rcard-num { font-family:'Cormorant Garamond',serif; font-size:.75rem; font-weight:400; color:var(--muted); margin-bottom:.25rem; }
-.rcard-title { font-size:.9rem; font-weight:700; color:var(--dark); margin-bottom:.75rem; line-height:1.4; }
-.tags { display:flex; flex-wrap:wrap; gap:.35rem; }
-.tag { font-size:.62rem; font-weight:600; padding:.18rem .55rem; border-radius:4px; background:var(--bg); color:var(--muted); }
+.rq-groups { display:flex; flex-direction:column; gap:2rem; margin-top:2.5rem; }
+.rq-group-label { font-size:.78rem; font-weight:700; letter-spacing:.06em; color:var(--accent); text-transform:uppercase; margin-bottom:.9rem; padding-bottom:.6rem; border-bottom:1px solid rgba(196,144,106,.2); }
+.rq-pair { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.rqcard { background:var(--white); border-radius:14px; padding:1.4rem 1.5rem; box-shadow:0 2px 14px rgba(46,64,64,.06); display:flex; gap:1rem; align-items:flex-start; }
+.rq-num { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:300; font-style:italic; color:rgba(90,144,128,.25); line-height:1; flex-shrink:0; width:2rem; text-align:center; }
+.rq-text { font-size:.83rem; color:var(--muted); line-height:1.75; }
 
 /* POLA */
 .pola-sec { padding:4.5rem 0; }
@@ -222,7 +214,7 @@ a   { color: inherit; text-decoration: none; }
 @media (max-width:900px) {
   .hero-grid,.profile-grid,.data-grid,.pola-grid { grid-template-columns:1fr; }
   .hero-photo { display:none; }
-  .riset-grid,.support-grid { grid-template-columns:repeat(2,1fr); }
+  .rq-pair,.support-grid { grid-template-columns:1fr; }
   .photo-grid { grid-template-columns:1fr 1fr; }
   .photo-lg { grid-column:span 2; }
   .photo-lg img { height:280px; }
@@ -235,7 +227,7 @@ a   { color: inherit; text-decoration: none; }
   .hero-stats { grid-template-columns:1fr 1fr; }
   .si { padding:0 1.2rem; }
   .profile-sec,.data-sec,.riset-sec,.pola-sec,.support-sec,.cta-sec,.closing-sec,.gallery-sec { padding:3rem 0; }
-  .riset-grid,.support-grid { grid-template-columns:1fr; }
+  .rq-pair,.support-grid { grid-template-columns:1fr; }
   .photo-grid { grid-template-columns:1fr; }
   .photo-lg { grid-column:span 1; }
 }
@@ -415,35 +407,54 @@ a   { color: inherit; text-decoration: none; }
 </section>
 
 <!-- RISET -->
-<section class="riset-sec">
+<!-- KEUNIKAN ILMIAH -->
+<section class="pola-sec">
   <div class="si">
-    <div class="slabel">Peluang Kolaborasi</div>
-    <h2 class="stitle">6 Kluster Riset Prioritas</h2>
+    <div class="slabel">Keunikan Ilmiah</div>
+    <h2 class="stitle">Mengapa Lokasi Ini Relevan?</h2>
     <div class="divider"></div>
-    <p class="slead">Kondisi program membuka peluang riset yang langka: 39 bulan riwayat terdokumentasi, tanpa intervensi agronomi formal, menjelang musim panen pertama di bawah manajemen baru.</p>
-    <div class="riset-grid">
-      <div class="rcard"><div class="rcard-icon">🌱</div><div class="rcard-num">Kluster 01</div><div class="rcard-title">Agronomi &amp; Fisiologi Tanaman</div><div class="tags"><span class="tag">Soil mapping</span><span class="tag">pH &amp; NPK baseline</span><span class="tag">Pruning impact</span><span class="tag">Fenologi kopi</span></div></div>
-      <div class="rcard"><div class="rcard-icon">☕</div><div class="rcard-num">Kluster 02</div><div class="rcard-title">Pascapanen &amp; Specialty Coffee</div><div class="tags"><span class="tag">Processing methods</span><span class="tag">Sensory analysis</span><span class="tag">Value chain</span><span class="tag">SDG tanaman</span></div></div>
-      <div class="rcard"><div class="rcard-icon">📊</div><div class="rcard-num">Kluster 03</div><div class="rcard-title">Ekonomi Wakaf Produktif</div><div class="tags"><span class="tag">Cost-benefit</span><span class="tag">Sustainability model</span><span class="tag">Break-even analysis</span></div></div>
-      <div class="rcard"><div class="rcard-icon">🏛️</div><div class="rcard-num">Kluster 04</div><div class="rcard-title">Kelembagaan &amp; Tata Kelola</div><div class="tags"><span class="tag">Nadzir effectiveness</span><span class="tag">Akuntabilitas</span><span class="tag">SOP design</span></div></div>
-      <div class="rcard"><div class="rcard-icon">🌿</div><div class="rcard-num">Kluster 05</div><div class="rcard-title">Ekologi &amp; Konservasi</div><div class="tags"><span class="tag">Agroforestri</span><span class="tag">DAS Brantas</span><span class="tag">Biodiversitas</span><span class="tag">Karbon stok</span></div></div>
-      <div class="rcard"><div class="rcard-icon">📚</div><div class="rcard-num">Kluster 06</div><div class="rcard-title">Pendidikan &amp; Kapasitas</div><div class="tags"><span class="tag">Knowledge transfer</span><span class="tag">Learning design</span><span class="tag">Community-based</span></div></div>
+    <p class="slead" style="margin-bottom:2rem;">Skala lahan yang kecil bukanlah hambatan bagi relevansi ilmiah — bergantung pada pertanyaan yang diajukan. Berikut tiga dimensi keunikan yang masing-masing mengarah pada pertanyaan riset yang <em>genuine</em> dan belum banyak terjawab dalam literatur.</p>
+    <div class="pola-grid">
+      <div class="polacard"><div class="pola-n">4.1</div><div><div class="pola-t">Repositori Genetik Hidup yang Tidak Tersengaja</div><div class="pola-d">Pohon-pohon di kebun ini tumbuh tanpa seleksi varietas artifisial selama lebih dari empat dekade. Isolasi geografis Ngantang berimplikasi pada kemungkinan diferensiasi genetik lokal yang berbeda dari populasi Robusta di wilayah lain Jawa Timur — analog lapangan dari bank gen dalam konteks agroforestri aktif.</div></div></div>
+      <div class="polacard"><div class="pola-n">4.2</div><div><div class="pola-t">Indikasi Geografis &amp; Identitas Kopi Ngantang yang Belum Terlindungi</div><div class="pola-d">Kopi Ngantang belum memiliki posisi formal — produknya kerap terserap ke label generik 'Kopi Malang' atau rantai pasok Kopi Dampit. Apakah kebun wakaf ini, dengan populasi pohon tertua yang terdokumentasi, dapat berfungsi sebagai <em>anchor plot</em> untuk karakterisasi profil referensi IG?</div></div></div>
+      <div class="polacard"><div class="pola-n">4.3</div><div><div class="pola-t">Wakaf sebagai Instrumen Tata Kelola Non-Negara untuk Konservasi Lanskap</div><div class="pola-d">Status wakaf menjadikan kebun ini tidak dapat dikonversi atau diperjualbelikan — sebuah keunikan kelembagaan yang menghadirkan pertanyaan menarik: dapatkah wakaf produktif dikonseptualisasikan sebagai instrumen konservasi non-negara yang komplementer terhadap sistem kawasan lindung di DAS Brantas hulu?</div></div></div>
     </div>
   </div>
 </section>
 
-<!-- POLA -->
-<section class="pola-sec">
+<!-- PERTANYAAN RISET -->
+<section class="riset-sec">
   <div class="si">
-    <div class="slabel">Konteks &amp; Justifikasi Riset</div>
-    <h2 class="stitle">Empat Pola yang Membuat Riset Ini Penting</h2>
+    <div class="slabel">Pertanyaan Riset</div>
+    <h2 class="stitle">Pertanyaan Riset yang Diusulkan</h2>
     <div class="divider"></div>
-    <p class="slead" style="margin-bottom:2rem;">Selama 39 bulan, empat pola berulang terjadi lintas tiga fase manajemen — bukan sekadar catatan kegagalan, melainkan justifikasi ilmiah mengapa kondisi pra-intervensi saat ini bernilai untuk diteliti.</p>
-    <div class="pola-grid">
-      <div class="polacard"><div class="pola-n">01</div><div><div class="pola-t">Tenaga Ahli Tanpa Pendampingan Lapangan</div><div class="pola-d">Rekomendasi teknis diberikan tanpa kehadiran di lapangan secara konsisten. Intervensi dilakukan berdasarkan persepsi tanpa observasi langsung dan tanpa evaluasi dampak.</div></div></div>
-      <div class="polacard"><div class="pola-n">02</div><div><div class="pola-t">Tidak Ada Baseline Data Agronomi</div><div class="pola-d">pH, NPK, EC tanah, dan peta pohon belum pernah diukur di satu pun fase. Program tidak bisa dievaluasi secara objektif karena tidak ada titik awal yang terukur.</div></div></div>
-      <div class="polacard"><div class="pola-n">03</div><div><div class="pola-t">Transfer Pengetahuan yang Gagal</div><div class="pola-d">Pergantian fase manajemen tidak disertai alih pengetahuan yang terstruktur — ke petani maupun ke pengelola berikutnya. Good practices hilang bersama pergantian personil.</div></div></div>
-      <div class="polacard"><div class="pola-n">04</div><div><div class="pola-t">Riset sebagai Perisai Akuntabilitas</div><div class="pola-d">Justifikasi R&D digunakan untuk menutupi ketiadaan hasil terukur. Lahan wakaf berpotensi menjadi demplot riset komersial mitra teknis tanpa transparansi kepada Wakif.</div></div></div>
+    <p class="slead">Enam pertanyaan riset berikut diidentifikasi sebagai <em>genuine gaps</em> — pertanyaan yang belum memiliki jawaban dalam literatur yang kami ketahui, dan yang secara empiris dapat dijawab dengan data dari lokasi ini.</p>
+    <div class="rq-groups">
+
+      <div class="rq-group">
+        <div class="rq-group-label">🔬 Karakterisasi Genetik &amp; Agroekologi</div>
+        <div class="rq-pair">
+          <div class="rqcard"><div class="rq-num">01</div><div class="rq-text">Apakah pohon-pohon Robusta berumur &gt;40 tahun di kebun ini merepresentasikan sub-varietas lokal yang belum terkarakterisasi secara molekuler? Sejauh mana isolasi geografis dan ketiadaan seleksi artifisial selama empat dekade membentuk keragaman genetiknya?</div></div>
+          <div class="rqcard"><div class="rq-num">02</div><div class="rq-text">Bagaimana interaksi antara faktor edafis (tanah vulkanik DAS Brantas hulu), iklim mikro ketinggian ±700–870 mdpl, dan praktik budidaya tradisional membentuk profil sensoris dan kimiawi biji kopi di lokasi ini?</div></div>
+        </div>
+      </div>
+
+      <div class="rq-group">
+        <div class="rq-group-label">🗺️ Indikasi Geografis &amp; Identitas Produk</div>
+        <div class="rq-pair">
+          <div class="rqcard"><div class="rq-num">03</div><div class="rq-text">Apakah karakteristik agroekologis dan genetis Kopi Ngantang memenuhi syarat pembeda geografis untuk pendaftaran Indikasi Geografis (IG) yang independen dari branding Kopi Dampit — dan bagaimana posisinya dalam peta IG kopi Jawa Timur?</div></div>
+          <div class="rqcard"><div class="rq-num">04</div><div class="rq-text">Apakah kebun wakaf ini, dengan pohon-pohon berumur &gt;40 tahun yang belum dimodifikasi, dapat berfungsi sebagai <em>'anchor plot'</em> yang representatif untuk pengembangan profil referensi Sumber Daya Genetik (SDG) tanaman kopi lokal Ngantang?</div></div>
+        </div>
+      </div>
+
+      <div class="rq-group">
+        <div class="rq-group-label">🏛️ Institusi Wakaf &amp; Tata Kelola Konservasi</div>
+        <div class="rq-pair">
+          <div class="rqcard"><div class="rq-num">05</div><div class="rq-text">Dapatkah kelembagaan wakaf produktif — dengan sifat kepemilikannya yang tidak dapat dialihkan — berfungsi sebagai mekanisme konservasi <em>in-situ</em> non-negara yang komplementer terhadap sistem kawasan lindung, khususnya di zona ekologis batas selatan TAHURA Raden Soerjo dan DAS Brantas hulu?</div></div>
+          <div class="rqcard"><div class="rq-num">06</div><div class="rq-text">Bagaimana dinamika tata kelola multi-aktor (wakif, nadzir, tenaga ahli, komunitas lokal) dalam program wakaf produktif mempengaruhi keberlanjutan intervensi agronomis — dan apa yang dapat dipelajari dari 39 bulan data longitudinal tentang kegagalan transfer pengetahuan institusional?</div></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
