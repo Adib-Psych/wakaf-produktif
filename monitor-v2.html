@@ -1380,18 +1380,60 @@ function initApp() {
 // ===== DASHBOARD =====
 function renderDashboard() {
   const data = STATE.laporan;
-  document.getElementById('kpi-laporan').textContent = data.length;
+  // Total laporan 30 hari terakhir
+  const now = new Date();
+  const cutoff = new Date(now); cutoff.setDate(now.getDate() - 30);
+  const cutoffStr = cutoff.toISOString().slice(0,10);
+  const recent30 = data.filter(d => d.tgl >= cutoffStr);
+  document.getElementById('kpi-laporan').textContent = recent30.length;
   document.getElementById('kpi-pohon').textContent = data.reduce((s,d)=>s+(+d.pohon||0),0);
   const compliantCount = data.filter(d=>d.compliance==='compliant').length;
   document.getElementById('kpi-compliance').textContent = data.length ? Math.round((compliantCount/data.length)*100) + '%' : '—';
   const alertsCount = data.reduce((s,d)=>s+(d.alerts?d.alerts.length:0),0);
   document.getElementById('kpi-alerts').textContent = alertsCount;
-  document.getElementById('kpi-budget').textContent = 'Rp 510rb / 2,5 jt';
-  // countdown to July 1
+
+  // PRODUCTION: Burn Rate dinamis dari CASHBOOK + RAB Final total
+  if (typeof CASHBOOK !== 'undefined' && typeof RAB_DATA !== 'undefined') {
+    let totalKeluar = 0;
+    CASHBOOK.forEach(t => {
+      if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah' || t.tipe === 'transfer_anto') {
+        totalKeluar += t.keluar || 0;
+      }
+    });
+    // Total RAB 2 siklus
+    let totalRAB = 0;
+    Object.values(RAB_DATA).forEach(siklus => {
+      siklus.kategori.forEach(k => k.items.forEach(it => { totalRAB += it.qty * it.hf; }));
+    });
+    const fmtJt = (n) => {
+      if (n === 0) return 'Rp 0';
+      if (n >= 1000000) return 'Rp ' + (n/1000000).toFixed(1) + ' jt';
+      if (n >= 1000) return 'Rp ' + Math.round(n/1000) + 'rb';
+      return 'Rp ' + n;
+    };
+    const pct = totalRAB > 0 ? Math.round((totalKeluar/totalRAB)*100) : 0;
+    document.getElementById('kpi-budget').textContent = fmtJt(totalKeluar) + ' / ' + fmtJt(totalRAB);
+    const trendEl = document.getElementById('kpi-budget-trend');
+    if (trendEl) trendEl.textContent = pct + '% serapan total RAB';
+  } else {
+    document.getElementById('kpi-budget').textContent = '—';
+  }
+
+  // Auto-update KPI trends "Belum ada data" → real metrics
+  if (data.length > 0) {
+    const trL = document.getElementById('kpi-laporan-trend');
+    if (trL) trL.textContent = `${data.length} total all-time`;
+    const trP = document.getElementById('kpi-pohon-trend');
+    if (trP) trP.textContent = data.length + ' laporan';
+    const trC = document.getElementById('kpi-compliance-trend');
+    if (trC) trC.textContent = compliantCount + '/' + data.length + ' compliant';
+  }
+
+  // countdown to July 1 panen window
   const today = new Date();
   const panen = new Date('2026-07-01');
   const days = Math.ceil((panen-today)/(86400000));
-  document.getElementById('kpi-countdown').textContent = days;
+  document.getElementById('kpi-countdown').textContent = days > 0 ? days : 'Active';
 }
 
 function renderActivityChart() {
