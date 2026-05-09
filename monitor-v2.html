@@ -573,20 +573,17 @@
             <tbody id="upah-tbody"></tbody>
           </table>
         </div>
-        <p style="font-size:10px;color:var(--mute);margin-top:10px">Tarif (Notulen 1-2 Mei 2026): setengah hari Rp 60.000 · full day Rp 80.000 · pohon panjat Rp 20.000/pohon</p>
+        <p style="font-size:10px;color:var(--mute);margin-top:10px">Tarif per pekerja (update 8 Mei 2026): <strong>Cak Yit</strong> Rp 60K ½ hari · Rp 120K full day · <strong>Pak Kumpul</strong> Rp 50K ½ hari · Rp 100K full day · borongan: panjat durian Rp 20K/pohon · build rorak Rp 30K/unit · tanam lamtoro Rp 5K/lubang. Detail lengkap → tab Distribusi Tugas.</p>
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">5</span>Riwayat Transaksi Lain (non-upah)</div>
-        <div style="margin-bottom:10px">
-          <button class="btn btn-primary" onclick="alert('Form input transaksi akan ditambah di iterasi berikutnya.')">+ Tambah Transaksi</button>
-        </div>
+        <div class="card-title"><span class="num">5</span>Riwayat Transaksi Lain (non-upah, legacy view)</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">⚠️ Section legacy. Gunakan tab <strong>Laporan Keuangan</strong> untuk input + tracking transaksi yang lebih lengkap (dengan Petty Cash Anto, kategori RAB, upload nota, dll).</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr></thead>
             <tbody>
-              <tr><td>2 Mei 2026</td><td>💸 Keluar</td><td>Operasional</td><td>Transport Adib + Anto ke kebun</td><td>Rp 150.000</td></tr>
-              <tr><td>20 Apr 2026</td><td>💰 Masuk</td><td>Donasi Wakaf</td><td>Transfer dari Wakif (Adib) untuk operasional kebun kopi wakaf Ngantang</td><td>Rp 2.500.000</td></tr>
+              <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--mute);font-style:italic">Belum ada transaksi non-upah dicatat di view ini.<br>Lihat tab <strong>Laporan Keuangan</strong> untuk Cashbook lengkap.</td></tr>
             </tbody>
           </table>
         </div>
@@ -3070,7 +3067,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
       {t:'Petik selektif merah harian', sop:'Robusta Edisi 2 hal 215', prio:'wajib', siapa:'Tim panen'},
       {t:'Defect grading per 300 g sampel', sop:'SNI 01-2907-2008', prio:'rekomendasi', siapa:'Mas Anto'},
       {t:'Tracking kadar air harian (target ≤12,5%)', sop:'Robusta Edisi 2 hal 261', prio:'wajib', siapa:'Tim'},
-      {t:'Pembayaran upah panen (Rp 80K full day)', sop:'Notulen 1-2 Mei', prio:'wajib', siapa:'Wakif'}
+      {t:'Pembayaran upah panen (Yit Rp 120K · Kumpul Rp 100K full day · tim ad-hoc Rp 80K)', sop:'Tarif update 8 Mei 2026', prio:'wajib', siapa:'Wakif'}
     ]
   },
   8: {
