@@ -362,7 +362,8 @@
           </div>
           <div class="field">
             <label class="field-lbl">Tanggal Aktivitas <span class="req">*</span></label>
-            <input type="date" id="f-tgl">
+            <input type="date" id="f-tgl" onchange="updateTglPreview()">
+            <div id="f-tgl-preview" style="font-size:12px;color:var(--moss);font-weight:700;margin-top:6px;letter-spacing:0.3px"></div>
           </div>
           <div class="field">
             <label class="field-lbl">Bidang <span class="req">*</span></label>
@@ -1412,6 +1413,7 @@ function initApp() {
 
   // Set today's date in form
   document.getElementById('f-tgl').value = new Date().toISOString().slice(0,10);
+  if (typeof updateTglPreview === 'function') updateTglPreview();
 }
 
 // ===== DASHBOARD =====
@@ -1607,21 +1609,45 @@ function setRadio(group, el) {
 
 // ===== DATE FORMAT HELPER (DD Mmm YYYY, Indonesian) =====
 const BULAN_SINGKAT = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const HARI = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];          // 3-char hari (untuk formatTgl)
+const HARI_FULL = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu']; // full hari (untuk preview form)
+function _isoToDate(isoDate) {
+  if (!isoDate) return null;
+  const parts = String(isoDate).split('T')[0].split('-');
+  if (parts.length !== 3) return null;
+  // new Date(y,m-1,d) menghindari TZ issue dari new Date(iso)
+  return new Date(+parts[0], +parts[1]-1, +parts[2]);
+}
 function formatTgl(isoDate) {
   if (!isoDate) return '—';
-  // Handle ISO date string "2026-05-08"
-  const parts = String(isoDate).split('T')[0].split('-');
-  if (parts.length !== 3) return isoDate;
-  const y = parts[0], m = parseInt(parts[1],10), d = parseInt(parts[2],10);
-  return `${d} ${BULAN_SINGKAT[m-1]} ${y}`;
+  const dt = _isoToDate(isoDate);
+  if (!dt) return isoDate;
+  const y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate(), w = dt.getDay();
+  return `${HARI[w]}, ${d} ${BULAN_SINGKAT[m]} ${y}`;
 }
-// Versi pendek untuk axis chart (tanpa tahun) — "9 Apr"
+// Versi pendek (tanpa tahun) — "Sab, 9 Mei"
 function formatTglShort(isoDate) {
   if (!isoDate) return '';
-  const parts = String(isoDate).split('T')[0].split('-');
-  if (parts.length !== 3) return isoDate;
-  const m = parseInt(parts[1],10), d = parseInt(parts[2],10);
-  return `${d} ${BULAN_SINGKAT[m-1]}`;
+  const dt = _isoToDate(isoDate);
+  if (!dt) return isoDate;
+  const m = dt.getMonth(), d = dt.getDate(), w = dt.getDay();
+  return `${HARI[w]}, ${d} ${BULAN_SINGKAT[m]}`;
+}
+// Versi full hari (untuk preview di Form Input) — "Sabtu, 9 Mei 2026"
+function formatTglFull(isoDate) {
+  if (!isoDate) return '—';
+  const dt = _isoToDate(isoDate);
+  if (!dt) return isoDate;
+  const y = dt.getFullYear(), m = dt.getMonth(), d = dt.getDate(), w = dt.getDay();
+  return `${HARI_FULL[w]}, ${d} ${BULAN_SINGKAT[m]} ${y}`;
+}
+// Live preview helper: dipasang di Form Input
+function updateTglPreview() {
+  const inp = document.getElementById('f-tgl');
+  const prev = document.getElementById('f-tgl-preview');
+  if (inp && prev) {
+    prev.textContent = inp.value ? '📅 ' + formatTglFull(inp.value) : '';
+  }
 }
 
 function renderActivityForm() {
@@ -2168,6 +2194,7 @@ function resetForm() {
     if (el.type === 'date') el.value = new Date().toISOString().slice(0,10);
     else el.value = '';
   });
+  if (typeof updateTglPreview === 'function') updateTglPreview();
   document.querySelectorAll('#panel-form .radio-pill').forEach(p=>p.classList.remove('on'));
   document.getElementById('activity-detail-form').innerHTML = '';
   document.getElementById('form-preview').innerHTML = '';
