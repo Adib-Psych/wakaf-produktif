@@ -3058,17 +3058,37 @@ const STATUS_VISUAL = {
   na:           { ico:'🔒', lbl:'N/A',            bg:'#f0f0f0', fg:'#888' }
 };
 
+// 🔒 SOP Project Anchor — adopsi resmi SOP Mei 2026 (Notulen 1-2 Mei 2026)
+// Items di bulan SEBELUM ini dianggap pre-project / N/A (bukan overdue).
+const SOP_PROJECT_START = { year: 2026, month: 5 };  // Mei 2026
+
 function getComplianceMetrics() {
   let total = 0, sudah = 0, belum = 0, tidakSesuai = 0, na = 0;
-  let belumOverdue = 0;
-  const currentMonth = new Date().getMonth() + 1;
-  const overdueItems = [], deviationItems = [];
+  let belumOverdue = 0, preProject = 0;
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+  const overdueItems = [], deviationItems = [], currentMonthItems = [], upcomingItems = [];
+
+  // Apakah bulan SOP ini sudah masuk window proyek?
+  // Asumsi: SOP_AKTIVITAS_PER_BULAN punya 12 bulan dalam 1 siklus tahun.
+  // Jika currentYear === SOP_PROJECT_START.year: hanya bulan >= start.month yg counted.
+  // Jika currentYear > start.year: semua 12 bulan counted (siklus tahun ke-2+).
+  const isFirstYear = currentYear === SOP_PROJECT_START.year;
+  const projectStartMonth = SOP_PROJECT_START.month;
 
   Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(bulanN => {
     const m = +bulanN;
     SOP_AKTIVITAS_PER_BULAN[bulanN].aktivitas.forEach((a, i) => {
       // Skip larangan items — they're "STOP" not actionable
       if (a.prio === 'larangan') return;
+
+      // Pre-project months (tahun pertama, sebelum Mei): skip dari total, tag N/A info
+      if (isFirstYear && m < projectStartMonth) {
+        preProject++;
+        return;
+      }
+
       total++;
       const key = `${bulanN}-${i}`;
       const s = SOP_STATUS[key];
@@ -3081,13 +3101,24 @@ function getComplianceMetrics() {
       else {
         belum++;
         if (m < currentMonth) {
+          // Overdue: bulan lewat & masih belum (only counted in window proyek)
           belumOverdue++;
           overdueItems.push({bulanN: m, idx: i, aktivitas: a});
+        } else if (m === currentMonth) {
+          // Bulan berjalan — fokus aktif
+          currentMonthItems.push({bulanN: m, idx: i, aktivitas: a});
+        } else if (m === currentMonth + 1) {
+          // Bulan depan — heads-up upcoming (hanya wajib)
+          if (a.prio === 'wajib') {
+            upcomingItems.push({bulanN: m, idx: i, aktivitas: a});
+          }
         }
       }
     });
   });
-  return { total, sudah, belum, belumOverdue, tidakSesuai, na, overdueItems, deviationItems };
+  return { total, sudah, belum, belumOverdue, tidakSesuai, na, preProject,
+           overdueItems, deviationItems, currentMonthItems, upcomingItems,
+           currentMonth, currentYear };
 }
 
 function navigateToMonthInKalender(bulanN) {
@@ -3398,11 +3429,16 @@ function renderComplianceProgress() {
   const belumPct = m.total ? Math.round((m.belum / m.total) * 100) : 0;
   const deviationPct = m.total ? Math.round((m.tidakSesuai / m.total) * 100) : 0;
   const naPct = m.total ? Math.round((m.na / m.total) * 100) : 0;
+  const namaBulanFull = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
-  // Progress bar (stacked)
+  // Progress bar (stacked) + project anchor banner
   const prog = document.getElementById('compliance-progress');
   if (prog) {
     prog.innerHTML = `
+      <div style="background:linear-gradient(90deg,#E8F4EE 0%,#F5F0E6 100%);padding:10px 14px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:11px;border:1px solid #d4e5dc">
+        <div><b style="color:var(--earth)">📅 Bulan berjalan:</b> <span style="color:var(--moss);font-weight:700">${namaBulanFull[m.currentMonth]} ${m.currentYear}</span></div>
+        <div style="color:var(--mute)">SOP aktif sejak ${namaBulanFull[SOP_PROJECT_START.month]} ${SOP_PROJECT_START.year}${m.preProject ? ` · <span style="color:var(--mute)">${m.preProject} item pre-project (N/A)</span>` : ''}</div>
+      </div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:14px;font-weight:700;color:var(--earth)">Overall Compliance: <span style="color:var(--green);font-size:22px">${compliancePct}%</span></div>
         <div style="font-size:11px;color:var(--mute)">${m.sudah} dari ${m.total} aktivitas applicable selesai sesuai SOP</div>
@@ -3433,64 +3469,96 @@ function renderComplianceProgress() {
     `;
   }
 
-  // Action items
+  // Action items — restructured: 🔥 Fokus bulan ini → ⚠️ Deviations → ⏰ Overdue → 📅 Upcoming
   const actC = document.getElementById('compliance-action-items');
   if (actC) {
     const namaBulan = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-    const items = [];
 
-    // Deviations first (highest priority)
-    m.deviationItems.forEach(it => {
-      items.push({
-        sev: 'tinggi',
-        ico: '⚠️',
-        bg: '#fde2dc',
-        border: '#c14b3a',
-        bulanLbl: namaBulan[it.bulanN],
-        bulanN: it.bulanN,
-        title: it.aktivitas.t,
-        meta: `Tidak sesuai SOP · ${it.aktivitas.siapa} · 📖 ${it.aktivitas.sop}`,
-        note: it.note ? `📝 ${it.note}` : 'Tanpa catatan deviation'
-      });
-    });
-
-    // Overdue belum (medium priority)
-    m.overdueItems.forEach(it => {
-      items.push({
-        sev: 'sedang',
-        ico: '⏰',
-        bg: '#fff5e6',
-        border: '#e67e22',
-        bulanLbl: namaBulan[it.bulanN],
-        bulanN: it.bulanN,
-        title: it.aktivitas.t,
-        meta: `Overdue (${namaBulan[it.bulanN]}) · ${it.aktivitas.siapa} · ${it.aktivitas.prio.toUpperCase()}`,
-        note: 'Belum ditandai sudah dilakukan'
-      });
-    });
-
-    if (items.length === 0) {
-      actC.innerHTML = `<div style="background:var(--greenlt);padding:14px;border-radius:8px;text-align:center;color:var(--green);font-size:13px;font-weight:600">
-        🎉 Tidak ada action items! Semua aktivitas SOP yang masa-nya sudah lewat sudah ditandai sudah / N/A.
+    function renderItem(it, ico, bg, border, bulanLbl, meta, note) {
+      return `<div onclick="navigateToMonthInKalender(${it.bulanN})"
+                   style="cursor:pointer;display:grid;grid-template-columns:30px 1fr 70px;gap:12px;padding:11px 14px;background:${bg};border-left:4px solid ${border};border-radius:6px;margin-bottom:6px;align-items:center;transition:.15s"
+                   onmouseover="this.style.transform='translateX(2px)'" onmouseout="this.style.transform=''">
+        <div style="font-size:20px">${ico}</div>
+        <div>
+          <div style="font-weight:700;color:var(--earth);font-size:13px">${it.aktivitas.t}</div>
+          <div style="font-size:10px;color:var(--mute);margin-top:2px">${meta}</div>
+          <div style="font-size:11px;color:var(--earth);margin-top:3px;font-style:italic">${note}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="background:${border};color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;display:inline-block">${bulanLbl}</div>
+          <div style="font-size:9px;color:var(--mute);margin-top:3px">→ klik</div>
+        </div>
       </div>`;
-    } else {
-      actC.innerHTML = items.map(it =>
-        `<div onclick="navigateToMonthInKalender(${it.bulanN})"
-              style="cursor:pointer;display:grid;grid-template-columns:30px 1fr 70px;gap:12px;padding:11px 14px;background:${it.bg};border-left:4px solid ${it.border};border-radius:6px;margin-bottom:6px;align-items:center;transition:.15s"
-              onmouseover="this.style.transform='translateX(2px)'" onmouseout="this.style.transform=''">
-          <div style="font-size:20px">${it.ico}</div>
-          <div>
-            <div style="font-weight:700;color:var(--earth);font-size:13px">${it.title}</div>
-            <div style="font-size:10px;color:var(--mute);margin-top:2px">${it.meta}</div>
-            <div style="font-size:11px;color:var(--earth);margin-top:3px;font-style:italic">${it.note}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="background:${it.border};color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;display:inline-block">${it.bulanLbl}</div>
-            <div style="font-size:9px;color:var(--mute);margin-top:3px">→ klik</div>
-          </div>
-        </div>`
-      ).join('');
     }
+
+    function sectionHeader(emoji, title, count, color) {
+      return `<div style="display:flex;align-items:center;gap:10px;margin:14px 0 8px 0;padding-bottom:6px;border-bottom:2px solid ${color}">
+        <div style="font-size:18px">${emoji}</div>
+        <div style="font-weight:800;color:${color};font-size:13px;letter-spacing:0.3px;text-transform:uppercase">${title}</div>
+        <div style="background:${color};color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700">${count}</div>
+      </div>`;
+    }
+
+    let html = '';
+    let totalActionItems = m.deviationItems.length + m.overdueItems.length + m.currentMonthItems.length + m.upcomingItems.length;
+
+    // 1. Deviations (severity tertinggi)
+    if (m.deviationItems.length > 0) {
+      html += sectionHeader('⚠️', 'Tidak Sesuai SOP — Perlu Review', m.deviationItems.length, '#c14b3a');
+      m.deviationItems.forEach(it => {
+        html += renderItem(it, '⚠️', '#fde2dc', '#c14b3a', namaBulan[it.bulanN],
+          `Tidak sesuai SOP · ${it.aktivitas.siapa} · 📖 ${it.aktivitas.sop}`,
+          it.note ? `📝 ${it.note}` : 'Tanpa catatan deviation');
+      });
+    }
+
+    // 2. Fokus bulan berjalan (HIGHLIGHT — yang harus dikerjakan SEKARANG)
+    if (m.currentMonthItems.length > 0) {
+      html += sectionHeader('🔥', `Fokus Bulan ${namaBulanFull[m.currentMonth]} (Aktif)`, m.currentMonthItems.length, '#1F5F47');
+      // Sort: wajib dulu, baru rutin, baru rekomendasi/rencana
+      const prioRank = { wajib:1, rutin:2, rekomendasi:3, rencana:4 };
+      const sortedCurrent = [...m.currentMonthItems].sort((a,b) =>
+        (prioRank[a.aktivitas.prio]||9) - (prioRank[b.aktivitas.prio]||9)
+      );
+      sortedCurrent.forEach(it => {
+        const isWajib = it.aktivitas.prio === 'wajib';
+        const bg = isWajib ? '#FFF8E5' : '#F0F7F3';
+        const border = isWajib ? '#D4AF37' : '#5a9080';
+        const ico = isWajib ? '⭐' : '📍';
+        html += renderItem(it, ico, bg, border, namaBulan[it.bulanN],
+          `Aktif bulan ini · ${it.aktivitas.siapa} · ${it.aktivitas.prio.toUpperCase()}`,
+          isWajib ? 'Prioritas WAJIB — selesaikan dalam bulan ini' : 'Aktivitas bulan berjalan');
+      });
+    }
+
+    // 3. Overdue (bulan yg lewat & masih belum, HANYA di window proyek)
+    if (m.overdueItems.length > 0) {
+      html += sectionHeader('⏰', 'Overdue — Bulan Lewat Belum Selesai', m.overdueItems.length, '#e67e22');
+      m.overdueItems.forEach(it => {
+        html += renderItem(it, '⏰', '#fff5e6', '#e67e22', namaBulan[it.bulanN],
+          `Overdue (${namaBulan[it.bulanN]}) · ${it.aktivitas.siapa} · ${it.aktivitas.prio.toUpperCase()}`,
+          'Belum ditandai sudah dilakukan');
+      });
+    }
+
+    // 4. Upcoming bulan depan (heads-up wajib only, info-only)
+    if (m.upcomingItems.length > 0) {
+      const nextMonth = m.currentMonth + 1 > 12 ? 1 : m.currentMonth + 1;
+      html += sectionHeader('📅', `Heads-Up: ${namaBulanFull[nextMonth]} (Wajib Mendatang)`, m.upcomingItems.length, '#5a9080');
+      m.upcomingItems.forEach(it => {
+        html += renderItem(it, '📌', '#F0F4F2', '#5a9080', namaBulan[it.bulanN],
+          `Akan aktif bulan depan · ${it.aktivitas.siapa} · WAJIB`,
+          'Persiapkan dari sekarang (procurement, koordinasi tim)');
+      });
+    }
+
+    if (totalActionItems === 0) {
+      html = `<div style="background:#E8F4EE;padding:14px;border-radius:8px;text-align:center;color:#1F5F47;font-size:13px;font-weight:600">
+        🎉 Tidak ada action items! Bulan ${namaBulanFull[m.currentMonth]} ${m.currentYear} clean.
+      </div>`;
+    }
+
+    actC.innerHTML = html;
   }
 }
 
