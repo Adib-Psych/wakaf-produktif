@@ -274,11 +274,11 @@
     <!-- ============ DASHBOARD ============ -->
     <div class="panel active" id="panel-dashboard">
       <div class="kpi-grid">
-        <div class="kpi"><div class="kpi-num" id="kpi-laporan">—</div><div class="kpi-lbl">Total Laporan (30 hari)</div><div class="kpi-trend">↗ 18 dari Mei</div></div>
-        <div class="kpi"><div class="kpi-num" id="kpi-pohon">—</div><div class="kpi-lbl">Pohon Dikerjakan</div><div class="kpi-trend">↗ 78% Bidang 1+2</div></div>
-        <div class="kpi gold"><div class="kpi-num" id="kpi-compliance">—</div><div class="kpi-lbl">SOP Compliance %</div><div class="kpi-trend">↗ vs minggu lalu</div></div>
-        <div class="kpi warn"><div class="kpi-num" id="kpi-alerts">—</div><div class="kpi-lbl">Active Alerts</div><div class="kpi-trend dn">→ Cek tab OPT</div></div>
-        <div class="kpi" data-tier="wakif"><div class="kpi-num" id="kpi-budget">—</div><div class="kpi-lbl">Burn Rate Anggaran</div><div class="kpi-trend">↘ Hemat 14% dari plan</div></div>
+        <div class="kpi"><div class="kpi-num" id="kpi-laporan">—</div><div class="kpi-lbl">Total Laporan (30 hari)</div><div class="kpi-trend" id="kpi-laporan-trend">Belum ada data</div></div>
+        <div class="kpi"><div class="kpi-num" id="kpi-pohon">—</div><div class="kpi-lbl">Pohon Dikerjakan</div><div class="kpi-trend" id="kpi-pohon-trend">Belum ada data</div></div>
+        <div class="kpi gold"><div class="kpi-num" id="kpi-compliance">—</div><div class="kpi-lbl">SOP Compliance %</div><div class="kpi-trend" id="kpi-compliance-trend">Belum ada data</div></div>
+        <div class="kpi warn"><div class="kpi-num" id="kpi-alerts">—</div><div class="kpi-lbl">Active Alerts</div><div class="kpi-trend dn">→ Cek tab OPT Heatmap</div></div>
+        <div class="kpi" data-tier="wakif"><div class="kpi-num" id="kpi-budget">—</div><div class="kpi-lbl">Burn Rate Anggaran</div><div class="kpi-trend" id="kpi-budget-trend">Cek tab RAB Siklus</div></div>
         <div class="kpi"><div class="kpi-num" id="kpi-countdown">—</div><div class="kpi-lbl">Hari Menuju Panen</div><div class="kpi-trend">🍒 Window Jul-Sep 2026 <span style="color:var(--cherry)">(NGT)</span></div></div>
       </div>
 
@@ -521,14 +521,15 @@
 
     <!-- ============ ANGGARAN (WAKIF ONLY) ============ -->
     <div class="panel" id="panel-anggaran">
-      <div class="card">
-        <div class="card-title"><span class="num">1</span>Plafon Anggaran 2026 (Rp 8.000.000/tahun)</div>
+      <div class="card" style="background:var(--cream);border-left:4px solid var(--gold)">
+        <div class="card-title" style="color:var(--gold);margin-top:0">💰 Quick View — RAB Final 2 Siklus (locked 9 Mei 2026)</div>
         <div class="kpi-grid" style="margin-bottom:0">
-          <div class="kpi"><div class="kpi-num">Rp 4 jt</div><div class="kpi-lbl">Tenaga Kerja</div></div>
-          <div class="kpi"><div class="kpi-num">Rp 1 jt</div><div class="kpi-lbl">Pupuk Kandang*</div><div class="kpi-trend dn">⚠ Q4: composting in-situ</div></div>
-          <div class="kpi"><div class="kpi-num">Rp 3 jt</div><div class="kpi-lbl">Pupuk Kimia</div><div class="kpi-trend">→ Q5: spek SOP</div></div>
-          <div class="kpi gold"><div class="kpi-num">Rp 2,5 jt</div><div class="kpi-lbl">Sampai Panen Juli</div></div>
+          <div class="kpi"><div class="kpi-num">Rp 27 jt</div><div class="kpi-lbl">Siklus 2026 (Mei-Sep)</div><div class="kpi-trend">📍 5 bulan, sisa pra-panen + panen</div></div>
+          <div class="kpi"><div class="kpi-num">Rp 44 jt</div><div class="kpi-lbl">Siklus 2027 (Okt 26-Sep 27)</div><div class="kpi-trend">📍 12 bulan full siklus</div></div>
+          <div class="kpi gold"><div class="kpi-num">Rp 71 jt</div><div class="kpi-lbl">Total 2 Siklus</div><div class="kpi-trend">↘ Save Rp 23 jt vs awal</div></div>
+          <div class="kpi"><div class="kpi-num">750</div><div class="kpi-lbl">Pohon Ideal Post-Selection</div><div class="kpi-trend">3 × 2,5 m density</div></div>
         </div>
+        <p style="font-size:11px;color:var(--mute);margin-top:10px">Detail RAB & serapan real-time → tab <strong>RAB Siklus</strong>. Detail transaksi & cashflow → tab <strong>Laporan Keuangan</strong>.</p>
       </div>
 
       <div class="card">
@@ -878,13 +879,13 @@
     <div class="panel" id="panel-inventaris">
       <div class="card">
         <div class="card-title"><span class="num">1</span>Snapshot Pohon per Bidang</div>
-        <div class="kpi-grid">
-          <div class="kpi"><div class="kpi-num">~915</div><div class="kpi-lbl">Total (Estimasi)</div><div class="kpi-trend">📍 Inventory in progress</div></div>
-          <div class="kpi"><div class="kpi-num">142</div><div class="kpi-lbl">Sudah Dipetakan</div><div class="kpi-trend">↗ 16% complete</div></div>
-          <div class="kpi"><div class="kpi-num">128</div><div class="kpi-lbl">Produktif</div></div>
-          <div class="kpi warn"><div class="kpi-num">14</div><div class="kpi-lbl">Perlu Sulam</div></div>
+        <div class="kpi-grid" id="inv-kpi-grid">
+          <div class="kpi"><div class="kpi-num">~915</div><div class="kpi-lbl">Total (Estimasi Pre-Selection)</div><div class="kpi-trend">📍 Target ideal post-selection: 750 phn (3×2,5 m)</div></div>
+          <div class="kpi"><div class="kpi-num" id="inv-dipetakan">0</div><div class="kpi-lbl">Sudah Dipetakan</div><div class="kpi-trend" id="inv-dipetakan-pct">— complete</div></div>
+          <div class="kpi"><div class="kpi-num" id="inv-produktif">0</div><div class="kpi-lbl">Produktif</div></div>
+          <div class="kpi warn"><div class="kpi-num" id="inv-sulam">0</div><div class="kpi-lbl">Perlu Sulam</div></div>
         </div>
-        <p style="font-size:11px;color:var(--mute)">Per Notulen 1-2 Mei: Mas Anto bertugas inventarisasi pohon — produktif / belum produktif / titik kosong per Bidang. Output untuk keputusan sulaman.</p>
+        <p style="font-size:11px;color:var(--mute)">Mas Anto bertugas inventarisasi pohon via tab Form Input → kategori "Inventarisasi Pohon" → otomatis terhitung di sini. Density target ideal: 750 phn (3×2,5 m, post-selection pasca-panen 2026).</p>
       </div>
 
       <div class="card">
@@ -1448,12 +1449,39 @@ function renderPelaporChart() {
 
 function renderAlerts() {
   const al = document.getElementById('alert-list');
-  const alerts = [
-    {sev:'warn',ico:'⚠️',msg:'Kepatuhan parit pemupukan parsial — kedalaman <2 cm di laporan 28/4. <strong>Action:</strong> retraining Pak Kumpul.'},
-    {sev:'warn',ico:'🍌',msg:'8 rumpun pisang di Bidang 3 belum di-bongkar. <strong>Status:</strong> menunggu panen MWC NU. Dokumentasikan amanah.'},
-    {sev:'alert',ico:'🌳',msg:'<strong>Penaung lamtoro PG 79 belum ditanam</strong> — target 200-300 phn paralel durian. Risiko: tanaman muda tanpa naungan saat MK 2026.'},
-    {sev:'warn',ico:'🌳',msg:'<strong>Top-graft fokus Robusta klon unggul</strong> — Cak Yit retraining identifikasi cabang produktif (BP 358/SA 237 untuk basah).'}
-  ];
+  if (!al) return;
+  // PRODUCTION: compute alerts dinamis dari STATE.laporan + status saat ini
+  const alerts = [];
+  const reports = STATE.laporan || [];
+
+  // Alert 1: belum ada laporan minggu ini
+  const now = new Date();
+  const wkStart = new Date(now); wkStart.setDate(now.getDate() - 7);
+  const wkStartStr = wkStart.toISOString().slice(0,10);
+  const recentReports = reports.filter(r => r.tgl >= wkStartStr);
+  if (reports.length === 0) {
+    alerts.push({sev:'warn', ico:'📝', msg:'<strong>Belum ada laporan harian</strong> — mulai input via tab Form Input untuk mengisi data baseline kebun.'});
+  } else if (recentReports.length === 0) {
+    alerts.push({sev:'warn', ico:'📅', msg:'<strong>Belum ada laporan minggu ini</strong> — tim lapangan reminder untuk input laporan harian.'});
+  }
+
+  // Alert 2: PBKo > 5% di OPT monitoring
+  const optHigh = reports.filter(r => r.kategori === 'opt_monitoring' && parseFloat(r.intensitas) > 5);
+  if (optHigh.length > 0) {
+    alerts.push({sev:'alert', ico:'🐛', msg:`<strong>OPT alert: ${optHigh.length} pengamatan menunjukkan PBKo &gt;5%</strong> — review tab OPT Heatmap, action: Beauveria + sanitasi buah jatuh.`});
+  }
+
+  // Alert 3: SOP non-compliance
+  const nonCompliant = reports.filter(r => r.compliance === 'tidak_sesuai' || r.compliance === 'partial').slice(0, 3);
+  nonCompliant.forEach(r => {
+    alerts.push({sev:'warn', ico:'⚠️', msg:`<strong>Compliance issue ${formatTglShort(r.tgl)}:</strong> ${r.kategori} ${r.detail || ''} — review action di tab SOP Compliance.`});
+  });
+
+  // Default empty state
+  if (alerts.length === 0) {
+    alerts.push({sev:'info', ico:'✅', msg:'<strong>Tidak ada alert kritis saat ini.</strong> Sistem akan auto-flag risiko OPT, compliance, atau pelaporan begitu data masuk.'});
+  }
+
   al.innerHTML = alerts.map(a =>
     `<div class="alert-row ${a.sev}"><span class="alert-ico">${a.ico}</span><span>${a.msg}</span></div>`
   ).join('');
@@ -2055,19 +2083,28 @@ function exportCSV() {
 function renderBudgetChart() {
   const ctx = document.getElementById('chart-budget');
   if (!ctx) return;
+  // PRODUCTION: redirect ke RAB tab untuk data lengkap. Chart legacy tampilkan summary kategori basic dari Cashbook.
+  let tk = 0, pupukOrg = 0, pupukAnorg = 0, opLain = 0;
+  (typeof CASHBOOK !== 'undefined' ? CASHBOOK : []).forEach(t => {
+    if (!t.kat) { opLain += (t.keluar || 0); return; }
+    const top = t.kat.split('.')[0];
+    if (top === '3' || top === '4') tk += t.keluar || 0;
+    else if (top === '2') pupukOrg += t.keluar || 0;
+    else if (top === '1') pupukAnorg += t.keluar || 0;
+    else opLain += t.keluar || 0;
+  });
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Tenaga Kerja', 'Pupuk Kandang', 'Pupuk Kimia', 'Operasional Lain'],
+      labels: ['Tenaga Kerja', 'Pupuk Organik', 'Pupuk Anorganik', 'Operasional Lain'],
       datasets: [
-        { label: 'Plan (Rp)', data: [4000000, 1000000, 3000000, 0], backgroundColor: 'rgba(46,64,64,0.4)' },
-        { label: 'Actual (Rp)', data: [510000, 0, 0, 150000], backgroundColor: '#5a9080' }
+        { label: 'Aktual Cashbook (Rp)', data: [tk, pupukOrg, pupukAnorg, opLain], backgroundColor: '#5a9080' }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
-      scales: { y: { beginAtZero: true } }
+      plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => 'Rp ' + ctx.raw.toLocaleString('id-ID') } } },
+      scales: { y: { beginAtZero: true, ticks: { callback: v => 'Rp ' + (v/1000).toFixed(0) + 'K' } } }
     }
   });
 }
@@ -2377,18 +2414,56 @@ function submitDlg() {
 }
 
 // ===== INVENTARIS =====
+function renderInventoryKPI() {
+  const inv = (STATE.laporan || []).filter(r => r.kategori === 'inventarisasi_pohon');
+  let totalDipetakan = 0, produktif = 0, sulam = 0;
+  inv.forEach(r => {
+    const qty = +r.pohon || 1;
+    totalDipetakan += qty;
+    if (r.kondisi === 'produktif') produktif += qty;
+    if (r.kondisi === 'perlu_sulam' || r.kondisi === 'rusak') sulam += qty;
+  });
+  const e1 = document.getElementById('inv-dipetakan'); if (e1) e1.textContent = totalDipetakan;
+  const e2 = document.getElementById('inv-dipetakan-pct');
+  if (e2) {
+    const pct = totalDipetakan > 0 ? Math.round((totalDipetakan / 915) * 100) : 0;
+    e2.textContent = pct + '% dari estimasi 915';
+  }
+  const e3 = document.getElementById('inv-produktif'); if (e3) e3.textContent = produktif;
+  const e4 = document.getElementById('inv-sulam'); if (e4) e4.textContent = sulam;
+}
+
 function renderInventoryChart() {
+  renderInventoryKPI();
   const ctx = document.getElementById('chart-inventory');
   if (!ctx) return;
+  // PRODUCTION: compute dari STATE.laporan filter inventarisasi_pohon
+  const inv = (STATE.laporan || []).filter(r => r.kategori === 'inventarisasi_pohon');
+  // Group by bidang × kondisi
+  const bidangs = ['1','2','3','4'];
+  const counts = { produktif:[0,0,0,0], belum_produktif:[0,0,0,0], perlu_sulam:[0,0,0,0], belum_inventaris:[915,0,0,0] };
+  // Estimasi total per bidang (roughly): 1=350, 2=300, 3=250, 4=15
+  const total = [350, 300, 250, 15];
+  inv.forEach(r => {
+    const bIdx = bidangs.indexOf(r.bidang);
+    if (bIdx < 0) return;
+    const k = (r.kondisi || 'produktif').replace(/-/g,'_');
+    if (counts[k]) counts[k][bIdx] += +r.pohon || 1;
+  });
+  // Compute belum_inventaris = total - sum others
+  bidangs.forEach((b, i) => {
+    const sumOther = counts.produktif[i] + counts.belum_produktif[i] + counts.perlu_sulam[i];
+    counts.belum_inventaris[i] = Math.max(0, total[i] - sumOther);
+  });
   new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Bidang 1','Bidang 2','Bidang 3','Bidang 4 (Rumah Wakif)'],
       datasets: [
-        { label: 'Produktif', data: [42, 56, 30, 6], backgroundColor: '#5a9080' },
-        { label: 'Belum Produktif', data: [8, 5, 12, 2], backgroundColor: '#a8c8bc' },
-        { label: 'Perlu Sulam', data: [4, 6, 4, 0], backgroundColor: '#c14b3a' },
-        { label: 'Belum Inventaris', data: [281, 189, 278, 12], backgroundColor: '#e8dec8' }
+        { label: 'Produktif', data: counts.produktif, backgroundColor: '#5a9080' },
+        { label: 'Belum Produktif', data: counts.belum_produktif, backgroundColor: '#a8c8bc' },
+        { label: 'Perlu Sulam', data: counts.perlu_sulam, backgroundColor: '#c14b3a' },
+        { label: 'Belum Inventaris (estimasi)', data: counts.belum_inventaris, backgroundColor: '#e8dec8' }
       ]
     },
     options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }, plugins: { legend: { position: 'bottom' } } }
@@ -2408,9 +2483,9 @@ function renderPrapanenChecklist() {
   const items = [
     {done:true, t:'Konsolidasi tim lapangan', d:'Mas Anto + Cak Yit + Pak Kumpul confirmed (Notulen 1-2 Mei)'},
     {done:true, t:'SOP perawatan disepakati filosofi', d:'Pertahankan cabang gemuk berbuah, buang wiwilan + cabang dalam'},
-    {done:true, t:'Anggaran Rp 8 jt + Rp 2,5 jt sampai panen disepakati', d:'Notulen 1-2 Mei'},
+    {done:true, t:'RAB Final 2 siklus locked (Rp 71,29 jt total, save Rp 23 jt vs awal)', d:'9 Mei 2026 — lihat tab RAB Siklus'},
     {done:true, t:'Klarifikasi Wakif 13 pertanyaan', d:'8 Mei 2026 — locked-in'},
-    {done:false, t:'Inventarisasi pohon Bidang 1 lengkap', d:'Tugas Mas Anto — 142/915 sudah dipetakan (16%)'},
+    {done:false, t:'Inventarisasi pohon Bidang 1 lengkap', d:'Tugas Mas Anto — input via tab Form Input kategori Inventarisasi'},
     {done:false, t:'Inventarisasi pohon Bidang 2 lengkap', d:'Lanjutan setelah B1 selesai'},
     {done:false, t:'Inventarisasi pohon Bidang 3 lengkap', d:'Lanjutan setelah B2 selesai'},
     {done:false, t:'Estimasi produksi formal (sampling 30 pohon)', d:'SOP hal 218 — pre-Juni 2026'},
@@ -2436,14 +2511,50 @@ function renderPrapanenChecklist() {
 // ===== OPT HEATMAP =====
 function renderHeatmap() {
   const c = document.getElementById('heatmap');
-  // 3 Bidang × 4 weeks (Apr W4, May W1-W3)
-  const weeks = ['Bidang','30 Apr','7 Mei','14 Mei','21 Mei','28 Mei','4 Jun','11 Jun'];
-  const rows = [
-    ['Bidang 1', 2, 3, 4, 4, 5, 6, 6],
-    ['Bidang 2', 1, 2, 3, 3, 4, 4, 5],
-    ['Bidang 3', 3, 4, 5, 6, 7, 8, 8],
-    ['Bidang 4', 0, 1, 1, 2, 2, 3, 3]
-  ];
+  // PRODUCTION: compute dari STATE.laporan filter kategori opt_monitoring
+  // Kalau no data → render empty state
+  const optReports = (STATE.laporan || []).filter(r => r.kategori === 'opt_monitoring');
+  if (optReports.length === 0) {
+    c.innerHTML = `<div style="padding:40px 20px;text-align:center;color:var(--mute);background:#fafaf7;border-radius:8px;border:2px dashed #ddd">
+      <div style="font-size:32px;margin-bottom:10px">🐛📊</div>
+      <div style="font-size:14px;font-weight:700;color:var(--earth);margin-bottom:6px">Belum Ada Pengamatan OPT</div>
+      <div style="font-size:11px;line-height:1.5">Heatmap akan auto-populate saat Mas Anto mulai input laporan kategori <strong>"OPT Monitoring (5-pohon-diagonal)"</strong> via tab Form Input.<br>Per BRIN: pengamatan mingguan, alert PBKo &gt;5%.</div>
+    </div>`;
+    return;
+  }
+  // Build heatmap dynamic dari optReports — group by bidang × minggu
+  // Get last 7 weeks
+  const now = new Date();
+  const weeks = ['Bidang'];
+  const weekStarts = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (i * 7));
+    const monday = new Date(d);
+    monday.setDate(d.getDate() - d.getDay() + 1);
+    weekStarts.push(monday.toISOString().slice(0,10));
+    weeks.push(monday.toLocaleDateString('id-ID', { day:'numeric', month:'short' }));
+  }
+  // Build rows per bidang
+  const bidangs = ['Bidang 1','Bidang 2','Bidang 3','Bidang 4'];
+  const rows = bidangs.map(b => {
+    const bidangNum = b.split(' ')[1];
+    const row = [b];
+    weekStarts.forEach((wkStart, i) => {
+      const wkEnd = new Date(wkStart);
+      wkEnd.setDate(wkEnd.getDate() + 6);
+      const wkEndStr = wkEnd.toISOString().slice(0,10);
+      const reports = optReports.filter(r => r.bidang === bidangNum && r.tgl >= wkStart && r.tgl <= wkEndStr);
+      if (reports.length === 0) {
+        row.push('-');
+      } else {
+        // Average intensity %
+        const avg = reports.reduce((s, r) => s + (parseFloat(r.intensitas) || 0), 0) / reports.length;
+        row.push(Math.round(avg));
+      }
+    });
+    return row;
+  });
   let html = '<div style="display:grid;grid-template-columns:80px repeat('+(weeks.length-1)+',1fr);gap:2px;font-size:10px">';
   weeks.forEach(w => html += `<div class="hm-cell" style="background:var(--earth);color:#fff">${w}</div>`);
   rows.forEach(r => {
@@ -2472,15 +2583,45 @@ function renderHeatmap() {
 function renderComplianceChart() {
   const ctx = document.getElementById('chart-compliance');
   if (!ctx) return;
+  // PRODUCTION: compute compliance per kategori dari STATE.laporan
+  const cats = {
+    'pemupukan': ['pemupukan_kimia','pemupukan_organik'],
+    'pemangkasan': ['pemangkasan'],
+    'penyemprotan': ['penyemprotan'],
+    'panen': ['panen','sortasi_buah','penjemuran'],
+    'sanitasi': ['babat_rumput','kompos_kulit_kopi'],
+    'opt monitoring': ['opt_monitoring','brocap_management'],
+    'pelaporan': null  // compute beda: ada laporan minggu ini?
+  };
+  const labels = Object.keys(cats).map(k => k.charAt(0).toUpperCase() + k.slice(1));
+  const data = [];
+  const reports = STATE.laporan || [];
+  Object.entries(cats).forEach(([k, kats]) => {
+    if (kats === null) {
+      // Pelaporan: % minggu yang ada laporan dari last 4 weeks
+      const now = new Date();
+      let weeksWithLaporan = 0;
+      for (let i = 0; i < 4; i++) {
+        const wkEnd = new Date(now); wkEnd.setDate(wkEnd.getDate() - i*7);
+        const wkStart = new Date(wkEnd); wkStart.setDate(wkEnd.getDate() - 6);
+        const wkStartStr = wkStart.toISOString().slice(0,10);
+        const wkEndStr = wkEnd.toISOString().slice(0,10);
+        if (reports.some(r => r.tgl >= wkStartStr && r.tgl <= wkEndStr)) weeksWithLaporan++;
+      }
+      data.push(Math.round((weeksWithLaporan / 4) * 100));
+    } else {
+      const matchingReports = reports.filter(r => kats.includes(r.kategori));
+      if (matchingReports.length === 0) { data.push(0); return; }
+      const compliant = matchingReports.filter(r => r.compliance === 'compliant').length;
+      data.push(Math.round((compliant / matchingReports.length) * 100));
+    }
+  });
+  const colors = data.map(v => v >= 80 ? '#5a9080' : (v >= 50 ? '#e67e22' : '#c0392b'));
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Pemupukan', 'Pemangkasan', 'Penyemprotan', 'Panen', 'Sanitasi', 'OPT Monitoring', 'Pelaporan'],
-      datasets: [{
-        label: 'Compliance Score (%)',
-        data: [70, 95, 0, 0, 80, 60, 90],
-        backgroundColor: ['#e67e22','#5a9080','#aaa','#aaa','#5a9080','#e67e22','#5a9080']
-      }]
+      labels: labels,
+      datasets: [{ label: 'Compliance Score (%)', data, backgroundColor: colors }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
