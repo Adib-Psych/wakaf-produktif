@@ -2058,12 +2058,65 @@ function submitForm() {
   STATE.laporan.unshift(newEntry);
   localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
 
+  // ===== AUTO-LINK ke UPAH_ITEMS (Yit/Kumpul saja, ANTO = sweat equity) =====
+  let upahMsg = '';
+  if ((STATE.pelapor === 'YIT' || STATE.pelapor === 'KUMPUL') && STATE.durasi && typeof UPAH_ITEMS !== 'undefined') {
+    const tarif = TARIF_PEKERJA[STATE.pelapor];
+    let satuan = STATE.durasi;
+    let satuanLbl = '';
+    let model = 'harian';
+    let tarifVal = 0;
+    let qty = 1;
+    let aktivitasLbl = `${kategori.replace(/_/g,' ')} di Bidang ${STATE.bidang}` + (pohon ? ` (${pohon} phn)` : '');
+
+    if (STATE.durasi === 'setengah_hari') {
+      satuanLbl = '½ hari';
+      tarifVal = tarif.setengah_hari;
+    } else if (STATE.durasi === 'full_day') {
+      satuanLbl = 'full day';
+      tarifVal = tarif.full_day;
+    } else if (STATE.durasi === 'panjat_per_pohon') {
+      satuan = 'panjat_durian';
+      satuanLbl = 'pohon durian';
+      tarifVal = BORONGAN_PRESETS.panjat_durian || 20000;
+      model = 'borongan';
+      qty = +pohon || 1;
+    }
+
+    if (tarifVal > 0) {
+      const newId = (UPAH_ITEMS.length > 0 ? Math.max(...UPAH_ITEMS.map(it => +it.id || 0)) : 0) + 1;
+      const upahEntry = {
+        id: newId,
+        tgl,
+        pelapor: STATE.pelapor,
+        aktivitas: aktivitasLbl,
+        model,
+        satuan,
+        satuan_lbl: satuanLbl,
+        qty,
+        tarif: tarifVal,
+        status: 'belum',
+        src: 'auto_form'  // tag: created via Form Input
+      };
+      UPAH_ITEMS.push(upahEntry);
+      saveUpah();
+      const total = qty * tarifVal;
+      upahMsg = `\n\n💰 Auto-create entry upah: ${NAMA_PEKERJA[STATE.pelapor]} · ${satuanLbl} · Rp ${total.toLocaleString('id-ID')} (status: belum dibayar)\n→ Cek tab Upah Pekerja untuk konfirmasi pembayaran`;
+      // Refresh upah views kalau function ada
+      if (typeof renderUpahTable === 'function') renderUpahTable();
+      if (typeof renderUpahSummary === 'function') renderUpahSummary();
+    }
+  } else if (STATE.pelapor === 'ANTO') {
+    upahMsg = `\n\n📝 Mas Anto = sweat equity (pro-bono per Notulen 1-2 Mei) — tidak masuk timeline upah harian. Kontribusi tetap tercatat untuk bagi hasil pasca-BEP.`;
+  }
+
   let alertSummary = '✅ Laporan tersimpan ke localStorage!';
   if (climateAlerts.length > 0) {
     alertSummary += `\n\n⚡ ${climateAlerts.length} climate alert(s) terdeteksi:\n` +
       climateAlerts.map((a,i) => `${i+1}. ${a.msg}`).join('\n');
     alertSummary += '\n\nStatus compliance: ' + (hasHighAlert ? 'PARTIAL (deviation karena climate trigger)' : 'COMPLIANT');
   }
+  alertSummary += upahMsg;
   alert(alertSummary);
   resetForm();
   renderDashboard(); renderLog();
