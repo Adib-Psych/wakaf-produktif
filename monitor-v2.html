@@ -2806,6 +2806,7 @@ const DISTRIBUSI_DATA = [
   {
     fase: 'off-season',
     period: 'JAN-FEB',
+    months: [1, 2],
     label: 'Off-Season Akhir / Pre-Bloom',
     warna: '#a8c8bc',
     fontColor: '#2e4040',
@@ -2819,6 +2820,7 @@ const DISTRIBUSI_DATA = [
   {
     fase: 'bunga',
     period: 'MAR',
+    months: [3],
     label: 'Pembungaan',
     warna: '#e8dec8',
     fontColor: '#2e4040',
@@ -2832,6 +2834,7 @@ const DISTRIBUSI_DATA = [
   {
     fase: 'pentil',
     period: 'APR-MEI',
+    months: [4, 5],
     label: 'Pentil → Pre-Panen',
     warna: '#e8dec8',
     fontColor: '#2e4040',
@@ -2849,6 +2852,7 @@ const DISTRIBUSI_DATA = [
   {
     fase: 'panen',
     period: 'JUN-AGU',
+    months: [6, 7, 8],
     label: 'Panen Selektif Merah',
     warna: '#c14b3a',
     fontColor: '#fff',
@@ -2864,6 +2868,7 @@ const DISTRIBUSI_DATA = [
   {
     fase: 'pascapanen',
     period: 'SEP-OKT',
+    months: [9, 10],
     label: 'Pasca-Panen / SELEKSI POHON',
     warna: '#5a9080',
     fontColor: '#fff',
@@ -2882,6 +2887,7 @@ const DISTRIBUSI_DATA = [
   {
     fase: 'awal-mh',
     period: 'NOV-DES',
+    months: [11, 12],
     label: 'Awal Musim Hujan / Off-Season',
     warna: '#a8c8bc',
     fontColor: '#2e4040',
@@ -2942,9 +2948,33 @@ function renderDistribusi() {
     <div class="kpi"><div class="kpi-num" style="font-size:18px;color:var(--gold)">${counts.WAKIF + counts.HENDY}</div><div class="kpi-lbl">🔒 Tugas Wakif + Hendy</div></div>
   `;
 
-  // Render fase cards
+  // ===== Reorder: bulan berjalan paling atas, lalu lanjut maju + wrap-around =====
+  const currentMonth = new Date().getMonth() + 1;
+  const currentYear = new Date().getFullYear();
+  const namaBulanFull = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+  // Find current period idx (yang punya months array yg cover currentMonth)
+  const currentIdx = DISTRIBUSI_DATA.findIndex(f => Array.isArray(f.months) && f.months.includes(currentMonth));
+  const reordered = currentIdx >= 0
+    ? [...DISTRIBUSI_DATA.slice(currentIdx), ...DISTRIBUSI_DATA.slice(0, currentIdx)]
+    : DISTRIBUSI_DATA;
+
+  // Render banner aktif sebelum cards
   const listC = document.getElementById('distribusi-fase-list');
-  listC.innerHTML = DISTRIBUSI_DATA.map(f => {
+  const activeFase = currentIdx >= 0 ? DISTRIBUSI_DATA[currentIdx] : null;
+  let bannerHtml = '';
+  if (activeFase) {
+    bannerHtml = `<div style="background:linear-gradient(90deg,#1F5F47 0%,#5a9080 100%);color:#fff;padding:14px 20px;border-radius:10px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+      <div>
+        <div style="font-size:11px;letter-spacing:1px;opacity:0.85;font-weight:700">📅 PERIODE AKTIF — ${namaBulanFull[currentMonth]} ${currentYear}</div>
+        <div style="font-size:18px;font-weight:800;margin-top:2px">${activeFase.label}</div>
+      </div>
+      <div style="background:rgba(255,255,255,0.2);padding:6px 14px;border-radius:6px;font-size:13px;font-weight:700">${activeFase.period}</div>
+    </div>`;
+  }
+
+  listC.innerHTML = bannerHtml + reordered.map((f, displayIdx) => {
+    const isActive = activeFase && f === activeFase;
     const rows = f.aktivitas.map(a => `
       <tr>
         <td style="font-size:12px;max-width:380px;line-height:1.4">${a.act}</td>
@@ -2952,11 +2982,18 @@ function renderDistribusi() {
         <td>${renderPICBadges(a.verif)}</td>
       </tr>
     `).join('');
-    return `<div class="card" style="border-left:4px solid ${f.warna}">
+    const cardStyle = isActive
+      ? `border-left:6px solid #1F5F47;box-shadow:0 4px 12px rgba(31,95,71,0.18);background:linear-gradient(180deg,#FAFCFB 0%,#fff 100%)`
+      : `border-left:4px solid ${f.warna};opacity:${displayIdx === 0 ? 1 : 0.92}`;
+    const activeBadge = isActive
+      ? `<span style="background:#1F5F47;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:0.5px;margin-left:8px">🔥 AKTIF</span>`
+      : '';
+    return `<div class="card" id="distribusi-card-${f.fase}" style="${cardStyle}">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
         <div>
           <div style="display:inline-block;padding:4px 10px;border-radius:6px;background:${f.warna};color:${f.fontColor};font-size:11px;font-weight:800;letter-spacing:1px">${f.period}</div>
           <span style="font-size:14px;font-weight:700;color:var(--earth);margin-left:8px">${f.label}</span>
+          ${activeBadge}
         </div>
         <div style="font-size:11px;color:var(--mute)">${f.aktivitas.length} aktivitas</div>
       </div>
@@ -3173,7 +3210,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
     warna: 'sand',
     aktivitas: [
       {t:'⚠️ HINDARI pemangkasan berat (mengganggu bunga)', sop:'Robusta Edisi 2 hal 130', prio:'larangan', siapa:'Tim'},
-      {t:'Pemupukan akhir MH ½ dosis (komplemen ½ awal MH)', sop:'Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Pak Kumpul', dosis:'915 phn × ½ × (Urea 400/SP36 200/KCl 250/Dolomit 200) = <strong>Urea 183 kg + SP36 91,5 kg + KCl 114,4 kg + Dolomit 91,5 kg</strong> · aplikasi parit lingkar 30-50 cm dari batang, dalam 2-5 cm', lokal:'<strong>Ngantang 2026:</strong> La Nina prolonged → MH bisa lanjut sampai Mei. <strong>Adaptive trigger:</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi. Dolomit +25% sama seperti aplikasi awal MH.'},
+      {t:'Pemupukan akhir MH ½ dosis BRIN — komplemen ½ awal MH (siklus 2027 onwards)', sop:'BRIN tabel 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Pak Kumpul', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn, ½ dosis akhir MH):</strong><br>• Urea: <strong>150 g/phn</strong>  • SP-36: <strong>80 g/phn</strong>  • KCl: <strong>100 g/phn</strong>  • Kieserit: <strong>50 g/phn</strong>  • Dolomit: ~125 g/phn (NGT +25%)<br><br><strong>📊 Mar 2027+ — Post-selection (target 750 phn ideal):</strong><br>Urea ~113 kg (2,3 sak) · SP-36 ~60 kg (1,2 sak) · KCl ~75 kg (1,5 sak) · Kieserit ~38 kg (0,75 sak) · Dolomit ~94 kg (1,9 sak)<br><br><strong>📊 Backup pre-selection (~915 phn) jika seleksi belum 100%:</strong><br>Urea ~137 kg (2,7 sak) · SP-36 ~73 kg (1,5 sak) · KCl ~92 kg (1,8 sak) · Kieserit ~46 kg (1 sak) · Dolomit ~114 kg (2,3 sak)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm.<br><br><em>⚠️ Catatan Mar 2026 (lewat): masuk era sub-dose Wahab — bukan BRIN. Item ini valid Mar 2027+.</em>', lokal:'<strong>Ngantang adaptive:</strong> La Nina prolonged → MH bisa lanjut sampai Mei. <strong>Trigger</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso). Dolomit +25% sama seperti aplikasi awal MH (Andisol acidic Ngantang). <strong>Kieserit BARU per BRIN tabel 9 Mei</strong> — Mg+S larut cepat, komplemen Dolomit slow-release.'},
       {t:'Penyemprotan Cercospora prevention (3 mgg sekali)', sop:'Robusta Edisi 2 hal 175', prio:'rekomendasi', siapa:'Pak Kumpul', dosis:'Ekstrak daun cengkeh 1L + air 14L per ronde · 70% volume ke bawah daun + surfaktan', lokal:'<strong>Ngantang frekuensi:</strong> per <strong>2 minggu</strong> (bukan 3 mgg SOP) karena curah hujan tinggi 2.500+ mm/thn = lembab kontinyu = Cercospora aktif sepanjang tahun.'},
       {t:'Dokumentasi kerontokan bunga', sop:'Robusta Edisi 2 hal 282', prio:'wajib', siapa:'Mas Anto'}
     ]
@@ -3192,7 +3229,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
     warna: 'sand',
     aktivitas: [
       {t:'Estimasi produksi formal (sampling 30 pohon — 10/Bidang)', sop:'Robusta Edisi 2 hal 218', prio:'wajib', siapa:'Mas Anto', lokal:'<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi 700-800 mdpl = batas N/S3 untuk Robusta murni. Naikkan target setelah 2-3 musim observasi data aktual.'},
-      {t:'Pemupukan akhir MH PARTIAL (mitigation only) — SP-36 + KCl saja per RAB Final 9 Mei', sop:'BRIN tabel + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul', dosis:'<strong>BRIN ½ dosis × 915 phn aktual:</strong> SP-36 ~73 kg (2 sak) + KCl ~92 kg (2 sak)<br><strong>SKIP:</strong> Urea + Dolomit (defer ke siklus 2027 Nov MH full SOP)', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Wakif decision — Mei = mitigation panen-saving only, full SOP applied Nov MH siklus 2027. Sub-dose Wahab Jan-Mar (~14g/phn) sudah di-bridge nutrient gap.'},
+      {t:'Pemupukan akhir MH PARTIAL (mitigation only) — SP-36 + KCl saja per RAB Final 9 Mei', sop:'BRIN tabel + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn):</strong><br>• SP-36: <strong>80 g/phn</strong> (P — energy transfer untuk pengisian biji)<br>• KCl: <strong>100 g/phn</strong> (K — kualitas biji + pembesaran cherry)<br>• ❌ Urea SKIP (N dorong vegetatif, ganggu fase reproduktif Mei)<br>• ❌ Kieserit + Dolomit DEFER ke Nov MH siklus 2027<br><br><strong>📊 Total 915 phn aktual (Mei 2026):</strong><br>SP-36 = 80g × 915 = <strong>~73 kg (2 sak 50kg)</strong><br>KCl = 100g × 915 = <strong>~92 kg (2 sak 50kg)</strong><br>Estimasi biaya: SP-36 Rp 480K + KCl Rp 760K = <strong>Rp 1,24 jt</strong> (per RAB Final item 1.2 + 1.3)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm. Tutup tanah setelah aplikasi.', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Wakif decision — Mei = mitigation panen-saving only, full SOP applied Nov MH siklus 2027. Sub-dose Wahab Jan-Mar (~14g/phn) sudah di-bridge nutrient gap. <strong>⚠️ Adaptive trigger:</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso) — pencucian risk tinggi kalau hujan deras.'},
       {t:'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT (full processing via penggilingan + Bonsari)', sop:'Robusta Edisi 2 hal 222-246 + RAB Final 9 Mei', prio:'wajib', siapa:'Wakif + tim', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pulper manual CUT dari RAB. Processing via jasa penggilingan lokal (~Rp 1.500/kg green bean) + specialty lot ke Bonsari Coffee.'},
       {t:'Konfirmasi processing partner per lot (Bonsari/penggilingan lokal)', sop:'Q12 — Klarifikasi 8 Mei', prio:'wajib', siapa:'Wakif', lokal:'<strong>📍 Hybrid model:</strong> Specialty lot (premium) → Bonsari Coffee. Bulk → penggilingan lokal Pujon ~Rp 1.500/kg.'},
       {t:'Pasang Brocap pilot di Bidang 4 (5 unit) — baseline monitoring', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Pak Kumpul', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pilot 5 unit Bidang 4 saja (Rumah Wakif, ~10-15 pohon). Full deploy 50 unit Bidang 1-3 pindah ke <strong>Nov-Des 2026</strong> (4 bln post-panen, optimal per jurnal).'},
