@@ -256,6 +256,9 @@
       <div style="font-size:10px;letter-spacing:1.5px;color:var(--moss);padding:4px 14px 6px;font-weight:800">📋 SOP</div>
       <div class="sb-tab" data-panel="compliance"><span class="ico">✅</span><span class="lbl">SOP Compliance</span></div>
       <div class="sb-tab" data-panel="kalender"><span class="ico">📅</span><span class="lbl">SOP Kalender</span></div>
+      <div style="height:14px"></div>
+      <div style="font-size:10px;letter-spacing:1.5px;color:#D4AF37;padding:4px 14px 6px;font-weight:800">📜 PUBLIK — WAKIF ONLY</div>
+      <div class="sb-tab wakif-only" data-panel="milestones" data-tier="wakif"><span class="ico">📜</span><span class="lbl">Milestones Publik</span></div>
     </nav>
     <div class="sb-footer">
       <button onclick="logout()" title="Login dinonaktifkan di review mode">⏏ Login</button>
@@ -1155,6 +1158,207 @@
       </div>
     </div>
 
+    <!-- ============ MILESTONES PUBLIK (Wakif-only, Curated for Living Lab) ============ -->
+    <div class="panel" id="panel-milestones">
+      <div class="card" style="background:linear-gradient(135deg,#1F5F47,#2E4040);color:#fff;border:0;border-left:5px solid #D4AF37">
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:#D4AF37;margin-bottom:8px">📜 CURATED PUBLIC LAYER</div>
+        <div style="font-size:14px;line-height:1.6">
+          <strong>Tab ini = jembatan antara Dashboard Internal (operasional) dan Living Lab (publik).</strong><br>
+          Wakif curate event-event signifikan dari laporan harian → publish sebagai milestone bilingual → export JSON → Living Lab auto-update.
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:#A8C8BC;font-style:italic">
+          📌 Workflow: Tab ini → Suggested (auto-detect) → Curate narrative → Publish → Export JSON → git push → Living Lab live
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" style="color:var(--gold)"><span class="num" style="background:var(--gold);color:#fff">1</span>Tools &amp; Filter</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <button class="btn btn-primary" onclick="openMilestoneDlg()" style="background:var(--moss)">+ Tambah Milestone</button>
+          <button class="btn" onclick="openSuggestDlg()" style="background:#FFF4D6;color:#8B6914;border:1.5px solid #D4AF37">💡 Suggested (<span id="suggest-count">0</span>)</button>
+          <button class="btn" onclick="exportMilestonesJSON()" style="background:#1F5F47;color:#fff">📤 Export JSON</button>
+          <button class="btn btn-secondary" onclick="renderMilestonesTable()">🔄 Refresh</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <select id="filter-ms-year" onchange="renderMilestonesTable()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <option value="">Semua Tahun</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+          <select id="filter-ms-phase" onchange="renderMilestonesTable()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <option value="">Semua Fase</option>
+            <option value="pre-panen">Pre-Panen</option>
+            <option value="panen">Panen</option>
+            <option value="post-panen">Post-Panen</option>
+            <option value="awal-mh">Awal MH</option>
+            <option value="strategi">Strategi / Tata Kelola</option>
+            <option value="infrastruktur">Infrastruktur</option>
+            <option value="kemitraan">Kemitraan</option>
+          </select>
+          <select id="filter-ms-status" onchange="renderMilestonesTable()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <option value="">Semua Status</option>
+            <option value="done">✓ Selesai</option>
+            <option value="ongoing">⟳ Berjalan</option>
+            <option value="planned">◎ Direncanakan</option>
+            <option value="upcoming">↗ Akan Datang</option>
+          </select>
+          <select id="filter-ms-publish" onchange="renderMilestonesTable()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <option value="">Semua</option>
+            <option value="true">✅ Published</option>
+            <option value="false">📝 Draft</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="num">2</span>Milestone Summary</div>
+        <div class="kpi-grid" id="ms-summary"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="num">3</span>Daftar Milestones</div>
+        <div class="table-wrap">
+          <table style="font-size:12px">
+            <thead><tr>
+              <th style="width:90px">Tanggal</th>
+              <th style="width:90px">Fase</th>
+              <th style="width:65px">Status</th>
+              <th>Title (ID)</th>
+              <th style="width:60px">EN?</th>
+              <th style="width:80px">Publish</th>
+              <th style="width:130px">Aksi</th>
+            </tr></thead>
+            <tbody id="ms-tbody"></tbody>
+          </table>
+        </div>
+        <p style="font-size:10px;color:var(--mute);margin-top:10px">
+          💡 Milestone published akan muncul di <a href="/living-lab.html" target="_blank" style="color:var(--moss);font-weight:700">Living Lab publik</a> setelah Adib export JSON + git push.
+          Edit history disimpan otomatis (last_modified + change_log untuk audit transparansi).
+        </p>
+      </div>
+    </div>
+
+    <!-- ============ MILESTONE FORM DIALOG ============ -->
+    <div id="ms-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9000;justify-content:center;align-items:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;max-width:760px;width:100%;max-height:92vh;display:flex;flex-direction:column">
+        <div style="padding:18px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:17px;font-weight:800;color:var(--earth)" id="ms-modal-title">📜 Tambah Milestone</div>
+            <div style="font-size:11px;color:var(--mute);margin-top:2px">ID required · EN optional (bisa diisi nanti)</div>
+          </div>
+          <button onclick="closeMilestoneDlg()" style="background:none;border:none;font-size:24px;color:var(--mute);cursor:pointer">✕</button>
+        </div>
+        <div style="padding:18px 24px;overflow-y:auto;flex:1">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Tanggal *</label>
+              <input type="date" id="ms-date" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Tahun *</label>
+              <select id="ms-year" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Fase *</label>
+              <select id="ms-phase" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+                <option value="pre-panen">🌱 Pre-Panen</option>
+                <option value="panen">☕ Panen</option>
+                <option value="post-panen">🌿 Post-Panen</option>
+                <option value="awal-mh">🌧️ Awal MH</option>
+                <option value="strategi">📋 Strategi / Tata Kelola</option>
+                <option value="infrastruktur">🏗️ Infrastruktur</option>
+                <option value="kemitraan">🤝 Kemitraan</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Status *</label>
+              <select id="ms-status" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+                <option value="done">✓ Selesai</option>
+                <option value="ongoing">⟳ Berjalan</option>
+                <option value="planned">◎ Direncanakan</option>
+                <option value="upcoming">↗ Akan Datang</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="background:#f5f9f7;padding:12px;border-radius:6px;margin-bottom:14px;border-left:3px solid var(--moss)">
+            <div style="font-size:11px;font-weight:700;color:var(--moss);margin-bottom:8px">🇮🇩 BAHASA INDONESIA (WAJIB)</div>
+            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Title ID *</label>
+            <input type="text" id="ms-title-id" placeholder="cth: RAB Final Locked — Saving Rp 22,94 jt" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin:4px 0 10px">
+            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Detail ID *</label>
+            <textarea id="ms-detail-id" rows="3" placeholder="Narasi lengkap 2-3 kalimat untuk publik..." style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px;font-family:inherit"></textarea>
+          </div>
+
+          <div style="background:#f5f7f9;padding:12px;border-radius:6px;margin-bottom:14px;border-left:3px solid #6B8FA8">
+            <div style="font-size:11px;font-weight:700;color:#6B8FA8;margin-bottom:8px">🇬🇧 ENGLISH (OPTIONAL — Auto-translate later)</div>
+            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Title EN</label>
+            <input type="text" id="ms-title-en" placeholder="e.g., Final RAB Locked — Saving Rp 22.94M" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin:4px 0 10px">
+            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Detail EN</label>
+            <textarea id="ms-detail-en" rows="3" placeholder="Optional English narrative..." style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px;font-family:inherit"></textarea>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Meta Tag (badge)</label>
+              <input type="text" id="ms-meta-tag" placeholder="cth: Strategi · Wakif · 4 sak" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+            </div>
+            <div>
+              <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Tag Kategori</label>
+              <select id="ms-tag" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+                <option value="wakif">Wakif</option>
+                <option value="tim">Tim Lapangan</option>
+                <option value="infrastruktur">Infrastruktur</option>
+                <option value="strategi">Strategi</option>
+                <option value="kemitraan">Kemitraan</option>
+                <option value="learning">Lesson Learned</option>
+                <option value="rab">RAB / Keuangan</option>
+                <option value="sop">SOP / Compliance</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-bottom:14px">
+            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Linked Documents (optional, comma-separated paths)</label>
+            <input type="text" id="ms-linked-docs" placeholder="cth: SOP/RAB_FINAL_9Mei2026.docx, Meeting Minutes Wakaf/Notulen_5Mei2026.docx" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+          </div>
+
+          <div style="background:#fff8e5;padding:10px 12px;border-radius:6px;font-size:11px;color:#8B6914" id="ms-audit-info" style="display:none">
+            🕐 <span id="ms-audit-text"></span>
+          </div>
+        </div>
+        <div style="padding:14px 24px;border-top:1px solid #eee;background:#fafbfa;display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <div style="font-size:12px;color:var(--earth)">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="ms-publish-toggle"> <span>📢 Publish ke Living Lab</span></label>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" onclick="closeMilestoneDlg()">Batal</button>
+            <button class="btn btn-primary" onclick="saveMilestone()" style="background:var(--moss);color:#fff">💾 Simpan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ SUGGEST PANEL DIALOG ============ -->
+    <div id="suggest-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9000;justify-content:center;align-items:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;max-width:880px;width:100%;max-height:90vh;display:flex;flex-direction:column">
+        <div style="padding:18px 24px;border-bottom:1px solid #eee">
+          <div style="font-size:17px;font-weight:800;color:var(--earth)">💡 Suggested Milestones</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px" id="suggest-info">Auto-detected dari STATE.laporan</div>
+        </div>
+        <div style="padding:14px 24px;background:#FFF8E5;border-bottom:1px solid #F0E5C5;font-size:11px;color:#8B6914;line-height:1.5">
+          💡 Sistem auto-detect candidates dari laporan harian dengan pattern: aktivitas Wakif/Hendy (strategis), cluster aktivitas serupa (mis. "pemupukan tuntas"), first-time activities, compliance milestones. Klik <b>Convert</b> untuk auto-populate form milestone.
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:14px 24px" id="suggest-list"></div>
+        <div style="padding:14px 24px;border-top:1px solid #eee;background:#fafbfa;display:flex;justify-content:flex-end">
+          <button class="btn btn-secondary" onclick="closeSuggestDlg()">Tutup</button>
+        </div>
+      </div>
+    </div>
+
   </div>
   <!-- /content-wrap -->
 
@@ -1410,6 +1614,7 @@ function initApp() {
   renderDistribusi();
   renderSOPKalender();
   renderComplianceProgress();
+  if (typeof renderMilestonesTable === 'function') renderMilestonesTable();
 
   // Set today's date in form
   document.getElementById('f-tgl').value = new Date().toISOString().slice(0,10);
@@ -3049,6 +3254,436 @@ function renderDistribusi() {
       }
     });
   }
+}
+
+// ===========================================================================
+// MILESTONES PUBLIK — Curated Public Layer (jembatan Dashboard ↔ Living Lab)
+// ===========================================================================
+const MILESTONE_SCHEMA_VERSION = '1.0';
+const MS_PHASE_LABELS = {
+  'pre-panen': { id:'Pre-Panen', en:'Pre-Harvest', icon:'🌱' },
+  'panen': { id:'Panen', en:'Harvest', icon:'☕' },
+  'post-panen': { id:'Post-Panen', en:'Post-Harvest', icon:'🌿' },
+  'awal-mh': { id:'Awal MH', en:'Wet Season Start', icon:'🌧️' },
+  'strategi': { id:'Strategi / Tata Kelola', en:'Strategy / Governance', icon:'📋' },
+  'infrastruktur': { id:'Infrastruktur', en:'Infrastructure', icon:'🏗️' },
+  'kemitraan': { id:'Kemitraan', en:'Partnership', icon:'🤝' }
+};
+const MS_STATUS_LABELS = {
+  'done': { id:'✓ Selesai', en:'✓ Done', cls:'compliant' },
+  'ongoing': { id:'⟳ Berjalan', en:'⟳ Ongoing', cls:'pending' },
+  'planned': { id:'◎ Direncanakan', en:'◎ Planned', cls:'na' },
+  'upcoming': { id:'↗ Akan Datang', en:'↗ Upcoming', cls:'na' }
+};
+
+// localStorage init dengan schema versioning
+const msStoredVer = localStorage.getItem('wkkn_v2_ms_ver');
+if (msStoredVer !== MILESTONE_SCHEMA_VERSION) {
+  localStorage.removeItem('wkkn_v2_milestones');
+  localStorage.setItem('wkkn_v2_ms_ver', MILESTONE_SCHEMA_VERSION);
+}
+let MILESTONES = JSON.parse(localStorage.getItem('wkkn_v2_milestones') || '[]');
+
+function saveMilestones() {
+  localStorage.setItem('wkkn_v2_milestones', JSON.stringify(MILESTONES));
+}
+
+let CURRENT_EDIT_MS_ID = null;
+
+// Helper: bahasa Indonesia full month name
+const MS_BULAN_FULL = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+function msFormatDateLabel(iso) {
+  const dt = _isoToDate(iso);
+  if (!dt) return iso;
+  return { id: `${dt.getDate()} ${MS_BULAN_FULL[dt.getMonth()+1]} ${dt.getFullYear()}`,
+           en: `${MS_BULAN_FULL[dt.getMonth()+1]} ${dt.getDate()}, ${dt.getFullYear()}` };
+}
+
+// ===== Render Summary KPIs =====
+function renderMilestonesSummary() {
+  const c = document.getElementById('ms-summary');
+  if (!c) return;
+  const total = MILESTONES.length;
+  const published = MILESTONES.filter(m => m.published).length;
+  const draft = total - published;
+  const enComplete = MILESTONES.filter(m => m.title && m.title.en && m.title.en.trim()).length;
+  const byPhase = {};
+  MILESTONES.forEach(m => { byPhase[m.phase] = (byPhase[m.phase]||0)+1; });
+  const topPhase = Object.entries(byPhase).sort((a,b)=>b[1]-a[1])[0];
+  c.innerHTML = `
+    <div class="kpi"><div class="kpi-num">${total}</div><div class="kpi-lbl">Total Milestones</div></div>
+    <div class="kpi"><div class="kpi-num" style="color:var(--green)">${published}</div><div class="kpi-lbl">📢 Published</div></div>
+    <div class="kpi"><div class="kpi-num" style="color:var(--mute)">${draft}</div><div class="kpi-lbl">📝 Draft</div></div>
+    <div class="kpi"><div class="kpi-num" style="color:#6B8FA8">${enComplete}</div><div class="kpi-lbl">🇬🇧 EN Complete</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:14px;color:var(--moss)">${topPhase ? MS_PHASE_LABELS[topPhase[0]].id : '—'}</div><div class="kpi-lbl">Top Fase</div></div>
+  `;
+}
+
+// ===== Render Table =====
+function renderMilestonesTable() {
+  const tbody = document.getElementById('ms-tbody');
+  if (!tbody) return;
+  const fYear = document.getElementById('filter-ms-year').value;
+  const fPhase = document.getElementById('filter-ms-phase').value;
+  const fStatus = document.getElementById('filter-ms-status').value;
+  const fPub = document.getElementById('filter-ms-publish').value;
+  let filtered = MILESTONES.slice();
+  if (fYear) filtered = filtered.filter(m => String(m.year) === fYear);
+  if (fPhase) filtered = filtered.filter(m => m.phase === fPhase);
+  if (fStatus) filtered = filtered.filter(m => m.status === fStatus);
+  if (fPub) filtered = filtered.filter(m => String(m.published) === fPub);
+  // Sort by date desc
+  filtered.sort((a,b) => (b.date||'').localeCompare(a.date||''));
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada milestone yang match filter. Klik "+ Tambah Milestone" untuk mulai.</td></tr>';
+    renderMilestonesSummary();
+    refreshSuggestCount();
+    return;
+  }
+  tbody.innerHTML = filtered.map(m => {
+    const phaseLbl = MS_PHASE_LABELS[m.phase] || { id:m.phase, icon:'•' };
+    const statusLbl = MS_STATUS_LABELS[m.status] || { id:m.status, cls:'na' };
+    const enExists = m.title && m.title.en && m.title.en.trim();
+    const pubBadge = m.published
+      ? '<span style="background:#5a9080;color:#fff;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">📢 LIVE</span>'
+      : '<span style="background:#eee;color:#888;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">📝 DRAFT</span>';
+    const auditTxt = m.last_modified_at ? `<div style="font-size:9px;color:var(--mute);margin-top:2px">Edit: ${formatTglShort(m.last_modified_at.slice(0,10))}</div>` : '';
+    return `<tr>
+      <td style="font-size:11px;white-space:nowrap"><b>${formatTgl(m.date)}</b>${auditTxt}</td>
+      <td style="font-size:11px"><span style="font-size:14px">${phaseLbl.icon}</span> ${phaseLbl.id}</td>
+      <td><span class="pill ${statusLbl.cls}" style="font-size:10px">${statusLbl.id}</span></td>
+      <td style="font-size:12px;line-height:1.4"><b>${m.title.id || '—'}</b><div style="font-size:10px;color:var(--mute);margin-top:2px">${(m.detail.id || '').substring(0,80)}${(m.detail.id||'').length>80?'…':''}</div></td>
+      <td style="text-align:center;font-size:11px">${enExists ? '✅' : '<span style="color:var(--mute)">—</span>'}</td>
+      <td style="text-align:center">${pubBadge}</td>
+      <td style="font-size:11px;white-space:nowrap">
+        <button onclick="editMilestone('${m.id}')" style="background:var(--moss);color:#fff;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px">✏️ Edit</button>
+        <button onclick="togglePublishMilestone('${m.id}')" style="background:${m.published?'#eee':'#FFF4D6'};color:${m.published?'#666':'#8B6914'};border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="${m.published?'Unpublish':'Publish'}">${m.published?'📝':'📢'}</button>
+        <button onclick="deleteMilestone('${m.id}')" style="background:#fde2dc;color:#8c2519;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer" title="Delete">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+  renderMilestonesSummary();
+  refreshSuggestCount();
+}
+
+// ===== CRUD =====
+function openMilestoneDlg(prefill) {
+  CURRENT_EDIT_MS_ID = null;
+  document.getElementById('ms-modal-title').textContent = '📜 Tambah Milestone';
+  document.getElementById('ms-date').value = prefill?.date || new Date().toISOString().slice(0,10);
+  document.getElementById('ms-year').value = prefill?.year || 2026;
+  document.getElementById('ms-phase').value = prefill?.phase || 'pre-panen';
+  document.getElementById('ms-status').value = prefill?.status || 'done';
+  document.getElementById('ms-title-id').value = prefill?.title?.id || '';
+  document.getElementById('ms-detail-id').value = prefill?.detail?.id || '';
+  document.getElementById('ms-title-en').value = '';
+  document.getElementById('ms-detail-en').value = '';
+  document.getElementById('ms-meta-tag').value = prefill?.meta?.tag || '';
+  document.getElementById('ms-tag').value = prefill?.tag || 'wakif';
+  document.getElementById('ms-linked-docs').value = '';
+  document.getElementById('ms-publish-toggle').checked = false;
+  const audit = document.getElementById('ms-audit-info');
+  if (audit) audit.style.display = 'none';
+  document.getElementById('ms-modal-overlay').style.display = 'flex';
+}
+
+function editMilestone(id) {
+  const m = MILESTONES.find(x => x.id === id);
+  if (!m) return;
+  CURRENT_EDIT_MS_ID = id;
+  document.getElementById('ms-modal-title').textContent = '✏️ Edit Milestone';
+  document.getElementById('ms-date').value = m.date || '';
+  document.getElementById('ms-year').value = m.year || 2026;
+  document.getElementById('ms-phase').value = m.phase || 'pre-panen';
+  document.getElementById('ms-status').value = m.status || 'done';
+  document.getElementById('ms-title-id').value = m.title?.id || '';
+  document.getElementById('ms-detail-id').value = m.detail?.id || '';
+  document.getElementById('ms-title-en').value = m.title?.en || '';
+  document.getElementById('ms-detail-en').value = m.detail?.en || '';
+  document.getElementById('ms-meta-tag').value = m.meta?.tag || '';
+  document.getElementById('ms-tag').value = m.tag || 'wakif';
+  document.getElementById('ms-linked-docs').value = (m.linked_docs || []).join(', ');
+  document.getElementById('ms-publish-toggle').checked = !!m.published;
+  // Show audit info
+  const audit = document.getElementById('ms-audit-info');
+  const auditTxt = document.getElementById('ms-audit-text');
+  if (audit && auditTxt) {
+    audit.style.display = 'block';
+    const created = m.created_at ? formatTgl(m.created_at.slice(0,10)) : '?';
+    const modified = m.last_modified_at ? formatTgl(m.last_modified_at.slice(0,10)) : '—';
+    const editCount = (m.change_log || []).length;
+    auditTxt.textContent = `Dibuat: ${created} · Terakhir edit: ${modified} · Total edit: ${editCount}`;
+  }
+  document.getElementById('ms-modal-overlay').style.display = 'flex';
+}
+
+function closeMilestoneDlg() {
+  document.getElementById('ms-modal-overlay').style.display = 'none';
+  CURRENT_EDIT_MS_ID = null;
+}
+
+function saveMilestone() {
+  const titleId = document.getElementById('ms-title-id').value.trim();
+  const detailId = document.getElementById('ms-detail-id').value.trim();
+  if (!titleId || !detailId) {
+    alert('Title ID dan Detail ID wajib diisi (bahasa Indonesia)');
+    return;
+  }
+  const date = document.getElementById('ms-date').value;
+  const linkedDocs = document.getElementById('ms-linked-docs').value
+    .split(',').map(s => s.trim()).filter(Boolean);
+  const now = new Date().toISOString();
+  const data = {
+    date,
+    year: parseInt(document.getElementById('ms-year').value, 10),
+    phase: document.getElementById('ms-phase').value,
+    status: document.getElementById('ms-status').value,
+    title: {
+      id: titleId,
+      en: document.getElementById('ms-title-en').value.trim() || null
+    },
+    detail: {
+      id: detailId,
+      en: document.getElementById('ms-detail-en').value.trim() || null
+    },
+    meta: {
+      tag: document.getElementById('ms-meta-tag').value.trim() || null,
+      date_short: formatTglShort(date)
+    },
+    tag: document.getElementById('ms-tag').value,
+    linked_docs: linkedDocs,
+    published: document.getElementById('ms-publish-toggle').checked,
+    last_modified_at: now,
+    last_modified_by: 'wakif'
+  };
+
+  if (CURRENT_EDIT_MS_ID) {
+    // Update existing
+    const idx = MILESTONES.findIndex(m => m.id === CURRENT_EDIT_MS_ID);
+    if (idx >= 0) {
+      const old = MILESTONES[idx];
+      // Audit log: append change_log entry kalau ada perubahan signifikan
+      const changeLog = old.change_log || [];
+      const titleChanged = old.title?.id !== titleId;
+      const statusChanged = old.status !== data.status;
+      const publishChanged = old.published !== data.published;
+      if (titleChanged || statusChanged || publishChanged) {
+        const summary = [];
+        if (titleChanged) summary.push('title updated');
+        if (statusChanged) summary.push(`status: ${old.status} → ${data.status}`);
+        if (publishChanged) summary.push(data.published ? 'published' : 'unpublished');
+        changeLog.push({ date: now.slice(0,10), summary: summary.join(', ') });
+      }
+      MILESTONES[idx] = {
+        ...old,
+        ...data,
+        id: old.id,
+        created_at: old.created_at,
+        change_log: changeLog
+      };
+    }
+  } else {
+    // Create new
+    const newId = 'm_' + date.replace(/-/g,'') + '_' + Math.random().toString(36).substr(2, 5);
+    MILESTONES.push({
+      id: newId,
+      ...data,
+      created_at: now,
+      change_log: []
+    });
+  }
+  saveMilestones();
+  closeMilestoneDlg();
+  renderMilestonesTable();
+  showToast(CURRENT_EDIT_MS_ID ? '✅ Milestone updated' : '✅ Milestone created');
+}
+
+function deleteMilestone(id) {
+  const m = MILESTONES.find(x => x.id === id);
+  if (!m) return;
+  if (!confirm(`Hapus milestone "${m.title.id}"?\n\nIni akan menghapus permanen — kalau published, juga akan hilang dari Living Lab setelah next export.`)) return;
+  MILESTONES = MILESTONES.filter(x => x.id !== id);
+  saveMilestones();
+  renderMilestonesTable();
+  showToast('🗑️ Milestone deleted');
+}
+
+function togglePublishMilestone(id) {
+  const m = MILESTONES.find(x => x.id === id);
+  if (!m) return;
+  m.published = !m.published;
+  m.last_modified_at = new Date().toISOString();
+  m.last_modified_by = 'wakif';
+  const cl = m.change_log || [];
+  cl.push({ date: m.last_modified_at.slice(0,10), summary: m.published ? 'published' : 'unpublished' });
+  m.change_log = cl;
+  saveMilestones();
+  renderMilestonesTable();
+  showToast(m.published ? '📢 Published' : '📝 Unpublished');
+}
+
+// ===== AUTO-SUGGEST ENGINE =====
+function findSuggestCandidates() {
+  if (!STATE || !Array.isArray(STATE.laporan)) return [];
+  const candidates = [];
+  // 1. Wakif/Hendy aktivitas (rare, strategic)
+  STATE.laporan.forEach(lap => {
+    if (lap.pelapor === 'WAKIF' || lap.pelapor === 'HENDY') {
+      // Cek belum ada di MILESTONES
+      const exists = MILESTONES.some(m => m.date === lap.tgl &&
+        (m.title.id || '').toLowerCase().includes((lap.kategori || '').toLowerCase().replace(/_/g, ' ')));
+      if (!exists) {
+        candidates.push({
+          type: 'strategic',
+          source: lap,
+          suggestedTitle: `${(lap.kategori || '').replace(/_/g,' ')} — ${lap.pelapor === 'WAKIF' ? 'Wakif' : 'Hendy'}`,
+          suggestedPhase: 'strategi',
+          icon: '⭐',
+          reason: 'Aktivitas Wakif/Hendy — strategic event yang jarang'
+        });
+      }
+    }
+  });
+  // 2. Cluster aktivitas serupa dalam 1 minggu (mis. "pemupukan tuntas semua bidang")
+  const byKatWeek = {};
+  STATE.laporan.forEach(lap => {
+    if (!lap.tgl || !lap.kategori) return;
+    const dt = _isoToDate(lap.tgl);
+    if (!dt) return;
+    const wk = `${lap.kategori}_${dt.getFullYear()}_${Math.floor(dt.getDate() / 7)}`;
+    byKatWeek[wk] = byKatWeek[wk] || [];
+    byKatWeek[wk].push(lap);
+  });
+  Object.entries(byKatWeek).forEach(([wk, laps]) => {
+    if (laps.length >= 3) {
+      const bidangs = [...new Set(laps.map(l => l.bidang))];
+      if (bidangs.length >= 2) {
+        const exists = MILESTONES.some(m => (m.title.id || '').toLowerCase().includes('cluster_' + wk));
+        if (!exists) {
+          candidates.push({
+            type: 'cluster',
+            source: laps[0],
+            allSources: laps,
+            suggestedTitle: `${(laps[0].kategori || '').replace(/_/g,' ')} tuntas — ${bidangs.length} bidang dalam 1 minggu`,
+            suggestedPhase: 'pre-panen',
+            icon: '🎯',
+            reason: `Cluster ${laps.length} aktivitas serupa di ${bidangs.length} bidang`
+          });
+        }
+      }
+    }
+  });
+  // 3. First-time activities (kategori belum pernah muncul sebelumnya)
+  const seen = new Set();
+  const sortedByDate = STATE.laporan.slice().sort((a,b) => (a.tgl||'').localeCompare(b.tgl||''));
+  sortedByDate.forEach(lap => {
+    if (seen.has(lap.kategori)) return;
+    seen.add(lap.kategori);
+    const exists = MILESTONES.some(m => m.date === lap.tgl && (m.title.id || '').toLowerCase().includes(lap.kategori.replace(/_/g, ' ').toLowerCase()));
+    if (!exists && lap.kategori && lap.tgl) {
+      candidates.push({
+        type: 'first-time',
+        source: lap,
+        suggestedTitle: `Pertama kali: ${(lap.kategori || '').replace(/_/g,' ')} di Bidang ${lap.bidang}`,
+        suggestedPhase: 'pre-panen',
+        icon: '🆕',
+        reason: 'First-time activity — milestone potensial untuk Living Lab'
+      });
+    }
+  });
+  return candidates.slice(0, 30); // Cap at 30 to avoid overwhelming
+}
+
+function refreshSuggestCount() {
+  const count = findSuggestCandidates().length;
+  const el = document.getElementById('suggest-count');
+  if (el) el.textContent = count;
+}
+
+function openSuggestDlg() {
+  const candidates = findSuggestCandidates();
+  const list = document.getElementById('suggest-list');
+  const info = document.getElementById('suggest-info');
+  if (candidates.length === 0) {
+    list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada suggested milestones saat ini. Mungkin semua sudah ter-curate, atau STATE.laporan masih kosong.</div>';
+    info.textContent = 'No candidates';
+  } else {
+    info.textContent = `${candidates.length} candidates ditemukan`;
+    list.innerHTML = candidates.map((c, i) => `
+      <div style="background:#FAFBFA;border-left:4px solid ${c.type==='strategic'?'#D4AF37':c.type==='cluster'?'#5a9080':'#6B8FA8'};padding:12px 16px;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:start;gap:12px">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+            <span style="font-size:18px">${c.icon}</span>
+            <span style="background:${c.type==='strategic'?'#FFF4D6':c.type==='cluster'?'#DDE9E3':'#E5EEF5'};color:${c.type==='strategic'?'#8B6914':c.type==='cluster'?'#1F5F47':'#3A5A75'};padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700">${c.type.toUpperCase()}</span>
+            <span style="font-size:11px;color:var(--mute)">${formatTgl(c.source.tgl)}</span>
+          </div>
+          <div style="font-weight:700;color:var(--earth);font-size:13px">${c.suggestedTitle}</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:3px;font-style:italic">${c.reason}</div>
+          <div style="font-size:10px;color:#888;margin-top:4px">Source: Bidang ${c.source.bidang || '?'} · ${c.source.detail?.substring(0,60) || '(no detail)'}${(c.source.detail||'').length>60?'…':''}</div>
+        </div>
+        <button class="btn btn-primary" onclick='convertSuggestToMilestone(${i})' style="background:var(--moss);color:#fff;flex-shrink:0;font-size:11px;padding:6px 10px">Convert →</button>
+      </div>
+    `).join('');
+    // Store candidates for convert reference
+    window.__SUGGEST_CACHE = candidates;
+  }
+  document.getElementById('suggest-modal-overlay').style.display = 'flex';
+}
+
+function closeSuggestDlg() {
+  document.getElementById('suggest-modal-overlay').style.display = 'none';
+}
+
+function convertSuggestToMilestone(idx) {
+  const c = window.__SUGGEST_CACHE?.[idx];
+  if (!c) return;
+  closeSuggestDlg();
+  openMilestoneDlg({
+    date: c.source.tgl,
+    year: parseInt((c.source.tgl || '').slice(0,4), 10) || 2026,
+    phase: c.suggestedPhase,
+    status: 'done',
+    title: { id: c.suggestedTitle },
+    detail: { id: c.source.detail || '(detail dari laporan harian — silakan refine narrative untuk publik)' },
+    meta: { tag: c.type === 'strategic' ? 'Strategic' : c.type === 'cluster' ? 'Cluster' : 'First-time' },
+    tag: c.type === 'strategic' ? 'strategi' : 'tim'
+  });
+}
+
+// ===== EXPORT JSON =====
+function exportMilestonesJSON() {
+  const published = MILESTONES.filter(m => m.published);
+  if (published.length === 0) {
+    if (!confirm('Belum ada milestone published. Tetap export (file kosong)?')) return;
+  }
+  const exportData = {
+    schema_version: MILESTONE_SCHEMA_VERSION,
+    generated_at: new Date().toISOString(),
+    generated_by: 'Wakaf Produktif Kebun Kopi Ngantang — Monitor V2',
+    total_published: published.length,
+    milestones: published.map(m => ({
+      id: m.id,
+      year: m.year,
+      phase: m.phase,
+      date: m.date,
+      date_label: msFormatDateLabel(m.date),
+      status: m.status,
+      title: m.title,
+      detail: m.detail,
+      meta: m.meta,
+      tag: m.tag,
+      linked_docs: m.linked_docs || [],
+      last_modified_at: m.last_modified_at,
+      change_log_count: (m.change_log || []).length
+    }))
+  };
+  const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'aktivitas-publik.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast(`📤 Exported ${published.length} published milestones — save ke /data/aktivitas-publik.json + git push`);
 }
 
 // ===== SOP STATUS TRACKING (linked: Kalender ↔ Compliance) =====
