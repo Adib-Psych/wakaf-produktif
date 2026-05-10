@@ -521,6 +521,68 @@ span.lang-en { display: none; }
   font-size: 0.85rem; font-style: italic;
   color: var(--muted); margin-left: auto;
 }
+/* ══ SOP Compliance Table (Year 2026+) ══ */
+.sop-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--bg-deep); background: #fff; }
+.sop-compliance-table {
+  width: 100%; border-collapse: collapse; font-size: 0.85rem;
+  background: #fff;
+}
+.sop-compliance-table th {
+  background: linear-gradient(180deg, #2E4040 0%, #1F5F47 100%);
+  color: #fff; font-weight: 700; font-size: 0.72rem;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 0.85rem 0.9rem; text-align: left;
+  border-bottom: 2px solid #1F5F47;
+}
+.sop-compliance-table th.sop-th-meta { width: 22%; }
+.sop-compliance-table th.sop-th-aktivitas { width: 30%; }
+.sop-compliance-table th.sop-th-terminology { width: 25%; }
+.sop-compliance-table th.sop-th-compliance { width: 23%; }
+.sop-table-row {
+  border-bottom: 1px solid #f0f0e8;
+  transition: background 0.12s;
+}
+.sop-table-row:hover { background: #fafbfa; }
+.sop-table-row td { padding: 0.95rem 0.9rem; vertical-align: top; line-height: 1.55; color: #2e4040; }
+.sop-cell-meta { background: #f9faf8; border-right: 1px solid #eef0e8; }
+.sop-cell-date { font-size: 0.75rem; color: #5a9080; font-weight: 700; margin-bottom: 4px; }
+.sop-cell-title { font-size: 0.86rem; line-height: 1.4; margin-bottom: 6px; color: #2e4040; }
+.sop-cell-status { font-size: 0.7rem; }
+.sop-cell-status .s-done { background: #DDE9E3; color: #1F5F47; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+.sop-cell-status .s-ongoing { background: #FFF4D6; color: #8B6914; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+.sop-cell-status .s-planned { background: #E5EEF5; color: #3A5A75; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+.sop-cell-status .s-upcoming { background: #f0e8dc; color: #6B5C40; padding: 2px 8px; border-radius: 10px; font-weight: 700; }
+.sop-cell-aktivitas { font-size: 0.83rem; color: #4a4030; }
+.sop-cell-terminology { font-size: 0.83rem; color: #1F5F47; font-style: italic; font-family: 'Lora', serif; }
+.sop-cell-compliance { background: #fafcfb; border-left: 1px solid #eef0e8; }
+.sop-compliance-badge {
+  display: inline-block; padding: 4px 10px; border-radius: 12px;
+  font-size: 0.72rem; font-weight: 700; margin-bottom: 6px;
+}
+.sop-badge-sesuai { background: #DDE9E3; color: #1F5F47; }
+.sop-badge-adaptasi { background: #E8F4DC; color: #4a6b1f; }
+.sop-badge-partial { background: #FFF4D6; color: #8B6914; }
+.sop-badge-deviation { background: #FDE2DC; color: #8c2519; }
+.sop-badge-phase2 { background: #E5EEF5; color: #3A5A75; }
+.sop-badge-na { background: #F0F0F0; color: #666; }
+.sop-badge-unknown { background: #F5F5F5; color: #999; }
+.sop-compliance-note { font-size: 0.75rem; color: #6B6053; line-height: 1.4; font-style: italic; }
+.sop-table-row.sop-status-deviation { background: rgba(193,75,58,0.04); }
+.sop-table-row.sop-status-deviation:hover { background: rgba(193,75,58,0.08); }
+.sop-table-row.sop-status-adaptasi { background: rgba(125,184,72,0.04); }
+
+/* Mobile responsive: stack table cells */
+@media (max-width: 768px) {
+  .sop-compliance-table thead { display: none; }
+  .sop-compliance-table tr { display: block; padding: 1rem; border-bottom: 2px solid var(--bg-deep); }
+  .sop-compliance-table td { display: block; padding: 0.4rem 0; border: 0; }
+  .sop-compliance-table td.sop-cell-meta { background: transparent; border-right: 0; padding-bottom: 0.7rem; border-bottom: 1px solid #eef0e8; margin-bottom: 0.7rem; }
+  .sop-compliance-table td.sop-cell-aktivitas::before { content: "📋 Apa yang Dilakukan: "; font-weight: 700; color: #5a9080; font-size: 0.7rem; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .sop-compliance-table td.sop-cell-terminology::before { content: "📐 Secara Teori (SOP): "; font-weight: 700; color: #5a9080; font-size: 0.7rem; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .sop-compliance-table td.sop-cell-compliance::before { content: "✅ Compliance: "; font-weight: 700; color: #5a9080; font-size: 0.7rem; display: block; margin-bottom: 3px; text-transform: uppercase; letter-spacing: 0.05em; background: transparent; }
+  .sop-compliance-table td.sop-cell-compliance { background: transparent; border-left: 0; }
+}
+
 .act-log-list { display: flex; flex-direction: column; gap: 0.7rem; }
 .act-log-item {
   background: var(--white);
@@ -2340,6 +2402,17 @@ const STATUS_LABELS_LL = {
   'upcoming':{ id:'↗ Akan Datang',   en:'↗ Upcoming', cls:'s-upcoming' }
 };
 
+const SOP_COMPLIANCE_LABELS = {
+  'sesuai':    { id:'Sesuai SOP',          en:'SOP Compliant',         icon:'✅', color:'#5a9080' },
+  'adaptasi':  { id:'Adaptasi Lokal',      en:'Local Adaptation',      icon:'🌱', color:'#7db848' },
+  'partial':   { id:'Partial Compliance',  en:'Partial Compliance',    icon:'⚠️', color:'#e67e22' },
+  'deviation': { id:'Deviation',           en:'Deviation',             icon:'🚨', color:'#c14b3a' },
+  'phase2':    { id:'Phase 2 Inject',      en:'Phase 2 Inject',        icon:'🆕', color:'#6B8FA8' },
+  'na':        { id:'N/A',                 en:'N/A',                   icon:'🔒', color:'#8B8579' },
+  'unknown':   { id:'Belum diisi',         en:'Not specified',         icon:'•',  color:'#bbb' },
+  null:        { id:'Belum diisi',         en:'Not specified',         icon:'•',  color:'#bbb' }
+};
+
 const PHASE_ORDER_LL = ['strategi','kemitraan','pre-panen','infrastruktur','panen','post-panen','awal-mh'];
 
 function renderDynamicMilestones(data) {
@@ -2373,6 +2446,9 @@ function renderDynamicMilestones(data) {
       activeBannerHTML = existingBanner.outerHTML;
     }
 
+    // Decide format: Year 2026+ = 3-column SOP compliance table; Year 2024-2025 = cards
+    const useTableFormat = parseInt(year, 10) >= 2026;
+
     // Sort phases by PHASE_ORDER_LL
     const sortedPhases = PHASE_ORDER_LL.filter(p => phases[p]);
     sortedPhases.forEach(phaseKey => {
@@ -2381,25 +2457,69 @@ function renderDynamicMilestones(data) {
       const periodID = milestones[0]?.date_label?.id || '';
       const periodEN = milestones[0]?.date_label?.en || '';
 
-      const items = milestones.map(m => {
-        const status = STATUS_LABELS_LL[m.status] || STATUS_LABELS_LL['planned'];
-        const titleEN = (m.title.en && m.title.en.trim()) ? m.title.en : null;
-        const detailEN = (m.detail.en && m.detail.en.trim()) ? m.detail.en : null;
-        const metaTag = m.meta?.tag || '';
-        const metaShort = m.meta?.date_short || m.date_label?.id || m.date || '';
-        return `
-          <div class="act-log-item">
-            <span class="act-log-status ${status.cls} lang-id">${status.id}</span>
-            <span class="act-log-status ${status.cls} lang-en">${status.en}</span>
-            <div class="act-log-body">
-              <div class="act-log-title lang-id">${escapeHTML(m.title.id)}</div>
-              ${titleEN ? `<div class="act-log-title lang-en">${escapeHTML(titleEN)}</div>` : `<div class="act-log-title lang-en">${escapeHTML(m.title.id)}</div>`}
-              <div class="act-log-detail lang-id">${escapeHTML(m.detail.id)}</div>
-              ${detailEN ? `<div class="act-log-detail lang-en">${escapeHTML(detailEN)}</div>` : `<div class="act-log-detail lang-en">${escapeHTML(m.detail.id)} <em style="opacity:0.6">[EN translation pending]</em></div>`}
-            </div>
-            <div class="act-log-meta"><strong>${escapeHTML(metaShort)}</strong>${metaTag ? escapeHTML(metaTag) : ''}</div>
+      let bodyHTML;
+      if (useTableFormat) {
+        // 3-COLUMN SOP COMPLIANCE TABLE FORMAT (Year 2026+)
+        const rows = milestones.map(m => {
+          const status = STATUS_LABELS_LL[m.status] || STATUS_LABELS_LL['planned'];
+          const compliance = m.sop_compliance || { status: null, note: null };
+          const complianceLbl = SOP_COMPLIANCE_LABELS[compliance.status] || SOP_COMPLIANCE_LABELS.unknown;
+          const aktivitas = m.aktivitas_lapangan || m.detail?.id || '(belum diisi)';
+          const terminology = m.terminology_sop || '(belum diisi)';
+          const dateLbl = m.date_label?.id || m.meta?.date_short || m.date;
+          const titleID = m.title?.id || '';
+          return `
+            <tr class="sop-table-row sop-status-${compliance.status || 'unknown'}">
+              <td class="sop-cell-meta">
+                <div class="sop-cell-date">${escapeHTML(dateLbl)}</div>
+                <div class="sop-cell-title"><strong>${escapeHTML(titleID)}</strong></div>
+                <div class="sop-cell-status"><span class="${status.cls}">${status.id}</span></div>
+              </td>
+              <td class="sop-cell-aktivitas">${escapeHTML(aktivitas)}</td>
+              <td class="sop-cell-terminology">${escapeHTML(terminology)}</td>
+              <td class="sop-cell-compliance">
+                <div class="sop-compliance-badge sop-badge-${compliance.status || 'unknown'}">${complianceLbl.icon} ${complianceLbl.id}</div>
+                ${compliance.note ? `<div class="sop-compliance-note">${escapeHTML(compliance.note)}</div>` : ''}
+              </td>
+            </tr>`;
+        }).join('');
+        bodyHTML = `
+          <div class="sop-table-wrap">
+            <table class="sop-compliance-table">
+              <thead>
+                <tr>
+                  <th class="sop-th-meta">Tanggal & Aktivitas</th>
+                  <th class="sop-th-aktivitas">📋 Apa yang Dilakukan</th>
+                  <th class="sop-th-terminology">📐 Secara Teori (SOP)</th>
+                  <th class="sop-th-compliance">✅ Compliance</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
           </div>`;
-      }).join('');
+      } else {
+        // STORYTELLING CARDS FORMAT (Year 2024-2025, preserve original)
+        const items = milestones.map(m => {
+          const status = STATUS_LABELS_LL[m.status] || STATUS_LABELS_LL['planned'];
+          const titleEN = (m.title.en && m.title.en.trim()) ? m.title.en : null;
+          const detailEN = (m.detail.en && m.detail.en.trim()) ? m.detail.en : null;
+          const metaTag = m.meta?.tag || '';
+          const metaShort = m.meta?.date_short || m.date_label?.id || m.date || '';
+          return `
+            <div class="act-log-item">
+              <span class="act-log-status ${status.cls} lang-id">${status.id}</span>
+              <span class="act-log-status ${status.cls} lang-en">${status.en}</span>
+              <div class="act-log-body">
+                <div class="act-log-title lang-id">${escapeHTML(m.title.id)}</div>
+                ${titleEN ? `<div class="act-log-title lang-en">${escapeHTML(titleEN)}</div>` : `<div class="act-log-title lang-en">${escapeHTML(m.title.id)}</div>`}
+                <div class="act-log-detail lang-id">${escapeHTML(m.detail.id)}</div>
+                ${detailEN ? `<div class="act-log-detail lang-en">${escapeHTML(detailEN)}</div>` : `<div class="act-log-detail lang-en">${escapeHTML(m.detail.id)} <em style="opacity:0.6">[EN translation pending]</em></div>`}
+              </div>
+              <div class="act-log-meta"><strong>${escapeHTML(metaShort)}</strong>${metaTag ? escapeHTML(metaTag) : ''}</div>
+            </div>`;
+        }).join('');
+        bodyHTML = `<div class="act-log-list">${items}</div>`;
+      }
 
       phaseBlocks += `
         <div class="phase-block">
@@ -2410,7 +2530,7 @@ function renderDynamicMilestones(data) {
             <span class="phase-block-period lang-id">${periodID}</span>
             <span class="phase-block-period lang-en">${periodEN}</span>
           </div>
-          <div class="act-log-list">${items}</div>
+          ${bodyHTML}
         </div>`;
     });
 
