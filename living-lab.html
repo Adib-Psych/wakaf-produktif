@@ -521,7 +521,92 @@ span.lang-en { display: none; }
   font-size: 0.85rem; font-style: italic;
   color: var(--muted); margin-left: auto;
 }
-/* ══ SOP Compliance Table (Year 2026+) ══ */
+/* ══ 5-Elemen Evaluasi Cards (Year 2026+, per Protokol v2.0 11 Mei 2026) ══ */
+.ll5-card-list { display: flex; flex-direction: column; gap: 1.4rem; }
+.ll5-card {
+  background: #fff;
+  border: 1px solid #e5e7e0;
+  border-left: 6px solid #5a9080;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(46,64,64,0.05);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.ll5-card:hover { box-shadow: 0 4px 16px rgba(46,64,64,0.1); }
+.ll5-verdict-sesuai { border-left-color: #5a9080; }
+.ll5-verdict-perhatian { border-left-color: #D4AF37; }
+.ll5-verdict-eskalasi { border-left-color: #C14B3A; }
+.ll5-verdict-unknown { border-left-color: #ccc; }
+
+.ll5-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 1rem; padding: 1.1rem 1.3rem 0.8rem;
+  border-bottom: 1px solid #f0f0e8; flex-wrap: wrap;
+}
+.ll5-header-meta { flex: 1; min-width: 240px; }
+.ll5-date { font-size: 0.72rem; color: #5a9080; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 4px; }
+.ll5-title { font-family: 'Playfair Display', serif; font-size: 1.15rem; line-height: 1.3; color: #2e4040; margin: 0 0 6px 0; font-weight: 700; }
+.ll5-status-row { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.ll5-status { font-size: 0.7rem; padding: 3px 9px; border-radius: 11px; font-weight: 700; }
+.ll5-status.s-done { background: #DDE9E3; color: #1F5F47; }
+.ll5-status.s-ongoing { background: #FFF4D6; color: #8B6914; }
+.ll5-status.s-planned { background: #E5EEF5; color: #3A5A75; }
+.ll5-status.s-upcoming { background: #f0e8dc; color: #6B5C40; }
+.ll5-verdict-badge {
+  padding: 8px 14px; border-radius: 18px; font-size: 0.74rem; font-weight: 800;
+  letter-spacing: 0.03em; border: 2px solid; flex-shrink: 0;
+  display: flex; flex-direction: column; align-items: center; line-height: 1.3;
+}
+
+.ll5-narrative {
+  padding: 1rem 1.3rem 0.6rem;
+  background: linear-gradient(180deg, #fafbf8 0%, #fff 100%);
+}
+.ll5-narrative p { font-family: 'Lora', serif; font-size: 0.92rem; line-height: 1.65; color: #4a4030; margin: 0; }
+
+.ll5-elements {
+  padding: 0.8rem 1.3rem 1.2rem;
+  display: grid; gap: 0.85rem;
+}
+.ll5-elem {
+  background: #fafbf8; border-left: 3px solid; border-radius: 6px;
+  padding: 0.7rem 0.95rem;
+}
+.ll5-elem-1 { border-left-color: #5a9080; }
+.ll5-elem-2 { border-left-color: #6B8FA8; }
+.ll5-elem-3 { border-left-color: #D4AF37; }
+.ll5-elem-4 { border-left-color: #C14B3A; }
+.ll5-elem-5 { border-left-color: #8B8579; }
+.ll5-elem-label {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.04em;
+  color: #2e4040; margin-bottom: 5px; text-transform: uppercase;
+}
+.ll5-elem-status {
+  display: inline-block; padding: 2px 9px; border-radius: 10px;
+  font-size: 0.72rem; font-weight: 700; margin-bottom: 5px;
+}
+.ll5-elem-source {
+  font-size: 0.72rem; color: #5a9080; font-style: italic; margin-bottom: 5px;
+}
+.ll5-elem-text {
+  font-size: 0.83rem; line-height: 1.55; color: #4a4030;
+}
+.ll5-elem-sitasi {
+  font-size: 0.72rem; color: #6B6053; margin-top: 6px; padding-top: 6px;
+  border-top: 1px dashed #ddd; font-style: italic;
+}
+.ll5-elem-empty {
+  font-size: 0.78rem; color: #aaa; font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .ll5-header { flex-direction: column; }
+  .ll5-verdict-badge { align-self: flex-start; }
+  .ll5-narrative p { font-size: 0.88rem; }
+  .ll5-elements { padding: 0.6rem 1rem 1rem; }
+}
+
+/* ══ SOP Compliance Table (Year 2026+, legacy v1) — kept for reference ══ */
 .sop-table-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--bg-deep); background: #fff; }
 .sop-compliance-table {
   width: 100%; border-collapse: collapse; font-size: 0.85rem;
@@ -2408,9 +2493,19 @@ const SOP_COMPLIANCE_LABELS = {
   'partial':   { id:'Partial Compliance',  en:'Partial Compliance',    icon:'⚠️', color:'#e67e22' },
   'deviation': { id:'Deviation',           en:'Deviation',             icon:'🚨', color:'#c14b3a' },
   'phase2':    { id:'Phase 2 Inject',      en:'Phase 2 Inject',        icon:'🆕', color:'#6B8FA8' },
+  'prematur':  { id:'Prematur',            en:'Premature',             icon:'⏰', color:'#e67e22' },
+  'terlambat': { id:'Terlambat',           en:'Late',                  icon:'⏱️', color:'#c14b3a' },
+  'luar':      { id:'Phase 2 Inject',      en:'Phase 2 Inject',        icon:'🆕', color:'#6B8FA8' },
   'na':        { id:'N/A',                 en:'N/A',                   icon:'🔒', color:'#8B8579' },
   'unknown':   { id:'Belum diisi',         en:'Not specified',         icon:'•',  color:'#bbb' },
   null:        { id:'Belum diisi',         en:'Not specified',         icon:'•',  color:'#bbb' }
+};
+
+const VERDICT_LABELS = {
+  'sesuai':    { id:'✅ SESUAI — LANJUTKAN',     en:'✅ COMPLIANT — CONTINUE',   bg:'#DDE9E3', color:'#1F5F47', border:'#5a9080' },
+  'perhatian': { id:'⚠️ PERLU DIPERHATIKAN',     en:'⚠️ NEEDS ATTENTION',        bg:'#FFF4D6', color:'#8B6914', border:'#D4AF37' },
+  'eskalasi':  { id:'🔴 ESKALASI — KONSULTASI',  en:'🔴 ESCALATION — CONSULT',   bg:'#FDE2DC', color:'#8c2519', border:'#C14B3A' },
+  null:        { id:'•  Belum dievaluasi',       en:'•  Not yet evaluated',      bg:'#F5F5F5', color:'#888',    border:'#ccc' }
 };
 
 const PHASE_ORDER_LL = ['strategi','kemitraan','pre-panen','infrastruktur','panen','post-panen','awal-mh'];
@@ -2459,44 +2554,78 @@ function renderDynamicMilestones(data) {
 
       let bodyHTML;
       if (useTableFormat) {
-        // 3-COLUMN SOP COMPLIANCE TABLE FORMAT (Year 2026+)
-        const rows = milestones.map(m => {
+        // 5-ELEMEN EVALUASI CARD FORMAT (Year 2026+, per Protokol v2.0 11 Mei 2026)
+        const cards = milestones.map(m => {
           const status = STATUS_LABELS_LL[m.status] || STATUS_LABELS_LL['planned'];
-          const compliance = m.sop_compliance || { status: null, note: null };
-          const complianceLbl = SOP_COMPLIANCE_LABELS[compliance.status] || SOP_COMPLIANCE_LABELS.unknown;
-          const aktivitas = m.aktivitas_lapangan || m.detail?.id || '(belum diisi)';
-          const terminology = m.terminology_sop || '(belum diisi)';
+          const kesesuaian = m.kesesuaian_sop || {};
+          const kajian = m.kajian_ilmiah || {};
+          const verdict = m.verdict || {};
+          const verdictLbl = VERDICT_LABELS[verdict.status] || VERDICT_LABELS[null];
+          const tindakLanjut = m.tindak_lanjut || '';
+          const verifikasi = m.verifikasi_diperlukan || '';
           const dateLbl = m.date_label?.id || m.meta?.date_short || m.date;
           const titleID = m.title?.id || '';
+          const titleEN = m.title?.en || '';
+          const detailID = m.detail?.id || '';
+          const detailEN = m.detail?.en || '';
+          const sitasiList = (kajian.sitasi || []);
+          const kesesuaianLbl = SOP_COMPLIANCE_LABELS[kesesuaian.status] || SOP_COMPLIANCE_LABELS.unknown;
+
           return `
-            <tr class="sop-table-row sop-status-${compliance.status || 'unknown'}">
-              <td class="sop-cell-meta">
-                <div class="sop-cell-date">${escapeHTML(dateLbl)}</div>
-                <div class="sop-cell-title"><strong>${escapeHTML(titleID)}</strong></div>
-                <div class="sop-cell-status"><span class="${status.cls}">${status.id}</span></div>
-              </td>
-              <td class="sop-cell-aktivitas">${escapeHTML(aktivitas)}</td>
-              <td class="sop-cell-terminology">${escapeHTML(terminology)}</td>
-              <td class="sop-cell-compliance">
-                <div class="sop-compliance-badge sop-badge-${compliance.status || 'unknown'}">${complianceLbl.icon} ${complianceLbl.id}</div>
-                ${compliance.note ? `<div class="sop-compliance-note">${escapeHTML(compliance.note)}</div>` : ''}
-              </td>
-            </tr>`;
+            <article class="ll5-card ll5-verdict-${verdict.status || 'unknown'}">
+              <header class="ll5-header">
+                <div class="ll5-header-meta">
+                  <div class="ll5-date">${escapeHTML(dateLbl)}</div>
+                  <h3 class="ll5-title lang-id">${escapeHTML(titleID)}</h3>
+                  <h3 class="ll5-title lang-en">${escapeHTML(titleEN || titleID)}</h3>
+                  <div class="ll5-status-row">
+                    <span class="ll5-status ${status.cls} lang-id">${status.id}</span>
+                    <span class="ll5-status ${status.cls} lang-en">${status.en}</span>
+                  </div>
+                </div>
+                <div class="ll5-verdict-badge" style="background:${verdictLbl.bg};color:${verdictLbl.color};border-color:${verdictLbl.border}">
+                  <span class="lang-id">${escapeHTML(verdictLbl.id)}</span>
+                  <span class="lang-en">${escapeHTML(verdictLbl.en)}</span>
+                </div>
+              </header>
+
+              <div class="ll5-narrative">
+                <p class="lang-id">${escapeHTML(detailID)}</p>
+                <p class="lang-en">${escapeHTML(detailEN || detailID)}</p>
+              </div>
+
+              <div class="ll5-elements">
+                <div class="ll5-elem ll5-elem-1">
+                  <div class="ll5-elem-label">① Kesesuaian SOP</div>
+                  <div class="ll5-elem-status" style="background:${kesesuaianLbl.color}15;color:${kesesuaianLbl.color}">${kesesuaianLbl.icon} ${kesesuaianLbl.id}</div>
+                  ${kesesuaian.sumber ? `<div class="ll5-elem-source">📖 ${escapeHTML(kesesuaian.sumber)}</div>` : ''}
+                  ${kesesuaian.note ? `<div class="ll5-elem-text">${escapeHTML(kesesuaian.note)}</div>` : ''}
+                </div>
+
+                <div class="ll5-elem ll5-elem-2">
+                  <div class="ll5-elem-label">② Kajian Ilmiah & Sumber</div>
+                  ${kajian.narrative ? `<div class="ll5-elem-text">${escapeHTML(kajian.narrative)}</div>` : '<div class="ll5-elem-empty">Belum dievaluasi</div>'}
+                  ${sitasiList.length > 0 ? `<div class="ll5-elem-sitasi"><b>Sumber:</b> ${sitasiList.map(s => escapeHTML(s)).join(' · ')}</div>` : ''}
+                </div>
+
+                ${verdict.justifikasi ? `<div class="ll5-elem ll5-elem-3">
+                  <div class="ll5-elem-label">③ Verdict Justifikasi</div>
+                  <div class="ll5-elem-text">${escapeHTML(verdict.justifikasi)}</div>
+                </div>` : ''}
+
+                ${tindakLanjut ? `<div class="ll5-elem ll5-elem-4">
+                  <div class="ll5-elem-label">④ Tindak Lanjut</div>
+                  <div class="ll5-elem-text">${escapeHTML(tindakLanjut)}</div>
+                </div>` : ''}
+
+                ${verifikasi ? `<div class="ll5-elem ll5-elem-5">
+                  <div class="ll5-elem-label">⑤ Verifikasi Lapangan Diperlukan</div>
+                  <div class="ll5-elem-text">${escapeHTML(verifikasi)}</div>
+                </div>` : ''}
+              </div>
+            </article>`;
         }).join('');
-        bodyHTML = `
-          <div class="sop-table-wrap">
-            <table class="sop-compliance-table">
-              <thead>
-                <tr>
-                  <th class="sop-th-meta">Tanggal & Aktivitas</th>
-                  <th class="sop-th-aktivitas">📋 Apa yang Dilakukan</th>
-                  <th class="sop-th-terminology">📐 Secara Teori (SOP)</th>
-                  <th class="sop-th-compliance">✅ Compliance</th>
-                </tr>
-              </thead>
-              <tbody>${rows}</tbody>
-            </table>
-          </div>`;
+        bodyHTML = `<div class="ll5-card-list">${cards}</div>`;
       } else {
         // STORYTELLING CARDS FORMAT (Year 2024-2025, preserve original)
         const items = milestones.map(m => {

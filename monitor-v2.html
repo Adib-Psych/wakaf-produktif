@@ -1327,35 +1327,82 @@
             </div>
           </div>
 
-          <!-- 3-Column SOP View Fields (untuk year 2026 onwards di Living Lab) -->
-          <div style="background:#FFF8E5;padding:14px;border-radius:6px;margin-bottom:14px;border-left:3px solid #D4AF37">
-            <div style="font-size:11px;font-weight:700;color:#8B6914;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
-              <span>📊 3-COLUMN SOP VIEW (Year 2026+) — Optional</span>
-              <button onclick="openRefineDlg()" style="background:#D4AF37;color:#fff;border:0;border-radius:4px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer">✨ Refine ke Bahasa Pro</button>
+          <!-- 5-ELEMEN EVALUASI (per Protokol v2.0 11 Mei 2026) -->
+          <div style="background:linear-gradient(135deg,#1F5F47 0%,#2E4040 100%);color:#fff;padding:16px;border-radius:8px;margin-bottom:14px;border-left:4px solid #D4AF37">
+            <div style="font-size:12px;font-weight:800;color:#D4AF37;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+              <span>📋 5-ELEMEN EVALUASI LIVING LAB (per Protokol v2.0)</span>
+              <div style="display:flex;gap:6px">
+                <button onclick="openAggregateDlg()" style="background:#D4AF37;color:#1F5F47;border:0;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:800;cursor:pointer" title="Generate milestone draft dari laporan harian via Claude AI">🤖 Generate dari Laporan</button>
+                <button onclick="openRefineDlg()" style="background:#fff;color:#1F5F47;border:0;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer" title="Refine narrative ke bahasa profesional">✨ Refine Bahasa</button>
+              </div>
             </div>
-            <div style="font-size:10px;color:var(--mute);font-style:italic;margin-bottom:10px">
-              Field ini untuk format tabel 3-kolom Living Lab Year 2026 (Apa Dilakukan | Terminology Teori | Compliance SOP). Boleh kosong — fallback ke detail.id biasa.
+            <div style="font-size:10px;color:#A8C8BC;margin-bottom:0">Framework evidence-based 5-elemen untuk Living Lab Year 2026+. Sumber acuan: SOP Robusta Edisi 2 → BRIN tabel → Klarifikasi Wakif 8 Mei → Phase 2 Inject → ICCRI/Wintgens/WCR/FAO.</div>
+          </div>
+
+          <!-- ① Kesesuaian SOP -->
+          <div style="background:#fff;border:1.5px solid #5a9080;padding:14px;border-radius:6px;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;color:#1F5F47;margin-bottom:8px">① KESESUAIAN SOP <span style="font-weight:400;color:var(--mute);font-size:10px;margin-left:6px">(refactor dari v1: "Grand Design")</span></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Status Kesesuaian</label>
+                <select id="ms-elemen1-status" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+                  <option value="">— Pilih —</option>
+                  <option value="sesuai">✅ Sesuai SOP</option>
+                  <option value="adaptasi">🌱 Adaptasi Lokal (justified)</option>
+                  <option value="prematur">⏰ Prematur (timing belum tepat)</option>
+                  <option value="terlambat">⏱️ Terlambat dari window optimal</option>
+                  <option value="luar">🆕 Phase 2 Inject (di luar SOP nasional)</option>
+                  <option value="na">🔒 N/A</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Sumber Acuan SOP</label>
+                <input type="text" id="ms-elemen1-sumber" placeholder="cth: SOP Robusta Edisi 2 hal 111-115, BRIN tabel umur 5-10 thn" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+              </div>
             </div>
+            <textarea id="ms-elemen1-note" rows="2" placeholder="Catatan kesesuaian (mis. dosis sesuai BRIN × 915 phn pre-selection, timing fenologi pentil-besar match window aplikasi)" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
+          </div>
 
-            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Kolom 1: Apa yang Dilakukan (Aktivitas Lapangan)</label>
-            <textarea id="ms-aktivitas-lapangan" rows="2" placeholder="cth: Aplikasi 2 sak SP-36 + 2 sak KCl di parit lingkar pohon, kedalaman 5 cm" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin:4px 0 10px;font-family:inherit"></textarea>
+          <!-- ② Kajian Ilmiah & Sumber -->
+          <div style="background:#fff;border:1.5px solid #6B8FA8;padding:14px;border-radius:6px;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;color:#3A5A75;margin-bottom:8px">② KAJIAN ILMIAH & SUMBER</div>
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Penilaian Teknis (dengan sitasi eksplisit)</label>
+            <textarea id="ms-elemen2-kajian" rows="3" placeholder="cth: Aplikasi SP-36 80g/phn pada fase pentil-besar mendukung pengisian biji via energy transfer (P sebagai ATP precursor). Per BRIN tabel umur 5-10 thn (akhir MH ½ dosis), 80g/phn = standar baseline. Pencegahan pencucian: aplikasi parit lingkar 30-50 cm dari batang, tutup tanah. Risiko: hujan deras 3 hari post-aplikasi → pencucian ~30-50%. Mitigasi: cek BMKG sebelum aplikasi." style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase;margin-top:8px;display:block">Sumber Sitasi (komma-separated, format: "Sumber, halaman/section")</label>
+            <input type="text" id="ms-elemen2-sumber" placeholder="cth: SOP Robusta Edisi 2 hal 111, BRIN Tabel Dosis 9 Mei 2026, Wintgens 2004 Ch.6 hal 320-325" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+          </div>
 
-            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Kolom 2: Secara Teori Apa Namanya (Terminology SOP)</label>
-            <input type="text" id="ms-terminology-sop" placeholder="cth: Pemupukan Akhir MH Partial — Phosphor + Kalium (BRIN tabel umur 5-10 thn)" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin:4px 0 10px">
-
-            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase">Kolom 3: SOP Compliance Status</label>
-            <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px;margin-top:4px">
-              <select id="ms-sop-compliance" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-                <option value="">— Pilih —</option>
-                <option value="sesuai">✅ Sesuai SOP</option>
-                <option value="adaptasi">🌱 Adaptasi Lokal (justified deviation)</option>
-                <option value="partial">⚠️ Partial Compliance</option>
-                <option value="deviation">🚨 Deviation (perlu review)</option>
-                <option value="phase2">🆕 Phase 2 Inject (di luar SOP nasional)</option>
-                <option value="na">🔒 N/A (non-SOP item)</option>
-              </select>
-              <input type="text" id="ms-sop-compliance-note" placeholder="Catatan justifikasi (mis. BRIN dosis × 915 phn pre-selection)" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <!-- ③ Badge Verdict -->
+          <div style="background:#fff;border:1.5px solid #D4AF37;padding:14px;border-radius:6px;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;color:#8B6914;margin-bottom:8px">③ BADGE VERDICT</div>
+            <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px">
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Verdict</label>
+                <select id="ms-elemen3-verdict" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+                  <option value="">— Pilih —</option>
+                  <option value="sesuai">✅ Sesuai — Lanjutkan</option>
+                  <option value="perhatian">⚠️ Perlu Diperhatikan</option>
+                  <option value="eskalasi">🔴 Eskalasi — Konsultasi BRIN</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Justifikasi Singkat</label>
+                <input type="text" id="ms-elemen3-justifikasi" placeholder="cth: Dosis sesuai BRIN, timing match fenologi, no critical risk" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+              </div>
             </div>
+          </div>
+
+          <!-- ④ Rekomendasi Tindak Lanjut -->
+          <div style="background:#fff;border:1.5px solid #C14B3A;padding:14px;border-radius:6px;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;color:#8c2519;margin-bottom:8px">④ REKOMENDASI TINDAK LANJUT (Forward-Looking)</div>
+            <textarea id="ms-elemen4-tindaklanjut" rows="3" placeholder="cth: (1) Monitor kerontokan bunga 2 minggu pasca-aplikasi, (2) Cek BMKG Karangploso H+1 sampai H+7, kalau hujan >100mm/minggu = catat sebagai risk pencucian, (3) Sample uji kelembaban tanah piringan untuk validasi penetrasi pupuk, (4) Konsultasi BRIN jika respon vegetatif lebih dominan dari generative." style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
+          </div>
+
+          <!-- ⑤ Verifikasi Lapangan Diperlukan -->
+          <div style="background:#fff;border:1.5px solid #8B8579;padding:14px;border-radius:6px;margin-bottom:14px">
+            <div style="font-size:12px;font-weight:800;color:#4a4030;margin-bottom:8px">⑤ VERIFIKASI LAPANGAN DIPERLUKAN (Audit Trail)</div>
+            <textarea id="ms-elemen5-verifikasi" rows="3" placeholder="Daftar bukti spesifik yang HARUS dikumpulkan, format: (1)... (2)... (3)... — cth: (1) Foto aplikasi pupuk dengan tanggal+lokasi metadata, (2) Nota pembelian SP-36 + KCl Pujon, (3) Catatan kondisi cuaca H+1 sampai H+7, (4) Foto kondisi buah pra vs 2 minggu post-aplikasi" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
+            <div style="margin-top:6px;font-size:10px;color:var(--mute);font-style:italic">💡 Tracking status (Sudah/Pending/N/A) per item akan ditambahkan di Phase 8 dengan IndexedDB photo+nota linkage.</div>
           </div>
 
           <div style="margin-bottom:14px">
@@ -3296,7 +3343,7 @@ function renderDistribusi() {
 // ===========================================================================
 // MILESTONES PUBLIK — Curated Public Layer (jembatan Dashboard ↔ Living Lab)
 // ===========================================================================
-const MILESTONE_SCHEMA_VERSION = '1.1';  // v1.1: tambah aktivitas_lapangan, terminology_sop, sop_compliance fields
+const MILESTONE_SCHEMA_VERSION = '2.0';  // v2.0 (11 Mei): refactor ke 5-elemen Protokol — kesesuaian_sop, kajian_ilmiah, verdict, tindak_lanjut, verifikasi_diperlukan
 const MS_PHASE_LABELS = {
   'pre-panen': { id:'Pre-Panen', en:'Pre-Harvest', icon:'🌱' },
   'panen': { id:'Panen', en:'Harvest', icon:'☕' },
@@ -3417,10 +3464,16 @@ function openMilestoneDlg(prefill) {
   document.getElementById('ms-detail-en').value = '';
   document.getElementById('ms-meta-tag').value = prefill?.meta?.tag || '';
   document.getElementById('ms-tag').value = prefill?.tag || 'wakif';
-  document.getElementById('ms-aktivitas-lapangan').value = prefill?.aktivitas_lapangan || '';
-  document.getElementById('ms-terminology-sop').value = prefill?.terminology_sop || '';
-  document.getElementById('ms-sop-compliance').value = prefill?.sop_compliance?.status || '';
-  document.getElementById('ms-sop-compliance-note').value = prefill?.sop_compliance?.note || '';
+  // 5-elemen evaluasi (v2.0)
+  document.getElementById('ms-elemen1-status').value = prefill?.kesesuaian_sop?.status || '';
+  document.getElementById('ms-elemen1-sumber').value = prefill?.kesesuaian_sop?.sumber || '';
+  document.getElementById('ms-elemen1-note').value = prefill?.kesesuaian_sop?.note || '';
+  document.getElementById('ms-elemen2-kajian').value = prefill?.kajian_ilmiah?.narrative || '';
+  document.getElementById('ms-elemen2-sumber').value = (prefill?.kajian_ilmiah?.sitasi || []).join(', ');
+  document.getElementById('ms-elemen3-verdict').value = prefill?.verdict?.status || '';
+  document.getElementById('ms-elemen3-justifikasi').value = prefill?.verdict?.justifikasi || '';
+  document.getElementById('ms-elemen4-tindaklanjut').value = prefill?.tindak_lanjut || '';
+  document.getElementById('ms-elemen5-verifikasi').value = prefill?.verifikasi_diperlukan || '';
   document.getElementById('ms-linked-docs').value = '';
   document.getElementById('ms-publish-toggle').checked = false;
   const audit = document.getElementById('ms-audit-info');
@@ -3443,10 +3496,16 @@ function editMilestone(id) {
   document.getElementById('ms-detail-en').value = m.detail?.en || '';
   document.getElementById('ms-meta-tag').value = m.meta?.tag || '';
   document.getElementById('ms-tag').value = m.tag || 'wakif';
-  document.getElementById('ms-aktivitas-lapangan').value = m.aktivitas_lapangan || '';
-  document.getElementById('ms-terminology-sop').value = m.terminology_sop || '';
-  document.getElementById('ms-sop-compliance').value = m.sop_compliance?.status || '';
-  document.getElementById('ms-sop-compliance-note').value = m.sop_compliance?.note || '';
+  // 5-elemen evaluasi (v2.0)
+  document.getElementById('ms-elemen1-status').value = m.kesesuaian_sop?.status || '';
+  document.getElementById('ms-elemen1-sumber').value = m.kesesuaian_sop?.sumber || '';
+  document.getElementById('ms-elemen1-note').value = m.kesesuaian_sop?.note || '';
+  document.getElementById('ms-elemen2-kajian').value = m.kajian_ilmiah?.narrative || '';
+  document.getElementById('ms-elemen2-sumber').value = (m.kajian_ilmiah?.sitasi || []).join(', ');
+  document.getElementById('ms-elemen3-verdict').value = m.verdict?.status || '';
+  document.getElementById('ms-elemen3-justifikasi').value = m.verdict?.justifikasi || '';
+  document.getElementById('ms-elemen4-tindaklanjut').value = m.tindak_lanjut || '';
+  document.getElementById('ms-elemen5-verifikasi').value = m.verifikasi_diperlukan || '';
   document.getElementById('ms-linked-docs').value = (m.linked_docs || []).join(', ');
   document.getElementById('ms-publish-toggle').checked = !!m.published;
   // Show audit info
@@ -3469,10 +3528,10 @@ function closeMilestoneDlg() {
 
 // ============ BAHASA REFINER (raw lapangan → professional) ============
 function openRefineDlg() {
-  const aktivitas = document.getElementById('ms-aktivitas-lapangan').value.trim();
   const detail = document.getElementById('ms-detail-id').value.trim();
+  const kajian = document.getElementById('ms-elemen2-kajian').value.trim();
   const title = document.getElementById('ms-title-id').value.trim();
-  const sourceText = aktivitas || detail || title;
+  const sourceText = kajian || detail || title;
   if (!sourceText) {
     alert('Isi dulu salah satu: Title ID, Detail ID, atau Aktivitas Lapangan — baru bisa di-refine.');
     return;
@@ -3501,6 +3560,114 @@ Format output: 3 section dengan header bold, ready untuk copy-paste ke form mile
     showRefineInstructions(true);
   }).catch(() => {
     showRefineInstructions(false, promptTemplate);
+  });
+}
+
+// ============ AGGREGATE DIALOG (Generate milestone draft from laporan harian) ============
+function openAggregateDlg() {
+  if (!STATE || !Array.isArray(STATE.laporan) || STATE.laporan.length === 0) {
+    alert('Belum ada laporan harian di STATE.laporan. Tim lapangan perlu submit Form Input dulu.');
+    return;
+  }
+  // Quick selector: ask date range + filter
+  const today = new Date().toISOString().slice(0,10);
+  const weekAgo = new Date(Date.now() - 7*24*60*60*1000).toISOString().slice(0,10);
+  const startDate = prompt(`🤖 Generate Milestone Draft dari Laporan Harian\n\nFilter date range:\n\nTanggal mulai (YYYY-MM-DD):`, weekAgo);
+  if (!startDate) return;
+  const endDate = prompt(`Tanggal akhir (YYYY-MM-DD):`, today);
+  if (!endDate) return;
+
+  const filtered = STATE.laporan.filter(l =>
+    l.tgl && l.tgl >= startDate && l.tgl <= endDate
+  );
+
+  if (filtered.length === 0) {
+    alert(`Tidak ada laporan dalam range ${startDate} – ${endDate}. Coba range lain.`);
+    return;
+  }
+
+  // Group summary
+  const byKategori = {};
+  const byPelapor = {};
+  filtered.forEach(l => {
+    byKategori[l.kategori] = (byKategori[l.kategori] || 0) + 1;
+    byPelapor[l.pelapor] = (byPelapor[l.pelapor] || 0) + 1;
+  });
+
+  // Build prompt template
+  const reportSummary = filtered.map((l, i) =>
+    `[${i+1}] ${l.tgl} · ${l.pelapor} · Bidang ${l.bidang} · ${l.kategori}${l.pohon ? ` (${l.pohon} phn)` : ''}${l.durasi ? ` · ${l.durasi}` : ''}\n    Detail: ${l.detail || '(no detail)'}\n    Cuaca: ${l.cuaca_pagi || '?'}/${l.cuaca_siang || '?'} · Rainfall 24h: ${l.rainfall_24h || 0}mm, 7d: ${l.rainfall_7d || 0}mm${l.alerts && l.alerts.length ? `\n    Alerts: ${l.alerts.join('; ')}` : ''}`
+  ).join('\n\n');
+
+  const prompt_text = `🤖 GENERATE MILESTONE DRAFT — 5-ELEMEN EVALUASI
+
+Project: Wakaf Produktif Kebun Kopi Ngantang
+Range: ${startDate} – ${endDate}
+Total laporan: ${filtered.length}
+Kategori breakdown: ${Object.entries(byKategori).map(([k,c]) => `${k}(${c})`).join(', ')}
+Pelapor: ${Object.entries(byPelapor).map(([k,c]) => `${k}(${c})`).join(', ')}
+
+=== RAW LAPORAN HARIAN ===
+
+${reportSummary}
+
+=== TASK ===
+
+Aggregate laporan di atas menjadi 1-3 milestone draft untuk Living Lab publik. Setiap milestone harus mengikuti Protokol Evaluasi v2.0 (11 Mei 2026) dengan 5-elemen evaluasi:
+
+**Granularity decision**: tidak semua harus jadi milestone. Filter berdasarkan:
+- Strategic events → per-event
+- Cluster aktivitas serupa (3+ di 2+ bidang dalam minggu yg sama) → weekly summary
+- First-time activities → per-event
+- Routine maintenance harian → SKIP (operational only, jangan jadi milestone publik)
+
+**Untuk SETIAP milestone yang qualified, generate format JSON-ready:**
+
+\`\`\`
+MILESTONE [N]
+Title ID: [judul ringkas]
+Title EN: [English translation]
+Date: [tanggal representatif]
+Phase: [pre-panen / panen / post-panen / awal-mh / strategi / infrastruktur / kemitraan]
+Status: [done / ongoing / planned]
+Detail ID: [narrative 2-3 kalimat untuk publik]
+Detail EN: [English narrative]
+
+① KESESUAIAN SOP
+  Status: [sesuai / adaptasi / prematur / terlambat / luar / na]
+  Sumber: [SOP Robusta Edisi 2 hal X, BRIN tabel umur X-Y thn, dll]
+  Note: [catatan kesesuaian]
+
+② KAJIAN ILMIAH
+  Narrative: [penilaian teknis dengan reasoning agronomi]
+  Sitasi: [list sumber-sumber yang dikutip]
+
+③ VERDICT
+  Status: [sesuai / perhatian / eskalasi]
+  Justifikasi: [1 kalimat reasoning]
+
+④ TINDAK LANJUT
+  [Forward-looking actions: monitor, konsultasi, parameter, standar]
+
+⑤ VERIFIKASI DIPERLUKAN
+  (1) [bukti spesifik 1]
+  (2) [bukti spesifik 2]
+  (3) [...]
+\`\`\`
+
+Bahasa profesional untuk audience donor + komunitas + akademisi. Factual, evidence-based, jangan over-claim. Output langsung bisa Wakif copy-paste ke form milestone.`;
+
+  navigator.clipboard.writeText(prompt_text).then(() => {
+    alert(`✨ Aggregate prompt sudah disalin ke clipboard!\n\n📊 Stats:\n• ${filtered.length} laporan dalam range ${startDate} – ${endDate}\n• ${Object.keys(byKategori).length} kategori berbeda\n• ${Object.keys(byPelapor).length} pelapor\n\n🚀 CARA PAKAI:\n1. Buka Claude (tab/window lain — Claude.ai atau Cowork)\n2. Paste (Cmd+V) di chat baru\n3. Claude generate 1-3 milestone draft 5-elemen\n4. Copy hasil → klik "+ Tambah Milestone" di sini → paste ke field yang sesuai\n5. Review + Save + Publish + Push to Live\n\n💡 Tip: Adib bisa minta Claude per milestone — kalau output panjang, copy 1 milestone dulu ke form, save, baru lanjut milestone berikutnya.`);
+  }).catch(() => {
+    // Fallback: show in new window
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(`<pre style="font-family:monospace;font-size:11px;padding:20px;white-space:pre-wrap">${prompt_text.replace(/</g, '&lt;')}</pre>`);
+    } else {
+      alert('Manual copy text dari console.log');
+      console.log(prompt_text);
+    }
   });
 }
 
@@ -3551,12 +3718,22 @@ function saveMilestone() {
       date_short: formatTglShort(date)
     },
     tag: document.getElementById('ms-tag').value,
-    aktivitas_lapangan: document.getElementById('ms-aktivitas-lapangan').value.trim() || null,
-    terminology_sop: document.getElementById('ms-terminology-sop').value.trim() || null,
-    sop_compliance: {
-      status: document.getElementById('ms-sop-compliance').value || null,
-      note: document.getElementById('ms-sop-compliance-note').value.trim() || null
+    // 5-elemen evaluasi (Protokol v2.0 11 Mei 2026)
+    kesesuaian_sop: {
+      status: document.getElementById('ms-elemen1-status').value || null,
+      sumber: document.getElementById('ms-elemen1-sumber').value.trim() || null,
+      note: document.getElementById('ms-elemen1-note').value.trim() || null
     },
+    kajian_ilmiah: {
+      narrative: document.getElementById('ms-elemen2-kajian').value.trim() || null,
+      sitasi: document.getElementById('ms-elemen2-sumber').value.split(',').map(s => s.trim()).filter(Boolean)
+    },
+    verdict: {
+      status: document.getElementById('ms-elemen3-verdict').value || null,
+      justifikasi: document.getElementById('ms-elemen3-justifikasi').value.trim() || null
+    },
+    tindak_lanjut: document.getElementById('ms-elemen4-tindaklanjut').value.trim() || null,
+    verifikasi_diperlukan: document.getElementById('ms-elemen5-verifikasi').value.trim() || null,
     linked_docs: linkedDocs,
     published: document.getElementById('ms-publish-toggle').checked,
     last_modified_at: now,
@@ -3778,9 +3955,12 @@ function buildExportData() {
       detail: m.detail,
       meta: m.meta,
       tag: m.tag,
-      aktivitas_lapangan: m.aktivitas_lapangan || null,
-      terminology_sop: m.terminology_sop || null,
-      sop_compliance: m.sop_compliance || { status: null, note: null },
+      // 5-elemen evaluasi (Protokol v2.0)
+      kesesuaian_sop: m.kesesuaian_sop || { status: null, sumber: null, note: null },
+      kajian_ilmiah: m.kajian_ilmiah || { narrative: null, sitasi: [] },
+      verdict: m.verdict || { status: null, justifikasi: null },
+      tindak_lanjut: m.tindak_lanjut || null,
+      verifikasi_diperlukan: m.verifikasi_diperlukan || null,
       linked_docs: m.linked_docs || [],
       last_modified_at: m.last_modified_at,
       change_log_count: (m.change_log || []).length
