@@ -521,7 +521,117 @@ span.lang-en { display: none; }
   font-size: 0.85rem; font-style: italic;
   color: var(--muted); margin-left: auto;
 }
-/* ══ 5-Elemen Evaluasi Cards (Year 2026+, per Protokol v2.0 11 Mei 2026) ══ */
+/* ══ 2-Layer Architecture Cards (Year 2026+, per Protokol v3.0 11 Mei 2026) ══ */
+/* Alignment Bar — quantification % toward international standard */
+.ll5-align-bar-wrap {
+  margin: 0 1.3rem 0.8rem;
+  padding: 0.8rem 1rem;
+  background: linear-gradient(180deg,#fafbf8 0%,#fff 100%);
+  border-radius: 8px;
+  border: 1px solid #eef0e8;
+}
+.ll5-align-bar-label {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 0.5rem; margin-bottom: 6px;
+  font-size: 0.78rem; font-weight: 700; color: #2e4040;
+}
+.ll5-align-bar-value { font-size: 1.1rem; font-weight: 800; }
+.ll5-align-bar-track {
+  height: 14px; background: #f0f0e8; border-radius: 8px; overflow: hidden;
+  border: 1px solid #e5e7e0;
+}
+.ll5-align-bar-fill {
+  height: 100%; border-radius: 7px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  background: linear-gradient(90deg, currentColor 0%, currentColor 100%);
+}
+.ll-align-high { box-shadow: 0 0 8px rgba(90,144,128,0.4); }
+.ll-align-mid { box-shadow: 0 0 6px rgba(212,175,55,0.4); }
+.ll-align-low { box-shadow: 0 0 6px rgba(193,75,58,0.4); }
+.ll5-align-bar-legend {
+  margin-top: 6px;
+  font-size: 0.7rem; color: #888; font-style: italic;
+}
+.ll5-align-pct {
+  font-size: 0.95rem; font-weight: 800;
+  margin-top: 4px; padding: 2px 8px; border-radius: 8px;
+  background: rgba(255,255,255,0.7);
+}
+
+/* 2-Section Grid (A. Implementasi + B. Benchmark Evaluation) */
+.ll5-2section-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+  padding: 0 1.3rem 1rem;
+}
+.ll5-section {
+  background: #fafbf8;
+  border-left: 4px solid;
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+}
+.ll5-section-impl { border-left-color: #5a9080; }
+.ll5-section-bench { border-left-color: #D4AF37; }
+.ll5-section-header {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 0.7rem; padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #ddd;
+}
+.ll5-section-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 800; font-size: 0.78rem;
+  width: 22px; height: 22px; border-radius: 50%;
+}
+.ll5-section-title {
+  font-size: 0.78rem; font-weight: 800; color: #2e4040;
+  letter-spacing: 0.03em; text-transform: uppercase;
+}
+.ll5-section-title em { font-style: italic; color: #888; font-weight: 600; text-transform: none; letter-spacing: 0; }
+.ll5-section-row {
+  display: flex; gap: 8px; margin-bottom: 7px;
+  font-size: 0.78rem; line-height: 1.5; color: #4a4030;
+}
+.ll5-section-label {
+  font-weight: 700; flex-shrink: 0; min-width: 60px;
+  color: #5a6660;
+}
+.ll5-section-text { flex: 1; }
+.ll5-section-italic { font-style: italic; color: #6B6053; }
+.ll5-section-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.75rem;
+  background: rgba(212,175,55,0.08);
+  padding: 1px 6px; border-radius: 4px;
+}
+.ll5-section-deviasi { background: rgba(193,75,58,0.05); padding: 6px 8px; border-radius: 4px; margin-top: 4px; }
+.ll5-section-gap { background: rgba(212,175,55,0.08); padding: 6px 8px; border-radius: 4px; }
+.ll5-section-roadmap { background: rgba(90,144,128,0.06); padding: 6px 8px; border-radius: 4px; }
+
+/* Verifikasi (Layer C) */
+.ll5-verifikasi {
+  margin: 0 1.3rem 1rem;
+  padding: 0.8rem 1rem;
+  background: #f5f4f0;
+  border-left: 4px solid #8B8579;
+  border-radius: 6px;
+}
+.ll5-verifikasi-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.78rem; font-weight: 800; color: #4a4030;
+  letter-spacing: 0.03em; text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+.ll5-verifikasi-label em { font-style: italic; color: #888; font-weight: 600; text-transform: none; letter-spacing: 0; }
+.ll5-verifikasi-text {
+  font-size: 0.78rem; line-height: 1.5; color: #4a4030;
+}
+
+@media (max-width: 768px) {
+  .ll5-2section-grid { grid-template-columns: 1fr; }
+}
+
+/* ══ 5-Elemen Evaluasi Cards (Year 2026+, per Protokol v2.0 11 Mei 2026) — LEGACY, kept for reference ══ */
 .ll5-card-list { display: flex; flex-direction: column; gap: 1.4rem; }
 .ll5-card {
   background: #fff;
@@ -2554,25 +2664,31 @@ function renderDynamicMilestones(data) {
 
       let bodyHTML;
       if (useTableFormat) {
-        // 5-ELEMEN EVALUASI CARD FORMAT (Year 2026+, per Protokol v2.0 11 Mei 2026)
+        // 2-LAYER ARCHITECTURE CARD FORMAT (Year 2026+, per Protokol v3.0 11 Mei 2026)
         const cards = milestones.map(m => {
           const status = STATUS_LABELS_LL[m.status] || STATUS_LABELS_LL['planned'];
-          const kesesuaian = m.kesesuaian_sop || {};
-          const kajian = m.kajian_ilmiah || {};
-          const verdict = m.verdict || {};
-          const verdictLbl = VERDICT_LABELS[verdict.status] || VERDICT_LABELS[null];
-          const tindakLanjut = m.tindak_lanjut || '';
+          const impl = m.implementasi || {};
+          const bench = m.benchmark_evaluation || {};
+          const verdictLbl = VERDICT_LABELS[bench.verdict] || VERDICT_LABELS[null];
           const verifikasi = m.verifikasi_diperlukan || '';
           const dateLbl = m.date_label?.id || m.meta?.date_short || m.date;
           const titleID = m.title?.id || '';
           const titleEN = m.title?.en || '';
           const detailID = m.detail?.id || '';
           const detailEN = m.detail?.en || '';
-          const sitasiList = (kajian.sitasi || []);
-          const kesesuaianLbl = SOP_COMPLIANCE_LABELS[kesesuaian.status] || SOP_COMPLIANCE_LABELS.unknown;
+          const sumberBenchList = (bench.sumber_benchmark || []);
+          const alignmentPct = (typeof bench.alignment_pct === 'number') ? bench.alignment_pct : null;
+
+          // Alignment color: 85+ green, 60-84 gold, <60 cherry
+          let alignColor = '#bbb', alignBgClass = 'll-align-unknown';
+          if (alignmentPct !== null) {
+            if (alignmentPct >= 85) { alignColor = '#5a9080'; alignBgClass = 'll-align-high'; }
+            else if (alignmentPct >= 60) { alignColor = '#D4AF37'; alignBgClass = 'll-align-mid'; }
+            else { alignColor = '#C14B3A'; alignBgClass = 'll-align-low'; }
+          }
 
           return `
-            <article class="ll5-card ll5-verdict-${verdict.status || 'unknown'}">
+            <article class="ll5-card ll5-verdict-${bench.verdict || 'unknown'}">
               <header class="ll5-header">
                 <div class="ll5-header-meta">
                   <div class="ll5-date">${escapeHTML(dateLbl)}</div>
@@ -2586,6 +2702,7 @@ function renderDynamicMilestones(data) {
                 <div class="ll5-verdict-badge" style="background:${verdictLbl.bg};color:${verdictLbl.color};border-color:${verdictLbl.border}">
                   <span class="lang-id">${escapeHTML(verdictLbl.id)}</span>
                   <span class="lang-en">${escapeHTML(verdictLbl.en)}</span>
+                  ${alignmentPct !== null ? `<div class="ll5-align-pct" style="color:${alignColor}">${alignmentPct}%</div>` : ''}
                 </div>
               </header>
 
@@ -2594,35 +2711,82 @@ function renderDynamicMilestones(data) {
                 <p class="lang-en">${escapeHTML(detailEN || detailID)}</p>
               </div>
 
-              <div class="ll5-elements">
-                <div class="ll5-elem ll5-elem-1">
-                  <div class="ll5-elem-label">① Kesesuaian SOP</div>
-                  <div class="ll5-elem-status" style="background:${kesesuaianLbl.color}15;color:${kesesuaianLbl.color}">${kesesuaianLbl.icon} ${kesesuaianLbl.id}</div>
-                  ${kesesuaian.sumber ? `<div class="ll5-elem-source">📖 ${escapeHTML(kesesuaian.sumber)}</div>` : ''}
-                  ${kesesuaian.note ? `<div class="ll5-elem-text">${escapeHTML(kesesuaian.note)}</div>` : ''}
+              ${alignmentPct !== null ? `
+              <div class="ll5-align-bar-wrap">
+                <div class="ll5-align-bar-label">
+                  <span class="lang-id">📊 Alignment ke International Standard</span>
+                  <span class="lang-en">📊 Alignment to International Standard</span>
+                  <span class="ll5-align-bar-value" style="color:${alignColor}">${alignmentPct}%</span>
+                </div>
+                <div class="ll5-align-bar-track">
+                  <div class="ll5-align-bar-fill ${alignBgClass}" style="width:${alignmentPct}%;background:${alignColor}"></div>
+                </div>
+                <div class="ll5-align-bar-legend">
+                  <span class="lang-id">≥85% Sesuai · 60-84% Perhatian · &lt;60% Eskalasi</span>
+                  <span class="lang-en">≥85% Compliant · 60-84% Attention · &lt;60% Escalation</span>
+                </div>
+              </div>` : ''}
+
+              <div class="ll5-2section-grid">
+                <!-- LAYER A — IMPLEMENTASI -->
+                <div class="ll5-section ll5-section-impl">
+                  <div class="ll5-section-header">
+                    <span class="ll5-section-badge" style="background:#5a9080">A</span>
+                    <span class="ll5-section-title lang-id">IMPLEMENTASI <em>(Internal SOP)</em></span>
+                    <span class="ll5-section-title lang-en">IMPLEMENTATION <em>(Internal SOP)</em></span>
+                  </div>
+                  ${impl.aktivitas_lapangan ? `<div class="ll5-section-row">
+                    <span class="ll5-section-label">Aktivitas:</span>
+                    <span class="ll5-section-text">${escapeHTML(impl.aktivitas_lapangan)}</span>
+                  </div>` : ''}
+                  ${impl.tor_sumber ? `<div class="ll5-section-row">
+                    <span class="ll5-section-label">📋 TOR:</span>
+                    <span class="ll5-section-text ll5-section-italic">${escapeHTML(impl.tor_sumber)}</span>
+                  </div>` : ''}
+                  ${impl.dosis_aktual ? `<div class="ll5-section-row">
+                    <span class="ll5-section-label">⚖️ Dosis:</span>
+                    <span class="ll5-section-text ll5-section-mono">${escapeHTML(impl.dosis_aktual)}</span>
+                  </div>` : ''}
+                  ${impl.deviasi_internal ? `<div class="ll5-section-row ll5-section-deviasi">
+                    <span class="ll5-section-label">⚠️ Deviasi:</span>
+                    <span class="ll5-section-text">${escapeHTML(impl.deviasi_internal)}</span>
+                  </div>` : ''}
                 </div>
 
-                <div class="ll5-elem ll5-elem-2">
-                  <div class="ll5-elem-label">② Kajian Ilmiah & Sumber</div>
-                  ${kajian.narrative ? `<div class="ll5-elem-text">${escapeHTML(kajian.narrative)}</div>` : '<div class="ll5-elem-empty">Belum dievaluasi</div>'}
-                  ${sitasiList.length > 0 ? `<div class="ll5-elem-sitasi"><b>Sumber:</b> ${sitasiList.map(s => escapeHTML(s)).join(' · ')}</div>` : ''}
+                <!-- LAYER B — BENCHMARK EVALUATION -->
+                <div class="ll5-section ll5-section-bench">
+                  <div class="ll5-section-header">
+                    <span class="ll5-section-badge" style="background:#D4AF37">B</span>
+                    <span class="ll5-section-title lang-id">BENCHMARK EVALUATION <em>(vs International)</em></span>
+                    <span class="ll5-section-title lang-en">BENCHMARK EVALUATION <em>(vs International)</em></span>
+                  </div>
+                  ${bench.kajian_internasional ? `<div class="ll5-section-row">
+                    <span class="ll5-section-label">🔬 Kajian:</span>
+                    <span class="ll5-section-text">${escapeHTML(bench.kajian_internasional)}</span>
+                  </div>` : ''}
+                  ${sumberBenchList.length > 0 ? `<div class="ll5-section-row">
+                    <span class="ll5-section-label">📚 Benchmark:</span>
+                    <span class="ll5-section-text ll5-section-italic">${sumberBenchList.map(s => escapeHTML(s)).join(' · ')}</span>
+                  </div>` : ''}
+                  ${bench.gap_analysis ? `<div class="ll5-section-row ll5-section-gap">
+                    <span class="ll5-section-label">🎯 Gap:</span>
+                    <span class="ll5-section-text">${escapeHTML(bench.gap_analysis)}</span>
+                  </div>` : ''}
+                  ${bench.roadmap ? `<div class="ll5-section-row ll5-section-roadmap">
+                    <span class="ll5-section-label">🗺️ Roadmap:</span>
+                    <span class="ll5-section-text">${escapeHTML(bench.roadmap)}</span>
+                  </div>` : ''}
                 </div>
-
-                ${verdict.justifikasi ? `<div class="ll5-elem ll5-elem-3">
-                  <div class="ll5-elem-label">③ Verdict Justifikasi</div>
-                  <div class="ll5-elem-text">${escapeHTML(verdict.justifikasi)}</div>
-                </div>` : ''}
-
-                ${tindakLanjut ? `<div class="ll5-elem ll5-elem-4">
-                  <div class="ll5-elem-label">④ Tindak Lanjut</div>
-                  <div class="ll5-elem-text">${escapeHTML(tindakLanjut)}</div>
-                </div>` : ''}
-
-                ${verifikasi ? `<div class="ll5-elem ll5-elem-5">
-                  <div class="ll5-elem-label">⑤ Verifikasi Lapangan Diperlukan</div>
-                  <div class="ll5-elem-text">${escapeHTML(verifikasi)}</div>
-                </div>` : ''}
               </div>
+
+              ${verifikasi ? `<div class="ll5-verifikasi">
+                <div class="ll5-verifikasi-label">
+                  <span class="ll5-section-badge" style="background:#8B8579">C</span>
+                  <span class="lang-id">VERIFIKASI LAPANGAN <em>(Audit Trail)</em></span>
+                  <span class="lang-en">FIELD VERIFICATION <em>(Audit Trail)</em></span>
+                </div>
+                <div class="ll5-verifikasi-text">${escapeHTML(verifikasi)}</div>
+              </div>` : ''}
             </article>`;
         }).join('');
         bodyHTML = `<div class="ll5-card-list">${cards}</div>`;

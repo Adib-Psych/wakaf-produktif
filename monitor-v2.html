@@ -1327,82 +1327,85 @@
             </div>
           </div>
 
-          <!-- 5-ELEMEN EVALUASI (per Protokol v2.0 11 Mei 2026) -->
+          <!-- 2-LAYER ARCHITECTURE (per Protokol v3.0 11 Mei 2026) -->
           <div style="background:linear-gradient(135deg,#1F5F47 0%,#2E4040 100%);color:#fff;padding:16px;border-radius:8px;margin-bottom:14px;border-left:4px solid #D4AF37">
             <div style="font-size:12px;font-weight:800;color:#D4AF37;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-              <span>📋 5-ELEMEN EVALUASI LIVING LAB (per Protokol v2.0)</span>
+              <span>📋 2-LAYER EVALUATION FRAMEWORK (Protokol v3.0)</span>
               <div style="display:flex;gap:6px">
                 <button onclick="openAggregateDlg()" style="background:#D4AF37;color:#1F5F47;border:0;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:800;cursor:pointer" title="Generate milestone draft dari laporan harian via Claude AI">🤖 Generate dari Laporan</button>
                 <button onclick="openRefineDlg()" style="background:#fff;color:#1F5F47;border:0;border-radius:4px;padding:5px 10px;font-size:10px;font-weight:700;cursor:pointer" title="Refine narrative ke bahasa profesional">✨ Refine Bahasa</button>
               </div>
             </div>
-            <div style="font-size:10px;color:#A8C8BC;margin-bottom:0">Framework evidence-based 5-elemen untuk Living Lab Year 2026+. Sumber acuan: SOP Robusta Edisi 2 → BRIN tabel → Klarifikasi Wakif 8 Mei → Phase 2 Inject → ICCRI/Wintgens/WCR/FAO.</div>
-          </div>
-
-          <!-- ① Kesesuaian SOP -->
-          <div style="background:#fff;border:1.5px solid #5a9080;padding:14px;border-radius:6px;margin-bottom:14px">
-            <div style="font-size:12px;font-weight:800;color:#1F5F47;margin-bottom:8px">① KESESUAIAN SOP <span style="font-weight:400;color:var(--mute);font-size:10px;margin-left:6px">(refactor dari v1: "Grand Design")</span></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px">
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Status Kesesuaian</label>
-                <select id="ms-elemen1-status" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
-                  <option value="">— Pilih —</option>
-                  <option value="sesuai">✅ Sesuai SOP</option>
-                  <option value="adaptasi">🌱 Adaptasi Lokal (justified)</option>
-                  <option value="prematur">⏰ Prematur (timing belum tepat)</option>
-                  <option value="terlambat">⏱️ Terlambat dari window optimal</option>
-                  <option value="luar">🆕 Phase 2 Inject (di luar SOP nasional)</option>
-                  <option value="na">🔒 N/A</option>
-                </select>
-              </div>
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Sumber Acuan SOP</label>
-                <input type="text" id="ms-elemen1-sumber" placeholder="cth: SOP Robusta Edisi 2 hal 111-115, BRIN tabel umur 5-10 thn" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
-              </div>
+            <div style="font-size:10px;color:#A8C8BC;line-height:1.5">
+              <b>Layer A — Implementasi (Internal SOP):</b> apa yang dilakukan tim sesuai TOR Kementan + BRIN + adaptasi NGT.<br>
+              <b>Layer B — Benchmark Evaluation (External International):</b> evaluasi objektif vs international standard (ICCRI / Wintgens / WCR / SCA) dengan quantification % alignment + gap analysis + roadmap.
             </div>
-            <textarea id="ms-elemen1-note" rows="2" placeholder="Catatan kesesuaian (mis. dosis sesuai BRIN × 915 phn pre-selection, timing fenologi pentil-besar match window aplikasi)" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
           </div>
 
-          <!-- ② Kajian Ilmiah & Sumber -->
-          <div style="background:#fff;border:1.5px solid #6B8FA8;padding:14px;border-radius:6px;margin-bottom:14px">
-            <div style="font-size:12px;font-weight:800;color:#3A5A75;margin-bottom:8px">② KAJIAN ILMIAH & SUMBER</div>
-            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Penilaian Teknis (dengan sitasi eksplisit)</label>
-            <textarea id="ms-elemen2-kajian" rows="3" placeholder="cth: Aplikasi SP-36 80g/phn pada fase pentil-besar mendukung pengisian biji via energy transfer (P sebagai ATP precursor). Per BRIN tabel umur 5-10 thn (akhir MH ½ dosis), 80g/phn = standar baseline. Pencegahan pencucian: aplikasi parit lingkar 30-50 cm dari batang, tutup tanah. Risiko: hujan deras 3 hari post-aplikasi → pencucian ~30-50%. Mitigasi: cek BMKG sebelum aplikasi." style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
-            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase;margin-top:8px;display:block">Sumber Sitasi (komma-separated, format: "Sumber, halaman/section")</label>
-            <input type="text" id="ms-elemen2-sumber" placeholder="cth: SOP Robusta Edisi 2 hal 111, BRIN Tabel Dosis 9 Mei 2026, Wintgens 2004 Ch.6 hal 320-325" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+          <!-- A. IMPLEMENTASI (Internal — TOR Kementan + BRIN + NGT) -->
+          <div style="background:#fff;border:2px solid #5a9080;padding:14px;border-radius:6px;margin-bottom:14px">
+            <div style="font-size:13px;font-weight:800;color:#1F5F47;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+              <span style="background:#5a9080;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px">A</span>
+              <span>IMPLEMENTASI (Internal — TOR Kementan + BRIN + Adaptasi NGT)</span>
+            </div>
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Aktivitas Lapangan (apa yang dilakukan)</label>
+            <textarea id="ms-impl-aktivitas" rows="2" placeholder="cth: Pak Kumpul aplikasi 2 sak SP-36 + 2 sak KCl di parit lingkar pohon, kedalaman 5 cm, untuk 915 pohon aktual, hari Rabu 14 Mei 2026" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin:3px 0 10px;font-family:inherit"></textarea>
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">TOR / Sumber Implementasi (internal reference)</label>
+            <input type="text" id="ms-impl-tor" placeholder="cth: SOP Robusta Edisi 2 hal 111-115 + BRIN tabel umur 5-10 thn + Klarifikasi Wakif 8 Mei Q5" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin:3px 0 10px">
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Dosis / Quantity Aktual</label>
+            <input type="text" id="ms-impl-dosis" placeholder="cth: SP-36 80g/phn × 915 phn = 73 kg (2 sak), KCl 100g/phn × 915 phn = 92 kg (2 sak)" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin:3px 0 10px">
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Deviasi Internal (kalau ada penyimpangan dari TOR)</label>
+            <textarea id="ms-impl-deviasi" rows="2" placeholder="Optional — cth: ADAPTASI dari full SOP. Skip Urea (N) di fase reproductive untuk save panen. Full SOP applied di Nov MH siklus 2027." style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px;font-family:inherit"></textarea>
           </div>
 
-          <!-- ③ Badge Verdict -->
-          <div style="background:#fff;border:1.5px solid #D4AF37;padding:14px;border-radius:6px;margin-bottom:14px">
-            <div style="font-size:12px;font-weight:800;color:#8B6914;margin-bottom:8px">③ BADGE VERDICT</div>
-            <div style="display:grid;grid-template-columns:1fr 2fr;gap:10px">
+          <!-- B. BENCHMARK EVALUATION (External — International Standard) -->
+          <div style="background:#fff;border:2px solid #D4AF37;padding:14px;border-radius:6px;margin-bottom:14px">
+            <div style="font-size:13px;font-weight:800;color:#8B6914;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+              <span style="background:#D4AF37;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px">B</span>
+              <span>BENCHMARK EVALUATION (External — vs International Standard)</span>
+            </div>
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Kajian Internasional (cross-check vs ICCRI/Wintgens/WCR/SCA)</label>
+            <textarea id="ms-bench-kajian" rows="3" placeholder="cth: Aplikasi partial P + K pada fase pentil-besar mendukung pengisian biji via energy transfer (P sebagai ATP precursor) — per ICCRI Pedoman Pemupukan Pra-Panen 2018, Wintgens (2004) Ch. 8 hal 320-325, WCR Reproductive Phase Notes 2022. Skip Urea (N) validated by international literature: N tinggi push vegetative growth counter-productive ke fase reproductive." style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin:3px 0 10px;font-family:inherit"></textarea>
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Sumber Benchmark (international references, comma-separated)</label>
+            <input type="text" id="ms-bench-sumber" placeholder="cth: ICCRI Pedoman Pemupukan 2018, Wintgens 2004 Ch.8 hal 320-325, WCR Reproductive Phase Notes 2022, IPNI Nutrient Loss Studies" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin:3px 0 10px">
+
+            <div style="display:grid;grid-template-columns:140px 1fr;gap:10px;margin-bottom:10px">
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Alignment %</label>
+                <input type="number" id="ms-bench-pct" min="0" max="100" placeholder="0-100" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:14px;margin-top:3px;text-align:center;font-weight:800">
+              </div>
               <div>
                 <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Verdict</label>
-                <select id="ms-elemen3-verdict" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+                <select id="ms-bench-verdict" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
                   <option value="">— Pilih —</option>
-                  <option value="sesuai">✅ Sesuai — Lanjutkan</option>
-                  <option value="perhatian">⚠️ Perlu Diperhatikan</option>
-                  <option value="eskalasi">🔴 Eskalasi — Konsultasi BRIN</option>
+                  <option value="sesuai">✅ Sesuai (≥85%) — Lanjutkan</option>
+                  <option value="perhatian">⚠️ Perhatian (60-84%) — Address gap</option>
+                  <option value="eskalasi">🔴 Eskalasi (&lt;60%) — Konsultasi BRIN/expert</option>
                 </select>
               </div>
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Justifikasi Singkat</label>
-                <input type="text" id="ms-elemen3-justifikasi" placeholder="cth: Dosis sesuai BRIN, timing match fenologi, no critical risk" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
-              </div>
             </div>
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Gap Analysis (apa yang missing untuk full international compliance)</label>
+            <textarea id="ms-bench-gap" rows="2" placeholder="cth: 25% gap karena: (a) Kieserit (Mg+S) belum diaplikasikan — Wintgens 2004 + IPNI recommend Mg+S supplementation, (b) Soil test pre-aplikasi belum executed, (c) Leaf tissue analysis belum direncanakan, (d) Foliar spray micro-nutrients belum dipertimbangkan" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin:3px 0 10px;font-family:inherit"></textarea>
+
+            <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Roadmap (action untuk close gap menuju international standard)</label>
+            <textarea id="ms-bench-roadmap" rows="3" placeholder="cth: H+1 to H+7: monitor cuaca BMKG. H+14: monitor kerontokan bunga (target <10%). Q3 2026: soil test post-aplikasi. Nov MH 2027: apply full SOP termasuk Kieserit + foliar micro-nutrients (close 25% gap)." style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
           </div>
 
-          <!-- ④ Rekomendasi Tindak Lanjut -->
-          <div style="background:#fff;border:1.5px solid #C14B3A;padding:14px;border-radius:6px;margin-bottom:14px">
-            <div style="font-size:12px;font-weight:800;color:#8c2519;margin-bottom:8px">④ REKOMENDASI TINDAK LANJUT (Forward-Looking)</div>
-            <textarea id="ms-elemen4-tindaklanjut" rows="3" placeholder="cth: (1) Monitor kerontokan bunga 2 minggu pasca-aplikasi, (2) Cek BMKG Karangploso H+1 sampai H+7, kalau hujan >100mm/minggu = catat sebagai risk pencucian, (3) Sample uji kelembaban tanah piringan untuk validasi penetrasi pupuk, (4) Konsultasi BRIN jika respon vegetatif lebih dominan dari generative." style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
-          </div>
-
-          <!-- ⑤ Verifikasi Lapangan Diperlukan -->
+          <!-- C. VERIFIKASI LAPANGAN (Audit Trail) -->
           <div style="background:#fff;border:1.5px solid #8B8579;padding:14px;border-radius:6px;margin-bottom:14px">
-            <div style="font-size:12px;font-weight:800;color:#4a4030;margin-bottom:8px">⑤ VERIFIKASI LAPANGAN DIPERLUKAN (Audit Trail)</div>
-            <textarea id="ms-elemen5-verifikasi" rows="3" placeholder="Daftar bukti spesifik yang HARUS dikumpulkan, format: (1)... (2)... (3)... — cth: (1) Foto aplikasi pupuk dengan tanggal+lokasi metadata, (2) Nota pembelian SP-36 + KCl Pujon, (3) Catatan kondisi cuaca H+1 sampai H+7, (4) Foto kondisi buah pra vs 2 minggu post-aplikasi" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
-            <div style="margin-top:6px;font-size:10px;color:var(--mute);font-style:italic">💡 Tracking status (Sudah/Pending/N/A) per item akan ditambahkan di Phase 8 dengan IndexedDB photo+nota linkage.</div>
+            <div style="font-size:13px;font-weight:800;color:#4a4030;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+              <span style="background:#8B8579;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px">C</span>
+              <span>VERIFIKASI LAPANGAN (Audit Trail Bukti)</span>
+            </div>
+            <textarea id="ms-verifikasi" rows="3" placeholder="Daftar bukti spesifik yang HARUS dikumpulkan, format: (1)... (2)... (3)... — cth: (1) Foto aplikasi pupuk dengan tanggal+lokasi metadata, (2) Nota pembelian SP-36 + KCl Pujon, (3) Catatan kondisi cuaca H+1 sampai H+7, (4) Foto kondisi buah pra vs 2 minggu post-aplikasi, (5) Soil test report (target Q3 2026)" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;font-family:inherit"></textarea>
+            <div style="margin-top:6px;font-size:10px;color:var(--mute);font-style:italic">💡 Tracking status (Sudah/Pending/N/A) per item akan ditambahkan di Phase 9 dengan IndexedDB photo+nota linkage.</div>
           </div>
 
           <div style="margin-bottom:14px">
@@ -3343,7 +3346,7 @@ function renderDistribusi() {
 // ===========================================================================
 // MILESTONES PUBLIK — Curated Public Layer (jembatan Dashboard ↔ Living Lab)
 // ===========================================================================
-const MILESTONE_SCHEMA_VERSION = '2.0';  // v2.0 (11 Mei): refactor ke 5-elemen Protokol — kesesuaian_sop, kajian_ilmiah, verdict, tindak_lanjut, verifikasi_diperlukan
+const MILESTONE_SCHEMA_VERSION = '3.0';  // v3.0 (11 Mei): 2-Layer Architecture — implementasi (TOR internal) + benchmark_evaluation (international standard + alignment_pct + gap + roadmap) + verifikasi_diperlukan
 const MS_PHASE_LABELS = {
   'pre-panen': { id:'Pre-Panen', en:'Pre-Harvest', icon:'🌱' },
   'panen': { id:'Panen', en:'Harvest', icon:'☕' },
@@ -3464,16 +3467,18 @@ function openMilestoneDlg(prefill) {
   document.getElementById('ms-detail-en').value = '';
   document.getElementById('ms-meta-tag').value = prefill?.meta?.tag || '';
   document.getElementById('ms-tag').value = prefill?.tag || 'wakif';
-  // 5-elemen evaluasi (v2.0)
-  document.getElementById('ms-elemen1-status').value = prefill?.kesesuaian_sop?.status || '';
-  document.getElementById('ms-elemen1-sumber').value = prefill?.kesesuaian_sop?.sumber || '';
-  document.getElementById('ms-elemen1-note').value = prefill?.kesesuaian_sop?.note || '';
-  document.getElementById('ms-elemen2-kajian').value = prefill?.kajian_ilmiah?.narrative || '';
-  document.getElementById('ms-elemen2-sumber').value = (prefill?.kajian_ilmiah?.sitasi || []).join(', ');
-  document.getElementById('ms-elemen3-verdict').value = prefill?.verdict?.status || '';
-  document.getElementById('ms-elemen3-justifikasi').value = prefill?.verdict?.justifikasi || '';
-  document.getElementById('ms-elemen4-tindaklanjut').value = prefill?.tindak_lanjut || '';
-  document.getElementById('ms-elemen5-verifikasi').value = prefill?.verifikasi_diperlukan || '';
+  // 2-Layer Architecture v3.0
+  document.getElementById('ms-impl-aktivitas').value = prefill?.implementasi?.aktivitas_lapangan || '';
+  document.getElementById('ms-impl-tor').value = prefill?.implementasi?.tor_sumber || '';
+  document.getElementById('ms-impl-dosis').value = prefill?.implementasi?.dosis_aktual || '';
+  document.getElementById('ms-impl-deviasi').value = prefill?.implementasi?.deviasi_internal || '';
+  document.getElementById('ms-bench-kajian').value = prefill?.benchmark_evaluation?.kajian_internasional || '';
+  document.getElementById('ms-bench-sumber').value = (prefill?.benchmark_evaluation?.sumber_benchmark || []).join(', ');
+  document.getElementById('ms-bench-pct').value = prefill?.benchmark_evaluation?.alignment_pct ?? '';
+  document.getElementById('ms-bench-verdict').value = prefill?.benchmark_evaluation?.verdict || '';
+  document.getElementById('ms-bench-gap').value = prefill?.benchmark_evaluation?.gap_analysis || '';
+  document.getElementById('ms-bench-roadmap').value = prefill?.benchmark_evaluation?.roadmap || '';
+  document.getElementById('ms-verifikasi').value = prefill?.verifikasi_diperlukan || '';
   document.getElementById('ms-linked-docs').value = '';
   document.getElementById('ms-publish-toggle').checked = false;
   const audit = document.getElementById('ms-audit-info');
@@ -3496,16 +3501,18 @@ function editMilestone(id) {
   document.getElementById('ms-detail-en').value = m.detail?.en || '';
   document.getElementById('ms-meta-tag').value = m.meta?.tag || '';
   document.getElementById('ms-tag').value = m.tag || 'wakif';
-  // 5-elemen evaluasi (v2.0)
-  document.getElementById('ms-elemen1-status').value = m.kesesuaian_sop?.status || '';
-  document.getElementById('ms-elemen1-sumber').value = m.kesesuaian_sop?.sumber || '';
-  document.getElementById('ms-elemen1-note').value = m.kesesuaian_sop?.note || '';
-  document.getElementById('ms-elemen2-kajian').value = m.kajian_ilmiah?.narrative || '';
-  document.getElementById('ms-elemen2-sumber').value = (m.kajian_ilmiah?.sitasi || []).join(', ');
-  document.getElementById('ms-elemen3-verdict').value = m.verdict?.status || '';
-  document.getElementById('ms-elemen3-justifikasi').value = m.verdict?.justifikasi || '';
-  document.getElementById('ms-elemen4-tindaklanjut').value = m.tindak_lanjut || '';
-  document.getElementById('ms-elemen5-verifikasi').value = m.verifikasi_diperlukan || '';
+  // 2-Layer Architecture v3.0
+  document.getElementById('ms-impl-aktivitas').value = m.implementasi?.aktivitas_lapangan || '';
+  document.getElementById('ms-impl-tor').value = m.implementasi?.tor_sumber || '';
+  document.getElementById('ms-impl-dosis').value = m.implementasi?.dosis_aktual || '';
+  document.getElementById('ms-impl-deviasi').value = m.implementasi?.deviasi_internal || '';
+  document.getElementById('ms-bench-kajian').value = m.benchmark_evaluation?.kajian_internasional || '';
+  document.getElementById('ms-bench-sumber').value = (m.benchmark_evaluation?.sumber_benchmark || []).join(', ');
+  document.getElementById('ms-bench-pct').value = m.benchmark_evaluation?.alignment_pct ?? '';
+  document.getElementById('ms-bench-verdict').value = m.benchmark_evaluation?.verdict || '';
+  document.getElementById('ms-bench-gap').value = m.benchmark_evaluation?.gap_analysis || '';
+  document.getElementById('ms-bench-roadmap').value = m.benchmark_evaluation?.roadmap || '';
+  document.getElementById('ms-verifikasi').value = m.verifikasi_diperlukan || '';
   document.getElementById('ms-linked-docs').value = (m.linked_docs || []).join(', ');
   document.getElementById('ms-publish-toggle').checked = !!m.published;
   // Show audit info
@@ -3529,9 +3536,10 @@ function closeMilestoneDlg() {
 // ============ BAHASA REFINER (raw lapangan → professional) ============
 function openRefineDlg() {
   const detail = document.getElementById('ms-detail-id').value.trim();
-  const kajian = document.getElementById('ms-elemen2-kajian').value.trim();
+  const kajian = document.getElementById('ms-bench-kajian').value.trim();
+  const aktivitas = document.getElementById('ms-impl-aktivitas').value.trim();
   const title = document.getElementById('ms-title-id').value.trim();
-  const sourceText = kajian || detail || title;
+  const sourceText = kajian || aktivitas || detail || title;
   if (!sourceText) {
     alert('Isi dulu salah satu: Title ID, Detail ID, atau Aktivitas Lapangan — baru bisa di-refine.');
     return;
@@ -3633,7 +3641,7 @@ Tier 5: **Puslitkoka Jember**, **BPTP Jawa Timur**, **FAO Guidelines**, **peer-r
 
 Konflik antar tier: tier lebih tinggi diutamakan KECUALI ada justifikasi konteks lokal explicit (mis. BRIN tabel umur tanaman lebih granular dari ICCRI generic — pakai BRIN dengan note "ICCRI baseline + BRIN refinement").
 
-**Untuk SETIAP milestone yang qualified, generate format JSON-ready:**
+**Untuk SETIAP milestone qualified, generate format 2-Layer Architecture (Protokol v3.0):**
 
 \`\`\`
 MILESTONE [N]
@@ -3642,32 +3650,38 @@ Title EN: [English translation]
 Date: [tanggal representatif]
 Phase: [pre-panen / panen / post-panen / awal-mh / strategi / infrastruktur / kemitraan]
 Status: [done / ongoing / planned]
-Detail ID: [narrative 2-3 kalimat untuk publik]
+Detail ID: [narrative 2-3 kalimat publik]
 Detail EN: [English narrative]
 
-① KESESUAIAN SOP
-  Status: [sesuai / adaptasi / prematur / terlambat / luar / na]
-  Sumber: [pakai hierarki di atas — mis. "ICCRI Pedoman Pemupukan Kopi 2018, BRIN tabel umur 5-10 thn refinement"]
-  Note: [catatan kesesuaian]
+==================================================
+LAYER A — IMPLEMENTASI (Internal — TOR Kementan + BRIN + NGT)
+==================================================
+A1. Aktivitas Lapangan: [apa yang dilakukan secara konkret]
+A2. TOR Sumber: [SOP Robusta Edisi 2 hal X, BRIN tabel umur Y, Klarifikasi Wakif Q-N]
+A3. Dosis Aktual: [quantity per pohon × jumlah pohon = total]
+A4. Deviasi Internal: [kalau ada penyimpangan dari TOR — atau "null"]
 
-② KAJIAN ILMIAH
-  Narrative: [penilaian teknis dengan reasoning agronomi]
-  Sitasi: [list sumber dari hierarki, format: "Sumber, halaman/section" — prioritaskan ICCRI dan international peer untuk authority]
+==================================================
+LAYER B — BENCHMARK EVALUATION (External — vs International Standard)
+==================================================
+B1. Kajian Internasional: [evaluasi vs ICCRI/Wintgens/WCR/SCA — apa yang aligned, apa yang gap]
+B2. Sumber Benchmark: [ICCRI Pedoman X 2018, Wintgens 2004 Ch. Y hal Z, WCR Notes 2022, SCA Standard]
+B3. Alignment %: [estimasi 0-100, % completeness vs international standard]
+B4. Verdict: [sesuai (≥85%) / perhatian (60-84%) / eskalasi (<60%)]
+B5. Gap Analysis: [apa yang missing untuk full international compliance — list konkret]
+B6. Roadmap: [forward actions untuk close the gap, dengan timeline Q3 2026, Q4, Q1 2027 dst]
 
-③ VERDICT
-  Status: [sesuai / perhatian / eskalasi]
-  Justifikasi: [1 kalimat reasoning]
-
-④ TINDAK LANJUT
-  [Forward-looking actions: monitor, konsultasi, parameter, standar]
-
-⑤ VERIFIKASI DIPERLUKAN
-  (1) [bukti spesifik 1]
-  (2) [bukti spesifik 2]
-  (3) [...]
+==================================================
+LAYER C — VERIFIKASI LAPANGAN (Audit Trail)
+==================================================
+(1) [bukti spesifik 1 — foto/dokumen/catatan]
+(2) [bukti spesifik 2]
+(3) [...]
 \`\`\`
 
-Bahasa profesional untuk audience donor + komunitas + akademisi internasional (Living Lab aspirasi: international standard reference). Factual, evidence-based, jangan over-claim. Output langsung bisa Wakif copy-paste ke form milestone.`;
+**Alignment % logic**: Apakah implementasi kita match international best practice? 100% = full match dengan ICCRI/Wintgens/WCR. Estimasi based on: coverage (berapa banyak aspek best practice di-cover), quality (seberapa mendekati optimal range), documentation (audit-ready evidence).
+
+**Bahasa**: profesional untuk audience donor + komunitas + akademisi internasional (Living Lab aspirasi: international standard reference). Factual, evidence-based, jangan over-claim. Output bisa Wakif copy-paste langsung ke form milestone (3-section: A. Implementasi, B. Benchmark Evaluation, C. Verifikasi).`;
 
   navigator.clipboard.writeText(prompt_text).then(() => {
     alert(`✨ Aggregate prompt sudah disalin ke clipboard!\n\n📊 Stats:\n• ${filtered.length} laporan dalam range ${startDate} – ${endDate}\n• ${Object.keys(byKategori).length} kategori berbeda\n• ${Object.keys(byPelapor).length} pelapor\n\n🚀 CARA PAKAI:\n1. Buka Claude (tab/window lain — Claude.ai atau Cowork)\n2. Paste (Cmd+V) di chat baru\n3. Claude generate 1-3 milestone draft 5-elemen\n4. Copy hasil → klik "+ Tambah Milestone" di sini → paste ke field yang sesuai\n5. Review + Save + Publish + Push to Live\n\n💡 Tip: Adib bisa minta Claude per milestone — kalau output panjang, copy 1 milestone dulu ke form, save, baru lanjut milestone berikutnya.`);
@@ -3730,22 +3744,22 @@ function saveMilestone() {
       date_short: formatTglShort(date)
     },
     tag: document.getElementById('ms-tag').value,
-    // 5-elemen evaluasi (Protokol v2.0 11 Mei 2026)
-    kesesuaian_sop: {
-      status: document.getElementById('ms-elemen1-status').value || null,
-      sumber: document.getElementById('ms-elemen1-sumber').value.trim() || null,
-      note: document.getElementById('ms-elemen1-note').value.trim() || null
+    // 2-Layer Architecture (Protokol v3.0 11 Mei 2026)
+    implementasi: {
+      aktivitas_lapangan: document.getElementById('ms-impl-aktivitas').value.trim() || null,
+      tor_sumber: document.getElementById('ms-impl-tor').value.trim() || null,
+      dosis_aktual: document.getElementById('ms-impl-dosis').value.trim() || null,
+      deviasi_internal: document.getElementById('ms-impl-deviasi').value.trim() || null
     },
-    kajian_ilmiah: {
-      narrative: document.getElementById('ms-elemen2-kajian').value.trim() || null,
-      sitasi: document.getElementById('ms-elemen2-sumber').value.split(',').map(s => s.trim()).filter(Boolean)
+    benchmark_evaluation: {
+      kajian_internasional: document.getElementById('ms-bench-kajian').value.trim() || null,
+      sumber_benchmark: document.getElementById('ms-bench-sumber').value.split(',').map(s => s.trim()).filter(Boolean),
+      alignment_pct: parseInt(document.getElementById('ms-bench-pct').value, 10) || null,
+      verdict: document.getElementById('ms-bench-verdict').value || null,
+      gap_analysis: document.getElementById('ms-bench-gap').value.trim() || null,
+      roadmap: document.getElementById('ms-bench-roadmap').value.trim() || null
     },
-    verdict: {
-      status: document.getElementById('ms-elemen3-verdict').value || null,
-      justifikasi: document.getElementById('ms-elemen3-justifikasi').value.trim() || null
-    },
-    tindak_lanjut: document.getElementById('ms-elemen4-tindaklanjut').value.trim() || null,
-    verifikasi_diperlukan: document.getElementById('ms-elemen5-verifikasi').value.trim() || null,
+    verifikasi_diperlukan: document.getElementById('ms-verifikasi').value.trim() || null,
     linked_docs: linkedDocs,
     published: document.getElementById('ms-publish-toggle').checked,
     last_modified_at: now,
@@ -3967,11 +3981,9 @@ function buildExportData() {
       detail: m.detail,
       meta: m.meta,
       tag: m.tag,
-      // 5-elemen evaluasi (Protokol v2.0)
-      kesesuaian_sop: m.kesesuaian_sop || { status: null, sumber: null, note: null },
-      kajian_ilmiah: m.kajian_ilmiah || { narrative: null, sitasi: [] },
-      verdict: m.verdict || { status: null, justifikasi: null },
-      tindak_lanjut: m.tindak_lanjut || null,
+      // 2-Layer Architecture (Protokol v3.0)
+      implementasi: m.implementasi || { aktivitas_lapangan: null, tor_sumber: null, dosis_aktual: null, deviasi_internal: null },
+      benchmark_evaluation: m.benchmark_evaluation || { kajian_internasional: null, sumber_benchmark: [], alignment_pct: null, verdict: null, gap_analysis: null, roadmap: null },
       verifikasi_diperlukan: m.verifikasi_diperlukan || null,
       linked_docs: m.linked_docs || [],
       last_modified_at: m.last_modified_at,
