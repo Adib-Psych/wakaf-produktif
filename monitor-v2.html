@@ -3621,6 +3621,18 @@ Aggregate laporan di atas menjadi 1-3 milestone draft untuk Living Lab publik. S
 - First-time activities → per-event
 - Routine maintenance harian → SKIP (operational only, jangan jadi milestone publik)
 
+**HIERARKI SUMBER ILMIAH (Aspirasi: international standard reference):**
+
+🌍 Living Lab kebun wakaf NGT diaspirasikan jadi acuan international standard untuk wakaf produktif modern. Hierarki sumber prioritas:
+
+Tier 1 (TERTINGGI): **ICCRI** (Indonesian Coffee and Cocoa Research Institute) — jangkar Indonesian-international authority
+Tier 2: **Wintgens (2004) Coffee: Growing, Processing, Sustainable Production** + **World Coffee Research (WCR)** — international peer authority
+Tier 3: **SOP Robusta Edisi 2 (Kementan + Puslit Koka 2019)** + **BRIN tabel dosis pupuk per umur tanaman** — Indonesian regulatory baseline ("panduan awal kita")
+Tier 4: **Klarifikasi Wakif 8 Mei 2026** + **Phase 2 Inject Decisions** — Internal Protocol NGT (adaptasi lokal terdokumentasi)
+Tier 5: **Puslitkoka Jember**, **BPTP Jawa Timur**, **FAO Guidelines**, **peer-reviewed journals** — specialized & backup
+
+Konflik antar tier: tier lebih tinggi diutamakan KECUALI ada justifikasi konteks lokal explicit (mis. BRIN tabel umur tanaman lebih granular dari ICCRI generic — pakai BRIN dengan note "ICCRI baseline + BRIN refinement").
+
 **Untuk SETIAP milestone yang qualified, generate format JSON-ready:**
 
 \`\`\`
@@ -3635,12 +3647,12 @@ Detail EN: [English narrative]
 
 ① KESESUAIAN SOP
   Status: [sesuai / adaptasi / prematur / terlambat / luar / na]
-  Sumber: [SOP Robusta Edisi 2 hal X, BRIN tabel umur X-Y thn, dll]
+  Sumber: [pakai hierarki di atas — mis. "ICCRI Pedoman Pemupukan Kopi 2018, BRIN tabel umur 5-10 thn refinement"]
   Note: [catatan kesesuaian]
 
 ② KAJIAN ILMIAH
   Narrative: [penilaian teknis dengan reasoning agronomi]
-  Sitasi: [list sumber-sumber yang dikutip]
+  Sitasi: [list sumber dari hierarki, format: "Sumber, halaman/section" — prioritaskan ICCRI dan international peer untuk authority]
 
 ③ VERDICT
   Status: [sesuai / perhatian / eskalasi]
@@ -3655,7 +3667,7 @@ Detail EN: [English narrative]
   (3) [...]
 \`\`\`
 
-Bahasa profesional untuk audience donor + komunitas + akademisi. Factual, evidence-based, jangan over-claim. Output langsung bisa Wakif copy-paste ke form milestone.`;
+Bahasa profesional untuk audience donor + komunitas + akademisi internasional (Living Lab aspirasi: international standard reference). Factual, evidence-based, jangan over-claim. Output langsung bisa Wakif copy-paste ke form milestone.`;
 
   navigator.clipboard.writeText(prompt_text).then(() => {
     alert(`✨ Aggregate prompt sudah disalin ke clipboard!\n\n📊 Stats:\n• ${filtered.length} laporan dalam range ${startDate} – ${endDate}\n• ${Object.keys(byKategori).length} kategori berbeda\n• ${Object.keys(byPelapor).length} pelapor\n\n🚀 CARA PAKAI:\n1. Buka Claude (tab/window lain — Claude.ai atau Cowork)\n2. Paste (Cmd+V) di chat baru\n3. Claude generate 1-3 milestone draft 5-elemen\n4. Copy hasil → klik "+ Tambah Milestone" di sini → paste ke field yang sesuai\n5. Review + Save + Publish + Push to Live\n\n💡 Tip: Adib bisa minta Claude per milestone — kalau output panjang, copy 1 milestone dulu ke form, save, baru lanjut milestone berikutnya.`);
