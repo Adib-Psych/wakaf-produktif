@@ -341,12 +341,13 @@
             <thead>
               <tr>
                 <th>Tgl</th><th>Pelapor</th><th>Bidang</th><th>Kategori</th>
-                <th>Phn</th><th>Detail</th><th>Compliance</th><th>Alerts</th>
+                <th>Phn</th><th>Detail</th><th>Compliance</th><th>Alerts</th><th style="width:110px">Aksi</th>
               </tr>
             </thead>
             <tbody id="log-tbody"></tbody>
           </table>
         </div>
+        <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">💡 Klik <b>✏️ Edit</b> untuk koreksi entry yang salah · <b>🗑️ Delete</b> akan hapus entry + auto-remove linked UPAH entry (kalau ada).</p>
       </div>
     </div>
 
@@ -1861,7 +1862,23 @@ function renderAlerts() {
 }
 
 // ===== LOG =====
+// Migration: assign unique IDs to old entries that don't have one
+function _migrateLaporanIds() {
+  let migrated = false;
+  STATE.laporan.forEach((l, i) => {
+    if (!l.id) {
+      l.id = 'lap_' + (l.tgl || 'unknown').replace(/-/g,'') + '_' + Math.random().toString(36).substr(2,5);
+      migrated = true;
+    }
+  });
+  if (migrated) {
+    localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+    console.log('[Log Harian] Migrated', STATE.laporan.length, 'laporan with new IDs');
+  }
+}
+
 function renderLog() {
+  _migrateLaporanIds();
   const fp = document.getElementById('filter-pelapor').value;
   const fb = document.getElementById('filter-bidang').value;
   const fk = document.getElementById('filter-kategori').value;
@@ -1882,8 +1899,128 @@ function renderLog() {
       <td style="font-size:11px">${d.detail||'-'}</td>
       <td><span class="pill ${d.compliance}">${d.compliance}</span></td>
       <td>${(d.alerts||[]).map(a=>'<span class="pill alert">'+a+'</span>').join('')||'<span style="color:#aaa">none</span>'}</td>
+      <td style="white-space:nowrap">
+        <button onclick="editLaporan('${d.id}')" style="background:var(--moss);color:#fff;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="Edit entry">✏️ Edit</button>
+        <button onclick="deleteLaporan('${d.id}')" style="background:#fde2dc;color:#8c2519;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer" title="Delete entry">🗑️</button>
+      </td>
     </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;color:#aaa;padding:20px">Tidak ada data sesuai filter.</td></tr>';
+  }).join('') || '<tr><td colspan="9" style="text-align:center;color:#aaa;padding:20px">Tidak ada data sesuai filter.</td></tr>';
+}
+
+// ============ EDIT LAPORAN (from Log Harian) ============
+let CURRENT_EDIT_LAPORAN_ID = null;
+
+function editLaporan(id) {
+  const lap = STATE.laporan.find(l => l.id === id);
+  if (!lap) { alert('Entry tidak ditemukan (mungkin sudah dihapus).'); return; }
+  CURRENT_EDIT_LAPORAN_ID = id;
+
+  // Switch ke tab Form Input
+  const formTab = document.querySelector('.sb-tab[data-panel="form"]');
+  if (formTab) formTab.click();
+
+  // Populate fields setelah short delay (biar tab switch settle)
+  setTimeout(() => {
+    document.getElementById('f-tgl').value = lap.tgl || '';
+    if (typeof updateTglPreview === 'function') updateTglPreview();
+
+    // Set radio pills
+    setRadioByValue('form-pelapor', lap.pelapor); STATE.pelapor = lap.pelapor;
+    setRadioByValue('form-bidang', String(lap.bidang)); STATE.bidang = lap.bidang;
+    if (lap.cuaca_pagi) { setRadioByValue('form-cuaca-pagi', lap.cuaca_pagi); STATE.cuaca_pagi = lap.cuaca_pagi; }
+    if (lap.cuaca_siang) { setRadioByValue('form-cuaca-siang', lap.cuaca_siang); STATE.cuaca_siang = lap.cuaca_siang; }
+    if (lap.durasi) { setRadioByValue('form-durasi', lap.durasi); STATE.durasi = lap.durasi; }
+
+    // Standard fields
+    document.getElementById('f-kategori').value = lap.kategori || '';
+    if (typeof renderActivityForm === 'function') renderActivityForm();
+    document.getElementById('f-pohon').value = lap.pohon || '';
+    document.getElementById('f-catatan').value = lap.detail || '';
+    document.getElementById('f-rainfall-24h').value = lap.rainfall_24h || 0;
+    document.getElementById('f-rainfall-7d').value = lap.rainfall_7d || 0;
+
+    // Show edit banner
+    showEditBanner(lap);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }, 200);
+}
+
+function setRadioByValue(group, val) {
+  if (!val) return;
+  const parent = document.getElementById(group);
+  if (!parent) return;
+  parent.querySelectorAll('.radio-pill').forEach(p => {
+    if (p.dataset.val === String(val)) p.classList.add('on');
+    else p.classList.remove('on');
+  });
+}
+
+function showEditBanner(lap) {
+  let banner = document.getElementById('edit-banner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'edit-banner';
+    banner.style.cssText = 'background:linear-gradient(90deg,#FFF4D6 0%,#fff 100%);border:2px solid #D4AF37;border-radius:8px;padding:12px 16px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap';
+    const panel = document.getElementById('panel-form');
+    if (panel) panel.insertBefore(banner, panel.firstChild);
+  }
+  banner.innerHTML = `
+    <div style="flex:1;min-width:240px">
+      <div style="font-size:12px;font-weight:800;color:#8B6914;letter-spacing:0.5px">✏️ MODE EDIT — ${formatTgl(lap.tgl)} · ${lap.pelapor} · ${lap.kategori.replace(/_/g,' ')}</div>
+      <div style="font-size:11px;color:var(--mute);margin-top:3px">Update entry yang ada. Klik "Simpan Perubahan" untuk save, atau Cancel untuk batal.</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <button onclick="cancelEditLaporan()" class="btn btn-secondary" style="font-size:11px">Batal Edit</button>
+    </div>`;
+  banner.style.display = 'flex';
+
+  // Update submit button text
+  const submitBtn = document.querySelector('#panel-form button[onclick="submitForm()"]');
+  if (submitBtn) {
+    submitBtn.textContent = '💾 Simpan Perubahan';
+    submitBtn.style.background = '#D4AF37';
+  }
+}
+
+function cancelEditLaporan() {
+  CURRENT_EDIT_LAPORAN_ID = null;
+  hideEditBanner();
+  if (typeof resetForm === 'function') resetForm();
+}
+
+function hideEditBanner() {
+  const banner = document.getElementById('edit-banner');
+  if (banner) banner.style.display = 'none';
+  const submitBtn = document.querySelector('#panel-form button[onclick="submitForm()"]');
+  if (submitBtn) {
+    submitBtn.textContent = '✓ Submit Laporan';
+    submitBtn.style.background = '';
+  }
+}
+
+function deleteLaporan(id) {
+  const lap = STATE.laporan.find(l => l.id === id);
+  if (!lap) { alert('Entry tidak ditemukan.'); return; }
+  const linkedUpah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.filter(u =>
+    u.tgl === lap.tgl && u.pelapor === lap.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill')
+  ) : [];
+  const msg = `Hapus entry ini?\n\n📅 ${formatTgl(lap.tgl)} · ${lap.pelapor} · Bidang ${lap.bidang} · ${lap.kategori}\n📝 ${(lap.detail || '').substring(0, 80)}${(lap.detail||'').length>80?'…':''}\n\n` +
+    (linkedUpah.length > 0 ? `⚠️ Ini juga akan menghapus ${linkedUpah.length} linked UPAH entry (status: ${linkedUpah.filter(u=>u.status==='lunas').length} sudah lunas, ${linkedUpah.filter(u=>u.status==='belum').length} belum dibayar). Cashbook auto-entries yang sudah lunas TIDAK terhapus (audit trail).\n\n` : '') +
+    'Lanjut?';
+  if (!confirm(msg)) return;
+  STATE.laporan = STATE.laporan.filter(l => l.id !== id);
+  localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+  // Cascade delete linked UPAH entries (only belum dibayar — preserve lunas untuk audit)
+  if (typeof UPAH_ITEMS !== 'undefined' && linkedUpah.length > 0) {
+    const idsToRemove = linkedUpah.filter(u => u.status === 'belum').map(u => u.id);
+    UPAH_ITEMS = UPAH_ITEMS.filter(u => !idsToRemove.includes(u.id));
+    if (typeof saveUpah === 'function') saveUpah();
+    if (typeof renderUpahTable === 'function') renderUpahTable();
+    if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  }
+  renderLog();
+  if (typeof renderDashboard === 'function') renderDashboard();
+  showToast(`🗑️ Entry deleted (${linkedUpah.filter(u=>u.status==='belum').length} linked UPAH auto-removed)`);
 }
 
 // ===== FORM =====
@@ -2407,12 +2544,47 @@ function submitForm() {
   const hasHighAlert = climateAlerts.some(a => a.sev === 'tinggi');
   const compliance = hasHighAlert ? 'partial' : 'compliant';
 
+  // ===== EDIT MODE: kalau ada CURRENT_EDIT_LAPORAN_ID, update existing =====
+  if (CURRENT_EDIT_LAPORAN_ID) {
+    const idx = STATE.laporan.findIndex(l => l.id === CURRENT_EDIT_LAPORAN_ID);
+    if (idx >= 0) {
+      const oldEntry = STATE.laporan[idx];
+      STATE.laporan[idx] = {
+        ...oldEntry,
+        tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
+        pohon: +pohon || 0, detail: catatan || '(no detail)',
+        durasi: STATE.durasi || null,
+        rainfall_24h: r24, rainfall_7d: r7d,
+        compliance, alerts: alertMsgs,
+        last_edited_at: new Date().toISOString()
+      };
+      localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+      // Note: linked UPAH entry tidak auto-update — Adib bisa manual delete + re-create kalau pelapor/durasi berubah
+      const linkedUpah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.find(u =>
+        u.tgl === oldEntry.tgl && u.pelapor === oldEntry.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill')
+      ) : null;
+      const editWarning = linkedUpah ? `\n\n⚠️ Linked UPAH entry tidak auto-update. Kalau pelapor/durasi/dosis berubah, periksa manual di tab Upah Pekerja (entry ${formatTglShort(oldEntry.tgl)} · ${oldEntry.pelapor}).` : '';
+      const editId = CURRENT_EDIT_LAPORAN_ID;
+      CURRENT_EDIT_LAPORAN_ID = null;
+      if (typeof hideEditBanner === 'function') hideEditBanner();
+      alert(`✅ Entry updated (ID: ${editId.substring(0,15)}…)${editWarning}`);
+      resetForm();
+      renderDashboard();
+      renderLog();
+      return;
+    }
+    CURRENT_EDIT_LAPORAN_ID = null;
+    if (typeof hideEditBanner === 'function') hideEditBanner();
+  }
+
   const newEntry = {
+    id: 'lap_' + tgl.replace(/-/g,'') + '_' + Math.random().toString(36).substr(2,5),  // ⭐ v3.2: unique ID untuk edit/delete
     tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
     pohon: +pohon || 0, detail: catatan || '(no detail)',
     durasi: STATE.durasi || null,  // ⭐ v3.1: simpan durasi utk traceability + recovery
     rainfall_24h: r24, rainfall_7d: r7d,
-    compliance, alerts: alertMsgs
+    compliance, alerts: alertMsgs,
+    created_at: new Date().toISOString()
   };
   STATE.laporan.unshift(newEntry);
   localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
@@ -2487,6 +2659,11 @@ function resetForm() {
     else el.value = '';
   });
   if (typeof updateTglPreview === 'function') updateTglPreview();
+  // Auto-clear edit mode kalau aktif
+  if (CURRENT_EDIT_LAPORAN_ID !== null) {
+    CURRENT_EDIT_LAPORAN_ID = null;
+    if (typeof hideEditBanner === 'function') hideEditBanner();
+  }
   document.querySelectorAll('#panel-form .radio-pill').forEach(p=>p.classList.remove('on'));
   document.getElementById('activity-detail-form').innerHTML = '';
   document.getElementById('form-preview').innerHTML = '';
