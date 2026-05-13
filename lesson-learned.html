@@ -1,0 +1,1895 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lesson Learned — Pengelolaan Kebun Wakaf 2022-2025</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  :root {
+    --bg:#FAF7F2;--s1:#FFFFFF;--s2:#EFEAE0;--s3:#DDD5C7;
+    --t1:#3A4A55;--t2:#6B7B85;--t3:#8FA0A8;
+    --red:#C66E5C;--amber:#C4906A;--green:#7B9B7E;--blue:#5A8AA0;--cyan:#7BA8B5;--purple:#A89BB8;--pink:#D4A89A;
+    --r:12px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--t1);line-height:1.6}
+  .hdr{background:linear-gradient(135deg,#3A4A55,#2D3742);padding:28px 32px;border-bottom:3px solid #9CB4A4}
+  .hdr h1{font-size:26px;font-weight:800;background:linear-gradient(135deg,#FAF7F2,#C5D5C5);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hdr .sub{color:var(--t2);font-size:13px;margin-top:4px}
+  .hdr .badge{display:inline-block;background:rgba(90,138,160,0.12);border:1px solid rgba(90,138,160,0.3);color:var(--blue);padding:3px 10px;border-radius:16px;font-size:11px;font-weight:600;margin-top:10px}
+  .ctr{max-width:1400px;margin:0 auto;padding:20px}
+  .tabs{display:flex;gap:3px;background:var(--s1);border-radius:var(--r);padding:3px;margin-bottom:20px;overflow-x:auto}
+  .tab{padding:9px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;color:var(--t2);white-space:nowrap;transition:all .2s;border:1px solid transparent;background:none}
+  .tab:hover{color:var(--t1);background:var(--s2);border-color:var(--s3)}.tab.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 8px rgba(90,138,160,.3)}
+  .tc{display:none !important}.tc.active{display:block !important}
+  .g{display:grid;gap:14px}.g2{grid-template-columns:repeat(auto-fit,minmax(380px,1fr))}.g3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}.g4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .c{background:var(--s1);border-radius:var(--r);padding:18px;border:1px solid var(--s2)}
+  .c h3{font-size:13px;font-weight:600;color:var(--t2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+  .bn{font-size:26px;font-weight:800}.desc{font-size:11px;color:var(--t3);margin-top:3px}
+  .sr{color:var(--red)}.sa{color:var(--amber)}.sg{color:var(--green)}.sb{color:var(--blue)}
+  .tw{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{background:var(--s2);color:var(--t2);padding:8px 10px;text-align:left;font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+  td{padding:8px 10px;border-bottom:1px solid rgba(58,74,85,.08);color:var(--t1);line-height:1.6;vertical-align:top;word-wrap:break-word;overflow-wrap:break-word}
+  tr:hover td{background:rgba(156,180,164,.08)}
+  .tag{display:inline-block;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600}
+  .tr{background:rgba(198,110,92,.1);color:var(--red);border:1px solid rgba(198,110,92,.25)}
+  .ta{background:rgba(196,144,106,.1);color:var(--amber);border:1px solid rgba(196,144,106,.25)}
+  .tg{background:rgba(123,155,126,.1);color:var(--green);border:1px solid rgba(123,155,126,.25)}
+  .tb{background:rgba(90,138,160,.1);color:var(--blue);border:1px solid rgba(90,138,160,.25)}
+  .tp{background:rgba(168,155,184,.1);color:var(--purple);border:1px solid rgba(168,155,184,.25)}
+  .tc2{background:rgba(123,168,181,.1);color:var(--cyan);border:1px solid rgba(123,168,181,.25)}
+  .f{background:var(--s1);border-radius:var(--r);padding:14px 18px;margin-bottom:10px;border-left:4px solid}
+  .f.fc{border-color:var(--red)}.f.fw{border-color:var(--amber)}.f.fo{border-color:var(--green)}.f.fi{border-color:var(--blue)}
+  .f h4{font-size:13px;font-weight:700;margin-bottom:5px}
+  .f p{font-size:12px;color:var(--t2);line-height:1.7}
+  .f .ev{font-size:11px;color:var(--t3);margin-top:6px;padding-top:6px;border-top:1px solid var(--s2);font-style:italic}
+  .f .ac{margin-top:6px;padding:6px 10px;background:rgba(90,138,160,.1);border-radius:6px;font-size:11px;color:var(--blue)}
+  .bw{background:var(--s2);border-radius:4px;height:7px;margin:3px 0;overflow:hidden}
+  .bf{height:100%;border-radius:4px}
+  .cc{position:relative;height:280px}.cl{position:relative;height:380px}
+  .st{font-size:16px;font-weight:700;margin:20px 0 14px;padding-bottom:6px;border-bottom:3px solid #9CB4A4}
+  .mb{margin-bottom:14px}.mb2{margin-bottom:20px}
+  .fb{display:flex;justify-content:space-between;align-items:center}
+  .tr-right{text-align:right}
+  .phase-bar{display:flex;height:32px;border-radius:6px;overflow:hidden;margin:8px 0}
+  .phase-bar div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+  .est-box{background:repeating-linear-gradient(45deg,transparent,transparent 4px,rgba(168,155,184,.08) 4px,rgba(168,155,184,.08) 8px);border:1px dashed rgba(168,155,184,.4);border-radius:8px;padding:14px;margin-bottom:14px}
+  .est-label{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(196,144,106,.15);color:var(--amber);border:1px solid rgba(196,144,106,.3);margin-bottom:6px}
+  @media(max-width:768px){.g2,.g3,.g4{grid-template-columns:1fr}.hdr{padding:16px}.ctr{padding:12px}}
+  .harvest-timeline{position:relative;padding:20px 0;overflow-x:auto;min-width:600px}
+  .ht-row{display:flex;align-items:center;margin-bottom:8px}
+  .ht-label{width:50px;font-size:10px;color:var(--t3);text-align:right;padding-right:8px;flex-shrink:0;font-weight:600}
+  .ht-bar{flex:1;display:flex;height:32px;border-radius:6px;overflow:hidden}
+  .ht-bar div{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff}
+  .ht-track{flex:1;display:flex;height:32px;position:relative;background:var(--s2);border-radius:6px}
+  .ht-marker{position:absolute;height:100%;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff}
+  .ht-invest{position:absolute;height:100%;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
+  .ht-years{display:flex;flex:1}
+  .ht-years div{flex:1;text-align:center;font-size:11px;font-weight:700;color:var(--t2)}
+  .ht-trans{flex:1;position:relative;height:50px}
+
+  /* === SIDEBAR NAV (left, sticky, fixed-width) === */
+  .layout{display:flex;min-height:calc(100vh - 200px);max-width:1400px;margin:0 auto;gap:0;font-size:14px}
+  /* Responsive zoom for content readability */
+  @media (min-width: 1200px) {
+    .layout { zoom: 1.10; }
+  }
+  @media (min-width: 1400px) {
+    .layout { zoom: 1.15; }
+  }
+  @media (min-width: 1700px) {
+    .layout { zoom: 1.20; }
+  }
+  .sidebar{flex:0 0 240px;background:var(--s1);border-right:1px solid var(--s2);padding:18px 0;position:sticky;top:0;align-self:flex-start;max-height:100vh;overflow-y:auto}
+  .sidebar-group{padding:14px 18px 6px;font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px;margin-top:6px;border-top:1px solid rgba(143,160,168,.12)}
+  .sidebar-group:first-of-type{border-top:none;margin-top:0}
+  .nav-item{display:flex;align-items:center;gap:8px;padding:9px 18px;cursor:pointer;font-size:12px;font-weight:500;color:var(--t2);border:none;background:none;width:100%;text-align:left;font-family:inherit;transition:all .15s;border-left:3px solid transparent}
+  .nav-item:hover{background:rgba(156,180,164,.08);color:var(--t1)}
+  .nav-item.active{background:rgba(196,144,106,.1);color:var(--amber);border-left-color:var(--amber);font-weight:600}
+  .nav-item .nav-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(143,160,168,.15);color:var(--t3);font-size:10px;font-weight:700;flex-shrink:0}
+  .nav-item.active .nav-num{background:rgba(196,144,106,.2);color:var(--amber)}
+  .main{flex:1;padding:24px 32px;min-width:0;overflow-x:hidden}
+  @media(max-width:900px){
+    .layout{flex-direction:column}
+    .sidebar{flex:1 1 auto;max-height:none;width:100%;position:relative;border-right:none;border-bottom:1px solid var(--s2);display:flex;flex-wrap:wrap;padding:8px}
+    .sidebar-group{width:100%;padding:4px 10px}
+    .nav-item{width:auto;flex:0 0 auto;padding:6px 10px;border-left:none;border-bottom:2px solid transparent;border-radius:6px}
+    .nav-item.active{border-left:none;border-bottom-color:var(--amber)}
+    .main{padding:18px 14px}
+  }
+
+  /* === AUDIENCE TAGS (Color Coding per Section) === */
+  .aud-tag {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    padding: 3px 9px;
+    border-radius: 100px;
+    margin-left: 10px;
+    vertical-align: middle;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+  }
+  .aud-internal { background: rgba(168,155,184,.12); color: var(--purple); border: 1px solid rgba(168,155,184,.35); }
+  .aud-audit { background: rgba(196,144,106,.12); color: var(--amber); border: 1px solid rgba(196,144,106,.35); }
+  .aud-donor { background: rgba(123,155,126,.12); color: var(--green); border: 1px solid rgba(123,155,126,.35); }
+  .aud-legal { background: rgba(90,138,160,.12); color: var(--blue); border: 1px solid rgba(90,138,160,.35); }
+  .aud-mix { background: rgba(212,168,154,.12); color: var(--pink); border: 1px solid rgba(212,168,154,.35); }
+  .aud-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 10px 14px;
+    background: rgba(250,247,242,.5);
+    border: 1px solid var(--s3);
+    border-radius: 8px;
+    margin: 12px 0 18px;
+    font-size: 11px;
+    color: var(--t2);
+  }
+  .aud-legend-item { display:inline-flex; align-items:center; gap:6px; }
+</style>
+</head>
+<body>
+<div class="hdr">
+  <h1>LESSON LEARNED &mdash; Pengelolaan Kebun Wakaf Ngantang 2022&ndash;2026</h1>
+  <div class="sub">Analisis Komprehensif: Riwayat Perawatan, Siklus Keuangan, Untung-Rugi, 12 Lesson Learned & Phase 4 Roadmap | Kebun Kopi Ngantang, Malang</div>
+  <div class="badge">Dokumen Analisis Internal &mdash; Konsolidasi 6 Fase Pengelolaan 2022&ndash;2026 | 1 Wakif &mdash; Amal Jariyah Adib Asrori | <span style="font-family:monospace;font-size:9px;background:rgba(196,144,106,.25);padding:2px 6px;border-radius:4px;margin-left:8px">v4.7 — 11 May 2026 11:20 WIB</span></div>
+  <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+    <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(123,168,181,.15);color:var(--cyan);border:1px solid rgba(123,168,181,.3)">FASE 1: Adib Solo (Jul 22 &ndash; Sep 23)</span>
+    <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(168,155,184,.15);color:var(--purple);border:1px solid rgba(168,155,184,.3)">FASE 2: Inisiasi Lembaga Nadzir ke-1 (Okt 23 &ndash; Mar 24)</span>
+    <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(90,138,160,.15);color:var(--blue);border:1px solid rgba(90,138,160,.3)">FASE 3: Lembaga Nadzir ke-2 (Apr 24 &ndash; Okt 25)</span>
+    <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(123,155,126,.15);color:var(--green);border:1px solid rgba(123,155,126,.3)">FASE 4: Lembaga Nadzir ke-3 / RWI (Nov 25 &ndash; 1 Mei 26)</span>
+    <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(212,168,154,.18);color:var(--pink);border:1px solid rgba(212,168,154,.4)">FASE 5: Transisi Pasca-Q1 (1 Apr&ndash;2 Mei 26)</span>
+    <span style="padding:3px 10px;border-radius:12px;font-size:10px;font-weight:600;background:rgba(196,144,106,.2);color:var(--amber);border:1px solid rgba(196,144,106,.45)">FASE 6: Pengelolaan Mandiri Wakif (2 Mei 26 onwards)</span>
+  </div>
+  <!-- STATUS DOKUMEN -->
+  <div style="margin-top:14px;padding:10px 14px;background:rgba(250,247,242,.08);border:1px solid rgba(197,213,197,.25);border-radius:8px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;font-size:11px;color:#FAF7F2">
+    <span><b>Versi:</b> v3.0</span>
+    <span style="opacity:.4">|</span>
+    <span><b>Update:</b> 2 Mei 2026</span>
+    <span style="opacity:.4">|</span>
+    <span><b>Status:</b> Konsolidasi pasca pembatalan MOU RWI</span>
+    <span style="opacity:.4">|</span>
+    <span><b>Palette:</b> Sage Mist</span>
+    <span style="opacity:.4">|</span>
+    <span><b>Author:</b> Adib Asrori (Wakif)</span>
+  </div>
+</div>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-group">Overview</div>
+    <button class="nav-item active" onclick="showTab('overview',this)"><span class="nav-num">&#9733;</span>Status &amp; Ringkasan</button>
+    <div class="sidebar-group">6 Fase Pengelolaan</div>
+    <button class="nav-item" onclick="showTab('f1',this)"><span class="nav-num">1</span>Adib (Wakif-Only)</button>
+    <button class="nav-item" onclick="showTab('f2',this)"><span class="nav-num">2</span>Lembaga Nadzir ke-1 (Inisiasi)</button>
+    <button class="nav-item" onclick="showTab('f3',this)"><span class="nav-num">3</span>Lembaga Nadzir ke-2</button>
+    <button class="nav-item" onclick="showTab('f4',this)"><span class="nav-num">4</span>Lembaga Nadzir ke-3 (RWI)</button>
+    <button class="nav-item" onclick="showTab('f5',this)"><span class="nav-num">5</span>Transisi RWI</button>
+    <button class="nav-item" onclick="showTab('f6',this)"><span class="nav-num">6</span>Pengelolaan Mandiri</button>
+    <div class="sidebar-group">Analisis Lintas Fase</div>
+    <button class="nav-item" onclick="showTab('workers',this)"><span class="nav-num">&#9876;</span>Pekerja &amp; Absensi</button>
+    <button class="nav-item" onclick="showTab('efficiency',this)"><span class="nav-num">&#36;</span>Keuangan &amp; P&amp;L</button>
+    <button class="nav-item" onclick="showTab('harvest',this)"><span class="nav-num">&#9728;</span>Siklus Panen</button>
+    <div class="sidebar-group">Refleksi</div>
+    <button class="nav-item" onclick="showTab('lessons',this)"><span class="nav-num">&#9999;</span>14 Lesson Learned</button>
+  </aside>
+  <main class="main">
+
+  <!-- TAB 1: OVERVIEW + STATUS -->
+  <div id="overview" class="tc active" style="display:block">
+
+
+    <div class="st">Timeline 6 Fase Pengelolaan Kebun Wakaf Ngantang (44+ Bulan) <span class="aud-tag aud-mix">Mix</span></div>
+    <!-- PHASE TIMELINE — Redesigned: 2 layers (bar + labels under) -->
+    <div style="margin-bottom:12px">
+      <!-- Phase bar (proportional widths, F1-F4) -->
+      <div class="phase-bar" style="height:36px;border-radius:6px;overflow:hidden;display:flex">
+        <div style="width:34%;background:var(--cyan);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700">F1</div>
+        <div style="width:14%;background:var(--purple);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700">F2</div>
+        <div style="width:41%;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700">F3</div>
+        <div style="width:11%;background:var(--green);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700">F4</div>
+      </div>
+      <!-- Labels under bar -->
+      <div style="display:flex;margin-top:6px;font-size:10px;color:var(--t2);text-align:center">
+        <div style="width:34%;padding:0 4px"><b style="color:var(--cyan)">Adib Solo</b><br><span style="color:var(--t3)">Jul 22 &ndash; Sep 23 &middot; 15 bln</span></div>
+        <div style="width:14%;padding:0 4px"><b style="color:var(--purple)">Inisiasi Nadzir ke-1</b><br><span style="color:var(--t3)">Okt 23 &ndash; Mar 24 &middot; 6 bln</span></div>
+        <div style="width:41%;padding:0 4px"><b style="color:var(--blue)">Lembaga Nadzir ke-2</b><br><span style="color:var(--t3)">Apr 24 &ndash; Okt 25 &middot; 18 bln</span></div>
+        <div style="width:11%;padding:0 4px"><b style="color:var(--green)">RWI</b><br><span style="color:var(--t3)">Nov 25 &ndash; 1 Mei 26 &middot; 5 bln</span></div>
+      </div>
+    </div>
+
+    <!-- F5 &amp; F6 banner -->
+    <div style="margin-bottom:20px;padding:12px 16px;background:linear-gradient(90deg,rgba(212,168,154,.15) 0%,rgba(196,144,106,.18) 100%);border-left:4px solid var(--amber);border-radius:8px;font-size:11px;color:var(--t1);line-height:1.6">
+      <b style="color:var(--pink)">F5: Transisi Pasca-Q1 (1 Apr &ndash; 2 Mei 2026)</b> &rarr; <b style="color:var(--amber)">F6: Pengelolaan Mandiri Wakif (2 Mei 2026 onwards)</b> &mdash; momentum keputusan musyawarah keluarga, struktur Pengelolaan Mandiri.
+    </div>
+
+    <div class="g g4 mb2">
+      <div class="c" style="border-top:3px solid var(--cyan)">
+        <h3>Fase 1: Adib Solo</h3>
+        <div class="bn" style="color:var(--cyan)">15 Bulan</div>
+        <div class="desc">~Rp 15 Jt (estimasi) &middot; ~Rp 1 Jt/bln (batas bawah)</div>
+        <div style="margin-top:6px"><span class="est-label">ESTIMASI</span></div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--purple)">
+        <h3>Fase 2: Inisiasi Lembaga Nadzir ke-1</h3>
+        <div class="bn" style="color:var(--purple)">6 Bulan</div>
+        <div class="desc">Rp 14,49 Jt &middot; Rp 2,42 Jt/bln (investasi intensif)</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t2)">Lembaga akhirnya mundur</div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--blue)">
+        <h3>Fase 3: Lembaga Nadzir ke-2</h3>
+        <div class="bn sb">18 Bulan</div>
+        <div class="desc">Rp 19,58 Jt &middot; Rp 1,09 Jt/bln (rate stabil)</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t2)">Saldo positif pertama tercapai &middot; ~344 KG panen</div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--green)">
+        <h3>Fase 4: RWI</h3>
+        <div class="bn sg">5 Bulan</div>
+        <div class="desc">~Rp 60 Jt RWI fund &middot; commitment Rp 124,94 jt/thn</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t2)">Pembatalan MOU oleh RWI &middot; Outflow Wakif: nihil</div>
+      </div>
+    </div>
+
+    <div class="g g4 mb2">
+      <div class="c" style="border-top:3px solid var(--amber);background:rgba(196,144,106,.04)">
+        <h3>Total Wakif F1+F2+F3</h3>
+        <div class="bn sr">39 Bulan</div>
+        <div class="desc">~Rp 49,1 Jt cumulative &middot; Rp 1,26 jt/bln baseline</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t2)">Fase 4 RWI fund &middot; Fase 6 anggaran Rp 8 jt/thn</div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--green)">
+        <h3>Total Panen (Fase 2&ndash;3)</h3>
+        <div class="bn sg">~344 KG</div>
+        <div class="desc">2024: ~100 KG | 2025: ~281 KG green bean</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t2)">Tren: ~3,5&times; growth Y-o-Y (volume)</div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--blue);background:rgba(90,138,160,.04)">
+        <h3>Bonsari Coffee (Hilir Commercial Wing)</h3>
+        <div class="bn sb">Lihat Detail</div>
+        <div class="desc">Sayap komersial Wakif (anchor offtaker)</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t2)">Analisis komprehensif tersedia di Tab <b>Siklus Keuangan &amp; P&amp;L</b></div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--amber)">
+        <h3>Status Fase 5&ndash;6</h3>
+        <div class="bn sa">PENGELOLAAN MANDIRI</div>
+        <div class="desc">Keputusan keluarga 2 Mei 2026</div>
+        <div style="margin-top:6px;font-size:11px;color:var(--t2)">Adib + Hendy + tim ramping lapangan</div>
+      </div>
+    </div>
+
+    <!-- KEY INSIGHT BOX -->
+    <div class="c mb2" style="border:2px solid var(--amber);background:rgba(196,144,106,.06)">
+      <h3 style="color:var(--amber)">&#127919; Insight Strategis Pasca Pembatalan MOU <span class="aud-tag aud-donor">Donor</span></h3>
+      <div style="font-size:12px;color:var(--t1);line-height:1.85;margin-top:8px">
+        <b>1. Wakaf TETAP SAH secara niat</b> &mdash; ikrar bersifat permanen. Yang berubah hanya struktur kelembagaan pengelola (Nazhir).<br>
+        <b>2. AIW belum pernah dibuat di hadapan PPAIW</b> &mdash; tanah masih SHM atas nama Adib. Implikasi: <em>awal baru window</em> dengan Nazhir baru tanpa kompleksitas update sertifikat BPN.<br>
+        <b>3. 39 bulan investasi Wakif (Fase 1&ndash;3), total ~Rp 49,1 Jt</b> &mdash; saldo positif pertama kali tercapai di Fase 3 sheet 2024-25 (+Rp 597.000). Tren produktivitas membaik substansial: cost/KG turun dari Rp 189.683 (2024) &rarr; Rp 30.712 (2025) dalam setahun.<br>
+        <b>4. Sayap Komersial Wakif (Bonsari Coffee)</b> sebagai integrator hilir telah terbukti sebagai anchor offtaker yang berfungsi &mdash; menjadi fondasi multi-offtaker strategy Fase 6 bersama Nomad Coffee dan partner specialty lainnya. Detail metrik kinerja, lintasan margin, dan Cermin Refleksi Bonsari vs RWI dibahas khusus di Tab <b>Siklus Keuangan &amp; P&amp;L</b>.<br>
+        <b>5. Fase 4 RWI: ~Rp 60 jt RWI disburse dalam 5 bulan</b> (estimasi sentral, item-by-item) &mdash; setara dengan 39 bulan Wakif F1+F2+F3 (~Rp 49,1 Jt), namun delivery komunitas Rp 0 &amp; reputational cost tinggi &mdash; lihat Tab "Fase 4: RWI &amp; Pembatalan MOU" untuk detail. <b>Fase 5&ndash;6 (1&ndash;2 Mei 2026)</b>: transisi cepat ke self-managed via meeting keluarga &mdash; lihat tab dedicated.
+      </div>
+    </div>
+
+    <div class="est-box">
+      <span class="est-label">CATATAN PENTING</span>
+      <p style="font-size:12px;color:var(--t2);margin-top:6px">
+        Pengeluaran periode Juli 2022 hingga September 2023 (estimasi ~Rp 15 Jt) merupakan <b>estimasi batas bawah</b> berdasarkan rata-rata pengeluaran ~Rp 1 Jt/bulan untuk tenaga kerja kebun.
+        Nilai aktual berpotensi lebih tinggi mengingat tidak tersedianya dokumentasi keuangan pada periode tersebut. Seluruh angka agregat yang mengandung komponen estimasi ditandai dengan label <span class="est-label" style="margin:0">ESTIMASI</span>.
+      </p>
+    </div>
+
+    <div class="c mb2" style="border-left:4px solid var(--blue)">
+      <h3>Perjalanan Pengelolaan: 3 Lembaga Nadzir, 1 Wakif</h3>
+      <p style="font-size:12px;color:var(--t2);line-height:1.8">
+        Selama periode 2022&ndash;2026, kebun wakaf telah melalui <b>tiga lembaga nadzir</b> berturut-turut dengan satu Wakif tetap (Adib Asrori). Berikut ringkasan masing-masing:
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:10px">
+        <div style="padding:10px;background:rgba(168,155,184,.1);border:1px solid rgba(168,155,184,.3);border-radius:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--purple)">Lembaga Nadzir ke-1 (Inisiasi)</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:4px">Belum pernah menandatangani akad &mdash; masih dalam <b>fase inisiasi program</b>. TA memberikan sejumlah rekomendasi teknis (penebangan pohon, pelatihan, pemupukan organik, pembersihan lahan), namun hanya panduan singkat tanpa pendampingan. Wakif dibiarkan menunggu berbulan-bulan hingga akhirnya lembaga <b>mundur</b> karena jarak lokasi dan tidak adanya tim operasional. <b>Dampak:</b> penebangan pohon tanpa analisis naungan menyebabkan sebagian Bidang 3 terlalu panas (kopi gosong); pembiak pupuk organik tidak terpakai hingga saat ini.</div>
+        </div>
+        <div style="padding:10px;background:rgba(90,138,160,.1);border:1px solid rgba(90,138,160,.3);border-radius:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--blue)">Lembaga Nadzir ke-2 (April 2024 s/d Oktober 2025)</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:4px">Menyediakan tenaga kerja lokal. <b>Mundur</b> karena ketidakmampuan mendokumentasikan good practices, lesson learned, serta R&amp;D &mdash; personel yang ditunjuk adalah petani biasa tanpa kapasitas manajerial.</div>
+        </div>
+        <div style="padding:10px;background:rgba(123,155,126,.1);border:1px solid rgba(123,155,126,.3);border-radius:8px">
+          <div style="font-size:11px;font-weight:700;color:var(--green)">Lembaga Nadzir ke-3: Rumah Wakaf Indonesia (RWI) &mdash; Nov 2025 s/d Mei 2026</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:4px">Pengambilalihan pengelolaan secara penuh termasuk pendanaan operasional. Kerjasama berakhir 1 Mei 2026 dengan pembatalan MOU oleh RWI.</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;padding:8px 12px;background:rgba(196,144,106,.08);border:1px solid rgba(196,144,106,.25);border-radius:6px;font-size:11px;color:var(--amber)">
+        <b>Catatan:</b> Pada Fase 1, 2, dan 3, pendanaan operasional bersumber dari <b>Wakif (Adib Asrori) pribadi</b>. Pada Fase 4, seluruh biaya ditanggung oleh RWI. Pasca Pembatalan MOU 1 Mei 2026, struktur kembali ke Pengelolaan Mandiri Wakif (Fase 6).
+      </div>
+    </div>
+
+    <div class="g g2 mb2">
+      <div class="c">
+        <h3>Pengeluaran per Fase</h3>
+        <div class="cc"><canvas id="chPhase"></canvas></div>
+      </div>
+      <div class="c">
+        <h3>Komposisi Pengeluaran Keseluruhan</h3>
+        <div class="cc"><canvas id="chExpAll"></canvas></div>
+      </div>
+    </div>
+
+    <div class="st">Perbandingan Kunci antar Fase</div>
+    <div class="c mb2">
+      <div class="tw">
+        <table>
+          <thead><tr><th>Indikator</th><th>Fase 1 (Belum Terdokumentasi)</th><th>Fase 2 (Terdokumentasi)</th><th>Fase 3: via Lembaga Nadzir ke-2</th><th>Tren</th></tr></thead>
+          <tbody>
+            <tr><td>Durasi</td><td>15 bulan</td><td>6 bulan</td><td>~18 bulan</td><td>Total: ~39 bulan</td></tr>
+            <tr><td>Total Pengeluaran</td><td>~Rp 15 Jt <span class="est-label" style="font-size:8px">EST</span></td><td>Rp 14,49 Jt</td><td>Rp 19,58 Jt</td><td>Grand total: ~Rp 49,1 Jt</td></tr>
+            <tr><td>Pengeluaran/Bulan</td><td class="sa"><b>~Rp 1 Jt</b></td><td class="sr"><b>Rp 2,42 Jt</b></td><td class="sg"><b>Rp 1,09 Jt</b></td><td>F2 tertinggi karena mencakup investasi awal intensif</td></tr>
+            <tr><td>Panen Kopi</td><td>0 KG</td><td>0 KG</td><td>~381 KG (100+281, estimasi)</td><td>Investasi selama 21 bulan mulai menghasilkan pada Fase 2</td></tr>
+            <tr><td>Sumber Pendapatan</td><td>Belum terdokumentasi</td><td>Penjualan kayu tebang (92%)</td><td>Kopi (100%)</td><td><span class="tag tg">Menuju kemandirian finansial</span></td></tr>
+            <tr><td>Pencatatan</td><td class="sr"><b>Tidak ada</b></td><td class="sg"><b>Detail per pekerja/hari</b></td><td class="sa"><b>Ringkas per kegiatan</b></td><td>Standar pencatatan Fase 2 menjadi acuan terbaik</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB F1: ADIB SOLO -->
+  <div id="f1" class="tc" style="display:none">
+    <div class="st" style="color:var(--cyan)">Fase 1: Adib Solo (Juli 2022 &ndash; September 2023) <span class="aud-tag aud-audit">Audit</span></div>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.7;font-style:italic">
+      Bab perdana &mdash; sebelum ada lembaga nadzir apapun. Wakif memulai pengelolaan kebun secara langsung, sendirian, dengan perawatan rutin tanpa SOP formal dan tanpa dokumentasi keuangan.
+    </p>
+
+    <div class="g g4 mb2">
+      <div class="c"><h3>Durasi</h3><div class="bn" style="color:var(--cyan)">15 Bulan</div><div class="desc">Jul 2022 &ndash; Sep 2023</div></div>
+      <div class="c"><h3>Estimasi Pengeluaran</h3><div class="bn" style="color:var(--cyan)">~Rp 15 Jt</div><div class="desc">~Rp 1 Jt/bulan (batas bawah)</div><div style="margin-top:6px"><span class="est-label">ESTIMASI</span></div></div>
+      <div class="c"><h3>Sumber Pendanaan</h3><div class="bn sa">Wakif Pribadi</div><div class="desc">Bukan dari lembaga / donasi</div></div>
+      <div class="c"><h3>Status Pencatatan</h3><div class="bn sr">NIHIL</div><div class="desc">Tidak ada dokumentasi keuangan</div></div>
+    </div>
+
+    <div class="est-box mb2">
+      <span class="est-label">CATATAN PENTING &mdash; FASE INI BELUM TERDOKUMENTASI</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px">
+        <div>
+          <div style="font-size:13px;color:var(--t1);font-weight:600;margin-bottom:6px">Estimasi Pengeluaran</div>
+          <div style="font-size:28px;font-weight:800;color:var(--cyan)">~Rp 15.000.000</div>
+          <div style="font-size:11px;color:var(--t3)">15 bulan &times; ~Rp 1.000.000/bulan (batas bawah)</div>
+          <div style="font-size:11px;color:var(--t3);margin-top:6px;line-height:1.6">Nilai aktual berpotensi lebih tinggi. Seluruh angka agregat yang mengandung komponen ini ditandai <span class="est-label" style="margin:0">ESTIMASI</span>.</div>
+        </div>
+        <div>
+          <div style="font-size:13px;color:var(--t1);font-weight:600;margin-bottom:6px">Konteks Pengelolaan</div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.8">
+            Pengelolaan kebun dimulai sejak Juli 2022 dengan pengeluaran rutin bulanan untuk tenaga kerja. Tidak ada lembaga nadzir, tidak ada TA, tidak ada SOP, tidak ada catatan keuangan. Fokus kegiatan: perawatan rutin tanaman kopi yang sudah ada.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="f fw">
+      <h4>Refleksi Fase 1 &mdash; Akar Pelajaran LL #0 (Wakaf adalah Amanah)</h4>
+      <p>Fase ini adalah fondasi emosional Wakif terhadap kebun: <b>kepemilikan langsung, tanpa perantara, tanpa ekspektasi return komersial</b>. Kebun dirawat karena <em>amanah</em>, bukan karena bisnis. Namun ketiadaan dokumentasi 15 bulan menjadi pembelajaran utama yang membentuk LL #0 &amp; LL #3: <b>setiap pengeluaran harus didokumentasikan, tanpa terkecuali</b> &mdash; karena biaya yang tidak tercatat tetap merupakan beban biaya yang nyata terhadap amal jariyah ini.</p>
+    </div>
+  </div>
+
+  <!-- TAB F2: INISIASI NADZIR 1 -->
+  <div id="f2" class="tc" style="display:none">
+    <div class="st" style="color:var(--purple)">Fase 2: Inisiasi dengan Calon Lembaga Nadzir ke-1 (Oktober 2023 &ndash; Maret 2024)</div>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.7;font-style:italic">
+      Babak ketika Wakif coba berkolaborasi dengan calon lembaga nadzir pertama. Lembaga belum menandatangani akad &mdash; masih dalam fase inisiasi. TA memberikan rekomendasi teknis (tebang pohon, pelatihan, pupuk organik), Wakif eksekusi atas arahan mereka, namun lembaga akhirnya mundur karena jarak lokasi dan tidak adanya tim operasional. Wakif dibiarkan menunggu berbulan-bulan.
+    </p>
+
+    <div class="g g4 mb2">
+      <div class="c"><h3>Durasi</h3><div class="bn" style="color:var(--purple)">6 Bulan</div><div class="desc">Okt 2023 &ndash; Mar 2024</div></div>
+      <div class="c"><h3>Total Pengeluaran</h3><div class="bn" style="color:var(--purple)">Rp 14,49 Jt</div><div class="desc">6 bulan | Rp 2,42 Jt/bln</div></div>
+      <div class="c"><h3>Total Pendapatan</h3><div class="bn sg">Rp 16,28 Jt</div><div class="desc">92% dari penjualan kayu tebang</div></div>
+      <div class="c"><h3>Saldo</h3><div class="bn" style="color:var(--amber)">Efek Samping</div><div class="desc">Saldo positif +Rp 1,79 Jt tercatat &mdash; namun bersumber dari efek samping penebangan pohon, bukan strategi pendapatan</div></div>
+    </div>
+
+    <div class="g g2 mb2">
+      <div class="c">
+        <h3>Rincian Pengeluaran Tercatat (Fase 2)</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Tanggal</th><th>Deskripsi</th><th>Jumlah</th><th>Kategori</th></tr></thead>
+            <tbody>
+              <tr><td>26 Okt 23</td><td>Enumerators Fees (4 Days)</td><td class="tr-right">Rp 1.600.000</td><td><span class="tag tp">Survey/Data</span> <span class="tag tc2">Rekomendasi TA Lembaga Nadzir ke-1</span></td></tr>
+              <tr><td>9 Nov 23</td><td>Ongkos Potong Pohon</td><td class="tr-right">Rp 3.000.000</td><td><span class="tag tr">Tanpa seleksi pohon peneduh</span> <span class="tag tc2">Rekomendasi TA Lembaga Nadzir ke-1</span></td></tr>
+              <tr><td>6 Des 23</td><td>Biaya Pelatihan Kopi Petrik</td><td class="tr-right">Rp 2.000.000</td><td><span class="tag tb">Pelatihan</span> <span class="tag tc2">Rekomendasi TA Lembaga Nadzir ke-1</span></td></tr>
+              <tr><td>6 Des 23</td><td>Gunting &amp; Gergaji Kopi</td><td class="tr-right">Rp 555.000</td><td><span class="tag tb">Alat</span></td></tr>
+              <tr><td>7 Des 23</td><td>Cangkul, Asahan, Sabit</td><td class="tr-right">Rp 250.000</td><td><span class="tag tb">Alat</span></td></tr>
+              <tr><td>28 Des 23</td><td>Upah Pembersihan Kebun DEC</td><td class="tr-right">Rp 780.000</td><td><span class="tag tp">Pekerja</span></td></tr>
+              <tr><td>28 Des 23</td><td>Terpal</td><td class="tr-right">Rp 195.000</td><td><span class="tag tb">Material</span></td></tr>
+              <tr><td>6 Jan 24</td><td>Pembiak Pupuk Organik</td><td class="tr-right">Rp 880.000</td><td><span class="tag ta">Tidak terpakai</span> <span class="tag tc2">Rekomendasi TA Lembaga Nadzir ke-1</span></td></tr>
+              <tr><td>27 Jan 24</td><td>Upah Pembersihan JAN</td><td class="tr-right">Rp 1.480.000</td><td><span class="tag tp">Pekerja</span> <span class="tag tc2">Rekomendasi TA Lembaga Nadzir ke-1</span></td></tr>
+              <tr><td>28 Feb 24</td><td>Upah Pembersihan FEB</td><td class="tr-right">Rp 2.750.000</td><td><span class="tag tp">Pekerja</span> <span class="tag tc2">Rekomendasi TA Lembaga Nadzir ke-1</span></td></tr>
+              <tr style="background:var(--s2)"><td colspan="2"><b>TOTAL TERCATAT</b></td><td class="tr-right"><b>Rp 14.490.000</b></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="c">
+        <h3>Breakdown Kategori (Tercatat)</h3>
+        <div class="cc"><canvas id="chAdibCat"></canvas></div>
+        <div style="margin-top:12px">
+          <div class="f fi">
+            <h4>Validasi Silang dengan Data Absensi</h4>
+            <p>Data kehadiran pada sheet &ldquo;Kebun Wakaf&rdquo; telah diverifikasi dan sesuai dengan catatan anggaran:<br>
+            <b>Des 2023:</b> 6 hari kerja (Petrik+Agata+Nardi+Dino) = <b>Rp 780.000</b> &#10003;<br>
+            <b>Jan 2024:</b> 7 hari kerja (Nardi+Bambang+Dino+Petrik) = <b>Rp 1.480.000</b> &#10003;<br>
+            <b>Feb 2024:</b> 22 hari kerja (Bambang+Dino+Pak No+Nardi) = <b>Rp 2.750.000</b> &#10003;</p>
+            <div class="ev">Sistem pencatatan kehadiran per individu per hari (yang diinisiasi bersamaan keterlibatan TA Lembaga Nadzir ke-1) merupakan praktik terbaik yang perlu dipertahankan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="st">Pendapatan Fase 2 (Tercatat) <span class="aud-tag aud-audit">Audit</span></div>
+    <div class="c mb2">
+      <div class="tw">
+        <table>
+          <thead><tr><th>Sumber</th><th>Jumlah</th><th>% dari Total</th><th>Keberlanjutan</th><th>Catatan</th></tr></thead>
+          <tbody>
+            <tr><td>Penjualan Pohon (hasil tebang)</td><td class="tr-right">Rp 15.000.000</td><td>92,1%</td><td><span class="tag tr">EFEK SAMPING</span></td><td>Hasil penjualan kayu dari penebangan pohon atas rekomendasi TA Lembaga Nadzir ke-1 untuk fokus ke kopi. Bukan strategi pendapatan, melainkan efek samping penebangan</td></tr>
+            <tr><td>Sedekah Ade (hasil durian)</td><td class="tr-right">Rp 1.000.000</td><td>6,1%</td><td><span class="tag ta">TIDAK PASTI</span></td><td>Kontribusi sukarela, bukan model pendapatan tetap</td></tr>
+            <tr><td>Penjualan Buah Kelapa</td><td class="tr-right">Rp 280.000</td><td>1,7%</td><td><span class="tag ta">MINOR</span></td><td>Pemanfaatan hasil sampingan dari lahan</td></tr>
+            <tr style="background:var(--s2)"><td><b>TOTAL</b></td><td class="tr-right"><b>Rp 16.280.000</b></td><td>100%</td><td></td><td>Saldo tercatat: +Rp 1.790.000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="f fw">
+      <h4>Refleksi Fase 2 &mdash; Inisiasi yang Berakhir Mundur</h4>
+      <p>Fase ini mencerminkan investasi intensif yang dianggap fondasi: pembersihan lahan, pengadaan alat, pelatihan tenaga kerja. Namun tiga kegagalan crystallize:<br>
+      <b>(1) Pelatihan Petrik Rp 2 Jt &mdash; pekerja resign 1 bulan setelahnya.</b> Investasi kapasitas SDM hilang seluruhnya.<br>
+      <b>(2) Pupuk organik Rp 880rb &mdash; tidak pernah dipakai</b> karena tidak ada personel yang tahu cara aplikasinya setelah TA tidak lagi terlibat.<br>
+      <b>(3) Penebangan tanpa seleksi naungan &mdash; sebagian Bidang 3 gosong</b> karena kehilangan shade tree.<br>
+      Lembaga akhirnya mundur, Wakif kehilangan momentum, dan momentum baru muncul ketika Lembaga Nadzir ke-2 masuk di Fase 3. Inilah Pola #1 (TA tanpa kehadiran lapangan) dan Pola #2 (no baseline data) yang akan terulang di fase-fase berikutnya.</p>
+    </div>
+  </div>
+
+  <!-- TAB 3: Lembaga Nadzir ke-2 PHASE -->
+  <div id="f3" class="tc" style="display:none">
+    <div class="st" style="color:var(--blue)">Fase 3: Pengelolaan via Lembaga Nadzir ke-2 (April 2024 &ndash; Oktober 2025) <span class="aud-tag aud-audit">Audit</span></div>
+    <div class="g g4 mb2">
+      <div class="c"><h3>Total Pengeluaran</h3><div class="bn sb">Rp 19,58 Jt</div><div class="desc">~18 bulan | avg Rp 1,09 Jt/bulan</div></div>
+      <div class="c"><h3>Panen Kopi</h3><div class="bn sg">~344 KG</div><div class="desc">2024: ~100 KG (63 tercatat) | 2025: ~281 KG</div></div>
+      <div class="c"><h3>Revenue Kopi</h3><div class="bn sg">Rp 18,38 Jt</div><div class="desc">Termasuk valuasi stok 210 KG @Rp 53K/KG</div></div>
+      <div class="c"><h3>Saldo Akhir</h3><div class="bn sg">+Rp 597.000</div><div class="desc">Saldo positif pertama kali tercapai</div></div>
+    </div>
+
+    <div class="g g2 mb2">
+      <div class="c">
+        <h3>Pengeluaran dari Budget 2023-24 (Apr&ndash;Nov 2024)</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Tanggal</th><th>Deskripsi</th><th>Jumlah</th><th>Catatan</th></tr></thead>
+            <tbody>
+              <tr style="background:rgba(196,144,106,.06)"><td>30 Mei 24</td><td>Biaya Perawatan Bid 1 & 2</td><td class="tr-right"><b>Rp 4.000.000</b></td><td><span class="tag ta">Lump sum &mdash; tanpa breakdown</span></td></tr>
+              <tr style="background:rgba(196,144,106,.06)"><td>11 Jun 24</td><td>Biaya Perawatan Bid 3</td><td class="tr-right"><b>Rp 2.000.000</b></td><td><span class="tag ta">Lump sum &mdash; tanpa breakdown</span></td></tr>
+              <tr><td>17 Jul 24</td><td>Stek Kopi 130 Pohon @Rp 2.500</td><td class="tr-right">Rp 325.000</td><td><span class="tag tg">Investasi bibit</span></td></tr>
+              <tr><td>17 Jul 24</td><td>Panen Kopi 3 Hari @Rp 70K</td><td class="tr-right">Rp 210.000</td><td>Panen 2024</td></tr>
+              <tr><td>9 Agt 24</td><td>Unduh Kopi 2hr 5org @Rp 100K</td><td class="tr-right">Rp 1.000.000</td><td>Panen 2024</td></tr>
+              <tr><td>2 Sep 24</td><td>Pupuk Phonska + SP</td><td class="tr-right">Rp 1.210.000</td><td><span class="tag tg">Pupuk</span></td></tr>
+              <tr><td>28 Okt 24</td><td>Penanaman Bid 3 (bibit+pekerja)</td><td class="tr-right">Rp 1.000.000</td><td><span class="tag tg">Replanting</span></td></tr>
+              <tr><td>31 Okt 24</td><td>Penanaman Bid 3 (200 bibit)</td><td class="tr-right">Rp 600.000</td><td><span class="tag tg">Replanting</span></td></tr>
+              <tr><td>24 Nov 24</td><td>Upah Pembersihan 4Hr 2Org</td><td class="tr-right">Rp 800.000</td><td>Pekerja</td></tr>
+              <tr><td>30 Nov 24</td><td>Upah Pembersihan 4Hr 2Org</td><td class="tr-right">Rp 800.000</td><td>Pekerja</td></tr>
+              <tr style="background:var(--s2)"><td colspan="2"><b>Subtotal (dari sheet 2023-24)</b></td><td class="tr-right"><b>Rp 11.945.000</b></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="c">
+        <h3>Pengeluaran dari Budget 2024-25 (Jan&ndash;Jul 2025)</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Tanggal</th><th>Deskripsi</th><th>Jumlah</th><th>Catatan</th></tr></thead>
+            <tbody>
+              <tr><td>7 Jan 25</td><td>Obat Rumput</td><td class="tr-right">Rp 150.000</td><td>Obat</td></tr>
+              <tr><td>14 Jan 25</td><td>Upah perawatan 7 Hari</td><td class="tr-right">Rp 500.000</td><td>Pekerja</td></tr>
+              <tr><td>20 Jan 25</td><td>Upah perawatan 1 Hari</td><td class="tr-right">Rp 100.000</td><td>Pekerja</td></tr>
+              <tr><td>29 Jan 25</td><td>Pupuk Kopi & Jeruk</td><td class="tr-right">Rp 300.000</td><td>Pupuk</td></tr>
+              <tr><td>6 Feb 25</td><td>Upah perawatan 3 Hari</td><td class="tr-right">Rp 300.000</td><td>Pekerja</td></tr>
+              <tr><td>15 Apr 25</td><td>Bambu + Paku & Kawat</td><td class="tr-right">Rp 250.000</td><td>Infrastruktur</td></tr>
+              <tr><td>17-27 Apr</td><td>Pasang pagar bambu 3 bidang</td><td class="tr-right">Rp 2.700.000</td><td>Pekerja + Material</td></tr>
+              <tr><td>2 Mei 25</td><td>Pagar Bid 3</td><td class="tr-right">Rp 400.000</td><td>Pekerja</td></tr>
+              <tr><td>16 Mei 25</td><td>Bensin + Obat Rumput</td><td class="tr-right">Rp 200.000</td><td>Operasional</td></tr>
+              <tr><td>17 Mei 25</td><td>Upah Dedy 6 hari</td><td class="tr-right">Rp 500.000</td><td>Pekerja</td></tr>
+              <tr><td>10 Jun 25</td><td>Unduh Kopi 3hr 3org @Rp 100K</td><td class="tr-right">Rp 900.000</td><td>Panen 2025</td></tr>
+              <tr style="background:rgba(196,144,106,.06)"><td>2 Jul 25</td><td>Upah + pupuk + rokok</td><td class="tr-right"><b>Rp 2.030.000</b></td><td><span class="tag ta">Campuran &mdash; dari jual panen</span></td></tr>
+              <tr><td>20 Jul 25</td><td>Giling + Jemur</td><td class="tr-right">Rp 300.000</td><td>Pengolahan</td></tr>
+              <tr style="background:var(--s2)"><td colspan="2"><b>Subtotal (sheet 2024-25)</b></td><td class="tr-right"><b>Rp 8.630.000</b></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="g g2 mb2">
+      <div class="c">
+        <h3>Hasil Panen 2024 (Fase Lembaga Nadzir ke-2)</h3>
+        <div style="font-size:13px;line-height:2;color:var(--t2)">
+          <div>Panen Jul&ndash;Agt 2024: <b>63 KG</b> green bean (tercatat/terjual)</div>
+          <div>Dijual tunai &amp; transfer: <b>Rp 4.302.000</b><br>Estimasi total panen aktual: ~100 KG (sisa untuk konsumsi pribadi, tidak tercatat)</div>
+          <div>Avg harga jual: Rp 68.286/KG (retail)</div>
+          <div style="margin-top:8px;color:var(--t3)">Detail: 10 KG @Rp 80K (Jul), 10 KG @Rp 80K (Agt), 25 KG @Rp 60K (Sep), 18 KG @Rp 71K (Sep)</div>
+        </div>
+      </div>
+      <div class="c">
+        <h3>Hasil Panen 2025 (Fase Lembaga Nadzir ke-2)</h3>
+        <div style="font-size:13px;line-height:2;color:var(--t2)">
+          <div>Total: <b>23 karung basah</b> &rarr; ~<b>281 KG</b> green bean</div>
+          <div>Panen 1 (16 Mei): 6 karung &rarr; dijual Rp 500.000</div>
+          <div>Panen 2 (10 Jun): 6 karung &rarr; disimpan</div>
+          <div>Panen 3 (2 Jul): 17 karung &rarr; 4 dijual (Rp 2,03 Jt), 13 disimpan</div>
+          <div>Disimpan: 210 KG green bean (valuasi Rp 11,13 Jt @Rp 53K/KG)</div>
+          <div style="margin-top:6px"><span class="tag tg">Peningkatan produksi 346% dibanding 2024</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3.5: FASE 4 RWI & PEMBATALAN MOU -->
+  <div id="f4" class="tc" style="display:none">
+    <div class="st" style="color:var(--green)">Fase 4: Lembaga Nadzir ke-3 &mdash; Rumah Wakaf Indonesia (RWI) <span style="font-size:0.85rem;font-weight:400;color:var(--t3)">| 1 Nov 2025 &ndash; 1 Mei 2026</span></div>
+
+    <div class="g g4 mb2">
+      <div class="c"><h3>Total Pengeluaran (RWI fund)</h3><div class="bn sr">~Rp 60 Jt</div><div class="desc">Estimasi sentral (item-by-item) &middot; range Rp 54&ndash;65 Jt</div></div>
+      <div class="c"><h3>Total Durasi</h3><div class="bn" style="color:var(--green)">5 Bulan</div><div class="desc">Nov 2025 &ndash; 1 Mei 2026</div></div>
+      <div class="c"><h3>Outflow Wakif</h3><div class="bn sg">Nihil</div><div class="desc">RWI fund operasional (reimbursement Q1 selesai)</div></div>
+      <div class="c"><h3>Status Akhir</h3><div class="bn sr">MOU DIBATALKAN</div><div class="desc">Inisiatif RWI &middot; pembatalan bersama 1 Mei 2026</div></div>
+    </div>
+
+    <!-- PONDASI KERJASAMA: PKS 26 NOV 2025 -->
+    <div class="c mb2" style="border-left:4px solid var(--green);background:rgba(123,155,126,.04)">
+      <h3 style="color:var(--green)">&#128196; Pondasi Kerjasama &mdash; Perjanjian Kerjasama (PKS) 26 November 2025 <span class="aud-tag aud-legal">Legal</span></h3>
+      <p style="font-size:12px;color:var(--t2);line-height:1.75;margin-top:8px">
+        Kerjasama Wakaf Produktif antara Wakif dan Lembaga Nadzir ke-3 (RWI) ditandatangani secara resmi pada <b>Rabu, 26 November 2025</b> di Malang, dalam bentuk Perjanjian Kerjasama (PKS) bernomor <b>959/SP3-DIR/RWI/XI/2025</b>. PKS ini menjadi rujukan formal seluruh dinamika kerjasama, dari struktur tanggung jawab hingga skema pembagian hasil.
+      </p>
+
+      <div class="g g2 mb2" style="margin-top:14px;gap:14px">
+        <div style="padding:12px 14px;background:rgba(123,155,126,.08);border-left:3px solid var(--green);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1px">Pihak Pertama (Wakif)</div>
+          <div style="font-size:12px;color:var(--t1);margin-top:6px;line-height:1.6">
+            <b>Adib Asrori</b><br>
+            Wakif perorangan, pemilik harta benda wakaf<br>
+            <span style="font-size:11px;color:var(--t3)">Alamat: Villa Sengkaling Blok L-66, Dau, Malang</span>
+          </div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(123,155,126,.08);border-left:3px solid var(--green);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1px">Pihak Kedua (Nazhir)</div>
+          <div style="font-size:12px;color:var(--t1);margin-top:6px;line-height:1.6">
+            <b>Yayasan Rumah Wakaf Indonesia</b><br>
+            Lembaga Nazhir Wakaf terdaftar di BWI<br>
+            Diwakili oleh <b>CEO RWI</b> selaku Ketua Yayasan
+          </div>
+        </div>
+      </div>
+
+      <h4 style="color:var(--t1);font-size:14px;margin-top:14px;margin-bottom:10px">Pasal-Pasal Kunci yang Disepakati</h4>
+      
+      <div class="g g2 mb2" style="gap:12px">
+        <div style="padding:12px 14px;background:rgba(255,255,255,.5);border:1px solid rgba(143,160,168,.2);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--cyan);text-transform:uppercase;letter-spacing:1px">Pasal 3-4 &mdash; Objek &amp; Jangka Waktu</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.7">
+            &#9656; Lahan ~<b>4.918 m&sup2;</b> (3 bidang tanah) di Desa Sumberagung, Ngantang<br>
+            &#9656; Komoditas: <b>kopi &amp; durian</b><br>
+            &#9656; Jenis: <b>Wakaf Produktif Khairi Mu'aqqat</b> (jangka waktu terbatas)<br>
+            &#9656; Durasi: <b>15 tahun</b>, evaluasi setiap 5 tahun
+          </div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(255,255,255,.5);border:1px solid rgba(143,160,168,.2);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px">Pasal 5 &mdash; Tugas Nazhir (RWI)</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.7">
+            &#9656; Menyediakan <b>tenaga ahli perkebunan</b><br>
+            &#9656; <b>Riset &amp; pengembangan On-Farm</b> hingga produk olahan<br>
+            &#9656; <b>Marketing dan penjualan</b> hasil kebun + produk turunan<br>
+            &#9656; <b>Konsep bisnis + permodalan</b> (Nazhir tanggung modal)<br>
+            &#9656; Wakif terbuka berkontribusi sesuai kapasitas
+          </div>
+        </div>
+      </div>
+
+      <div class="g g2 mb2" style="gap:12px">
+        <div style="padding:12px 14px;background:rgba(255,255,255,.5);border:1px solid rgba(143,160,168,.2);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:1px">Pasal 6 &mdash; Skema Pembagian Hasil</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.7">
+            Setelah dikurangi biaya operasional, laba bersih dibagi:<br>
+            &#9656; <b>Wakif: 30%</b><br>
+            &#9656; <b>Nazhir (RWI): 10%</b><br>
+            &#9656; <b>Mauquf Alaih: 30%</b> (Dana Habis Pakai)<br>
+            &#9656; <b>Dana Pengembangan: 30%</b> (reinvestasi)<br>
+            <em style="font-size:10px;color:var(--t3)">Catatan: skema bagi hasil berlaku pasca-BEP. Pengolahan biji kopi hingga produk siap konsumsi diharapkan untuk profit maksimal &mdash; tanggung jawab Nazhir.</em>
+          </div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(255,255,255,.5);border:1px solid rgba(143,160,168,.2);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:1px">Pasal 7 &mdash; Mauquf Alaih</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:6px;line-height:1.7">
+            Penerima manfaat utama:<br>
+            &#9656; <b>Yayasan Pendidikan &amp; Sosial Darul Mujtabah Ngantang</b><br>
+            Peruntukan dana:<br>
+            &#9656; Operasional TPQ Darul Mujtaba<br>
+            &#9656; Kegiatan dakwah<br>
+            &#9656; Bantuan sosial<br>
+            <em style="font-size:10px;color:var(--t3)">Nazhir wajib pastikan transparansi, akuntabilitas, ketertelusuran manfaat.</em>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:12px 14px;background:rgba(196,144,106,.06);border-left:3px solid var(--amber);border-radius:6px;font-size:11px;color:var(--t1);line-height:1.75;margin-top:6px">
+        <b>&#128270; Pasal 8 &mdash; Monitoring &amp; Evaluasi:</b> Para Pihak berkomitmen bersikap terbuka dan kooperatif sesuai prinsip <b>transparansi dan akuntabilitas</b>. Jika ditemukan penyimpangan atau ketidaksesuaian pelaksanaan, kedua pihak sepakat melakukan <em>musyawarah untuk mencari solusi yang adil dan proporsional</em>. <br>
+        <b>&#128274; Pasal 9 &mdash; Pengakhiran:</b> PKS dapat diakhiri sebelum 15 tahun bila ada pelanggaran tanpa perbaikan, force majeure, atau <b>kesepakatan bersama tertulis</b>. Mekanisme inilah yang ditempuh pada 1 Mei 2026.
+      </div>
+
+      <p style="font-size:11px;color:var(--t3);margin-top:12px;line-height:1.65;font-style:italic">
+        PKS ini menjadi <b>pondasi formal</b> yang menetapkan ekspektasi dan komitmen pada awal kerjasama. Bagaimana komitmen-komitmen tersebut terealisasi (atau tidak) selama 5 bulan kerjasama menjadi fokus narasi pada timeline dan analisis berikutnya.
+      </p>
+    </div>
+
+    <!-- TIMELINE FASE 3 -->
+    <div class="c mb2" style="border-left:4px solid var(--green)">
+      <h3>Timeline Kerjasama RWI (5 Bulan)</h3>
+      <div class="tw">
+        <table style="table-layout:fixed;width:100%">
+          <colgroup>
+            <col style="width:13%">
+            <col style="width:60%">
+            <col style="width:27%">
+          </colgroup>
+          <thead><tr><th>Tanggal</th><th>Milestone</th><th>Catatan</th></tr></thead>
+          <tbody>
+            <tr><td>26 Nov 2025</td><td>Penandatanganan MOU Wakaf Produktif No. 959/SP3-DIR/RWI/XI/2025</td><td>Adib (Wakif) &amp; CEO RWI. 15 tahun, evaluasi tiap 5 tahun</td></tr>
+            <tr><td>Des 2025 &ndash; Feb 2026</td><td>RWI mulai aktif: koordinasi awal, alokasi TA RWI &amp; TA RWI Senior</td><td><span class="tag ta">Pendampingan minim &mdash; pola kerja eksklusif</span></td></tr>
+            <tr><td>31 Mar 2026</td><td>Meeting evaluasi Q1 2026 dengan TA RWI</td><td><span class="tag tr">Insiden defensif TA RWI Senior &mdash; "Bukan hak Anda mengevaluasi kami"</span></td></tr>
+            <tr><td>1 Apr 2026</td><td>Pesan WA Adib ke CEO RWI: flag concerns TA RWI/agrosip</td><td>Tone amanah, husnudzon &mdash; bukan konfrontasi</td></tr>
+            <tr style="background:rgba(123,155,126,.04)"><td>7 Apr 2026</td><td>CEO RWI menyampaikan keterbukaan terhadap penawaran tim mitra rekomendasi Wakif: <em>"Untuk dari Rumah Wakaf, monggo terbuka untuk penawaran dari mitra Mas Adib. Kami berupaya mengedepankan antarahin. Saling ridha, kerelaan bersama."</em> Wakif sekaligus mengkonfirmasi pemasangan logo RWI di facade Bon's Cafe sebagai bentuk visibilitas RWI sebagai Lembaga Nadzir yang mendukung kebun wakaf (Hulu) dengan aliran ke Bonsari Coffee dan Bon's Cafe (Hilir).</td><td><span class="tag tg">Komitmen formal CEO RWI</span></td></tr>
+            <tr><td>9 Apr 2026</td><td>Meeting dengan Ust Fauzan: re-architect boundary fasilitator vs pengelola pendidikan</td><td><span class="tag tb">Restorasi dynamic Yayasan DM sebagai Mauquf Alaih</span></td></tr>
+            <tr style="background:rgba(123,155,126,.04)"><td>13 Apr 2026</td><td>Wakif meneruskan proposal komprehensif dari tim mitra rekomendasi kepada CEO RWI. Penerimaan formal: <em>"Baik Mas, diterima proposalnya. Saya teruskan lebih awal ke tim program."</em></td><td><span class="tag tg">Proposal diterima di level CEO</span></td></tr>
+            <tr><td>16 Apr 2026</td><td>Meeting Calon TA ke-3 (Konsultan eksternal On-Farm Technical Lead)</td><td>Roadmap on-farm independen dari TA RWI</td></tr>
+            <tr style="background:rgba(123,155,126,.04)"><td>17 Apr 2026</td><td>Wakif mengirimkan halaman web learning session sebagai outcome awal dari knowledge sharing oleh Calon TA ke-3. Respons CEO RWI: <em>"Mantapp Mas Adib &#128591;&#127995;"</em></td><td><span class="tag tg">Acknowledgment positif</span></td></tr>
+            <tr style="background:rgba(123,155,126,.04)"><td>21 Apr 2026</td><td>Wakif mengirimkan update laporan assessment awal &mdash; termasuk pengambilan sampling untuk baseline data &mdash; sebagai upaya transparansi. Respons CEO RWI: <em>"Mantap Mas"</em></td><td><span class="tag tg">Komunikasi tetap terjaga</span></td></tr>
+            <tr style="background:rgba(196,144,106,.06)"><td>28 Apr 2026</td><td>Wakif mengirimkan link website yang dibangun bersama tim mitra baru, sebagai upaya transparansi sistem M&amp;E dan quality control. <b>Pesan hanya dibaca (read receipt) oleh CEO RWI tanpa respons.</b></td><td><span class="tag ta">Pertama kali komunikasi tidak direspons &mdash; indikasi awal perubahan dinamika</span></td></tr>
+            <tr><td><b>1 Mei 2026</b></td><td>Wakif follow up terkait proposal dan persiapan perawatan menjelang panen. <b>CEO RWI via WhatsApp menyampaikan keputusan bahwa RWI tidak melanjutkan kerjasama dengan skema MOU.</b> RWI memilih melanjutkan bersama TA RWI di tempat lain.</td><td><span class="tag tr">Pembatalan MOU oleh CEO RWI</span></td></tr>
+            <tr><td>1 Mei 2026 (malam)</td><td>Adib kirim pesan final ke CEO RWI: konfirmasi pembatalan + request addendum + defer charity offer</td><td><span class="tag tg">Klasifikasi tinggi maintained &mdash; dignified clean break</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- DELIVERY REALITY -->
+    <div class="g g2 mb2">
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <h3 style="color:var(--blue)">Komitmen MOU Pasal 5 (RWI sebagai Nazhir)</h3>
+        <div style="font-size:12px;line-height:1.85;color:var(--t1)">
+          <div>&#9656; Sediakan tenaga ahli perkebunan</div>
+          <div>&#9656; Riset &amp; pengembangan On-Farm + produk olahan</div>
+          <div>&#9656; <b>Marketing &amp; penjualan</b></div>
+          <div>&#9656; Konsep bisnis + <b>PERMODALAN</b></div>
+          <div>&#9656; Wakif berhak (tidak wajib) berkontribusi sesuai kapasitas</div>
+        </div>
+      </div>
+      <div class="c" style="border-left:4px solid var(--red)">
+        <h3 style="color:var(--red)">Reality Delivery (5 Bulan Berjalan)</h3>
+        <div style="font-size:12px;line-height:1.85;color:var(--t1)">
+          <div>&#9888; TA RWI/TA RWI Senior: pola kerja eksklusif, minim kunjungan lapangan</div>
+          <div>&#9888; <b>ZERO customer datang ke Bons Cafe karena RWI partnership</b> &mdash; logo "in collaboration with rumah wakaf" di facade = formalitas tanpa nilai</div>
+          <div>&#9888; Indikasi mark-up harga pupuk &amp; obat pertanian di atas pasar</div>
+          <div>&#9888; Baseline data nol &mdash; 12 parameter agronomi belum diukur</div>
+          <div>&#9888; Reimbursement ke petani terlambat, status realisasi anggaran tidak dikomunikasikan</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CASCADE REPUTATIONAL -->
+    <div class="c mb2" style="border:2px solid var(--red);background:rgba(198,110,92,.05)">
+      <h3 style="color:var(--red)">Cascade Reputational Impact yang Adib Pegang <span class="aud-tag aud-internal">Internal</span></h3>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:10px">
+        Pembatalan MOU bukan sekadar internal disappointment. Adib telah membawa RWI ke ekosistem kepercayaan personal beliau dengan reputasi pribadi sebagai jaminan. Saat RWI mundur, Wakif yang harus retract semua komitmen di komunitas:
+      </p>
+      <div class="g g2" style="gap:10px">
+        <div class="f fc"><h4>Mama (Ibu Wakif)</h4><p>Adib alokasikan ruangan rumah untuk kantor representasi RWI Jatim. Mama menyaksikan persiapan fisik berjalan.</p></div>
+        <div class="f fc"><h4>Ust Fauzan &amp; Yayasan DM</h4><p>CEO RWI admit "sudah banyak kasih kredit positif soal RWI" ke beliau. Plus Adib's personal vouching. Trust komunitas DM build atas dasar partnership ini.</p></div>
+        <div class="f fc"><h4>Takmir Masjid Setempat</h4><p>Adib personally koordinasi program nasi bungkus gratis dari RWI. Takmir menunggu program yang dijanjikan.</p></div>
+        <div class="f fc"><h4>Customer Bons Cafe</h4><p>Logo "in collaboration with rumah wakaf" di facade. Walaupun marketing RWI zero delivery, claim collaboration tetap perlu di-update.</p></div>
+        <div class="f fc"><h4>Tim Inti Wakaf Produktif</h4><p>Hendy &amp; tim commit dengan asumsi RWI sebagai partner. Pembatalan MOU ini berdampak ke roadmap dan struktur tim.</p></div>
+        <div class="f fc"><h4>Konsultan Eksternal</h4><p>Calon TA ke-3, Calon Konsultan Eksternal direkrut dengan asumsi infrastruktur RWI sebagai backup. Sekarang harus aware shift &mdash; tetap engaged via skema Ju'alah.</p></div>
+      </div>
+      <div style="margin-top:14px;padding:12px 14px;background:rgba(198,110,92,.08);border-left:3px solid var(--red);border-radius:6px;font-size:12px;color:var(--t1);font-style:italic">
+        Ini bukan partnership level vendor. Ini fellowship-level trust yang Adib berikan, yang di-respon dengan vendor-level decision dari RWI. Inilah perbedaan kualitatif yang membuat pengalaman Fase 3 lebih dalam dari sekadar "partnership gagal".
+      </div>
+    </div>
+
+    <!-- PESAN FINAL -->
+    <div class="c mb2" style="border:2px solid var(--green);background:rgba(123,155,126,.05)">
+      <h3 style="color:var(--green)">Pesan Final Adib ke CEO RWI (1 Mei 2026 malam) <span class="aud-tag aud-internal">Internal</span></h3>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.7">
+        Setelah processing emotional dan strategic, Adib mengirim pesan final yang memenuhi 5 fungsi sekaligus: konfirmasi pembatalan formal &middot; request addendum tertulis &middot; dignified accountability re: cascade reputasi tanpa accusation &middot; defer charity offer secara graceful &middot; closure tone yang final namun tetap dignified.
+      </p>
+      <div style="padding:14px 16px;background:rgba(123,155,126,.08);border-left:4px solid var(--green);border-radius:8px;font-size:12px;color:var(--t1);line-height:1.85;font-style:italic">
+        <p>"Wassalam CEO RWI.. Nuwun atas keterbukaannya &#128591;</p>
+        <p style="margin-top:8px">Baik, sy konfirmasi setuju utk pembatalan MOU yg sdh kt sepakati sebelumnya. Mengingat dr sisi aset sdh diambil oleh TA RWI &amp; reimbursement Q1 sdh terselesaikan, mungkin lbh efisien kt selesaikan administratifnya by chat saja kang. Mohon dibantu siapkan addendum tertulis yg bs kt sign digital, biar dr sisi formalitas clean utk kedua belah pihak.</p>
+        <p style="margin-top:8px">Sebagai catatan, salah satu langkah dr sisi kami berikutnya adalah finalisasi penyesuaian kelembagaan bersama Ust. Fauzan &amp; Yayasan DM, sekaligus mengkomunikasikan kembali ke beliau &amp; komunitas tentang situasi terkini &mdash; krn ada bbrp komitmen yg sblmnya sdh sempat kt sampaikan dlm konteks RWI yg perlu dijelaskan ulang.</p>
+        <p style="margin-top:8px">Utk tawaran charity yg Kang sebutkan, terima kasih atas niat baik RWI &#128591; Sementara izinkan kami fokus dulu ke konsolidasi internal. Bila ke depan ada momentum yg pas, insya Allah kt bs sambungkan kembali.</p>
+        <p style="margin-top:8px">Sekali lagi terima kasih atas semua interaksi &amp; pelajaran selama ini, Kang. Semoga apa yg sdh kt jalankan menjadi catatan kebaikan utk semua pihak &#128591;"</p>
+      </div>
+    </div>
+
+    <!-- IMPLIKASI PEMBATALAN MOU -->
+    <div class="f fi">
+      <h4>Implikasi Strategis Pembatalan MOU bagi Phase 4</h4>
+      <p style="font-size:12px;line-height:1.85">
+        <b>1. Yayasan Baru naik level</b> dari "mitra Nazhir RWI" menjadi <b>calon Nazhir formal sendiri</b> (model Wakaf Salman ITB &mdash; YPM Salman menaungi BWS sebagai Nazhir terdaftar BWI).<br>
+        <b>2. Distribusi 10/30/30/30</b> &mdash; 10% Nazhir + 30% Pengembangan masuk ke Yayasan Baru = effective control 40% pasca pembatalan MOU.<br>
+        <b>3. Konsultasi BWI Jatim</b> menjadi urgent: pendaftaran Yayasan Baru sebagai Nazhir formal.<br>
+        <b>4. Konsultasi notaris</b>: percepat pendirian Yayasan Baru + drafting AIW (Akta Ikrar Wakaf di hadapan PPAIW).<br>
+        <b>5. Skenario Nazhir Transisi (per analisis 1 Mei 2026):</b> Adib as Interim Nazhir Perorangan + Ust Fauzan as Spiritual Co-Steward (informal but documented). Joint Board Yayasan Baru &harr; Yayasan DM aktif sejak awal Phase 4.<br>
+        <b>6. Konsultan eksternal</b> (Calon TA ke-3, Calon Konsultan Eksternal ) tetap engaged via skema <b>Akad Ju'alah</b> &mdash; janji upah atas pekerjaan/output, selesai = lunas, no long-term commitment.
+      </p>
+    </div>
+
+    <!-- RWI BUDGET BREAKDOWN -->
+    <div class="c mb2" style="border:2px solid var(--green);background:rgba(123,155,126,.05)">
+      <h3 style="color:var(--green)">&#128176; Anggaran RWI: Komitmen vs Estimasi Penyerapan 5 Bulan <span class="aud-tag aud-audit">Audit</span></h3>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.75">
+        Berbasis dokumen <em>Proyeksi Agribisnis Kopi Ngantang Malang</em> (RWI) + Laporan Evaluasi Q1 2026, RWI commit anggaran operasional <b>Rp 124,94 juta/tahun</b> &mdash; ~4&times; benchmark nasional Rp 30 jt/ha untuk lahan 0,49 ha. Komitmen pembiayaan 2 tahun pertama (pra-BEP): <b>Rp 249,88 juta</b>. Berikut breakdown alokasi Tahun ke-1 yang dijanjikan:
+      </p>
+
+      <div class="g g2 mb2" style="gap:14px">
+        <div class="c" style="border-left:4px solid var(--green)">
+          <h3 style="color:var(--green);margin-bottom:10px">Breakdown Tahun 1 (Rp 124,94 Jt)</h3>
+          <div class="tw">
+            <table>
+              <thead><tr><th>Kategori</th><th class="tr-right">Jumlah</th><th class="tr-right">%</th></tr></thead>
+              <tbody>
+                <tr style="background:rgba(198,110,92,.06)"><td><b>Treatmen Khusus</b><br><small style="color:var(--t3)">Fish Extract 2.000 L Rp 30 jt &middot; NPGP, CN cair, CN padat, SNC</small></td><td class="tr-right"><b>Rp 50,00 Jt</b></td><td class="tr-right"><b>40%</b></td></tr>
+                <tr style="background:rgba(198,110,92,.06)"><td><b>Tenaga Ahli</b><br><small style="color:var(--t3)">17 kunjungan/thn: Transport Rp 500K + Honor Rp 1,5jt + lain Rp 5jt</small></td><td class="tr-right"><b>Rp 39,00 Jt</b></td><td class="tr-right"><b>31%</b></td></tr>
+                <tr><td>Tenaga Kerja Harian (13 bln &times; Rp 1,5 jt)</td><td class="tr-right">Rp 19,50 Jt</td><td class="tr-right">16%</td></tr>
+                <tr><td>Pupuk Makro (6 items)</td><td class="tr-right">Rp 8,21 Jt</td><td class="tr-right">7%</td></tr>
+                <tr><td>Penggemburan tanah (1.100 phn &times; Rp 5K)</td><td class="tr-right">Rp 5,50 Jt</td><td class="tr-right">4%</td></tr>
+                <tr><td>Alat (Hand Sprayer, Garpu)</td><td class="tr-right">Rp 1,65 Jt</td><td class="tr-right">1%</td></tr>
+                <tr><td>Pupuk Mikro (5 items)</td><td class="tr-right">Rp 1,08 Jt</td><td class="tr-right">1%</td></tr>
+                <tr style="background:var(--s2);font-weight:700"><td><b>TOTAL TAHUN 1</b></td><td class="tr-right"><b>Rp 124,94 Jt</b></td><td class="tr-right"><b>100%</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="c" style="border-left:4px solid var(--red)">
+          <h3 style="color:var(--red);margin-bottom:10px">Proyeksi 5 Tahun + Komitmen Penuh (Klaim RWI)</h3>
+          <div class="tw">
+            <table>
+              <thead><tr><th>Item</th><th class="tr-right">Nilai</th></tr></thead>
+              <tbody>
+                <tr><td>Komitmen pembiayaan 2 tahun (Pra-BEP)</td><td class="tr-right"><b>Rp 249,88 Jt</b></td></tr>
+                <tr><td>Komitmen MOU 15 tahun (rolling annual)</td><td class="tr-right"><b>~Rp 1,87 Miliar</b></td></tr>
+                <tr style="background:rgba(196,144,106,.06)"><td>Proyeksi hasil panen Tahun 1 (1 kg/pohon)</td><td class="tr-right">Rp 82,50 Jt</td></tr>
+                <tr style="background:rgba(196,144,106,.06)"><td>Proyeksi hasil panen Tahun 5 (<b>3 kg/pohon</b>)</td><td class="tr-right">Rp 330,00 Jt</td></tr>
+                <tr style="background:rgba(123,155,126,.08)"><td><b>Surplus 5 tahun (klaim TA RWI)</b></td><td class="tr-right"><b>Rp 833,62 Jt</b></td></tr>
+                <tr><td colspan="2" style="padding:10px;background:rgba(198,110,92,.08);border-left:3px solid var(--red);font-size:11px;color:var(--t1);line-height:1.6"><b>&#9888; Reality check:</b> Target 3 kg/pohon tahun 5 = <b>~8&times; benchmark nasional</b> (Pusdatin: 0,4 kg/pohon). Panen aktual 2025 = ~0,31 kg/pohon &mdash; sudah mendekati benchmark, dengan anggaran Fase 6 ramping (<b>~1/15 dari era RWI per tahun</b>).</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ITEM-BY-ITEM PROJECTION 5 BULAN -->
+      <div style="padding:14px 16px;background:rgba(198,110,92,.06);border-left:4px solid var(--red);border-radius:8px;margin-top:10px">
+        <h4 style="color:var(--red);margin-bottom:8px;font-size:14px">Estimasi Penyerapan 5 Bulan &mdash; Analisis Item-by-Item</h4>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7;margin-bottom:10px">
+          Tidak ada angka pasti yang RWI komunikasikan (per Laporan Q1: <em>"status pencairan tidak jelas, ketidakjelasan realisasi anggaran"</em>). Estimasi berikut dibangun dari 23 line item Proyeksi Agribisnis RWI dengan klasifikasi penyerapan: <b>PENGADAAN DI-MUKA</b> (procurement awal, biasanya 80&ndash;100% terserap Q1) &middot; <b>BERKELANJUTAN</b> (per bulan/kunjungan, pro-rata 5/12) &middot; <b>SEKALI-PAKAI</b> (sekali kegiatan) &middot; <b>BELUM</b> (Reality Q1: tidak dijalankan).
+        </p>
+
+        <div class="tw" style="margin-top:8px">
+          <table>
+            <thead>
+              <tr>
+                <th>Line Item (Proyeksi Agribisnis RWI)</th>
+                <th class="tr-right">Budget Tahun 1</th>
+                <th>Sifat</th>
+                <th class="tr-right">Est. Terserap 5 Bln</th>
+                <th>Evidence / Catatan</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="background:rgba(123,168,181,.08)">
+                <td colspan="5" style="font-weight:700;color:var(--cyan)">&#9656; PENGADAAN DI-MUKA &mdash; Tinggi penyerapan di awal program</td>
+              </tr>
+              <tr><td>Pupuk Makro (6 items: Fertiphos, Karate Plus, Ponska, Yaramila, DAP, Kapur)</td><td class="tr-right">Rp 8,21 Jt (7%)</td><td><span class="tag tc2">PENGADAAN DI-MUKA</span></td><td class="tr-right"><b>Rp 8,21 Jt</b> (100%)</td><td>Over-treatment confirmed: pemupukan termasuk pohon mati (Q1)</td></tr>
+              <tr><td>Pupuk Mikro (5 items: Vita flex, MKP, CNG, ZnS, MGs)</td><td class="tr-right">Rp 1,08 Jt (1%)</td><td><span class="tag tc2">PENGADAAN DI-MUKA</span></td><td class="tr-right"><b>Rp 1,08 Jt</b> (100%)</td><td>Disetel bersama pupuk makro</td></tr>
+              <tr><td>Alat (Garpu pertanian 3 unit + Hand Sprayer electric 1 unit)</td><td class="tr-right">Rp 1,65 Jt (1%)</td><td><span class="tag tc2">PENGADAAN DI-MUKA</span></td><td class="tr-right"><b>Rp 1,65 Jt</b> (100%)</td><td>Sekali-Pakai procurement awal program</td></tr>
+              <tr style="background:rgba(198,110,92,.06)"><td><b>Fish Extract 2.000 liter</b> (treatment paling fantastis)</td><td class="tr-right"><b>Rp 30,00 Jt (24%)</b></td><td><span class="tag ta">PENGADAAN DI-MUKA sebagian</span></td><td class="tr-right"><b>Rp 15&ndash;20 Jt</b> (50&ndash;67%)</td><td>Pengadaan bertahap; tidak masuk akal pakai 2000L dalam 5 bln di kebun 0,49 ha</td></tr>
+
+              <tr style="background:rgba(123,155,126,.08)">
+                <td colspan="5" style="font-weight:700;color:var(--green)">&#9656; BERKELANJUTAN / BERTAHAP &mdash; Pro-rata terhadap waktu</td>
+              </tr>
+              <tr><td>NPGP 20 liter (treatment khusus)</td><td class="tr-right">Rp 5,00 Jt (4%)</td><td><span class="tag tg">BERKELANJUTAN</span></td><td class="tr-right"><b>~50%</b> terserap</td><td>Treatment khusus, sebagian use</td></tr>
+              <tr><td>CN cair 20 liter</td><td class="tr-right">Rp 4,00 Jt (3%)</td><td><span class="tag tg">BERKELANJUTAN</span></td><td class="tr-right"><b>~50% terserap</b></td><td>Treatment khusus, sebagian use</td></tr>
+              <tr><td>CN padat 10 Kg</td><td class="tr-right">Rp 6,00 Jt (5%)</td><td><span class="tag tg">BERKELANJUTAN</span></td><td class="tr-right"><b>~50% terserap</b></td><td>Treatment khusus, sebagian use</td></tr>
+              <tr><td>SNC 100 liter</td><td class="tr-right">Rp 5,00 Jt (4%)</td><td><span class="tag tg">BERKELANJUTAN</span></td><td class="tr-right"><b>~50% terserap</b></td><td>Treatment khusus, sebagian use</td></tr>
+              <tr><td>Tenaga Kerja Harian (13 bulan &times; Rp 1,5 jt/bln)</td><td class="tr-right">Rp 19,50 Jt (16%)</td><td><span class="tag tg">MONTHLY</span></td><td class="tr-right"><b>Rp 7,5 Jt</b> (5/13 = 38%)</td><td>Petani aktif sepanjang Nov 25&ndash;Apr 26</td></tr>
+              <tr style="background:rgba(196,144,106,.06)"><td><b>Tenaga Ahli Transportasi</b> (17 kunjungan/thn)</td><td class="tr-right"><b>Rp 8,50 Jt (7%)</b></td><td><span class="tag ta">BERKELANJUTAN low</span></td><td class="tr-right"><b>Rp 1,5&ndash;2,5 Jt</b> (3&ndash;5 dari 7 kunjungan expected)</td><td>Q1: "Intensitas kunjungan rendah, jarang turun lapangan" (vs target ~7 kunjungan pro-rata)</td></tr>
+              <tr style="background:rgba(196,144,106,.06)"><td><b>Tenaga Ahli Honor</b> (17 kali kunjungan/thn)</td><td class="tr-right"><b>Rp 25,50 Jt (20%)</b></td><td><span class="tag ta">BERKELANJUTAN low</span></td><td class="tr-right"><b>Rp 4,5&ndash;7,5 Jt</b> (3&ndash;5 kunjungan aktual)</td><td>Mengikuti kunjungan aktual TA</td></tr>
+              <tr><td>Biaya lain-lain (1 paket)</td><td class="tr-right">Rp 5,00 Jt (4%)</td><td><span class="tag tg">BERKELANJUTAN</span></td><td class="tr-right"><b>Rp 2,0 Jt</b> (40%)</td><td>Ad-hoc disbursement</td></tr>
+
+              <tr style="background:rgba(196,144,106,.08)">
+                <td colspan="5" style="font-weight:700;color:var(--amber)">&#9656; SEKALI-PAKAI PARTIAL &mdash; Pekerjaan awal program belum selesai</td>
+              </tr>
+              <tr><td>Penggemburan tanah (1.100 pohon &times; Rp 5K)</td><td class="tr-right">Rp 5,50 Jt (4%)</td><td><span class="tag ta">SEKALI-PAKAI sebagian</span></td><td class="tr-right"><b>Rp 2,2&ndash;3,3 Jt</b> (40&ndash;60%)</td><td>Q1: "Penataan lahan belum komprehensif sesuai rencana awal"</td></tr>
+
+              <tr style="background:rgba(143,160,168,.1)">
+                <td colspan="5" style="font-weight:700;color:var(--t3)">&#9656; BELUM TERSERAP (Rp 0) &mdash; Reality Q1 confirms tidak dijalankan</td>
+              </tr>
+              <tr><td>Pelatihan komunitas / transfer pengetahuan</td><td class="tr-right">&mdash;</td><td><span class="tag tr">BELUM</span></td><td class="tr-right"><b>Rp 0</b></td><td>Q1 KPI #10: 0 sesi vs target min 4 sesi/kuartal</td></tr>
+              <tr><td>Inventarisasi pohon produktif</td><td class="tr-right">(implicit)</td><td><span class="tag tr">BELUM</span></td><td class="tr-right"><b>Rp 0</b></td><td>Q1: belum diinventarisasi</td></tr>
+              <tr><td>Soil test / baseline 11 parameter agronomi</td><td class="tr-right">(implicit)</td><td><span class="tag tr">BELUM</span></td><td class="tr-right"><b>Rp 0</b></td><td>Q1 KPI #9: 0 dari 11 parameter terukur</td></tr>
+              <tr><td>Distribusi 30% Mauquf Alaih (TPQ Darul Mujtaba)</td><td class="tr-right">MOU Pasal 6</td><td><span class="tag tr">BELUM</span></td><td class="tr-right"><b>Rp 0</b></td><td>Q1 KPI #13: "belum ada distribusi ke Mauquf Alaih"</td></tr>
+              <tr><td>Marketing channel via RWI ke customer Bons Cafe</td><td class="tr-right">MOU Pasal 5</td><td><span class="tag tr">BELUM</span></td><td class="tr-right"><b>Rp 0</b></td><td>ZERO customer datang karena RWI partnership</td></tr>
+
+              <tr style="background:var(--s2);font-weight:700">
+                <td><b>TOTAL ESTIMASI TERSERAP 5 BULAN</b></td>
+                <td class="tr-right"><b>Rp 124,94 Jt</b> (full year)</td>
+                <td>&mdash;</td>
+                <td class="tr-right"><b style="color:var(--red);font-size:14px">Rp 53,6 &ndash; 65,5 Jt</b><br><small style="font-weight:normal;color:var(--t3)">Sentral: ~Rp 60 Jt (~47%)</small></td>
+                <td>Setara ~5 bln pro-rata + pengadaan di-muka items</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Summary by category -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:12px">
+          <div style="padding:10px 12px;background:rgba(123,168,181,.1);border:1px solid rgba(123,168,181,.3);border-radius:6px">
+            <div style="font-size:10px;color:var(--cyan);font-weight:700;text-transform:uppercase;letter-spacing:1px">Pengadaan di-Muka (Pupuk + Alat + Fish Extract sebagian)</div>
+            <div style="font-size:18px;font-weight:800;color:var(--cyan);margin-top:4px">Rp 26,0&ndash;30,9 Jt (~22%)</div>
+          </div>
+          <div style="padding:10px 12px;background:rgba(123,155,126,.1);border:1px solid rgba(123,155,126,.3);border-radius:6px">
+            <div style="font-size:10px;color:var(--green);font-weight:700;text-transform:uppercase;letter-spacing:1px">Berkelanjutan (Tenaga Kerja + TA + Treatment sebagian)</div>
+            <div style="font-size:18px;font-weight:800;color:var(--green);margin-top:4px">Rp 25,5&ndash;31,4 Jt (~23%)</div>
+          </div>
+          <div style="padding:10px 12px;background:rgba(196,144,106,.1);border:1px solid rgba(196,144,106,.3);border-radius:6px">
+            <div style="font-size:10px;color:var(--amber);font-weight:700;text-transform:uppercase;letter-spacing:1px">Sekali-Pakai sebagian (Penggemburan)</div>
+            <div style="font-size:18px;font-weight:800;color:var(--amber);margin-top:4px">Rp 2,2&ndash;3,3 Jt (~2%)</div>
+          </div>
+          <div style="padding:10px 12px;background:rgba(198,110,92,.1);border:2px solid rgba(198,110,92,.4);border-radius:6px">
+            <div style="font-size:10px;color:var(--red);font-weight:700;text-transform:uppercase;letter-spacing:1px">SENTRAL ESTIMASI 5 BLN</div>
+            <div style="font-size:22px;font-weight:800;color:var(--red);margin-top:4px">~Rp 60 Jt (47%)</div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;padding:10px 14px;background:rgba(143,160,168,.08);border-left:3px solid var(--t3);border-radius:6px;font-size:11px;color:var(--t2);line-height:1.7;font-style:italic">
+          <b>Catatan metodologis:</b> Estimasi ini berbasis logika pola pengadaan agribisnis + cross-check temuan Laporan Evaluasi Q1 2026. Angka aktual hanya RWI yang tahu &mdash; namun range ini realistis untuk amal jariyah scale 0,49 ha. Yang paling penting: bukan total angkanya, melainkan <b>komposisi delivery yang lopsided</b> &mdash; treatment khusus + TA honor dominan terserap, sementara pilar yang paling dijanjikan ke Wakif (transfer pengetahuan komunitas, baseline data, distribusi Mauquf Alaih, marketing customer) berstatus <b>0% delivery</b>.
+        </div>
+      </div>
+
+      <!-- REALITY DELIVERY -->
+      <div style="margin-top:14px">
+        <h4 style="color:var(--t1);margin-bottom:8px;font-size:14px">Delivery Aktual 5 Bulan (per Laporan Evaluasi Q1 2026)</h4>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Komitmen MOU / TOR</th><th>Target</th><th>Reality 5 Bln</th></tr></thead>
+            <tbody>
+              <tr><td>Distribusi 30% surplus ke Mauquf Alaih (TPQ Darul Mujtaba)</td><td class="tr-right">Pro-rata 5 bln: <b>~Rp 15,6 Jt</b></td><td><span class="tag tr">Rp 0 &mdash; belum ada distribusi</span></td></tr>
+              <tr><td>Marketing &amp; penjualan (MOU Pasal 5)</td><td class="tr-right">Customer aktif via partnership</td><td><span class="tag tr">ZERO customer Bons Cafe karena RWI</span></td></tr>
+              <tr><td>Grand Design &amp; SOP Teknis</td><td class="tr-right">100% tersedia 31 Mar 2026</td><td><span class="tag tr">Belum diterima hingga 1 Mei</span></td></tr>
+              <tr><td>Data baseline 11 parameter agronomi</td><td class="tr-right">100% terukur</td><td><span class="tag tr">0 dari 11 parameter terukur</span></td></tr>
+              <tr><td>Sesi transfer pengetahuan komunitas</td><td class="tr-right">Min. 4 sesi/kuartal</td><td><span class="tag tr">0 sesi terlaksana</span></td></tr>
+              <tr><td>Kunjungan lapangan TA</td><td class="tr-right">17 kali/tahun = ~1,4&times;/bln</td><td><span class="tag ta">Intensitas rendah, instruksi sering dilempar ke petani</span></td></tr>
+              <tr><td>Harga pengadaan pupuk &amp; obat pertanian</td><td class="tr-right">Sesuai harga pasar</td><td><span class="tag ta">Indikasi mark-up + over-treatment (pemupukan pohon mati)</span></td></tr>
+              <tr><td>Akuntabilitas keuangan ke Wakif</td><td class="tr-right">Status realisasi dikomunikasikan</td><td><span class="tag ta">Petani menunggu dalam ketidakpastian; reimbursement terlambat</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- VISUAL COMPARISON -->
+      <div class="c" style="margin-top:14px;background:rgba(196,144,106,.05);border-left:4px solid var(--amber)">
+        <h3 style="color:var(--amber);margin-bottom:8px">&#128202; Perbandingan Cross-Fase: Disbursed vs Per-Bulan Rate</h3>
+        <div class="cl" style="height:340px"><canvas id="chCrossFase"></canvas></div>
+        <p style="font-size:11px;color:var(--t3);margin-top:8px;font-style:italic">Bar chart membandingkan total pengeluaran kumulatif vs per-bulan rate per fase. RWI 5 bulan menyerap setara magnitude dengan Wakif Fase 1+2 (39 bulan) &mdash; namun dengan hasil delivery yang lebih rendah.</p>
+      </div>
+
+      <!-- INSIGHT BOX -->
+      <div style="margin-top:14px;padding:14px 16px;background:rgba(196,144,106,.08);border:2px solid var(--amber);border-radius:8px">
+        <h4 style="color:var(--amber);margin-bottom:8px;font-size:14px">&#127919; Insight Refleksi: Skala Bukan Kualitas</h4>
+        <div style="font-size:12px;color:var(--t1);line-height:1.85">
+          Dalam <b>5 bulan</b>, RWI commit anggaran ~<b>Rp 60 jt</b> (estimasi sentral, item-by-item; range Rp 53,6&ndash;65,5 jt) &mdash; <b>setara dengan total pengeluaran Wakif selama 39 bulan</b> (~Rp 49,1 Jt di Fase 1+2+3). Per-bulan rate: <b>RWI ~Rp 12 jt/bln</b> vs <b>Wakif Fase 1+2+3 ~Rp 1,26 jt/bln</b> vs <b>Fase 6 Pengelolaan Mandiri ~Rp 667K/bln</b> (= Rp 8 jt &divide; 12).
+          <br><br>
+          Era RWI = <b>~18&times; lebih boros</b> per bulan dari Fase 6 dengan akuntabilitas penuh Wakif &mdash; bukan karena Fase 6 cutting corners, namun karena <em>"Treatmen Khusus" Rp 50 jt (40% budget)</em> + <em>"Tenaga Ahli Rp 39 jt untuk 17 kunjungan/thn"</em> = struktur biaya yang tidak match dengan realitas kebun 0,49 ha.
+          <br><br>
+          Inilah bukti angka konkret untuk <b>LL #13 (Self-Management adalah Pilihan Etis)</b>: dana terbatas + manajemen jelas <em>secara kualitatif lebih kuat</em> daripada dana besar namun tidak akuntabel. Untuk amal jariyah Wakif, integrasi akuntabilitas full-stack lebih utama daripada skala operasional.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB F5: TRANSISI PASCA-Q1 (1 APR-2 MEI 2026) -->
+  <div id="f5" class="tc" style="display:none">
+    <div class="st" style="color:var(--pink)">Fase 5: Transisi Pasca-Q1 (1 April &ndash; 2 Mei 2026) <span class="aud-tag aud-mix">Mix</span></div>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.7;font-style:italic">
+      Bridge yang singkat namun sangat consequential. Setelah RWI mundur 1 Mei pagi/sore, Wakif sempat mempertimbangkan struktur baru dengan calon tim eksternal &mdash; Calon TA ke-3 (On-Farm Technical Lead), plus konsultan lain (Calon Konsultan Eksternal ) &mdash; sebelum meeting keluarga 2 Mei membentuk arah final menuju self-managed.
+    </p>
+
+    <div class="g g4 mb2">
+      <div class="c"><h3>Durasi</h3><div class="bn" style="color:var(--pink)">~1 Bulan</div><div class="desc">1 April &ndash; 2 Mei 2026 (pasca-Q1 meeting)</div></div>
+      <div class="c"><h3>Karakter</h3><div class="bn" style="color:var(--pink)">Eksplorasi</div><div class="desc">Refleksi pasca-Q1 + pertimbangan struktur baru</div></div>
+      <div class="c"><h3>Outcome</h3><div class="bn sa">PEMULIHAN</div><div class="desc">Diputuskan self-managed di 2 Mei</div></div>
+      <div class="c"><h3>Konsekuensi</h3><div class="bn sg">Awal Baru</div><div class="desc">Tim eksternal yang dipertimbangkan tidak dilanjutkan</div></div>
+    </div>
+
+    <!-- DINAMIKA SUMMARY 1 APRIL - 2 MEI 2026 -->
+    <div class="c mb2" style="border-left:4px solid var(--pink)">
+      <h3>Dinamika Transisi (1 April &ndash; 2 Mei 2026)</h3>
+      <p style="font-size:12px;color:var(--t2);line-height:1.85;margin-bottom:14px">
+        Pasca Q1 Evaluation Meeting RWI (31 Maret 2026), terbentuk satu bulan dinamika strategis yang akhirnya mengarahkan Wakif kepada keputusan Pengelolaan Mandiri. Periode ini melewati lima babak yang saling membangun:
+      </p>
+      <div style="font-size:12px;color:var(--t1);line-height:1.95">
+        <div style="padding:10px 12px;margin-bottom:8px;background:rgba(212,168,154,.06);border-left:3px solid var(--pink);border-radius:6px">
+          <b>Awal April &mdash; Refleksi Pasca-Q1.</b> Wakif menelaah ulang temuan kritis dari Q1 evaluation (tata kelola, kinerja tenaga ahli, indikasi mark-up, baseline nol) dan menyampaikan amanah secara dignified ke CEO RWI sebagai usaha internal cleanup.
+        </div>
+        <div style="padding:10px 12px;margin-bottom:8px;background:rgba(212,168,154,.06);border-left:3px solid var(--pink);border-radius:6px">
+          <b>Pertengahan April &mdash; CEO RWI Konfirmasi Keterbukaan, Proposal Diterima.</b> Pada 7 April, CEO RWI menyampaikan komitmen formal: <em>"Untuk dari Rumah Wakaf, monggo terbuka untuk penawaran dari mitra Mas Adib... saling ridha, kerelaan bersama."</em> Wakif sekaligus mengkonfirmasi pemasangan logo RWI di facade Bon's Cafe sebagai bentuk visibilitas RWI sebagai Lembaga Nadzir yang mendukung kebun wakaf (Hulu) dengan aliran ke Bonsari Coffee dan Bon's Cafe (Hilir). Pada 13 April, Wakif meneruskan proposal komprehensif dari tim mitra rekomendasi kepada CEO RWI dan diterima di level kepemimpinan: <em>"Baik Mas, diterima proposalnya. Saya teruskan lebih awal ke tim program."</em>
+        </div>
+        <div style="padding:10px 12px;margin-bottom:8px;background:rgba(212,168,154,.06);border-left:3px solid var(--pink);border-radius:6px">
+          <b>Akhir April &mdash; Lintasan Engagement Yang Meredup.</b> Wakif konsisten mengirim update progres ke CEO RWI sebagai bentuk transparansi: pada 17 April, halaman web learning session sebagai outcome awal Calon TA ke-3 (respons: <em>"Mantapp Mas Adib"</em>); pada 21 April, laporan assessment awal pengambilan sampling untuk baseline data (respons: <em>"Mantap Mas"</em>). Namun pada 28 April, ketika Wakif mengirim link website monitoring tools (M&amp;E + quality control), <b>pesan hanya dibaca tanpa respons</b> &mdash; pertama kalinya komunikasi tidak mendapat tanggapan, menandai indikasi awal perubahan dinamika.
+        </div>
+        <div style="padding:10px 12px;margin-bottom:8px;background:rgba(212,168,154,.06);border-left:3px solid var(--pink);border-radius:6px">
+          <b>1 Mei 2026 &mdash; Pembatalan MOU oleh CEO RWI.</b> Wakif melakukan follow up terkait proposal dan persiapan perawatan menjelang panen. CEO RWI merespons dengan keputusan via WhatsApp: <b>RWI tidak melanjutkan kerjasama dengan skema MOU; RWI memilih melanjutkan program bersama TA mereka di lokasi lain.</b> Wakif kemudian mengirim pesan final yang dignified kepada CEO RWI sebagai konfirmasi penerimaan pembatalan, menjaga klasifikasi tinggi sebagaimana adab interaksi sepanjang kerjasama.
+        </div>
+        <div style="padding:10px 12px;margin-bottom:8px;background:rgba(212,168,154,.06);border-left:3px solid var(--pink);border-radius:6px">
+          <b>2 Mei 2026 &mdash; Musyawarah Keluarga.</b> Wakif bermusyawarah dengan tim inti keluarga di rumah, membahas anggaran detail, strategi pengelolaan, sistem pelaporan harian, dan pelajaran dari pengalaman 4 fase pengelolaan sebelumnya. Keputusan Pengelolaan Mandiri diambil sebagai pilihan etis pasca-refleksi yang matang, bukan keputusan default.
+        </div>
+      </div>
+    </div>
+
+    <!-- ALTERNATIVES CONSIDERED -->
+    <!-- ALTERNATIVES CONSIDERED -->
+    <div class="g g2 mb2">
+      <div class="c" style="border-left:4px solid var(--purple)">
+        <h3 style="color:var(--purple)">Skema yang Sempat Dipertimbangkan</h3>
+        <div style="font-size:12px;line-height:1.85">
+          <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.12)"><b>Skema A: Yayasan Baru sebagai Nazhir formal</b> + konsultan eksternal via Akad Ju'alah (Calon TA ke-3 On-Farm Lead, Calon Konsultan Eksternal Ecosystem Builder, Calon Konsultan Eksternal Agronomy Expert, Calon Konsultan Eksternal Training Lead, Calon Konsultan Eksternal ).</div>
+          <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.12)"><b>Skema B: Ust Fauzan sebagai Nazhir Perorangan</b> &mdash; leverage trust personal 3,5+ tahun + 18 bulan precedent Nazhir Fase 3 Lembaga Nadzir ke-2.</div>
+          <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.12)"><b>Skema C: Co-Nazhir Adib + Ust Fauzan</b> &mdash; powerful namun unusual struktur.</div>
+          <div style="padding:8px 0"><b>Skema E (akhirnya dipilih): Adib as Interim Nazhir Perorangan + tim ramping internal</b> + Ust Fauzan as Spiritual Co-Steward + BRIN Purwodadi sebagai rujukan agronomi institusional.</div>
+        </div>
+      </div>
+      <div class="c" style="border-left:4px solid var(--red)">
+        <h3 style="color:var(--red)">Mengapa Tim Eksternal Lama Tidak Dilanjutkan</h3>
+        <div style="font-size:12px;line-height:1.85;color:var(--t1)">
+          <p>Setelah meeting keluarga 2 Mei dan refleksi pola berulang lintas Fase 2&ndash;4, beberapa pertimbangan menutup opsi melanjutkan dengan konsultan eksternal lama:</p>
+          <div style="margin-top:8px">
+            &#9656; <b>Anggaran</b>: Rp 8 jt/thn (Fase 6) vs proyeksi Rp 30+ jt/thn (Skema A dengan fee konsultan). ~15&times; lebih hemat.<br>
+            &#9656; <b>Pola Pengulangan</b>: Pola #1 (TA tanpa kehadiran) sudah confirmed di Fase 2, 3, 4. Eksplorasi tim eksternal baru = potensi mengulang pola.<br>
+            &#9656; <b>Klasifikasi Trust</b>: Personal trust dengan Ust Fauzan + Mas Anto + komunitas petani lokal sudah teruji (LL #10). Trust institusional baru = belum teruji.<br>
+            &#9656; <b>Filosofi Adib</b>: "Mending dirawat sendiri, daripada sudah tahu ada hal yang menyalahi amanah wakaf, namun tetap dipaksa dijalankan terus dengan lembaga Nadzir." &mdash; principle yang muncul di meeting 2 Mei.<br>
+            &#9656; <b>Konsekuensi</b>: Per 10 Mei 2026, Calon TA ke-3, Calon Konsultan Eksternal semua tidak aktif lagi di tim. Rujukan agronomi pindah ke BRIN Purwodadi (eksternal institusional dengan MoU formal 5 Mei 2026).
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="f fi">
+      <h4>Insight Strategis Fase 5</h4>
+      <p>Fase 5 adalah <b>masa "what-if" yang ditolak</b>. Wakif sempat menyentuh skenario "Yayasan Baru + Konsultan Eksternal" yang secara konvensional logis &mdash; namun meeting keluarga 2 Mei men-reframe pertanyaan dari <em>"struktur apa yang paling profesional?"</em> menjadi <em>"struktur apa yang paling akuntabel dan bisa Wakif jaga amanahnya secara penuh?"</em>. Jawabannya: <b>self-managed dengan tim ramping lapangan + mitra eksternal institusional yang clean (BRIN, Bonsari, Nomad, Ust Fauzan)</b>. Fase 5 ada sebagai <em>jejak proses berpikir</em> yang penting untuk dicatat: keputusan Fase 6 bukan instinct, melainkan hasil eliminasi terhadap alternatif yang sudah dipertimbangkan.</p>
+    </div>
+  </div>
+
+  <!-- TAB F6: PENGELOLAAN MANDIRI WAKIF -->
+  <div id="f6" class="tc" style="display:none">
+    <div class="st" style="color:var(--amber)">Fase 6: Pengelolaan Mandiri Wakif &mdash; Kelola Langsung (2 Mei 2026 onwards) <span class="aud-tag aud-mix">Mix</span></div>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:16px;line-height:1.7;font-style:italic">
+      Babak baru. Wakif memutuskan mengelola kebun secara langsung dengan tim ramping internal &mdash; tanpa lembaga nadzir formal eksternal, tanpa konsultan jangka panjang. Anggaran anggaran ramping Fase 6, filosofi <em>perawatan konsisten lebih utama daripada nutrisi mahal</em>, dan sistem akuntabilitas yang terbentuk dari meeting keluarga 2 Mei 2026.
+    </p>
+
+    <div class="g g4 mb2">
+      <div class="c"><h3>Tanggal Mulai</h3><div class="bn" style="color:var(--amber)">2 Mei 2026</div><div class="desc">Pasca meeting keluarga</div></div>
+      <div class="c"><h3>Anggaran/Tahun</h3><div class="bn" style="color:var(--amber)">Rp 8 Jt</div><div class="desc">15&times; lebih hemat dari era RWI (Rp 124,9 jt)</div></div>
+      <div class="c"><h3>Tim Inti</h3><div class="bn sg">2 + 3</div><div class="desc">Strategic: Adib+Hendy | Lapangan: Anto+Yit+Kumpul</div></div>
+      <div class="c"><h3>Filosofi</h3><div class="bn sa">RAWAT KONSISTEN</div><div class="desc">Bukan nutrisi mahal</div></div>
+    </div>
+
+    <!-- STRUKTUR TIM FASE 6 -->
+    <div class="st" style="margin-top:8px">Struktur Tim Fase 6 (Locked 10 Mei 2026) <span class="aud-tag aud-legal">Legal</span></div>
+    <div class="g g2 mb2">
+      <div class="c" style="border-left:4px solid var(--amber)">
+        <h3 style="color:var(--amber)">Tim Inti Strategis</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Siapa</th><th>Peran</th></tr></thead>
+            <tbody>
+              <tr><td><b>Adib Asrori</b></td><td>Wakif &amp; Program Director &mdash; decision-maker final untuk strategi &amp; kemitraan komersial</td></tr>
+              <tr><td><b>Hendy Kurniansyah</b></td><td>Strategic &amp; Systems Executive &mdash; lead strategi, finance, IT, governance (pro-bono, remote-first)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <h3 style="color:var(--blue)">Tim Lapangan Eksekusi (Ngantang)</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Siapa</th><th>Peran</th><th>Kompensasi</th></tr></thead>
+            <tbody>
+              <tr><td><b>Mas Anto</b></td><td>Koordinator Lapangan &mdash; jembatan komunitas, laporan harian, inventarisasi pohon</td><td>Sweat equity / pro-bono (bagi hasil pasca-BEP)</td></tr>
+              <tr><td><b>Cak Yit</b> (Yitno)</td><td>Pekerja Bagian ATAS Pohon &mdash; pangkas, sambung pucuk, wiwilan</td><td>Harian (Rp 60K &frac12; hari / Rp 120K full day) + borongan</td></tr>
+              <tr><td><b>Pak Kumpul</b></td><td>Pekerja Bagian BAWAH &mdash; babat rumput, pemupukan, rorak, composting + jahe self-financed Bidang 3</td><td>Harian (Rp 60K &frac12; hari / Rp 120K full day) + borongan</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="c mb2" style="border-left:4px solid var(--green)">
+      <h3 style="color:var(--green)">Mitra Eksternal Aktif (Kepercayaan Bersih)</h3>
+      <div style="font-size:12px;line-height:1.85">
+        &#9656; <b>Ust. Fauzan</b> &mdash; Spiritual Co-Steward (informal but documented), pengawas syariah, pemimpin TPQ Darul Mujtaba (Mauquf Alaih utama)<br>
+        &#9656; <b>TPQ Darul Mujtaba</b> &mdash; Mauquf Alaih utama (penerima 30% surplus pasca-BEP)<br>
+        &#9656; <b>BRIN Purwodadi</b> &mdash; Rujukan agronomi institusional (MoU Rp 50 jt, 5 Mei 2026)<br>
+        &#9656; <b>Bonsari Coffee</b> &mdash; Specialty offtaker, anchor commercial (margin terbukti positif Q4 2025)<br>
+        &#9656; <b>Nomad Coffee</b> &mdash; Specialty offtaker<br>
+        
+      </div>
+    </div>
+
+    <!-- 3 BIDANG -->
+    <div class="st">Pembagian 3 Bidang Kebun (4.918 m&sup2;) <span class="aud-tag aud-internal">Internal</span></div>
+    <div class="g g3 mb2">
+      <div class="c" style="border-top:3px solid var(--cyan)">
+        <h3>Bidang 1 &amp; 2 (Atas)</h3>
+        <div style="font-size:12px;line-height:1.7">Area Cak Yit untuk pemangkasan, sambung pucuk Robusta klon unggul, wiwilan.</div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--blue)">
+        <h3>Bidang 3 (Bawah)</h3>
+        <div style="font-size:12px;line-height:1.7">Area Pak Kumpul: babat rumput, pemupukan dasar, build rorak, composting + <b>jahe self-financed Pak Kumpul</b> (win-win: Pak Kumpul dapat hasil + Wakaf dapat lahan terawat tanpa biaya).</div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--purple)">
+        <h3>Bidang 4 (Area Rumah Wakif)</h3>
+        <div style="font-size:12px;line-height:1.7">Pilot zone untuk eksperimen kontrolasi (cover crops Arachis pintoi, brocap trap PBKo). Setelah berhasil, ekspansi ke Bidang 1&ndash;2.</div>
+      </div>
+    </div>
+
+    <!-- ANGGARAN FASE 6 -->
+    <div class="c mb2" style="border:2px solid var(--amber);background:rgba(196,144,106,.05)">
+      <h3 style="color:var(--amber)">Anggaran Fase 6 (Rp 8 Juta / Tahun) <span class="aud-tag aud-audit">Audit</span></h3>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:10px">
+        Perbandingan: era RWI biaya operasional <b>Rp 124,9 jt/tahun</b> (4&times; benchmark nasional, terindikasi mark-up). Fase 6 self-managed: <b>Rp 8 jt/tahun</b> &mdash; <b>15,6&times; lebih hemat</b> dengan akuntabilitas penuh dari Wakif.
+      </p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Komponen</th><th>Estimasi</th><th>Catatan</th></tr></thead>
+          <tbody>
+            <tr><td>Upah harian Cak Yit (atas)</td><td class="tr-right">~Rp 3,0 Jt</td><td>~25 hari kerja/thn @Rp 120K full day</td></tr>
+            <tr><td>Upah harian Pak Kumpul (bawah)</td><td class="tr-right">~Rp 2,5 Jt</td><td>~25 hari kerja/thn @Rp 100K full day</td></tr>
+            <tr><td>Pemupukan dasar (kompos + urea)</td><td class="tr-right">Rp 1,2 Jt</td><td>Dosis BRIN sesuai umur tanaman</td></tr>
+            <tr><td>Borongan rorak (Pak Kumpul)</td><td class="tr-right">Rp 600K</td><td>~20 unit prioritas Bidang 3 @Rp 30K/unit</td></tr>
+            <tr><td>Mesin semprot &amp; mesin babat (inventaris)</td><td class="tr-right">Rp 500K</td><td>Investasi alat &mdash; sekali pakai jangka panjang</td></tr>
+            <tr><td>Transport &amp; operasional</td><td class="tr-right">Rp 200K</td><td>Wakif handle pribadi sebagian</td></tr>
+            <tr style="background:var(--s2)"><td><b>TOTAL</b></td><td class="tr-right"><b>Rp 8.000.000</b></td><td><b>15,6&times; lebih hemat dari era RWI</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STRATEGI -->
+    <div class="g g2 mb2">
+
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <h3 style="color:var(--blue)">Sistem Pelaporan Harian &amp; Akuntabilitas</h3>
+        <div style="font-size:12px;line-height:1.8">
+          <b>Konten laporan wajib (voice note WA, harian dari Mas Anto):</b><br>
+          &#9656; Bidang berapa<br>
+          &#9656; Jam berangkat &amp; pulang<br>
+          &#9656; Bareng siapa<br>
+          &#9656; Pekerjaan apa<br>
+          &#9656; Berapa pohon dikerjakan
+          <br><br>
+          <b>Filosofi Adib:</b><br>
+          <em>"Saya cuma minta dukungan dari Mas Anto, yaitu laporan di lapangan sebisa mungkin... pokoknya setiap hari ada perlakuannya."</em>
+          <br><br>
+          <em>"Aku juga pengen belajar gitu. Jadi jangan ngerasa tak ribeti ketika aku melok."</em> &mdash; motivasi: ingin belajar teknis kebun, bukan sekadar mengawasi.
+          <br><br>
+          <b>Inventarisasi Pohon</b> (tugas Mas Anto): manual lapangan, tidak butuh drone. Kategori: (1) produktif sudah berbuah, (2) belum produktif, (3) titik kosong untuk sulaman.
+        </div>
+      </div>
+    </div>
+
+    <!-- KEPUTUSAN ADIB -->
+    <div class="c mb2" style="border:2px solid var(--green);background:rgba(123,155,126,.06)">
+      <h3 style="color:var(--green)">Keputusan Inti Adib &mdash; "Mending Dirawat Sendiri"</h3>
+      <div style="padding:14px 18px;background:rgba(123,155,126,.08);border-left:4px solid var(--green);border-radius:8px;font-size:13px;color:var(--t1);line-height:1.85;font-style:italic;margin-top:8px">
+        <p>"Mending dirawat sendiri, daripada istilahnya kami sudah tahu aturan namun kami berjalankan terus, kan gak enak."</p>
+        <p style="margin-top:8px;font-style:normal;font-size:11px;color:var(--t3)">&mdash; Adib, meeting keluarga 2 Mei 2026</p>
+      </div>
+      <p style="font-size:12px;color:var(--t2);margin-top:14px;line-height:1.7">
+        Keputusan ini bukan keputusan instan &mdash; ini hasil refleksi terhadap pengalaman 4 fase sebelumnya. Wakif memilih <b>dana terbatas + manajemen jelas</b> di atas <b>dana besar namun tidak akuntabel</b>. Selaras dengan komitmen etika dana umat. Filosofi ini menjadi arah operasional Fase 6: <b>perawatan konsisten lebih utama daripada nutrisi mahal</b> &mdash; 3 bulan rawat + 5 bulan ditinggal = lebih buruk daripada perawatan standar konsisten.
+      </p>
+    </div>
+  </div>
+
+  <!-- TAB 4: WORKERS -->
+  <div id="workers" class="tc" style="display:none">
+    <div class="st">Data Pekerja dari Absensi (Fase 2: Okt 2023 &ndash; Mar 2024) <span class="aud-tag aud-audit">Audit</span></div>
+    <div class="c mb2">
+      <h3>Ringkasan Pekerja &mdash; Khusus Kebun Wakaf</h3>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:12px">Bersumber dari sheet &ldquo;Kebun Wakaf&rdquo; pada file absensi &mdash; mencakup hanya pekerjaan di area kebun wakaf, tidak termasuk penugasan lain (kebun durian, Rumah ADB, dsb.)</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Bulan</th><th>Pekerja</th><th>Hari Kerja</th><th>Upah Total</th><th>Detail</th></tr></thead>
+          <tbody>
+            <tr><td rowspan="3">Des 2023</td><td>Petrik + Agata</td><td>4 hari</td><td>Rp 530.000</td><td>8-12 Des, upah Rp 100-150K/2 orang/hari</td></tr>
+            <tr><td>Petrik + Nardi</td><td>1 hari</td><td>Rp 100.000</td><td>25 Des</td></tr>
+            <tr><td>Petrik + Nardi + Dino</td><td>1 hari</td><td>Rp 150.000</td><td>28 Des</td></tr>
+            <tr style="background:var(--s2)"><td colspan="3"><b>Total Des 2023</b></td><td><b>Rp 780.000</b></td><td>&#10003; Cocok dengan budget</td></tr>
+            <tr><td rowspan="2">Jan 2024</td><td>Pak Nardi (sendiri)</td><td>1 hari</td><td>Rp 50.000</td><td>1 Jan</td></tr>
+            <tr><td>Bambang+Dino+Petrik (kombinasi)</td><td>6 hari</td><td>Rp 1.430.000</td><td>22-27 Jan, 2-3 orang paralel</td></tr>
+            <tr style="background:var(--s2)"><td colspan="3"><b>Total Jan 2024</b></td><td><b>Rp 1.480.000</b></td><td>&#10003; Cocok dengan budget</td></tr>
+            <tr><td>Feb 2024</td><td>Bambang, Dino, Pak No, Nardi</td><td>22 hari kerja (55 person-days)</td><td><b>Rp 2.750.000</b></td><td>Rata-rata 2,5 pekerja/hari @Rp 50K; pembersihan intensif atas rekomendasi TA Lembaga Nadzir ke-1</td></tr>
+            <tr style="background:var(--s2)"><td colspan="3"><b>Total Feb 2024</b></td><td><b>Rp 2.750.000</b></td><td>&#10003; Cocok dengan budget</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="c mb2">
+      <h3>Pekerjaan Pekerja di Luar Kebun Wakaf (Konteks)</h3>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:12px">Tenaga kerja yang sama juga ditugaskan pada pekerjaan di luar kebun wakaf &mdash; informasi ini penting untuk perencanaan alokasi tenaga kerja ke depan</p>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Pekerja</th><th>Tugas Kebun Wakaf</th><th>Tugas Lain</th><th>Catatan</th></tr></thead>
+          <tbody>
+            <tr><td><b>Pak Nardi</b></td><td>Pembersihan kebun, panen</td><td>Unduh durian, ikat durian, Rumah ADB</td><td>Tenaga kerja dengan frekuensi kehadiran tertinggi. Upah Rp 35.000&ndash;85.000/hari</td></tr>
+            <tr><td><b>Petrik</b></td><td>Pembersihan, pelatihan kopi</td><td>Enumerator, tugas harian</td><td>Aktif pada periode Desember 2023&ndash;Januari 2024. Telah mengikuti pelatihan pengelolaan kopi senilai Rp 2.000.000 (resign 1 bulan setelahnya)</td></tr>
+            <tr><td><b>Dino</b></td><td>Pembersihan kebun</td><td>Rumah ADB, Agni</td><td>Pada Februari, lebih banyak bertugas di area &ldquo;Rumah ADB&rdquo; (16 hari) dibanding kebun wakaf</td></tr>
+            <tr><td><b>Pak Bambang</b></td><td>Pembersihan kebun</td><td>Rumah ADB, Ade</td><td>Pada Februari, lebih banyak bertugas di area &ldquo;Rumah ADB&rdquo; (21 hari)</td></tr>
+            <tr><td><b>Pak No/Sumpeno</b></td><td>Pembersihan kebun</td><td>Rumah ADB</td><td>Bergabung mulai Februari 2024 dengan tarif tetap Rp 50.000/hari</td></tr>
+            <tr><td><b>Agata</b></td><td>Pembersihan awal Des 23</td><td>&mdash;</td><td>Terlibat hanya 4 hari pada Desember 2023</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="g g2 mb2">
+      <div class="c">
+        <h3>Distribusi Hari Kerja per Pekerja (Kebun Wakaf)</h3>
+        <div class="cc"><canvas id="chWorkers"></canvas></div>
+      </div>
+      <div class="c">
+        <h3>Upah Harian &mdash; Variasi & Standarisasi</h3>
+        <div class="cl"><canvas id="chWages"></canvas></div>
+      </div>
+    </div>
+
+    <div class="f fi">
+      <h4>Temuan Utama dari Data Kehadiran</h4>
+      <p>
+        <b>1. Tenaga kerja dialokasikan lintas properti.</b> Pak Nardi, Dino, dan Pak Bambang bertugas di kebun wakaf maupun area Rumah ADB/kebun durian. Diperlukan pemisahan biaya yang jelas antar lokasi penugasan.<br>
+        <b>2. Februari 2024 merupakan bulan dengan intensitas kerja tertinggi.</b> Tercatat 22 hari kerja aktif dengan total 55 person-days (rata-rata 2,5 pekerja/hari) &mdash; menandai periode pembersihan lahan secara intensif.<br>
+        <b>3. Tarif upah belum terstandarisasi.</b> Tarif upah Rp 35.000 hingga Rp 85.000 per hari merujuk pada durasi kerja (setengah hari vs satu hari penuh). Sistem ini perlu didokumentasikan untuk periode selanjutnya (sudah dilakukan di Fase 6: Cak Yit half-day/full-day, Pak Kumpul half-day/full-day).<br>
+        <b>4. Sistem pencatatan kehadiran pada Fase 2 sangat terstruktur (diinisiasi bersamaan dengan keterlibatan TA Lembaga Nadzir ke-1).</b> Setiap individu, tanggal, dan jenis pekerjaan tercatat dengan rinci &mdash; praktik ini perlu diadopsi oleh tim pengelola berikutnya.<br>
+        <b>5. Tidak tersedia data kehadiran pada Fase 1.</b> Periode Juli 2022 hingga September 2023 tidak memiliki dokumentasi ketenagakerjaan sama sekali &mdash; hal ini menjadi pembelajaran utama terkait pentingnya pencatatan sejak awal.
+      </p>
+    </div>
+  </div>
+
+  <!-- TAB 5: EFFICIENCY -->
+  <div id="efficiency" class="tc" style="display:none">
+    <div class="st">Analisis Efisiensi Keseluruhan <span class="aud-tag aud-audit">Audit</span></div>
+    <div class="g g3 mb2">
+      <div class="c">
+        <h3>Cost per KG &mdash; Evolusi</h3>
+        <div style="margin-bottom:10px">
+          <div class="fb"><span style="font-size:12px;color:var(--t2)">Fase 1 Adib (21 bln, 0 KG)</span><span class="sr" style="font-weight:700">&infin; (belum panen)</span></div>
+          <div class="bw"><div class="bf" style="width:100%;background:var(--s3)"></div></div>
+          <div class="desc">~Rp 29,5 Jt dikeluarkan tanpa hasil kopi <span class="est-label" style="font-size:8px">EST</span></div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="fb"><span style="font-size:12px;color:var(--t2)">Lembaga Nadzir ke-2 2024 (63 KG)</span><span class="sr" style="font-weight:700">Rp 189.683/KG (above farm-gate)</span></div>
+          <div class="bw"><div class="bf" style="width:65%;background:var(--red)"></div></div>
+          <div class="desc">~61% F3 cost &divide; 63 KG (hanya biaya Lembaga Nadzir ke-2 sheet 1)</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="fb"><span style="font-size:12px;color:var(--t2)">Lembaga Nadzir ke-2 2025 (281 KG)</span><span class="sg" style="font-weight:700">Rp 30.712/KG (sub farm-gate)</span></div>
+          <div class="bw"><div class="bf" style="width:10%;background:var(--green)"></div></div>
+          <div class="desc">Di bawah harga farm-gate farm-gate price &mdash; mengindikasikan margin positif</div>
+        </div>
+        <div style="margin-bottom:10px;padding-top:10px;border-top:1px solid var(--s2)">
+          <div class="fb"><span style="font-size:12px;color:var(--amber)"><b>HPP Kumulatif (semua fase)</b></span><span class="sr" style="font-weight:700">~kumulatif high</span></div>
+          <div class="bw"><div class="bf" style="width:49%;background:var(--amber)"></div></div>
+          <div class="desc">~kumulatif F1+F2+F3 &divide; 344 KG &mdash; termasuk seluruh investasi awal <span class="est-label" style="font-size:8px">EST</span></div>
+        </div>
+        <div>
+          <div class="fb"><span style="font-size:12px;color:var(--blue)"><b>HPP Kumulatif (tanpa 1a)</b></span><span class="sa" style="font-weight:700">documented HPP</span></div>
+          <div class="bw"><div class="bf" style="width:34%;background:var(--blue)"></div></div>
+          <div class="desc">Rp 34,07 Jt &divide; 344 KG &mdash; hanya biaya tercatat</div>
+        </div>
+      </div>
+      <div class="c">
+        <h3>Revenue per Rupiah Biaya</h3>
+        <div class="cc"><canvas id="chROI"></canvas></div>
+      </div>
+      <div class="c">
+        <h3>Benchmark Biaya</h3>
+        <div class="cc"><canvas id="chBench"></canvas></div>
+        <div class="desc" style="margin-top:6px">Benchmark nasional ~Rp 30 Jt/ha. Kebun = 0.49 ha &rarr; Rp 14,75 Jt/tahun</div>
+      </div>
+    </div>
+
+    <div class="st">Produktivitas & Tren</div>
+    <div class="g g2 mb2">
+      <div class="c">
+        <h3>Tren Panen vs Biaya per Periode</h3>
+        <div class="cl"><canvas id="chTrend"></canvas></div>
+      </div>
+      <div class="c">
+        <h3>Sumber Pendapatan &mdash; Pergeseran Model</h3>
+        <div class="cl"><canvas id="chIncome"></canvas></div>
+        <div class="desc" style="margin-top:8px">Terjadi pergeseran model pendapatan: dari periode tanpa dokumentasi, ke penjualan aset, hingga penjualan produk kopi &mdash; menunjukkan transisi menuju model bisnis yang berkelanjutan.</div>
+      </div>
+    </div>
+
+    <div class="est-box">
+      <span class="est-label">IMPLIKASI SILENT COST</span>
+      <p style="font-size:12px;color:var(--t2);margin-top:6px">
+        Dengan memperhitungkan estimasi pengeluaran Fase 1, HPP kumulatif meningkat dari documented HPP menjadi ~kumulatif high.
+        Hal ini menunjukkan bahwa secara kumulatif, <b>kebun belum mencapai titik impas</b> &mdash; total pendapatan (~Rp 34,6 Jt) masih berada di bawah total pengeluaran (~Rp 49,1 Jt).
+        Namun demikian, tren per tahun menunjukkan perbaikan yang signifikan: cost/KG pada periode Lembaga Nadzir ke-2 2025 telah berada di bawah harga jual.
+        <b>Kesimpulan: kebun berada pada jalur menuju profitabilitas, dengan proyeksi pencapaian titik impas dalam 1&ndash;2 tahun ke depan.</b>
+      </p>
+    </div>
+
+    <!-- BONSARI COFFEE MOMENTUM CONTEXT (Updated 7-Month Data) -->
+    <div class="st" style="color:var(--blue);margin-top:24px">Bonsari Coffee &mdash; Hilir Commercial Wing (Okt 2025 &ndash; Mei 2026) <span class="aud-tag aud-donor">Donor</span></div>
+    <p style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.7;font-style:italic">
+      Sebagai anchor offtaker yang dimiliki Wakif, Bonsari Coffee terbukti integrator hulu-hilir yang berfungsi. Data berikut dari <b>live monitor</b> (<a href="https://adib-psych.github.io/bonsari-coffee-monitor/" style="color:var(--blue)">adib-psych.github.io/bonsari-coffee-monitor</a>) per Mei 2026 &mdash; 7 bulan operasi.
+    </p>
+
+    <!-- KPI ROW 1: HEALTH METRICS -->
+    <div class="g g4 mb2">
+      <div class="c" style="border-top:3px solid var(--blue)"><h3>Periode Operasi</h3><div class="bn sb">7 Bulan</div><div class="desc">Okt 25 &ndash; Mei 26 (active)</div></div>
+      <div class="c" style="border-top:3px solid var(--green)"><h3>Margin Gross</h3><div class="bn sg">23,09%</div><div class="desc">In-range specialty industry (20&ndash;30%)</div></div>
+      <div class="c" style="border-top:3px solid var(--green)"><h3>Margin Net (P&amp;L)</h3><div class="bn sg">15,55%</div><div class="desc">After OpEx + Depresiasi</div></div>
+      <div class="c" style="border-top:3px solid var(--amber)"><h3>BEP Progress</h3><div class="bn sa">23,9%</div><div class="desc">Sub-1 tahun lintasan positif</div></div>
+    </div>
+
+    <!-- KPI ROW 2: WEALTH & GROWTH (RATIO-ONLY) -->
+    <div class="g g4 mb2">
+      <div class="c" style="border-top:3px solid var(--purple)"><h3>Pemulihan Modal</h3><div class="bn" style="color:var(--purple)">~100%+</div><div class="desc">Kumulatif revenue setara/melebihi Modal Awal</div></div>
+      <div class="c" style="border-top:3px solid var(--blue)"><h3>Posisi Kas</h3><div class="bn sb">Likuid Positif</div><div class="desc">Saldo rekening cukup cover modal kerja</div></div>
+      <div class="c" style="border-top:3px solid var(--amber)"><h3>Stok Tertahan</h3><div class="bn sa">~31% Volume</div><div class="desc">~333 KG dari 971 KG kumulatif</div></div>
+      <div class="c" style="border-top:3px solid var(--green)"><h3>Pertumbuhan Aset Bersih</h3><div class="bn sg">+10,7%</div><div class="desc">Dari baseline Modal Awal</div></div>
+    </div>
+
+    <!-- VOLUME & QUARTERLY TRAJECTORY -->
+    <div class="g g2 mb2">
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <h3 style="color:var(--blue)">Quarterly Lintasan &mdash; Margin Naik Konsisten</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Periode</th><th class="tr-right">GB Volume (KG)</th><th class="tr-right">% Share Volume</th><th class="tr-right">Margin Gross</th></tr></thead>
+            <tbody>
+              <tr><td>Q4 2025 (Okt&ndash;Des)</td><td class="tr-right">514</td><td class="tr-right">53%</td><td class="tr-right" style="color:var(--amber)">14,9%</td></tr>
+              <tr><td>Q1 2026 (Jan&ndash;Mar)</td><td class="tr-right">380</td><td class="tr-right">39%</td><td class="tr-right" style="color:var(--green)">~20%</td></tr>
+              <tr><td>Q2 2026 (Apr&ndash;Mei, berkelanjutan)</td><td class="tr-right">~77</td><td class="tr-right">~8%</td><td class="tr-right" style="color:var(--green)">~25%</td></tr>
+              <tr style="background:var(--s2);font-weight:700"><td><b>TOTAL 7 BULAN</b></td><td class="tr-right"><b>971 eq</b></td><td class="tr-right"><b>100%</b></td><td class="tr-right"><b style="color:var(--green)">23,09%</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;padding:8px 12px;background:rgba(123,155,126,.08);border-left:3px solid var(--green);border-radius:6px;font-size:11px;color:var(--t1);line-height:1.65">
+          <b>&#9650; Lintasan positif:</b> Margin Gross naik konsisten dari <b>14,9% &rarr; 23,1%</b> dalam 7 bulan. Bukti operational learning + pricing power yang membaik (premium specialty channel terbukti).
+        </div>
+      </div>
+      <div class="c" style="border-left:4px solid var(--green)">
+        <h3 style="color:var(--green)">Volume &amp; Stock Flow</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>Item</th><th class="tr-right">KG</th><th>Catatan</th></tr></thead>
+            <tbody>
+              <tr><td>GB sold (penjualan Green Bean)</td><td class="tr-right"><b>894</b></td><td>Wholesale + retail</td></tr>
+              <tr><td>RB&amp;GC sold (Roast Bean + Ground Coffee output)</td><td class="tr-right"><b>60,05</b></td><td>Retail value-add</td></tr>
+              <tr><td>GB consumed for roasting</td><td class="tr-right">77,15</td><td>RB&times;1.25 yield ratio</td></tr>
+              <tr style="background:rgba(123,155,126,.08)"><td><b>Total GB equivalent</b></td><td class="tr-right"><b>~971</b></td><td>Sold + consumed</td></tr>
+              <tr><td>Stock GB akhir (di gudang)</td><td class="tr-right">305,88</td><td>+ 15 KG di pekerja</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:10px;padding:8px 12px;background:rgba(196,144,106,.08);border-left:3px solid var(--amber);border-radius:6px;font-size:11px;color:var(--t1);line-height:1.65">
+          <b>&#127858; Insight stok:</b> ~333 KG green bean masih ditahan (~31% dari volume kumulatif). Stok ini = liquidity yang bisa diaktifkan untuk cashflow tambahan, atau ditahan untuk pricing power lebih baik.
+        </div>
+      </div>
+    </div>
+
+    <!-- WAKAF ALOKASI POTENTIAL -->
+    <div class="c mb2" style="border:2px solid var(--green);background:rgba(123,155,126,.05)">
+      <h3 style="color:var(--green)">&#129000; Potensi Alokasi Sosial Bonsari (Jika Pakai 30% Rule)</h3>
+      <p style="font-size:12px;color:var(--t2);margin-bottom:10px;line-height:1.7">
+        Walaupun Bonsari Coffee adalah commercial wing Wakif (bukan wakaf langsung), filosofi <b>30/70 distribution</b> dari kerangka wakaf produktif bisa diaplikasikan sebagai self-imposed governance. Berikut potensi alokasi jika 30% Gross Profit di-redirect ke Mauquf Alaih:
+      </p>
+      <div class="g g2" style="gap:14px">
+        <div style="padding:12px 14px;background:rgba(123,155,126,.1);border-left:4px solid var(--green);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1px">Alokasi Sosial</div>
+          <div style="font-size:22px;font-weight:800;color:var(--green);margin-top:4px">30%</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:4px">Dari Gross Profit &rarr; TPQ Darul Mujtaba / komunitas Sumberagung</div>
+        </div>
+        <div style="padding:12px 14px;background:rgba(90,138,160,.1);border-left:4px solid var(--blue);border-radius:6px">
+          <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:1px">Sisa Operasional</div>
+          <div style="font-size:22px;font-weight:800;color:var(--blue);margin-top:4px">70%</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:4px">Reinvestasi modal kerja &middot; pengembangan brand &middot; cadangan</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--t3);margin-top:10px;font-style:italic">
+        <b>Note:</b> Kontras tajam dengan era RWI &mdash; selama 5 bulan, distribusi 30% ke Mauquf Alaih = <b>0% delivered</b>. Bonsari (Wakif-owned) <em>menghasilkan</em> potensi alokasi sosial substantial dalam 7 bulan tanpa beban institusional Nazhir.
+      </p>
+    </div>
+
+    <!-- ANCHOR CUSTOMERS -->
+    <div class="c mb2" style="border-left:4px solid var(--blue)">
+      <h3 style="color:var(--blue)">Pelanggan Utama (Wholesale Berulang &mdash; Validasi Multi-Offtaker)</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Customer</th><th>Pola Berulang</th><th>Channel/Tier</th><th>Payment</th></tr></thead>
+          <tbody>
+            <tr><td><b>Roastery A</b></td><td>50 KG &times; multiple kali (Okt&ndash;Mei)</td><td>Specialty wholesale (GBO2)</td><td>BSI Transfer wholesale</td></tr>
+            <tr><td><b>Roastery B</b></td><td>50 KG premium &times; beberapa kali</td><td>Specialty premium (GBP)</td><td>BSI Transfer wholesale</td></tr>
+            <tr><td><b>Roastery C</b></td><td>5 KG/varian &times; 3 varian (GBB, GBO, GBC)</td><td>Wholesale mix</td><td>BSI Transfer wholesale</td></tr>
+            <tr><td>Cafe D</td><td>Retail per-KG (RBP/RBA)</td><td>Roasted retail (value-add)</td><td>QRIS / Tunai</td></tr>
+            <tr><td>Komunitas retail (5+ pelanggan reguler)</td><td>Retail Ground Coffee &amp; packs</td><td>Per pack 150&ndash;400gr</td><td>Cash / QRIS</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px;padding:8px 12px;background:rgba(123,155,126,.08);border-radius:6px;font-size:11px;color:var(--t1);line-height:1.6">
+        <b>Catatan validasi:</b> Roastery A dan B = wholesale berulang (menandakan kepercayaan, pelanggan berulang). Customer dari RWI partnership: <b>ZERO</b> &mdash; semua organic dari networking Wakif. Strategi multi-offtaker Fase 6 sudah <em>de facto</em> terbukti.
+      </div>
+    </div>
+
+    <!-- Bonsari vs RWI Comparison Callout -->
+    <div class="c mb2" style="border:2px solid var(--amber);background:rgba(196,144,106,.05)">
+      <h3 style="color:var(--amber)">&#127919; Bonsari Revenue vs RWI Disbursement &mdash; Cermin Refleksi</h3>
+      <div style="font-size:12px;color:var(--t1);line-height:1.85">
+        Window waktu yang hampir paralel (Q4 2025 onwards), magnitudo serupa, namun arah <em>terbalik</em>:
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+          <div style="padding:10px 12px;background:rgba(90,138,160,.1);border-left:3px solid var(--blue);border-radius:6px">
+            <b style="color:var(--blue)">Bonsari Coffee (Wakif-owned)</b><br>
+            <b>PEMASUKAN</b> &mdash; commercial wing operasi sehat (7 bln)<br>
+            &#9656; Margin Gross 23,09% &middot; Net 15,55%<br>
+            &#9656; BEP Progress 23,9% &middot; Pertumbuhan Aset Bersih +10,7%<br>
+            &#9656; 971 KG GB equivalent delivered<br>
+            &#9656; Wholesale berulang (Roastery A, B)<br>
+            &#9656; Lintasan margin meningkat 14,9% &rarr; 23,1%<br>
+            &#9656; Potensi 30% sosial: substansial (dari Gross)
+          </div>
+          <div style="padding:10px 12px;background:rgba(198,110,92,.1);border-left:3px solid var(--red);border-radius:6px">
+            <b style="color:var(--red)">RWI Disbursement (Lembaga)</b><br>
+            <b>PENGELUARAN</b> ~Rp 54&ndash;65 jt disbursed (5 bln, sentral ~Rp 60 jt)<br>
+            &#9656; 40% budget = Treatmen Khusus (Fish Extract dll)<br>
+            &#9656; 31% budget = Tenaga Ahli Honor<br>
+            &#9656; 0 customer marketing<br>
+            &#9656; 0 sesi komunitas / transfer pengetahuan<br>
+            &#9656; 0 baseline data 11 parameter agronomi<br>
+            &#9656; <b>0 distribusi ke TPQ Darul Mujtaba</b><br>
+            &#9656; Pembatalan MOU 1 Mei 2026
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:12px 14px;background:rgba(196,144,106,.08);border-left:4px solid var(--amber);border-radius:6px;font-size:12px;color:var(--t1);line-height:1.85">
+          <b>&#127919; Insight Strategis:</b> Magnitudo skala disbursement vs revenue hampir <em>setara</em>, namun arsitektur akuntabilitas <em>berlawanan</em>. Bonsari = setiap unit nilai masuk punya nama customer + product + traceable + margin naik. RWI = setiap unit nilai keluar tanpa traceable delivery ke pilar yang dijanjikan. Plus, Bonsari (commercial wing) <em>menghasilkan</em> potensi alokasi sosial substansial (30% dari Gross Profit) dalam 7 bulan, sementara RWI (lembaga Nazhir formal yang punya commitment 30% redirection) deliver <b>0%</b> ke Mauquf Alaih dalam 5 bulan. <b>Inilah keunggulan struktural self-managed Fase 6</b> &mdash; bukan filosofi abstrak, namun data konkret.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB: HARVEST CYCLE ANALYSIS -->
+  <div id="harvest" class="tc" style="display:none">
+    <div class="st">Siklus Panen Kopi & Transisi Manajemen</div>
+    
+    <div class="c mb2">
+      <h3>Prinsip: "Invest Now, Harvest Later"</h3>
+      <p style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:14px">
+        Tanaman kopi memiliki karakteristik jeda waktu (lag) antara investasi perawatan dan hasil panen. Pemupukan yang dilakukan pada bulan tertentu baru memberikan dampak pada panen <b>6&ndash;10 bulan kemudian</b>.
+        Pembersihan dan perawatan menentukan kondisi tanaman untuk musim pembungaan berikutnya.
+        Implikasinya: <b>pihak yang menanggung biaya investasi belum tentu merupakan pihak yang menerima hasil panen</b> &mdash; 
+        terutama apabila terjadi pergantian pengelola di tengah siklus produksi.
+        <div style="margin-top:10px;padding:8px 12px;background:rgba(143,160,168,.08);border:1px solid rgba(143,160,168,.2);border-radius:6px;font-size:11px;color:var(--t3)">
+          <b>Referensi:</b> Siklus aktual berdasarkan data panen kebun Ngantang (2024: Jul&ndash;Agt, 2025: Mei&ndash;Jul).
+          Prinsip lag investasi-panen didukung oleh: <i>Robusta Coffee Lifecycle</i> (greg.app, 2024) &mdash; maturasi 9&ndash;11 bulan dari bunga ke panen;
+          <i>Understanding Indonesian Robusta Production</i> (Perfect Daily Grind, 2022) &mdash; pola regional Jawa Timur;
+          <i>A Coffee Producer&rsquo;s Guide to Soil Management</i> (Perfect Daily Grind, 2017) &mdash; dampak pemupukan terhadap siklus produksi.
+        </div>
+      </p>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;font-size:11px">
+        <div style="background:rgba(168,155,184,.1);border:1px solid rgba(168,155,184,.3);border-radius:8px;padding:10px">
+          <div style="font-weight:700;color:var(--purple)">Agt&ndash;Okt</div>
+          <div style="color:var(--t2)">Pemangkasan pasca-panen, pembersihan</div>
+        </div>
+        <div style="background:rgba(90,138,160,.1);border:1px solid rgba(90,138,160,.3);border-radius:8px;padding:10px">
+          <div style="font-weight:700;color:var(--blue)">Nov&ndash;Feb</div>
+          <div style="color:var(--t2)">Pemupukan, perawatan intensif</div>
+        </div>
+        <div style="background:rgba(196,144,106,.1);border:1px solid rgba(196,144,106,.3);border-radius:8px;padding:10px">
+          <div style="font-weight:700;color:var(--amber)">Mar&ndash;Mei</div>
+          <div style="color:var(--t2)">Pembungaan, pembentukan buah</div>
+        </div>
+        <div style="background:rgba(123,155,126,.1);border:1px solid rgba(123,155,126,.3);border-radius:8px;padding:10px">
+          <div style="font-weight:700;color:var(--green)">Jun&ndash;Jul</div>
+          <div style="color:var(--t2)">PANEN</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="st">Timeline: Siapa Invest, Siapa Panen?</div>
+        <div class="c mb2" style="overflow-x:auto">
+      <div class="harvest-timeline">
+        <!-- Year labels -->
+        <div class="ht-row">
+          <div class="ht-label"></div>
+          <div class="ht-years">
+            <div>2022</div><div>2023</div><div>2024</div><div>2025</div>
+          </div>
+        </div>
+        
+        <!-- Management bar -->
+        <div class="ht-row">
+          <div class="ht-label">Pengelola</div>
+          <div class="ht-bar">
+            <div style="width:12.5%;background:var(--s2)"></div>
+            <div style="width:35.4%;background:linear-gradient(90deg,var(--cyan) 0%,var(--cyan) 40%,var(--purple) 60%,var(--purple) 100%)">ADIB (Jul 22&ndash;Mar 24)</div>
+            <div style="width:39.6%;background:var(--blue)">via Lembaga Nadzir ke-2 (Apr 24&ndash;Okt 25)</div>
+            <div style="width:12.5%;background:var(--green)">RWI</div>
+          </div>
+        </div>
+
+        <!-- Harvest markers -->
+        <div class="ht-row">
+          <div class="ht-label">Panen</div>
+          <div class="ht-track">
+            <div class="ht-marker" style="left:25%;width:4.5%;background:rgba(143,160,168,.5);color:var(--t3)">?</div>
+            <div class="ht-marker" style="left:50%;width:4.5%;background:rgba(123,155,126,.6)">~100</div>
+            <div class="ht-marker" style="left:75%;width:5.5%;background:rgba(123,155,126,.9)">281 KG</div>
+          </div>
+        </div>
+
+        <!-- Investment periods -->
+        <div class="ht-row">
+          <div class="ht-label">Investasi</div>
+          <div class="ht-track">
+            <div class="ht-invest" style="left:12.5%;width:35.4%;background:repeating-linear-gradient(45deg,rgba(168,155,184,.15),rgba(168,155,184,.15) 4px,transparent 4px,transparent 8px);color:var(--purple)">Adib: ~Rp 29,5 Jt</div>
+            <div class="ht-invest" style="left:47.9%;width:39.6%;background:repeating-linear-gradient(45deg,rgba(90,138,160,.15),rgba(90,138,160,.15) 4px,transparent 4px,transparent 8px);color:var(--blue)">Adib via Lembaga Nadzir ke-2: ~documented F3</div>
+          </div>
+        </div>
+
+        <!-- Transition markers -->
+        <div class="ht-row" style="margin-top:4px">
+          <div class="ht-label"></div>
+          <div style="flex:1;position:relative;height:50px">
+            <div style="position:absolute;left:47.9%;top:0;height:18px;border-left:2px dashed var(--amber)"></div>
+            <div style="position:absolute;left:42%;top:20px;font-size:10px;color:var(--amber);font-weight:600;white-space:nowrap;background:var(--s1);padding:2px 6px;border-radius:4px;border:1px solid rgba(196,144,106,.2)">&#9888; Transisi pengelola Apr 24</div>
+            <div style="position:absolute;left:85.4%;top:0;height:18px;border-left:2px dashed var(--green)"></div>
+            <div style="position:absolute;left:76%;top:20px;font-size:10px;color:var(--green);font-weight:600;white-space:nowrap;background:var(--s1);padding:2px 6px;border-radius:4px;border:1px solid rgba(123,155,126,.2)">&#10003; Transisi pengelola Nov 25</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="st">True Cost Attribution: Siapa Invest untuk Panen Mana?</div>
+    <div class="g g3 mb2">
+      <div class="c" style="border-top:3px solid var(--s3)">
+        <h3>Panen 2023 (Jun&ndash;Jul)</h3>
+        <div class="bn" style="color:var(--t3)">? KG</div>
+        <div class="desc">Tidak ada data &mdash; kemungkinan tidak panen atau tidak tercatat</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--t2)">
+          <b>Investor:</b> Adib (Wakif)<br>
+          <b>Biaya persiapan:</b> ~~baseline budget (Jul 22&ndash;Jun 23)<br>
+          <b>Pengelola saat panen:</b> Adib (langsung)<br>
+          <div style="margin-top:6px;padding:6px;background:rgba(143,160,168,.1);border-radius:6px;font-size:11px">
+            Siklus investasi-panen utuh berada di bawah satu pengelola. Namun tidak tersedia data untuk memverifikasi apakah terdapat hasil panen pada periode ini.
+          </div>
+        </div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--amber)">
+        <h3>Panen 2024 (Jun&ndash;Jul)</h3>
+        <div class="bn sg">~100 KG</div>
+        <div class="desc">63 KG tercatat/terjual, sisa konsumsi pribadi</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--t2)">
+          <b>Investor:</b> <span style="color:var(--purple);font-weight:700">ADIB (seluruh fase)</span><br>
+          <b>Biaya persiapan (Agt 23&ndash;Mei 24):</b><br>
+          &bull; Pengelolaan langsung: ~documented F2 (pembersihan, pupuk, pelatihan, alat)<br>
+          &bull; Via Lembaga Nadzir ke-2: Rp 6 Jt (perawatan Mei&ndash;Jun 24)<br>
+          <b>Pengelola saat panen:</b> Lembaga Nadzir ke-2 (penyedia tenaga kerja)<br>
+          <div style="margin-top:6px;padding:6px;background:rgba(90,138,160,.1);border-radius:6px;font-size:11px;color:var(--blue)">
+            <b>Catatan:</b> Pendanaan tetap bersumber dari Wakif (Adib) di seluruh fase. Transisi April 2024 merupakan pergantian penyedia tenaga kerja, bukan pergantian investor.
+          </div>
+        </div>
+      </div>
+      <div class="c" style="border-top:3px solid var(--green)">
+        <h3>Panen 2025 (Mei&ndash;Jul)</h3>
+        <div class="bn sg">~281 KG</div>
+        <div class="desc">Panen terbesar &mdash; naik 346%</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--t2)">
+          <b>Investor:</b> <span style="color:var(--purple);font-weight:700">ADIB (seluruh fase)</span><br>
+          <b>Biaya persiapan (Agt 24&ndash;Mei 25):</b><br>
+          &bull; Via Lembaga Nadzir ke-2: ~moderate budget (pupuk Sep 24, replanting, pagar, perawatan Jan&ndash;Apr 25)<br>
+          &bull; + Fondasi dari pengelolaan langsung (efek jangka panjang pembersihan & pupuk organik)<br>
+          <b>Pengelola saat panen:</b> Lembaga Nadzir ke-2 (penyedia tenaga kerja)<br>
+          <div style="margin-top:6px;padding:6px;background:rgba(123,155,126,.1);border-radius:6px;font-size:11px;color:var(--green)">
+            <b>Kontinuitas pendanaan:</b> Investasi dari Wakif (Adib) berlangsung konsisten di seluruh fase. Timing transisi sesuai.
+            Replanting 330 bibit (Oktober 2024) <b>telah gagal total</b> &mdash; seluruh bibit mati (sebagian dibabat pencari rumput, sebagian mati alami). Kerugian: Rp 1.600.000.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g g2 mb2">
+      <div class="c">
+        <h3>Adjusted Cost/KG: True Attribution</h3>
+        <div class="cl"><canvas id="chAttrib"></canvas></div>
+      </div>
+      <div class="c">
+        <h3>Investment-Harvest Gap per Fase</h3>
+        <div class="cl"><canvas id="chGap"></canvas></div>
+      </div>
+    </div>
+
+    <div class="c mb2">
+      <h3>Analisis Biaya per Siklus Panen (Bukan per Fase Manajemen)</h3>
+      <div class="tw">
+        <table>
+          <thead><tr><th>Siklus Panen</th><th>Periode Investasi</th><th>Biaya Investasi</th><th>Hasil Panen</th><th>Cost/KG</th><th>Pengelola Operasional</th><th>Pendanaan</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><b>Siklus 2023</b></td>
+              <td>Jul 22 &ndash; Jun 23</td>
+              <td>~baseline F1 cost <span class="est-label" style="font-size:8px">EST</span></td>
+              <td style="color:var(--t3)">? KG (tidak tercatat)</td>
+              <td>&mdash;</td>
+              <td><span class="tag tp">Adib (langsung)</span></td>
+              <td><span class="tag tp">Adib (Wakif)</span></td>
+              <td><span class="tag tr">Data hilang</span></td>
+            </tr>
+            <tr>
+              <td><b>Siklus 2024</b></td>
+              <td>Jul 23 &ndash; Jun 24</td>
+              <td>~~moderate budget</td>
+              <td><b>63 KG</b></td>
+              <td class="sr"><b>Rp 278.000/KG</b></td>
+              <td><span class="tag tp">Adib</span> &rarr; <span class="tag tb">Lembaga Nadzir ke-2</span></td>
+              <td><span class="tag tp">Adib (Wakif)</span></td>
+              <td><span class="tag tb">Transisi pengelola</span></td>
+            </tr>
+            <tr>
+              <td><b>Siklus 2025</b></td>
+              <td>Jul 24 &ndash; Jun 25</td>
+              <td>Rp 13,58 Jt</td>
+              <td><b>~281 KG</b></td>
+              <td class="sg"><b>Rp 30.712/KG (sub farm-gate)</b></td>
+              <td><span class="tag tb">Lembaga Nadzir ke-2</span></td>
+              <td><span class="tag tp">Adib (Wakif)</span></td>
+              <td><span class="tag tg">Stabil</span></td>
+            </tr>
+            <tr style="background:var(--s2)">
+              <td><b>Siklus 2026</b></td>
+              <td>Jul 25 &ndash; Jun 26</td>
+              <td>TBD</td>
+              <td><b>Target: 500-800 KG</b></td>
+              <td>&mdash;</td>
+              <td><span class="tag tb">Lembaga Nadzir ke-2</span> &rarr; <span class="tag tg">RWI</span></td>
+              <td><span class="tag tp">Adib (Wakif)</span></td>
+              <td><span class="tag tb">Transisi pengelola</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="g g2 mb2">
+      <div class="f fi">
+        <h4>&#128270; Catatan: Struktur Pendanaan Kebun Wakaf</h4>
+        <p>Seluruh biaya pengelolaan kebun di semua fase ditanggung oleh <b>Wakif (Adib)</b> sebagai investor tunggal.
+        Ketiga lembaga nadzir (Lembaga Nadzir ke-1, Lembaga Nadzir ke-2, RWI) berperan sebagai penyedia tenaga kerja dan/atau pelaksana operasional.
+        Pergantian nadzir merupakan <b>pergantian pengelola operasional</b>, bukan pergantian sumber pendanaan.</p>
+        <div class="ac">Implikasi: Evaluasi kinerja tiap fase perlu difokuskan pada <b>efektivitas penggunaan dana</b> dan <b>hasil yang dicapai</b>, bukan pada siapa yang membiayai</div>
+      </div>
+      <div class="f fo">
+        <h4>&#10003; Insight: Investasi Berkelanjutan Menghasilkan Peningkatan Bertahap</h4>
+        <p>Sebagai investor tunggal, Adib telah mengalokasikan total ~kumulatif F1+F2+F3 selama ~39 bulan.
+        Dampak investasi ini terlihat pada peningkatan produksi secara bertahap: 0 KG &rarr; 63 KG &rarr; 281 KG.
+        Kegiatan pembersihan intensif pada Fase 1, dilanjutkan dengan pemupukan dan replanting pada Fase 2,
+        menunjukkan bahwa <b>konsistensi pendanaan jangka panjang</b> merupakan faktor kunci keberhasilan kebun wakaf.</p>
+        <div class="ac">Pembelajaran: Pergantian penyedia tenaga kerja tidak mengganggu kontinuitas investasi &mdash; selama <b>sumber pendanaan tetap konsisten</b></div>
+      </div>
+    </div>
+
+    <div class="c" style="border:2px solid var(--blue);background:rgba(90,138,160,.06)">
+      <h3 style="color:var(--blue)">Rekomendasi untuk Siklus 2026</h3>
+      <div style="font-size:12px;color:var(--t2);line-height:1.8">
+        <b>1. Pencatatan biaya perlu dilakukan per siklus panen, bukan hanya per periode kalender.</b> Setiap pengeluaran sebaiknya dikategorikan sebagai 
+        &ldquo;investasi untuk siklus panen 2026&rdquo; atau &ldquo;biaya operasional umum&rdquo;, sehingga memungkinkan kalkulasi cost/KG yang akurat per siklus produksi.<br>
+        <b>2. Transisi penyedia tenaga kerja dari Lembaga Nadzir ke-2 ke RWI (November 2025) telah dilakukan pada timing yang tepat</b> &mdash; setelah musim panen selesai dan sebelum siklus investasi baru dimulai.<br>
+        <b>3. Penyusunan anggaran 2026 perlu memperhitungkan peninggalan investasi sebelumnya</b>: replanting 330 bibit dari Oktober 2024 telah gagal (seluruh bibit mati), namun investasi infrastruktur pagar dan pemupukan yang dialokasikan melalui Lembaga Nadzir ke-2 akan memberikan dampak pada panen 2026.<br>
+        <b>4. Penetapan target panen 2026 perlu didasarkan pada data realistis</b>: dengan fondasi dari dua fase pengelolaan sebelumnya serta perawatan intensif yang berkelanjutan, target produksi 500&ndash;800 KG (dibanding 281 KG pada 2025) dapat dicapai.
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: LESSONS -->
+  <div id="lessons" class="tc" style="display:none">
+    <div class="st">14 Lesson Learned &mdash; Konsolidasi 4 Fase Nazhir + Keputusan Pengelolaan Mandiri</div>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.7">
+      14 Lesson Learned ini dikonsolidasi dari 6 fase pengelolaan kebun wakaf (2022&ndash;2026):
+      <b>6 LL klasik</b> dari Fase 1&ndash;3 (Adib Solo, Inisiasi Lembaga Nadzir ke-1, Lembaga Nadzir ke-2) &middot; <b>6 LL baru dari Pembatalan MOU RWI</b> (Fase 4, dinamika cascade reputasi) &middot; <b>2 LL terbaru dari Family Meeting 2 Mei 2026</b> (fondasi Fase 6 self-managed). Inilah <em>"premi"</em> yang Wakif bayar &mdash; dengan biaya 44+ bulan pengalaman, energi, dan beberapa luka yang membutuhkan waktu untuk healed &mdash; yang menjadi modal pengetahuan ke depan.
+    </p>
+
+    <!-- BAGIAN 1: 6 LL KLASIK -->
+    <div class="st" style="color:var(--blue);margin-top:24px">Bagian 1 &mdash; 6 Lesson Learned Klasik (dari Fase 1&ndash;3: Adib Solo + Inisiasi Lembaga Nadzir ke-1 + Lembaga Nadzir ke-2)</div>
+    <div class="g g2 mb2">
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:4px">LL #0</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Wakaf adalah Amanah, Bukan Proyek Biasa</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Dana wakaf memiliki dimensi spiritual dan hukum yang berbeda dari investasi biasa. Setiap rupiah harus dipertanggungjawabkan tidak hanya secara finansial, tetapi juga secara <i>syar'i</i>. <b>Konsekuensi:</b> setiap keputusan strategis harus melewati filter <em>"apakah ini sesuai amanah Wakif?"</em> &mdash; bukan hanya <em>"apakah ini menguntungkan?"</em></p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:4px">LL #1</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Kehadiran Fisik Adalah Non-Negotiable</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Tenaga Ahli yang tidak pernah ke lapangan menghasilkan rekomendasi yang tidak aplikatif. Kehadiran fisik, observasi langsung, dan dialog dengan pekerja lapangan adalah syarat minimum. <b>Pola #1 di seluruh 3 fase</b> menunjukkan ini sebagai red flag konstan.</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:4px">LL #2</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Data Sebelum Keputusan</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Keputusan tanpa baseline data adalah spekulasi. Inventarisasi pohon, soil test, dan pemetaan lahan harus menjadi langkah pertama. Selama 39 bulan, baseline data masih sangat terbatas &mdash; itu adalah <b>utang yang harus diselesaikan</b> sebelum Phase 4 dimulai.</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:4px">LL #3</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Dokumentasi adalah Investasi</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Setiap pergantian pengelola membuktikan bahwa tanpa dokumentasi, institutional memory hilang. Jurnal kebun, catatan keputusan, dan foto berkala adalah infrastruktur minimum. Aset Knowledge v2.0 + Lesson Learned ini adalah upaya menutup gap dokumentasi 39 bulan.</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:4px">LL #4</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Kontrak Jelas, Ekspektasi Terukur</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Hubungan kerja tanpa kontrak yang jelas menghasilkan ambiguitas peran, konflik, dan inefisiensi. <b>Akad Ju'alah</b> &mdash; janji upah atas pekerjaan/output tertentu; selesai pekerjaan berarti akad lunas dan tidak ada keterikatan jangka panjang &mdash; adalah skema standar minimum untuk konsultan eksternal Phase 4 (DSN-MUI No. 62/DSN-MUI/XII/2007).</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--blue)">
+        <div style="font-size:11px;font-weight:700;color:var(--blue);letter-spacing:1px;margin-bottom:4px">LL #5</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Productive Paranoia: Selalu Siapkan Plan B</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Ketergantungan pada satu orang atau satu institusi adalah titik kegagalan. Mas Anto perlu backup, RWI perlu Plan B, Yayasan Baru juga harus punya Plan B. <b>Strategi multi-offtaker</b> (Bonsari + Nomad Coffee + partner specialty lain) adalah aplikasi prinsip ini di sisi market.</p>
+      </div>
+    </div>
+
+    <!-- BAGIAN 2: 6 LL BARU DARI RWI -->
+    <div class="st" style="color:var(--amber);margin-top:24px">Bagian 2 &mdash; 6 Lesson Learned BARU (dari Fase 4: Dinamika RWI &amp; Pembatalan MOU oleh RWI (1 Mei 2026))</div>
+    <div class="g g2 mb2">
+      <div class="c" style="border-left:4px solid var(--amber);background:rgba(196,144,106,.04)">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:4px">LL #6 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">MOU bukan AIW: Formalitas Hukum Wakaf Wajib di Awal</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Selama 5 bulan kerjasama dengan RWI, dokumen yang ada hanya MOU &mdash; <b>BUKAN Akta Ikrar Wakaf (AIW)</b> yang dibuat di hadapan PPAIW. Implikasi: wakaf belum sah secara hukum positif Indonesia. Dampak positif pasca Pembatalan MOU: <em>awal baru</em> dengan Nazhir baru jadi simple. <b>Pelajaran:</b> di Phase 4, AIW harus dibuat formal SEGERA setelah Yayasan Baru terdaftar sebagai Nazhir.</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--amber);background:rgba(196,144,106,.04)">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:4px">LL #7 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Marketing Promise &ne; Marketing Delivery</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Per MOU Pasal 5, RWI berkewajiban menyediakan marketing &amp; permodalan. Reality: <b>ZERO customer datang ke Bons Cafe karena RWI partnership</b>. Logo "in collaboration with rumah wakaf" di facade = formalitas tanpa nilai tanpa value. <b>Pelajaran:</b> jangan vouch reputasi institusi partner sampai delivery terbukti substantial. Build community trust incrementally berdasarkan delivery aktual, bukan upfront berdasarkan brand partner.</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--amber);background:rgba(196,144,106,.04)">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:4px">LL #8 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Cascade Reputational Cost: Wakif Carries the Burden</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Adib telah build extensive ecosystem trust dengan RWI sebagai jaminan: alokasi ruangan rumah untuk kantor RWI Jatim, koordinasi dengan Takmir Masjid, vouching ke Mama &amp; Ust Fauzan. Saat RWI mundur, Wakif yang harus retract semua komitmen di komunitas. <b>Pelajaran:</b> kalau Wakif extend reputasi pribadi ke partner, partner harus terikat formal untuk manage cascade impact bila exit. Atau: Wakif lebih konservatif dalam vouching sampai delivery konkret.</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--amber);background:rgba(196,144,106,.04)">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:4px">LL #9 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Investigate Counterparty's Internal Dynamics</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Sebelum 1 Mei 2026, Adib lakukan investigasi independen dan menemukan <b>dual-identity Fundraiser RWI</b> (Fundraiser RWI) dengan PT Optima Solusi Nation. Plus pattern TA RWI "mindah toko ke kebun" via @agrosip.alam.lestari. Pattern ini explain kenapa RWI tetap pilih TA RWI walau Adib explicitly flag concerns. <b>Pelajaran Phase 4:</b> sebelum signing partnership baru, due diligence informal terhadap key personnel counterparty: afiliasi paralel, COI potensial, dual-roles. Patterns predict outcome.</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--amber);background:rgba(196,144,106,.04)">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:4px">LL #10 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Trust Personal vs Trust Institutional</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">RWI sebagai brand wakaf nasional kredibel. Namun kapasitas operasional aktual + dynamics internal (Fundraiser RWI-Optima COI hypothesis, prioritization TA RWI) berbeda dari brand-nya. Sementara: <b>Ust Fauzan sebagai personal trust 3.5+ tahun</b> (termasuk 18 bulan Nazhir Fase 2) lebih battle-tested daripada institutional trust 5 bulan dengan RWI. <b>Pelajaran:</b> prioritize trust yang sudah teruji (personal, long-term) di atas trust yang baru (institutional, brand).</p>
+      </div>
+      <div class="c" style="border-left:4px solid var(--amber);background:rgba(196,144,106,.04)">
+        <div style="font-size:11px;font-weight:700;color:var(--amber);letter-spacing:1px;margin-bottom:4px">LL #11 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Klasifikasi Tinggi adalah Modal Moral yang Tahan Banting</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">Sepanjang 5 bulan interaksi terakhir dengan RWI &mdash; termasuk insiden TA, pembatalan MOU, charity offer yang ditahan &mdash; Adib konsisten dengan adab tinggi: tone polite, husnudzon, generous of spirit. Walaupun RWI mengambil keputusan yang merugikan, <b>klasifikasi Adib tetap maintained</b>. <b>Pelajaran:</b> dignity tidak bisa dibawa pergi oleh orang lain. Komunikasi yang dijaga dengan adab menjadi modal moral yang nilainya tetap berlaku, terlepas dari tindakan partner. Plus: <em>silence sometimes louder than blame</em>.</p>
+      </div>
+    </div>
+
+    <!-- BAGIAN 3: 2 LL BARU DARI FAMILY MEETING 2 MEI -->
+    <div class="st" style="color:var(--pink);margin-top:24px">Bagian 3 &mdash; 2 Lesson Learned BARU (dari Family Meeting 2 Mei 2026)</div>
+    <p style="font-size:13px;color:var(--t2);margin-bottom:14px;line-height:1.7">
+      Meeting keluarga 2 Mei 2026 (Adib + Mas Anto + Mas Bagus + Febry + Budhe) menghasilkan dua pelajaran tambahan yang membentuk fondasi Fase 6 self-managed. Lesson ini lahir dari dinamika percakapan langsung yang tidak akan tertangkap kalau hanya membaca dokumen formal.
+    </p>
+    <div class="g g2 mb2">
+      <div class="c" style="border-left:4px solid var(--pink);background:rgba(212,168,154,.05)">
+        <div style="font-size:11px;font-weight:700;color:var(--pink);letter-spacing:1px;margin-bottom:4px">LL #12 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Keluarga sebagai Common Sense Check Governance</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">
+          Dalam meeting 2 Mei, Budhe (Mama) membawa <b>perspektif realistis &amp; konservatif</b> yang menyeimbangkan optimisme Mas Anto soal tumpang sari durian. Argumen Budhe (<em>"walaupun durian sampai 10 tahun, kopi tetap ada; namun durian tidak selalu tiap tahun ada"</em>) langsung membentuk keputusan final: jarak durian 10&times;10 m, kopi sebagai jangkar utama 15 tahun. Febry kontribusi analogi diversifikasi skincare. <b>Pelajaran:</b> keluarga inti bukan sekadar emotional support &mdash; mereka adalah <em>governance layer</em> yang membawa common sense check terhadap rekomendasi teknis. Untuk amal jariyah Wakif, sounding board keluarga signifikan terhadap keputusan akhir.
+        </p>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(212,168,154,.08);border-radius:6px;font-size:11px;color:var(--t1);line-height:1.65">
+          <b>Aplikasi Phase 6:</b> Keluarga inti (Budhe, Mas Bagus, Febry) tetap diundang untuk strategic check-in periodik &mdash; bukan untuk operasional, namun untuk validasi arah strategis &amp; etika dana umat.
+        </div>
+      </div>
+      <div class="c" style="border-left:4px solid var(--pink);background:rgba(212,168,154,.05)">
+        <div style="font-size:11px;font-weight:700;color:var(--pink);letter-spacing:1px;margin-bottom:4px">LL #13 &mdash; NEW</div>
+        <h3 style="color:var(--t1);margin-bottom:8px">Self-Management adalah Pilihan Etis, Bukan Default</h3>
+        <p style="font-size:12px;color:var(--t2);line-height:1.7">
+          Keputusan self-managed Fase 6 BUKAN karena tidak ada pilihan struktur lain. Skema A (Yayasan Baru + konsultan Ju'alah), Skema B (Ust Fauzan sebagai Nazhir Perorangan), Skema C (Co-Nazhir) semua sudah dipertimbangkan di Fase 5. Adib memilih self-managed dengan filosofi eksplisit: <em>"Mending dirawat sendiri, daripada sudah tahu aturan namun tetap berjalankan terus."</em> Plus refleksi tentang kasus TA RWI (kritik Mas Anto + Budhe: <em>"bolongannya pendorosan, namun bersorban"</em>) &mdash; Wakif menolak struktur yang berisiko mengulang pola pengulangan dana donatur menguap. <b>Pelajaran:</b> dana terbatas + manajemen akuntabel adalah pilihan etis yang lebih kuat daripada dana besar namun tidak akuntabel. Untuk amal jariyah, integrasi <em>akuntabilitas full-stack</em> lebih utama daripada skala operasional.
+        </p>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(212,168,154,.08);border-radius:6px;font-size:11px;color:var(--t1);line-height:1.65">
+          <b>Aplikasi Phase 6:</b> Anggaran Rp 8 jt/thn (15,6&times; lebih hemat dari era RWI), filosofi "perawatan konsisten &gt; nutrisi mahal", sistem laporan harian wajib dari Mas Anto. Setiap rupiah harus bisa dipertanggungjawabkan secara syar'i &mdash; bukan sekadar finansial.
+        </div>
+        <div style="margin-top:10px;padding:10px 12px;background:rgba(123,155,126,.06);border-left:3px solid var(--green);border-radius:6px;font-size:11px;color:var(--t2);line-height:1.65;font-style:italic">
+          <b>&#128202; Bukti angka konkret</b> lintas-fase &mdash; perbandingan ratio, magnitudo disbursement, dan delivery komunitas &mdash; tersedia lengkap di Tab <b>Siklus Keuangan &amp; P&amp;L</b> section "Cermin Refleksi Bonsari vs RWI".
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 POLA BERULANG -->
+    <div class="st" style="color:var(--red);margin-top:24px">4 Pola Berulang yang Dikonfirmasi di Fase 2&ndash;4 (Lembaga Nadzir) <span class="aud-tag aud-donor">Donor</span></div>
+    <p style="font-size:12px;color:var(--t2);margin-bottom:14px;line-height:1.7;font-style:italic">Tiga lembaga nadzir berbeda (Calon Lembaga Nadzir ke-1 / Lembaga Nadzir ke-2 / RWI), empat pola kegagalan yang sama berulang. <b>Pelajaran terdalam:</b> masalah bukan pada pengelola spesifik, namun pada absence of governance design yang prevent pola ini berulang.</p>
+
+    <div class="f fc mb">
+      <h4>&#9656; POLA #1: Tenaga Ahli Tanpa Kehadiran Lapangan</h4>
+      <p>TA memberikan rekomendasi tanpa pernah (atau jarang) mengunjungi kebun. Rekomendasi bersifat generik, tidak kontekstual. <b>Confirmed di Fase 1, 2, 3</b> &mdash; tiga fase, satu pola.</p>
+      <div class="ac"><b>Mitigasi Phase 4:</b> Skema Ju'alah dengan KPI kehadiran fisik wajib + Mas Anto sebagai daily field reporter + voice-note transkripsi &rarr; database untuk monitoring berkelanjutan.</div>
+    </div>
+
+    <div class="f fc mb">
+      <h4>&#9656; POLA #2: Tidak Ada Baseline Data</h4>
+      <p>Keputusan diambil tanpa data dasar: jumlah pohon riil, kondisi tanah, kesehatan akar, peta lahan. Semua angka masih estimasi &mdash; bahkan setelah 39 bulan. <b>Confirmed di seluruh 4 fase nadzir &mdash; utang yang akumulatif.</b></p>
+      <div class="ac"><b>Mitigasi Phase 4:</b> Soil test komposit minimum 4 sampel per bidang (zigzag) sebelum intervensi mayor; inventarisasi pohon riil; soil monitoring berkala via Digital Platform Fase 1.</div>
+    </div>
+
+    <div class="f fc mb">
+      <h4>&#9656; POLA #3: Transfer Pengelolaan yang Gagal</h4>
+      <p>Setiap pergantian Nazhir tidak disertai transfer pengetahuan dan SOP yang memadai. Transisi Fase 2&rarr;3 (Lembaga Nadzir ke-1 &rarr; Lembaga Nadzir ke-2): tidak ada SOP tertulis. Transisi Fase 3&rarr;4 (Lembaga Nadzir ke-2 &rarr; RWI): gap komunikasi + <b>pohon pisang dibabat sebagai protes</b>. <b>Confirmed di setiap transisi antar-fase.</b></p>
+      <div class="ac"><b>Mitigasi Phase 4:</b> Aset Knowledge v2.0 + handover protocol formal + Adib sebagai continuity bridge + Lesson Learned ini sebagai institutional memory yang persistent.</div>
+    </div>
+
+    <div class="f fc mb2">
+      <h4>&#9656; POLA #4: Justifikasi Riset sebagai Perisai Akuntabilitas</h4>
+      <p>Kegiatan berlabel 'riset' atau 'pengembangan' digunakan untuk membenarkan pengeluaran tanpa akuntabilitas hasil. Confirmed di Fase 4 (RWI): TA RWI/TA RWI Senior mengarahkan kebun wakaf jadi R&amp;D demplot pupuk Optima/agrosip.</p>
+      <div class="ac"><b>Mitigasi Phase 4:</b> Setiap intervensi harus tied to outcome produktif. Demplot diperbolehkan namun dengan KPI clear &amp; framing eksplisit (proof of concept, bukan eksperimen open-ended).</div>
+    </div>
+
+    <!-- PHASE 6 ROADMAP -->
+    <div class="st" style="color:var(--amber);margin-top:24px">Fase 6 Roadmap &mdash; Compass Pengelolaan Mandiri Wakif</div>
+
+    <div class="c mb2" style="border:2px solid var(--amber);background:rgba(196,144,106,.05)">
+      <h3 style="color:var(--amber)">8 Implikasi Strategis Fase 6 (Mei 2026 onwards)</h3>
+      <div style="font-size:12px;color:var(--t1);line-height:1.85;margin-top:10px">
+        <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.15)"><b>1. Nazhir Fase 6:</b> <b>Adib sebagai Interim Nazhir Perorangan</b> (precedent Fase 1, 15 bulan solo) + <b>Ust Fauzan sebagai Spiritual Co-Steward</b> (informal but documented &mdash; leveraging trust 3,5+ tahun + 18 bulan precedent Nazhir Fase 3 Lembaga Nadzir ke-2). Yayasan Baru akan di-build untuk eventually take over institutional Nazhir-ship (~2027&ndash;2028).</div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.15)"><b>2. Build vs Outsource:</b> Tim ramping internal handle core operasional (Adib + Hendy strategic; Mas Anto + Cak Yit + Pak Kumpul lapangan). <b>Konsultan eksternal jangka panjang tidak dilanjutkan</b> &mdash; rujukan agronomi pindah ke BRIN Purwodadi (institusional dengan MoU formal Rp 50 jt, 5 Mei 2026).</div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.15)"><b>3. Multi-Offtaker Strategy:</b> Bonsari Coffee (anchor, owned by Wakif &mdash; sudah proven margin 14,9% Q4 2025) + Nomad Coffee + partner specialty lain. Tidak ada single point of failure di sisi market.</div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.15)"><b>4. Joint Board Mechanism:</b> Aktif sejak awal Fase 6 sebagai forum koordinasi Yayasan Baru &harr; Yayasan DM (Mauquf Alaih). Cross-membership Pembina, reciprocal observer, veto bersama. Transparency by design.</div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.15)"><b>5. Documentation Discipline:</b> Aset Knowledge v2.0 + sistem laporan harian Mas Anto via voice note WA + Digital Platform Fase 1 (Monitoring Tools) sebagai infrastruktur dokumentasi yang mencegah Pola #3 (Transfer Pengelolaan Gagal) berulang.</div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.15)"><b>6. Reputational Conservatism:</b> Wakif tidak vouch institusi partner ke komunitas sampai delivery terbukti substantial. Build community trust incrementally (LL #7, #8).</div>
+        <div style="padding:8px 0;border-bottom:1px solid rgba(143,160,168,.15)"><b>7. Financial Discipline:</b> Anggaran anggaran ramping Fase 6 (15&times; lebih hemat dari era RWI) dengan filosofi <em>"perawatan konsisten &gt; nutrisi mahal"</em>. Self-financing schemes (Pak Kumpul jahe Bidang 3) untuk mengurangi beban operasional.</div>
+        <div style="padding:8px 0"><b>8. Spiritual Compass:</b> Klasifikasi tinggi &amp; adab Islam dipertahankan dalam semua interaksi (LL #11). Filter <em>"sesuai amanah Wakif?"</em> di atas filter <em>"menguntungkan?"</em>. Keluarga sebagai governance sounding board (LL #12). Self-management sebagai pilihan etis (LL #13).</div>
+      </div>
+    </div>
+
+    <!-- ACTION ITEMS FASE 6 -->
+    <div class="st" style="color:var(--blue);margin-top:24px">Action Items 90 Hari Pertama Fase 6 (Mei &ndash; Jul 2026)</div>
+    <div class="c mb2">
+      <div class="tw">
+        <table>
+          <thead><tr><th>Prioritas</th><th>Action Item</th><th>Owner</th><th>Timeline</th><th>Mitigasi LL</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag tr">P0</span></td><td><b>Inventarisasi pohon riil 3 bidang</b><br>Hitung manual: produktif vs belum produktif vs titik kosong</td><td>Mas Anto</td><td>Minggu 1&ndash;2</td><td>LL #2 (Baseline Data)</td></tr>
+            <tr><td><span class="tag tr">P0</span></td><td><b>Sistem laporan harian aktif</b><br>Voice note WA: bidang, jam, bareng siapa, pekerjaan, jumlah pohon</td><td>Mas Anto &rarr; Adib</td><td>Mulai minggu 1</td><td>LL #1, #3 (Field reporting + dokumentasi)</td></tr>
+            <tr><td><span class="tag tr">P0</span></td><td><b>Pemangkasan intensif Bidang 1&ndash;2</b><br>Cabang gemuk dipertahankan, daun kering dibuang, wiwilan</td><td>Cak Yit</td><td>~4 hari intensif</td><td>SOP filosofi rawat konsisten (LL #13)</td></tr>
+            <tr><td><span class="tag tr">P0</span></td><td><b>Babat rumput + pemupukan dasar Bidang 3</b><br>Urutan: babat dulu, baru pemupukan</td><td>Pak Kumpul</td><td>Minggu 1&ndash;3</td><td>LL #13 (rawat konsisten)</td></tr>
+            <tr><td><span class="tag tr">P0</span></td><td><b>MOU dengan BRIN Purwodadi locked</b><br>Rp 50 jt MoU rujukan agronomi institusional (5 Mei 2026 &mdash; selesai)</td><td>Adib + Hendy</td><td>Selesai</td><td>LL #10 (Trust institusional yang clean)</td></tr>
+            <tr><td><span class="tag ta">P1</span></td><td><b>Pendirian Yayasan Baru (notaris)</b><br>Cek nama AHU, draft AD/ART, akta pendirian</td><td>Adib + Hendy</td><td>Bulan 1&ndash;2</td><td>LL #6 (legal formalitas)</td></tr>
+            <tr><td><span class="tag ta">P1</span></td><td><b>Konsultasi BWI Jatim</b><br>Pendaftaran Yayasan Baru sebagai Nazhir formal</td><td>Adib + Hendy</td><td>Bulan 2</td><td>LL #6</td></tr>
+            <tr><td><span class="tag ta">P1</span></td><td><b>Pembuatan AIW</b><br>Akta Ikrar Wakaf di hadapan PPAIW &rarr; sertifikat wakaf BPN</td><td>Adib</td><td>Bulan 2&ndash;3</td><td>LL #6</td></tr>
+            <tr><td><span class="tag ta">P1</span></td><td><b>Cascade Reputational Communication</b><br>Update ke Mama (selesai 2 Mei), Ust Fauzan (selesai 1 Mei), Takmir Masjid, customer Bons Cafe</td><td>Adib</td><td>Bulan 1&ndash;2</td><td>LL #7, #8</td></tr>
+            <tr><td><span class="tag ta">P1</span></td><td><b>Tanam lamtoro PG 79 + persiapan durian 10x10m</b><br>200&ndash;300 pohon lamtoro sebagai penaung leguminosa</td><td>Pak Kumpul + Cak Yit</td><td>Bulan 2&ndash;3</td><td>Strategi tumpang sari (keluarga 2 Mei)</td></tr>
+            <tr><td><span class="tag tb">P2</span></td><td><b>Soil Test komposit BRIN</b><br>Minimum 4 sampel per bidang &mdash; pH, NPK, EC</td><td>BRIN Purwodadi + Adib</td><td>Bulan 3</td><td>LL #2</td></tr>
+            <tr><td><span class="tag tb">P2</span></td><td><b>Strategi Panen Kopi 2026</b><br>Petik merah default, borongan jika hujan deras</td><td>Cak Yit + Mas Anto</td><td>Jul&ndash;Agu 2026</td><td>SOP berbasis kondisi cuaca</td></tr>
+            <tr><td><span class="tag tb">P2</span></td><td><b>Joint Board Yayasan Baru &harr; Yayasan DM</b><br>Charter, cadence meeting, cross-membership</td><td>Adib + Ust Fauzan</td><td>Bulan 3</td><td>LL #10</td></tr>
+            <tr><td><span class="tag tb">P2</span></td><td><b>Skema jahe self-financed Pak Kumpul</b><br>Tanam Okt&ndash;Nov 2026, panen Jul&ndash;Agu 2027 (bersamaan kopi)</td><td>Pak Kumpul (mandiri)</td><td>Mulai Okt 2026</td><td>Win-win economic (LL #13)</td></tr>
+            <tr><td><span class="tag tg">P3</span></td><td><b>3-Layer Protection Rumah Wakif</b><br>Wasiat tertulis (notaris/PA) + Hak Pakai DM (BPN) + MoU antar-yayasan</td><td>Adib + notaris</td><td>Bulan 3+</td><td>Amal jariyah Adib (LL #0)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- PESAN KUNCI -->
+    <div class="c mb2" style="border:2px solid var(--green);background:rgba(123,155,126,.06)">
+      <h3 style="color:var(--green)">&#129000; Pesan Kunci &mdash; Compass Fase 6 Pengelolaan Mandiri</h3>
+      <div style="font-size:13px;color:var(--t1);line-height:1.85">
+        14 lesson learned ini bukan kompilasi teoritis &mdash; <b>semua dibayar dengan pengalaman, waktu, energi, dan beberapa luka yang membutuhkan waktu untuk healed.</b>
+        Yang membuat lesson ini berharga bukan content-nya saja, namun <em>konteks-nya</em>: setiap LL terikat ke pengalaman konkret yang bisa di-recall, bisa di-reflektifkan, bisa di-share ke generasi penerus sebagai bagian dari amal jariyah ini.
+        <br><br>
+        Untuk Fase 6 Pengelolaan Mandiri ke depan, dokumen ini menjadi <b>arah pemandu</b>: bukan untuk hindari semua kegagalan (yang tidak mungkin), namun untuk hindari <em>pengulangan kegagalan yang sama</em>.
+        Sebagaimana Aset Knowledge v2.0 menjadi single source of truth untuk operasional, Lesson Learned ini menjadi <em>single source of wisdom</em> untuk strategi.
+        <br><br>
+        <b>Proyeksi finansial Fase 6 (915 pohon produktif, harga Rp 53.000/KG farm-gate):</b><br>
+        <span style="color:var(--amber)">&bull; Konservatif (0,4 KG/pohon):</span> 366 KG &times; Rp 53.000 = <b>Rp 19,4 Jt/tahun</b><br>
+        <span style="color:var(--blue)">&bull; Moderat (0,7 KG/pohon, manajemen membaik):</span> 640 KG &times; Rp 53.000 = <b>Rp 33,9 Jt/tahun</b><br>
+        <span style="color:var(--green)">&bull; Optimistis (1,2 KG/pohon, best practice):</span> 1.098 KG &times; Rp 53.000 = <b>Rp 58,2 Jt/tahun</b><br>
+        <span style="font-size:11px;color:var(--t3)">Catatan: Tahun 2025 mencapai 281 KG = ~0,31 KG/pohon &mdash; mendekati rata-rata nasional. Tren positif.</span>
+        <br><br>
+        Pada skenario moderat, akumulasi investasi ~Rp 49 Jt akan tertutup dalam <b>kurang dari 2 musim panen</b>. Pencapaian skenario optimistis memerlukan implementasi konsisten: restorasi tanaman, pemupukan presisi berbasis soil test, SOP berbasis riset, dan multi-offtaker channel via Bonsari + Nomad.
+        <br><br>
+        <em style="color:var(--amber)">&hearts; Filosofi Wakif: ini adalah arsitektur amal jariyah yang dirancang dengan presisi tinggi &mdash; bukan proyek bisnis, bukan peninggalan untuk keturunan. Hadits HR Muslim 1631 menjadi pemandu tertinggi di atas semua KPI finansial.</em>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+
+<script>
+function showTab(id,btn){document.querySelectorAll('.tc').forEach(e=>{e.classList.remove('active');e.style.display='none'});document.querySelectorAll('.nav-item').forEach(e=>e.classList.remove('active'));const tgt=document.getElementById(id);tgt.classList.add('active');tgt.style.display='block';if(btn)btn.classList.add('active');window.scrollTo({top:0,behavior:'smooth'})}
+const C={red:'#C66E5C',amber:'#C4906A',green:'#7B9B7E',blue:'#5A8AA0',cyan:'#7BA8B5',purple:'#A89BB8',pink:'#D4A89A',slate:'#8FA0A8'};
+Chart.defaults.color='#6B7B85';Chart.defaults.borderColor='rgba(58,74,85,.08)';Chart.defaults.font.family='Inter';
+
+new Chart(document.getElementById('chPhase'),{type:'bar',data:{labels:['Fase 1\n(15 bln, est)','Fase 2\n(6 bln)','via Lembaga Nadzir ke-2\n(sheet 23-24)','via Lembaga Nadzir ke-2\n(sheet 24-25)'],datasets:[{label:'Pekerja',data:[15000000,5010000,8810000,7430000],backgroundColor:[C.cyan,C.purple,C.blue,C.blue]},{label:'Alat/Material',data:[0,1000000,0,250000],backgroundColor:C.slate},{label:'Pupuk',data:[0,880000,1210000,300000],backgroundColor:C.green},{label:'Pelatihan/Survey',data:[0,3600000,0,0],backgroundColor:C.amber},{label:'Bibit/Replanting',data:[0,0,1925000,0],backgroundColor:C.pink},{label:'Pengolahan/Lain',data:[0,0,0,650000],backgroundColor:C.red}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>'Rp '+(v/1e6).toFixed(0)+'Jt'}}}}});
+
+new Chart(document.getElementById('chExpAll'),{type:'doughnut',data:{labels:['Pekerja (semua fase)','Pupuk','Pelatihan/Survey','Alat/Material','Bibit/Replanting','Pengolahan','Silent Cost (est)'],datasets:[{data:[21250000,2390000,3600000,1250000,1925000,650000,15000000],backgroundColor:[C.red,C.green,C.blue,C.purple,C.amber,C.pink,C.cyan]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.label}: Rp ${(c.raw/1e6).toFixed(1)} Jt (${(c.raw/46065000*100).toFixed(0)}%)`}}}}});
+
+new Chart(document.getElementById('chAdibCat'),{type:'bar',data:{labels:['Pekerja\n(Des-Feb)','Ongkos\nPotong','Pelatihan\nPetrik','Pupuk\nOrganik','Alat\nPertanian','Material'],datasets:[{data:[5010000,3000000,2000000,880000,805000,195000],backgroundColor:[C.purple,C.amber,C.blue,C.green,C.cyan,C.slate],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Rp ${(c.raw/1e6).toFixed(1)} Jt`}}},scales:{x:{ticks:{callback:v=>`Rp ${(v/1e6).toFixed(0)}Jt`}}}}});
+
+new Chart(document.getElementById('chWorkers'),{type:'bar',data:{labels:['Bambang','Dino','Nardi','Petrik','Pak No','Agata'],datasets:[{label:'Person-days di Kebun Wakaf',data:[17,14,5,8,7,4],backgroundColor:C.purple,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{title:{display:true,text:'Hari Kerja (Des 23 - Feb 24)'}}}}});
+
+new Chart(document.getElementById('chWages'),{type:'scatter',data:{datasets:[{label:'Des 2023',data:[{x:1,y:70},{x:2,y:70},{x:3,y:75},{x:4,y:50},{x:5,y:50},{x:6,y:50}],backgroundColor:C.purple,pointRadius:6},{label:'Jan 2024',data:[{x:7,y:50},{x:8,y:50},{x:9,y:50},{x:10,y:50},{x:11,y:50},{x:12,y:50},{x:13,y:50}],backgroundColor:C.blue,pointRadius:6},{label:'Feb 2024',data:[{x:14,y:50},{x:15,y:50},{x:16,y:50},{x:17,y:50},{x:18,y:50},{x:19,y:50},{x:20,y:50},{x:21,y:50},{x:22,y:50}],backgroundColor:C.green,pointRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}},tooltip:{callbacks:{label:c=>`${c.dataset.label}: Rp ${c.raw.y}K/orang/hari`}}},scales:{x:{display:false},y:{title:{display:true,text:'Upah per Orang (Rp K)'},min:0,max:120}}}});
+
+new Chart(document.getElementById('chROI'),{type:'bar',data:{labels:['Fase 1\nAdib','via Lembaga Nadzir ke-2\n2024','via Lembaga Nadzir ke-2\n2025'],datasets:[{label:'Revenue Kopi / Rupiah Biaya',data:[0,0.36,1.73],backgroundColor:[C.slate,C.red,C.green],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`${c.raw.toFixed(2)}× Revenue per unit Cost`}}},scales:{y:{title:{display:true,text:'Rasio Revenue/Cost'}}}}});
+
+new Chart(document.getElementById('chBench'),{type:'bar',data:{labels:['via Lembaga Nadzir ke-2\n2024-25','Benchmark\nNasional\n(0.49 ha)','Fase 2\nAdib\n(annualized)','Fase 1\nAdib\n(annualized)'],datasets:[{data:[8.63,14.75,28.98,12.0],backgroundColor:[C.green,C.blue,C.amber,C.cyan],borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>`Rp ${c.raw} Jt/tahun`}}},scales:{y:{ticks:{callback:v=>`Rp ${v} Jt`},title:{display:true,text:'Biaya per Tahun'}}}}});
+
+new Chart(document.getElementById('chTrend'),{type:'bar',data:{labels:['Fase 1\n(Jul 22-Sep 23)','Fase 2\n(Okt 23-Mar 24)','via Lembaga Nadzir ke-2\n(Panen 2024)','via Lembaga Nadzir ke-2\n(Panen 2025)'],datasets:[{label:'Biaya (Rp Jt)',data:[15,14.49,11.95,8.63],backgroundColor:['rgba(123,168,181,.3)','rgba(168,155,184,.3)','rgba(90,138,160,.3)','rgba(90,138,160,.3)'],borderColor:[C.cyan,C.purple,C.blue,C.blue],borderWidth:1,yAxisID:'y',borderRadius:4},{label:'Panen (KG)',data:[0,0,63,281],type:'line',borderColor:C.green,backgroundColor:C.green,pointRadius:6,yAxisID:'y1',tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}},scales:{y:{type:'linear',position:'left',ticks:{callback:v=>`Rp ${v} Jt`},title:{display:true,text:'Biaya'}},y1:{type:'linear',position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Panen (KG)'}}}}});
+
+new Chart(document.getElementById('chIncome'),{type:'bar',data:{labels:['Fase 1\n(Belum Terdokumentasi)','Fase 2\n(Adib)','Fase 2\n(via Lembaga Nadzir ke-2)'],datasets:[{label:'Penjualan Aset (Pohon)',data:[0,15000,0],backgroundColor:C.red},{label:'Donasi/Sedekah',data:[0,1000,0],backgroundColor:C.amber},{label:'Hasil Lain',data:[0,280,0],backgroundColor:C.slate},{label:'Penjualan Kopi',data:[0,0,4302],backgroundColor:C.green},{label:'Panen Dijual (Cherry)',data:[0,0,2530],backgroundColor:C.cyan},{label:'Valuasi Stok GB',data:[0,0,11130],backgroundColor:C.blue},{label:'Belum Terdokumentasi',data:[0,0,0],backgroundColor:'rgba(123,168,181,.3)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>`Rp ${(v/1000).toFixed(0)} Jt`}}}}});
+
+// Harvest cycle charts
+new Chart(document.getElementById('chAttrib'),{type:'bar',data:{labels:['Panen 2024\n(63 KG)','Panen 2025\n(~281 KG)'],datasets:[{label:'Investasi Adib',data:[12250000,0],backgroundColor:C.purple,borderRadius:4},{label:'Investasi via Lembaga Nadzir ke-2',data:[5250000,13580000],backgroundColor:C.blue,borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:c=>`${c.dataset.label}: Rp ${(c.raw/1e6).toFixed(1)} Jt`}}},scales:{x:{stacked:true},y:{stacked:true,ticks:{callback:v=>'Rp '+(v/1e6).toFixed(0)+'Jt'},title:{display:true,text:'Biaya Investasi per Siklus Panen'}}}}});
+
+new Chart(document.getElementById('chGap'),{type:'bar',data:{labels:['Siklus 2023','Siklus 2024','Siklus 2025','Siklus 2026\n(proyeksi)'],datasets:[{label:'Biaya Investasi (Rp Jt)',data:[12,17.5,13.58,0],backgroundColor:['rgba(143,160,168,.4)','rgba(196,144,106,.4)','rgba(123,155,126,.4)','rgba(90,138,160,.2)'],borderColor:[C.slate,C.amber,C.green,C.blue],borderWidth:1,yAxisID:'y',borderRadius:4},{label:'Hasil Panen (KG)',data:[0,63,281,640],type:'line',borderColor:C.green,backgroundColor:C.green,pointRadius:6,yAxisID:'y1',tension:.3,borderDash:[5,5]},{label:'Cost/KG (Rp Ribu)',data:[0,278,48,0],type:'line',borderColor:C.red,backgroundColor:C.red,pointRadius:6,yAxisID:'y1b',tension:.3,pointStyle:'triangle'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:10}}}},scales:{y:{type:'linear',position:'left',ticks:{callback:v=>`Rp ${v} Jt`},title:{display:true,text:'Biaya'}},y1:{type:'linear',position:'right',grid:{drawOnChartArea:false},title:{display:true,text:'Panen (KG)'},min:0},y1b:{display:false,type:'linear',min:0,max:400}}}});
+
+// Cross-Fase Comparison Chart (RWI Budget Analysis)
+new Chart(document.getElementById('chCrossFase'),{
+  type:'bar',
+  data:{
+    labels:['Wakif Fase 1+2\n(39 bln · solo+Lembaga Nadzir ke-1)','RWI Fase 4\n(5 bln · est. pro-rata)','Wakif Fase 6\n(per tahun)'],
+    datasets:[
+      {
+        label:'Total Disbursed (Rp Jt)',
+        data:[49.1,60.0,8.0],
+        backgroundColor:[C.purple,C.red,C.amber],
+        borderRadius:4,
+        yAxisID:'y'
+      },
+      {
+        label:'Per-Bulan Rate (Rp Jt)',
+        data:[1.26,12.0,0.667],
+        backgroundColor:[C.purple+'80',C.red+'80',C.amber+'80'],
+        borderRadius:4,
+        yAxisID:'y1',
+        type:'line',
+        tension:.3,
+        pointRadius:6,
+        borderColor:C.slate,
+        borderDash:[5,5]
+      }
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11}}},
+      tooltip:{callbacks:{label:c=>`${c.dataset.label}: Rp ${c.raw} Jt`}}
+    },
+    scales:{
+      y:{type:'linear',position:'left',title:{display:true,text:'Total Disbursed (Rp Jt)',font:{size:11}},ticks:{callback:v=>'Rp '+v+'Jt'}},
+      y1:{type:'linear',position:'right',title:{display:true,text:'Per-Bulan Rate (Rp Jt)',font:{size:11}},ticks:{callback:v=>'Rp '+v+'Jt'},grid:{drawOnChartArea:false}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+
+</script>
+</body>
+</html>
