@@ -4788,14 +4788,16 @@ function setSOPWheelView(mode) {
 
 function navSOPYear(delta) {
   const yearNow = new Date().getFullYear();
+  // Year window range: 1 tahun sebelum project start (untuk baseline comparison) → 1 tahun ke depan
+  // 2025 = panen 281kg formally documented baseline · 2026 = T0 SOP · 2027 = next cycle planning
+  const MIN_YEAR = SOP_PROJECT_START_YEAR - 1; // 2025
+  const MAX_YEAR = yearNow + 1;                // currentYear + 1 (planning preview)
   if (delta === 0) {
-    // Jump to current year
     currentSOPYear = yearNow;
   } else {
     currentSOPYear = (currentSOPYear || yearNow) + delta;
-    // Constrain to reasonable range
-    if (currentSOPYear < 2024) currentSOPYear = 2024;
-    if (currentSOPYear > yearNow + 2) currentSOPYear = yearNow + 2;
+    if (currentSOPYear < MIN_YEAR) currentSOPYear = MIN_YEAR;
+    if (currentSOPYear > MAX_YEAR) currentSOPYear = MAX_YEAR;
   }
   renderSOPKalender();
 }
