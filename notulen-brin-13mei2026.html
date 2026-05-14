@@ -747,21 +747,23 @@ footer .signature {
         </div>
         <div class="field">
           <label>Bagian Notulen yang Dikomentari</label>
-          <select name="bagian">
+          <select name="bagian" id="f-bagian">
             <option value="Umum">Umum / Keseluruhan</option>
+            <option value="Koreksi Nama &amp; Gelar Peserta">⚠ Koreksi Nama &amp; Gelar Peserta</option>
             <option value="Section 1 - Identitas Pertemuan">1. Identitas Pertemuan</option>
-            <option value="Section 2 - Peserta & Kompetensi">2. Peserta &amp; Kompetensi</option>
+            <option value="Section 2 - Peserta & Kompetensi">2. Peserta &amp; Kompetensi (Latar Belakang)</option>
             <option value="Section 3 - Profil Kebun & Tantangan">3. Profil Kebun &amp; Tantangan</option>
             <option value="Section 4 - Pendekatan Riset 3 Fase">4. Pendekatan Riset 3 Fase</option>
             <option value="Section 5 - Keputusan & Kesepakatan">5. Keputusan &amp; Kesepakatan</option>
             <option value="Section 6 - Action Items">6. Action Items</option>
+            <option value="Hal Lain">Hal Lain (sebutkan di kolom masukan)</option>
           </select>
         </div>
       </div>
 
       <div class="field" style="margin-bottom: 16px;">
         <label>Masukan / Koreksi / Edit <span class="req">*</span></label>
-        <textarea name="masukan" required placeholder="Silakan tuliskan masukan, koreksi data, perubahan action plan, atau hal lain yang perlu diperjelas..."></textarea>
+        <textarea name="masukan" id="f-masukan" required placeholder="Silakan tuliskan masukan, koreksi data, perubahan action plan, atau hal lain yang perlu diperjelas..."></textarea>
       </div>
 
       <label class="consent">
@@ -831,6 +833,35 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaSTGyutQJNRIV33o4R
 const form = document.getElementById('feedbackForm');
 const successMsg = document.getElementById('form-success');
 const errorMsg = document.getElementById('form-error');
+
+// Dynamic placeholder: kalau pilih "Koreksi Nama & Gelar Peserta", tampilkan template siap-isi
+const bagianSelect = document.getElementById('f-bagian');
+const masukanField = document.getElementById('f-masukan');
+const PLACEHOLDER_DEFAULT = 'Silakan tuliskan masukan, koreksi data, perubahan action plan, atau hal lain yang perlu diperjelas...';
+const PLACEHOLDER_KOREKSI_NAMA = `Mohon koreksi nama & gelar (silakan tinggal isi sesuai poin di bawah, hapus yang tidak relevan):
+
+1. Nama saya: ___
+2. Gelar lengkap (depan + belakang): ___
+   Contoh: Dr. / Ph.D. / M.Si. / S.T.P., M.Sc., dst.
+3. Pusat Riset (PR) tempat saya berafiliasi: ___
+4. Kelompok Riset (Kelris) saya: ___
+5. Posisi/jabatan: ___
+6. Email resmi @brin.go.id: ___
+
+(Boleh juga koreksi nama rekan jika ada yang salah tulis di notulen)`;
+
+if (bagianSelect && masukanField) {
+  bagianSelect.addEventListener('change', () => {
+    if (bagianSelect.value === 'Koreksi Nama & Gelar Peserta') {
+      masukanField.placeholder = PLACEHOLDER_KOREKSI_NAMA;
+      // Auto-rows lebih panjang biar template kelihatan utuh
+      masukanField.setAttribute('rows', '12');
+    } else {
+      masukanField.placeholder = PLACEHOLDER_DEFAULT;
+      masukanField.setAttribute('rows', '6');
+    }
+  });
+}
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
