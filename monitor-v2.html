@@ -3080,27 +3080,27 @@ async function generateBuktiBayar() {
   // Full receipt HTML (off-screen render target)
   const receiptHTML = `
     <div id="bukti-bayar-render" style="position:fixed;top:0;left:-9999px;width:800px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;box-shadow:0 4px 12px rgba(0,0,0,.1)">
-      <!-- HEADER -->
-      <div style="background:linear-gradient(135deg,#2e4040 0%,#5a9080 100%);color:#ffffff;padding:28px 32px 22px;position:relative;overflow:hidden">
-        <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;background:rgba(212,175,55,.18);border-radius:50%"></div>
-        <div style="position:relative">
-          <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
-            <div style="width:62px;height:62px;background:rgba(255,255,255,.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;border:2px solid rgba(255,255,255,.4)">☕</div>
-            <div>
-              <div style="font-size:22px;font-weight:800;letter-spacing:.4px;line-height:1.1">WAKAF PRODUKTIF</div>
-              <div style="font-size:15px;font-weight:600;color:#e8dec8;letter-spacing:.6px;margin-top:2px">KEBUN KOPI NGANTANG</div>
-            </div>
+      <!-- HEADER — Professional letterhead style -->
+      <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47;position:relative">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
+          <img src="images/Logo Wakaf Produktif Transparan.png" style="height:88px;width:auto;display:block;flex-shrink:0" alt="Logo Wakaf Produktif Kebun Kopi Ngantang">
+          <div style="text-align:right;flex-shrink:0;max-width:280px">
+            <div style="font-size:9px;font-weight:800;color:#1F5F47;letter-spacing:2.5px;margin-bottom:6px">— DOKUMEN RESMI —</div>
+            <div style="font-size:11px;color:#6b7878;line-height:1.55;font-style:italic">Wakaf produktif berbasis kebun kopi<br>untuk amal jariyah berkelanjutan</div>
+            <div style="margin-top:8px;padding-top:6px;border-top:1px solid #d4c8a8;font-size:9px;color:#8b6914;letter-spacing:.5px;font-weight:600">📍 Ngantang, Malang · Jawa Timur</div>
           </div>
-          <div style="margin-top:14px;padding-top:12px;border-top:1.5px dashed rgba(255,255,255,.32);font-size:11px;color:#a8c8bc;letter-spacing:2.5px;font-weight:700">BUKTI PEMBAYARAN UPAH</div>
+        </div>
+        <div style="margin-top:14px;padding-top:12px;border-top:2px dashed #D4AF37;display:flex;align-items:center;justify-content:space-between;gap:14px">
+          <div style="font-size:19px;font-weight:800;color:#1F5F47;letter-spacing:1.8px">BUKTI PEMBAYARAN UPAH</div>
+          <div style="font-size:10px;color:#6b7878;letter-spacing:.6px;font-weight:600;text-align:right;line-height:1.4">No. Bukti<br><span style="font-family:'Courier New',monospace;color:#2e4040;font-size:11px;font-weight:700">${nomorBukti}</span></div>
         </div>
       </div>
 
-      <!-- INFO BOX -->
+      <!-- INFO BOX — 1x3 grid since No. Bukti moved to header -->
       <div style="padding:22px 32px 0">
-        <div style="background:#f5f0e6;padding:14px 18px;border-radius:8px;border-left:4px solid #c14b3a;display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;font-size:13px">
-          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">NO. BUKTI</div><div style="color:#2e4040;font-weight:700;font-family:'Courier New',monospace;font-size:12px">${nomorBukti}</div></div>
+        <div style="background:#f5f0e6;padding:14px 18px;border-radius:8px;border-left:4px solid #c14b3a;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 18px;font-size:13px">
           <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">TANGGAL BAYAR</div><div style="color:#2e4040;font-weight:700">${todayLbl}</div></div>
-          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:700;font-size:15px">${namaPenerima}</div></div>
+          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:800;font-size:15px">${namaPenerima}</div></div>
           <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">SUMBER DANA</div><div style="color:#2e4040;font-weight:700">${sumberDana}</div></div>
         </div>
       </div>
@@ -3133,10 +3133,11 @@ async function generateBuktiBayar() {
         <div style="margin-top:10px;font-size:15px;font-weight:700;color:#5a9080;letter-spacing:.5px">Barakallahu fiikum.</div>
       </div>
 
-      <!-- SIGNATURE SECTION -->
+      <!-- SIGNATURE SECTION — TTD Adib embedded -->
       <div style="padding:28px 32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
         <div style="text-align:center">
-          <div style="color:#6b7878;margin-bottom:54px">Hormat kami,</div>
+          <div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div>
+          <img src="images/signature-adib.png" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD Adib">
           <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">Mas Tito (Adib Asrori)</div>
           <div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
         </div>
@@ -3159,11 +3160,23 @@ async function generateBuktiBayar() {
   wrapper.innerHTML = receiptHTML;
   document.body.appendChild(wrapper);
 
-  // Small delay for any web fonts/images to settle
-  await new Promise(r => setTimeout(r, 100));
+  // Wait for all images (logo + signature) to load before html2canvas capture
+  // — without this, html2canvas can render before images decoded → blank logo/signature
+  const target = document.getElementById('bukti-bayar-render');
+  const allImages = Array.from(target.querySelectorAll('img'));
+  await Promise.all(allImages.map(img => {
+    if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+    return new Promise(resolve => {
+      img.onload = () => resolve();
+      img.onerror = () => { console.warn('Image failed to load:', img.src); resolve(); };
+      // Safety timeout — don't block forever if image is stuck
+      setTimeout(resolve, 3000);
+    });
+  }));
+  // Small extra delay for fonts to settle
+  await new Promise(r => setTimeout(r, 150));
 
   try {
-    const target = document.getElementById('bukti-bayar-render');
     const canvas = await html2canvas(target, {
       backgroundColor: '#ffffff',
       scale: 2, // High-DPI for sharp WhatsApp share
