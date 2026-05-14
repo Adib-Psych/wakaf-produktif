@@ -79,6 +79,22 @@
   .card-title{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--moss);margin-bottom:10px;display:flex;align-items:center;gap:6px}
   .card-title .num{background:var(--moss);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
 
+  /* FORM HERO BANNER */
+  .form-hero-banner{position:relative;margin-bottom:14px;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);background:#fff;line-height:0;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease}
+  .form-hero-banner:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(46,64,64,.12)}
+  .form-hero-banner img{width:100%;height:auto;display:block}
+  .form-hero-banner .hero-dismiss-btn{position:absolute;top:8px;right:8px;background:rgba(46,64,64,.78);color:#fff;border:none;width:30px;height:30px;border-radius:50%;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s ease;z-index:2}
+  .form-hero-banner .hero-dismiss-btn:hover{background:rgba(193,75,58,.92)}
+  .form-hero-banner .hero-hint{position:absolute;bottom:8px;left:12px;background:rgba(255,255,255,.92);color:var(--earth);font-size:10px;font-weight:700;letter-spacing:.5px;padding:4px 10px;border-radius:20px;line-height:1.2;z-index:2;text-transform:uppercase}
+  .form-hero-restore{display:none;text-align:right;margin-bottom:10px}
+  .form-hero-restore a{font-size:11px;color:var(--moss);text-decoration:underline;cursor:pointer;font-weight:600}
+  .form-hero-restore a:hover{color:var(--cherry)}
+  /* Lightbox overlay */
+  .hero-lightbox{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;cursor:zoom-out}
+  .hero-lightbox.on{display:flex}
+  .hero-lightbox img{max-width:96vw;max-height:92vh;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.5)}
+  .hero-lightbox .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.18);color:#fff;border:none;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
   /* KPI GRID */
   .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
   .kpi{background:#fff;border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);position:relative;overflow:hidden}
@@ -353,6 +369,17 @@
 
     <!-- ============ FORM INPUT ============ -->
     <div class="panel" id="panel-form">
+
+      <!-- HERO BANNER — Panduan Cara Lapor (dismissible, lightbox on click) -->
+      <div class="form-hero-banner" id="form-hero-banner" onclick="openHeroLightbox(event)" title="Klik untuk perbesar — Panduan Cara Lapor Harian">
+        <img src="images/Cara Lapor Landscape for Hero Form Input Page.png" alt="Panduan Cara Lapor Harian Tim Lapangan — 5 hal wajib, Cara A chat & Cara B voice note">
+        <div class="hero-hint">📖 Klik untuk perbesar panduan</div>
+        <button class="hero-dismiss-btn" onclick="dismissFormHero(event)" title="Sembunyikan panduan ini">✕</button>
+      </div>
+      <div class="form-hero-restore" id="form-hero-restore">
+        <a onclick="restoreFormHero()">📖 Tampilkan kembali panduan Cara Lapor</a>
+      </div>
+
       <div class="card">
         <div class="card-title"><span class="num">1</span>Identitas Laporan</div>
         <div class="form-grid">
@@ -5888,6 +5915,79 @@ function removeFotoThumbnail(btn, notaId) {
 function clearFotoThumbnails() {
   document.getElementById('foto-thumbnails').innerHTML = '';
   UPLOADED_FOTO_IDS = [];
+}
+
+/* ============================================================
+   FORM HERO BANNER — Panduan Cara Lapor (dismissible + lightbox)
+   localStorage key: wkkn_form_hero_dismissed = '1' kalau di-dismiss
+   ============================================================ */
+const FORM_HERO_KEY = 'wkkn_form_hero_dismissed';
+
+function initFormHero(){
+  const banner = document.getElementById('form-hero-banner');
+  const restore = document.getElementById('form-hero-restore');
+  if (!banner || !restore) return;
+  const dismissed = localStorage.getItem(FORM_HERO_KEY) === '1';
+  banner.style.display = dismissed ? 'none' : 'block';
+  restore.style.display = dismissed ? 'block' : 'none';
+}
+
+function dismissFormHero(ev){
+  if (ev) ev.stopPropagation();
+  localStorage.setItem(FORM_HERO_KEY, '1');
+  const banner = document.getElementById('form-hero-banner');
+  const restore = document.getElementById('form-hero-restore');
+  if (banner) banner.style.display = 'none';
+  if (restore) restore.style.display = 'block';
+}
+
+function restoreFormHero(){
+  localStorage.removeItem(FORM_HERO_KEY);
+  const banner = document.getElementById('form-hero-banner');
+  const restore = document.getElementById('form-hero-restore');
+  if (banner) banner.style.display = 'block';
+  if (restore) restore.style.display = 'none';
+}
+
+function openHeroLightbox(ev){
+  // Jangan trigger lightbox kalau klik tombol dismiss
+  if (ev && ev.target && ev.target.classList.contains('hero-dismiss-btn')) return;
+  let lb = document.getElementById('hero-lightbox');
+  if (!lb){
+    lb = document.createElement('div');
+    lb.id = 'hero-lightbox';
+    lb.className = 'hero-lightbox';
+    lb.innerHTML = `
+      <button class="lb-close" onclick="closeHeroLightbox(event)" title="Tutup">✕</button>
+      <img src="images/Cara Lapor Landscape for Hero Form Input Page.png" alt="Panduan Cara Lapor — full size">
+    `;
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeHeroLightbox(); });
+    document.body.appendChild(lb);
+  }
+  lb.classList.add('on');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeHeroLightbox(ev){
+  if (ev) ev.stopPropagation();
+  const lb = document.getElementById('hero-lightbox');
+  if (lb) lb.classList.remove('on');
+  document.body.style.overflow = '';
+}
+
+// ESC key tutup lightbox
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape'){
+    const lb = document.getElementById('hero-lightbox');
+    if (lb && lb.classList.contains('on')) closeHeroLightbox();
+  }
+});
+
+// Init saat DOM ready
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', initFormHero);
+} else {
+  initFormHero();
 }
 
 </script>
