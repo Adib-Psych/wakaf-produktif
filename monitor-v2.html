@@ -4327,6 +4327,13 @@ if (sopStoredVer !== SOP_STATUS_VERSION) {
 }
 let SOP_STATUS = JSON.parse(localStorage.getItem('wkkn_sop_status_v1') || '{}');
 let currentSOPMonth = new Date().getMonth() + 1;
+let currentSOPYear = new Date().getFullYear();
+// Wheel view mode: 'forward' (default — auto-shift 12 months forward) or 'calendar' (Jan-Dec of selected year)
+let sopWheelView = localStorage.getItem('wkkn_sop_wheel_view') || 'forward';
+
+// SOP project start anchor — used for "Pre-Project" badge in calendar view (locked Mei 2026)
+const SOP_PROJECT_START_YEAR = 2026;
+const SOP_PROJECT_START_MONTH = 5;
 
 function saveSOPStatus() {
   localStorage.setItem('wkkn_sop_status_v1', JSON.stringify(SOP_STATUS));
@@ -4598,53 +4605,156 @@ function renderSOPKalender() {
   if (!wheelEl) return;
   const today = new Date();
   const monthNow = today.getMonth() + 1; // 1-12
+  const yearNow = today.getFullYear();
   _lastRenderedMonth = monthNow;
-
-  // Reorder FENOLOGI so current month is FIRST (paling kiri), wraps around
-  const reordered = [];
-  for (let i = 0; i < 12; i++) {
-    const idx = (monthNow - 1 + i) % 12;
-    reordered.push(FENOLOGI[idx]);
-  }
 
   const namaBulanFull = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
-  // Live indicator banner
-  let html = `<div style="background:linear-gradient(90deg,var(--cherry),#8c2519);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-    <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:18px">📅</span>
-      <div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:#fde2dc">BULAN BERJALAN — AUTO-SHIFT</div>
-        <div style="font-size:14px;font-weight:800">${namaBulanFull[monthNow]} ${today.getFullYear()}</div>
+  // === VIEW TOGGLE + YEAR NAVIGATOR ===
+  let html = `
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px;padding:10px 14px;background:#f5f0e6;border-radius:10px;border-left:3px solid var(--moss)">
+      <div style="font-size:11px;font-weight:800;color:var(--earth);letter-spacing:1px">📅 TAMPILAN:</div>
+      <div style="display:flex;gap:0;border:1.5px solid var(--moss);border-radius:8px;overflow:hidden">
+        <button onclick="setSOPWheelView('forward')" style="${sopWheelView==='forward' ? 'background:var(--moss);color:#fff' : 'background:#fff;color:var(--moss)'};border:0;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:.2s">📅 12 Bulan Forward</button>
+        <button onclick="setSOPWheelView('calendar')" style="${sopWheelView==='calendar' ? 'background:var(--moss);color:#fff' : 'background:#fff;color:var(--moss)'};border:0;padding:7px 14px;font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.3px;border-left:1.5px solid var(--moss);transition:.2s">📊 Tahun Kalender</button>
       </div>
+      ${sopWheelView === 'calendar' ? `
+        <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
+          <button onclick="navSOPYear(-1)" style="background:var(--moss);color:#fff;border:0;width:32px;height:32px;border-radius:6px;font-size:14px;cursor:pointer;font-weight:700" title="Tahun sebelumnya">◀</button>
+          <div style="font-size:16px;font-weight:800;color:var(--earth);padding:0 10px;min-width:70px;text-align:center">${currentSOPYear}</div>
+          <button onclick="navSOPYear(1)" style="background:var(--moss);color:#fff;border:0;width:32px;height:32px;border-radius:6px;font-size:14px;cursor:pointer;font-weight:700" title="Tahun berikutnya">▶</button>
+          ${currentSOPYear !== yearNow ? `<button onclick="navSOPYear(0)" style="background:#fff;color:var(--cherry);border:1.5px solid var(--cherry);padding:5px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;margin-left:4px;letter-spacing:.3px" title="Kembali ke tahun berjalan">↻ KE ${yearNow}</button>` : ''}
+        </div>
+      ` : '<div style="margin-left:auto;font-size:10px;color:var(--mute);font-style:italic">Bulan berjalan otomatis di paling kiri</div>'}
     </div>
-    <div style="font-size:10px;color:#fde2dc;font-style:italic">Roda di bawah otomatis bergeser tiap awal bulan · live refresh aktif</div>
-  </div>`;
+  `;
 
-  // Render 12-month wheel — current month FIRST (leftmost)
-  html += '<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;font-size:10px;font-weight:700;color:var(--earth)">';
-  reordered.forEach(f => {
-    const isNow = f.n === monthNow;
-    const bg = isNow ? 'var(--earth)' : f.warna;
-    const fg = isNow ? '#fff' : 'var(--earth)';
-    const ring = isNow ? 'box-shadow:0 0 0 3px var(--cherry);transform:scale(1.08);z-index:2;position:relative' : '';
-    const nowLabel = isNow ? '<div style="font-size:8px;font-weight:800;color:#fde2dc;letter-spacing:.5px;margin-bottom:2px">●  KINI</div>' : '';
-    html += `<div onclick="showBulanAktif(${f.n})" style="cursor:pointer;background:${bg};color:${fg};padding:${isNow?'10':'14'}px 4px 10px;text-align:center;border-radius:8px;${ring};transition:.2s">
-      ${nowLabel}
-      <div style="font-size:11px;font-weight:800">${f.bulan}</div>
-      <div style="font-size:9px;opacity:.85;margin-top:3px;text-transform:uppercase;letter-spacing:.5px">${f.fase.split('-')[0]}</div>
+  // === LIVE BANNER (per mode) ===
+  if (sopWheelView === 'forward') {
+    html += `<div style="background:linear-gradient(90deg,var(--cherry),#8c2519);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">📅</span>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:#fde2dc">BULAN BERJALAN — AUTO-SHIFT</div>
+          <div style="font-size:14px;font-weight:800">${namaBulanFull[monthNow]} ${yearNow}</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#fde2dc;font-style:italic">Roda di bawah otomatis bergeser tiap awal bulan</div>
     </div>`;
-  });
-  html += '</div>';
+  } else {
+    const isHistorical = currentSOPYear < yearNow;
+    const isFuture = currentSOPYear > yearNow;
+    const isCurrent = currentSOPYear === yearNow;
+    let bannerBg, bannerIco, bannerLabel, bannerSub;
+    if (isCurrent) {
+      bannerBg = 'linear-gradient(90deg,var(--cherry),#8c2519)';
+      bannerIco = '📅';
+      bannerLabel = 'TAHUN BERJALAN ' + yearNow;
+      bannerSub = 'Bulan ' + namaBulanFull[monthNow] + ' di-highlight sebagai KINI. Bulan sudah lewat = klik untuk backfill.';
+    } else if (isHistorical) {
+      bannerBg = 'linear-gradient(90deg,#8B7355,#5a4a35)';
+      bannerIco = '📜';
+      bannerLabel = 'TAHUN HISTORIS — ' + currentSOPYear;
+      bannerSub = (currentSOPYear < SOP_PROJECT_START_YEAR) ? 'Pre-Project: SOP belum diadopsi. Data dari Living Lab sebagai reference (read-only).' : 'Tahun lalu — backfill terbatas untuk audit retroaktif.';
+    } else {
+      bannerBg = 'linear-gradient(90deg,#5a9080,#1F5F47)';
+      bannerIco = '🔮';
+      bannerLabel = 'TAHUN MENDATANG — ' + currentSOPYear;
+      bannerSub = 'Preview SOP siklus berikutnya — planning only, belum dapat di-check sebagai done.';
+    }
+    html += `<div style="background:${bannerBg};color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">${bannerIco}</span>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:1.2px;color:#fde2dc">${bannerLabel}</div>
+          <div style="font-size:14px;font-weight:800">${currentSOPYear}${isCurrent ? ' · ' + namaBulanFull[monthNow] + ' (KINI)' : ''}</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#fde2dc;font-style:italic;max-width:400px;text-align:right">${bannerSub}</div>
+    </div>`;
+  }
+
+  // === RENDER WHEEL ===
+  if (sopWheelView === 'forward') {
+    // FORWARD MODE — current month FIRST (leftmost), wrap forward
+    const reordered = [];
+    for (let i = 0; i < 12; i++) {
+      const idx = (monthNow - 1 + i) % 12;
+      reordered.push({ f: FENOLOGI[idx], position: i });
+    }
+    html += '<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;font-size:10px;font-weight:700;color:var(--earth)">';
+    reordered.forEach(({ f, position }) => {
+      const isNow = f.n === monthNow;
+      // Determine year: positions after wrap-around belong to next year
+      const wrapAt = 12 - monthNow + 1; // position where wrap-around to next year begins
+      const isNextYear = position >= wrapAt;
+      const monthYear = isNextYear ? yearNow + 1 : yearNow;
+      const bg = isNow ? 'var(--earth)' : f.warna;
+      const fg = isNow ? '#fff' : 'var(--earth)';
+      const ring = isNow ? 'box-shadow:0 0 0 3px var(--cherry);transform:scale(1.08);z-index:2;position:relative' : '';
+      const nowLabel = isNow ? '<div style="font-size:8px;font-weight:800;color:#fde2dc;letter-spacing:.5px;margin-bottom:2px">●  KINI</div>' : '';
+      const yearTag = isNextYear ? `<div style="font-size:7px;color:#1F5F47;font-weight:800;letter-spacing:.3px;background:rgba(255,255,255,.6);padding:1px 4px;border-radius:3px;display:inline-block;margin-bottom:2px">↗ ${monthYear}</div>` : '';
+      html += `<div onclick="showBulanAktif(${f.n}, ${monthYear})" style="cursor:pointer;background:${bg};color:${fg};padding:${isNow?'10':'14'}px 4px 10px;text-align:center;border-radius:8px;${ring};transition:.2s">
+        ${nowLabel}${yearTag}
+        <div style="font-size:11px;font-weight:800">${f.bulan}</div>
+        <div style="font-size:9px;opacity:.85;margin-top:3px;text-transform:uppercase;letter-spacing:.5px">${f.fase.split('-')[0]}</div>
+      </div>`;
+    });
+    html += '</div>';
+  } else {
+    // CALENDAR YEAR MODE — Jan-Dec of currentSOPYear, chronological
+    const sortedFenologi = [...FENOLOGI].sort((a, b) => a.n - b.n);
+    html += '<div style="display:grid;grid-template-columns:repeat(12,1fr);gap:3px;font-size:10px;font-weight:700;color:var(--earth)">';
+    sortedFenologi.forEach(f => {
+      const isCurrentMonth = (f.n === monthNow && currentSOPYear === yearNow);
+      const isPastMonth = (currentSOPYear < yearNow) || (currentSOPYear === yearNow && f.n < monthNow);
+      const isFutureMonth = (currentSOPYear > yearNow) || (currentSOPYear === yearNow && f.n > monthNow);
+      const isPreProject = (currentSOPYear < SOP_PROJECT_START_YEAR) ||
+                          (currentSOPYear === SOP_PROJECT_START_YEAR && f.n < SOP_PROJECT_START_MONTH);
+
+      let bg, fg, opacity, badge;
+      if (isCurrentMonth) {
+        bg = 'var(--earth)'; fg = '#fff'; opacity = '1';
+        badge = '<div style="font-size:8px;font-weight:800;color:#fde2dc;letter-spacing:.5px;margin-bottom:2px">●  KINI</div>';
+      } else if (isPreProject) {
+        bg = '#d4c8a8'; fg = '#5a4a35'; opacity = '0.75';
+        badge = '<div style="font-size:7px;color:#5a4a35;font-weight:800;letter-spacing:.3px;background:rgba(255,255,255,.5);padding:1px 4px;border-radius:3px;display:inline-block;margin-bottom:2px">📜 PRE-T0</div>';
+      } else if (isPastMonth) {
+        bg = f.warna; fg = 'var(--earth)'; opacity = '0.65';
+        badge = '<div style="font-size:7px;color:#1F5F47;font-weight:800;letter-spacing:.3px;background:rgba(255,255,255,.6);padding:1px 4px;border-radius:3px;display:inline-block;margin-bottom:2px">✓ LEWAT</div>';
+      } else if (isFutureMonth) {
+        bg = f.warna; fg = 'var(--earth)'; opacity = '0.85';
+        badge = '<div style="font-size:7px;color:var(--mute);font-weight:800;letter-spacing:.3px;background:rgba(255,255,255,.6);padding:1px 4px;border-radius:3px;display:inline-block;margin-bottom:2px">↗ NEXT</div>';
+      } else {
+        bg = f.warna; fg = 'var(--earth)'; opacity = '1';
+        badge = '';
+      }
+
+      const ring = isCurrentMonth ? 'box-shadow:0 0 0 3px var(--cherry);transform:scale(1.08);z-index:2;position:relative' : '';
+      html += `<div onclick="showBulanAktif(${f.n}, ${currentSOPYear})" style="cursor:pointer;background:${bg};color:${fg};opacity:${opacity};padding:${isCurrentMonth?'10':'14'}px 4px 10px;text-align:center;border-radius:8px;${ring};transition:.2s">
+        ${badge}
+        <div style="font-size:11px;font-weight:800">${f.bulan}</div>
+        <div style="font-size:9px;opacity:.85;margin-top:3px;text-transform:uppercase;letter-spacing:.5px">${f.fase.split('-')[0]}</div>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // === LEGEND ===
   html += '<div style="display:flex;justify-content:center;gap:14px;margin-top:14px;font-size:10px;color:var(--mute);flex-wrap:wrap">';
   html += '<span><span style="display:inline-block;width:11px;height:11px;background:#a8c8bc;border-radius:2px;vertical-align:middle"></span> Off-season / Pre-bloom</span>';
   html += '<span><span style="display:inline-block;width:11px;height:11px;background:#e8dec8;border-radius:2px;vertical-align:middle"></span> Bunga / Pentil</span>';
   html += '<span><span style="display:inline-block;width:11px;height:11px;background:#c14b3a;border-radius:2px;vertical-align:middle"></span> Panen (Jul-Sep NGT)</span>';
   html += '<span><span style="display:inline-block;width:11px;height:11px;background:#5a9080;border-radius:2px;vertical-align:middle"></span> Pasca-Panen / Peremajaan</span>';
+  if (sopWheelView === 'calendar') {
+    html += '<span><span style="display:inline-block;width:11px;height:11px;background:#d4c8a8;border-radius:2px;vertical-align:middle"></span> 📜 Pre-Project (sebelum Mei 2026)</span>';
+  }
   html += '</div>';
   wheelEl.innerHTML = html;
 
-  showBulanAktif(monthNow);
+  // Default to current month + current year (forward) OR current month + selected year (calendar)
+  const defaultYear = (sopWheelView === 'calendar') ? currentSOPYear : yearNow;
+  showBulanAktif(monthNow, defaultYear);
 
   // Render fase mapping
   const fmEl = document.getElementById('fase-mapping');
@@ -4663,12 +4773,66 @@ function renderSOPKalender() {
   }
 }
 
-function showBulanAktif(n) {
+// === View toggle & year navigator helpers (C1) ===
+function setSOPWheelView(mode) {
+  if (mode !== 'forward' && mode !== 'calendar') return;
+  sopWheelView = mode;
+  localStorage.setItem('wkkn_sop_wheel_view', mode);
+  // Reset year to current when switching to calendar mode (avoid leftover state)
+  if (mode === 'calendar') {
+    const yearNow = new Date().getFullYear();
+    if (!currentSOPYear) currentSOPYear = yearNow;
+  }
+  renderSOPKalender();
+}
+
+function navSOPYear(delta) {
+  const yearNow = new Date().getFullYear();
+  if (delta === 0) {
+    // Jump to current year
+    currentSOPYear = yearNow;
+  } else {
+    currentSOPYear = (currentSOPYear || yearNow) + delta;
+    // Constrain to reasonable range
+    if (currentSOPYear < 2024) currentSOPYear = 2024;
+    if (currentSOPYear > yearNow + 2) currentSOPYear = yearNow + 2;
+  }
+  renderSOPKalender();
+}
+
+function showBulanAktif(n, year) {
   currentSOPMonth = n;
+  // Backward-compat: if year not provided, derive from current state/view
+  if (typeof year !== 'number') {
+    year = (sopWheelView === 'calendar') ? currentSOPYear : new Date().getFullYear();
+  }
+  currentSOPYear = year;
   const f = FENOLOGI.find(x => x.n === n);
   const sop = SOP_AKTIVITAS_PER_BULAN[n];
   const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-  document.getElementById('bulan-aktif-nama').textContent = namaBulan[n] + ' (Fase: ' + sop.fase + ')';
+
+  // Determine status badge based on temporal position relative to today + SOP_PROJECT_START
+  const today = new Date();
+  const monthNow = today.getMonth() + 1;
+  const yearNow = today.getFullYear();
+  const isCurrent = (year === yearNow && n === monthNow);
+  const isPreProject = (year < SOP_PROJECT_START_YEAR) ||
+                       (year === SOP_PROJECT_START_YEAR && n < SOP_PROJECT_START_MONTH);
+  const isPast = !isCurrent && ((year < yearNow) || (year === yearNow && n < monthNow));
+  const isFuture = !isCurrent && ((year > yearNow) || (year === yearNow && n > monthNow));
+
+  let statusBadge = '';
+  if (isCurrent) {
+    statusBadge = '<span style="background:#c14b3a;color:#fff;padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-left:8px">● BULAN BERJALAN</span>';
+  } else if (isPreProject) {
+    statusBadge = '<span style="background:#d4c8a8;color:#5a4a35;padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-left:8px" title="Sebelum baseline SOP — read-only, data dari Living Lab">📜 PRE-PROJECT (sebelum Mei 2026)</span>';
+  } else if (isPast) {
+    statusBadge = '<span style="background:#a8c8bc;color:#1f5f47;padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-left:8px" title="Bulan sudah lewat — backfill tersedia untuk audit retroaktif">✓ LEWAT · BACKFILL OK</span>';
+  } else if (isFuture) {
+    statusBadge = '<span style="background:#5a9080;color:#fff;padding:3px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px;margin-left:8px">↗ MENDATANG</span>';
+  }
+
+  document.getElementById('bulan-aktif-nama').innerHTML = namaBulan[n] + ' ' + year + ' (Fase: ' + sop.fase + ')' + statusBadge;
 
   const ic = document.getElementById('aktivitas-bulan');
   const prioMap = {
