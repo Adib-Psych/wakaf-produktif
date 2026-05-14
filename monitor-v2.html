@@ -3056,24 +3056,48 @@ async function generateBuktiBayar() {
   if (sumberSet.length === 1 && sumberSet[0] === 'anto') sumberDana = 'Petty Cash Mas Anto (Koordinator)';
   else if (sumberSet.length > 1) sumberDana = 'Campuran (Kas Wakif + Petty Cash Anto)';
 
-  // Build item rows
+  // Penerima signature path (dummy auto-generated TTD untuk validasi internal)
+  const SIGNATURE_MAP = { 'KUMPUL': 'images/signature-kumpul.png', 'YIT': 'images/signature-yit.png' };
+  const penerimaSigSrc = (pelaporSet.length === 1 && SIGNATURE_MAP[pelaporSet[0]]) ? SIGNATURE_MAP[pelaporSet[0]] : null;
+
+  // Indonesian number-to-words helper (terbilang)
+  function terbilangAngka(n) {
+    const a = ['', 'satu', 'dua', 'tiga', 'empat', 'lima', 'enam', 'tujuh', 'delapan', 'sembilan', 'sepuluh', 'sebelas'];
+    n = Math.floor(Math.abs(n));
+    if (n === 0) return '';
+    if (n < 12) return a[n];
+    if (n < 20) return a[n - 10] + ' belas';
+    if (n < 100) return a[Math.floor(n / 10)] + ' puluh' + (n % 10 ? ' ' + a[n % 10] : '');
+    if (n < 200) return 'seratus' + (n % 100 ? ' ' + terbilangAngka(n % 100) : '');
+    if (n < 1000) return a[Math.floor(n / 100)] + ' ratus' + (n % 100 ? ' ' + terbilangAngka(n % 100) : '');
+    if (n < 2000) return 'seribu' + (n % 1000 ? ' ' + terbilangAngka(n % 1000) : '');
+    if (n < 1000000) return terbilangAngka(Math.floor(n / 1000)) + ' ribu' + (n % 1000 ? ' ' + terbilangAngka(n % 1000) : '');
+    if (n < 1000000000) return terbilangAngka(Math.floor(n / 1000000)) + ' juta' + (n % 1000000 ? ' ' + terbilangAngka(n % 1000000) : '');
+    return terbilangAngka(Math.floor(n / 1000000000)) + ' miliar' + (n % 1000000000 ? ' ' + terbilangAngka(n % 1000000000) : '');
+  }
+  function terbilangRupiah(n) {
+    if (n === 0) return 'Nol Rupiah';
+    const words = terbilangAngka(n);
+    return words.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' Rupiah';
+  }
+
+  // Build item rows — COMPACT single-line layout with full year
   let total = 0;
   const itemRowsHTML = items.map((it, i) => {
     const subtotal = calcTotal(it);
     total += subtotal;
     const tgl = new Date(it.tgl);
     const hari = hariStr[tgl.getDay()];
-    const tglStr = `${hari}<br><span style="font-size:11px;color:#6b7878">${tgl.getDate()} ${bulanStr[tgl.getMonth()]}</span>`;
+    const tglStr = `${hari}, ${tgl.getDate()} ${bulanStr[tgl.getMonth()]} ${tgl.getFullYear()}`;
     const statusIco = it.status === 'lunas' ? '✓' : '⏳';
     const rowBg = i % 2 === 0 ? '#fafbfa' : '#ffffff';
+    // Activity description with inline qty/tarif detail
+    const aktDesc = `<span style="color:#2e4040;font-weight:600">${it.aktivitas}</span> <span style="color:#6b7878;font-size:11px">· ${statusIco} ${it.qty} ${it.satuan_lbl || it.satuan} × Rp ${it.tarif.toLocaleString('id-ID')}</span>`;
     return `<tr style="background:${rowBg}">
-      <td style="padding:9px 8px;text-align:center;border-bottom:1px solid #e8dec8;font-size:13px;font-weight:700;color:#5a9080">${i+1}</td>
-      <td style="padding:9px 8px;border-bottom:1px solid #e8dec8;font-size:13px;font-weight:600;color:#2e4040;line-height:1.4">${tglStr}</td>
-      <td style="padding:9px 8px;border-bottom:1px solid #e8dec8;font-size:13px;line-height:1.45">
-        <div style="color:#2e4040;font-weight:600">${it.aktivitas}</div>
-        <div style="font-size:11px;color:#6b7878;margin-top:2px">${statusIco} ${it.qty} ${it.satuan_lbl || it.satuan} × Rp ${it.tarif.toLocaleString('id-ID')}</div>
-      </td>
-      <td style="padding:9px 8px;text-align:right;border-bottom:1px solid #e8dec8;font-size:13px;font-weight:800;color:#2e4040;white-space:nowrap">Rp ${subtotal.toLocaleString('id-ID')}</td>
+      <td style="padding:8px 8px;text-align:center;border-bottom:1px solid #e8dec8;font-size:12px;font-weight:700;color:#5a9080;vertical-align:middle">${i+1}</td>
+      <td style="padding:8px 8px;border-bottom:1px solid #e8dec8;font-size:12px;font-weight:600;color:#2e4040;white-space:nowrap;vertical-align:middle">${tglStr}</td>
+      <td style="padding:8px 8px;border-bottom:1px solid #e8dec8;font-size:12px;line-height:1.45;vertical-align:middle">${aktDesc}</td>
+      <td style="padding:8px 8px;text-align:right;border-bottom:1px solid #e8dec8;font-size:12px;font-weight:700;color:#2e4040;white-space:nowrap;vertical-align:middle">Rp ${subtotal.toLocaleString('id-ID')}</td>
     </tr>`;
   }).join('');
 
@@ -3083,7 +3107,7 @@ async function generateBuktiBayar() {
       <!-- HEADER — Professional letterhead style -->
       <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47;position:relative">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
-          <img src="images/Logo Wakaf Produktif Transparan.png" style="height:88px;width:auto;display:block;flex-shrink:0" alt="Logo Wakaf Produktif Kebun Kopi Ngantang">
+          <img src="images/logo-wakaf-produktif-transparan.png" style="height:88px;width:auto;display:block;flex-shrink:0" alt="Logo Wakaf Produktif Kebun Kopi Ngantang">
           <div style="text-align:right;flex-shrink:0;max-width:280px">
             <div style="font-size:9px;font-weight:800;color:#1F5F47;letter-spacing:2.5px;margin-bottom:6px">— DOKUMEN RESMI —</div>
             <div style="font-size:11px;color:#6b7878;line-height:1.55;font-style:italic">Wakaf produktif berbasis kebun kopi<br>untuk amal jariyah berkelanjutan</div>
@@ -3120,8 +3144,18 @@ async function generateBuktiBayar() {
           <tbody>${itemRowsHTML}</tbody>
           <tfoot>
             <tr style="background:#fff4d6">
-              <td colspan="3" style="padding:14px 12px;text-align:right;font-weight:800;color:#2e4040;font-size:14px;letter-spacing:.5px">TOTAL DIBAYAR</td>
-              <td style="padding:14px 8px;text-align:right;font-weight:800;color:#c14b3a;font-size:20px;white-space:nowrap">Rp ${total.toLocaleString('id-ID')}</td>
+              <td colspan="4" style="padding:14px 14px">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
+                  <div style="flex:1;min-width:240px">
+                    <div style="font-size:9px;font-weight:800;color:#8b6914;letter-spacing:1.5px;margin-bottom:3px">— TERBILANG —</div>
+                    <div style="font-size:12.5px;color:#2e4040;font-style:italic;font-weight:600;line-height:1.45">${terbilangRupiah(total)}</div>
+                  </div>
+                  <div style="text-align:right;flex-shrink:0">
+                    <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">Total Dibayar</div>
+                    <div style="font-size:22px;font-weight:800;color:#c14b3a;white-space:nowrap;letter-spacing:.3px">Rp ${total.toLocaleString('id-ID')}</div>
+                  </div>
+                </div>
+              </td>
             </tr>
           </tfoot>
         </table>
@@ -3133,8 +3167,8 @@ async function generateBuktiBayar() {
         <div style="margin-top:10px;font-size:15px;font-weight:700;color:#5a9080;letter-spacing:.5px">Barakallahu fiikum.</div>
       </div>
 
-      <!-- SIGNATURE SECTION — TTD Adib embedded -->
-      <div style="padding:28px 32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
+      <!-- SIGNATURE SECTION — TTD Adib + dummy TTD penerima (auto-generated) -->
+      <div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
         <div style="text-align:center">
           <div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div>
           <img src="images/signature-adib.png" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD Adib">
@@ -3142,10 +3176,16 @@ async function generateBuktiBayar() {
           <div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
         </div>
         <div style="text-align:center">
-          <div style="color:#6b7878;margin-bottom:54px">Penerima,</div>
+          <div style="color:#6b7878;margin-bottom:6px">Penerima,</div>
+          ${penerimaSigSrc ? `<img src="${penerimaSigSrc}" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD ${namaPenerima}">` : '<div style="height:54px"></div>'}
           <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${namaPenerima}</div>
           <div style="color:#6b7878;font-size:11px;margin-top:2px">Pekerja Lapangan</div>
         </div>
+      </div>
+
+      <!-- DISCLAIMER auto-generated signature -->
+      <div style="margin:0 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">
+        ⚠️ Tanda tangan penerima di atas <strong>auto-generated</strong> untuk validasi pembayaran internal/digital saja. Untuk arsip resmi/audit eksternal, lampirkan bukti fisik dengan tanda tangan basah dari pekerja.
       </div>
 
       <!-- FOOTER -->
