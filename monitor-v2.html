@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monitor v2 — Wakaf Produktif Kebun Kopi Ngantang</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   /* ============ EUCALYPTUS R2 PALETTE ============ */
   :root{
@@ -594,6 +595,7 @@
             <option value="borongan">📦 Borongan</option>
           </select>
           <button class="btn btn-primary" onclick="batchPay()">💸 Bayar Tercentang (batch)</button>
+          <button class="btn" onclick="generateBuktiBayar()" style="background:linear-gradient(135deg,#1F5F47,#5a9080);color:#fff;font-weight:700" title="Pilih item lunas via checkbox → generate Bukti Bayar PNG (download + share WA)">📄 Bukti Bayar (dari Pilihan)</button>
           <button class="btn btn-secondary" onclick="openDlg()">+ Tambah Item</button>
           <button class="btn" onclick="openRecoverDlg()" style="background:#FFF4D6;color:#8B6914;border:1.5px solid #D4AF37">🔄 Recover Entry Lama</button>
         </div>
@@ -2902,7 +2904,8 @@ function renderUpahTable() {
     const statusBadge = it.status === 'lunas'
       ? `<span class="pill compliant">✅ Lunas</span><div style="font-size:9px;color:var(--mute);margin-top:2px">${it.bayar_tgl?formatTgl(it.bayar_tgl):''}</div>`
       : `<span class="pill alert">⏳ Belum</span>`;
-    const checkbox = it.status === 'belum' ? `<input type="checkbox" class="upah-check" data-id="${it.id}">` : '';
+    // Checkbox available for ALL items: belum (batch pay) + lunas (bukti bayar generation)
+    const checkbox = `<input type="checkbox" class="upah-check" data-id="${it.id}" data-status="${it.status}" title="${it.status === 'lunas' ? 'Centang untuk include di Bukti Bayar' : 'Centang untuk batch pay'}">`;
     const action = it.status === 'belum'
       ? `<button class="btn btn-primary" style="padding:4px 8px;font-size:11px" onclick="openPaidModalById(${it.id})">💸 Bayar</button>`
       : `<button class="btn btn-secondary" style="padding:4px 8px;font-size:11px" onclick="markUnpaid(${it.id})">↺ Batal</button>`;
@@ -2993,6 +2996,209 @@ function batchPay() {
 
 function toggleAllPay(checkbox) {
   document.querySelectorAll('.upah-check').forEach(c => c.checked = checkbox.checked);
+}
+
+// ===== BUKTI BAYAR — Generate PNG receipt from selected items (Flow Y) =====
+async function generateBuktiBayar() {
+  const checked = document.querySelectorAll('.upah-check:checked');
+  if (checked.length === 0) {
+    alert('📋 Pilih dulu item yang mau dimasukkan ke Bukti Bayar.\n\nCara: centang checkbox di tabel pada item yang sudah Lunas (status ✅).\nLalu klik "Bukti Bayar (dari Pilihan)".');
+    return;
+  }
+  if (typeof html2canvas === 'undefined') {
+    alert('html2canvas library belum ke-load. Coba refresh halaman + cek koneksi internet.');
+    return;
+  }
+
+  // Collect checked items
+  const items = [];
+  let belumCount = 0;
+  checked.forEach(c => {
+    const id = +c.dataset.id;
+    const it = UPAH_ITEMS.find(x => x.id === id);
+    if (it) {
+      items.push(it);
+      if (it.status === 'belum') belumCount++;
+    }
+  });
+
+  // Warn if any belum (incomplete)
+  if (belumCount > 0) {
+    if (!confirm(`⚠️ ${belumCount} dari ${items.length} item yang dipilih masih BELUM dibayar.\n\nBukti Bayar idealnya hanya untuk item yang sudah Lunas (sebagai validasi serah-terima ke pekerja).\n\nLanjutkan generate Bukti Bayar dengan item belum? (Tidak direkomendasikan)`)) {
+      return;
+    }
+  }
+
+  // Group check — multi-pelapor warning
+  const pelaporSet = [...new Set(items.map(it => it.pelapor))];
+  if (pelaporSet.length > 1) {
+    if (!confirm(`Item yang dipilih mencakup ${pelaporSet.length} pekerja berbeda (${pelaporSet.map(p => NAMA_PEKERJA[p]).join(', ')}).\n\nBukti Bayar akan digabung dalam 1 dokumen multi-pekerja. Lanjut?\n\n(Lebih baik generate terpisah per pekerja untuk validasi.)`)) {
+      return;
+    }
+  }
+
+  // Sort items by date
+  items.sort((a, b) => a.tgl.localeCompare(b.tgl));
+
+  // Build metadata
+  const today = new Date();
+  const hariStr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const bulanStr = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const todayLbl = `${hariStr[today.getDay()]}, ${today.getDate()} ${bulanStr[today.getMonth()]} ${today.getFullYear()}`;
+  const yyyymmdd = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
+  const pelaporCode = pelaporSet.length === 1 ? pelaporSet[0] : 'MULTI';
+  const nomorBukti = `BUKTI-NGT-${yyyymmdd}-${pelaporCode}-${String(Date.now()).slice(-4)}`;
+  const namaPenerima = pelaporSet.length === 1 ? NAMA_PEKERJA[pelaporSet[0]] : 'Multi-Pekerja';
+
+  // Sumber dana inference (kalau semua lunas via anto = petty cash)
+  const sumberSet = [...new Set(items.filter(it => it.bayar_source).map(it => it.bayar_source))];
+  let sumberDana = 'Kas Wakif Langsung';
+  if (sumberSet.length === 1 && sumberSet[0] === 'anto') sumberDana = 'Petty Cash Mas Anto (Koordinator)';
+  else if (sumberSet.length > 1) sumberDana = 'Campuran (Kas Wakif + Petty Cash Anto)';
+
+  // Build item rows
+  let total = 0;
+  const itemRowsHTML = items.map((it, i) => {
+    const subtotal = calcTotal(it);
+    total += subtotal;
+    const tgl = new Date(it.tgl);
+    const hari = hariStr[tgl.getDay()];
+    const tglStr = `${hari}<br><span style="font-size:11px;color:#6b7878">${tgl.getDate()} ${bulanStr[tgl.getMonth()]}</span>`;
+    const statusIco = it.status === 'lunas' ? '✓' : '⏳';
+    const rowBg = i % 2 === 0 ? '#fafbfa' : '#ffffff';
+    return `<tr style="background:${rowBg}">
+      <td style="padding:9px 8px;text-align:center;border-bottom:1px solid #e8dec8;font-size:13px;font-weight:700;color:#5a9080">${i+1}</td>
+      <td style="padding:9px 8px;border-bottom:1px solid #e8dec8;font-size:13px;font-weight:600;color:#2e4040;line-height:1.4">${tglStr}</td>
+      <td style="padding:9px 8px;border-bottom:1px solid #e8dec8;font-size:13px;line-height:1.45">
+        <div style="color:#2e4040;font-weight:600">${it.aktivitas}</div>
+        <div style="font-size:11px;color:#6b7878;margin-top:2px">${statusIco} ${it.qty} ${it.satuan_lbl || it.satuan} × Rp ${it.tarif.toLocaleString('id-ID')}</div>
+      </td>
+      <td style="padding:9px 8px;text-align:right;border-bottom:1px solid #e8dec8;font-size:13px;font-weight:800;color:#2e4040;white-space:nowrap">Rp ${subtotal.toLocaleString('id-ID')}</td>
+    </tr>`;
+  }).join('');
+
+  // Full receipt HTML (off-screen render target)
+  const receiptHTML = `
+    <div id="bukti-bayar-render" style="position:fixed;top:0;left:-9999px;width:800px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;box-shadow:0 4px 12px rgba(0,0,0,.1)">
+      <!-- HEADER -->
+      <div style="background:linear-gradient(135deg,#2e4040 0%,#5a9080 100%);color:#ffffff;padding:28px 32px 22px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:-30px;right:-30px;width:180px;height:180px;background:rgba(212,175,55,.18);border-radius:50%"></div>
+        <div style="position:relative">
+          <div style="display:flex;align-items:center;gap:14px;margin-bottom:6px">
+            <div style="width:62px;height:62px;background:rgba(255,255,255,.18);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;border:2px solid rgba(255,255,255,.4)">☕</div>
+            <div>
+              <div style="font-size:22px;font-weight:800;letter-spacing:.4px;line-height:1.1">WAKAF PRODUKTIF</div>
+              <div style="font-size:15px;font-weight:600;color:#e8dec8;letter-spacing:.6px;margin-top:2px">KEBUN KOPI NGANTANG</div>
+            </div>
+          </div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1.5px dashed rgba(255,255,255,.32);font-size:11px;color:#a8c8bc;letter-spacing:2.5px;font-weight:700">BUKTI PEMBAYARAN UPAH</div>
+        </div>
+      </div>
+
+      <!-- INFO BOX -->
+      <div style="padding:22px 32px 0">
+        <div style="background:#f5f0e6;padding:14px 18px;border-radius:8px;border-left:4px solid #c14b3a;display:grid;grid-template-columns:1fr 1fr;gap:12px 18px;font-size:13px">
+          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">NO. BUKTI</div><div style="color:#2e4040;font-weight:700;font-family:'Courier New',monospace;font-size:12px">${nomorBukti}</div></div>
+          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">TANGGAL BAYAR</div><div style="color:#2e4040;font-weight:700">${todayLbl}</div></div>
+          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:700;font-size:15px">${namaPenerima}</div></div>
+          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">SUMBER DANA</div><div style="color:#2e4040;font-weight:700">${sumberDana}</div></div>
+        </div>
+      </div>
+
+      <!-- ITEMS TABLE -->
+      <div style="padding:18px 32px 8px">
+        <div style="font-size:11px;font-weight:800;color:#5a9080;letter-spacing:1.5px;margin-bottom:8px">📋 RINCIAN PEKERJAAN (${items.length} ITEM)</div>
+        <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+          <thead>
+            <tr style="background:#a8c8bc;color:#2e4040">
+              <th style="padding:11px 8px;font-size:11px;text-align:center;letter-spacing:.5px;width:36px">#</th>
+              <th style="padding:11px 8px;font-size:11px;text-align:left;letter-spacing:.5px;width:90px">HARI / TGL</th>
+              <th style="padding:11px 8px;font-size:11px;text-align:left;letter-spacing:.5px">AKTIVITAS</th>
+              <th style="padding:11px 8px;font-size:11px;text-align:right;letter-spacing:.5px;width:120px">SUBTOTAL</th>
+            </tr>
+          </thead>
+          <tbody>${itemRowsHTML}</tbody>
+          <tfoot>
+            <tr style="background:#fff4d6">
+              <td colspan="3" style="padding:14px 12px;text-align:right;font-weight:800;color:#2e4040;font-size:14px;letter-spacing:.5px">TOTAL DIBAYAR</td>
+              <td style="padding:14px 8px;text-align:right;font-weight:800;color:#c14b3a;font-size:20px;white-space:nowrap">Rp ${total.toLocaleString('id-ID')}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- DOA SECTION -->
+      <div style="margin:16px 32px 0;padding:18px 22px;background:#e8f1ec;border-radius:8px;border-left:4px solid #5a9080;text-align:center">
+        <div style="font-size:13px;line-height:1.7;color:#2e4040;font-style:italic">Terima kasih atas kerja keras dan amanahnya. Semoga rezeki ini barakah dan menguatkan keluarga.</div>
+        <div style="margin-top:10px;font-size:15px;font-weight:700;color:#5a9080;letter-spacing:.5px">Barakallahu fiikum.</div>
+      </div>
+
+      <!-- SIGNATURE SECTION -->
+      <div style="padding:28px 32px 24px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
+        <div style="text-align:center">
+          <div style="color:#6b7878;margin-bottom:54px">Hormat kami,</div>
+          <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">Mas Tito (Adib Asrori)</div>
+          <div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
+        </div>
+        <div style="text-align:center">
+          <div style="color:#6b7878;margin-bottom:54px">Penerima,</div>
+          <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${namaPenerima}</div>
+          <div style="color:#6b7878;font-size:11px;margin-top:2px">Pekerja Lapangan</div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div style="background:#2e4040;color:#a8c8bc;padding:11px 32px;font-size:10px;text-align:center;letter-spacing:.5px;line-height:1.5">
+        🌱 <strong style="color:#ffffff">Wakaf Produktif Kebun Kopi Ngantang</strong> · Dokumen auto-generate dari monitor-v2 · ${todayLbl}
+      </div>
+    </div>
+  `;
+
+  // Insert into DOM (off-screen), capture, cleanup
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = receiptHTML;
+  document.body.appendChild(wrapper);
+
+  // Small delay for any web fonts/images to settle
+  await new Promise(r => setTimeout(r, 100));
+
+  try {
+    const target = document.getElementById('bukti-bayar-render');
+    const canvas = await html2canvas(target, {
+      backgroundColor: '#ffffff',
+      scale: 2, // High-DPI for sharp WhatsApp share
+      logging: false,
+      useCORS: true,
+      allowTaint: false
+    });
+
+    canvas.toBlob(blob => {
+      if (!blob) {
+        alert('❌ Gagal generate PNG. Coba lagi atau cek console.');
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${nomorBukti}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 500);
+
+      // Friendly confirmation
+      setTimeout(() => {
+        alert(`✅ BUKTI BAYAR BERHASIL DI-DOWNLOAD\n\nFile: ${nomorBukti}.png\n\n📊 Ringkasan:\n• Penerima: ${namaPenerima}\n• Total Item: ${items.length}\n• Total Dibayar: Rp ${total.toLocaleString('id-ID')}\n• Sumber: ${sumberDana}\n\n📱 Cara share ke pekerja:\nBuka WhatsApp → chat pekerja → Attach → Foto → pilih file ${nomorBukti}.png yang baru di-download.`);
+      }, 250);
+    }, 'image/png');
+  } catch (e) {
+    console.error('html2canvas error:', e);
+    alert('❌ Gagal generate Bukti Bayar.\n\nError: ' + (e.message || e) + '\n\nCek console untuk detail.');
+  } finally {
+    setTimeout(() => {
+      if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
+    }, 1500);
+  }
 }
 
 // ===== UPAH ENTRY DIALOG =====
