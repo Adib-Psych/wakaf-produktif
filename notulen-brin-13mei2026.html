@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Notulen Rapat — Diskusi Kolaborasi Riset Kebun Kopi Wakaf dengan Tim Peneliti BRIN, 13 Mei 2026">
+<title>Notulen BRIN Serpong · 13 Mei 2026 · Wakaf Produktif Kebun Kopi Ngantang</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #8B2942;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --border:  #d4e3dd;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a { color: var(--medium); }
+a:hover { color: var(--dark); }
+
+/* ── HEADER (Kop Surat) ── */
+.kop-surat {
+  background: var(--white);
+  border-bottom: 4px solid var(--dark);
+  padding: 44px 0 38px;
+  position: relative;
+  overflow: hidden;
+}
+.kop-surat::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--medium) 100%);
+}
+.kop-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 48px;
+  display: flex;
+  align-items: center;
+  gap: 44px;
+}
+.kop-logo { flex-shrink: 0; }
+.kop-logo img {
+  width: 210px;
+  height: auto;
+  filter: drop-shadow(0 6px 16px rgba(46,64,64,0.15));
+}
+.kop-text { flex: 1; }
+.kop-text h1 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.95rem;
+  font-weight: 700;
+  color: var(--dark);
+  letter-spacing: 0.3px;
+  line-height: 1.15;
+  margin-bottom: 10px;
+}
+.kop-text p {
+  font-size: 0.88rem;
+  color: var(--muted);
+  margin: 2px 0;
+}
+.kop-text p.kop-location {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+.kop-text a {
+  color: var(--medium);
+  text-decoration: underline;
+  font-weight: 500;
+}
+.kop-text p.kop-location a {
+  color: #b8860b;
+  font-weight: 700;
+}
+.kop-mantra {
+  margin-top: 16px;
+  padding: 14px 18px 14px 20px;
+  border-left: 4px solid #b8860b;
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.02rem;
+  font-weight: 500;
+  color: #8a6508;
+  line-height: 1.6;
+  background: linear-gradient(90deg, rgba(184,134,11,0.08) 0%, rgba(184,134,11,0) 100%);
+  letter-spacing: 0.1px;
+}
+.kop-mantra::before {
+  content: '"';
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #b8860b;
+  line-height: 0;
+  position: relative;
+  top: 10px;
+  margin-right: 6px;
+}
+.kop-mantra::after {
+  content: '"';
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  color: #b8860b;
+  line-height: 0;
+  position: relative;
+  top: 10px;
+  margin-left: 4px;
+}
+@media (max-width: 720px) {
+  .kop-inner { flex-direction: column; text-align: center; }
+  .kop-logo img { width: 140px; }
+  .kop-mantra { text-align: left; }
+}
+
+/* ── HERO ── */
+.hero {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(168,200,188,0.25) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(196,144,106,0.10) 0%, transparent 45%),
+    linear-gradient(135deg, var(--bg-tint) 0%, var(--bg-deep) 100%);
+  padding: 56px 48px 64px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.hero-eyebrow {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: var(--medium);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.hero h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.6rem;
+  color: var(--dark);
+  font-weight: 700;
+  margin-bottom: 10px;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.hero-sub {
+  font-size: 1.1rem;
+  color: var(--muted);
+  font-style: italic;
+  max-width: 760px;
+  margin: 0 auto 32px;
+}
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.badge.date { background: var(--white); color: var(--dark); border: 1px solid var(--border); }
+.badge.status { background: var(--accent); color: var(--white); }
+
+.quote-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--white);
+  border-left: 4px solid var(--medium);
+  padding: 18px 24px;
+  border-radius: 8px;
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 1.02rem;
+  color: var(--dark);
+  text-align: left;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+}
+
+/* ── MAIN ── */
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 48px;
+}
+section {
+  margin-bottom: 40px;
+  scroll-margin-top: 20px;
+}
+section h3 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 1.4rem;
+  color: var(--dark);
+  font-weight: 700;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--light);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+section h3 .num {
+  font-family: 'Playfair Display', serif;
+  color: var(--medium);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+section h4 {
+  font-size: 1.02rem;
+  color: var(--dark);
+  font-weight: 700;
+  margin: 24px 0 10px;
+  padding-left: 12px;
+  border-left: 3px solid var(--accent);
+}
+
+/* Tables */
+.info-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  font-size: 0.92rem;
+}
+.info-table th, .info-table td {
+  padding: 11px 16px;
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--border);
+}
+.info-table tr:last-child td { border-bottom: none; }
+.info-table th {
+  background: var(--bg-tint);
+  color: var(--dark);
+  font-weight: 600;
+  width: 200px;
+  white-space: nowrap;
+}
+.info-table thead th {
+  background: var(--dark);
+  color: var(--white);
+  border-bottom: none;
+}
+
+.peserta-table th { width: auto; }
+.peserta-table tbody td:first-child { background: var(--bg-tint); width: 40px; text-align: center; }
+.peserta-table tbody td:nth-child(2) { font-weight: 600; color: var(--dark); }
+
+ul.bullets {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px;
+}
+ul.bullets li {
+  position: relative;
+  padding-left: 22px;
+  margin-bottom: 8px;
+  font-size: 0.94rem;
+}
+ul.bullets li::before {
+  content: "▸";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--medium);
+  font-weight: 700;
+}
+
+.callout {
+  background: var(--bg-tint);
+  border-left: 4px solid var(--accent);
+  padding: 14px 18px;
+  border-radius: 6px;
+  margin: 16px 0;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+.callout strong { color: var(--dark); }
+
+/* TOC (sticky right) */
+.toc {
+  position: fixed;
+  top: 100px;
+  right: 24px;
+  width: 180px;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 0.78rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  z-index: 50;
+}
+.toc strong {
+  display: block;
+  color: var(--dark);
+  margin-bottom: 10px;
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.toc ol { list-style: none; counter-reset: toc; }
+.toc ol li {
+  counter-increment: toc;
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+.toc ol li a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 500;
+  display: block;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.toc ol li a::before {
+  content: counter(toc) ". ";
+  color: var(--medium);
+  font-weight: 700;
+}
+.toc ol li a:hover {
+  background: var(--bg-tint);
+  color: var(--dark);
+}
+
+@media (max-width: 1300px) { .toc { display: none; } }
+
+/* ── FEEDBACK FORM ── */
+.feedback-section {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f3030 100%);
+  color: var(--white);
+  padding: 56px 32px;
+  margin-top: 32px;
+}
+.feedback-inner {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.feedback-section h3 {
+  color: var(--white);
+  border-bottom-color: var(--medium);
+  font-size: 1.6rem;
+}
+.feedback-section h3 .num { color: var(--light); }
+.feedback-section .intro {
+  color: var(--light);
+  margin-bottom: 28px;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+form.feedback-form {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 28px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+.field label {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--light);
+  margin-bottom: 6px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.field label .req { color: var(--accent); }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 11px 14px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 6px;
+  color: var(--white);
+  font-family: inherit;
+  font-size: 0.93rem;
+  transition: all 0.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.12);
+}
+.field textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+.field select { appearance: none; cursor: pointer; }
+.field input::placeholder, .field textarea::placeholder { color: rgba(255,255,255,0.4); }
+
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 16px 0 24px;
+  font-size: 0.85rem;
+  color: var(--light);
+  line-height: 1.5;
+}
+.consent input[type="checkbox"] { margin-top: 3px; cursor: pointer; }
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--accent);
+  color: var(--white);
+}
+.btn-primary:hover { background: #b07e58; transform: translateY(-1px); }
+.btn-secondary {
+  background: transparent;
+  color: var(--light);
+  border: 1px solid var(--light);
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.08); }
+
+#form-success, #form-error {
+  display: none;
+  padding: 18px 22px;
+  border-radius: 8px;
+  margin-top: 18px;
+  font-size: 0.95rem;
+}
+#form-success { background: rgba(168,200,188,0.2); border: 1px solid var(--light); color: var(--white); }
+#form-error { background: rgba(196,144,106,0.2); border: 1px solid var(--accent); color: var(--white); }
+
+/* ── FLOATING CTA ── */
+.floating-cta {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--cherry);
+  color: var(--white);
+  padding: 14px 22px;
+  border-radius: 100px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 6px 20px rgba(139,41,66,0.35);
+  z-index: 100;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.floating-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(139,41,66,0.45); }
+.floating-cta.hidden { opacity: 0; pointer-events: none; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg-tint);
+  padding: 28px 32px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+footer .signature {
+  font-weight: 600;
+  color: var(--dark);
+  margin: 6px 0 4px;
+}
+
+/* PRINT */
+@media print {
+  .toc, .floating-cta, .feedback-section { display: none !important; }
+  body { background: var(--white); }
+  .hero { background: var(--white); }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════ KOP SURAT ═══════ -->
+<header class="kop-surat">
+  <div class="kop-inner">
+    <div class="kop-logo">
+      <img src="./images/logo-wakaf-produktif.png" alt="Logo Wakaf Produktif Kebun Kopi Ngantang">
+    </div>
+    <div class="kop-text">
+      <h1>WAKAF PRODUKTIF KEBUN KOPI NGANTANG</h1>
+      <p class="kop-location">Robusta · Kecamatan Ngantang, Kabupaten Malang, Jawa Timur · <a href="https://www.google.com/maps?q=-7.85244830475601,112.37427665710071" target="_blank" rel="noopener">±648 mdpl</a></p>
+      <p>Kontak: <a href="https://adib-psych.github.io/myjourney/home.html" target="_blank" rel="noopener">Adib Asrori</a>, M.Psi, Psikolog (Wakif / Program Director) · <a href="mailto:asroriadib@gmail.com">asroriadib@gmail.com</a></p>
+      <p class="kop-mantra">Wakaf bukanlah apa yang diberikan, namun yang terus memberi — siapa pun yang merawatnya, berbagi dalam pahalanya. Satu mata air, tiga aliran: pendidikan, sosial, pemberdayaan ekonomi.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero">
+  <div class="hero-eyebrow">Notulen Rapat</div>
+  <h2>Diskusi Kolaborasi Riset Kebun Kopi Wakaf</h2>
+  <p class="hero-sub">dengan Tim Peneliti BRIN — Pusat Riset Teknologi Proses Pangan & Agroindustri</p>
+
+  <div class="hero-badges">
+    <span class="badge date">📅 Rabu, 13 Mei 2026 · 13.15 WIB</span>
+    <span class="badge status">📝 Menunggu Masukan Peserta</span>
+  </div>
+</section>
+
+<!-- ═══════ TOC ═══════ -->
+<nav class="toc" aria-label="Daftar Isi">
+  <strong>Daftar Isi</strong>
+  <ol>
+    <li><a href="#sec1">Identitas Pertemuan</a></li>
+    <li><a href="#sec2">Peserta &amp; Kompetensi</a></li>
+    <li><a href="#sec3">Profil Kebun &amp; Tantangan</a></li>
+    <li><a href="#sec4">Pendekatan Riset 3 Fase</a></li>
+    <li><a href="#sec5">Keputusan &amp; Kesepakatan</a></li>
+    <li><a href="#sec6">Action Items</a></li>
+    <li><a href="#feedback">📝 Beri Masukan</a></li>
+  </ol>
+</nav>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<main>
+
+  <section id="sec1">
+    <h3><span class="num">01</span> Identitas Pertemuan</h3>
+    <table class="info-table">
+      <tr><th>Hari &amp; Tanggal</th><td>Rabu, 13 Mei 2026</td></tr>
+      <tr><th>Waktu</th><td>13.15 WIB · Durasi ±60–90 menit</td></tr>
+      <tr><th>Format</th><td>Zoom Meeting (online)</td></tr>
+      <tr><th>Inisiator</th><td>Tim BRIN — Alvi Yani, Ph.D. (Pusat Riset Teknologi &amp; Proses Pangan)</td></tr>
+      <tr><th>Konteks</th><td>Tindak lanjut komunikasi telepon awal 11 Mei 2026 antara Bu Alvi Yani dan Adib Asrori</td></tr>
+    </table>
+  </section>
+
+  <section id="sec2">
+    <h3><span class="num">02</span> Peserta &amp; Kompetensi</h3>
+    <table class="info-table peserta-table">
+      <thead>
+        <tr><th>No</th><th>Nama</th><th>Posisi</th><th>Pusat Riset / Unit</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>Adib Asrori, M.Psi, Psikolog</td><td>Wakif / Program Director</td><td>Wakaf Produktif Kebun Kopi Ngantang</td></tr>
+        <tr><td>2</td><td>Alvi Yani, Ph.D.</td><td>Peneliti Senior</td><td>Pusat Riset Teknologi &amp; Proses Pangan (PRTPP) BRIN Serpong</td></tr>
+        <tr><td>3</td><td>Adnan Albahry, Ph.D.</td><td>Postharvest Technology Researcher</td><td>Kelompok Riset 8 "Peralatan Deteksi Cepat" BRIN</td></tr>
+        <tr><td>4</td><td>Arief Arianto, Ph.D.</td><td>Kepala Kelompok Riset Sistem Produksi &amp; Manajemen Agroindustri</td><td>Pusat Riset Agroindustri (PRA) BRIN</td></tr>
+        <tr><td>5</td><td>Heryoki Yohanes</td><td>Perekayasa Teknologi</td><td>Pusat Riset Teknologi &amp; Proses Pangan (PRTPP) BRIN Serpong</td></tr>
+        <tr><td>6</td><td>Noveria Sjafrina, Ph.D.</td><td>Senior Researcher</td><td>Pusat Riset Agroindustri (PRA) BRIN</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.82rem; color:var(--muted); font-style:italic; margin-top:6px;">Catatan: gelar akademik diisi berdasarkan sumber publik yang dapat diverifikasi. Mohon koreksi melalui formulir masukan di akhir halaman jika ada gelar tambahan yang perlu dicantumkan.</p>
+
+    <h4>Kompetensi &amp; Tawaran Konkret Tim Peneliti BRIN</h4>
+    <table class="info-table">
+      <tr><th>Alvi Yani, Ph.D.</th><td>Pasca panen kopi, metabolomik aroma, mikotoksin &amp; food safety biji kopi. Akan mengkoordinasikan tim BRIN untuk menyiapkan protokol pendampingan dan lead karakterisasi biji kopi.</td></tr>
+      <tr><th>Adnan Albahry, Ph.D.</th><td>Postharvest technology, Near Infrared (NIR) spectroscopy, multivariate analysis, deteksi cepat. Sedang mengembangkan alat uji cepat unsur hara tanah; akan menyediakan akses fasilitas laboratorium BRIN untuk analisis tanah kebun.</td></tr>
+      <tr><th>Arief Arianto, Ph.D.</th><td>Sistem produksi &amp; manajemen agroindustri, ketahanan pangan, value chain. Berperan sebagai anchor institutional kerjasama; framing PKS/MoU; koordinasi multi-PR internal BRIN.</td></tr>
+      <tr><th>Heryoki Yohanes</th><td>Engineering proses pangan; pengembangan teknologi peralatan pengolahan pangan BRIN.</td></tr>
+      <tr><th>Noveria Sjafrina, Ph.D.</th><td>Pasca panen pertanian umum; quality preservation &amp; storage technology.</td></tr>
+    </table>
+  </section>
+
+  <section id="sec3">
+    <h3><span class="num">03</span> Profil Kebun Kopi Wakaf yang Dibahas</h3>
+    <table class="info-table">
+      <tr><th>Lokasi</th><td>Jalan Makam Karaeng Galengsong, Kebonsari, Sumberagung, Kec. Ngantang, Kabupaten Malang, Jawa Timur 65392 · Ketinggian ±648 mdpl</td></tr>
+      <tr><th>Koordinat GPS</th><td><a href="https://www.google.com/maps?q=-7.85244830475601,112.37427665710071" target="_blank" rel="noopener">-7.85244830475601, 112.37427665710071</a></td></tr>
+      <tr><th>Luas Lahan</th><td>0,5 hektar, terbagi 3 blok terpisah</td></tr>
+      <tr><th>Status Hukum</th><td>Kebun Wakaf Produktif</td></tr>
+      <tr><th>Komoditas</th><td>Kopi Robusta — tanaman berusia &gt;40 tahun</td></tr>
+      <tr><th>Produktivitas Saat Ini</th><td>±350 kg/tahun (~700 kg/hektar)</td></tr>
+      <tr><th>Praktik Panen</th><td>Setahun sekali (Juli) · pengolahan dominan metode natural</td></tr>
+      <tr><th>Penjualan</th><td>Cherry langsung; sebagian dari 2 tahun terakhir mulai diolah hingga hasil panen green bean, sortasi, grading dan produk olahan kopi</td></tr>
+    </table>
+
+    <h4>Tantangan Teknis yang Teridentifikasi</h4>
+    <ul class="bullets">
+      <li>Kebun terabaikan selama 3–4 tahun saat Wakif bertugas di luar negeri; baru fokus pengelolaan intensif dalam 2 tahun terakhir</li>
+      <li>Pemupukan terakhir dilakukan pertengahan Maret 2026</li>
+      <li>Pemangkasan baru dimulai kembali minggu ini (terlambat dari waktu ideal pasca-pemupukan)</li>
+      <li>Praktik panen petani lokal masih dominan metode panen asalan (campuran hijau-merah); terdapat resistensi terhadap petik merah selektif</li>
+      <li>Kerjasama tenaga ahli sebelumnya berakhir karena pendekatan tidak sepenuhnya selaras dengan misi Wakaf Produktif</li>
+    </ul>
+  </section>
+
+  <section id="sec4">
+    <h3><span class="num">04</span> Pendekatan Riset 3 Fase yang Diusulkan Tim BRIN</h3>
+    <p style="font-size:0.94rem; margin-bottom:18px;">Tim BRIN mengusulkan kerangka tiga fase untuk meningkatkan produktivitas dan karakterisasi kebun kopi Wakaf Ngantang.</p>
+
+    <h4>Fase 1 — Diagnosis &amp; Baseline</h4>
+    <ul class="bullets">
+      <li>Identifikasi varietas kopi yang ditanam (asal bibit perlu ditelusuri)</li>
+      <li>Evaluasi kesehatan tanaman, deteksi hama/penyakit, analisis struktur kanopi</li>
+      <li>Analisis tanah: NPK, pH, ketersediaan nutrisi — dengan dukungan alat uji cepat hara tanah yang sedang dikembangkan Pak Adnan</li>
+      <li>Verifikasi ketersediaan air (curah hujan teoritis ±1.500–2.400 mm/tahun)</li>
+      <li>Evaluasi kerapatan tanam dan kesesuaian Robusta pada ketinggian 648 mdpl</li>
+    </ul>
+
+    <h4>Fase 2 — Intervensi Bertahap</h4>
+    <ul class="bullets">
+      <li><strong>Opsi A — Pemangkasan selektif:</strong> uji coba 10–20 pohon, pemangkasan 20–30% cabang untuk meningkatkan fotosintesis (bukan perombakan total)</li>
+      <li><strong>Opsi B — Replanting bertahap</strong> per blok bila varietas terbukti rendah produktivitas</li>
+      <li>Target peningkatan produktivitas realistis: 1,5–2 ton/hektar</li>
+      <li>BRIN memiliki akses varietas unggul melalui jaringan peneliti internal</li>
+      <li>Sistem demplot sebagai sarana pembelajaran masyarakat sekitar</li>
+    </ul>
+
+    <h4>Fase 3 — Karakterisasi Produk</h4>
+    <ul class="bullets">
+      <li>Identifikasi profil aroma kopi melalui pendekatan metabolik (kompetensi Bu Alvi Yani)</li>
+      <li>Karakterisasi parameter mutu biji kopi melalui Near Infrared (NIR) spectroscopy (kompetensi Pak Adnan)</li>
+      <li>Eksplorasi karakteristik unsur senyawa kopi pada tanaman berusia 40+ tahun — potensi specialty profile</li>
+      <li>Pengembangan metode pengolahan alternatif selain natural</li>
+      <li>Eksplorasi positioning Indikasi Geografis (IG) untuk kopi Ngantang</li>
+    </ul>
+  </section>
+
+  <section id="sec5">
+    <h3><span class="num">05</span> Keputusan &amp; Kesepakatan</h3>
+
+    <h4>Model Kerjasama</h4>
+    <ul class="bullets">
+      <li>Kerjasama dimulai dengan pendampingan sederhana, tidak harus menunggu PKS/MoU formal</li>
+      <li>PKS/MoU formal dapat menyusul secara simultan dengan pelaksanaan teknis lapangan</li>
+      <li><em>Prinsip Operasional:</em> Wakif tetap menjalankan intervensi di kebun, BRIN berperan mengarahkan secara teknis dan akan mengambil data untuk pembelajaran riset, dokumentasi <em>"good practices dan lesson learned"</em></li>
+      <li>BRIN menyediakan akses fasilitas laboratorium untuk analisis tanah dan karakterisasi biji kopi</li>
+    </ul>
+
+    <h4>Legalitas untuk PKS</h4>
+    <ul class="bullets">
+      <li>Dapat menggunakan yayasan TPQ yang sudah ada bila Wakif belum memiliki yayasan sendiri</li>
+      <li>Opsi yang disepakati fleksibel — finalisasi akan dilakukan setelah diskusi lanjutan</li>
+    </ul>
+
+    <h4>Target &amp; Cakupan Awal</h4>
+    <ul class="bullets">
+      <li>Target produktivitas: 1,5–2 ton/hektar (realistis dari kondisi saat ini ±700 kg/hektar)</li>
+      <li>Pengambilan sampel awal minimal (1–2 sampel) untuk karakterisasi</li>
+      <li>Potensi pengembangan agrowisata dan Living Lab edukasi masyarakat</li>
+    </ul>
+
+    <h4>Potensi Pengembangan yang Dibahas</h4>
+    <ul class="bullets">
+      <li><strong>Pengolahan pasca-panen alternatif</strong> — eksplorasi metode honey, wet, atau anaerobic selain metode natural untuk menghasilkan profil cita rasa specialty</li>
+      <li><strong>Indikasi Geografis (IG) Ngantang</strong> sebagai jalur positioning kopi specialty dengan terroir signature</li>
+      <li><strong>Karakterisasi senyawa biji kopi 40+ tahun</strong> — eksplorasi potensi specialty profile yang dihasilkan tanaman tua</li>
+      <li><strong>Living Lab edukasi masyarakat</strong> — kebun wakaf sebagai ruang belajar terbuka untuk petani sekitar; sistem demplot</li>
+      <li><strong>Agrowisata dengan konsep panen bersama</strong> — leveraging lokasi dekat Waduk Selorejo dan akses jalan beraspal</li>
+    </ul>
+
+    <h4>Fasilitas &amp; Sumberdaya yang BRIN Tawarkan</h4>
+    <ul class="bullets">
+      <li>Akses fasilitas laboratorium BRIN untuk analisis tanah (NPK, pH, nutrisi tersedia)</li>
+      <li>Peralatan Near Infrared (NIR) spectroscopy untuk karakterisasi cepat parameter mutu biji kopi</li>
+      <li>Alat uji cepat unsur hara tanah (sedang dikembangkan tim Pak Adnan Albahry)</li>
+      <li>Jaringan peneliti internal BRIN untuk konsultasi varietas kopi, termasuk rekanan Universitas Brawijaya</li>
+      <li>Protokol pendampingan teknis yang akan disiapkan oleh tim PRTPP dan PRA</li>
+    </ul>
+  </section>
+
+  <section id="sec6">
+    <h3><span class="num">06</span> Langkah Selanjutnya (Action Items)</h3>
+    <table class="info-table peserta-table">
+      <thead><tr><th>No</th><th>Tugas</th><th>Penanggung Jawab</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Menyampaikan dokumentasi lengkap dan timeline pengelolaan kebun</td><td>Adib Asrori (Wakif)</td></tr>
+        <tr><td>2</td><td>Koordinasi internal tim BRIN untuk menyiapkan protokol pendampingan</td><td>Bu Alvi Yani &amp; Tim PRTPP</td></tr>
+        <tr><td>3</td><td>Akses fasilitas laboratorium BRIN untuk analisis tanah kebun</td><td>Pak Adnan Albahry &amp; Tim Kelris 8</td></tr>
+        <tr><td>4</td><td>Menghubungi peneliti internal BRIN untuk konsultasi varietas kopi adaptif Malang, termasuk rekanan Universitas Brawijaya</td><td>Pak Adnan Albahry</td></tr>
+        <tr><td>5</td><td>Review informasi dasar yang sudah dibagikan untuk persiapan diagnosis</td><td>Pak Arief Arianto</td></tr>
+        <tr><td>6</td><td>Melanjutkan pemangkasan yang sudah dimulai dan mendokumentasikan prosesnya</td><td>Adib Asrori (Wakif)</td></tr>
+        <tr><td>7</td><td>Penyiapan pengambilan data baseline (NPK tanah, pH, hama/penyakit)</td><td>Tim BRIN multi-PR</td></tr>
+        <tr><td>8</td><td>Penjadwalan kunjungan lapangan ke kebun untuk pengambilan data baseline</td><td>Tim BRIN &amp; Wakif</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</main>
+
+<!-- ═══════ FEEDBACK SECTION ═══════ -->
+<section id="feedback" class="feedback-section">
+  <div class="feedback-inner">
+    <h3><span class="num">📝</span> Kotak Masukan, Koreksi &amp; Edit</h3>
+    <p class="intro">
+      Mohon kami terima masukan, koreksi, atau hal yang perlu diperjelas dari peserta meeting untuk perbaikan notulensi ini — khususnya terkait <em>action plan</em>, target waktu, atau aspek teknis. Setiap masukan akan kami pertimbangkan dan dokumentasikan dalam revisi notulen berikutnya.
+    </p>
+
+    <form class="feedback-form" id="feedbackForm" method="POST">
+      <div class="form-grid">
+        <div class="field">
+          <label>Nama Lengkap <span class="req">*</span></label>
+          <input type="text" name="nama" required placeholder="Contoh: Dr. Alvi Yani">
+        </div>
+        <div class="field">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" name="_replyto" required placeholder="email@brin.go.id">
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field">
+          <label>Institusi / Posisi <span class="req">*</span></label>
+          <input type="text" name="institusi" required placeholder="Contoh: Peneliti Senior — PRTPP BRIN">
+        </div>
+        <div class="field">
+          <label>Bagian Notulen yang Dikomentari</label>
+          <select name="bagian">
+            <option value="Umum">Umum / Keseluruhan</option>
+            <option value="Section 1 - Identitas Pertemuan">1. Identitas Pertemuan</option>
+            <option value="Section 2 - Peserta & Kompetensi">2. Peserta &amp; Kompetensi</option>
+            <option value="Section 3 - Profil Kebun & Tantangan">3. Profil Kebun &amp; Tantangan</option>
+            <option value="Section 4 - Pendekatan Riset 3 Fase">4. Pendekatan Riset 3 Fase</option>
+            <option value="Section 5 - Keputusan & Kesepakatan">5. Keputusan &amp; Kesepakatan</option>
+            <option value="Section 6 - Action Items">6. Action Items</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom: 16px;">
+        <label>Masukan / Koreksi / Edit <span class="req">*</span></label>
+        <textarea name="masukan" required placeholder="Silakan tuliskan masukan, koreksi data, perubahan action plan, atau hal lain yang perlu diperjelas..."></textarea>
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" name="persetujuan_publikasi" value="ya">
+        <span>Saya bersedia masukan ini dipertimbangkan dan dirujuk secara terbatas dalam revisi notulen internal program Wakaf Produktif Kebun Kopi Ngantang. (Opsional)</span>
+      </label>
+
+      <!-- Hidden fields for Formspree -->
+      <input type="hidden" name="_subject" value="Masukan Notulen BRIN Serpong - 13 Mei 2026">
+      <input type="text" name="_gotcha" style="display:none">
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          <span>📤</span> Kirim Masukan
+        </button>
+        <a href="mailto:asroriadib@gmail.com?subject=Masukan%20Notulen%20BRIN%20Serpong%2013%20Mei%202026&body=Nama%3A%20%0AInstitusi%2FPosisi%3A%20%0ABagian%20Notulen%3A%20%0A%0AMasukan%3A%0A" class="btn btn-secondary">
+          <span>✉</span> Kirim via Email Langsung
+        </a>
+      </div>
+
+      <div id="form-success">
+        ✓ Terima kasih atas masukannya. Notulensi akan diperbarui mengikuti masukan dari peserta meeting. Anda akan dihubungi kembali bila diperlukan klarifikasi lanjutan.
+      </div>
+      <div id="form-error">
+        Maaf, terjadi kendala teknis saat mengirim. Mohon gunakan tombol "Kirim via Email Langsung" sebagai alternatif.
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer>
+  <p>Notulen disusun oleh:</p>
+  <img src="./images/signature-adib.png" alt="Tanda tangan Adib Asrori" style="height: 56px; margin: 6px auto 0; display: block; opacity: 0.85;">
+  <p class="signature" style="margin-top: 0;">Adib Asrori, M.Psi, Psikolog</p>
+  <p><em>Wakif / Program Director — Wakaf Produktif Kebun Kopi Ngantang</em></p>
+  <p style="margin-top: 18px;">Ngantang, 13 Mei 2026 · Dokumen versi terkini, terbuka untuk koreksi peserta meeting</p>
+  <p style="margin-top: 8px; font-size: 0.78rem;">© 2026 Wakaf Produktif Kebun Kopi Ngantang</p>
+</footer>
+
+<!-- ═══════ FLOATING CTA ═══════ -->
+<a href="#feedback" class="floating-cta" id="floatingCta">
+  <span>📝</span> Beri Masukan
+</a>
+
+<script>
+// Hide floating CTA when feedback section is visible
+const cta = document.getElementById('floatingCta');
+const feedbackSection = document.getElementById('feedback');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) cta.classList.add('hidden');
+    else cta.classList.remove('hidden');
+  });
+}, { threshold: 0.1 });
+observer.observe(feedbackSection);
+
+// ════════════════════════════════════════════════════════════
+// FORM SUBMISSION — Google Apps Script Web App endpoint
+// ════════════════════════════════════════════════════════════
+// Setelah deploy Apps Script, ganti URL di bawah dengan
+// Web App URL yang didapat dari Deploy > New deployment.
+// Format URL: https://script.google.com/macros/s/AKfycb.../exec
+// ════════════════════════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwaSTGyutQJNRIV33o4R_nbktcWjn2SwSk-Y9zCAYI2-N8zJ-vauBQ64l9x0ETsg64/exec';
+
+const form = document.getElementById('feedbackForm');
+const successMsg = document.getElementById('form-success');
+const errorMsg = document.getElementById('form-error');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  // Validate setup
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL') {
+    alert('⚠ Form belum di-setup. Mohon gunakan tombol "Kirim via Email Langsung" sebagai gantinya.\n\n(Admin: paste URL Apps Script Web App di variabel SCRIPT_URL pada file HTML ini.)');
+    return;
+  }
+
+  successMsg.style.display = 'none';
+  errorMsg.style.display = 'none';
+
+  // Convert FormData → URLSearchParams (simple request, no CORS preflight)
+  const formData = new FormData(form);
+  const params = new URLSearchParams();
+  for (const [key, value] of formData) {
+    params.append(key, value);
+  }
+
+  // Show loading state
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn.innerHTML;
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span>⏳</span> Mengirim...';
+
+  try {
+    const response = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: params,
+      // Note: Apps Script Web App returns response, but CORS may block reading it.
+      // Submission still succeeds. Use no-cors mode if read fails.
+    });
+
+    // Apps Script may redirect — treat OK and redirect as success
+    if (response.ok || response.status === 0 || response.type === 'opaqueredirect') {
+      successMsg.style.display = 'block';
+      form.reset();
+      successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+      throw new Error('HTTP ' + response.status);
+    }
+  } catch (err) {
+    // Fallback: try no-cors mode (fire-and-forget)
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: params
+      });
+      // Assume success since no-cors can't read response
+      successMsg.style.display = 'block';
+      form.reset();
+      successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } catch (err2) {
+      console.error('Form submission failed:', err2);
+      errorMsg.style.display = 'block';
+    }
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+  }
+});
+</script>
+
+</body>
+</html>
