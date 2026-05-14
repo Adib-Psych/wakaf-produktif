@@ -3172,25 +3172,80 @@ async function generateBuktiBayar() {
       allowTaint: false
     });
 
-    canvas.toBlob(blob => {
-      if (!blob) {
-        alert('❌ Gagal generate PNG. Coba lagi atau cek console.');
-        return;
-      }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `${nomorBukti}.png`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 500);
+    // Use toDataURL (works universally in Safari, Chrome, Firefox)
+    // — vs toBlob+URL.createObjectURL which causes WebKitBlobResource error in Safari
+    const dataUrl = canvas.toDataURL('image/png');
+    const filename = `${nomorBukti}.png`;
 
-      // Friendly confirmation
-      setTimeout(() => {
-        alert(`✅ BUKTI BAYAR BERHASIL DI-DOWNLOAD\n\nFile: ${nomorBukti}.png\n\n📊 Ringkasan:\n• Penerima: ${namaPenerima}\n• Total Item: ${items.length}\n• Total Dibayar: Rp ${total.toLocaleString('id-ID')}\n• Sumber: ${sumberDana}\n\n📱 Cara share ke pekerja:\nBuka WhatsApp → chat pekerja → Attach → Foto → pilih file ${nomorBukti}.png yang baru di-download.`);
-      }, 250);
-    }, 'image/png');
+    // Build summary message
+    const summaryMsg = `📊 RINGKASAN BUKTI BAYAR\n\n• No. Bukti: ${nomorBukti}\n• Penerima: ${namaPenerima}\n• Total Item: ${items.length}\n• Total Dibayar: Rp ${total.toLocaleString('id-ID')}\n• Sumber Dana: ${sumberDana}\n\n📱 Cara share ke pekerja:\n1. Download/save file ${filename}\n2. Buka WhatsApp → chat pekerja\n3. Attach → Foto/Galeri → pilih file\n4. Send\n\nBarakallahu fiikum.`;
+
+    // Open in new window — universal solution that works in Safari + Chrome + Firefox
+    // User sees full receipt + explicit Download button + right-click Save option
+    const win = window.open('', '_blank', 'width=900,height=1200,scrollbars=yes');
+    if (!win) {
+      // Popup blocked — fallback to direct download attempt + alert
+      alert('⚠️ Popup terblokir browser.\n\nUntuk fix:\n• Safari: Preferences → Websites → Pop-ups → Allow for site\n• Chrome: Klik ikon popup di address bar → Allow\n\nLalu klik Bukti Bayar lagi.');
+      return;
+    }
+
+    const previewHTML = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>${filename} — Wakaf Produktif</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,'Segoe UI',Helvetica,sans-serif;background:#2e4040;min-height:100vh;padding:0}
+    .toolbar{position:sticky;top:0;background:linear-gradient(135deg,#1F5F47,#5a9080);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:10}
+    .toolbar h1{font-size:14px;font-weight:800;letter-spacing:.5px}
+    .toolbar h1 small{display:block;font-size:11px;font-weight:600;color:#a8c8bc;margin-top:2px;letter-spacing:.3px}
+    .toolbar .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .toolbar button,.toolbar a{background:#fff;color:#1F5F47;border:0;padding:8px 16px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:.15s}
+    .toolbar button:hover,.toolbar a:hover{background:#a8c8bc;color:#2e4040;transform:translateY(-1px)}
+    .toolbar button.primary,.toolbar a.primary{background:#D4AF37;color:#2e4040}
+    .toolbar button.primary:hover,.toolbar a.primary:hover{background:#ffd95c}
+    .hint{background:#3a5050;color:#e8dec8;padding:10px 22px;font-size:12px;line-height:1.5;border-bottom:1px solid #5a9080}
+    .hint strong{color:#fff}
+    .img-wrap{padding:24px 16px;display:flex;justify-content:center;align-items:flex-start;background:#2e4040;min-height:calc(100vh - 100px)}
+    .img-wrap img{max-width:100%;height:auto;border-radius:8px;box-shadow:0 12px 40px rgba(0,0,0,.6);background:#fff;display:block}
+    @media print {.toolbar,.hint{display:none}.img-wrap{padding:0;background:#fff;min-height:0}.img-wrap img{box-shadow:none;border-radius:0}}
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <h1>📄 BUKTI PEMBAYARAN UPAH<small>${filename}</small></h1>
+    <div class="actions">
+      <a class="primary" href="${dataUrl}" download="${filename}" id="dl-btn">📥 Download PNG</a>
+      <button onclick="window.print()">🖨️ Print</button>
+      <button onclick="window.close()">✕ Tutup</button>
+    </div>
+  </div>
+  <div class="hint">
+    💡 <strong>Cara save ke device:</strong> Klik tombol "📥 Download PNG" di atas.
+    Kalau tidak otomatis ter-download (Safari kadang block), <strong>klik kanan pada gambar</strong> di bawah → pilih <strong>"Save Image As..."</strong> → simpan dengan nama <code>${filename}</code>.
+  </div>
+  <div class="img-wrap">
+    <img src="${dataUrl}" alt="Bukti Bayar ${nomorBukti}" id="receipt-img">
+  </div>
+  <script>
+    // Auto-trigger download (works in most browsers)
+    setTimeout(() => {
+      const btn = document.getElementById('dl-btn');
+      if (btn) btn.click();
+    }, 500);
+  <\/script>
+</body>
+</html>`;
+
+    win.document.open();
+    win.document.write(previewHTML);
+    win.document.close();
+
+    // Show summary alert in parent window
+    setTimeout(() => {
+      alert('✅ BUKTI BAYAR BERHASIL DI-GENERATE\n\n' + summaryMsg + '\n\n💡 Bukti Bayar terbuka di tab baru. Download otomatis dicoba — kalau gagal, klik tombol "📥 Download PNG" atau klik kanan gambar → Save Image As.');
+    }, 300);
   } catch (e) {
     console.error('html2canvas error:', e);
     alert('❌ Gagal generate Bukti Bayar.\n\nError: ' + (e.message || e) + '\n\nCek console untuk detail.');
