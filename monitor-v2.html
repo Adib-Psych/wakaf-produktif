@@ -3092,8 +3092,17 @@ async function generateBuktiBayar() {
     const statusIco = it.status === 'lunas' ? '✓' : '⏳';
     const rowBg = i % 2 === 0 ? '#fafbfa' : '#ffffff';
     // Activity description with inline qty/tarif detail
-    // Format "qty× satuan" (× attached to qty) — prevents misread "1 ½ hari" as "1.5 hari"
-    const aktDesc = `<span style="color:#2e4040;font-weight:600">${it.aktivitas}</span> <span style="color:#6b7878;font-size:11px">· ${statusIco} ${it.qty}× ${it.satuan_lbl || it.satuan} · Rp ${it.tarif.toLocaleString('id-ID')}</span>`;
+    // Harian: drop qty prefix (each row = 1 unit by definition), normalize "full day" → "1 hari"
+    // Borongan: keep qty prefix (qty bisa > 1, mis. 5 pohon durian)
+    let qtyDisplay;
+    if (it.model === 'harian') {
+      let lbl = it.satuan_lbl || it.satuan;
+      if (lbl === 'full day') lbl = '1 hari';
+      qtyDisplay = lbl;
+    } else {
+      qtyDisplay = `${it.qty}× ${it.satuan_lbl || it.satuan}`;
+    }
+    const aktDesc = `<span style="color:#2e4040;font-weight:600">${it.aktivitas}</span> <span style="color:#6b7878;font-size:11px">· ${statusIco} ${qtyDisplay} · Rp ${it.tarif.toLocaleString('id-ID')}</span>`;
     return `<tr style="background:${rowBg}">
       <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;color:#2e4040;white-space:nowrap;vertical-align:middle"><span style="color:#5a9080;font-weight:700;display:inline-block;width:22px">${i+1}.</span><span style="font-weight:600">${tglStr}</span></td>
       <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;line-height:1.45;vertical-align:middle">${aktDesc}</td>
