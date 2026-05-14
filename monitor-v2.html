@@ -82,7 +82,7 @@
   /* FORM HERO BANNER */
   .form-hero-banner{position:relative;margin-bottom:14px;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);background:#fff;line-height:0;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease}
   .form-hero-banner:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(46,64,64,.12)}
-  .form-hero-banner img{width:100%;height:auto;display:block}
+  .form-hero-banner img{width:100%;height:auto;max-height:280px;object-fit:cover;object-position:center;display:block}
   .form-hero-banner .hero-dismiss-btn{position:absolute;top:8px;right:8px;background:rgba(46,64,64,.78);color:#fff;border:none;width:30px;height:30px;border-radius:50%;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;transition:background .15s ease;z-index:2}
   .form-hero-banner .hero-dismiss-btn:hover{background:rgba(193,75,58,.92)}
   .form-hero-banner .hero-hint{position:absolute;bottom:8px;left:12px;background:rgba(255,255,255,.92);color:var(--earth);font-size:10px;font-weight:700;letter-spacing:.5px;padding:4px 10px;border-radius:20px;line-height:1.2;z-index:2;text-transform:uppercase}
@@ -372,7 +372,7 @@
 
       <!-- HERO BANNER — Panduan Cara Lapor (dismissible, lightbox on click) -->
       <div class="form-hero-banner" id="form-hero-banner" onclick="openHeroLightbox(event)" title="Klik untuk perbesar — Panduan Cara Lapor Harian">
-        <img src="images/Cara Lapor Landscape for Hero Form Input Page.png" alt="Panduan Cara Lapor Harian Tim Lapangan — 5 hal wajib, Cara A chat & Cara B voice note">
+        <img src="images/cara-lapor-banner.png" alt="Panduan Cara Lapor Harian Tim Lapangan — 5 hal wajib, Cara A chat & Cara B voice note">
         <div class="hero-hint">📖 Klik untuk perbesar panduan</div>
         <button class="hero-dismiss-btn" onclick="dismissFormHero(event)" title="Sembunyikan panduan ini">✕</button>
       </div>
@@ -5959,7 +5959,7 @@ function openHeroLightbox(ev){
     lb.className = 'hero-lightbox';
     lb.innerHTML = `
       <button class="lb-close" onclick="closeHeroLightbox(event)" title="Tutup">✕</button>
-      <img src="images/Cara Lapor Landscape for Hero Form Input Page.png" alt="Panduan Cara Lapor — full size">
+      <img src="images/cara-lapor-banner.png" alt="Panduan Cara Lapor — full size">
     `;
     lb.addEventListener('click', (e) => { if (e.target === lb) closeHeroLightbox(); });
     document.body.appendChild(lb);
