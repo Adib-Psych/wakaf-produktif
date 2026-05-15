@@ -611,7 +611,7 @@ p, .page-hero-desc, .section-lead, .fase-body, .fase-lesson,
 <header class="navbar">
   <div class="navbar-inner">
     <a href="index.html" class="navbar-logo">
-      <img src="images/logo-wakaf-produktif-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:54px;width:auto;max-width:108px;display:block;border-radius:4px">
+      <img src="images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
     </a>
     <div class="navbar-right">
       <nav>
@@ -626,10 +626,16 @@ p, .page-hero-desc, .section-lead, .fase-body, .fase-lesson,
       </nav>
       <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
       <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-      <a href="https://adib-psych.github.io/myjourney/home.html" target="_blank" rel="noopener" class="rwi-nav-badge" title="Lihat profil Wakif">
+      <a href="https://adib-psych.github.io/myjourney/home.html" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif">
         <div class="rwi-nav-text">
           <div class="rwi-nav-label">Wakif</div>
           <div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div>
+        </div>
+      </a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile">
+        <div class="rwi-nav-text">
+          <div class="rwi-nav-label">Waqif</div>
+          <div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div>
         </div>
       </a>
     </div>
@@ -1475,6 +1481,7 @@ p, .page-hero-desc, .section-lead, .fase-body, .fase-lesson,
   const INLINE_BLOCK_TAGS = new Set(['a']);
   function getDisplayType(el) {
     const tag = el.tagName.toLowerCase();
+    if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
     if (INLINE_TAGS.has(tag))       return 'inline';
     if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
     return 'block';
