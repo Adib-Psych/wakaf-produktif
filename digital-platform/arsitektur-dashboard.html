@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arsitektur Monitoring Dashboard → Living Lab · Public View — Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Diagram arsitektur sistem monitoring & living lab Wakaf Produktif Kebun Kopi Ngantang — 5-layer separation, data flow end-to-end, editorial curation. Public reference untuk donatur, BRIN, komunitas.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Aligned dengan website living-lab.html (Eucalyptus R2 palette) */
+    --dark:    #2e4040;
+    --medium:  #5a9080;
+    --light:   #a8c8bc;
+    --accent:  #c4906a;        /* warm tan — replace cherry red */
+    --bg:      #f0f5f3;        /* mint background */
+    --bg-tint: #e8f4f0;
+    --bg-deep: #d8eeea;
+    --white:   #ffffff;
+    --text:    #1e3030;
+    --muted:   #5a7878;
+
+    /* Alias lama (kompatibilitas internal) */
+    --earth: var(--dark);
+    --moss: var(--medium);
+    --sage: var(--light);
+    --sand: #E8DEC8;
+    --accent-tint: #f0e0d4;    /* replace #FDE2DC cherry-tint */
+    --accent-mid:  #e6c5a8;    /* replace #F4B8AB */
+    --cream: #F5F0E6;
+    --gold: #D4AF37;
+    --darkgreen: #1F5F47;
+    --ink: var(--text);
+    --mute: var(--muted);
+    --green: #2E7D5E;
+    --blue: #2C5B80; --bluelt: #DCE9F0;
+    --orange: #E67E22; --orangelt: #FFF4D6;
+    --greenlt: #E8F1EC;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink); padding: 20px 12px;
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 1480px; margin: 0 auto; background: white;
+    border-radius: 16px; box-shadow: 0 6px 32px rgba(46,64,64,.1);
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--darkgreen), var(--moss));
+    color: white; padding: 28px 36px 22px; position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ""; position: absolute; top: -60px; right: -60px;
+    width: 260px; height: 260px;
+    background: rgba(212,175,55,.18); border-radius: 50%;
+  }
+  .header-inner {
+    position: relative; z-index: 2;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 20px;
+  }
+  .header-text { flex: 1; min-width: 300px; }
+  .header-logo {
+    width: 160px; height: 80px;
+    object-fit: contain;
+    flex-shrink: 0;
+    position: relative; z-index: 2;
+  }
+  .header-tag {
+    font-size: 11px; font-weight: 800; letter-spacing: 2.5px;
+    color: var(--sage); margin-bottom: 8px;
+  }
+  .header h1 { font-size: 28px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 6px; line-height: 1.15; }
+  .header h1 em { color: var(--gold); font-style: normal; }
+  .header .sub { font-size: 14px; color: var(--sand); max-width: 900px; }
+  .header .meta {
+    display: inline-block; margin-top: 12px;
+    background: rgba(255,255,255,.16);
+    border: 1.5px solid rgba(255,255,255,.32);
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 11px; font-weight: 700;
+  }
+
+  /* MAIN CONTAINER */
+  .architecture { padding: 32px 36px 28px; }
+
+  /* LAYER WRAPPER */
+  .layer {
+    background: white; border-radius: 14px;
+    padding: 18px 22px; margin-bottom: 18px;
+    border: 2px solid #e8e4dc;
+    position: relative;
+  }
+  .layer-tag {
+    position: absolute; top: -12px; left: 22px;
+    background: var(--earth); color: white;
+    padding: 4px 14px; border-radius: 100px;
+    font-size: 10px; font-weight: 800; letter-spacing: 1.5px;
+  }
+  .layer-tag.l1 { background: var(--blue); }
+  .layer-tag.l2 { background: var(--moss); }
+  .layer-tag.l3 { background: var(--gold); color: var(--earth); }
+  .layer-tag.l4 { background: var(--accent); }
+  .layer-tag.l5 { background: var(--darkgreen); }
+
+  .layer-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; padding-bottom: 10px;
+    border-bottom: 2px dashed var(--sage);
+    flex-wrap: wrap; gap: 8px;
+  }
+  .layer-title {
+    font-size: 17px; font-weight: 800; color: var(--earth);
+    letter-spacing: -.2px;
+  }
+  .layer-title .icon {
+    display: inline-block; width: 36px; height: 36px;
+    background: var(--cream); border-radius: 50%;
+    text-align: center; line-height: 36px;
+    font-size: 18px; margin-right: 10px;
+    vertical-align: middle;
+  }
+  .layer-desc {
+    font-size: 12px; color: var(--mute);
+    flex: 1; max-width: 600px; text-align: right;
+  }
+
+  /* BOX GRID */
+  .box-grid {
+    display: grid; gap: 10px;
+  }
+  .box-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .box-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .box-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+  .box-grid.cols-6 { grid-template-columns: repeat(6, 1fr); }
+
+  /* BOX */
+  .box {
+    background: white;
+    border: 1.5px solid var(--sage);
+    border-radius: 10px;
+    padding: 10px 12px;
+    position: relative;
+    transition: .15s;
+  }
+  .box:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(46,64,64,.1); }
+  .box.input { background: var(--bluelt); border-color: var(--blue); }
+  .box.storage { background: var(--cream); border-color: var(--gold); }
+  .box.process { background: var(--greenlt); border-color: var(--moss); }
+  .box.tab { background: white; border-color: var(--moss); }
+  .box.wakif-only { background: #fef3d7; border-color: var(--gold); }
+  .box.financial { background: #fff8e6; border-color: var(--orange); border-style: dashed; }
+  .box.bridge { background: var(--cream); border-color: var(--accent); }
+  .box.public { background: var(--greenlt); border-color: var(--darkgreen); }
+  .box.external { background: #f5f5f5; border-color: var(--mute); border-style: dashed; }
+
+  .box-name {
+    font-size: 12px; font-weight: 800;
+    color: var(--earth); margin-bottom: 3px;
+    line-height: 1.3;
+  }
+  .box-name .ico {
+    font-size: 14px; margin-right: 4px;
+  }
+  .box-detail {
+    font-size: 10.5px; color: var(--mute);
+    line-height: 1.45;
+  }
+  .box-detail code {
+    background: rgba(0,0,0,.06); padding: 1px 4px;
+    border-radius: 3px; font-size: 9.5px; color: var(--earth);
+    font-family: 'Courier New', monospace;
+  }
+
+  /* FLOW ARROW between layers */
+  .flow-arrow {
+    display: flex; align-items: center; justify-content: center;
+    margin: -6px 0 12px; position: relative; z-index: 5;
+  }
+  .flow-arrow .label {
+    background: var(--earth); color: white;
+    padding: 5px 14px; border-radius: 100px;
+    font-size: 10px; font-weight: 800;
+    letter-spacing: 1.5px;
+    box-shadow: 0 3px 10px rgba(46,64,64,.18);
+    position: relative;
+  }
+  .flow-arrow .label::before,
+  .flow-arrow .label::after {
+    content: ""; position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 100px; height: 2px;
+    background: var(--earth);
+  }
+  .flow-arrow .label::before { right: 100%; margin-right: 6px; }
+  .flow-arrow .label::after { left: 100%; margin-left: 6px; }
+  .flow-arrow .label::after::after {
+    content: "▶"; position: absolute;
+    right: -8px; top: -7px; color: var(--earth);
+  }
+  .flow-arrow.bridge .label { background: var(--accent); }
+  .flow-arrow.bridge .label::before, .flow-arrow.bridge .label::after { background: var(--accent); }
+
+  /* SECTION SUBDIVIDER inside layer */
+  .sub-section {
+    margin-top: 12px;
+  }
+  .sub-section-label {
+    font-size: 10px; font-weight: 800;
+    color: var(--mute); letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px;
+    padding-left: 4px; border-left: 3px solid var(--sage);
+  }
+
+  /* EXTERNAL REFS */
+  .external-refs {
+    background: #f8f7f1;
+    border-radius: 12px;
+    padding: 16px 20px;
+    border-left: 5px solid var(--mute);
+  }
+  .external-refs-title {
+    font-size: 13px; font-weight: 800;
+    color: var(--earth); margin-bottom: 10px;
+  }
+  .external-refs .box-grid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+
+  /* LEGEND */
+  .legend {
+    margin-top: 20px; padding: 14px 20px;
+    background: var(--cream); border-radius: 10px;
+    display: flex; flex-wrap: wrap; gap: 14px;
+    font-size: 11px; color: var(--earth);
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .legend-swatch {
+    width: 16px; height: 16px; border-radius: 4px;
+    border: 1.5px solid;
+  }
+  .legend-swatch.input { background: var(--bluelt); border-color: var(--blue); }
+  .legend-swatch.storage { background: var(--cream); border-color: var(--gold); }
+  .legend-swatch.process { background: var(--greenlt); border-color: var(--moss); }
+  .legend-swatch.tab { background: white; border-color: var(--moss); }
+  .legend-swatch.wakif-only { background: #fef3d7; border-color: var(--gold); }
+  .legend-swatch.financial { background: #fff8e6; border-color: var(--orange); border-style: dashed; }
+  .legend-swatch.bridge { background: var(--cream); border-color: var(--accent); }
+  .legend-swatch.public { background: var(--greenlt); border-color: var(--darkgreen); }
+  .legend-swatch.external { background: #f5f5f5; border-color: var(--mute); border-style: dashed; }
+
+  /* FOOTER */
+  .footer {
+    background: var(--earth); color: var(--sand);
+    padding: 14px 36px; font-size: 11px;
+    text-align: center; line-height: 1.6;
+  }
+  .footer strong { color: white; }
+
+  /* MOBILE adjustments */
+  @media (max-width: 900px) {
+    .box-grid.cols-3, .box-grid.cols-4, .box-grid.cols-5, .box-grid.cols-6 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .layer-header { flex-direction: column; align-items: flex-start; }
+    .layer-desc { text-align: left; }
+    .header-inner { justify-content: center; }
+    .header-logo { width: 130px; height: 65px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-inner">
+      <div class="header-text">
+        <div class="header-tag">🏗️ SYSTEM ARCHITECTURE · DATA FLOW · PUBLIC VIEW</div>
+        <h1>Arsitektur <em>Monitoring Dashboard → Living Lab</em></h1>
+        <div class="sub">Aliran data end-to-end dari input harian Wakif → storage localStorage → curation editorial → public-facing Living Lab. Reference dokumen untuk seluruh stakeholder (Adib, Hendy, tim lapangan, BRIN, donatur, komunitas).</div>
+        <div class="meta">📅 Snapshot 15 Mei 2026 · v1.0 · Wakaf Produktif Kebun Kopi Ngantang</div>
+      </div>
+      <img src="../images/logo-wakaf-produktif-transparan.png" alt="Wakaf Produktif Kebun Kopi Ngantang" class="header-logo">
+    </div>
+  </div>
+
+  <!-- ARCHITECTURE BODY -->
+  <div class="architecture">
+
+    <!-- ═══════ FLOWCHART — KONEKSI ANTAR KOMPONEN (moved to top per Adib 15 Mei 2026) ═══════ -->
+    <div class="layer" style="background:#fafbfa;border-color:var(--accent)">
+      <div class="layer-tag" style="background:var(--accent);color:white">🔄 FLOW CHART · KONEKSI ANTAR KOMPONEN</div>
+      <div class="layer-header" style="margin-top:6px">
+        <div class="layer-title"><span class="icon">🔗</span>Aliran Data — Apa Kontribusi ke Apa</div>
+        <div class="layer-desc">Diagram koneksi: setiap input/tab menunjukkan downstream-nya. Warna arrow = jenis data.</div>
+      </div>
+
+      <div style="overflow-x:auto;padding:14px 4px;background:white;border-radius:10px;border:1px solid #e8e4dc">
+        <svg viewBox="0 0 1400 820" style="width:100%;min-width:1200px;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
+          <!-- Define arrowhead markers -->
+          <defs>
+            <marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#2C5B80"/>
+            </marker>
+            <marker id="ah-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#D4AF37"/>
+            </marker>
+            <marker id="ah-moss" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#5A9080"/>
+            </marker>
+            <marker id="ah-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#c4906a"/>
+            </marker>
+            <marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#E67E22"/>
+            </marker>
+            <marker id="ah-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,0 L10,5 L0,10 z" fill="#1F5F47"/>
+            </marker>
+
+            <!-- Box style template -->
+            <linearGradient id="grad-input" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#DCE9F0"/>
+              <stop offset="100%" stop-color="#B8D2DD"/>
+            </linearGradient>
+            <linearGradient id="grad-storage" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFF4D6"/>
+              <stop offset="100%" stop-color="#F0E0A0"/>
+            </linearGradient>
+            <linearGradient id="grad-tab" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#E8F1EC"/>
+              <stop offset="100%" stop-color="#D0E4D6"/>
+            </linearGradient>
+            <linearGradient id="grad-bridge" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f0e0d4"/>
+              <stop offset="100%" stop-color="#e6c5a8"/>
+            </linearGradient>
+            <linearGradient id="grad-public" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1F5F47"/>
+              <stop offset="100%" stop-color="#5A9080"/>
+            </linearGradient>
+          </defs>
+
+          <!-- COLUMN LABELS -->
+          <text x="100" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">INPUTS</text>
+          <text x="400" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">STORAGE</text>
+          <text x="700" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">DASHBOARD TABS</text>
+          <text x="1000" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">OUTPUT / BRIDGE</text>
+          <text x="1240" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">PUBLIC</text>
+
+          <!-- ═══ COL 1: INPUTS ═══ -->
+
+          <!-- Form Input -->
+          <g>
+            <rect x="20" y="50" width="180" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2"/>
+            <text x="110" y="73" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">✏️ Form Input</text>
+            <text x="110" y="92" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">Wakif manual entry</text>
+          </g>
+
+          <!-- SOP Kalender -->
+          <g>
+            <rect x="20" y="150" width="180" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2"/>
+            <text x="110" y="173" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">📅 SOP Kalender</text>
+            <text x="110" y="192" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">Klik status per item</text>
+          </g>
+
+          <!-- Tambah Transaksi -->
+          <g>
+            <rect x="20" y="260" width="180" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2"/>
+            <text x="110" y="283" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">💵 Tambah Transaksi</text>
+            <text x="110" y="302" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">Modal Laporan Keuangan</text>
+          </g>
+
+          <!-- Living Lab Seed (auto) -->
+          <g>
+            <rect x="20" y="370" width="180" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2" stroke-dasharray="5,3"/>
+            <text x="110" y="393" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">🌱 Living Lab Seed</text>
+            <text x="110" y="412" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">Auto-populate 1× Jan-Apr</text>
+          </g>
+
+          <!-- WhatsApp Form (future, dashed) -->
+          <g opacity="0.6">
+            <rect x="20" y="475" width="180" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2" stroke-dasharray="6,4"/>
+            <text x="110" y="498" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">📱 WA Form (Future)</text>
+            <text x="110" y="517" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">Workers direct Q3 2026</text>
+          </g>
+
+          <!-- ═══ COL 2: STORAGE ═══ -->
+
+          <!-- STATE.laporan -->
+          <g>
+            <rect x="320" y="50" width="160" height="50" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
+            <text x="400" y="72" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">STATE.laporan</text>
+            <text x="400" y="89" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">daily reports array</text>
+          </g>
+
+          <!-- UPAH_ITEMS -->
+          <g>
+            <rect x="320" y="120" width="160" height="50" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
+            <text x="400" y="142" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">UPAH_ITEMS</text>
+            <text x="400" y="159" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Yit/Kumpul tracker</text>
+          </g>
+
+          <!-- SOP_STATUS -->
+          <g>
+            <rect x="320" y="200" width="160" height="50" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
+            <text x="400" y="222" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">SOP_STATUS</text>
+            <text x="400" y="239" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">item status keys</text>
+          </g>
+
+          <!-- CASHBOOK -->
+          <g>
+            <rect x="320" y="280" width="160" height="50" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
+            <text x="400" y="302" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">CASHBOOK</text>
+            <text x="400" y="319" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">cash flow trx</text>
+          </g>
+
+          <!-- MILESTONES -->
+          <g>
+            <rect x="320" y="500" width="160" height="50" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
+            <text x="400" y="522" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">MILESTONES</text>
+            <text x="400" y="539" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">curated bilingual</text>
+          </g>
+
+          <!-- ═══ COL 3: DASHBOARD TABS ═══ -->
+
+          <!-- Log Harian -->
+          <g>
+            <rect x="600" y="30" width="160" height="44" rx="8" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
+            <text x="680" y="50" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📋 Log Harian</text>
+            <text x="680" y="65" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">view/edit/delete</text>
+          </g>
+
+          <!-- Distribusi Tugas -->
+          <g>
+            <rect x="600" y="90" width="160" height="44" rx="8" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
+            <text x="680" y="110" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">👷 Distribusi Tugas</text>
+            <text x="680" y="125" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">auto-link cells</text>
+          </g>
+
+          <!-- Upah Pekerja -->
+          <g>
+            <rect x="600" y="150" width="160" height="44" rx="8" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
+            <text x="680" y="170" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">💰 Upah Pekerja 🔒</text>
+            <text x="680" y="185" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">harian + borongan</text>
+          </g>
+
+          <!-- SOP Compliance -->
+          <g>
+            <rect x="600" y="210" width="160" height="44" rx="8" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
+            <text x="680" y="230" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">✅ SOP Compliance</text>
+            <text x="680" y="245" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">cards + analysis</text>
+          </g>
+
+          <!-- OPT Heatmap -->
+          <g>
+            <rect x="600" y="270" width="160" height="44" rx="8" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
+            <text x="680" y="290" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">🐛 OPT Heatmap</text>
+            <text x="680" y="305" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">5-pohon-diagonal</text>
+          </g>
+
+          <!-- Laporan Keuangan -->
+          <g>
+            <rect x="600" y="330" width="160" height="44" rx="8" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
+            <text x="680" y="350" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">💵 Laporan Keuangan 🔒</text>
+            <text x="680" y="365" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">cashbook + petty</text>
+          </g>
+
+          <!-- RAB Siklus -->
+          <g>
+            <rect x="600" y="390" width="160" height="44" rx="8" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
+            <text x="680" y="410" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📑 RAB Siklus 🔒</text>
+            <text x="680" y="425" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Rp 71,29 jt 2 siklus</text>
+          </g>
+
+          <!-- Annual Cards -->
+          <g>
+            <rect x="600" y="450" width="160" height="44" rx="8" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
+            <text x="680" y="470" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📊 Annual Cards</text>
+            <text x="680" y="485" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">2024/25/26 YTD</text>
+          </g>
+
+          <!-- Milestones Publik -->
+          <g>
+            <rect x="600" y="510" width="160" height="44" rx="8" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
+            <text x="680" y="530" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📜 Milestones Publik 🔒</text>
+            <text x="680" y="545" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">curate bilingual</text>
+          </g>
+
+          <!-- ═══ COL 4: OUTPUT / BRIDGE ═══ -->
+
+          <!-- Bukti Bayar PNG -->
+          <g>
+            <rect x="900" y="150" width="180" height="50" rx="10" fill="url(#grad-bridge)" stroke="#c4906a" stroke-width="2"/>
+            <text x="990" y="172" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#1a2828">📄 Bukti Bayar PNG</text>
+            <text x="990" y="190" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">html2canvas download</text>
+          </g>
+
+          <!-- Export JSON -->
+          <g>
+            <rect x="900" y="500" width="180" height="50" rx="10" fill="url(#grad-bridge)" stroke="#c4906a" stroke-width="2"/>
+            <text x="990" y="522" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#1a2828">📤 Export JSON</text>
+            <text x="990" y="540" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">+ GitHub auto-push</text>
+          </g>
+
+          <!-- aktivitas-publik.json -->
+          <g>
+            <rect x="900" y="580" width="180" height="50" rx="10" fill="url(#grad-bridge)" stroke="#c4906a" stroke-width="2"/>
+            <text x="990" y="602" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#1a2828">aktivitas-publik.json</text>
+            <text x="990" y="619" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#6b7878">schema v3.0 · 11 items</text>
+          </g>
+
+          <!-- ═══ COL 5: PUBLIC ═══ -->
+
+          <!-- Living Lab Page -->
+          <g>
+            <rect x="1180" y="370" width="200" height="60" rx="12" fill="url(#grad-public)" stroke="#1F5F47" stroke-width="2"/>
+            <text x="1280" y="395" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="800" fill="white">🌐 Living Lab Page</text>
+            <text x="1280" y="412" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#a8c8bc">living-lab.html · bilingual</text>
+          </g>
+
+          <!-- Public Visitors -->
+          <g>
+            <rect x="1180" y="500" width="200" height="56" rx="12" fill="#2E4040" stroke="#1F5F47" stroke-width="2"/>
+            <text x="1280" y="523" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="white">👥 Public Visitors</text>
+            <text x="1280" y="540" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#a8c8bc">Donatur · BRIN · Komunitas</text>
+          </g>
+
+          <!-- ═══════════════════════════════════ -->
+          <!-- ═══ ARROWS — Data Flow Connections ═══ -->
+          <!-- ═══════════════════════════════════ -->
+
+          <!-- Form Input → STATE.laporan -->
+          <path d="M 200 78 Q 260 78, 320 75" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)"/>
+
+          <!-- Form Input → UPAH_ITEMS (auto-link Yit/Kumpul) -->
+          <path d="M 200 88 Q 260 130, 320 140" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)" stroke-dasharray="4,3"/>
+          <text x="252" y="120" font-family="sans-serif" font-size="8" fill="#2C5B80" font-style="italic">auto-link</text>
+
+          <!-- STATE.laporan → Log Harian -->
+          <path d="M 480 65 Q 540 50, 600 50" stroke="#5A9080" stroke-width="2" fill="none" marker-end="url(#ah-moss)"/>
+
+          <!-- STATE.laporan → Distribusi Tugas -->
+          <path d="M 480 80 Q 540 100, 600 110" stroke="#5A9080" stroke-width="2" fill="none" marker-end="url(#ah-moss)"/>
+
+          <!-- STATE.laporan → OPT Heatmap (if OPT category) -->
+          <path d="M 480 95 Q 540 200, 600 285" stroke="#5A9080" stroke-width="1.5" fill="none" marker-end="url(#ah-moss)" stroke-dasharray="3,3"/>
+          <text x="500" y="195" font-family="sans-serif" font-size="8" fill="#5A9080" font-style="italic">if OPT</text>
+
+          <!-- STATE.laporan → Milestones Publik (auto-suggest) -->
+          <path d="M 480 95 Q 540 350, 600 530" stroke="#5A9080" stroke-width="1.5" fill="none" marker-end="url(#ah-moss)" stroke-dasharray="3,3"/>
+          <text x="500" y="335" font-family="sans-serif" font-size="8" fill="#5A9080" font-style="italic">auto-suggest</text>
+
+          <!-- UPAH_ITEMS → Upah Pekerja -->
+          <path d="M 480 145 Q 540 150, 600 170" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
+
+          <!-- Upah Pekerja → Bukti Bayar PNG -->
+          <path d="M 760 170 Q 830 170, 900 170" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
+
+          <!-- Upah Pekerja → Laporan Keuangan (batchPay lunas auto-link) -->
+          <path d="M 680 194 Q 680 270, 680 330" stroke="#D4AF37" stroke-width="1.5" fill="none" marker-end="url(#ah-gold)" stroke-dasharray="3,3"/>
+          <text x="685" y="265" font-family="sans-serif" font-size="8" fill="#8b6914" font-style="italic">batchPay</text>
+
+          <!-- SOP Kalender → SOP_STATUS -->
+          <path d="M 200 180 Q 260 200, 320 220" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)"/>
+
+          <!-- Living Lab Seed → SOP_STATUS (auto 1×) -->
+          <path d="M 200 395 Q 260 320, 320 240" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)" stroke-dasharray="6,4"/>
+          <text x="232" y="320" font-family="sans-serif" font-size="8" fill="#2C5B80" font-style="italic">Jan-Apr seed</text>
+
+          <!-- SOP_STATUS → SOP Compliance -->
+          <path d="M 480 225 Q 540 220, 600 230" stroke="#5A9080" stroke-width="2.5" fill="none" marker-end="url(#ah-moss)"/>
+
+          <!-- SOP Compliance → Annual Cards -->
+          <path d="M 680 254 Q 680 350, 680 450" stroke="#5A9080" stroke-width="2" fill="none" marker-end="url(#ah-moss)"/>
+
+          <!-- Annual Cards → Living Lab (via JSON later) -->
+          <path d="M 760 472 Q 900 472, 1180 410" stroke="#1F5F47" stroke-width="2" fill="none" marker-end="url(#ah-dark)" stroke-dasharray="3,3"/>
+          <text x="950" y="445" font-family="sans-serif" font-size="9" fill="#1F5F47" font-style="italic">also displayed in</text>
+
+          <!-- Tambah Transaksi → CASHBOOK -->
+          <path d="M 200 288 Q 260 290, 320 305" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)"/>
+
+          <!-- CASHBOOK → Laporan Keuangan -->
+          <path d="M 480 305 Q 540 320, 600 350" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
+
+          <!-- Laporan Keuangan → RAB Siklus -->
+          <path d="M 680 374 Q 680 380, 680 390" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
+
+          <!-- Milestones Publik → MILESTONES storage -->
+          <path d="M 600 530 Q 540 525, 480 525" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
+
+          <!-- MILESTONES → Export JSON -->
+          <path d="M 480 525 Q 690 525, 900 525" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
+
+          <!-- Export JSON → aktivitas-publik.json -->
+          <path d="M 990 550 Q 990 565, 990 580" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
+
+          <!-- aktivitas-publik.json → Living Lab Page (FETCH) -->
+          <path d="M 1080 600 Q 1130 500, 1180 410" stroke="#1F5F47" stroke-width="3" fill="none" marker-end="url(#ah-dark)"/>
+          <text x="1100" y="490" font-family="sans-serif" font-size="10" fill="#1F5F47" font-weight="700">fetch</text>
+
+          <!-- Living Lab Page → Public Visitors -->
+          <path d="M 1280 430 Q 1280 465, 1280 500" stroke="#1F5F47" stroke-width="2.5" fill="none" marker-end="url(#ah-dark)"/>
+
+          <!-- ═══ ANNOTATION LABELS ═══ -->
+
+          <!-- Bukti Bayar → WA (text annotation) -->
+          <text x="990" y="220" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#8b6914" font-style="italic">→ share via WA ke pekerja</text>
+
+          <!-- Cluster label: Daily Operations -->
+          <rect x="540" y="10" width="180" height="16" rx="3" fill="rgba(168,200,188,0.3)"/>
+          <text x="630" y="22" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="800" fill="#1F5F47" letter-spacing="1">DAILY OPERATIONS LOOP</text>
+
+          <!-- Cluster label: Compliance -->
+          <rect x="540" y="490" width="180" height="16" rx="3" fill="rgba(196,144,106,0.22)"/>
+          <text x="630" y="502" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="800" fill="#c4906a" letter-spacing="1">CURATION → PUBLIC</text>
+
+          <!-- ═══ LEGEND inside SVG ═══ -->
+          <g transform="translate(20, 690)">
+            <text x="0" y="0" font-family="sans-serif" font-size="11" font-weight="800" fill="#2E4040">ARROW TYPES:</text>
+
+            <line x1="0" y1="20" x2="40" y2="20" stroke="#2C5B80" stroke-width="2" marker-end="url(#ah-blue)"/>
+            <text x="50" y="24" font-family="sans-serif" font-size="10" fill="#2E4040">Input → Storage (write)</text>
+
+            <line x1="220" y1="20" x2="260" y2="20" stroke="#5A9080" stroke-width="2" marker-end="url(#ah-moss)"/>
+            <text x="270" y="24" font-family="sans-serif" font-size="10" fill="#2E4040">Storage → Display (read)</text>
+
+            <line x1="450" y1="20" x2="490" y2="20" stroke="#D4AF37" stroke-width="2" marker-end="url(#ah-gold)"/>
+            <text x="500" y="24" font-family="sans-serif" font-size="10" fill="#2E4040">Financial flow (auto-link)</text>
+
+            <line x1="690" y1="20" x2="730" y2="20" stroke="#c4906a" stroke-width="2" marker-end="url(#ah-accent)"/>
+            <text x="740" y="24" font-family="sans-serif" font-size="10" fill="#2E4040">Curation / Export</text>
+
+            <line x1="890" y1="20" x2="930" y2="20" stroke="#1F5F47" stroke-width="2.5" marker-end="url(#ah-dark)"/>
+            <text x="940" y="24" font-family="sans-serif" font-size="10" fill="#2E4040">Public layer</text>
+
+            <line x1="1080" y1="20" x2="1120" y2="20" stroke="#6B7878" stroke-width="2" marker-end="url(#ah-blue)" stroke-dasharray="4,3"/>
+            <text x="1130" y="24" font-family="sans-serif" font-size="10" fill="#2E4040">Conditional / dashed = optional</text>
+          </g>
+
+          <!-- ═══ NARRATIVE EXAMPLES ═══ -->
+          <g transform="translate(20, 740)">
+            <rect x="0" y="0" width="1360" height="62" rx="8" fill="#fff8e6" stroke="#D4AF37" stroke-width="1.5"/>
+            <text x="14" y="18" font-family="sans-serif" font-size="10" font-weight="800" fill="#8b6914" letter-spacing="1">📖 CONTOH NARASI 1 HARI KERJA:</text>
+            <text x="14" y="34" font-family="sans-serif" font-size="11" fill="#2E4040"><tspan font-weight="700">07:00</tspan> Cak Yit pemangkasan 5 phn Bidang 2 · <tspan font-weight="700">16:30</tspan> lapor via WA ke Wakif · <tspan font-weight="700">17:00</tspan> Wakif input Form → <tspan fill="#5A9080" font-weight="700">STATE.laporan</tspan> update · <tspan fill="#D4AF37" font-weight="700">UPAH_ITEMS</tspan> auto-create entry Cak Yit ½ hari Rp 60K</text>
+            <text x="14" y="50" font-family="sans-serif" font-size="11" fill="#2E4040"><tspan font-weight="700">17:01</tspan> Log Harian + Distribusi Tugas + Upah Pekerja auto-refresh · <tspan font-weight="700">17:05</tspan> Wakif klik "Sudah" di SOP Kalender → <tspan fill="#5A9080" font-weight="700">SOP_STATUS</tspan> update · <tspan fill="#c4906a" font-weight="700">SOP Compliance</tspan> recompute · <tspan font-weight="700">Annual Cards</tspan> 2026 YTD naik tipis</text>
+          </g>
+
+        </svg>
+      </div>
+
+      <!-- 4 KEY FLOWS NARRATIVE -->
+      <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
+        <div style="background:#DCE9F0;border-left:4px solid #2C5B80;padding:12px 14px;border-radius:8px">
+          <div style="font-size:11px;font-weight:800;color:#2C5B80;letter-spacing:1.2px;margin-bottom:5px">🔵 FLOW A — DAILY OPERATIONS</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Form Input → STATE.laporan → <strong>4 downstream tabs</strong> (Log Harian + Distribusi Tugas + OPT Heatmap + Milestones suggest) + UPAH_ITEMS auto-link (Yit/Kumpul)</div>
+        </div>
+        <div style="background:#E8F1EC;border-left:4px solid #5A9080;padding:12px 14px;border-radius:8px">
+          <div style="font-size:11px;font-weight:800;color:#5A9080;letter-spacing:1.2px;margin-bottom:5px">🟢 FLOW B — SOP COMPLIANCE</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">SOP Kalender → SOP_STATUS (+ auto-seed Living Lab Jan-Apr) → <strong>SOP Compliance tab</strong> → Annual Cards (2024/25/26) + Analysis Box + Action Items</div>
+        </div>
+        <div style="background:#FFF4D6;border-left:4px solid #D4AF37;padding:12px 14px;border-radius:8px">
+          <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:1.2px;margin-bottom:5px">🟡 FLOW C — FINANCIAL</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Tambah Transaksi → CASHBOOK · Upah Pekerja (batchPay) → CASHBOOK · <strong>Laporan Keuangan</strong> + RAB Siklus tracking. Output: <strong>Bukti Bayar PNG</strong> untuk share WA pekerja.</div>
+        </div>
+        <div style="background:#f0e0d4;border-left:4px solid #c4906a;padding:12px 14px;border-radius:8px">
+          <div style="font-size:11px;font-weight:800;color:#c4906a;letter-spacing:1.2px;margin-bottom:5px">🟤 FLOW D — CURATION → PUBLIC</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Wakif curate di Milestones Publik tab → MILESTONES storage → <strong>Export JSON</strong> (+ GitHub auto-push) → aktivitas-publik.json → <strong>Living Lab Page</strong> fetch → publik visitors browse</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ LAYER 1 — INPUT SOURCES ═══════ -->
+    <div class="layer">
+      <div class="layer-tag l1">LAYER 1 · INPUT SOURCES</div>
+      <div class="layer-header" style="margin-top:6px">
+        <div class="layer-title"><span class="icon">📝</span>Data Entry (Siapa Input Apa)</div>
+        <div class="layer-desc">3 channel input — saat ini Wakif manual, plan Q3 2026: workers via WA link langsung</div>
+      </div>
+      <div class="box-grid cols-3">
+        <div class="box input">
+          <div class="box-name"><span class="ico">✏️</span>Form Input (Wakif Manual)</div>
+          <div class="box-detail">Tab Form Input di monitor-v2 — Wakif isi berdasarkan laporan harian dari WA tim lapangan (Anto/Yit/Kumpul). Field: pelapor, tgl, bidang, kategori, durasi, qty, cuaca, dll.</div>
+        </div>
+        <div class="box input" style="opacity:.7;border-style:dashed">
+          <div class="box-name"><span class="ico">📱</span>WhatsApp Form (Workers — Future)</div>
+          <div class="box-detail">Plan: mobile-first form di <code>lapor.html</code>, link di-share via WA → Pak Kumpul/Cak Yit tap → fill dropdown → submit. Target akurasi data harian.</div>
+        </div>
+        <div class="box input" style="background:#fef3d7;border-color:var(--gold)">
+          <div class="box-name"><span class="ico">🌱</span>Living Lab Seed (Auto, 1×)</div>
+          <div class="box-detail">Pre-T0 Jan-Apr 2026 era T.A. (RWI) — auto-populate <code>SOP_STATUS</code> dari observation. Tidak overwrite user edits.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><div class="label">▼ WRITE TO STORAGE</div></div>
+
+    <!-- ═══════ LAYER 2 — STORAGE & PROCESSING ═══════ -->
+    <div class="layer">
+      <div class="layer-tag l2">LAYER 2 · STORAGE + PROCESSING</div>
+      <div class="layer-header" style="margin-top:6px">
+        <div class="layer-title"><span class="icon">💾</span>localStorage + Compute Logic</div>
+        <div class="layer-desc">7 storage keys + processing functions — semua client-side, no server backend</div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">📦 Storage Keys (localStorage)</div>
+        <div class="box-grid cols-4">
+          <div class="box storage">
+            <div class="box-name"><code>STATE.laporan</code></div>
+            <div class="box-detail">Daily reports array. Auto-populate dari Form Input. v3 schema dgn id + src tags.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>SOP_STATUS</code></div>
+            <div class="box-detail">Status per item (Belum/Sudah/Tidak Sesuai/N/A). Key: <code>${bulan}-${idx}</code>. Seeded Jan-Apr dari Living Lab.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>UPAH_ITEMS</code></div>
+            <div class="box-detail">Pekerja harian + borongan tracker. Auto-link dari Form Input untuk Yit/Kumpul.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>CASHBOOK</code></div>
+            <div class="box-detail">Cash flow transactions. Auto-link saat batchPay upah lunas → CASHBOOK entry.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>MILESTONES</code></div>
+            <div class="box-detail">Curated public milestones bilingual. Schema v3.0 dgn implementasi + benchmark_evaluation.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>PETTY_CASH_ANTO</code></div>
+            <div class="box-detail">Petty cash Mas Anto sebagai koordinator lapangan. Track pengeluaran ad-hoc.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>ANNUAL_COMPLIANCE</code></div>
+            <div class="box-detail">Historical scores 2024 (12%) · 2025 (16%) · 2026 (dynamic blend).</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>SOP_AKTIVITAS_PER_BULAN</code></div>
+            <div class="box-detail">Master SOP data — 12 bulan × 58 aktivitas hardcoded. Source: SOP Robusta Edisi 2 + BRIN.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">⚙️ Processing Functions</div>
+        <div class="box-grid cols-4">
+          <div class="box process">
+            <div class="box-name">getComplianceMetrics()</div>
+            <div class="box-detail">Compute aggregate dari SOP_STATUS (sudah/tidak/belum/na counts + overdue/upcoming items).</div>
+          </div>
+          <div class="box process">
+            <div class="box-name">computeAnnualCompliance(year)</div>
+            <div class="box-detail">2026 YTD blend = (sudah + 0.5×tidak_sesuai) / total · partial credit formula.</div>
+          </div>
+          <div class="box process">
+            <div class="box-name">renderComplianceAnalysis()</div>
+            <div class="box-detail">Dynamic analysis "kenapa rendah" — list belum wajib + tidak_sesuai dgn SOP guidance.</div>
+          </div>
+          <div class="box process">
+            <div class="box-name">5-Dimension Scoring</div>
+            <div class="box-detail">Coverage 30% + Quality 25% + Timing 20% (La Nina ±1bln) + Cost 15% + Doc 10%.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow"><div class="label">▼ RENDER TO TABS</div></div>
+
+    <!-- ═══════ LAYER 3 — INTERNAL DASHBOARD (monitor-v2.html) ═══════ -->
+    <div class="layer">
+      <div class="layer-tag l3">LAYER 3 · INTERNAL DASHBOARD (monitor-v2.html)</div>
+      <div class="layer-header" style="margin-top:6px">
+        <div class="layer-title"><span class="icon">🔒</span>Private Tabs — Wakif Tier Access</div>
+        <div class="layer-desc">13 tabs · 2 tier (Wakif full · Review limited) · adib-psych.github.io/wakaf-produktif/monitor-v2.html</div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">🏃 OPERATIONAL TABS (semua tier)</div>
+        <div class="box-grid cols-5">
+          <div class="box tab">
+            <div class="box-name"><span class="ico">📊</span>Dashboard</div>
+            <div class="box-detail">Overview KPI + alerts harian</div>
+          </div>
+          <div class="box tab">
+            <div class="box-name"><span class="ico">📋</span>Log Harian</div>
+            <div class="box-detail">View/edit/delete STATE.laporan</div>
+          </div>
+          <div class="box tab">
+            <div class="box-name"><span class="ico">✏️</span>Form Input</div>
+            <div class="box-detail">Entry harian (hero banner panduan)</div>
+          </div>
+          <div class="box tab">
+            <div class="box-name"><span class="ico">🌳</span>Inventarisasi</div>
+            <div class="box-detail">915 phn → target 750 post-selection</div>
+          </div>
+          <div class="box tab">
+            <div class="box-name"><span class="ico">🍒</span>Pra-Panen 2026</div>
+            <div class="box-detail">Jul-Sep target ~366 kg</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">📈 MONITORING & SOP TABS</div>
+        <div class="box-grid cols-4">
+          <div class="box tab">
+            <div class="box-name"><span class="ico">👷</span>Distribusi Tugas</div>
+            <div class="box-detail">Auto-link Form Input → cell per pekerja</div>
+          </div>
+          <div class="box tab">
+            <div class="box-name"><span class="ico">🐛</span>OPT Heatmap</div>
+            <div class="box-detail">Live data dari kategori OPT Monitoring</div>
+          </div>
+          <div class="box tab">
+            <div class="box-name"><span class="ico">✅</span>SOP Compliance</div>
+            <div class="box-detail">Annual cards + Status Eksekusi + Analysis (kenapa rendah)</div>
+          </div>
+          <div class="box tab">
+            <div class="box-name"><span class="ico">📅</span>SOP Kalender</div>
+            <div class="box-detail">Forward View / Year Calendar · 58 aktivitas</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">💰 FINANCIAL TABS (Wakif-only — 🔒 locked)</div>
+        <div class="box-grid cols-4">
+          <div class="box wakif-only">
+            <div class="box-name"><span class="ico">📑</span>RAB Siklus</div>
+            <div class="box-detail">Rp 71,29 jt total · 9 kategori · 2 siklus 2026-2027</div>
+          </div>
+          <div class="box wakif-only">
+            <div class="box-name"><span class="ico">💵</span>Laporan Keuangan</div>
+            <div class="box-detail">Cashbook + Petty Cash Anto + Tambah Transaksi modal</div>
+          </div>
+          <div class="box wakif-only">
+            <div class="box-name"><span class="ico">💰</span>Upah Pekerja</div>
+            <div class="box-detail">Harian + Borongan tracking · Bukti Bayar PNG generator</div>
+          </div>
+          <div class="box financial">
+            <div class="box-name"><span class="ico">📄</span>Bukti Bayar PNG</div>
+            <div class="box-detail">html2canvas → download untuk WA pekerja (logo + signature + terbilang)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow bridge"><div class="label">▼ EDITORIAL CURATION</div></div>
+
+    <!-- ═══════ LAYER 4 — CURATION BRIDGE ═══════ -->
+    <div class="layer" style="background:linear-gradient(135deg,#fff8e6,#fef3d7);border-color:var(--gold)">
+      <div class="layer-tag l4">LAYER 4 · CURATION BRIDGE (Editorial Layer)</div>
+      <div class="layer-header" style="margin-top:6px">
+        <div class="layer-title"><span class="icon">🌉</span>Wakif Editorial Control — NOT Auto-Dump</div>
+        <div class="layer-desc">Wakif review activity → curate jadi milestone bilingual → publish → export JSON → push GitHub</div>
+      </div>
+      <div class="box-grid cols-4">
+        <div class="box bridge">
+          <div class="box-name"><span class="ico">📜</span>Tab Milestones Publik</div>
+          <div class="box-detail">Wakif-only · curate event signifikan dari STATE.laporan. Auto-suggest engine + bilingual form (ID required, EN optional).</div>
+        </div>
+        <div class="box bridge">
+          <div class="box-name"><span class="ico">📤</span>Export JSON</div>
+          <div class="box-detail">Generate aktivitas-publik.json · published-only milestones · schema v3.0 (2-Layer Architecture).</div>
+        </div>
+        <div class="box bridge">
+          <div class="box-name"><span class="ico">🚀</span>GitHub Auto-Push (PAT)</div>
+          <div class="box-detail">Opsi C: Fine-grained PAT → API call → commit + push otomatis. Fallback: manual git push terminal.</div>
+        </div>
+        <div class="box bridge">
+          <div class="box-name"><span class="ico">⏱️</span>GitHub Pages Deploy</div>
+          <div class="box-detail">~1-2 menit propagation · CDN serve · adib-psych.github.io update otomatis.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flow-arrow bridge"><div class="label">▼ PUBLIC FETCH</div></div>
+
+    <!-- ═══════ LAYER 5 — PUBLIC LIVING LAB ═══════ -->
+    <div class="layer" style="background:linear-gradient(135deg,#e8f1ec,#dde9e3);border-color:var(--darkgreen)">
+      <div class="layer-tag l5">LAYER 5 · PUBLIC LIVING LAB (living-lab.html)</div>
+      <div class="layer-header" style="margin-top:6px">
+        <div class="layer-title"><span class="icon">🌐</span>Open Transparency · Bilingual ID/EN</div>
+        <div class="layer-desc">adib-psych.github.io/wakaf-produktif/living-lab.html · audience: donatur, komunitas, BRIN, akademisi</div>
+      </div>
+      <div class="box-grid cols-4">
+        <div class="box public">
+          <div class="box-name"><span class="ico">📊</span>Annual Compliance Widget</div>
+          <div class="box-detail">3 kotak (2026 YTD · 2025 · 2024) bilingual. Methodology link ke Aset Knowledge.</div>
+        </div>
+        <div class="box public">
+          <div class="box-name"><span class="ico">📅</span>Year Tabs (Newest First)</div>
+          <div class="box-detail">2026 (Active) → 2025 → 2024. Era labels neutral (no nadzir specific name).</div>
+        </div>
+        <div class="box public">
+          <div class="box-name"><span class="ico">🌱</span>Phase Blocks + Activity Logs</div>
+          <div class="box-detail">Pre-Panen / Panen / Post-Panen per tahun · status badges · period labels.</div>
+        </div>
+        <div class="box public">
+          <div class="box-name"><span class="ico">🛡️</span>Defensive Fallback</div>
+          <div class="box-detail">Hardcoded HTML jalan kalau JSON fetch fail · graceful degradation.</div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">🔗 Other Public Pages (related)</div>
+        <div class="box-grid cols-5">
+          <div class="box public">
+            <div class="box-name">index.html</div>
+            <div class="box-detail">Landing page · narrative wakaf</div>
+          </div>
+          <div class="box public">
+            <div class="box-name">program.html</div>
+            <div class="box-detail">Tim · multi-offtaker · Fase 4</div>
+          </div>
+          <div class="box public">
+            <div class="box-name">belajar.html</div>
+            <div class="box-detail">Edukasi visitor</div>
+          </div>
+          <div class="box public">
+            <div class="box-name">kontak.html</div>
+            <div class="box-detail">Komunikasi publik</div>
+          </div>
+          <div class="box public">
+            <div class="box-name">latar-belakang.html</div>
+            <div class="box-detail">Story Wakif · sejarah kebun</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ EXTERNAL REFERENCES & ANCHORS ═══════ -->
+    <div class="external-refs" style="margin-top:24px">
+      <div class="external-refs-title">🌍 EXTERNAL ANCHORS — Knowledge Sources & Integrations</div>
+      <div class="box-grid">
+        <div class="box external">
+          <div class="box-name"><span class="ico">📕</span>SOP Robusta Edisi 2 (2019)</div>
+          <div class="box-detail">Kementan + Puslit Koka · 310 hal · source utama untuk SOP_AKTIVITAS_PER_BULAN. Permentan No 49/2014.</div>
+        </div>
+        <div class="box external">
+          <div class="box-name"><span class="ico">🧪</span>BRIN Tabel Dosis</div>
+          <div class="box-detail">Locked 9 Mei 2026 · per umur tanaman 5-10 thn · Urea + SP-36 + KCl + Kieserit + Dolomit.</div>
+        </div>
+        <div class="box external">
+          <div class="box-name"><span class="ico">🌐</span>ICCRI / Wintgens / WCR</div>
+          <div class="box-detail">International benchmark (Tier 1-2 per hierarchy) · alignment_pct di milestone schema.</div>
+        </div>
+        <div class="box external">
+          <div class="box-name"><span class="ico">🤝</span>BRIN (Penjajakan)</div>
+          <div class="box-detail">5 Mei Purwodadi · 13 Mei Serpong Zoom 5 peneliti · status: pertemuan awal, belum MoU.</div>
+        </div>
+        <div class="box external">
+          <div class="box-name"><span class="ico">📦</span>GitHub Pages (Hosting)</div>
+          <div class="box-detail">Static hosting · adib-psych.github.io/wakaf-produktif/ · ~1-2 min propagation.</div>
+        </div>
+        <div class="box external">
+          <div class="box-name"><span class="ico">📱</span>WhatsApp (Worker Comms)</div>
+          <div class="box-detail">Anto/Yit/Kumpul lapor harian sore. Future: form link via WA untuk akurasi direct.</div>
+        </div>
+        <div class="box external">
+          <div class="box-name"><span class="ico">📚</span>Aset Knowledge Docs</div>
+          <div class="box-detail">SOP_Tertanam v2 · Detail Living Lab v2 · Methodology Guide · Monitor V2 Snapshot.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ LEGEND ═══════ -->
+    <div class="legend">
+      <div style="font-weight:800;color:var(--earth);margin-right:8px">🎨 LEGEND:</div>
+      <div class="legend-item"><div class="legend-swatch input"></div>Input Source</div>
+      <div class="legend-item"><div class="legend-swatch storage"></div>Storage Key</div>
+      <div class="legend-item"><div class="legend-swatch process"></div>Processing</div>
+      <div class="legend-item"><div class="legend-swatch tab"></div>Tab (operational)</div>
+      <div class="legend-item"><div class="legend-swatch wakif-only"></div>Wakif-only (🔒)</div>
+      <div class="legend-item"><div class="legend-swatch financial"></div>Bukti Bayar generator</div>
+      <div class="legend-item"><div class="legend-swatch bridge"></div>Bridge (Curation)</div>
+      <div class="legend-item"><div class="legend-swatch public"></div>Public (Living Lab)</div>
+      <div class="legend-item"><div class="legend-swatch external"></div>External / Reference</div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    🌱 <strong>Wakaf Produktif Kebun Kopi Ngantang</strong> · Arsitektur Monitoring Dashboard → Living Lab · v1.0 · 15 Mei 2026 · Wakif: Adib Asrori, M.Psi (Mas Tito) · Strategic Executive: Hendy Kurniansyah<br>
+    <em style="color:var(--sage);font-size:10px">Filosofi inti: 5-Layer separation of concerns · client-side only (no server) · editorial curation antara private internal & public Living Lab · honest transparency dengan partial credit untuk fairness.</em>
+  </div>
+
+</div>
+
+</body>
+</html>
