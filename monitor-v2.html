@@ -1120,6 +1120,7 @@
         <p style="font-size:11px;color:var(--mute);margin-bottom:14px">Live data dari checklist SOP Kalender. Klik tombol status di Kalender untuk update — progress di sini auto-refresh.</p>
         <div id="compliance-progress"></div>
         <div class="kpi-grid" id="compliance-kpis" style="margin-top:14px"></div>
+        <div id="compliance-analysis"></div>
         <div style="margin-top:12px;text-align:right">
           <button class="btn btn-secondary" onclick="resetSOPStatus()" style="font-size:11px;padding:6px 12px">🔄 Reset Semua Status</button>
         </div>
@@ -5401,6 +5402,109 @@ function renderAnnualCompliance() {
   }).join('');
 }
 
+// ===== COMPLIANCE ANALYSIS — auto-explain kenapa compliance rendah + SOP guidance (15 Mei 2026) =====
+function renderComplianceAnalysis() {
+  const c = document.getElementById('compliance-analysis');
+  if (!c) return;
+  const m = getComplianceMetrics();
+  if (!m || !m.total) { c.innerHTML = ''; return; }
+
+  const credit = m.sudah + (m.tidakSesuai * 0.5);
+  const pct = Math.round((credit / m.total) * 100);
+  const namaBulan = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const namaBulanFull = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+  // Collect tidak_sesuai items dengan notes (substituted/approximate dari Living Lab seed)
+  const tidakSesuaiList = [];
+  Object.keys(SOP_STATUS).forEach(key => {
+    const s = SOP_STATUS[key];
+    if (s.status !== 'tidak_sesuai') return;
+    const parts = key.split('-');
+    const bn = parseInt(parts[0]);
+    const ix = parseInt(parts[1]);
+    const bd = SOP_AKTIVITAS_PER_BULAN[bn];
+    if (bd && bd.aktivitas[ix]) {
+      tidakSesuaiList.push({ bulanN: bn, idx: ix, item: bd.aktivitas[ix], note: s.note || '' });
+    }
+  });
+  tidakSesuaiList.sort((a, b) => a.bulanN - b.bulanN);
+
+  // Top belum items — combine overdue + currentMonth + upcoming wajib
+  const belumPriority = [].concat(m.overdueItems || [], m.currentMonthItems || [], m.upcomingItems || [])
+    .filter(b => b.aktivitas && b.aktivitas.prio === 'wajib')
+    .slice(0, 5);
+
+  // Build TIDAK_SESUAI block (era T.A. pre-T0 contributions)
+  let tidakSesuaiHTML = '';
+  if (tidakSesuaiList.length > 0) {
+    tidakSesuaiHTML = `
+      <div style="margin-top:14px">
+        <div style="font-size:11px;font-weight:800;color:#c14b3a;letter-spacing:.8px;margin-bottom:8px;text-transform:uppercase">⚠️ ${tidakSesuaiList.length} Item Tidak Sesuai SOP — Era T.A. Pre-T0 (Substituted / Approximate)</div>
+        <div style="font-size:12px;line-height:1.6;color:#2e4040;background:rgba(255,255,255,.65);padding:10px 13px;border-radius:6px">
+          ${tidakSesuaiList.map(t => `
+            <div style="padding:8px 0;border-bottom:1px dashed #e8dec8">
+              <strong style="color:#c14b3a">${namaBulan[t.bulanN]}:</strong> <span style="font-weight:600">${t.item.t}</span><br>
+              <span style="font-size:11px;color:#5f4a3a;line-height:1.55;display:block;margin-top:4px;font-style:italic">${t.note}</span>
+              <span style="font-size:10px;color:#5a9080;display:block;margin-top:3px">📖 SOP Ref: ${t.item.sop}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Build BELUM block (top 5 wajib items not yet executed + SOP guidance)
+  let belumHTML = '';
+  if (belumPriority.length > 0) {
+    belumHTML = `
+      <div style="margin-top:14px">
+        <div style="font-size:11px;font-weight:800;color:#1F5F47;letter-spacing:.8px;margin-bottom:8px;text-transform:uppercase">⭐ Top ${belumPriority.length} Item WAJIB Belum Dieksekusi — Menurut SOP Mestinya:</div>
+        <div style="font-size:12px;line-height:1.6;color:#2e4040;background:rgba(255,255,255,.65);padding:10px 13px;border-radius:6px">
+          ${belumPriority.map((b,i) => {
+            const a = b.aktivitas;
+            const dosisShort = a.dosis
+              ? a.dosis.replace(/<br>/gi, ' · ').replace(/<[^>]+>/g, '').substring(0, 220) + (a.dosis.length > 220 ? '...' : '')
+              : '';
+            const lokalShort = a.lokal
+              ? a.lokal.replace(/<br>/gi, ' · ').replace(/<[^>]+>/g, '').substring(0, 160) + (a.lokal.length > 160 ? '...' : '')
+              : '';
+            return `<div style="padding:8px 0;border-bottom:1px dashed #e8dec8">
+              <strong style="color:#1F5F47">${i+1}. ${namaBulan[b.bulanN]}:</strong> <span style="font-weight:600">${a.t}</span><br>
+              <span style="font-size:10px;color:#5a9080;display:block;margin-top:3px">📖 ${a.sop} · 👤 ${a.siapa}</span>
+              ${dosisShort ? `<span style="font-size:11px;color:#5f4a3a;line-height:1.5;display:block;margin-top:5px;padding:5px 8px;background:#fdf6e3;border-left:2px solid #D4AF37;border-radius:3px"><strong style="color:#8b6914">📐 SOP says:</strong> ${dosisShort}</span>` : ''}
+              ${lokalShort ? `<span style="font-size:11px;color:#5f4a3a;line-height:1.5;display:block;margin-top:4px;padding:5px 8px;background:#fde2dc;border-left:2px solid #c14b3a;border-radius:3px"><strong style="color:#c14b3a">📍 NGT Adjust:</strong> ${lokalShort}</span>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  // Build full analysis HTML
+  c.innerHTML = `
+    <div style="margin-top:14px;padding:18px 22px;background:linear-gradient(135deg,#fff8e6 0%,#fef3d7 100%);border-radius:10px;border-left:5px solid #D4AF37">
+      <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:1.5px;margin-bottom:10px">📊 ANALISA — KENAPA COMPLIANCE RENDAH?</div>
+
+      <div style="font-size:13px;line-height:1.7;color:#2e4040;margin-bottom:10px">
+        <strong>Reading sekarang:</strong> ${pct}% (partial credit). Dari <strong>${m.total} aktivitas SOP applicable</strong> di 2026: <strong style="color:#2e7d5e">${m.sudah} fully compliant</strong> + <strong style="color:#c14b3a">${m.tidakSesuai} partial</strong> (substituted/approximate, era T.A. pre-T0) + <strong style="color:#e67e22">${m.belum} belum dieksekusi</strong>${m.na > 0 ? ` + <strong style="color:#888">${m.na} N/A</strong>` : ''}.
+      </div>
+
+      ${tidakSesuaiHTML}
+      ${belumHTML}
+
+      <div style="margin-top:16px;padding-top:14px;border-top:2px dashed #D4AF37">
+        <div style="font-size:11px;font-weight:800;color:#1F5F47;letter-spacing:.8px;margin-bottom:8px;text-transform:uppercase">💡 Konteks &amp; Recommendation</div>
+        <div style="font-size:12px;line-height:1.75;color:#2e4040">
+          <div style="margin-bottom:8px"><strong style="color:#8b6914">1. Pre-T0 era T.A. RWI (Jan-Apr 2026):</strong> Tenaga Ahli pakai protokol berbeda dari SOP Robusta Edisi 2 (BRIN + Kementan). Premium brands (NPK Yaramila, Karate Plus Boron, Fish Extract) ≠ BRIN spec (Urea + SP-36 + KCl + Kieserit + Dolomit). Substituted = 50% credit per methodology.</div>
+          <div style="margin-bottom:8px"><strong style="color:#8b6914">2. T0 (Mei 2026+):</strong> SOP nasional formally adopted. Compliance akan naik organik saat tim lapangan (Mas Anto, Cak Yit, Pak Kumpul) eksekusi wajib items per bulan + Wakif mark status via SOP Kalender harian.</div>
+          <div style="margin-bottom:8px"><strong style="color:#8b6914">3. Target realistic year-end 2026:</strong> 60-80% kalau seluruh wajib items Mei-Des terpenuhi. Saat ini ${pct}% = baseline organik yang akan tumbuh seiring siklus berjalan.</div>
+          <div><strong style="color:#8b6914">4. Action sekarang:</strong> <a href="#" onclick="document.querySelector('.sb-tab[data-panel=kalender]').click();return false;" style="color:#c14b3a;font-weight:700;text-decoration:underline">Buka tab SOP Kalender</a> → klik bulan <strong>${namaBulanFull[m.currentMonth]}</strong> → mark status setiap item (Belum → Sudah → Tidak Sesuai → N/A) sesuai progress lapangan harian. Tiap update auto-recompute score di sini.</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 // ===== COMPLIANCE PROGRESS (real-time dari SOP_STATUS) =====
 function renderComplianceProgress() {
   const m = getComplianceMetrics();
@@ -5542,6 +5646,8 @@ function renderComplianceProgress() {
 
   // Also refresh annual comparison cards (2026 YTD blends with real-time current month)
   if (typeof renderAnnualCompliance === 'function') renderAnnualCompliance();
+  // Refresh analysis box (kenapa compliance rendah + SOP guidance)
+  if (typeof renderComplianceAnalysis === 'function') renderComplianceAnalysis();
 }
 
 function resetSOPStatus() {
