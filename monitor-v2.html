@@ -80,6 +80,24 @@
   .card-title{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--moss);margin-bottom:10px;display:flex;align-items:center;gap:6px}
   .card-title .num{background:var(--moss);color:#fff;width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px}
 
+  /* ANNUAL COMPLIANCE CARDS (15 Mei 2026) */
+  .annual-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+  .annual-card{background:#fff;border:2px solid #ddd;border-radius:12px;padding:16px 18px;transition:.2s;position:relative;overflow:hidden}
+  .annual-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(46,64,64,.12)}
+  .annual-card.current{box-shadow:0 0 0 3px rgba(212,175,55,.32);background:linear-gradient(135deg,#fffbf0,#fff)}
+  .annual-card .annual-year{font-size:13px;font-weight:800;color:var(--earth);margin-bottom:6px;letter-spacing:.6px;display:flex;align-items:center;justify-content:space-between}
+  .annual-card .annual-score{font-size:38px;font-weight:800;line-height:1;letter-spacing:-1.5px;margin-bottom:8px}
+  .annual-card .annual-bar{background:#eee;height:7px;border-radius:4px;overflow:hidden;margin-bottom:8px}
+  .annual-card .annual-fill{height:100%;border-radius:4px;transition:width .6s ease}
+  .annual-card .annual-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px}
+  .annual-card .annual-era{font-size:11.5px;color:var(--earth);font-weight:700;margin-bottom:6px;line-height:1.4}
+  .annual-card .annual-records{font-size:10.5px;color:var(--mute);line-height:1.55;margin-bottom:6px;padding-top:8px;border-top:1px dashed #eee}
+  .annual-card .annual-records strong{color:var(--earth)}
+  .annual-card .annual-note{font-size:10px;color:#aaa;font-style:italic;line-height:1.45}
+  .annual-status{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.5px}
+  .annual-status.ytd{background:#FFF4D6;color:#8B6914}
+  .annual-status.final{background:#e8f1ec;color:#5a9080}
+
   /* FORM HERO BANNER */
   .form-hero-banner{position:relative;margin-bottom:14px;border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);background:#fff;line-height:0;cursor:pointer;transition:transform .15s ease, box-shadow .15s ease}
   .form-hero-banner:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(46,64,64,.12)}
@@ -1088,7 +1106,15 @@
 
     <!-- ============ COMPLIANCE ============ -->
     <div class="panel" id="panel-compliance">
-      <!-- NEW: Real-time progress dari SOP Kalender checklist -->
+
+      <!-- NEW (15 Mei 2026): Annual Comparison Cards — Compliance Year-on-Year -->
+      <div class="card" style="border-left:4px solid var(--gold)">
+        <div class="card-title" style="color:var(--gold)"><span class="num" style="background:var(--gold)">📊</span>Compliance Tahunan — Komparasi Year-on-Year</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:14px">SOP compliance per kalender tahunan. 2024–2025 = historical (sparse data, low compliance baseline). <strong>2026 = YTD</strong> (blend pre-T0 era T.A. Jan–Apr + Mei onwards real-time tracking). Methodology detail di Aset Knowledge: <code>Analisa_Compliance_Methodology_Preview_15Mei2026.html</code></p>
+        <div class="annual-cards" id="annual-compliance-cards"></div>
+      </div>
+
+      <!-- Real-time progress dari SOP Kalender checklist -->
       <div class="card" style="border-left:4px solid var(--moss)">
         <div class="card-title"><span class="num">1</span>Status Eksekusi SOP — Real-time Tracking</div>
         <p style="font-size:11px;color:var(--mute);margin-bottom:14px">Live data dari checklist SOP Kalender. Klik tombol status di Kalender untuk update — progress di sini auto-refresh.</p>
@@ -5246,6 +5272,96 @@ function showBulanAktif(n, year) {
   }).join('');
 }
 
+// ===== ANNUAL COMPLIANCE COMPARISON (15 Mei 2026) =====
+// Hardcoded historical estimates (pending detailed Tahap 2 analysis per methodology)
+// Methodology: 5-dimensi scoring (Coverage 30% · Quality 25% · Timing 20% · Cost 15% · Doc 10%)
+// Priority weights: wajib 3× · rekomendasi 2× · rutin 1× · larangan 3× · rencana 0×
+const ANNUAL_COMPLIANCE = {
+  2024: {
+    score: 12,
+    era: 'Era MWC NU (Lembaga Nadzir ke-2)',
+    actual_records: 'Feb pembersihan intensif (55 PD) · Jul-Aug panen perdana ~100 KG (63 KG verified) · Okt replanting 330 bibit gagal',
+    status: 'final',
+    note: 'Estimasi awal — sparse data, pending Tahap 2 detailed analysis'
+  },
+  2025: {
+    score: 16,
+    era: 'Era MWC NU lanjutan',
+    actual_records: 'Jul-Aug panen 281 KG (+346% dari 2024) · Sep-Nov MOU Wakaf admin (non-perawatan)',
+    status: 'final',
+    note: 'Estimasi awal — improvement panen tapi sparse SOP-spec match'
+  },
+  2026: {
+    score_pre_t0: 40,        // Pilot Jan 40,6%, Feb-Apr placeholder pending
+    pre_t0_months: 4,         // Jan-Apr 2026
+    era: 'Era T.A. (RWI) Pre-T0 → T0 SOP Adoption (Mei)',
+    actual_records: 'Pre-T0: Pemupukan Makro+Mikro T.A. (8 Jan) · Penggemburan + 65 sak kompos ayam (Jan-Feb) · PDAM (7 Mar) · Fish Extract (15 Mar) · Kunjungan T.A. baseline (20 Apr) | Post-T0: Mei+ live tracking',
+    status: 'YTD',
+    note: 'Pilot Jan 40,6%. Feb-Apr estimasi placeholder. Mei+ blend dgn real-time SOP_STATUS.'
+  }
+};
+
+function computeAnnualCompliance(year) {
+  const data = ANNUAL_COMPLIANCE[year];
+  if (!data) return 0;
+  // For 2024 and 2025: hardcoded final
+  if (data.status === 'final') return data.score;
+  // For 2026 YTD: blend pre-T0 + post-T0 real-time
+  const today = new Date();
+  const monthNow = today.getMonth() + 1;
+  const yearNow = today.getFullYear();
+  if (year !== yearNow) return data.score_pre_t0 || 0;
+  // Pre-T0 contribution (Jan-Apr 2026)
+  const preT0Score = data.score_pre_t0;
+  const preT0Weight = data.pre_t0_months;
+  // Post-T0 months (May onwards)
+  const postT0Months = Math.max(0, monthNow - 4);
+  if (postT0Months <= 0) return preT0Score;
+  // Real-time current compliance from SOP_STATUS
+  const m = (typeof getComplianceMetrics === 'function') ? getComplianceMetrics() : null;
+  const realTimePct = (m && m.total) ? Math.round((m.sudah / m.total) * 100) : 0;
+  // Weighted average
+  const totalMonths = preT0Weight + postT0Months;
+  const blended = (preT0Score * preT0Weight + realTimePct * postT0Months) / totalMonths;
+  return Math.round(blended);
+}
+
+function getComplianceColor(score) {
+  if (score < 25) return { bg: '#B83227', label: 'Sangat Rendah' };
+  if (score < 40) return { bg: '#E67E22', label: 'Rendah' };
+  if (score < 60) return { bg: '#D4AF37', label: 'Berkembang' };
+  if (score < 80) return { bg: '#5A9080', label: 'Baik' };
+  return { bg: '#2E7D5E', label: 'Sangat Baik' };
+}
+
+function renderAnnualCompliance() {
+  const c = document.getElementById('annual-compliance-cards');
+  if (!c) return;
+  const yearNow = new Date().getFullYear();
+  const years = [2024, 2025, 2026];
+  c.innerHTML = years.map(year => {
+    const data = ANNUAL_COMPLIANCE[year];
+    if (!data) return '';
+    const score = computeAnnualCompliance(year);
+    const color = getComplianceColor(score);
+    const isCurrent = year === yearNow;
+    const statusCls = data.status === 'YTD' ? 'ytd' : 'final';
+    const statusLbl = data.status === 'YTD' ? 'YTD' : 'FINAL';
+    return `<div class="annual-card ${isCurrent ? 'current' : ''}" style="border-color:${color.bg}">
+      <div class="annual-year">
+        <span>${year}${isCurrent ? ' (Tahun Berjalan)' : ''}</span>
+        <span class="annual-status ${statusCls}">${statusLbl}</span>
+      </div>
+      <div class="annual-score" style="color:${color.bg}">${score}<span style="font-size:18px">%</span></div>
+      <div class="annual-bar"><div class="annual-fill" style="width:${score}%;background:${color.bg}"></div></div>
+      <div class="annual-label" style="color:${color.bg}">${color.label}</div>
+      <div class="annual-era">${data.era}</div>
+      <div class="annual-records"><strong>📋 Records:</strong> ${data.actual_records}</div>
+      <div class="annual-note">💡 ${data.note}</div>
+    </div>`;
+  }).join('');
+}
+
 // ===== COMPLIANCE PROGRESS (real-time dari SOP_STATUS) =====
 function renderComplianceProgress() {
   const m = getComplianceMetrics();
@@ -5384,6 +5500,9 @@ function renderComplianceProgress() {
 
     actC.innerHTML = html;
   }
+
+  // Also refresh annual comparison cards (2026 YTD blends with real-time current month)
+  if (typeof renderAnnualCompliance === 'function') renderAnnualCompliance();
 }
 
 function resetSOPStatus() {
