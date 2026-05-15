@@ -4762,7 +4762,10 @@ if (_livingLabSeedApplied > 0) {
 let currentSOPMonth = new Date().getMonth() + 1;
 let currentSOPYear = new Date().getFullYear();
 // Wheel view mode: 'forward' (default — auto-shift 12 months forward) or 'calendar' (Jan-Dec of selected year)
-let sopWheelView = localStorage.getItem('wkkn_sop_wheel_view') || 'forward';
+// Always default to forward on page load — calendar mode session-only untuk backfill audit
+// (Hapus persistence supaya Adib selalu kembali ke familiar forward view tiap buka dashboard)
+let sopWheelView = 'forward';
+localStorage.removeItem('wkkn_sop_wheel_view'); // Cleanup deprecated persistence
 
 // SOP project start anchor — Jan 2026 (era T.A. RWI included sebagai pre-T0 historical contribution)
 // Updated 15 Mei 2026 per Adib: 2026 = tahun full year, Jan-Apr items in-scope dengan auto-seed dari Living Lab
@@ -5210,7 +5213,7 @@ function renderSOPKalender() {
 function setSOPWheelView(mode) {
   if (mode !== 'forward' && mode !== 'calendar') return;
   sopWheelView = mode;
-  localStorage.setItem('wkkn_sop_wheel_view', mode);
+  // Session-only — tidak persist supaya tiap page load default forward (current month leftmost)
   // Reset year to current when switching to calendar mode (avoid leftover state)
   if (mode === 'calendar') {
     const yearNow = new Date().getFullYear();
