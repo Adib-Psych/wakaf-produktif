@@ -68,8 +68,8 @@ span.lang-en { display: none; }
   background: linear-gradient(135deg, rgba(90,144,128,0.22), rgba(90,144,128,0.1));
   color: #e8f4f0; white-space: nowrap;
 }
-.navbar-right { display: flex; align-items: center; gap: 0.5rem; }
-.navbar-nav { display: flex; align-items: center; gap: 0.1rem; list-style: none; }
+.navbar-right { display: flex; align-items: center; gap: 0.85rem; }
+.navbar-nav { display: flex; align-items: center; gap: 0.35rem; list-style: none; margin-right: 0.4rem; }
 .navbar-nav li a {
   font-size: 0.78rem; font-weight: 500; color: #a8c8bc;
   padding: 0.35rem 0.7rem; border-radius: 6px;
@@ -105,12 +105,19 @@ span.lang-en { display: none; }
 .lang-btn:hover, .lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
 .rwi-nav-badge {
   display: inline-flex; align-items: center; gap: 0.6rem;
-  padding: 0.35rem 0.7rem;
+  padding: 0.4rem 0.8rem;
   border-radius: 6px;
   border: 1px solid var(--accent);
   box-shadow: 2px 2px 0px var(--accent);
   background: linear-gradient(135deg, rgba(90,144,128,0.22), rgba(90,144,128,0.1));
   flex-shrink: 0;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.rwi-nav-badge:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--accent);
 }
 .rwi-logo-box {
   width: 96px; height: 48px; border-radius: 6px;
@@ -540,7 +547,7 @@ p,
 <header class="navbar">
   <div class="navbar-inner">
     <a href="index.html" class="navbar-logo">
-      <img src="images/logo-wakaf-produktif-3x1.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block">
+      <img src="images/logo-wakaf-produktif-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:54px;width:auto;max-width:108px;display:block;border-radius:4px">
     </a>
     <div class="navbar-right">
       <nav>
@@ -555,7 +562,7 @@ p,
       </nav>
       <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
       <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-      <div class="rwi-nav-badge"><div class="rwi-nav-text"><div class="rwi-nav-label lang-id">Wakif</div><div class="rwi-nav-label lang-en">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></div>
+      <a href="https://adib-psych.github.io/myjourney/home.html" target="_blank" rel="noopener" class="rwi-nav-badge" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
     </div>
   </div>
 </header>
