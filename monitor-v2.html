@@ -4710,14 +4710,63 @@ if (sopStoredVer !== SOP_STATUS_VERSION) {
   localStorage.setItem('wkkn_sop_status_ver', SOP_STATUS_VERSION);
 }
 let SOP_STATUS = JSON.parse(localStorage.getItem('wkkn_sop_status_v1') || '{}');
+
+// ===== LIVING LAB SEED — Auto-populate SOP_STATUS from Living Lab data (15 Mei 2026) =====
+// Mapping era T.A. (RWI) Jan-Apr 2026 ke status SOP berdasarkan Living Lab observations.
+// Status: 'sudah' (compliant), 'tidak_sesuai' (substituted/approximate), 'belum' (no record).
+// Hanya seed kalau user belum set status — preserve user edits.
+const LIVING_LAB_SEED = {
+  // === JANUARI 2026 (4 items) — pilot Tahap 1 analyzed ===
+  '1-0': { status: 'belum', note: 'Pre-T0 Era T.A.: tidak ada record formal pemangkasan wiwilan Jan 2026' },
+  '1-1': { status: 'tidak_sesuai', note: 'Pre-T0 Era T.A. (8 Jan 2026): pemupukan dgn NPK Yaramila 16-16-16 + spray nutrisi premium (Karate Plus Boron, Ponska Plus, Fertiphos, MKP, Vita Flex, dll). Substituted dari BRIN spec. Score ~75 (Coverage 100 + Quality 50 + Cost 30). [Sumber: Living Lab]' },
+  '1-2': { status: 'tidak_sesuai', note: 'Pre-T0 Era T.A. (31 Jan-20 Feb 2026): 65 sak kompos ayam + penggemburan tanah dgn garpu (kedalaman 20 cm). Approximate overlap dgn sanitasi piringan. Score ~80. [Sumber: Living Lab]' },
+  '1-3': { status: 'belum', note: 'Pre-T0 Era T.A.: tidak ada record formal OPT monitoring 5-pohon-diagonal Jan 2026' },
+
+  // === FEBRUARI 2026 (3 effective items, #3 rencana excluded) — quick estimate, pending Tahap 2 ===
+  '2-0': { status: 'belum', note: 'Pre-T0 Era T.A.: pending Tahap 2 detailed analysis Februari 2026' },
+  '2-1': { status: 'belum', note: 'Pre-T0 Era T.A.: pending Tahap 2 detailed analysis Februari 2026' },
+  '2-2': { status: 'belum', note: 'Pre-T0 Era T.A.: pending Tahap 2 detailed analysis Februari 2026' },
+
+  // === MARET 2026 (4 items) — quick estimate, pending Tahap 2 detailed ===
+  '3-0': { status: 'sudah', note: 'Pre-T0 Era T.A.: HINDARI pemangkasan berat = COMPLIANT (T.A. tidak melakukan major pruning Mar 2026 — fokus pada Fish Extract). Larangan terpenuhi. [Sumber: Living Lab]' },
+  '3-1': { status: 'tidak_sesuai', note: 'Pre-T0 Era T.A. (15 Mar 2026): Fish Extract perdana 100cc/pohon (1L/pohon dgn air, produced di Wonosalam) — substituted dari BRIN pemupukan akhir MH spec. Score ~70 (Coverage 100 + Quality 50 different method). [Sumber: Living Lab]' },
+  '3-2': { status: 'belum', note: 'Pre-T0 Era T.A.: pending Tahap 2 detailed analysis Maret 2026' },
+  '3-3': { status: 'belum', note: 'Pre-T0 Era T.A.: pending Tahap 2 detailed analysis Maret 2026' },
+
+  // === APRIL 2026 (3 items) — quick estimate, pending Tahap 2 ===
+  '4-0': { status: 'tidak_sesuai', note: 'Pre-T0 Era T.A. (20 Apr 2026): Kunjungan T.A. + assessment 915 pohon + TDS soil sampling 5 titik — partial overlap dgn inventarisasi pohon. Score ~75. [Sumber: Living Lab]' },
+  '4-1': { status: 'tidak_sesuai', note: 'Pre-T0 Era T.A. (20 Apr 2026): Evaluasi kondisi 915 pohon termasuk soil sampling — partial overlap dgn sortasi tanaman. Score ~75. [Sumber: Living Lab]' },
+  '4-2': { status: 'belum', note: 'Pre-T0 Era T.A.: pending Tahap 2 detailed analysis April 2026' }
+};
+
+// Auto-seed Jan-Apr 2026 SOP_STATUS dari Living Lab observations (preserve user edits)
+let _livingLabSeedApplied = 0;
+Object.keys(LIVING_LAB_SEED).forEach(key => {
+  if (!SOP_STATUS[key]) {
+    const seed = LIVING_LAB_SEED[key];
+    SOP_STATUS[key] = {
+      status: seed.status,
+      note: seed.note,
+      ts: '2026-04-30T23:59:59Z',
+      src: 'living_lab_seed'
+    };
+    _livingLabSeedApplied++;
+  }
+});
+if (_livingLabSeedApplied > 0) {
+  localStorage.setItem('wkkn_sop_status_v1', JSON.stringify(SOP_STATUS));
+  console.log(`[Living Lab Seed] Applied ${_livingLabSeedApplied} pre-T0 SOP statuses from era T.A. observations.`);
+}
+
 let currentSOPMonth = new Date().getMonth() + 1;
 let currentSOPYear = new Date().getFullYear();
 // Wheel view mode: 'forward' (default — auto-shift 12 months forward) or 'calendar' (Jan-Dec of selected year)
 let sopWheelView = localStorage.getItem('wkkn_sop_wheel_view') || 'forward';
 
-// SOP project start anchor — used for "Pre-Project" badge in calendar view (locked Mei 2026)
+// SOP project start anchor — Jan 2026 (era T.A. RWI included sebagai pre-T0 historical contribution)
+// Updated 15 Mei 2026 per Adib: 2026 = tahun full year, Jan-Apr items in-scope dengan auto-seed dari Living Lab
 const SOP_PROJECT_START_YEAR = 2026;
-const SOP_PROJECT_START_MONTH = 5;
+const SOP_PROJECT_START_MONTH = 1;
 
 function saveSOPStatus() {
   localStorage.setItem('wkkn_sop_status_v1', JSON.stringify(SOP_STATUS));
@@ -4752,7 +4801,7 @@ const STATUS_VISUAL = {
 
 // 🔒 SOP Project Anchor — adopsi resmi SOP Mei 2026 (Notulen 1-2 Mei 2026)
 // Items di bulan SEBELUM ini dianggap pre-project / N/A (bukan overdue).
-const SOP_PROJECT_START = { year: 2026, month: 5 };  // Mei 2026
+const SOP_PROJECT_START = { year: 2026, month: 1 };  // Jan 2026 (era T.A. RWI included as pre-T0 contribution per Adib 15 Mei)
 
 function getComplianceMetrics() {
   let total = 0, sudah = 0, belum = 0, tidakSesuai = 0, na = 0;
@@ -5279,15 +5328,15 @@ function showBulanAktif(n, year) {
 const ANNUAL_COMPLIANCE = {
   2024: {
     score: 12,
-    era: 'Era MWC NU (Lembaga Nadzir ke-2)',
+    era: 'Era Wakif & Calon Nadzir 1',
     actual_records: 'Feb pembersihan intensif (55 PD) · Jul-Aug panen perdana ~100 KG (63 KG verified) · Okt replanting 330 bibit gagal',
     status: 'final',
     note: 'Estimasi awal — sparse data, pending Tahap 2 detailed analysis'
   },
   2025: {
     score: 16,
-    era: 'Era MWC NU lanjutan',
-    actual_records: 'Jul-Aug panen 281 KG (+346% dari 2024) · Sep-Nov MOU Wakaf admin (non-perawatan)',
+    era: 'Era Lembaga Nadzir 2',
+    actual_records: 'Jul-Aug panen 281 KG (+346% dari 2024) · Sep-Nov MOU Wakaf admin (non-perawatan kopi)',
     status: 'final',
     note: 'Estimasi awal — improvement panen tapi sparse SOP-spec match'
   },
@@ -5304,26 +5353,16 @@ const ANNUAL_COMPLIANCE = {
 function computeAnnualCompliance(year) {
   const data = ANNUAL_COMPLIANCE[year];
   if (!data) return 0;
-  // For 2024 and 2025: hardcoded final
+  // For 2024 and 2025: hardcoded final (sparse historical data, pending Tahap 2 detailed)
   if (data.status === 'final') return data.score;
-  // For 2026 YTD: blend pre-T0 + post-T0 real-time
-  const today = new Date();
-  const monthNow = today.getMonth() + 1;
-  const yearNow = today.getFullYear();
-  if (year !== yearNow) return data.score_pre_t0 || 0;
-  // Pre-T0 contribution (Jan-Apr 2026)
-  const preT0Score = data.score_pre_t0;
-  const preT0Weight = data.pre_t0_months;
-  // Post-T0 months (May onwards)
-  const postT0Months = Math.max(0, monthNow - 4);
-  if (postT0Months <= 0) return preT0Score;
-  // Real-time current compliance from SOP_STATUS
+  // For 2026 YTD: live compute dari SOP_STATUS (Jan-Apr already seeded dari Living Lab,
+  // Mei+ live tracking) — partial credit untuk tidak_sesuai (50% of sudah weight)
   const m = (typeof getComplianceMetrics === 'function') ? getComplianceMetrics() : null;
-  const realTimePct = (m && m.total) ? Math.round((m.sudah / m.total) * 100) : 0;
-  // Weighted average
-  const totalMonths = preT0Weight + postT0Months;
-  const blended = (preT0Score * preT0Weight + realTimePct * postT0Months) / totalMonths;
-  return Math.round(blended);
+  if (!m || !m.total) return 0;
+  // Compliance % with partial credit:
+  // sudah = 100% credit, tidak_sesuai = 50% credit (substituted/approximate masih kontribusi)
+  const credit = m.sudah + (m.tidakSesuai * 0.5);
+  return Math.round((credit / m.total) * 100);
 }
 
 function getComplianceColor(score) {
