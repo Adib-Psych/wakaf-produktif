@@ -348,11 +348,11 @@
             <option value="KUMPUL">Pak Kumpul</option>
           </select>
           <select id="filter-bidang" onchange="renderLog()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-            <option value="">Semua Bidang</option>
-            <option value="1">Bidang 1 (atas)</option>
-            <option value="2">Bidang 2 (atas)</option>
-            <option value="3">Bidang 3 (bawah + jahe)</option>
-            <option value="4">Bidang 4 (Rumah Wakif)</option>
+            <option value="">Semua Kebun</option>
+            <option value="1">Kebun 1 (pinggir jalan, kecil)</option>
+            <option value="2">Kebun 2 (pinggir jalan, besar)</option>
+            <option value="3">Kebun 3 (bawah)</option>
+            <option value="4">Kebun 4 (belakang Rumah)</option>
           </select>
           <select id="filter-kategori" onchange="renderLog()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <option value="">Semua Kategori</option>
@@ -375,7 +375,7 @@
           <table>
             <thead>
               <tr>
-                <th>Tgl</th><th>Pelapor</th><th>Bidang</th><th>Kategori</th>
+                <th>Tgl</th><th>Pelapor</th><th>Kebun</th><th>Kategori</th>
                 <th>Phn</th><th>Detail</th><th>Compliance</th><th>Alerts</th><th style="width:110px">Aksi</th>
               </tr>
             </thead>
@@ -416,12 +416,12 @@
             <div id="f-tgl-preview" style="font-size:12px;color:var(--moss);font-weight:700;margin-top:6px;letter-spacing:0.3px"></div>
           </div>
           <div class="field">
-            <label class="field-lbl">Bidang <span class="req">*</span></label>
+            <label class="field-lbl">Kebun <span class="req">*</span></label>
             <div class="radio-row" id="form-bidang">
-              <div class="radio-pill" data-val="1" onclick="setRadio('form-bidang',this)">Bidang 1 (atas)</div>
-              <div class="radio-pill" data-val="2" onclick="setRadio('form-bidang',this)">Bidang 2 (atas)</div>
-              <div class="radio-pill" data-val="3" onclick="setRadio('form-bidang',this)">Bidang 3 (bawah + jahe)</div>
-              <div class="radio-pill" data-val="4" onclick="setRadio('form-bidang',this)">🏠 Bidang 4 (Rumah Wakif)</div>
+              <div class="radio-pill" data-val="1" onclick="setRadio('form-bidang',this)">Kebun 1<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, kecil</small></div>
+              <div class="radio-pill" data-val="2" onclick="setRadio('form-bidang',this)">Kebun 2<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, besar</small></div>
+              <div class="radio-pill" data-val="3" onclick="setRadio('form-bidang',this)">Kebun 3<br><small style="font-weight:400;color:var(--mute);font-size:10px">bawah</small></div>
+              <div class="radio-pill" data-val="4" onclick="setRadio('form-bidang',this)">🏠 Kebun 4<br><small style="font-weight:400;color:var(--mute);font-size:10px">belakang Rumah</small></div>
             </div>
           </div>
           <div class="field">
@@ -944,7 +944,7 @@
               <tr style="border-bottom:2px solid var(--sage);text-align:left">
                 <th style="padding:8px 6px;font-size:11px">Tgl</th>
                 <th style="padding:8px 6px;font-size:11px">Pekerja</th>
-                <th style="padding:8px 6px;font-size:11px">Bidang</th>
+                <th style="padding:8px 6px;font-size:11px">Kebun</th>
                 <th style="padding:8px 6px;font-size:11px">Aktivitas</th>
                 <th style="padding:8px 6px;font-size:11px">Pohon</th>
                 <th style="padding:8px 6px;font-size:11px;width:140px">Durasi / Model</th>
@@ -970,7 +970,7 @@
     <!-- ============ INVENTARISASI ============ -->
     <div class="panel" id="panel-inventaris">
       <div class="card">
-        <div class="card-title"><span class="num">1</span>Snapshot Pohon per Bidang</div>
+        <div class="card-title"><span class="num">1</span>Snapshot Pohon per Kebun</div>
         <div class="kpi-grid" id="inv-kpi-grid">
           <div class="kpi"><div class="kpi-num">~915</div><div class="kpi-lbl">Total (Estimasi Pre-Selection)</div><div class="kpi-trend">📍 Target ideal post-selection: 750 phn (3×2,5 m)</div></div>
           <div class="kpi"><div class="kpi-num" id="inv-dipetakan">0</div><div class="kpi-lbl">Sudah Dipetakan</div><div class="kpi-trend" id="inv-dipetakan-pct">— complete</div></div>
@@ -981,7 +981,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">2</span>Distribusi Pohon per Bidang × Status</div>
+        <div class="card-title"><span class="num">2</span>Distribusi Pohon per Kebun × Status</div>
         <div class="chart-wrap"><canvas id="chart-inventory"></canvas></div>
       </div>
 
@@ -1050,7 +1050,7 @@
     <!-- ============ OPT ============ -->
     <div class="panel" id="panel-opt">
       <div class="card">
-        <div class="card-title"><span class="num">1</span>OPT Heatmap (Per Bidang × Minggu)</div>
+        <div class="card-title"><span class="num">1</span>OPT Heatmap (Per Kebun × Minggu)</div>
         <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Pengamatan 5 pohon diagonal per blok per minggu (per SOP hal 155-160 + BRIN 5 Mei). Alert: PBKo &gt;5% warning · &gt;10% action.</p>
         <div id="heatmap"></div>
       </div>
@@ -1098,7 +1098,7 @@
         <div style="font-size:12px;color:#4a4030;line-height:1.7">
           <p style="margin-bottom:8px"><strong>Mas Anto (Sweat Equity):</strong> bukan pekerja harian — kontribusi pro-bono terdokumentasi untuk bagi hasil pasca-BEP (Fase 3). Tidak masuk timeline gaji harian, tapi tetap aktif sebagai Koordinator Lapangan + verifikator compliance.</p>
           <p style="margin-bottom:8px"><strong>Cak Yit (Yitno):</strong> spesialis bagian atas pohon — pruning, sambung pucuk Robusta klon unggul, wiwilan. Tarif Rp 60K ½ hari · Rp 120K full day. Borongan: Rp 20K/pohon untuk panjat durian (insidental).</p>
-          <p style="margin-bottom:8px"><strong>Pak Kumpul:</strong> spesialis bagian bawah + tanaman penaung + konservasi. Tarif Rp 50K ½ hari · Rp 100K full day. Plus side project jahe self-financed di Bidang 3 (tidak dibayar dari kas kebun kopi wakaf — biaya & hasil dari panen jahe sendiri).</p>
+          <p style="margin-bottom:8px"><strong>Pak Kumpul:</strong> spesialis bagian bawah + tanaman penaung + konservasi. Tarif Rp 50K ½ hari · Rp 100K full day. Plus side project jahe self-financed di Kebun 3 (tidak dibayar dari kas kebun kopi wakaf — biaya & hasil dari panen jahe sendiri).</p>
           <p style="margin-bottom:0"><strong>Wakif (Adib) + Hendy:</strong> keputusan strategis, anggaran, soil test, infrastruktur, audit transparansi. Tim panen ad-hoc saat Jun-Agu (extra labor + Cak Yit + Pak Kumpul).</p>
         </div>
       </div>
@@ -2063,7 +2063,7 @@ function deleteLaporan(id) {
   const linkedUpah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.filter(u =>
     u.tgl === lap.tgl && u.pelapor === lap.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill')
   ) : [];
-  const msg = `Hapus entry ini?\n\n📅 ${formatTgl(lap.tgl)} · ${lap.pelapor} · Bidang ${lap.bidang} · ${lap.kategori}\n📝 ${(lap.detail || '').substring(0, 80)}${(lap.detail||'').length>80?'…':''}\n\n` +
+  const msg = `Hapus entry ini?\n\n📅 ${formatTgl(lap.tgl)} · ${lap.pelapor} · Kebun ${lap.bidang} · ${lap.kategori}\n📝 ${(lap.detail || '').substring(0, 80)}${(lap.detail||'').length>80?'…':''}\n\n` +
     (linkedUpah.length > 0 ? `⚠️ Ini juga akan menghapus ${linkedUpah.length} linked UPAH entry (status: ${linkedUpah.filter(u=>u.status==='lunas').length} sudah lunas, ${linkedUpah.filter(u=>u.status==='belum').length} belum dibayar). Cashbook auto-entries yang sudah lunas TIDAK terhapus (audit trail).\n\n` : '') +
     'Lanjut?';
   if (!confirm(msg)) return;
@@ -2272,7 +2272,7 @@ function renderActivityForm() {
           <div class="field"><label class="field-lbl">Petugas Panen</label>
             <select><option>MWC_NU</option><option>Ust_Fauzan</option><option>tim_kebun_ngt</option></select></div>
           <div class="field" style="grid-column:1/-1"><label class="field-lbl">Catatan Amanah (audit trail)</label>
-            <textarea placeholder="Dokumentasi komunikasi dengan MWC NU/Ust. Fauzan untuk audit amanah pisang Bidang 3 kebun kopi wakaf Ngantang..."></textarea></div>
+            <textarea placeholder="Dokumentasi komunikasi dengan MWC NU/Ust. Fauzan untuk audit amanah pisang Kebun 3 kebun kopi wakaf Ngantang..."></textarea></div>
         </div>
       </div>`,
     inventarisasi_pohon: `
@@ -2400,8 +2400,8 @@ function renderActivityForm() {
         <div class="card-title"><span class="num">🪤</span>Detail Brocap Trap Management (Wiryadiputra & Cilas 2009)</div>
         <div class="form-grid">
           <div class="field"><label class="field-lbl">Aksi <span class="req">*</span></label>
-            <select><option>pasang_baru_pilot_bidang_4 (Mei 2026)</option><option>pasang_full_deploy_bidang_1_3 (Nov-Des 2026)</option><option>cek_isi_tangkapan</option><option>ganti_atraktan_kapsul</option><option>maintenance_botol</option></select></div>
-          <div class="field"><label class="field-lbl">Bidang</label>
+            <select><option>pasang_baru_pilot_kebun_4 (Mei 2026)</option><option>pasang_full_deploy_kebun_1_3 (Nov-Des 2026)</option><option>cek_isi_tangkapan</option><option>ganti_atraktan_kapsul</option><option>maintenance_botol</option></select></div>
+          <div class="field"><label class="field-lbl">Kebun</label>
             <select><option>1</option><option>2</option><option>3</option><option>4 (Rumah Wakif - pilot)</option></select></div>
           <div class="field"><label class="field-lbl">Jumlah Trap</label><input type="number" placeholder="5 pilot / 50 full"></div>
           <div class="field"><label class="field-lbl">Ketinggian Pasang (m)</label>
@@ -2583,6 +2583,42 @@ function updateRainfallAlert() {
     </div>`).join('');
 }
 
+// ===== HARVEST DETAIL FORM — capture all sub-fields per kategori (fix 16 Mei 2026) =====
+function harvestDetailForm() {
+  const container = document.getElementById('activity-detail-form');
+  if (!container) return null;
+  const detail = {};
+
+  // Iterate all .field containers
+  container.querySelectorAll('.field').forEach(field => {
+    const lblEl = field.querySelector('.field-lbl');
+    if (!lblEl) return;
+    // Clean label: strip required asterisk, normalize whitespace
+    const label = lblEl.textContent.trim().replace(/\s+/g, ' ').replace(/\s*\*\s*$/, '');
+
+    // Try input/select/textarea (single value)
+    const input = field.querySelector('input:not([type="radio"]):not([type="checkbox"]), select, textarea');
+    if (input && input.value) {
+      detail[label] = input.value;
+      return;
+    }
+
+    // Try radio-row dengan multi-pilih chip pattern
+    const radioRow = field.querySelector('.radio-row');
+    if (radioRow) {
+      const selected = Array.from(radioRow.querySelectorAll('.radio-pill.on'))
+        .map(p => p.textContent.trim());
+      if (selected.length > 0) detail[label] = selected.length === 1 ? selected[0] : selected;
+    }
+  });
+
+  // Include card title for context (kategori name)
+  const cardTitle = container.querySelector('.card-title');
+  if (cardTitle) detail._kategoriTitle = cardTitle.textContent.trim();
+
+  return Object.keys(detail).length > 0 ? detail : null;
+}
+
 function submitForm() {
   const tgl = document.getElementById('f-tgl').value;
   const kategori = document.getElementById('f-kategori').value;
@@ -2592,7 +2628,7 @@ function submitForm() {
   const r7d = +document.getElementById('f-rainfall-7d').value || 0;
 
   if (!STATE.pelapor || !STATE.bidang || !kategori) {
-    alert('Field wajib belum lengkap: Pelapor, Bidang, Kategori');
+    alert('Field wajib belum lengkap: Pelapor, Kebun, Kategori');
     return;
   }
   // Compute alerts based on rainfall + kategori
@@ -2613,6 +2649,7 @@ function submitForm() {
         tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
         pohon: +pohon || 0, detail: catatan || '(no detail)',
         durasi: STATE.durasi || null,
+        detail_form: harvestDetailForm() || oldEntry.detail_form,
         rainfall_24h: r24, rainfall_7d: r7d,
         compliance, alerts: alertMsgs,
         last_edited_at: new Date().toISOString()
@@ -2641,6 +2678,7 @@ function submitForm() {
     tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
     pohon: +pohon || 0, detail: catatan || '(no detail)',
     durasi: STATE.durasi || null,  // ⭐ v3.1: simpan durasi utk traceability + recovery
+    detail_form: harvestDetailForm(),  // ⭐ v3.3 (16 Mei 2026): capture all sub-fields per kategori
     rainfall_24h: r24, rainfall_7d: r7d,
     compliance, alerts: alertMsgs,
     created_at: new Date().toISOString()
@@ -2657,7 +2695,7 @@ function submitForm() {
     let model = 'harian';
     let tarifVal = 0;
     let qty = 1;
-    let aktivitasLbl = `${kategori.replace(/_/g,' ')} di Bidang ${STATE.bidang}` + (pohon ? ` (${pohon} phn)` : '');
+    let aktivitasLbl = `${kategori.replace(/_/g,' ')} di Kebun ${STATE.bidang}` + (pohon ? ` (${pohon} phn)` : '');
 
     if (STATE.durasi === 'setengah_hari') {
       satuanLbl = '½ hari';
@@ -2756,7 +2794,7 @@ function generatePreview() {
 }
 
 function exportCSV() {
-  let csv = 'Tanggal,Pelapor,Bidang,Kategori,Pohon,Detail,Compliance\n';
+  let csv = 'Tanggal,Pelapor,Kebun,Kategori,Pohon,Detail,Compliance\n';
   STATE.laporan.forEach(d => {
     csv += `${d.tgl},${d.pelapor},${d.bidang},${d.kategori},${d.pohon||0},"${(d.detail||'').replace(/"/g,'""')}",${d.compliance}\n`;
   });
@@ -3502,7 +3540,7 @@ function renderInventoryChart() {
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Bidang 1','Bidang 2','Bidang 3','Bidang 4 (Rumah Wakif)'],
+      labels: ['Kebun 1 (pinggir jalan, kecil)','Kebun 2 (pinggir jalan, besar)','Kebun 3 (bawah)','Kebun 4 (belakang Rumah)'],
       datasets: [
         { label: 'Produktif', data: counts.produktif, backgroundColor: '#5a9080' },
         { label: 'Belum Produktif', data: counts.belum_produktif, backgroundColor: '#a8c8bc' },
@@ -3529,14 +3567,14 @@ function renderPrapanenChecklist() {
     {done:true, t:'SOP perawatan disepakati filosofi', d:'Pertahankan cabang gemuk berbuah, buang wiwilan + cabang dalam'},
     {done:true, t:'RAB Final 2 siklus locked (Rp 71,29 jt total, save Rp 23 jt vs awal)', d:'9 Mei 2026 — lihat tab RAB Siklus'},
     {done:true, t:'Klarifikasi Wakif 13 pertanyaan', d:'8 Mei 2026 — locked-in'},
-    {done:false, t:'Inventarisasi pohon Bidang 1 lengkap', d:'Tugas Mas Anto — input via tab Form Input kategori Inventarisasi'},
-    {done:false, t:'Inventarisasi pohon Bidang 2 lengkap', d:'Lanjutan setelah B1 selesai'},
-    {done:false, t:'Inventarisasi pohon Bidang 3 lengkap', d:'Lanjutan setelah B2 selesai'},
+    {done:false, t:'Inventarisasi pohon Kebun 1 lengkap', d:'Tugas Mas Anto — input via tab Form Input kategori Inventarisasi'},
+    {done:false, t:'Inventarisasi pohon Kebun 2 lengkap', d:'Lanjutan setelah B1 selesai'},
+    {done:false, t:'Inventarisasi pohon Kebun 3 lengkap', d:'Lanjutan setelah B2 selesai'},
     {done:false, t:'Estimasi produksi formal (sampling 30 pohon)', d:'SOP hal 218 — pre-Juni 2026'},
     {done:false, t:'Tanam ulang 200-300 lamtoro PG 79', d:'Q7 Opsi A — paralel durian'},
-    {done:false, t:'Build 15-20 rorak prioritas', d:'Q8 Opsi B — fokus area paling miring (Bidang 3)'},
-    {done:false, t:'Bongkar pisang Bidang 3 (panen MWC NU dulu)', d:'Q3 update — amanah didahulukan'},
-    {done:false, t:'Soil test diagonal 5 titik × 3 Bidang', d:'Q9 — vendor UB Brawijaya'},
+    {done:false, t:'Build 15-20 rorak prioritas', d:'Q8 Opsi B — fokus area paling miring (Kebun 3)'},
+    {done:false, t:'Bongkar pisang Kebun 3 (panen MWC NU dulu)', d:'Q3 update — amanah didahulukan'},
+    {done:false, t:'Soil test diagonal 5 titik × 3 Kebun', d:'Q9 — vendor UB Brawijaya'},
     {done:true, t:'Moisture meter — DEFER ke Bonsari (CUT dari RAB 9 Mei)', d:'Q10 → Wakif decision: pinjam Bonsari atau anggaran 2027'},
     {done:true, t:'Top-graft fokus Robusta klon unggul (BP 358/SA 237)', d:'Q2 — plan sudah disepakati'},
     {done:false, t:'OPT pengamatan 5-pohon-diagonal mingguan', d:'SOP hal 155 — alert PBKo >5%'},
@@ -3569,7 +3607,7 @@ function renderHeatmap() {
   // Build heatmap dynamic dari optReports — group by bidang × minggu
   // Get last 7 weeks
   const now = new Date();
-  const weeks = ['Bidang'];
+  const weeks = ['Kebun'];
   const weekStarts = [];
   for (let i = 6; i >= 0; i--) {
     const d = new Date(now);
@@ -3580,7 +3618,7 @@ function renderHeatmap() {
     weeks.push(monday.toLocaleDateString('id-ID', { day:'numeric', month:'short' }));
   }
   // Build rows per bidang
-  const bidangs = ['Bidang 1','Bidang 2','Bidang 3','Bidang 4'];
+  const bidangs = ['Kebun 1','Kebun 2','Kebun 3','Kebun 4'];
   const rows = bidangs.map(b => {
     const bidangNum = b.split(' ')[1];
     const row = [b];
@@ -3723,11 +3761,11 @@ const DISTRIBUSI_DATA = [
     warna: '#e8dec8',
     fontColor: '#2e4040',
     aktivitas: [
-      {act: 'Inventarisasi pohon (Bidang 1, 2, 3, 4)', exec: 'ANTO', verif: 'WAKIF'},
+      {act: 'Inventarisasi pohon (Kebun 1, 2, 3, 4)', exec: 'ANTO', verif: 'WAKIF'},
       {act: 'Estimasi produksi formal (sampling 30 phn)', exec: 'ANTO', verif: 'WAKIF'},
       {act: 'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT, via penggilingan + Bonsari', exec: 'WAKIF+ANTO', verif: 'HENDY'},
       {act: 'Pemupukan akhir MH PARTIAL (SP-36 2 sak + KCl 2 sak, mitigation only)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Pasang Brocap pilot Bidang 4 (5 unit, baseline monitoring)', exec: 'KUMPUL', verif: 'ANTO'},
+      {act: 'Pasang Brocap pilot Kebun 4 (5 unit, baseline monitoring)', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Sortasi tanaman + assessment kondisi', exec: 'ANTO+TIM', verif: '-'},
       {act: 'Konfirmasi processing partner (Bonsari specialty + penggilingan lokal bulk)', exec: 'WAKIF', verif: 'HENDY'},
       {act: 'Moisture meter — defer (akses Bonsari atau anggaran 2027)', exec: 'WAKIF', verif: '-'}
@@ -3746,7 +3784,7 @@ const DISTRIBUSI_DATA = [
       {act: 'Sortasi air pre-pulping (kopong float, bagus tenggelam)', exec: 'TIM', verif: 'ANTO'},
       {act: 'Penjemuran 6-10 cm + balik tiap 1 jam', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Defect grading per 300g sampel (target Mutu 3)', exec: 'ANTO', verif: 'HENDY'},
-      {act: 'Lot tracking WKKN-YYYY-MM-Bidang-LOT', exec: 'ANTO', verif: 'WAKIF'}
+      {act: 'Lot tracking WKKN-YYYY-MM-Kebun-LOT', exec: 'ANTO', verif: 'WAKIF'}
     ]
   },
   {
@@ -3765,7 +3803,7 @@ const DISTRIBUSI_DATA = [
       {act: 'Tanam ulang lamtoro PG 79 (200-300 phn)', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Top-graft Robusta klon unggul (BP 358/SA 237)', exec: 'YIT', verif: 'ANTO'},
       {act: 'Soil test diagonal (lab UB Brawijaya)', exec: 'WAKIF+HENDY', verif: 'ANTO'},
-      {act: 'Bongkar pisang Bidang 3 + tunas (pasca-MWC NU panen)', exec: 'KUMPUL', verif: 'ANTO'}
+      {act: 'Bongkar pisang Kebun 3 + tunas (pasca-MWC NU panen)', exec: 'KUMPUL', verif: 'ANTO'}
     ]
   },
   {
@@ -3777,10 +3815,10 @@ const DISTRIBUSI_DATA = [
     fontColor: '#2e4040',
     aktivitas: [
       {act: 'Pemupukan awal MH ½ dosis BRIN (Urea/SP-36/KCl/Kieserit/Dolomit)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: '🪤 Brocap full deploy 50 unit (Bidang 1-3 + refill 4) — 4 bln post-panen', exec: 'KUMPUL', verif: 'ANTO'},
+      {act: '🪤 Brocap full deploy 50 unit (Kebun 1-3 + refill 4) — 4 bln post-panen', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Mulsa untuk konservasi kelembapan', exec: 'KUMPUL', verif: '-'},
-      {act: 'Tanam Arachis pintoi pilot Bidang 4 Rumah Wakif', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Tanam jahe Bidang 3 (self-financed)', exec: 'KUMPUL (sendiri)', verif: 'ANTO'},
+      {act: 'Tanam Arachis pintoi pilot Kebun 4 Rumah Wakif', exec: 'KUMPUL', verif: 'ANTO'},
+      {act: 'Tanam jahe Kebun 3 (self-financed)', exec: 'KUMPUL (sendiri)', verif: 'ANTO'},
       {act: 'Sanitasi pisang completion + monitoring regrowth', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Monitoring infiltrasi rorak post-hujan', exec: 'ANTO', verif: 'WAKIF'},
       {act: 'Review tahunan + planning siklus berikutnya', exec: 'WAKIF+ANTO', verif: 'HENDY'}
@@ -4196,7 +4234,7 @@ function openAggregateDlg() {
 
   // Build prompt template
   const reportSummary = filtered.map((l, i) =>
-    `[${i+1}] ${l.tgl} · ${l.pelapor} · Bidang ${l.bidang} · ${l.kategori}${l.pohon ? ` (${l.pohon} phn)` : ''}${l.durasi ? ` · ${l.durasi}` : ''}\n    Detail: ${l.detail || '(no detail)'}\n    Cuaca: ${l.cuaca_pagi || '?'}/${l.cuaca_siang || '?'} · Rainfall 24h: ${l.rainfall_24h || 0}mm, 7d: ${l.rainfall_7d || 0}mm${l.alerts && l.alerts.length ? `\n    Alerts: ${l.alerts.join('; ')}` : ''}`
+    `[${i+1}] ${l.tgl} · ${l.pelapor} · Kebun ${l.bidang} · ${l.kategori}${l.pohon ? ` (${l.pohon} phn)` : ''}${l.durasi ? ` · ${l.durasi}` : ''}\n    Detail: ${l.detail || '(no detail)'}\n    Cuaca: ${l.cuaca_pagi || '?'}/${l.cuaca_siang || '?'} · Rainfall 24h: ${l.rainfall_24h || 0}mm, 7d: ${l.rainfall_7d || 0}mm${l.alerts && l.alerts.length ? `\n    Alerts: ${l.alerts.join('; ')}` : ''}`
   ).join('\n\n');
 
   const prompt_text = `🤖 GENERATE MILESTONE DRAFT — 5-ELEMEN EVALUASI
@@ -4485,7 +4523,7 @@ function findSuggestCandidates() {
       candidates.push({
         type: 'first-time',
         source: lap,
-        suggestedTitle: `Pertama kali: ${(lap.kategori || '').replace(/_/g,' ')} di Bidang ${lap.bidang}`,
+        suggestedTitle: `Pertama kali: ${(lap.kategori || '').replace(/_/g,' ')} di Kebun ${lap.bidang}`,
         suggestedPhase: 'pre-panen',
         icon: '🆕',
         reason: 'First-time activity — milestone potensial untuk Living Lab'
@@ -4520,7 +4558,7 @@ function openSuggestDlg() {
           </div>
           <div style="font-weight:700;color:var(--earth);font-size:13px">${c.suggestedTitle}</div>
           <div style="font-size:11px;color:var(--mute);margin-top:3px;font-style:italic">${c.reason}</div>
-          <div style="font-size:10px;color:#888;margin-top:4px">Source: Bidang ${c.source.bidang || '?'} · ${c.source.detail?.substring(0,60) || '(no detail)'}${(c.source.detail||'').length>60?'…':''}</div>
+          <div style="font-size:10px;color:#888;margin-top:4px">Source: Kebun ${c.source.bidang || '?'} · ${c.source.detail?.substring(0,60) || '(no detail)'}${(c.source.detail||'').length>60?'…':''}</div>
         </div>
         <button class="btn btn-primary" onclick='convertSuggestToMilestone(${i})' style="background:var(--moss);color:#fff;flex-shrink:0;font-size:11px;padding:6px 10px">Convert →</button>
       </div>
@@ -4936,11 +4974,11 @@ const SOP_AKTIVITAS_PER_BULAN = {
     fase: 'Pentil Besar (PRE-PANEN)',
     warna: 'sand',
     aktivitas: [
-      {t:'Estimasi produksi formal (sampling 30 pohon — 10/Bidang)', sop:'Robusta Edisi 2 hal 218', prio:'wajib', siapa:'Mas Anto/Cak Yit', lokal:'<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi 700-800 mdpl = batas N/S3 untuk Robusta murni. Naikkan target setelah 2-3 musim observasi data aktual.'},
+      {t:'Estimasi produksi formal (sampling 30 pohon — 10/Kebun)', sop:'Robusta Edisi 2 hal 218', prio:'wajib', siapa:'Mas Anto/Cak Yit', lokal:'<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi 700-800 mdpl = batas N/S3 untuk Robusta murni. Naikkan target setelah 2-3 musim observasi data aktual.'},
       {t:'Pemupukan akhir MH PARTIAL (mitigation only) — SP-36 + KCl saja per RAB Final 9 Mei', sop:'BRIN tabel + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul per instruksi Cak Yit', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn):</strong><br>• SP-36: <strong>80 g/phn</strong> (P — energy transfer untuk pengisian biji)<br>• KCl: <strong>100 g/phn</strong> (K — kualitas biji + pembesaran cherry)<br>• ❌ Urea SKIP (N dorong vegetatif, ganggu fase reproduktif Mei)<br>• ❌ Kieserit + Dolomit DEFER ke Nov MH siklus 2027<br><br><strong>📊 Total 915 phn aktual (Mei 2026):</strong><br>SP-36 = 80g × 915 = <strong>~73 kg (2 sak 50kg)</strong><br>KCl = 100g × 915 = <strong>~92 kg (2 sak 50kg)</strong><br>Estimasi biaya: SP-36 Rp 480K + KCl Rp 760K = <strong>Rp 1,24 jt</strong> (per RAB Final item 1.2 + 1.3)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm. Tutup tanah setelah aplikasi.', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Wakif decision — Mei = mitigation panen-saving only, full SOP applied Nov MH siklus 2027. Sub-dose Wahab Jan-Mar (~14g/phn) sudah di-bridge nutrient gap. <strong>⚠️ Adaptive trigger:</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso) — pencucian risk tinggi kalau hujan deras.'},
       {t:'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT (full processing via penggilingan + Bonsari)', sop:'Robusta Edisi 2 hal 222-246 + RAB Final 9 Mei', prio:'wajib', siapa:'Wakif + tim', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pulper manual CUT dari RAB. Processing via jasa penggilingan lokal (~Rp 1.500/kg green bean) + specialty lot ke Bonsari Coffee.'},
       {t:'Konfirmasi processing partner per lot (Bonsari/penggilingan lokal)', sop:'Q12 — Klarifikasi 8 Mei', prio:'wajib', siapa:'Wakif', lokal:'<strong>📍 Hybrid model:</strong> Specialty lot (premium) → Bonsari Coffee. Bulk → penggilingan lokal Pujon ~Rp 1.500/kg.'},
-      {t:'Pasang Brocap pilot di Bidang 4 (5 unit) — baseline monitoring', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Pak Kumpul', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pilot 5 unit Bidang 4 saja (Rumah Wakif, ~10-15 pohon). Full deploy 50 unit Bidang 1-3 pindah ke <strong>Nov-Des 2026</strong> (4 bln post-panen, optimal per jurnal).'},
+      {t:'Pasang Brocap pilot di Kebun 4 (5 unit) — baseline monitoring', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Pak Kumpul', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pilot 5 unit Kebun 4 saja (Rumah Wakif, ~10-15 pohon). Full deploy 50 unit Kebun 1-3 pindah ke <strong>Nov-Des 2026</strong> (4 bln post-panen, optimal per jurnal).'},
       {t:'Moisture meter — DEFER ke Bonsari', sop:'SNI 01-2907-2008 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Wakif', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> CUT dari RAB Siklus 2026. Pinjam akses moisture meter Bonsari atau anggaran tahun 2027.'},
       {t:'OPT monitoring intensif menjelang panen', sop:'Robusta Edisi 2 hal 160', prio:'wajib', siapa:'Mas Anto/Cak Yit'},
       {t:'Pembongkaran pisang (jika MWC NU sudah panen)', sop:'Robusta Edisi 2 hal 56', prio:'wajib', siapa:'Pak Kumpul'}
@@ -4954,7 +4992,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
       {t:'Window 12 jam petik-ke-proses', sop:'Robusta Edisi 2 hal 225', prio:'wajib', siapa:'Mas Anto'},
       {t:'Sortasi air pre-pulping (buah kopong float)', sop:'Robusta Edisi 2 hal 230', prio:'wajib', siapa:'Wakif + Tim'},
       {t:'Penjemuran ketebalan 6-10 cm + balik tiap 1 jam', sop:'Robusta Edisi 2 hal 235', prio:'wajib', siapa:'Pak Kumpul'},
-      {t:'Lot tracking (WKKN-YYYY-MM-Bidang-LOT)', sop:'Robusta Edisi 2 hal 280', prio:'wajib', siapa:'Mas Anto'}
+      {t:'Lot tracking (WKKN-YYYY-MM-Kebun-LOT)', sop:'Robusta Edisi 2 hal 280', prio:'wajib', siapa:'Mas Anto'}
     ]
   },
   7: {
@@ -4996,7 +5034,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
       {t:'🌳 SELEKSI POHON pasca-panen (tebang + peremajaan) — TARGET 750 phn ideal', sop:'RAB Final 9 Mei + density ideal 1.333 phn/ha', prio:'wajib', siapa:'Wakif + Mas Anto', dosis:'<strong>Dari ~915 phn aktual → target 750 phn pasca-seleksi</strong><br>Kriteria tebang: pohon non-produktif, sakit kronis, terlalu rapat (<2 m antar pohon), buah PBKo-damaged dominan<br>Kriteria peremajaan: pohon tua >25 thn, batang busuk, hasil <0,3 kg/thn', lokal:'<strong>📍 NGT MILESTONE Adib 9 Mei:</strong> Density target 1.333 phn/ha (jarak 3 × 2,5 m) untuk 0,49 ha. Pasca-seleksi → update jumlah final di CLAUDE.md → dashboard auto-recompute dosis pemupukan Nov MH proporsional.'},
       {t:'Lanjutan top-graft (musim hujan = kambium aktif)', sop:'Budidaya 2010 hal 21', prio:'rekomendasi', siapa:'Cak Yit', lokal:'<strong>Ngantang adaptive:</strong> La Nina perpanjang masa hujan → window top-graft bisa lebih lebar (Sep-Des). Cek kambium aktif dengan iris kulit pucuk — kalau basah/lengket = aktif. Monitor BMKG Karangploso untuk forecast.'},
       {t:'Bongkar tunas pisang (jika tahap 1 sudah)', sop:'Robusta Edisi 2 hal 56', prio:'wajib', siapa:'Pak Kumpul'},
-      {t:'Soil test diagonal 5 titik × 4 Bidang (Q9)', sop:'BRIN 5 Mei + Robusta Edisi 2 hal 155', prio:'rekomendasi', siapa:'Wakif + lab UB/BRIN'},
+      {t:'Soil test diagonal 5 titik × 4 Kebun (Q9)', sop:'BRIN 5 Mei + Robusta Edisi 2 hal 155', prio:'rekomendasi', siapa:'Wakif + lab UB/BRIN'},
       {t:'Evaluasi siklus tahunan + planning siklus berikutnya', sop:'—', prio:'rutin', siapa:'Wakif + Tim Ahli'}
     ]
   },
@@ -5006,10 +5044,10 @@ const SOP_AKTIVITAS_PER_BULAN = {
     aktivitas: [
       {t:'Pemupukan awal MH ½ dosis (BRIN tabel umur 5-10 thn) — DUAL BASELINE', sop:'BRIN 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Pak Kumpul per instruksi Cak Yit', dosis:'<strong>RUMUS UNIVERSAL: dosis_BRIN(g/phn) × jumlah_pohon_aktual = total_kg</strong><br>BRIN ½ dosis awal MH per pohon: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g · Dolomit ~125g (NGT +25%)<br><br><strong>📅 Nov 2025 (lewat) — Pre-selection (~915 phn):</strong> historical reference<br><strong>📅 Nov 2026+ — Post-selection (target 750 phn ideal):</strong> Urea 113 kg (2,3 sak) · SP-36 60 kg (1,2 sak) · KCl 75 kg (1,5 sak) · Kieserit 38 kg (0,75 sak) · Dolomit 94 kg (1,9 sak)<br><strong>⚠️ Kalau seleksi belum 100% selesai Nov 2026:</strong> pakai jumlah pohon aktual transition (mungkin 800-850), scale dosis proporsional naik dari baseline 750.', lokal:'<strong>Aturan workflow:</strong> Sebelum Nov 2026 = pakai jumlah pohon aktual (~915). Setelah Nov 2026 = pakai 750 phn baseline ATAU jumlah final hasil seleksi (update di CLAUDE.md).<br><strong>Kieserit BARU per BRIN tabel 9 Mei</strong> + La Nina prolonged → MH bisa mulai lebih awal/akhir Okt. Monitor BMKG Karangploso, aplikasi setelah rainfall pattern stabil.'},
       {t:'Mulsa untuk konservasi kelembapan', sop:'Robusta Edisi 2 hal 117', prio:'rekomendasi', siapa:'Pak Kumpul'},
-      {t:'🪤 Brocap trap FULL DEPLOY (50 unit Bidang 1-3 + refill Bidang 4) — 4 bln post-panen optimal', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul', dosis:'50 unit × Rp 25K + atraktan 50 kapsul × Rp 25K = ~Rp 2,5 jt total', lokal:'<strong>📍 NGT TIMING (post Adib decision 9 Mei):</strong> Pasang Nov-Des 2026 = 4 bulan setelah panen Jul-Sep 2026 (per jurnal Wiryadiputra & Cilas 2009). Tangkap PBKo dewasa generasi pertama yang keluar dari buah jatuh/mumifikasi → cegah re-infestasi siklus 2027. Pasang ketinggian 0,6-1,2 m, density 25 unit/ha. Pilot Bidang 4 Mei sudah memberikan baseline data.'},
-      {t:'Tanam Arachis pintoi (kacang hias) — pilot Bidang 4 Rumah Wakif', sop:'Phase 2 Inject — CIFOR-ICRAF agroforestry 2024', prio:'rekomendasi', siapa:'Pak Kumpul', phase2:true, lokal:'<strong>PENYESUAIAN DARI SOP — bukan SOP nasional.</strong> "Kacang hias" = istilah lokal untuk Arachis pintoi (kacang merambat berbunga kuning). Pilot 250 stek di Bidang 4 (~Rp 100-200rb). Manfaat: N gratis dari udara (kurangi Urea 30-50%), suppress gulma 60-90% di tahun 2-3, mengurangi babat rumput. Bibit dicarikan Mas Anto. Lihat panduan: <code>SOP/Penjelasan_Biochar_CoverCrops_A4.pdf</code>'},
+      {t:'🪤 Brocap trap FULL DEPLOY (50 unit Kebun 1-3 + refill Kebun 4) — 4 bln post-panen optimal', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul', dosis:'50 unit × Rp 25K + atraktan 50 kapsul × Rp 25K = ~Rp 2,5 jt total', lokal:'<strong>📍 NGT TIMING (post Adib decision 9 Mei):</strong> Pasang Nov-Des 2026 = 4 bulan setelah panen Jul-Sep 2026 (per jurnal Wiryadiputra & Cilas 2009). Tangkap PBKo dewasa generasi pertama yang keluar dari buah jatuh/mumifikasi → cegah re-infestasi siklus 2027. Pasang ketinggian 0,6-1,2 m, density 25 unit/ha. Pilot Kebun 4 Mei sudah memberikan baseline data.'},
+      {t:'Tanam Arachis pintoi (kacang hias) — pilot Kebun 4 Rumah Wakif', sop:'Phase 2 Inject — CIFOR-ICRAF agroforestry 2024', prio:'rekomendasi', siapa:'Pak Kumpul', phase2:true, lokal:'<strong>PENYESUAIAN DARI SOP — bukan SOP nasional.</strong> "Kacang hias" = istilah lokal untuk Arachis pintoi (kacang merambat berbunga kuning). Pilot 250 stek di Kebun 4 (~Rp 100-200rb). Manfaat: N gratis dari udara (kurangi Urea 30-50%), suppress gulma 60-90% di tahun 2-3, mengurangi babat rumput. Bibit dicarikan Mas Anto. Lihat panduan: <code>SOP/Penjelasan_Biochar_CoverCrops_A4.pdf</code>'},
       {t:'Build rorak (kondisi optimal saat tanah lembab)', sop:'Robusta Edisi 2 hal 149', prio:'rekomendasi', siapa:'Pak Kumpul'},
-      {t:'Tanam jahe Pak Kumpul di Bidang 3 (self-financed)', sop:'Notulen 1-2 Mei', prio:'wajib', siapa:'Pak Kumpul'},
+      {t:'Tanam jahe Pak Kumpul di Kebun 3 (self-financed)', sop:'Notulen 1-2 Mei', prio:'wajib', siapa:'Pak Kumpul'},
       {t:'Sanitasi gulma menyeluruh', sop:'Robusta Edisi 2 hal 145', prio:'wajib', siapa:'Pak Kumpul'}
     ]
   },
@@ -5020,7 +5058,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
       {t:'Monitoring infiltrasi rorak setelah hujan', sop:'Robusta Edisi 2 hal 149', prio:'rutin', siapa:'Mas Anto'},
       {t:'Pemangkasan ringan (cabang sakit/non-produktif)', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Cak Yit'},
       {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Mas Anto/Cak Yit'},
-      {t:'Review tahunan + planning Bidang/blok prioritas', sop:'—', prio:'rutin', siapa:'Wakif + tim Ahli'}
+      {t:'Review tahunan + planning Kebun/blok prioritas', sop:'—', prio:'rutin', siapa:'Wakif + tim Ahli'}
     ]
   }
 };
@@ -5030,7 +5068,7 @@ const FASE_MAPPING = [
   {periode:'Mar-Mei', fase:'Pembungaan → Pentil', icon:'🌸', warna:'sand', aktivitas:'⚠️ HINDARI pruning berat · Pemupukan akhir MH · Cercospora prevention · Inventarisasi · Estimasi produksi'},
   {periode:'Jun-Aug', fase:'Panen', icon:'🍒', warna:'terra', aktivitas:'Petik selektif merah · Window 12-jam · Sortasi air · Penjemuran ≤12,5% · Lot tracking · Defect grading'},
   {periode:'Sep-Okt', fase:'Pasca-Panen / Peremajaan', icon:'✂️', warna:'moss', aktivitas:'Pruning total · Pupuk kandang 5-12 kg · Build rorak · Composting · Tanam lamtoro · Top-graft Robusta'},
-  {periode:'Nov-Des', fase:'Awal Musim Hujan / Off-Season', icon:'🌧️', warna:'sage', aktivitas:'Pemupukan awal MH · Mulsa · Build rorak optimal · Tanam jahe Bidang 3 · Sanitasi'}
+  {periode:'Nov-Des', fase:'Awal Musim Hujan / Off-Season', icon:'🌧️', warna:'sage', aktivitas:'Pemupukan awal MH · Mulsa · Build rorak optimal · Tanam jahe Kebun 3 · Sanitasi'}
 ];
 
 // Track last rendered month for live-update detection
@@ -5722,13 +5760,13 @@ const RAB_DATA = {
       ]},
       { id:'5', nama:'Pestisida & OPT Control', warna:'#d4af37', items:[
         { kode:'5.1', nama:'Beauveria bassiana (PBKo agen hayati)', qty:2, sat:'liter', hn:150000, hl:150000 },
-        { kode:'5.2', nama:'Brocap trap (PILOT Bidang 4 — baseline monitoring saja, full deploy Nov-Des 2026 sesuai jurnal Wiryadiputra & Cilas: 4 bln pasca-panen)', qty:5, sat:'unit', hn:25000, hl:25000 },
+        { kode:'5.2', nama:'Brocap trap (PILOT Kebun 4 — baseline monitoring saja, full deploy Nov-Des 2026 sesuai jurnal Wiryadiputra & Cilas: 4 bln pasca-panen)', qty:5, sat:'unit', hn:25000, hl:25000 },
         { kode:'5.3', nama:'Surfaktan (perekat semprot)', qty:2, sat:'liter', hn:50000, hl:50000 },
       ]},
       { id:'6', nama:'Bibit & Penaung', warna:'#5a9080', items:[
         { kode:'6.1', nama:'Bibit lamtoro PG 79', qty:200, sat:'phn', hn:8000, hl:6000 },
         { kode:'6.2', nama:'Bibit durian (10×10 m)', qty:8, sat:'phn', hn:80000, hl:65000 },
-        { kode:'6.3', nama:'Stek Arachis pintoi (pilot Bidang 4)', qty:250, sat:'stek', hn:1000, hl:800 },
+        { kode:'6.3', nama:'Stek Arachis pintoi (pilot Kebun 4)', qty:250, sat:'stek', hn:1000, hl:800 },
       ]},
       { id:'7', nama:'Alat & Infrastruktur', warna:'#2e4040', items:[
         { kode:'7.1', nama:'Moisture meter Sinar AP-6060 — ❌ CUT 9 Mei (defer, pinjam/ke Bonsari saja)', qty:0, sat:'unit', hn:2000000, hl:2000000 },
@@ -5782,13 +5820,13 @@ const RAB_DATA = {
       ]},
       { id:'5', nama:'Pestisida & OPT Control', warna:'#d4af37', items:[
         { kode:'5.1', nama:'Beauveria bassiana (refill)', qty:4, sat:'liter', hn:150000, hl:150000 },
-        { kode:'5.2', nama:'Brocap trap full deploy Nov-Des 2026 (4 bln post-panen 2026, sesuai Wiryadiputra & Cilas) — Bidang 1-3 + refill 4', qty:50, sat:'unit', hn:25000, hl:25000 },
+        { kode:'5.2', nama:'Brocap trap full deploy Nov-Des 2026 (4 bln post-panen 2026, sesuai Wiryadiputra & Cilas) — Kebun 1-3 + refill 4', qty:50, sat:'unit', hn:25000, hl:25000 },
         { kode:'5.3', nama:'Surfaktan (semprot rutin)', qty:4, sat:'liter', hn:50000, hl:50000 },
         { kode:'5.4', nama:'Fungisida emergency Cercospora', qty:2, sat:'liter', hn:200000, hl:200000 },
       ]},
       { id:'6', nama:'Bibit & Penaung', warna:'#5a9080', items:[
         { kode:'6.1', nama:'Bibit lamtoro PG 79 lanjutan', qty:100, sat:'phn', hn:8000, hl:6000 },
-        { kode:'6.3', nama:'Stek Arachis pintoi ekspansi (Bidang 1-2)', qty:500, sat:'stek', hn:1000, hl:800 },
+        { kode:'6.3', nama:'Stek Arachis pintoi ekspansi (Kebun 1-2)', qty:500, sat:'stek', hn:1000, hl:800 },
       ]},
       { id:'7', nama:'Alat & Infrastruktur', warna:'#2e4040', items:[
         { kode:'7.2', nama:'Gunting pangkas refill', qty:2, sat:'unit', hn:120000, hl:100000 },
@@ -6512,7 +6550,7 @@ function confirmRecover() {
       id: newId,
       tgl: c.tgl,
       pelapor: c.pelapor,
-      aktivitas: `${(c.kategori||'').replace(/_/g,' ')} di Bidang ${c.bidang}` + (c.pohon ? ` (${c.pohon} phn)` : ''),
+      aktivitas: `${(c.kategori||'').replace(/_/g,' ')} di Kebun ${c.bidang}` + (c.pohon ? ` (${c.pohon} phn)` : ''),
       model, satuan, satuan_lbl: satuanLbl, qty, tarif: tarifVal,
       status: 'belum',
       src: 'auto_backfill'
