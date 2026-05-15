@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1F5F47">
+<title>Lapor Harian — Kebun Wakaf NGT</title>
+<style>
+  :root {
+    --earth: #2E4040; --moss: #5A9080; --sage: #A8C8BC; --sand: #E8DEC8;
+    --cherry: #C14B3A; --cream: #F5F0E6; --gold: #D4AF37; --darkgreen: #1F5F47;
+    --ink: #1a2828; --mute: #6B7878; --green: #2E7D5E; --whatsapp: #25D366;
+    --bg: #f0f0e8;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.5;
+    font-size: 16px;
+    /* Prevent iOS zoom on input focus */
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* DEMO MODE banner */
+  .demo-banner {
+    background: var(--gold); color: var(--earth);
+    padding: 8px 14px; font-size: 11px; font-weight: 800;
+    letter-spacing: 1.5px; text-align: center;
+    position: sticky; top: 0; z-index: 100;
+  }
+
+  /* App container — phone mockup style */
+  .app {
+    max-width: 500px;
+    margin: 0 auto;
+    background: white;
+    min-height: 100vh;
+    padding-bottom: 100px; /* space for sticky submit */
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, var(--darkgreen), var(--moss));
+    color: white; padding: 22px 20px 18px;
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ""; position: absolute; top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    background: rgba(212,175,55,.16); border-radius: 50%;
+  }
+  .header-content { position: relative; z-index: 2; }
+  .header h1 {
+    font-size: 22px; font-weight: 800; letter-spacing: -.3px;
+    margin-bottom: 2px;
+  }
+  .header .sub {
+    font-size: 12px; color: var(--sand); margin-bottom: 12px;
+  }
+  .worker-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.18);
+    border: 1.5px solid rgba(255,255,255,.4);
+    padding: 6px 12px; border-radius: 100px;
+    font-size: 13px; font-weight: 700;
+    cursor: pointer;
+  }
+  .worker-pill .switch {
+    font-size: 10px; opacity: .7; margin-left: 4px;
+  }
+
+  /* Worker switch modal */
+  .worker-switch-modal {
+    display: none; position: fixed; inset: 0;
+    background: rgba(46,64,64,.85); z-index: 200;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .worker-switch-modal.on { display: flex; }
+  .worker-switch-modal .inner {
+    background: white; border-radius: 14px; padding: 22px;
+    width: 100%; max-width: 360px;
+  }
+  .worker-switch-modal h2 {
+    font-size: 17px; color: var(--earth); margin-bottom: 14px;
+    text-align: center;
+  }
+  .worker-switch-modal .opt {
+    display: block; width: 100%; padding: 14px 16px;
+    background: var(--cream); border: 2px solid var(--sage);
+    border-radius: 10px; font-size: 14px; font-weight: 700;
+    color: var(--earth); margin-bottom: 8px; cursor: pointer;
+    text-align: left;
+  }
+  .worker-switch-modal .opt.active { border-color: var(--moss); background: #d4e8de; }
+  .worker-switch-modal .close-btn {
+    width: 100%; padding: 10px; margin-top: 6px;
+    background: #eee; border: 0; border-radius: 8px;
+    font-size: 13px; font-weight: 700; color: var(--mute);
+    cursor: pointer;
+  }
+
+  /* Form */
+  .form-section {
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--cream);
+  }
+  .form-section:last-of-type { border-bottom: 0; }
+  .field-label {
+    font-size: 11px; font-weight: 800;
+    color: var(--earth); letter-spacing: 1.2px;
+    text-transform: uppercase; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .field-label .req { color: var(--cherry); }
+  .field-label .ico { font-size: 14px; }
+
+  /* Date input with hari preview */
+  .tgl-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  input[type="date"] {
+    flex: 1; min-width: 150px;
+    padding: 12px 14px; font-size: 16px;
+    border: 2px solid var(--sage);
+    border-radius: 10px;
+    color: var(--earth); background: white;
+    font-family: inherit;
+  }
+  input[type="date"]:focus { outline: none; border-color: var(--moss); }
+  .hari-preview {
+    font-size: 13px; font-weight: 700; color: var(--moss);
+    padding: 4px 10px; background: var(--cream); border-radius: 6px;
+  }
+
+  /* Chips (Bidang, Durasi, Cuaca) */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    flex: 1; min-width: calc(50% - 4px);
+    padding: 14px 12px;
+    border: 2px solid var(--sage);
+    background: white;
+    border-radius: 10px;
+    font-size: 14px; font-weight: 700;
+    color: var(--earth);
+    cursor: pointer;
+    text-align: center;
+    transition: .15s;
+    user-select: none;
+  }
+  .chip:active { transform: scale(0.97); }
+  .chip.on {
+    background: var(--moss); color: white; border-color: var(--darkgreen);
+    box-shadow: 0 3px 10px rgba(90,144,128,.32);
+  }
+  .chips.compact .chip { padding: 10px 6px; font-size: 12.5px; }
+  .chips.cuaca .chip { font-size: 18px; padding: 12px 6px; }
+  .chips.cuaca .chip .lbl { display: block; font-size: 10px; font-weight: 700; margin-top: 2px; }
+
+  /* Select dropdown */
+  select {
+    width: 100%; padding: 13px 14px; font-size: 16px;
+    border: 2px solid var(--sage);
+    border-radius: 10px;
+    background: white; color: var(--earth);
+    font-family: inherit; font-weight: 600;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14'%3e%3cpath fill='%235A9080' d='M7 10L1 4h12z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 14px;
+    padding-right: 36px;
+  }
+  select:focus { outline: none; border-color: var(--moss); }
+
+  /* Number input */
+  input[type="number"], input[type="text"], textarea {
+    width: 100%; padding: 12px 14px; font-size: 16px;
+    border: 2px solid var(--sage);
+    border-radius: 10px;
+    color: var(--earth); background: white;
+    font-family: inherit;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, textarea:focus {
+    outline: none; border-color: var(--moss);
+  }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.4; }
+
+  /* Hint text */
+  .hint {
+    font-size: 11px; color: var(--mute); margin-top: 5px;
+    line-height: 1.45;
+  }
+
+  /* Curah hujan callout */
+  .rainfall-callout {
+    background: #fff8e6; border-left: 3px solid var(--gold);
+    padding: 10px 12px; border-radius: 6px; margin-top: 8px;
+    font-size: 11.5px; color: var(--earth); line-height: 1.55;
+  }
+  .rainfall-callout strong { color: var(--gold); }
+
+  /* Submit button — sticky bottom */
+  .submit-bar {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    max-width: 500px; margin: 0 auto;
+    background: white; padding: 12px 16px 16px;
+    border-top: 1px solid #e8e4dc;
+    box-shadow: 0 -4px 16px rgba(0,0,0,.06);
+    z-index: 50;
+  }
+  .submit-btn {
+    width: 100%; padding: 16px; font-size: 16px; font-weight: 800;
+    background: linear-gradient(135deg, var(--darkgreen), var(--moss));
+    color: white; border: 0; border-radius: 12px;
+    cursor: pointer; letter-spacing: .5px;
+    box-shadow: 0 4px 14px rgba(31,95,71,.32);
+  }
+  .submit-btn:active { transform: scale(0.99); }
+  .submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+  .submit-hint { font-size: 10px; color: var(--mute); text-align: center; margin-top: 6px; }
+
+  /* Success screen */
+  .success-screen {
+    display: none; padding: 40px 24px;
+    text-align: center; min-height: 70vh;
+    flex-direction: column; justify-content: center; align-items: center;
+  }
+  .success-screen.on { display: flex; }
+  .success-icon {
+    width: 80px; height: 80px; border-radius: 50%;
+    background: var(--green); color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 40px; margin-bottom: 18px;
+    animation: pop .3s ease;
+  }
+  @keyframes pop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+  }
+  .success-screen h2 {
+    font-size: 22px; color: var(--darkgreen); margin-bottom: 8px; font-weight: 800;
+  }
+  .success-screen .msg { font-size: 13px; color: var(--mute); margin-bottom: 24px; line-height: 1.55; max-width: 320px; }
+  .success-summary {
+    background: var(--cream); border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 20px;
+    width: 100%; max-width: 360px;
+    text-align: left;
+  }
+  .success-summary .row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0; border-bottom: 1px dashed #ddd;
+    font-size: 12px;
+  }
+  .success-summary .row:last-child { border-bottom: 0; }
+  .success-summary .label { color: var(--mute); font-weight: 600; }
+  .success-summary .val { color: var(--earth); font-weight: 700; text-align: right; }
+  .success-actions { display: flex; gap: 8px; width: 100%; max-width: 360px; }
+  .success-actions button {
+    flex: 1; padding: 13px; font-size: 13px; font-weight: 700;
+    border-radius: 10px; cursor: pointer; border: 2px solid;
+  }
+  .success-actions .primary {
+    background: var(--moss); color: white; border-color: var(--darkgreen);
+  }
+  .success-actions .secondary {
+    background: white; color: var(--moss); border-color: var(--moss);
+  }
+
+  /* WhatsApp share button */
+  .wa-share {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    margin-top: 16px; padding: 12px 16px;
+    background: var(--whatsapp); color: white;
+    border-radius: 12px; font-size: 13px; font-weight: 700;
+    cursor: pointer; border: 0;
+    box-shadow: 0 3px 10px rgba(37,211,102,.32);
+  }
+</style>
+</head>
+<body>
+
+<div class="demo-banner">🧪 DEMO MODE — Prototype Form Lapor Harian (Belum Production)</div>
+
+<div class="app">
+
+  <!-- FORM SCREEN -->
+  <div id="form-screen">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-content">
+        <h1>📱 Lapor Harian</h1>
+        <div class="sub">Kebun Wakaf Kopi Ngantang · 0,49 ha</div>
+        <div class="worker-pill" id="worker-display" onclick="openWorkerSwitch()">
+          <span id="worker-icon">🌱</span>
+          <span id="worker-name">Pak Kumpul</span>
+          <span class="switch">[ganti]</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TANGGAL -->
+    <div class="form-section">
+      <div class="field-label"><span class="ico">📅</span>Tanggal Kerja <span class="req">*</span></div>
+      <div class="tgl-row">
+        <input type="date" id="f-tgl" onchange="updateHariPreview()">
+        <span class="hari-preview" id="hari-preview">—</span>
+      </div>
+    </div>
+
+    <!-- BIDANG -->
+    <div class="form-section">
+      <div class="field-label"><span class="ico">📍</span>Bidang <span class="req">*</span></div>
+      <div class="chips" id="bidang-chips">
+        <div class="chip" data-v="1" onclick="setChip('bidang', this)">Bidang 1<br><small style="font-weight:400;color:var(--mute);font-size:10px">Atas</small></div>
+        <div class="chip" data-v="2" onclick="setChip('bidang', this)">Bidang 2<br><small style="font-weight:400;color:var(--mute);font-size:10px">Atas</small></div>
+        <div class="chip" data-v="3" onclick="setChip('bidang', this)">Bidang 3<br><small style="font-weight:400;color:var(--mute);font-size:10px">Bawah+Jahe</small></div>
+        <div class="chip" data-v="4" onclick="setChip('bidang', this)">🏠 Bidang 4<br><small style="font-weight:400;color:var(--mute);font-size:10px">Rumah Wakif</small></div>
+      </div>
+    </div>
+
+    <!-- AKTIVITAS -->
+    <div class="form-section">
+      <div class="field-label"><span class="ico">🔧</span>Aktivitas <span class="req">*</span></div>
+      <select id="f-aktivitas">
+        <option value="">— Pilih aktivitas —</option>
+      </select>
+      <div class="hint" id="aktivitas-hint">Dropdown otomatis filter sesuai peran pekerja</div>
+    </div>
+
+    <!-- QTY / DURASI -->
+    <div class="form-section">
+      <div class="field-label"><span class="ico">📐</span>Durasi / Jumlah <span class="req">*</span></div>
+      <div class="chips compact" id="durasi-chips">
+        <div class="chip" data-v="setengah_hari" onclick="setChip('durasi', this)">½ Hari</div>
+        <div class="chip" data-v="full_day" onclick="setChip('durasi', this)">1 Hari Penuh</div>
+        <div class="chip" data-v="borongan" onclick="setChip('durasi', this);showBoronganQty()">Borongan</div>
+      </div>
+      <div id="qty-borongan" style="display:none;margin-top:10px">
+        <input type="number" id="f-qty" placeholder="Berapa pohon / unit?" min="1">
+      </div>
+    </div>
+
+    <!-- CUACA -->
+    <div class="form-section">
+      <div class="field-label"><span class="ico">🌤️</span>Cuaca Hari Ini</div>
+      <div style="font-size:11px;color:var(--mute);margin-bottom:8px">Pilih cuaca pagi:</div>
+      <div class="chips cuaca" id="cuaca-pagi-chips">
+        <div class="chip" data-v="cerah" onclick="setChip('cuaca_pagi', this)">☀️<span class="lbl">Cerah</span></div>
+        <div class="chip" data-v="berawan" onclick="setChip('cuaca_pagi', this)">⛅<span class="lbl">Berawan</span></div>
+        <div class="chip" data-v="hujan_ringan" onclick="setChip('cuaca_pagi', this)">🌦️<span class="lbl">Gerimis</span></div>
+        <div class="chip" data-v="hujan_deras" onclick="setChip('cuaca_pagi', this)">🌧️<span class="lbl">Hujan</span></div>
+      </div>
+    </div>
+
+    <!-- CURAH HUJAN -->
+    <div class="form-section">
+      <div class="field-label"><span class="ico">💧</span>Curah Hujan 24 Jam (mm)</div>
+      <input type="number" id="f-rainfall" min="0" step="0.5" placeholder="Estimasi: 0=cerah, 5=gerimis, 25=hujan deras">
+      <div class="rainfall-callout">
+        <strong>💡 Tips:</strong> Kalau bingung, cek <strong>BMKG Karangploso</strong> di HP — biasanya tertera mm hujan kemarin. Atau perkiraan: pagi-sore cuaca cerah = 0 mm, gerimis ringan = 2-5 mm, hujan deras = &gt;20 mm.
+      </div>
+    </div>
+
+    <!-- CATATAN -->
+    <div class="form-section">
+      <div class="field-label"><span class="ico">📝</span>Catatan Penting</div>
+      <textarea id="f-catatan" placeholder="Apa yang penting hari ini? Cabang patah? Pohon sakit? Alat rusak? Hama terlihat?"></textarea>
+    </div>
+
+  </div>
+
+  <!-- SUCCESS SCREEN -->
+  <div class="success-screen" id="success-screen">
+    <div class="success-icon">✓</div>
+    <h2>Berhasil Dikirim!</h2>
+    <div class="msg">Laporan Anda sudah masuk ke dashboard Wakif. Terima kasih atas kerja keras hari ini 🙏</div>
+
+    <div class="success-summary" id="success-summary"></div>
+
+    <div class="success-actions">
+      <button class="secondary" onclick="newReport()">+ Kirim Lagi</button>
+      <button class="primary" onclick="shareWA()">📲 Share ke WA</button>
+    </div>
+
+    <div style="margin-top:18px;font-size:11px;color:var(--mute);font-style:italic;text-align:center;max-width:320px;line-height:1.5">
+      💡 <strong>Mode Demo:</strong> Data tersimpan di local browser saja (belum kirim ke server). Production version: data langsung masuk dashboard monitor-v2.
+    </div>
+  </div>
+
+</div>
+
+<!-- STICKY SUBMIT (form only) -->
+<div class="submit-bar" id="submit-bar">
+  <button class="submit-btn" id="submit-btn" onclick="submitForm()">📤 Kirim Laporan</button>
+  <div class="submit-hint">Barakallahu fiikum — Wakif akan terima pemberitahuan</div>
+</div>
+
+<!-- WORKER SWITCH MODAL -->
+<div class="worker-switch-modal" id="worker-modal">
+  <div class="inner">
+    <h2>👤 Pilih Pekerja</h2>
+    <button class="opt" data-w="KUMPUL" onclick="selectWorker('KUMPUL')">
+      🌱 <strong>Pak Kumpul</strong> — Pekerja Bagian Bawah<br>
+      <small style="color:var(--mute);font-weight:400">Babat rumput · pemupukan · rorak · composting · lamtoro</small>
+    </button>
+    <button class="opt" data-w="YIT" onclick="selectWorker('YIT')">
+      🪜 <strong>Cak Yit</strong> — Pekerja Atas Pohon<br>
+      <small style="color:var(--mute);font-weight:400">Pemangkasan · sambung pucuk Robusta · top-graft · panjat durian</small>
+    </button>
+    <button class="opt" data-w="ANTO" onclick="selectWorker('ANTO')">
+      👷 <strong>Mas Anto</strong> — Koordinator Lapangan<br>
+      <small style="color:var(--mute);font-weight:400">Inventarisasi · OPT monitoring · laporan harian</small>
+    </button>
+    <button class="close-btn" onclick="closeWorkerSwitch()">Tutup</button>
+  </div>
+</div>
+
+<script>
+// ==================== DATA ====================
+const WORKER_AKTIVITAS = {
+  KUMPUL: [
+    { v: 'babat_rumput', label: '🌿 Babat rumput' },
+    { v: 'pupuk_dasar', label: '💩 Pemupukan (kompos / pupuk dasar)' },
+    { v: 'aplikasi_pupuk_kandang', label: '💩 Aplikasi pupuk kandang/kompos' },
+    { v: 'build_rorak', label: '⛏️ Build rorak (lubang resapan)' },
+    { v: 'composting', label: '♻️ Composting kulit kopi / sisa panen' },
+    { v: 'tanam_lamtoro', label: '🌱 Tanam lamtoro PG 79 (penaung)' },
+    { v: 'sanitasi_gulma', label: '🧹 Sanitasi gulma piringan' },
+    { v: 'mulsa', label: '🍂 Mulsa untuk simpan kelembapan' },
+    { v: 'penyemprotan_cercospora', label: '💧 Penyemprotan Cercospora prevention' },
+    { v: 'tanam_jahe', label: '🌶️ Tanam jahe (Bidang 3 self-financed)' },
+    { v: 'bongkar_pisang', label: '🪓 Bongkar tunas pisang' },
+    { v: 'lain', label: '✏️ Lain-lain (isi catatan)' }
+  ],
+  YIT: [
+    { v: 'pemangkasan_ringan', label: '✂️ Pemangkasan ringan (wiwilan)' },
+    { v: 'pemangkasan_total', label: '✂️ Pemangkasan total / peremajaan' },
+    { v: 'sambung_pucuk', label: '🌱 Sambung pucuk Robusta (klon BP 358/SA 237)' },
+    { v: 'top_graft', label: '🌱 Top-graft klon unggul' },
+    { v: 'inventarisasi_pohon', label: '🔢 Inventarisasi pohon' },
+    { v: 'opt_monitoring', label: '🐛 OPT monitoring 5-pohon-diagonal' },
+    { v: 'panjat_durian', label: '🌳 Panjat pohon durian (borongan)' },
+    { v: 'petik_selektif', label: '🍒 Petik selektif merah' },
+    { v: 'lain', label: '✏️ Lain-lain (isi catatan)' }
+  ],
+  ANTO: [
+    { v: 'inventarisasi_pohon', label: '🔢 Inventarisasi pohon' },
+    { v: 'opt_monitoring', label: '🐛 OPT monitoring 5-pohon-diagonal' },
+    { v: 'dokumentasi', label: '📷 Dokumentasi (foto + catatan)' },
+    { v: 'koordinasi_tim', label: '👥 Koordinasi tim lapangan' },
+    { v: 'soil_test', label: '🧪 Soil test (sampling 5 titik)' },
+    { v: 'estimasi_produksi', label: '📊 Estimasi produksi (sampling 30 pohon)' },
+    { v: 'sortasi_tanaman', label: '🌳 Sortasi tanaman / assessment kondisi' },
+    { v: 'lapor_harian', label: '📝 Lapor harian / weekly summary' },
+    { v: 'lain', label: '✏️ Lain-lain (isi catatan)' }
+  ]
+};
+
+const WORKER_INFO = {
+  KUMPUL: { name: 'Pak Kumpul', icon: '🌱', role: 'Pekerja Bagian Bawah' },
+  YIT: { name: 'Cak Yit', icon: '🪜', role: 'Pekerja Atas Pohon' },
+  ANTO: { name: 'Mas Anto', icon: '👷', role: 'Koordinator Lapangan' }
+};
+
+// ==================== STATE ====================
+const state = {
+  pelapor: 'KUMPUL', // default
+  tgl: new Date().toISOString().slice(0,10),
+  bidang: null,
+  aktivitas: null,
+  durasi: null,
+  qty: 1,
+  cuaca_pagi: null,
+  rainfall: null,
+  catatan: ''
+};
+
+// Detect pelapor from URL parameter (?pelapor=YIT or ?pelapor=KUMPUL)
+const urlParams = new URLSearchParams(window.location.search);
+const urlPelapor = urlParams.get('pelapor');
+if (urlPelapor && WORKER_INFO[urlPelapor.toUpperCase()]) {
+  state.pelapor = urlPelapor.toUpperCase();
+}
+
+// ==================== HELPERS ====================
+function setChip(field, el) {
+  state[field] = el.dataset.v;
+  const container = el.parentElement;
+  container.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function showBoronganQty() {
+  document.getElementById('qty-borongan').style.display = state.durasi === 'borongan' ? 'block' : 'none';
+}
+
+function updateHariPreview() {
+  const tgl = document.getElementById('f-tgl').value;
+  state.tgl = tgl;
+  if (!tgl) { document.getElementById('hari-preview').textContent = '—'; return; }
+  const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const d = new Date(tgl);
+  document.getElementById('hari-preview').textContent = hari[d.getDay()];
+}
+
+function populateAktivitas() {
+  const sel = document.getElementById('f-aktivitas');
+  const list = WORKER_AKTIVITAS[state.pelapor] || [];
+  sel.innerHTML = '<option value="">— Pilih aktivitas —</option>' +
+    list.map(it => `<option value="${it.v}">${it.label}</option>`).join('');
+  sel.onchange = () => state.aktivitas = sel.value;
+}
+
+function renderWorkerInfo() {
+  const info = WORKER_INFO[state.pelapor];
+  document.getElementById('worker-icon').textContent = info.icon;
+  document.getElementById('worker-name').textContent = info.name;
+}
+
+// Worker switch modal
+function openWorkerSwitch() {
+  document.querySelectorAll('.worker-switch-modal .opt').forEach(o => {
+    o.classList.toggle('active', o.dataset.w === state.pelapor);
+  });
+  document.getElementById('worker-modal').classList.add('on');
+}
+function closeWorkerSwitch() {
+  document.getElementById('worker-modal').classList.remove('on');
+}
+function selectWorker(w) {
+  state.pelapor = w;
+  state.aktivitas = null;
+  renderWorkerInfo();
+  populateAktivitas();
+  closeWorkerSwitch();
+}
+
+// ==================== SUBMIT ====================
+function submitForm() {
+  // Quick validation
+  const required = ['tgl', 'bidang', 'aktivitas', 'durasi'];
+  const missing = required.filter(r => !state[r]);
+  if (missing.length > 0) {
+    alert('⚠️ Lengkapi dulu:\n\n' + missing.map(m => '• ' + m).join('\n'));
+    return;
+  }
+
+  // Get qty (for borongan)
+  if (state.durasi === 'borongan') {
+    const q = parseInt(document.getElementById('f-qty').value);
+    if (!q || q < 1) {
+      alert('⚠️ Isi jumlah pohon/unit untuk borongan');
+      return;
+    }
+    state.qty = q;
+  } else {
+    state.qty = 1;
+  }
+
+  // Get other optional fields
+  state.rainfall = document.getElementById('f-rainfall').value || null;
+  state.catatan = document.getElementById('f-catatan').value || '';
+
+  // === DEMO MODE — save to localStorage ===
+  const stored = JSON.parse(localStorage.getItem('WKKN_DEMO_LAPOR') || '[]');
+  const entry = {
+    id: 'demo-' + Date.now(),
+    submitted_at: new Date().toISOString(),
+    ...state
+  };
+  stored.push(entry);
+  localStorage.setItem('WKKN_DEMO_LAPOR', JSON.stringify(stored));
+
+  console.log('[Demo Submit]', entry);
+
+  // Show success screen
+  showSuccess(entry);
+}
+
+function showSuccess(entry) {
+  const info = WORKER_INFO[entry.pelapor];
+  const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const d = new Date(entry.tgl);
+  const tglLbl = `${hari[d.getDay()]}, ${d.getDate()} ${bulan[d.getMonth()]} ${d.getFullYear()}`;
+
+  const aktiList = WORKER_AKTIVITAS[entry.pelapor] || [];
+  const aktiLbl = (aktiList.find(a => a.v === entry.aktivitas) || {}).label || entry.aktivitas;
+
+  const durasiLbl = entry.durasi === 'setengah_hari' ? '½ Hari'
+                  : entry.durasi === 'full_day' ? '1 Hari Penuh'
+                  : `Borongan (${entry.qty} unit)`;
+
+  const cuacaIcons = { cerah: '☀️ Cerah', berawan: '⛅ Berawan', hujan_ringan: '🌦️ Gerimis', hujan_deras: '🌧️ Hujan' };
+  const cuacaLbl = cuacaIcons[entry.cuaca_pagi] || '—';
+
+  document.getElementById('success-summary').innerHTML = `
+    <div class="row"><span class="label">Pekerja</span><span class="val">${info.icon} ${info.name}</span></div>
+    <div class="row"><span class="label">Tanggal</span><span class="val">${tglLbl}</span></div>
+    <div class="row"><span class="label">Bidang</span><span class="val">Bidang ${entry.bidang}</span></div>
+    <div class="row"><span class="label">Aktivitas</span><span class="val">${aktiLbl}</span></div>
+    <div class="row"><span class="label">Durasi</span><span class="val">${durasiLbl}</span></div>
+    <div class="row"><span class="label">Cuaca</span><span class="val">${cuacaLbl}</span></div>
+    ${entry.rainfall ? `<div class="row"><span class="label">Curah Hujan</span><span class="val">${entry.rainfall} mm</span></div>` : ''}
+    ${entry.catatan ? `<div class="row" style="flex-direction:column;align-items:flex-start"><span class="label">Catatan:</span><span class="val" style="text-align:left;margin-top:3px;font-weight:600">${entry.catatan}</span></div>` : ''}
+  `;
+
+  document.getElementById('form-screen').style.display = 'none';
+  document.getElementById('submit-bar').style.display = 'none';
+  document.getElementById('success-screen').classList.add('on');
+  window.scrollTo(0, 0);
+}
+
+function newReport() {
+  // Reset state
+  state.bidang = null;
+  state.aktivitas = null;
+  state.durasi = null;
+  state.qty = 1;
+  state.cuaca_pagi = null;
+  state.rainfall = null;
+  state.catatan = '';
+  document.querySelectorAll('.chip.on').forEach(c => c.classList.remove('on'));
+  document.getElementById('f-aktivitas').value = '';
+  document.getElementById('f-qty').value = '';
+  document.getElementById('qty-borongan').style.display = 'none';
+  document.getElementById('f-rainfall').value = '';
+  document.getElementById('f-catatan').value = '';
+
+  document.getElementById('form-screen').style.display = '';
+  document.getElementById('submit-bar').style.display = '';
+  document.getElementById('success-screen').classList.remove('on');
+  window.scrollTo(0, 0);
+}
+
+function shareWA() {
+  // Compose WA message summary
+  const stored = JSON.parse(localStorage.getItem('WKKN_DEMO_LAPOR') || '[]');
+  const last = stored[stored.length - 1];
+  if (!last) return;
+
+  const info = WORKER_INFO[last.pelapor];
+  const aktiList = WORKER_AKTIVITAS[last.pelapor] || [];
+  const aktiLbl = (aktiList.find(a => a.v === last.aktivitas) || {}).label || last.aktivitas;
+  const hari = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  const bulan = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+  const d = new Date(last.tgl);
+  const tglLbl = `${hari[d.getDay()]}, ${d.getDate()} ${bulan[d.getMonth()]}`;
+
+  const durasiLbl = last.durasi === 'setengah_hari' ? '½ hari'
+                  : last.durasi === 'full_day' ? '1 hari'
+                  : `${last.qty} unit borongan`;
+
+  const text = `📋 *LAPOR HARIAN KEBUN NGT*\n\n` +
+    `👤 ${info.name}\n` +
+    `📅 ${tglLbl}\n` +
+    `📍 Bidang ${last.bidang}\n` +
+    `🔧 ${aktiLbl}\n` +
+    `⏱️ ${durasiLbl}\n` +
+    `🌤️ Cuaca: ${last.cuaca_pagi || '-'}` +
+    (last.rainfall ? `\n💧 Curah hujan: ${last.rainfall} mm` : '') +
+    (last.catatan ? `\n📝 ${last.catatan}` : '') +
+    `\n\n_Lapor dari form digital · ${new Date().toLocaleTimeString('id-ID')}_`;
+
+  const waLink = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(waLink, '_blank');
+}
+
+// ==================== INIT ====================
+function init() {
+  // Set default date to today
+  document.getElementById('f-tgl').value = state.tgl;
+  updateHariPreview();
+  renderWorkerInfo();
+  populateAktivitas();
+
+  // Close modal on click outside
+  document.getElementById('worker-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'worker-modal') closeWorkerSwitch();
+  });
+}
+init();
+</script>
+
+</body>
+</html>
