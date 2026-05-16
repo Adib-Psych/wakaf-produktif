@@ -3806,8 +3806,9 @@ function renderInventoryKPI() {
   const e1 = document.getElementById('inv-dipetakan'); if (e1) e1.textContent = totalDipetakan;
   const e2 = document.getElementById('inv-dipetakan-pct');
   if (e2) {
-    const pct = totalDipetakan > 0 ? Math.round((totalDipetakan / 915) * 100) : 0;
-    e2.textContent = pct + '% dari estimasi 915';
+    const baseline = POHON_BASELINE.current;
+    const pct = totalDipetakan > 0 ? Math.round((totalDipetakan / baseline) * 100) : 0;
+    e2.textContent = pct + `% dari estimasi ${baseline}`;
   }
   const e3 = document.getElementById('inv-produktif'); if (e3) e3.textContent = produktif;
   const e4 = document.getElementById('inv-sulam'); if (e4) e4.textContent = sulam;
@@ -3819,16 +3820,20 @@ function renderInventoryChart() {
   if (!ctx) return;
   // PRODUCTION: compute dari STATE.laporan filter inventarisasi_pohon
   const inv = (STATE.laporan || []).filter(r => r.kategori === 'inventarisasi_pohon');
-  // Group by bidang × kondisi
+  // Group by bidang × kondisi (multi-kebun aware: distribute qty across kebun_list)
   const bidangs = ['1','2','3','4'];
-  const counts = { produktif:[0,0,0,0], belum_produktif:[0,0,0,0], perlu_sulam:[0,0,0,0], belum_inventaris:[915,0,0,0] };
-  // Estimasi total per bidang (roughly): 1=350, 2=300, 3=250, 4=15
-  const total = [350, 300, 250, 15];
+  const counts = { produktif:[0,0,0,0], belum_produktif:[0,0,0,0], perlu_sulam:[0,0,0,0], belum_inventaris:[POHON_BASELINE.current,0,0,0] };
+  // Estimasi total per bidang dari config
+  const total = POHON_BASELINE.perBidang.slice();
   inv.forEach(r => {
-    const bIdx = bidangs.indexOf(r.bidang);
-    if (bIdx < 0) return;
+    const idxs = getKebunIndices(r);
+    if (idxs.length === 0) return;
+    const qtyTotal = +r.pohon || 1;
+    const qtyPerKebun = qtyTotal / idxs.length;  // Distribute across multi-kebun
     const k = (r.kondisi || 'produktif').replace(/-/g,'_');
-    if (counts[k]) counts[k][bIdx] += +r.pohon || 1;
+    idxs.forEach(bIdx => {
+      if (counts[k]) counts[k][bIdx] += qtyPerKebun;
+    });
   });
   // Compute belum_inventaris = total - sum others
   bidangs.forEach((b, i) => {
@@ -3924,7 +3929,15 @@ function renderHeatmap() {
       const wkEnd = new Date(wkStart);
       wkEnd.setDate(wkEnd.getDate() + 6);
       const wkEndStr = wkEnd.toISOString().slice(0,10);
-      const reports = optReports.filter(r => r.bidang === bidangNum && r.tgl >= wkStart && r.tgl <= wkEndStr);
+      // Multi-kebun aware: match if entry's bidang OR any kebun_list contains this bidangNum
+      const reports = optReports.filter(r => {
+        if (r.tgl < wkStart || r.tgl > wkEndStr) return false;
+        if (r.bidang === bidangNum) return true;
+        if (Array.isArray(r.kebun_list)) {
+          return r.kebun_list.some(k => String(k).match(/\d/)?.[0] === bidangNum);
+        }
+        return false;
+      });
       if (reports.length === 0) {
         row.push('-');
       } else {
@@ -4354,7 +4367,12 @@ function bcGetFilteredEntries() {
     if (dFrom && d.tgl < dFrom) return false;
     if (dTo && d.tgl > dTo) return false;
     if (fPel && d.pelapor !== fPel) return false;
-    if (fKeb && String(d.bidang) !== fKeb) return false;
+    if (fKeb) {
+      // Multi-kebun aware: match if bidang OR any kebun_list contains fKeb
+      const matchesPrimary = String(d.bidang) === fKeb;
+      const matchesList = Array.isArray(d.kebun_list) && d.kebun_list.some(k => String(k).match(/\d/)?.[0] === fKeb);
+      if (!matchesPrimary && !matchesList) return false;
+    }
     if (fStatus && getEntryLLStatus(d.id) !== fStatus) return false;
     return true;
   }).sort((a,b) => (b.tgl || '').localeCompare(a.tgl || ''));
@@ -4437,7 +4455,14 @@ function bcUpdateSelectionBar() {
     ).filter(Boolean);
     const dates = selectedEntries.map(d => d.tgl).filter(Boolean).sort();
     const dateRange = dates.length ? `${formatTglShort(dates[0])} → ${formatTglShort(dates[dates.length-1])}` : '';
-    const kebunSet = new Set(selectedEntries.map(d => d.bidang));
+    const kebunSet = new Set();
+    selectedEntries.forEach(d => {
+      if (Array.isArray(d.kebun_list) && d.kebun_list.length) {
+        d.kebun_list.forEach(k => kebunSet.add(String(k).match(/\d/)?.[0] || ''));
+      } else if (d.bidang) {
+        kebunSet.add(String(d.bidang));
+      }
+    });
     const pelaporSet = new Set(selectedEntries.map(d => d.pelapor));
     periodEl.innerHTML = `${dateRange} · ${kebunSet.size} kebun · ${pelaporSet.size} pelapor`;
   }
@@ -4476,7 +4501,11 @@ function buildBatchDraftPrompt() {
   const kebunCount = {}, pelaporCount = {}, kategoriCount = {}, totalPohon = 0;
   let totalPohonSum = 0;
   selectedEntries.forEach(d => {
-    kebunCount[d.bidang] = (kebunCount[d.bidang] || 0) + 1;
+    // Multi-kebun aware: count entry once per kebun in kebun_list
+    const ks = Array.isArray(d.kebun_list) && d.kebun_list.length
+      ? d.kebun_list.map(k => String(k).match(/\d/)?.[0]).filter(Boolean)
+      : (d.bidang ? [d.bidang] : []);
+    ks.forEach(k => { kebunCount[k] = (kebunCount[k] || 0) + 1; });
     pelaporCount[d.pelapor] = (pelaporCount[d.pelapor] || 0) + 1;
     kategoriCount[d.kategori] = (kategoriCount[d.kategori] || 0) + 1;
     totalPohonSum += +d.pohon || 0;
@@ -4494,11 +4523,14 @@ function buildBatchDraftPrompt() {
   document.getElementById('bc-data-summary').innerHTML = summaryHTML;
 
   // === Section B: Build prompt ===
-  const entryJsonLines = selectedEntries.map((d,i) =>
-    `${i+1}. [${d.tgl}] ${PELAPOR_NAMES_BC[d.pelapor]||d.pelapor} · Kebun ${d.bidang} · ${(d.kategori||'').replace(/_/g,' ')} · ${d.pohon||0} phn · ${d.durasi||'-'}`
+  const entryJsonLines = selectedEntries.map((d,i) => {
+    const kebunStr = Array.isArray(d.kebun_list) && d.kebun_list.length > 1
+      ? d.kebun_list.join('+')
+      : `K${d.bidang}`;
+    return `${i+1}. [${d.tgl}] ${PELAPOR_NAMES_BC[d.pelapor]||d.pelapor} · Kebun ${kebunStr} · ${(d.kategori||'').replace(/_/g,' ')} · ${d.pohon||0} phn · ${d.durasi||'-'}`
     + (getDetailText(d) ? `\n   Catatan: ${getDetailText(d).substring(0,200)}` : '')
-    + (d.cuaca_pagi || d.cuaca_siang ? `\n   Cuaca: pagi=${d.cuaca_pagi||'-'}, siang=${d.cuaca_siang||'-'}, rainfall_24h=${d.rainfall_24h||0}mm, 7d=${d.rainfall_7d||0}mm` : '')
-  ).join('\n\n');
+    + (d.cuaca_pagi || d.cuaca_siang ? `\n   Cuaca: pagi=${d.cuaca_pagi||'-'}, siang=${d.cuaca_siang||'-'}, rainfall_24h=${d.rainfall_24h||0}mm, 7d=${d.rainfall_7d||0}mm` : '');
+  }).join('\n\n');
 
   const prompt = `Claude, draft milestone Living Lab dari ${selectedEntries.length} laporan harian berikut.
 
@@ -6833,6 +6865,47 @@ function getDetailText(d) {
     return (typeof d.catatan === 'string' ? d.catatan : '') || '';
   }
   return '';
+}
+
+// ===== POHON BASELINE — Central source of truth (locked 16 Mei 2026) =====
+// Pre-selection (Mei-Sep 2026): 915 pohon estimasi awal
+// Post-selection (Oct 2026 onwards): 750 pohon target (jarak 3 × 2,5 m di 0,49 ha)
+// Update POHON_BASELINE.current → 750 setelah seleksi pohon pasca-panen 2026 selesai
+const POHON_BASELINE = {
+  pre: 915,
+  post: 750,
+  current: 915,     // Active baseline — manual update after seleksi tebang/peremajaan
+  perBidang: [350, 300, 250, 15]   // Rough estimate per bidang (K1, K2, K3, K4)
+};
+
+// Multi-kebun helper: return array of bidang indices [0..3] for an entry
+// Handles: kebun_list array, kebun string 'K1+K3', single bidang 'K1' / '1'
+function getKebunIndices(entry) {
+  if (!entry) return [];
+  const bidangs = ['1','2','3','4'];
+  const collected = [];
+  // 1. kebun_list array (preferred — created by normalizeWorkerEntry)
+  if (Array.isArray(entry.kebun_list)) {
+    entry.kebun_list.forEach(k => {
+      const n = String(k).match(/\d/)?.[0];
+      const idx = bidangs.indexOf(n);
+      if (idx >= 0 && !collected.includes(idx)) collected.push(idx);
+    });
+  }
+  // 2. Fallback: parse kebun string ('K1+K3')
+  if (collected.length === 0 && typeof entry.kebun === 'string') {
+    entry.kebun.split(/[+,]/).forEach(part => {
+      const n = part.trim().match(/\d/)?.[0];
+      const idx = bidangs.indexOf(n);
+      if (idx >= 0 && !collected.includes(idx)) collected.push(idx);
+    });
+  }
+  // 3. Fallback: single bidang field
+  if (collected.length === 0 && entry.bidang) {
+    const idx = bidangs.indexOf(String(entry.bidang));
+    if (idx >= 0) collected.push(idx);
+  }
+  return collected;
 }
 function fmtRpShort(n) {
   // Full Indonesian Rupiah format (locked 16 Mei 2026 per Adib preference):
