@@ -1432,16 +1432,21 @@
             </details>
           </div>
 
-          <!-- SECTION C: Paste JSON Output -->
-          <div style="margin-bottom:16px">
-            <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:0.5px">SECTION C — PASTE JSON DARI CLAUDE</div>
-            <textarea id="bc-draft-json" placeholder='Paste seluruh JSON output dari Claude di sini (otomatis akan diparse + di-fill ke form di bawah)' style="width:100%;height:120px;padding:10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;border:1.5px solid var(--gold);border-radius:6px;background:#FFFEF8;resize:vertical"></textarea>
-            <div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:4px">Atau isi manual di form di bawah kalau Adib mau skip Claude review.</div>
-          </div>
+          <!-- SECTION C: Raw JSON (collapsible — hidden by default, dibuka kalau mau debug / fallback paste) -->
+          <details id="bc-section-c-wrapper" style="margin-bottom:16px">
+            <summary style="font-size:11px;color:var(--mute);cursor:pointer;padding:6px 0;font-weight:600">🧰 Raw JSON output (advanced / fallback manual paste)</summary>
+            <div style="margin-top:6px">
+              <textarea id="bc-draft-json" placeholder='Paste seluruh JSON output dari Claude di sini (otomatis akan diparse + di-fill ke form di bawah)' style="width:100%;height:120px;padding:10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;border:1.5px solid var(--gold);border-radius:6px;background:#FFFEF8;resize:vertical"></textarea>
+              <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
+                <button class="btn" onclick="bcReparseJson()" style="background:var(--moss);color:#fff;font-size:10px;padding:4px 10px">🔁 Re-parse JSON → Form</button>
+                <span style="font-size:10px;color:var(--mute);font-style:italic">Otomatis di-parse setelah Generate. Tombol ini cuma untuk manual paste.</span>
+              </div>
+            </div>
+          </details>
 
-          <!-- SECTION D: Manual Form (fallback / quick edit) -->
+          <!-- SECTION D: Readable form fields (auto-filled dari JSON) -->
           <div style="margin-bottom:16px">
-            <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:0.5px">SECTION D — MANUAL FIELDS (Optional / Quick Edit)</div>
+            <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:0.5px">📝 REVIEW HASIL (edit kalau perlu, lalu Save Draft)</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
               <div>
                 <label style="font-size:10px;font-weight:700;color:var(--mute)">Tanggal Milestone</label>
@@ -4564,6 +4569,65 @@ function bcClearApiKey() {
   }
 }
 
+// Extract FIRST balanced JSON object from text (handles markdown fences + multi-block output)
+function bcExtractFirstJsonBlock(text) {
+  if (!text) return null;
+  // Strip markdown fences
+  const cleaned = text.replace(/```(?:json)?\s*/gi, '').replace(/```/g, '');
+  const start = cleaned.indexOf('{');
+  if (start < 0) return null;
+  let depth = 0, inStr = false, esc = false;
+  for (let i = start; i < cleaned.length; i++) {
+    const c = cleaned[i];
+    if (esc) { esc = false; continue; }
+    if (c === '\\') { esc = true; continue; }
+    if (c === '"') { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) return cleaned.substring(start, i + 1);
+    }
+  }
+  return null;
+}
+
+// Apply parsed JSON to Section D form fields. Returns true if any field filled.
+function bcApplyJsonToForm(jsonText) {
+  try {
+    const parsed = JSON.parse(jsonText);
+    let filled = false;
+    const setVal = (id, val) => {
+      if (val == null || val === '') return;
+      const el = document.getElementById(id);
+      if (el) { el.value = val; filled = true; }
+    };
+    setVal('bc-draft-title-id', parsed.title?.id || parsed.title_id);
+    setVal('bc-draft-title-en', parsed.title?.en || parsed.title_en);
+    setVal('bc-draft-detail-id', parsed.detail?.id || parsed.detail_id);
+    setVal('bc-draft-detail-en', parsed.detail?.en || parsed.detail_en);
+    setVal('bc-draft-date', parsed.date || parsed.tanggal);
+    setVal('bc-draft-phase', parsed.phase || parsed.fase);
+    setVal('bc-draft-tag', parsed.tag || parsed.meta?.tag);
+    return filled;
+  } catch (e) {
+    console.warn('[bcApplyJsonToForm] parse fail:', e.message);
+    return false;
+  }
+}
+
+// Manual reparse button (in case auto-fill missed something)
+function bcReparseJson() {
+  const raw = document.getElementById('bc-draft-json').value;
+  if (!raw.trim()) {
+    alert('Section JSON kosong — paste JSON dulu atau jalankan Generate Now.');
+    return;
+  }
+  const block = bcExtractFirstJsonBlock(raw) || raw;
+  const ok = bcApplyJsonToForm(block);
+  alert(ok ? '✓ Field berhasil di-fill dari JSON. Scroll ke bawah untuk review.' : '⚠️ Gagal parse JSON. Cek struktur (apakah valid + ada field title/detail).');
+}
+
 async function bcGenerateDraftViaAPI() {
   const apiKey = bcGetApiKey();
   if (!apiKey) return;
@@ -4624,28 +4688,22 @@ async function bcGenerateDraftViaAPI() {
     const costUsd = (usage.input_tokens || 0) / 1e6 * p.input + (usage.output_tokens || 0) / 1e6 * p.output;
     const costRp = Math.round(costUsd * 15500);
 
-    // Auto-fill: extract JSON block + populate fields
-    const jsonMatch = reply.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      document.getElementById('bc-draft-json').value = jsonMatch[0];
-      try {
-        const parsed = JSON.parse(jsonMatch[0]);
-        if (parsed.title?.id) document.getElementById('bc-draft-title-id').value = parsed.title.id;
-        if (parsed.title?.en) document.getElementById('bc-draft-title-en').value = parsed.title.en;
-        if (parsed.detail?.id) document.getElementById('bc-draft-detail-id').value = parsed.detail.id;
-        if (parsed.detail?.en) document.getElementById('bc-draft-detail-en').value = parsed.detail.en;
-        if (parsed.date) document.getElementById('bc-draft-date').value = parsed.date;
-        if (parsed.phase) document.getElementById('bc-draft-phase').value = parsed.phase;
-        if (parsed.tag) document.getElementById('bc-draft-tag').value = parsed.tag;
-      } catch(e) {
-        console.warn('Parse partial fail:', e.message);
-      }
+    // Auto-fill: extract FIRST balanced JSON block (handle multi-block "DRAFT ID + DRAFT EN" output)
+    const firstJson = bcExtractFirstJsonBlock(reply);
+    let parseOk = false;
+    if (firstJson) {
+      document.getElementById('bc-draft-json').value = firstJson;
+      parseOk = bcApplyJsonToForm(firstJson);
     } else {
-      // Just paste raw text
+      // No JSON detected — dump raw reply for manual inspection
       document.getElementById('bc-draft-json').value = reply;
     }
 
-    statusEl.innerHTML = `<div style="padding:10px 14px;background:#DCFCE7;border-left:3px solid #15803D;border-radius:6px;font-size:11px;color:#15803D"><b>✅ Generated in ${duration}s</b> · ${usage.input_tokens || '?'} in + ${usage.output_tokens || '?'} out tokens · ~Rp ${costRp.toLocaleString('id-ID')} · Model: ${model}<br>Review hasil di Section D di bawah, edit kalau perlu, lalu Save Draft.</div>`;
+    const fillNote = parseOk
+      ? `<br>✓ Field Title/Detail/Date sudah ter-isi otomatis. Review di bawah, edit kalau perlu, lalu Save Draft.`
+      : `<br>⚠️ Auto-fill gagal — buka <i>Raw JSON output</i> di bawah untuk inspect manual, atau klik <b>🔁 Re-parse JSON → Form</b>.`;
+
+    statusEl.innerHTML = `<div style="padding:10px 14px;background:${parseOk?'#DCFCE7':'#FEF3C7'};border-left:3px solid ${parseOk?'#15803D':'#D97706'};border-radius:6px;font-size:11px;color:${parseOk?'#15803D':'#92400E'}"><b>${parseOk?'✅':'⚠️'} Generated in ${duration}s</b> · ${usage.input_tokens || '?'} in + ${usage.output_tokens || '?'} out tokens · ~Rp ${costRp.toLocaleString('id-ID')} · Model: ${model}${fillNote}</div>`;
 
   } catch (err) {
     console.error('[Anthropic API error]', err);
