@@ -4534,11 +4534,9 @@ Berikan JSON yang valid dengan struktur ini:
 }
 \`\`\`
 
-Reply dgn 2 block:
-- Block 1: \`# DRAFT BAHASA INDONESIA\` — full JSON
-- Block 2: \`# DRAFT ENGLISH\` — pure English version dari title.en + detail.en + kajian_internasional translation (kalau perlu)
+**OUTPUT FORMAT (PENTING)**: Reply dgn SATU JSON block saja (sudah bilingual karena title.id+title.en dan detail.id+detail.en included). Tidak perlu duplicate block "DRAFT ENGLISH" — sudah ada di field .en.
 
-Adib akan paste hasil ke 2 textareas di modal dashboard. Format JSON harus valid (no trailing comma, proper quoting).`;
+Format JSON harus valid (no trailing comma, proper quoting, no markdown commentary di luar code fence). Wrap dlm \`\`\`json ... \`\`\` fence.`;
 
   document.getElementById('bc-prompt-text').value = prompt;
 }
@@ -4662,7 +4660,7 @@ async function bcGenerateDraftViaAPI() {
       },
       body: JSON.stringify({
         model: model,
-        max_tokens: 4096,
+        max_tokens: 8192,
         messages: [
           { role: 'user', content: promptText }
         ]
