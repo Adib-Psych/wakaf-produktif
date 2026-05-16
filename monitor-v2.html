@@ -2138,8 +2138,17 @@ function renderLog() {
   const fp = document.getElementById('filter-pelapor').value;
   const fb = document.getElementById('filter-bidang').value;
   const fk = document.getElementById('filter-kategori').value;
+  // Multi-kebun filter: match if any of kebun_list contains the filter value
+  const matchKebun = (d) => {
+    if (!fb) return true;
+    if (d.bidang === fb) return true;
+    if (Array.isArray(d.kebun_list)) {
+      return d.kebun_list.some(k => String(k).replace(/[KkBb]/g,'') === fb);
+    }
+    return false;
+  };
   const data = STATE.laporan.filter(d =>
-    (!fp || d.pelapor===fp) && (!fb || d.bidang===fb) && (!fk || d.kategori===fk)
+    (!fp || d.pelapor===fp) && matchKebun(d) && (!fk || d.kategori===fk)
   ).sort((a,b)=>b.tgl.localeCompare(a.tgl));
 
   const roleMap = {ANTO:['Mas Anto','role-anto'], YIT:['Cak Yit','role-yit'], KUMPUL:['Pak Kumpul','role-kumpul']};
@@ -2164,10 +2173,16 @@ function renderLog() {
     return `<tr>
       <td style="white-space:nowrap">${formatTgl(d.tgl)}</td>
       <td><span class="pill ${cls}">${name}</span></td>
-      <td><span class="pill bidang-${d.bidang}" title="Kebun ${d.bidang}">K${d.bidang}</span></td>
+      <td>${Array.isArray(d.kebun_list) && d.kebun_list.length > 1
+            ? d.kebun_list.map(k => {
+                const n = String(k).replace(/[KkBb]/g,'');
+                return `<span class="pill bidang-${n}" title="Kebun ${n}" style="margin-right:2px">K${n}</span>`;
+              }).join('')
+            : `<span class="pill bidang-${d.bidang}" title="Kebun ${d.bidang}">K${d.bidang}</span>`
+          }</td>
       <td>${d.kategori.replace(/_/g,' ')}</td>
       <td title="${pohonTitle}">${pohonDisp}</td>
-      <td style="font-size:11px">${d.detail||'-'}</td>
+      <td style="font-size:11px">${getDetailText(d) || '-'}</td>
       <td><span class="pill ${d.compliance}">${d.compliance}</span></td>
       <td>${(d.alerts||[]).map(a=>'<span class="pill alert">'+a+'</span>').join('')||'<span style="color:#aaa">none</span>'}</td>
       <td style="white-space:nowrap">
@@ -2275,7 +2290,8 @@ function deleteLaporan(id) {
   const linkedUpah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.filter(u =>
     u.tgl === lap.tgl && u.pelapor === lap.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill')
   ) : [];
-  const msg = `Hapus entry ini?\n\n📅 ${formatTgl(lap.tgl)} · ${lap.pelapor} · Kebun ${lap.bidang} · ${lap.kategori}\n📝 ${(lap.detail || '').substring(0, 80)}${(lap.detail||'').length>80?'…':''}\n\n` +
+  const _lapDetail = getDetailText(lap);
+  const msg = `Hapus entry ini?\n\n📅 ${formatTgl(lap.tgl)} · ${lap.pelapor} · Kebun ${lap.bidang} · ${lap.kategori}\n📝 ${_lapDetail.substring(0, 80)}${_lapDetail.length>80?'…':''}\n\n` +
     (linkedUpah.length > 0 ? `⚠️ Ini juga akan menghapus ${linkedUpah.length} linked UPAH entry (status: ${linkedUpah.filter(u=>u.status==='lunas').length} sudah lunas, ${linkedUpah.filter(u=>u.status==='belum').length} belum dibayar). Cashbook auto-entries yang sudah lunas TIDAK terhapus (audit trail).\n\n` : '') +
     'Lanjut?';
   if (!confirm(msg)) return;
@@ -3004,7 +3020,7 @@ function submitForm() {
       UPAH_ITEMS.push(upahEntry);
       saveUpah();
       const total = qty * tarifVal;
-      upahMsg = `\n\n💰 Auto-create entry upah: ${NAMA_PEKERJA[STATE.pelapor]} · ${satuanLbl} · Rp ${total.toLocaleString('id-ID')} (status: belum dibayar)\n→ Cek tab Upah Pekerja untuk konfirmasi pembayaran`;
+      upahMsg = `\n\n💰 Auto-create entry upah: ${NAMA_PEKERJA[STATE.pelapor]} · ${satuanLbl} · ${fmtRpShort(total)} (status: belum dibayar)\n→ Cek tab Upah Pekerja untuk konfirmasi pembayaran`;
       // Refresh upah views kalau function ada
       if (typeof renderUpahTable === 'function') renderUpahTable();
       if (typeof renderUpahSummary === 'function') renderUpahSummary();
@@ -3070,7 +3086,15 @@ function generatePreview() {
 function exportCSV() {
   let csv = 'Tanggal,Pelapor,Kebun,Kategori,Pohon,Detail,Compliance\n';
   STATE.laporan.forEach(d => {
-    csv += `${d.tgl},${d.pelapor},${d.bidang},${d.kategori},${d.pohon||0},"${(d.detail||'').replace(/"/g,'""')}",${d.compliance}\n`;
+    // Multi-kebun support: prefer kebun (joined string 'K1+K3') > kebun_list > bidang fallback
+    let kebunStr = '';
+    if (Array.isArray(d.kebun_list) && d.kebun_list.length > 0) kebunStr = d.kebun_list.join('+');
+    else if (typeof d.kebun === 'string' && d.kebun) kebunStr = d.kebun;
+    else if (Array.isArray(d.kebun)) kebunStr = d.kebun.join('+');
+    else kebunStr = d.bidang ? `K${d.bidang}` : '';
+    // Ensure detail is text (defensive against legacy [object Object])
+    const detailStr = (typeof d.detail === 'object' && d.detail !== null) ? (d.catatan || '') : (d.detail || '');
+    csv += `${d.tgl},${d.pelapor},${kebunStr},${d.kategori},${d.pohon||0},"${detailStr.replace(/"/g,'""')}",${d.compliance}\n`;
   });
   const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
@@ -3103,7 +3127,7 @@ function renderBudgetChart() {
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => 'Rp ' + ctx.raw.toLocaleString('id-ID') } } },
+      plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => fmtRpShort(ctx.raw) } } },
       scales: { y: { beginAtZero: true, ticks: { callback: v => 'Rp ' + (v/1000).toFixed(0) + 'K' } } }
     }
   });
@@ -3256,8 +3280,8 @@ function renderUpahTable() {
       <td style="font-size:11px;max-width:220px">${it.aktivitas}</td>
       <td><strong>${it.qty}</strong></td>
       <td style="font-size:10px;color:var(--mute)">${it.satuan_lbl||it.satuan}</td>
-      <td>Rp ${it.tarif.toLocaleString('id-ID')}</td>
-      <td><strong>Rp ${total.toLocaleString('id-ID')}</strong></td>
+      <td>${fmtRpShort(it.tarif)}</td>
+      <td><strong>${fmtRpShort(total)}</strong></td>
       <td>${statusBadge}</td>
       <td>${action}</td>
     </tr>`;
@@ -3298,7 +3322,7 @@ function batchPay() {
       ids.push(id);
     }
   });
-  const sourceConfirm = confirm(`Bayar ${ids.length} item, total Rp ${total.toLocaleString('id-ID')}?\n\nOK = bayar dari KAS WAKIF langsung\nCancel = bayar via PETTY CASH ANTO`);
+  const sourceConfirm = confirm(`Bayar ${ids.length} item, total ${fmtRpShort(total)}?\n\nOK = bayar dari KAS WAKIF langsung\nCancel = bayar via PETTY CASH ANTO`);
   // Both flows continue; we just use confirm result as source picker
   const source = sourceConfirm ? 'wakif' : 'anto';
   const today = new Date().toISOString().slice(0,10);
@@ -3327,9 +3351,9 @@ function batchPay() {
   if (typeof renderKeuangan === 'function') renderKeuangan();
   if (typeof renderRAB === 'function') renderRAB();
   if (typeof showToast === 'function') {
-    showToast(`✅ ${ids.length} item batch-paid (${source==='anto'?'via Anto':'kas wakif'}) — Rp ${total.toLocaleString('id-ID')}`);
+    showToast(`✅ ${ids.length} item batch-paid (${source==='anto'?'via Anto':'kas wakif'}) — ${fmtRpShort(total)}`);
   } else {
-    alert(`✅ Batch payment berhasil — Rp ${total.toLocaleString('id-ID')} ditandai lunas (${today})`);
+    alert(`✅ Batch payment berhasil — ${fmtRpShort(total)} ditandai lunas (${today})`);
   }
 }
 
@@ -3583,7 +3607,7 @@ async function generateBuktiBayar() {
     const filename = `${nomorBukti}.png`;
 
     // Build summary message
-    const summaryMsg = `📊 RINGKASAN BUKTI BAYAR\n\n• No. Bukti: ${nomorBukti}\n• Penerima: ${namaPenerima}\n• Total Item: ${items.length}\n• Total Dibayar: Rp ${total.toLocaleString('id-ID')}\n• Sumber Dana: ${sumberDana}\n\n📱 Cara share ke pekerja:\n1. Download/save file ${filename}\n2. Buka WhatsApp → chat pekerja\n3. Attach → Foto/Galeri → pilih file\n4. Send\n\nBarakallahu fiikum.`;
+    const summaryMsg = `📊 RINGKASAN BUKTI BAYAR\n\n• No. Bukti: ${nomorBukti}\n• Penerima: ${namaPenerima}\n• Total Item: ${items.length}\n• Total Dibayar: ${fmtRpShort(total)}\n• Sumber Dana: ${sumberDana}\n\n📱 Cara share ke pekerja:\n1. Download/save file ${filename}\n2. Buka WhatsApp → chat pekerja\n3. Attach → Foto/Galeri → pilih file\n4. Send\n\nBarakallahu fiikum.`;
 
     // Open in new window — universal solution that works in Safari + Chrome + Firefox
     // User sees full receipt + explicit Download button + right-click Save option
@@ -3685,8 +3709,8 @@ function refreshHarianOptions() {
   const sel = document.getElementById('dlg-harian-tipe');
   if (!sel) return;
   sel.innerHTML = `
-    <option value="setengah_hari:${tarif.setengah_hari}">Setengah hari (Rp ${tarif.setengah_hari.toLocaleString('id-ID')})</option>
-    <option value="full_day:${tarif.full_day}">Full day (Rp ${tarif.full_day.toLocaleString('id-ID')})</option>
+    <option value="setengah_hari:${tarif.setengah_hari}">Setengah hari (${fmtRpShort(tarif.setengah_hari)})</option>
+    <option value="full_day:${tarif.full_day}">Full day (${fmtRpShort(tarif.full_day)})</option>
   `;
   updateDlgTotal();
 }
@@ -3733,7 +3757,7 @@ function updateDlgTotal() {
     const qty = +document.getElementById('dlg-borongan-qty').value || 0;
     total = qty * tarif;
   }
-  document.getElementById('dlg-total-preview').innerHTML = `Total: <strong>Rp ${total.toLocaleString('id-ID')}</strong>`;
+  document.getElementById('dlg-total-preview').innerHTML = `Total: <strong>${fmtRpShort(total)}</strong>`;
 }
 
 function submitDlg() {
@@ -4352,14 +4376,21 @@ function renderBatchCuration() {
     const isChecked = BC_SELECTED.has(d.id);
     const pelaporName = PELAPOR_NAMES_BC[d.pelapor] || d.pelapor;
     const kategoriLbl = (d.kategori || '').replace(/_/g, ' ');
-    const detail = (d.detail || '').substring(0, 60) + (d.detail && d.detail.length > 60 ? '…' : '');
+    const _dText = getDetailText(d);
+    const detail = _dText.substring(0, 60) + (_dText.length > 60 ? '…' : '');
     const durasiLbl = d.durasi === 'full_day' ? '1 hari' : (d.durasi === 'setengah_hari' ? '½ hari' : (d.durasi || '—'));
     const lockedStyle = isLocked ? 'opacity:0.5;background:#FAFAFA' : '';
     return `<tr style="${lockedStyle}">
       <td style="text-align:center"><input type="checkbox" data-eid="${d.id}" ${isChecked ? 'checked' : ''} ${isLocked ? 'disabled' : ''} onchange="bcToggleEntry('${d.id}')"></td>
       <td style="white-space:nowrap"><b>${formatTglShort(d.tgl)}</b></td>
       <td>${pelaporName}</td>
-      <td><span class="pill bidang-${d.bidang}" title="Kebun ${d.bidang}">K${d.bidang}</span></td>
+      <td>${Array.isArray(d.kebun_list) && d.kebun_list.length > 1
+            ? d.kebun_list.map(k => {
+                const n = String(k).replace(/[KkBb]/g,'');
+                return `<span class="pill bidang-${n}" title="Kebun ${n}" style="margin-right:2px">K${n}</span>`;
+              }).join('')
+            : `<span class="pill bidang-${d.bidang}" title="Kebun ${d.bidang}">K${d.bidang}</span>`
+          }</td>
       <td><b>${kategoriLbl}</b>${detail ? `<br><span style="font-size:10px;color:var(--mute)">${detail}</span>` : ''}</td>
       <td style="text-align:center">${d.pohon || '—'}</td>
       <td>${durasiLbl}</td>
@@ -4465,7 +4496,7 @@ function buildBatchDraftPrompt() {
   // === Section B: Build prompt ===
   const entryJsonLines = selectedEntries.map((d,i) =>
     `${i+1}. [${d.tgl}] ${PELAPOR_NAMES_BC[d.pelapor]||d.pelapor} · Kebun ${d.bidang} · ${(d.kategori||'').replace(/_/g,' ')} · ${d.pohon||0} phn · ${d.durasi||'-'}`
-    + (d.detail ? `\n   Catatan: ${(d.detail||'').substring(0,200)}` : '')
+    + (getDetailText(d) ? `\n   Catatan: ${getDetailText(d).substring(0,200)}` : '')
     + (d.cuaca_pagi || d.cuaca_siang ? `\n   Cuaca: pagi=${d.cuaca_pagi||'-'}, siang=${d.cuaca_siang||'-'}, rainfall_24h=${d.rainfall_24h||0}mm, 7d=${d.rainfall_7d||0}mm` : '')
   ).join('\n\n');
 
@@ -5348,7 +5379,7 @@ function openSuggestDlg() {
           </div>
           <div style="font-weight:700;color:var(--earth);font-size:13px">${c.suggestedTitle}</div>
           <div style="font-size:11px;color:var(--mute);margin-top:3px;font-style:italic">${c.reason}</div>
-          <div style="font-size:10px;color:#888;margin-top:4px">Source: Kebun ${c.source.bidang || '?'} · ${c.source.detail?.substring(0,60) || '(no detail)'}${(c.source.detail||'').length>60?'…':''}</div>
+          <div style="font-size:10px;color:#888;margin-top:4px">Source: Kebun ${c.source.bidang || '?'} · ${getDetailText(c.source).substring(0,60) || '(no detail)'}${getDetailText(c.source).length>60?'…':''}</div>
         </div>
         <button class="btn btn-primary" onclick='convertSuggestToMilestone(${i})' style="background:var(--moss);color:#fff;flex-shrink:0;font-size:11px;padding:6px 10px">Convert →</button>
       </div>
@@ -6785,9 +6816,23 @@ function getItemAktual(itemKode) {
 }
 
 // ---------- FORMAT HELPER ----------
+// Full IDR notation (locked 16 Mei 2026): "Rp. 1.000.000,-"
 function fmtRp(n) {
-  if (!n || n === 0) return 'Rp 0';
-  return 'Rp ' + n.toLocaleString('id-ID');
+  if (!n) return 'Rp. 0,-';
+  const sign = n < 0 ? '-' : '';
+  return `Rp. ${sign}${Math.abs(Math.round(n)).toLocaleString('id-ID')},-`;
+}
+
+// Defensive helper: return text version of detail, handling legacy [object Object] bug
+// Returns string safely — never returns object/null/undefined (always coerced to '')
+function getDetailText(d) {
+  if (!d) return '';
+  if (typeof d.detail === 'string') return d.detail;
+  if (typeof d.detail === 'object' && d.detail !== null) {
+    // Legacy bug: detail is object (dynamic fields). Fallback to catatan.
+    return (typeof d.catatan === 'string' ? d.catatan : '') || '';
+  }
+  return '';
 }
 function fmtRpShort(n) {
   // Full Indonesian Rupiah format (locked 16 Mei 2026 per Adib preference):
@@ -7392,11 +7437,11 @@ function updateRecoverTotals() {
   RECOVER_CANDIDATES.forEach((c, i) => {
     const total = calcRecoverRow(i);
     const cell = document.getElementById(`rec-total-${i}`);
-    if (cell) cell.textContent = total > 0 ? `Rp ${total.toLocaleString('id-ID')}` : '—';
+    if (cell) cell.textContent = total > 0 ? fmtRpShort(total) : '—';
     if (total > 0) { n++; sum += total; }
   });
   document.getElementById('recover-count').textContent = n;
-  document.getElementById('recover-total').textContent = `Rp ${sum.toLocaleString('id-ID')}`;
+  document.getElementById('recover-total').textContent = fmtRpShort(sum);
 }
 
 function closeRecoverDlg() {
