@@ -1,9 +1,12 @@
-# Backups
-*.bak
-*.backup
-*~
+# Dependencies
+node_modules/
+package-lock.json
 
-# OS junk
+# Build/scratch artifacts (local only)
+build_*.js
+scratch/
+
+# OS
 .DS_Store
 Thumbs.db
 
@@ -11,10 +14,8 @@ Thumbs.db
 .vscode/
 .idea/
 *.swp
+*.swo
 
-# Git internals
-.git/index.lock
-
-# Sensitive (excluded by default)
-*.env
-.env.local
+# Logs
+*.log
+npm-debug.log*
