@@ -1981,7 +1981,7 @@ function renderLog() {
     return `<tr>
       <td style="white-space:nowrap">${formatTgl(d.tgl)}</td>
       <td><span class="pill ${cls}">${name}</span></td>
-      <td><span class="pill bidang-${d.bidang}">B${d.bidang}</span></td>
+      <td><span class="pill bidang-${d.bidang}" title="Kebun ${d.bidang}">K${d.bidang}</span></td>
       <td>${d.kategori.replace(/_/g,' ')}</td>
       <td title="${pohonTitle}">${pohonDisp}</td>
       <td style="font-size:11px">${d.detail||'-'}</td>
