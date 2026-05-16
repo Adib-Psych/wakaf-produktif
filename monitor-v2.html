@@ -1290,13 +1290,85 @@
         </div>
       </div>
 
+      <!-- ========== NEW: BATCH CURATION — Generate Milestone from Laporan ========== -->
+      <div class="card" style="border-left:5px solid var(--gold)">
+        <div class="card-title" style="color:var(--gold)"><span class="num" style="background:var(--gold);color:#fff">2</span>📦 Batch Curation — Pilih Laporan Harian untuk Generate Milestone</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:14px">
+          Pilih entries laporan (dari Form Input atau Worker PWA) yang relevan untuk 1 milestone publik. Claude akan:
+          (1) translate bahasa petani → ilmiah, (2) tambah kajian teori dari Trifecta SOP, (3) validasi vs SOP.
+          Output: milestone bilingual schema v3.0 siap publish ke Living Lab.
+        </p>
+
+        <!-- Filter bar -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px;padding:10px 12px;background:#FFFAEC;border-radius:8px">
+          <label style="font-size:11px;font-weight:700;color:#8B6914">📅 Periode:</label>
+          <input id="bc-date-from" type="date" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <span style="font-size:11px;color:var(--mute)">→</span>
+          <input id="bc-date-to" type="date" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <select id="bc-filter-pelapor" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <option value="">Semua Pelapor</option>
+            <option value="WAKIF">Wakif (Adib)</option>
+            <option value="KUMPUL">Pak Kumpul</option>
+            <option value="YIT">Cak Yit</option>
+            <option value="ANTO">Mas Anto</option>
+          </select>
+          <select id="bc-filter-kebun" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <option value="">Semua Kebun</option>
+            <option value="1">Kebun 1</option>
+            <option value="2">Kebun 2</option>
+            <option value="3">Kebun 3</option>
+            <option value="4">Kebun 4</option>
+          </select>
+          <select id="bc-filter-status" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <option value="">Semua Status LL</option>
+            <option value="available">⚪ Available</option>
+            <option value="drafted">🟡 Drafted</option>
+            <option value="published">🟢 In Living Lab</option>
+          </select>
+          <button class="btn btn-secondary" onclick="bcResetFilters()" style="font-size:11px;padding:6px 10px">↺ Reset Filter</button>
+        </div>
+
+        <!-- Action toolbar -->
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:10px 14px;background:linear-gradient(135deg,#FFF4D6,#FFFAEC);border-radius:8px;border:1.5px solid #D4AF37;margin-bottom:12px">
+          <div style="flex:1;min-width:200px">
+            <div style="font-size:13px;font-weight:800;color:#8B6914">
+              <span id="bc-selected-count">0</span> entries selected
+            </div>
+            <div id="bc-selected-period" style="font-size:10px;color:#8B6914;font-style:italic;margin-top:2px">— pilih entries dari tabel di bawah</div>
+          </div>
+          <button class="btn" onclick="bcSelectAll()" style="background:#fff;color:#8B6914;border:1.5px solid #D4AF37;font-size:11px">☑ Select All Filtered</button>
+          <button class="btn" onclick="bcClearSelection()" style="background:#fff;color:#666;border:1.5px solid #ccc;font-size:11px">✕ Clear</button>
+          <button class="btn btn-primary" onclick="openBatchDraftModal()" style="background:linear-gradient(135deg,#D4AF37,#8B6914);color:#fff;font-weight:700;padding:8px 16px">🤖 Generate Milestone Draft via Claude</button>
+        </div>
+
+        <!-- Entries table -->
+        <div class="table-wrap">
+          <table style="font-size:11px">
+            <thead><tr>
+              <th style="width:28px"><input type="checkbox" id="bc-master-cb" onchange="bcMasterToggle()"></th>
+              <th style="width:80px">Tanggal</th>
+              <th style="width:90px">Pelapor</th>
+              <th style="width:55px">Kebun</th>
+              <th>Kategori · Detail</th>
+              <th style="width:55px">Pohon</th>
+              <th style="width:80px">Durasi</th>
+              <th style="width:90px">Status LL</th>
+            </tr></thead>
+            <tbody id="bc-tbody"></tbody>
+          </table>
+        </div>
+        <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">
+          💡 Status LL: <strong style="color:var(--mute)">⚪ Available</strong> = belum dipakai, <strong style="color:#B45309">🟡 Drafted</strong> = di milestone draft, <strong style="color:var(--green)">🟢 In Living Lab</strong> = sudah published. Entries 🟢 di-grey-out dan tidak bisa di-select ulang.
+        </p>
+      </div>
+
       <div class="card">
-        <div class="card-title"><span class="num">2</span>Milestone Summary</div>
+        <div class="card-title"><span class="num">3</span>Milestone Summary</div>
         <div class="kpi-grid" id="ms-summary"></div>
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">3</span>Daftar Milestones</div>
+        <div class="card-title"><span class="num">4</span>Daftar Milestones</div>
         <div class="table-wrap">
           <table style="font-size:12px">
             <thead><tr>
@@ -1319,6 +1391,102 @@
     </div>
 
     <!-- ============ MILESTONE FORM DIALOG ============ -->
+    <!-- ============ BATCH DRAFT MODAL (NEW) ============ -->
+    <div id="bc-draft-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9000;justify-content:center;align-items:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;max-width:900px;width:100%;max-height:94vh;display:flex;flex-direction:column">
+        <div style="padding:16px 22px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,#FFF4D6,#FFFAEC);border-radius:12px 12px 0 0">
+          <div>
+            <div style="font-size:16px;font-weight:800;color:#8B6914">🤖 Generate Milestone Draft via Claude</div>
+            <div style="font-size:11px;color:#8B6914;margin-top:2px">Workflow: Copy prompt → Paste ke Claude chat → Copy hasil → Paste ke form di bawah → Save Draft</div>
+          </div>
+          <button onclick="closeBatchDraftModal()" style="background:none;border:none;font-size:24px;color:#8B6914;cursor:pointer">✕</button>
+        </div>
+        <div style="padding:18px 22px;overflow-y:auto;flex:1">
+
+          <!-- SECTION A: Data Summary -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:0.5px">SECTION A — DATA SUMMARY</div>
+            <div id="bc-data-summary"></div>
+          </div>
+
+          <!-- SECTION B: Pre-built Prompt -->
+          <div style="margin-bottom:16px">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <div style="font-size:12px;font-weight:700;color:var(--gold);letter-spacing:0.5px">SECTION B — PROMPT UNTUK CLAUDE</div>
+              <div style="display:flex;gap:6px">
+                <button id="bc-copy-btn" class="btn btn-primary" onclick="bcCopyPrompt()" style="background:var(--moss);color:#fff;font-size:11px;padding:6px 12px">📋 Copy Prompt</button>
+                <a href="https://claude.ai/new" target="_blank" class="btn" style="background:#fff;border:1.5px solid var(--moss);color:var(--moss);font-size:11px;padding:6px 12px;text-decoration:none">💬 Open Claude Chat ↗</a>
+              </div>
+            </div>
+            <textarea id="bc-prompt-text" readonly style="width:100%;height:180px;padding:10px;font-family:'SF Mono',Monaco,monospace;font-size:10px;border:1.5px solid #ddd;border-radius:6px;background:#FAFAF6;color:#444;resize:vertical"></textarea>
+            <div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:4px">💡 Adib paste prompt ke chat Claude, tunggu hasilnya, lalu copy JSON output kembali ke "Paste JSON Output" di bawah.</div>
+          </div>
+
+          <!-- SECTION C: Paste JSON Output -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:0.5px">SECTION C — PASTE JSON DARI CLAUDE</div>
+            <textarea id="bc-draft-json" placeholder='Paste seluruh JSON output dari Claude di sini (otomatis akan diparse + di-fill ke form di bawah)' style="width:100%;height:120px;padding:10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;border:1.5px solid var(--gold);border-radius:6px;background:#FFFEF8;resize:vertical"></textarea>
+            <div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:4px">Atau isi manual di form di bawah kalau Adib mau skip Claude review.</div>
+          </div>
+
+          <!-- SECTION D: Manual Form (fallback / quick edit) -->
+          <div style="margin-bottom:16px">
+            <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:6px;letter-spacing:0.5px">SECTION D — MANUAL FIELDS (Optional / Quick Edit)</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute)">Tanggal Milestone</label>
+                <input id="bc-draft-date" type="date" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute)">Fase</label>
+                <select id="bc-draft-phase" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+                  <option value="strategi">📋 Strategi / Tata Kelola</option>
+                  <option value="pre-panen">🌱 Pre-Panen</option>
+                  <option value="panen">☕ Panen</option>
+                  <option value="post-panen">🌿 Post-Panen</option>
+                  <option value="awal-mh">🌧️ Awal MH</option>
+                  <option value="infrastruktur">🏗️ Infrastruktur</option>
+                  <option value="kemitraan">🤝 Kemitraan</option>
+                </select>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute)">Title (ID)</label>
+                <input id="bc-draft-title-id" type="text" placeholder="Judul Indonesia" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute)">Title (EN)</label>
+                <input id="bc-draft-title-en" type="text" placeholder="English title" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute)">Detail (ID)</label>
+                <textarea id="bc-draft-detail-id" placeholder="Narrative bahasa Indonesia (2-4 kalimat)" style="width:100%;height:80px;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:11px;resize:vertical"></textarea>
+              </div>
+              <div>
+                <label style="font-size:10px;font-weight:700;color:var(--mute)">Detail (EN)</label>
+                <textarea id="bc-draft-detail-en" placeholder="English narrative (2-4 sentences)" style="width:100%;height:80px;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:11px;resize:vertical"></textarea>
+              </div>
+            </div>
+            <div>
+              <label style="font-size:10px;font-weight:700;color:var(--mute)">Tag (pendek)</label>
+              <input id="bc-draft-tag" type="text" placeholder="mis. operasional / kemitraan / kompliance" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            </div>
+          </div>
+
+        </div>
+        <div style="padding:14px 22px;border-top:1px solid #eee;display:flex;justify-content:space-between;align-items:center;gap:10px;background:#FAFAFA;border-radius:0 0 12px 12px">
+          <div style="font-size:10px;color:var(--mute);font-style:italic">Source entries akan di-tag 🟡 Drafted. Saat di-Publish, tag jadi 🟢 In Living Lab.</div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-secondary" onclick="closeBatchDraftModal()">Batal</button>
+            <button class="btn btn-primary" onclick="bcSaveDraft()" style="background:linear-gradient(135deg,#D4AF37,#8B6914);color:#fff;font-weight:700">💾 Save as Draft</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div id="ms-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9000;justify-content:center;align-items:center;padding:20px">
       <div style="background:#fff;border-radius:12px;max-width:760px;width:100%;max-height:92vh;display:flex;flex-direction:column">
         <div style="padding:18px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center">
@@ -1776,6 +1944,7 @@ function initApp() {
   renderSOPKalender();
   renderComplianceProgress();
   if (typeof renderMilestonesTable === 'function') renderMilestonesTable();
+  if (typeof renderBatchCuration === 'function') renderBatchCuration();
 
   // Set today's date in form
   document.getElementById('f-tgl').value = new Date().toISOString().slice(0,10);
@@ -4103,6 +4272,341 @@ function msFormatDateLabel(iso) {
   if (!dt) return iso;
   return { id: `${dt.getDate()} ${MS_BULAN_FULL[dt.getMonth()+1]} ${dt.getFullYear()}`,
            en: `${MS_BULAN_FULL[dt.getMonth()+1]} ${dt.getDate()}, ${dt.getFullYear()}` };
+}
+
+// ===========================================================================
+// BATCH CURATION — Pilih Laporan Harian untuk Generate Milestone (16 Mei 2026)
+// ===========================================================================
+let BC_SELECTED = new Set();  // entry IDs yang di-check
+
+// Compute Living Lab status per entry — derive dari MILESTONES.source_entry_ids
+function getEntryLLStatus(entryId) {
+  for (const ms of MILESTONES) {
+    if (ms.source_entry_ids && Array.isArray(ms.source_entry_ids) && ms.source_entry_ids.includes(entryId)) {
+      return ms.published ? 'published' : 'drafted';
+    }
+  }
+  return 'available';
+}
+
+const LL_STATUS_STYLE = {
+  available: { icon: '⚪', label: 'Available', bg: '#F3F4F6', color: '#374151' },
+  drafted:   { icon: '🟡', label: 'Drafted',   bg: '#FEF3C7', color: '#B45309' },
+  published: { icon: '🟢', label: 'In LL',     bg: '#DCFCE7', color: '#15803D' }
+};
+
+const PELAPOR_NAMES_BC = { WAKIF:'Adib', KUMPUL:'Pak Kumpul', YIT:'Cak Yit', ANTO:'Mas Anto' };
+
+function bcResetFilters() {
+  document.getElementById('bc-date-from').value = '';
+  document.getElementById('bc-date-to').value = '';
+  document.getElementById('bc-filter-pelapor').value = '';
+  document.getElementById('bc-filter-kebun').value = '';
+  document.getElementById('bc-filter-status').value = '';
+  renderBatchCuration();
+}
+
+function bcGetFilteredEntries() {
+  const dFrom = document.getElementById('bc-date-from')?.value || '';
+  const dTo = document.getElementById('bc-date-to')?.value || '';
+  const fPel = document.getElementById('bc-filter-pelapor')?.value || '';
+  const fKeb = document.getElementById('bc-filter-kebun')?.value || '';
+  const fStatus = document.getElementById('bc-filter-status')?.value || '';
+  return (STATE.laporan || []).filter(d => {
+    if (dFrom && d.tgl < dFrom) return false;
+    if (dTo && d.tgl > dTo) return false;
+    if (fPel && d.pelapor !== fPel) return false;
+    if (fKeb && String(d.bidang) !== fKeb) return false;
+    if (fStatus && getEntryLLStatus(d.id) !== fStatus) return false;
+    return true;
+  }).sort((a,b) => (b.tgl || '').localeCompare(a.tgl || ''));
+}
+
+function renderBatchCuration() {
+  const tbody = document.getElementById('bc-tbody');
+  if (!tbody) return;
+  const entries = bcGetFilteredEntries();
+  if (entries.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--mute);font-style:italic">Tidak ada laporan dalam filter ini.</td></tr>';
+    bcUpdateSelectionBar();
+    return;
+  }
+  tbody.innerHTML = entries.map(d => {
+    const llStatus = getEntryLLStatus(d.id);
+    const llStyle = LL_STATUS_STYLE[llStatus];
+    const isLocked = llStatus === 'published';
+    const isChecked = BC_SELECTED.has(d.id);
+    const pelaporName = PELAPOR_NAMES_BC[d.pelapor] || d.pelapor;
+    const kategoriLbl = (d.kategori || '').replace(/_/g, ' ');
+    const detail = (d.detail || '').substring(0, 60) + (d.detail && d.detail.length > 60 ? '…' : '');
+    const durasiLbl = d.durasi === 'full_day' ? '1 hari' : (d.durasi === 'setengah_hari' ? '½ hari' : (d.durasi || '—'));
+    const lockedStyle = isLocked ? 'opacity:0.5;background:#FAFAFA' : '';
+    return `<tr style="${lockedStyle}">
+      <td style="text-align:center"><input type="checkbox" data-eid="${d.id}" ${isChecked ? 'checked' : ''} ${isLocked ? 'disabled' : ''} onchange="bcToggleEntry('${d.id}')"></td>
+      <td style="white-space:nowrap"><b>${formatTglShort(d.tgl)}</b></td>
+      <td>${pelaporName}</td>
+      <td><span class="pill bidang-${d.bidang}" title="Kebun ${d.bidang}">K${d.bidang}</span></td>
+      <td><b>${kategoriLbl}</b>${detail ? `<br><span style="font-size:10px;color:var(--mute)">${detail}</span>` : ''}</td>
+      <td style="text-align:center">${d.pohon || '—'}</td>
+      <td>${durasiLbl}</td>
+      <td><span style="background:${llStyle.bg};color:${llStyle.color};padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">${llStyle.icon} ${llStyle.label}</span></td>
+    </tr>`;
+  }).join('');
+  bcUpdateSelectionBar();
+}
+
+function bcToggleEntry(entryId) {
+  if (BC_SELECTED.has(entryId)) BC_SELECTED.delete(entryId);
+  else BC_SELECTED.add(entryId);
+  bcUpdateSelectionBar();
+}
+
+function bcMasterToggle() {
+  const masterCb = document.getElementById('bc-master-cb');
+  if (!masterCb) return;
+  if (masterCb.checked) bcSelectAll();
+  else bcClearSelection();
+}
+
+function bcSelectAll() {
+  const entries = bcGetFilteredEntries().filter(d => getEntryLLStatus(d.id) !== 'published');
+  entries.forEach(d => BC_SELECTED.add(d.id));
+  renderBatchCuration();
+}
+
+function bcClearSelection() {
+  BC_SELECTED.clear();
+  renderBatchCuration();
+}
+
+function bcUpdateSelectionBar() {
+  const cntEl = document.getElementById('bc-selected-count');
+  const periodEl = document.getElementById('bc-selected-period');
+  if (!cntEl) return;
+  cntEl.textContent = BC_SELECTED.size;
+  if (BC_SELECTED.size === 0) {
+    periodEl.textContent = '— pilih entries dari tabel di bawah';
+  } else {
+    const selectedEntries = Array.from(BC_SELECTED).map(id =>
+      (STATE.laporan || []).find(d => d.id === id)
+    ).filter(Boolean);
+    const dates = selectedEntries.map(d => d.tgl).filter(Boolean).sort();
+    const dateRange = dates.length ? `${formatTglShort(dates[0])} → ${formatTglShort(dates[dates.length-1])}` : '';
+    const kebunSet = new Set(selectedEntries.map(d => d.bidang));
+    const pelaporSet = new Set(selectedEntries.map(d => d.pelapor));
+    periodEl.innerHTML = `${dateRange} · ${kebunSet.size} kebun · ${pelaporSet.size} pelapor`;
+  }
+}
+
+// ===== Generate Draft Modal =====
+function openBatchDraftModal() {
+  if (BC_SELECTED.size === 0) {
+    alert('Pilih dulu minimal 1 entry dari tabel di bawah.');
+    return;
+  }
+  const overlay = document.getElementById('bc-draft-modal-overlay');
+  if (!overlay) return;
+  // Auto-generate data summary
+  buildBatchDraftPrompt();
+  overlay.style.display = 'flex';
+}
+
+function closeBatchDraftModal() {
+  document.getElementById('bc-draft-modal-overlay').style.display = 'none';
+}
+
+function bcLookupGlossary(text) {
+  // Simple lookup: find istilah ilmiah dari bahasa petani di Glossary
+  // (Glossary not currently embedded di monitor-v2; suggest manual lookup via Tab Sintesa SOP)
+  return text; // pass-through for now
+}
+
+function buildBatchDraftPrompt() {
+  const selectedEntries = Array.from(BC_SELECTED).map(id =>
+    (STATE.laporan || []).find(d => d.id === id)
+  ).filter(Boolean);
+
+  // === Section A: Data Summary ===
+  const dates = selectedEntries.map(d => d.tgl).filter(Boolean).sort();
+  const kebunCount = {}, pelaporCount = {}, kategoriCount = {}, totalPohon = 0;
+  let totalPohonSum = 0;
+  selectedEntries.forEach(d => {
+    kebunCount[d.bidang] = (kebunCount[d.bidang] || 0) + 1;
+    pelaporCount[d.pelapor] = (pelaporCount[d.pelapor] || 0) + 1;
+    kategoriCount[d.kategori] = (kategoriCount[d.kategori] || 0) + 1;
+    totalPohonSum += +d.pohon || 0;
+  });
+  const summaryHTML = `
+    <div style="background:#FFFAEC;border-left:3px solid var(--gold);padding:12px 14px;border-radius:6px;font-size:12px;line-height:1.6">
+      <div style="font-weight:700;color:#8B6914;margin-bottom:6px">📊 Data Summary (${selectedEntries.length} entries)</div>
+      <div>• <b>Periode:</b> ${dates[0]} → ${dates[dates.length-1]}</div>
+      <div>• <b>Kebun:</b> ${Object.entries(kebunCount).map(([k,n])=>`K${k} (${n})`).join(', ')}</div>
+      <div>• <b>Pelapor:</b> ${Object.entries(pelaporCount).map(([k,n])=>`${PELAPOR_NAMES_BC[k]||k} (${n})`).join(', ')}</div>
+      <div>• <b>Kategori:</b> ${Object.entries(kategoriCount).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,n])=>`${k.replace(/_/g,' ')} (${n})`).join(', ')}</div>
+      <div>• <b>Total Pohon:</b> ${totalPohonSum}</div>
+    </div>
+  `;
+  document.getElementById('bc-data-summary').innerHTML = summaryHTML;
+
+  // === Section B: Build prompt ===
+  const entryJsonLines = selectedEntries.map((d,i) =>
+    `${i+1}. [${d.tgl}] ${PELAPOR_NAMES_BC[d.pelapor]||d.pelapor} · Kebun ${d.bidang} · ${(d.kategori||'').replace(/_/g,' ')} · ${d.pohon||0} phn · ${d.durasi||'-'}`
+    + (d.detail ? `\n   Catatan: ${(d.detail||'').substring(0,200)}` : '')
+    + (d.cuaca_pagi || d.cuaca_siang ? `\n   Cuaca: pagi=${d.cuaca_pagi||'-'}, siang=${d.cuaca_siang||'-'}, rainfall_24h=${d.rainfall_24h||0}mm, 7d=${d.rainfall_7d||0}mm` : '')
+  ).join('\n\n');
+
+  const prompt = `Claude, draft milestone Living Lab dari ${selectedEntries.length} laporan harian berikut.
+
+=== DATA LAPORAN ===
+${entryJsonLines}
+
+=== REQUIREMENTS (WAJIB diikuti) ===
+
+1. **Translate bahasa petani → bahasa ilmiah** di narrative. Mis. "obat rumput" → "herbisida glifosat (off-SOP)", "sengkreng" → "manual mechanical weeding via cangkul (sub-surface)", "wiwilan" → "pruning tunas air". Reference: Glossary v1.0 Wakaf Ngantang.
+
+2. **Tambah Kajian Teori** dari Trifecta SOP Robusta Wakaf Ngantang v2.1 (16 Mei 2026):
+   - Identify topik A-S yang relevan
+   - Cite international references Tier 1-5 (ICCRI, Wintgens 2004, WCR, SCA, peer-reviewed) yang sudah ada di Sintesa SOP
+   - Sumber domestik: Robusta Edisi 2 (SCOPI 2019), Puslitbang 2010, Pedoman Lampung BRMP 2024
+   - Jelaskan WHY aktivitas ini matter dari sudut teori
+
+3. **Validasi against SOP** (per Compliance Methodology v2.0):
+   - Status konvergensi: KONVERGEN PENUH / KONVERGEN BASELINE / DIVERGEN (Mg/Dosis/Paradigma) / CRITICAL / UNIK_UNIVERSAL
+   - Tier alignment: Aligned / Approximate / Substituted / Partial / Deviation
+   - alignment_pct: estimasi 0-100
+   - Gap analysis: apa yang kurang vs SOP
+   - Roadmap: rekomendasi langkah ke depan
+
+=== OUTPUT SCHEMA (aktivitas-publik.json v3.0) ===
+
+Berikan JSON yang valid dengan struktur ini:
+
+\`\`\`json
+{
+  "id": "m_YYYYMMDD_slug_pendek",
+  "year": 2026,
+  "phase": "pre-panen | panen | post-panen | awal-mh | strategi | infrastruktur | kemitraan",
+  "date": "YYYY-MM-DD",
+  "date_label": { "id": "DD Bulan YYYY", "en": "Month DD, YYYY" },
+  "status": "done | ongoing | planned | upcoming",
+  "title": {
+    "id": "Judul bahasa Indonesia singkat & jelas",
+    "en": "English title — concise"
+  },
+  "detail": {
+    "id": "Narrative 2-4 kalimat bahasa Indonesia. Pakai bahasa ilmiah, jelaskan apa yang terjadi + makna agronomis.",
+    "en": "2-4 sentences English narrative. Scientific terms, what happened + agronomic significance."
+  },
+  "meta": { "tag": "Tag pendek", "date_short": "Hari, DD Bulan" },
+  "tag": "operasional | strategi | kemitraan | kompliance",
+  "implementasi": {
+    "aktivitas_lapangan": "Detail TEKNIS apa yang dilakukan tim (bahasa ilmiah translation dari laporan petani)",
+    "tor_sumber": "Reference internal: Notulen / SOP page / Trifecta topik. Mis. 'Trifecta v2.1 Topik C (Pemupukan kimia 5-10 thn) + Robusta Edisi 2 hal 111'",
+    "dosis_aktual": "Angka konkret: total kg/L/unit, jumlah pohon, durasi total, dll",
+    "deviasi_internal": null
+  },
+  "benchmark_evaluation": {
+    "kajian_internasional": "1-2 paragraf: cite Wintgens 2004 / ICCRI / WCR / SCA / Robusta Edisi 2 — JELASKAN status konvergensi dgn SOP topik (A-S)",
+    "sumber_benchmark": ["Sumber 1", "Sumber 2", "Sumber 3", "..."],
+    "alignment_pct": 85,
+    "gap_analysis": "Apa yg kurang. Mis. '15% gap karena topik C DIVERGEN Mg — Kieserit belum di-validate lokal'",
+    "verdict": "sesuai | perhatian | revisi-perlu",
+    "roadmap": "Q3 2026: ... Q4 2026: ... Q1 2027: ..."
+  },
+  "verifikasi_diperlukan": "(1) Bukti foto/voice. (2) Lab test kalau ada. (3) Cross-check Wakif. (4) ...",
+  "linked_docs": ["path/to/relevant.docx", "..."],
+  "last_modified_at": "2026-05-16T..."
+}
+\`\`\`
+
+Reply dgn 2 block:
+- Block 1: \`# DRAFT BAHASA INDONESIA\` — full JSON
+- Block 2: \`# DRAFT ENGLISH\` — pure English version dari title.en + detail.en + kajian_internasional translation (kalau perlu)
+
+Adib akan paste hasil ke 2 textareas di modal dashboard. Format JSON harus valid (no trailing comma, proper quoting).`;
+
+  document.getElementById('bc-prompt-text').value = prompt;
+}
+
+function bcCopyPrompt() {
+  const ta = document.getElementById('bc-prompt-text');
+  ta.select();
+  document.execCommand('copy');
+  const btn = document.getElementById('bc-copy-btn');
+  const orig = btn.textContent;
+  btn.textContent = '✓ Copied!';
+  btn.style.background = 'var(--green)';
+  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+}
+
+function bcSaveDraft() {
+  const titleId = document.getElementById('bc-draft-title-id').value.trim();
+  const titleEn = document.getElementById('bc-draft-title-en').value.trim();
+  const detailId = document.getElementById('bc-draft-detail-id').value.trim();
+  const detailEn = document.getElementById('bc-draft-detail-en').value.trim();
+  const phase = document.getElementById('bc-draft-phase').value;
+  const date = document.getElementById('bc-draft-date').value;
+  const tag = document.getElementById('bc-draft-tag').value.trim() || 'operasional';
+  const jsonRaw = document.getElementById('bc-draft-json').value.trim();
+
+  if (!titleId && !jsonRaw) {
+    alert('Isi minimal Title ID atau paste JSON dari Claude');
+    return;
+  }
+
+  // Try parse JSON if pasted
+  let parsed = null;
+  if (jsonRaw) {
+    try {
+      // Extract first JSON block from text
+      const match = jsonRaw.match(/\{[\s\S]*\}/);
+      if (match) parsed = JSON.parse(match[0]);
+    } catch (e) {
+      console.warn('JSON parse error:', e.message);
+    }
+  }
+
+  const newMs = parsed || {
+    id: `m_${(date||todayISO()).replace(/-/g,'')}_draft_${Date.now().toString().slice(-4)}`,
+    year: +(date||todayISO()).substring(0,4) || 2026,
+    phase: phase,
+    date: date || todayISO(),
+    date_label: msFormatDateLabel(date || todayISO()),
+    status: 'done',
+    title: { id: titleId, en: titleEn },
+    detail: { id: detailId, en: detailEn },
+    meta: { tag, date_short: '' },
+    tag,
+    implementasi: { aktivitas_lapangan: '', tor_sumber: '', dosis_aktual: '', deviasi_internal: null },
+    benchmark_evaluation: { kajian_internasional: '', sumber_benchmark: [], alignment_pct: 0, gap_analysis: '', verdict: 'sesuai', roadmap: '' },
+    verifikasi_diperlukan: '',
+    linked_docs: [],
+    last_modified_at: new Date().toISOString(),
+    change_log_count: 0
+  };
+
+  // Override id/date kalau parsed tapi user juga isi
+  if (parsed && date) newMs.date = date;
+  if (parsed && titleId) newMs.title.id = titleId;
+  if (parsed && titleEn) newMs.title.en = titleEn;
+  // Tag entries
+  newMs.source_entry_ids = Array.from(BC_SELECTED);
+  newMs.published = false;
+  newMs.created_via = 'batch_curation_v1';
+
+  MILESTONES.push(newMs);
+  saveMilestones();
+  BC_SELECTED.clear();
+  closeBatchDraftModal();
+  renderBatchCuration();
+  if (typeof renderMilestonesTable === 'function') renderMilestonesTable();
+  if (typeof renderBatchCuration === 'function') renderBatchCuration();
+  if (typeof renderMilestonesSummary === 'function') renderMilestonesSummary();
+  alert(`✅ Milestone draft saved: "${newMs.title.id || '(no title)'}"\nLinked ${newMs.source_entry_ids.length} entries → tagged 🟡 Drafted.\nReview di Daftar Milestones, edit kalau perlu, lalu Publish.`);
+}
+
+function todayISO() {
+  const d = new Date(); return d.toISOString().substring(0,10);
 }
 
 // ===== Render Summary KPIs =====
