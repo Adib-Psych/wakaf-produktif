@@ -2050,18 +2050,40 @@ async function manualSync() {
     showToast('Tidak ada sinyal — coba lagi nanti', 'error');
     return;
   }
-  // Phase 1A: simulate sync by marking pending as synced (Phase 1B: real Firestore push)
   const pending = await getPending();
   if (!pending.length) {
     showToast('Tidak ada pending laporan', '');
     return;
   }
+  // Phase 1B: real Firestore push
+  if (window.firestoreDB) {
+    let success = 0, failed = 0;
+    for (const item of pending) {
+      try {
+        await window.firestorePush(item.data, item.id);
+        await markSynced(item.id);
+        success++;
+      } catch (e) {
+        console.error('[Firestore push fail]', e);
+        failed++;
+      }
+    }
+    await refreshQueueBadge();
+    await renderQueueList();
+    if (failed === 0) {
+      showToast(`✅ ${success} laporan terkirim ke dashboard Adib`, 'success');
+    } else {
+      showToast(`${success} terkirim, ${failed} gagal — coba lagi`, failed > 0 ? 'error' : 'success');
+    }
+    return;
+  }
+  // Fallback Phase 1A simulation kalau Firebase tidak available
   for (const item of pending) {
     await markSynced(item.id);
   }
   await refreshQueueBadge();
   await renderQueueList();
-  showToast(`${pending.length} laporan ditandai terkirim (Phase 1A simulasi)`, 'success');
+  showToast(`${pending.length} laporan ditandai terkirim (offline mode)`, 'success');
 }
 
 async function exportToWA() {
@@ -2086,8 +2108,21 @@ async function exportToWA() {
 }
 
 async function maybeAutoSync() {
-  // hook for online event — Phase 1B will push to Firestore here
-  console.log('[OnlineSync] Online detected — Phase 1B would push to Firestore here');
+  if (!navigator.onLine || !window.firestoreDB) return;
+  const pending = await getPending();
+  if (!pending.length) return;
+  console.log('[AutoSync] Online + Firebase ready — pushing', pending.length, 'pending entries');
+  for (const item of pending) {
+    try {
+      await window.firestorePush(item.data, item.id);
+      await markSynced(item.id);
+    } catch (e) {
+      console.error('[AutoSync fail]', e);
+      break; // Stop on first failure, will retry next online event
+    }
+  }
+  await refreshQueueBadge();
+  await renderQueueList();
 }
 
 /* ============================================================
@@ -2105,6 +2140,41 @@ function registerSW() {
    START
    ============================================================ */
 document.addEventListener('DOMContentLoaded', init);
+</script>
+
+<!-- Firebase SDK + Firestore push (Phase 1B) -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
+
+  try {
+    const fbApp = initializeApp(firebaseConfig);
+    const db = getFirestore(fbApp);
+    window.firestoreDB = db;
+
+    window.firestorePush = async (entryData, localId) => {
+      const docId = entryData.id || localId;
+      const docRef = doc(db, COLLECTIONS.laporan, docId);
+      await setDoc(docRef, {
+        ...entryData,
+        synced_at: serverTimestamp(),
+        sync_source: 'lapor_pwa_v1'
+      });
+      return docId;
+    };
+
+    console.log('[Firebase] ✅ Connected to Wakaf Ngantang Firestore');
+
+    // Auto-sync pending on connect
+    if (typeof maybeAutoSync === 'function') {
+      window.addEventListener('online', maybeAutoSync);
+      setTimeout(maybeAutoSync, 2000); // Try sync 2s after load
+    }
+  } catch (e) {
+    console.error('[Firebase] init failed:', e);
+    window.firestoreDB = null;
+  }
 </script>
 </body>
 </html>
