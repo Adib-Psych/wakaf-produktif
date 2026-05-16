@@ -1038,7 +1038,7 @@
         </div>
         <div style="background:#fde2dc;border-left:3px solid var(--cherry);padding:11px 14px;border-radius:6px;font-size:12px;color:#4a4030;line-height:1.6;margin-top:12px">
           <strong style="color:var(--cherry)">📍 Mengapa Konservatif jadi Default Ngantang?</strong><br>
-          Elevasi 700-800 mdpl = batas N/S3 untuk Robusta murni (SOP S1: 300-500 mdpl). Excelsa rootstock + iklim Ngantang membuat target moderat-optimistis baru realistis setelah <strong>2-3 musim observasi data aktual</strong>. Set ekspektasi konservatif dulu untuk planning anggaran &amp; transparansi ke umat dan donor.
+          Elevasi <strong>648 mdpl = kelas S3 (marginal-atas)</strong> untuk Robusta — masih dalam range optimal Puslitbang 2010 (500–700 mdpl) tapi marginal per SOP Edisi 2 Tabel 1 (S1: 300–500 mdpl). Excelsa rootstock + iklim Ngantang membuat target moderat-optimistis baru realistis setelah <strong>2-3 musim observasi data aktual</strong>. Set ekspektasi konservatif dulu untuk planning anggaran &amp; transparansi ke umat dan donor.
         </div>
         <p style="font-size:11px;color:var(--mute);margin-top:10px">Asumsi farm-gate Rp 60K/kg. Sampling formal SOP hal 218 belum dilakukan — task <em>P2 — TINGGI</em> (Mei pre-panen).</p>
       </div>
@@ -1162,7 +1162,7 @@
         </div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px;margin-top:10px;font-size:11px">
           <div style="background:rgba(245,240,230,.1);padding:9px 11px;border-radius:6px;border:1px solid rgba(168,200,188,.3)">
-            <strong style="color:#e8dec8">📍 Elevasi 700-800 mdpl</strong><br><span style="color:#c5d8d2">Batas N/S3 untuk Robusta — Excelsa rootstock crucial</span>
+            <strong style="color:#e8dec8">📍 Elevasi 648 mdpl (S3)</strong><br><span style="color:#c5d8d2">Marginal-atas Robusta — Excelsa rootstock = optimization sah</span>
           </div>
           <div style="background:rgba(245,240,230,.1);padding:9px 11px;border-radius:6px;border:1px solid rgba(168,200,188,.3)">
             <strong style="color:#e8dec8">🌧️ Curah hujan 2.500-3.000 mm/thn</strong><br><span style="color:#c5d8d2">Tinggi vs SOP optimum 1.500-2.000 mm</span>
@@ -3834,8 +3834,7 @@ const DISTRIBUSI_DATA = [
       {act: 'Composting kulit kopi pulping in-situ', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Tanam ulang lamtoro PG 79 (200-300 phn)', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Top-graft Robusta klon unggul (BP 358/SA 237)', exec: 'YIT', verif: 'ANTO'},
-      {act: 'Soil test diagonal (lab UB Brawijaya)', exec: 'WAKIF+HENDY', verif: 'ANTO'},
-      {act: 'Bongkar pisang Kebun 3 + tunas (pasca-MWC NU panen)', exec: 'KUMPUL', verif: 'ANTO'}
+      {act: 'Soil test diagonal (lab UB Brawijaya)', exec: 'WAKIF+HENDY', verif: 'ANTO'}
     ]
   },
   {
@@ -3851,7 +3850,6 @@ const DISTRIBUSI_DATA = [
       {act: 'Mulsa untuk konservasi kelembapan', exec: 'KUMPUL', verif: '-'},
       {act: 'Tanam Arachis pintoi pilot Kebun 4 Rumah Wakif', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Tanam jahe Kebun 3 (self-financed)', exec: 'KUMPUL (sendiri)', verif: 'ANTO'},
-      {act: 'Sanitasi pisang completion + monitoring regrowth', exec: 'KUMPUL', verif: 'ANTO'},
       {act: 'Monitoring infiltrasi rorak post-hujan', exec: 'ANTO', verif: 'WAKIF'},
       {act: 'Review tahunan + planning siklus berikutnya', exec: 'WAKIF+ANTO', verif: 'HENDY'}
     ]
@@ -4774,7 +4772,7 @@ function openPATSetupDlg() {
 // Key format: `${bulanN}-${aktivitasIdx}` → { status, note, ts }
 // status: 'belum' | 'sudah' | 'tidak_sesuai' | 'na'
 // SOP_STATUS schema bump for production clean
-const SOP_STATUS_VERSION = '1.1';
+const SOP_STATUS_VERSION = '1.2';
 const sopStoredVer = localStorage.getItem('wkkn_sop_status_ver');
 if (sopStoredVer !== SOP_STATUS_VERSION) {
   localStorage.removeItem('wkkn_sop_status_v1');
@@ -5006,7 +5004,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
     fase: 'Pentil Besar (PRE-PANEN)',
     warna: 'sand',
     aktivitas: [
-      {t:'Estimasi produksi formal (sampling 30 pohon — 10/Kebun)', sop:'Robusta Edisi 2 hal 218', prio:'wajib', siapa:'Mas Anto/Cak Yit', lokal:'<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi 700-800 mdpl = batas N/S3 untuk Robusta murni. Naikkan target setelah 2-3 musim observasi data aktual.'},
+      {t:'Estimasi produksi formal (sampling 30 pohon — 10/Kebun)', sop:'Robusta Edisi 2 hal 218', prio:'wajib', siapa:'Mas Anto/Cak Yit', lokal:'<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi <strong>648 mdpl = kelas S3 (marginal-atas)</strong> Robusta + Excelsa rootstock optimization legacy. Naikkan target setelah 2-3 musim observasi data aktual.'},
       {t:'Pemupukan akhir MH PARTIAL (mitigation only) — SP-36 + KCl saja per RAB Final 9 Mei', sop:'BRIN tabel + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul per instruksi Cak Yit', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn):</strong><br>• SP-36: <strong>80 g/phn</strong> (P — energy transfer untuk pengisian biji)<br>• KCl: <strong>100 g/phn</strong> (K — kualitas biji + pembesaran cherry)<br>• ❌ Urea SKIP (N dorong vegetatif, ganggu fase reproduktif Mei)<br>• ❌ Kieserit + Dolomit DEFER ke Nov MH siklus 2027<br><br><strong>📊 Total 915 phn aktual (Mei 2026):</strong><br>SP-36 = 80g × 915 = <strong>~73 kg (2 sak 50kg)</strong><br>KCl = 100g × 915 = <strong>~92 kg (2 sak 50kg)</strong><br>Estimasi biaya: SP-36 Rp 480K + KCl Rp 760K = <strong>Rp 1,24 jt</strong> (per RAB Final item 1.2 + 1.3)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm. Tutup tanah setelah aplikasi.', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Wakif decision — Mei = mitigation panen-saving only, full SOP applied Nov MH siklus 2027. Sub-dose Wahab Jan-Mar (~14g/phn) sudah di-bridge nutrient gap. <strong>⚠️ Adaptive trigger:</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso) — pencucian risk tinggi kalau hujan deras.'},
       {t:'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT (full processing via penggilingan + Bonsari)', sop:'Robusta Edisi 2 hal 222-246 + RAB Final 9 Mei', prio:'wajib', siapa:'Wakif + tim', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pulper manual CUT dari RAB. Processing via jasa penggilingan lokal (~Rp 1.500/kg green bean) + specialty lot ke Bonsari Coffee.'},
       {t:'Konfirmasi processing partner per lot (Bonsari/penggilingan lokal)', sop:'Q12 — Klarifikasi 8 Mei', prio:'wajib', siapa:'Wakif', lokal:'<strong>📍 Hybrid model:</strong> Specialty lot (premium) → Bonsari Coffee. Bulk → penggilingan lokal Pujon ~Rp 1.500/kg.'},
