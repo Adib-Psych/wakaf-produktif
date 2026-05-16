@@ -2172,6 +2172,30 @@ function renderActivityForm() {
   const c = document.getElementById('activity-detail-form');
   if (!kategori) { c.innerHTML = ''; return; }
 
+  // Inject SOP v2.1 topik badge banner (kalau kategori punya mapping)
+  const topikCode = KATEGORI_TOPIK_MAP[kategori];
+  let topikBanner = '';
+  if (topikCode && SOP_V2_TOPIK[topikCode]) {
+    const t = SOP_V2_TOPIK[topikCode];
+    const s = SOP_V2_STATUS_STYLE[t.status] || SOP_V2_STATUS_STYLE.KONVERGEN_PENUH;
+    topikBanner = `<div style="margin-bottom:14px;padding:12px 16px;background:${s.bg};border-left:4px solid ${s.border};border-radius:8px;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span style="background:${s.border};color:#fff;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.5px">📊 TOPIK ${topikCode}</span>
+      <div style="flex:1;min-width:200px">
+        <div style="font-weight:700;color:${s.color};font-size:13px;line-height:1.4">${t.label}</div>
+        <div style="font-size:11px;color:${s.color};margin-top:2px">Status komparasi 4-arah: <strong>${s.label}</strong> · <a href="#" onclick="document.querySelector('[data-panel=sintesa]').click();return false;" style="color:${s.color};font-weight:700;text-decoration:underline">Buka Sintesa SOP →</a></div>
+      </div>
+    </div>`;
+  } else if (kategori === 'arachis_management' || kategori === 'biochar_pyrolysis') {
+    topikBanner = `<div style="margin-bottom:14px;padding:12px 16px;background:#FCE7F3;border-left:4px solid #EC4899;border-radius:8px">
+      <div style="font-weight:700;color:#9D174D;font-size:13px">🧪 Phase 2 — Belum Tervalidasi</div>
+      <div style="font-size:11px;color:#831843;margin-top:2px">Aktivitas Phase 2 inject — belum locked sebagai SOP recurring. Pilot/trial data dicatat untuk validation di siklus 2027.</div>
+    </div>`;
+  } else if (['babat_rumput','komunikasi_stakeholder','lain'].includes(kategori)) {
+    topikBanner = `<div style="margin-bottom:14px;padding:10px 14px;background:#F3F4F6;border-left:3px solid #9CA3AF;border-radius:6px;font-size:11px;color:#374151">
+      <strong>ℹ️ Aktivitas Pendukung</strong> — kategori general (sanitasi/komunikasi/lainnya), tidak terikat langsung ke topik SOP v2.1.
+    </div>`;
+  }
+
   const forms = {
     pemupukan_kimia: `
       <div class="card">
@@ -2535,7 +2559,7 @@ function renderActivityForm() {
     lain: `<div class="card"><div class="card-title">📝 Detail Aktivitas Lain</div>
       <p style="font-size:12px;color:var(--mute)">Pakai field "Catatan Kualitatif" di bawah untuk deskripsi lengkap. Kalau ini aktivitas berulang, beri tahu untuk ditambahkan kategori dedikasi di iterasi berikutnya.</p></div>`
   };
-  c.innerHTML = forms[kategori] || '';
+  c.innerHTML = topikBanner + (forms[kategori] || '');
 }
 
 // ===== RAINFALL ALERT ENGINE =====
@@ -4924,6 +4948,32 @@ const SOP_V2_STATUS_STYLE = {
   DIVERGEN_PARADIGMA:  { label: '⚠️ Divergen Paradigma', bg: '#FEF3C7', color: '#92400E', border: '#F59E0B' },
   CRITICAL:            { label: '🔴 Critical',            bg: '#FEE2E2', color: '#7F1D1D', border: '#C73E3E' },
   UNIK_UNIVERSAL:      { label: '🌟 Unik · Universal',    bg: '#EDE9FE', color: '#5B21B6', border: '#8B5CF6' }
+};
+// Mapping kategori Form Input → primary topik v2.1 (untuk badge display di Form Input + Log + Compliance)
+// null = no direct topik mapping (general/meta/Phase 2 unvalidated)
+const KATEGORI_TOPIK_MAP = {
+  pemupukan_organik:    'E',  // Pupuk organik rutin
+  pemupukan_kimia:      'C',  // Pemupukan kimia 5-10 thn
+  pemangkasan:          'I',  // Pangkas ringan (cross G/H)
+  babat_rumput:         null, // general sanitation
+  penyemprotan:         'R',  // Pestisida terlarang awareness
+  panen:                'O',  // Petik selektif merah
+  sortasi_buah:         'S',  // Mutu biji SNI
+  penjemuran:           'Q',  // Kadar air biji
+  build_rorak:          'L',  // Rorak konservasi tanah
+  kompos_kulit_kopi:    'E',  // Pupuk organik (Q4)
+  tanam_penaung:        'J',  // Lamtoro PG 79
+  inventarisasi_pohon:  'B',  // Excelsa rootstock observation
+  opt_monitoring:       'M',  // PBKo + Cercospora (cross with N)
+  brocap_management:    'M',  // PBKo
+  soil_test:            'E',  // Methodology supporting
+  topgraft_robusta:     'A',  // Klon Robusta
+  bokashi_production:   'E',  // Pupuk organik Phase 2
+  arachis_management:   null, // Phase 2 unvalidated
+  biochar_pyrolysis:    null, // Phase 2 unvalidated
+  pisang_management:    'K',  // Pisang (non-SOP one-off)
+  komunikasi_stakeholder: null, // meta-activity
+  lain:                 null  // free-text
 };
 
 function getComplianceMetrics() {

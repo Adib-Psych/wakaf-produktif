@@ -2,264 +2,632 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Topik A — Klon Robusta Zona Basah · Belajar SOP Kebun Wakaf Ngantang</title>
-<link rel="stylesheet" href="../_assets/style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul A — Klon Robusta Zona Basah · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Klon Robusta untuk zona basah — mengapa pemilihan klon menentukan masa depan kebun.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
 </head>
-<body data-topic="A">
+<body>
 
-<div class="page">
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
 
-  <!-- NAV -->
-  <nav class="nav">
-    <div class="brand">📚 Belajar SOP · Kebun Wakaf Ngantang</div>
-    <div class="breadcrumb"><a href="../index.html">← Semua Topik</a></div>
-  </nav>
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul A</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module A</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="A">
 
   <!-- HERO -->
-  <div class="hero">
-    <div class="topic-badge"><span class="dot"></span>TOPIK A · KLON & GENETIKA · MODUL 1 DARI 19</div>
-    <h1>Klon Robusta untuk <em>Zona Basah</em></h1>
-    <div class="subtitle">Mengapa pemilihan klon menentukan masa depan kebun kita di 648 mdpl</div>
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul A · Klon & Genetika · 1 dari 19</span>
+      <span class="lang-en">Module A · Clones & Genetics · 1 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Klon Robusta untuk <em>Zona Basah</em></span>
+      <span class="lang-en">Robusta Clones for the <em>Wet Zone</em></span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Mengapa pemilihan klon menentukan masa depan kebun kita di 648 mdpl</span>
+      <span class="lang-en">Why clone selection shapes the future of our garden at 648 m above sea level</span>
+    </p>
     <div class="outcomes">
-      <div class="outcomes-label">Setelah Modul Ini, Saya Akan Paham</div>
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
       <ul>
-        <li>Apa itu klon kopi dan mengapa berbeda dengan varietas atau spesies</li>
-        <li>Klon Robusta mana yang cocok untuk zona basah elevasi 600–700 mdpl seperti Ngantang</li>
-        <li>Mengapa BP 358 muncul sebagai kandidat utama untuk top-graft di Kebun Wakaf Ngantang</li>
-        <li>Bagaimana mengidentifikasi klon eksisting di kebun kita yang belum diketahui</li>
+        <li>
+          <span class="lang-id">Apa itu klon kopi dan mengapa berbeda dengan varietas atau spesies</span>
+          <span class="lang-en">What a coffee clone is and how it differs from a variety or species</span>
+        </li>
+        <li>
+          <span class="lang-id">Klon Robusta mana yang cocok untuk zona basah elevasi 600–700 mdpl seperti Ngantang</span>
+          <span class="lang-en">Which Robusta clones suit the wet zone at 600–700 m elevations like Ngantang</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa BP 358 muncul sebagai kandidat utama untuk top-graft di Kebun Wakaf Ngantang</span>
+          <span class="lang-en">Why BP 358 emerges as the top candidate for top-grafting at Ngantang Waqf Garden</span>
+        </li>
+        <li>
+          <span class="lang-id">Bagaimana mengidentifikasi klon eksisting di kebun kita yang belum diketahui</span>
+          <span class="lang-en">How to identify the existing clones in our garden that remain unknown</span>
+        </li>
       </ul>
     </div>
-    <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
   </div>
 
   <!-- HERO IMAGE -->
   <div class="hero-img">
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Coffee_Plantation%2C_Hawaii.jpg/1280px-Coffee_Plantation%2C_Hawaii.jpg" alt="Kebun kopi dengan baris pohon teratur" loading="lazy">
-    <div class="credit">Foto: <a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation,_Hawaii.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Coffee_Plantation%2C_Hawaii.jpg/1280px-Coffee_Plantation%2C_Hawaii.jpg" alt="Coffee plantation with terraced rows" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto:</span><span class="lang-en">Photo:</span> <a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation,_Hawaii.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
   </div>
 
-  <!-- ═══ STORY INTRO ═══ -->
+  <!-- STORY INTRO -->
   <section class="sec">
-    <p>Bayangkan dua secangkir kopi Robusta — satu dari Lampung, satu dari Jember. Diseduh dengan teknik yang sama, dari biji yang dipanen pada musim yang sama. Tetap saja, rasanya bisa sangat berbeda. Pertanyaannya: <em>mengapa</em>?</p>
-    <p>Jawabannya, sebagian besar, ada pada satu kata: <strong>klon</strong>. Sama seperti kita mengenal bahwa kepribadian seseorang punya komponen genetik dan komponen lingkungan, pohon kopi pun begitu. <strong>Klon adalah substrat genetiknya</strong>; kebun adalah modulator lingkungannya. Kalau klonnya tepat untuk ekosistem kebun, pohon akan tumbuh optimal — produktif, tahan penyakit, dengan biji yang konsisten kualitasnya. Kalau salah pilih klon, segala upaya pemupukan dan perawatan tidak akan menutupi keterbatasan genetik tersebut.</p>
-    <p>Modul ini membantu kita memahami: <em>klon apa yang sesuai untuk Kebun Wakaf Ngantang?</em></p>
+    <p class="lang-id">Bayangkan dua secangkir kopi Robusta — satu dari Lampung, satu dari Jember. Diseduh dengan teknik yang sama, dari biji yang dipanen pada musim yang sama. Tetap saja, rasanya bisa sangat berbeda. Pertanyaannya: <em>mengapa</em>?</p>
+    <p class="lang-en">Imagine two cups of Robusta coffee — one from Lampung, one from Jember. Brewed the same way, from beans harvested in the same season. Still, the flavors can differ greatly. The question: <em>why</em>?</p>
+
+    <p class="lang-id">Jawabannya, sebagian besar, ada pada satu kata: <strong>klon</strong>. Sama seperti kita mengenal bahwa kepribadian seseorang punya komponen genetik dan komponen lingkungan, pohon kopi pun begitu. <strong>Klon adalah substrat genetiknya</strong>; kebun adalah modulator lingkungannya. Kalau klonnya tepat untuk ekosistem kebun, pohon akan tumbuh optimal — produktif, tahan penyakit, dengan biji yang konsisten kualitasnya. Kalau salah pilih klon, segala upaya pemupukan dan perawatan tidak akan menutupi keterbatasan genetik tersebut.</p>
+    <p class="lang-en">The answer, largely, lies in one word: <strong>clone</strong>. Just as we know that a person's character has genetic and environmental components, coffee trees work the same way. <strong>The clone is its genetic substrate</strong>; the garden is the environmental modulator. When the clone fits the garden's ecosystem, the tree grows optimally — productive, disease-resistant, with consistent bean quality. Choose the wrong clone and no amount of fertilization or care will compensate for that genetic limitation.</p>
+
+    <p class="lang-id">Modul ini membantu kita memahami: <em>klon apa yang sesuai untuk Kebun Wakaf Ngantang?</em></p>
+    <p class="lang-en">This module helps us understand: <em>which clones suit Ngantang Waqf Garden?</em></p>
   </section>
 
-  <!-- ═══ KONTEKS NGANTANG ═══ -->
+  <!-- KONTEKS NGANTANG -->
   <section class="sec">
     <div class="sec-head">
       <div class="num cherry">1</div>
-      <h2>Konteks Kebun Wakaf Ngantang</h2>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
     </div>
 
-    <p>Kebun Wakaf Ngantang berada di elevasi <strong>648 mdpl</strong> dengan curah hujan tahunan <strong>2.500–3.000 mm</strong>. Per Tabel Kesesuaian Robusta dalam SOP Robusta Edisi 2 Kementan (2019), kondisi ini masuk ke <em>kelas S3</em> — marginal-atas, tapi tetap sah untuk Robusta.</p>
+    <p class="lang-id">Kebun Wakaf Ngantang berada di elevasi <strong>648 mdpl</strong> dengan curah hujan tahunan <strong>2.500–3.000 mm</strong>. Per Tabel Kesesuaian Robusta dalam SOP Robusta Edisi 2 Kementan (2019), kondisi ini masuk ke <em>kelas S3</em> — marginal-atas, tapi tetap sah untuk Robusta.</p>
+    <p class="lang-en">Ngantang Waqf Garden sits at <strong>648 m elevation</strong> with annual rainfall of <strong>2,500–3,000 mm</strong>. According to the Robusta Suitability Table in the Edition-2 SOP (Indonesia's Ministry of Agriculture, 2019), this condition falls into <em>class S3</em> — upper-marginal, but still valid for Robusta.</p>
 
     <div class="box box-cherry">
-      <div class="box-label">⚠ Realitas Saat Ini</div>
-      <p>Kebun kita adalah <strong>Excelsa rootstock lama</strong> (warisan pre-era BP 308) yang di-top-graft dengan pucuk Robusta klon — <em>tapi klon yang ter-graft tersebut belum teridentifikasi</em>. Kita tidak tahu varietas apa yang sebenarnya tumbuh di atas batang Excelsa kita.</p>
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Kebun kita adalah <strong>Excelsa rootstock lama</strong> (warisan pre-era BP 308) yang di-top-graft dengan pucuk Robusta klon — <em>tapi klon yang ter-graft tersebut belum teridentifikasi</em>. Kita tidak tahu varietas apa yang sebenarnya tumbuh di atas batang Excelsa kita.</p>
+      <p class="lang-en">Our garden has a <strong>legacy Excelsa rootstock</strong> (pre-BP 308 era) top-grafted with Robusta clone scions — <em>but the grafted clone has not been identified</em>. We do not actually know what variety is growing on our Excelsa stems.</p>
     </div>
 
-    <p>Implikasi: tanpa identifikasi klon eksisting, kita tidak bisa optimalkan agronomi (pemupukan, pemangkasan, pengendalian penyakit). Solusi jangka panjangnya ada dua jalur paralel: <strong>(1) identifikasi klon eksisting</strong> via DNA fingerprinting di Puslitkoka Jember, dan <strong>(2) penggunaan klon-klon unggul yang sudah terbukti</strong> untuk top-graft baru atau peremajaan pohon yang produksinya menurun.</p>
+    <p class="lang-id">Implikasi: tanpa identifikasi klon eksisting, kita tidak bisa optimalkan agronomi (pemupukan, pemangkasan, pengendalian penyakit). Solusi jangka panjangnya ada dua jalur paralel: <strong>(1) identifikasi klon eksisting</strong> via DNA fingerprinting di Puslitkoka Jember, dan <strong>(2) penggunaan klon-klon unggul yang sudah terbukti</strong> untuk top-graft baru atau peremajaan pohon yang produksinya menurun.</p>
+    <p class="lang-en">Implication: without identifying the existing clones, we cannot optimize agronomy (fertilization, pruning, disease control). The long-term solution runs along two parallel tracks: <strong>(1) identifying the existing clones</strong> via DNA fingerprinting at Puslitkoka Jember, and <strong>(2) using proven elite clones</strong> for new top-grafting or rejuvenation of declining trees.</p>
   </section>
 
-  <!-- ═══ TEORI DASAR ═══ -->
+  <!-- TEORI DASAR -->
   <section class="sec">
     <div class="sec-head">
       <div class="num">2</div>
-      <h2>Teori Dasar: Apa Itu Klon?</h2>
+      <h2><span class="lang-id">Teori Dasar: Apa Itu Klon?</span><span class="lang-en">Theory: What Is a Clone?</span></h2>
       <div class="label">schema building</div>
     </div>
 
-    <p><strong>Klon</strong> dalam konteks pertanian bukanlah klon di film fiksi-ilmiah. Klon adalah sekelompok tanaman yang <strong>secara genetik identik</strong>, hasil dari propagasi vegetatif — bukan dari biji. Cara perbanyakannya bisa lewat stek, cangkok, atau sambung pucuk (<em>grafting</em>). Karena semua individu berasal dari satu induk yang sama, mereka mewarisi karakter genetik yang persis sama.</p>
+    <p class="lang-id"><strong>Klon</strong> dalam konteks pertanian bukanlah klon di film fiksi-ilmiah. Klon adalah sekelompok tanaman yang <strong>secara genetik identik</strong>, hasil dari propagasi vegetatif — bukan dari biji. Cara perbanyakannya bisa lewat stek, cangkok, atau sambung pucuk (<em>grafting</em>). Karena semua individu berasal dari satu induk yang sama, mereka mewarisi karakter genetik yang persis sama.</p>
+    <p class="lang-en">A <strong>clone</strong> in agriculture is not the science-fiction kind. A clone is a group of plants that are <strong>genetically identical</strong>, produced through vegetative propagation rather than from seeds. Propagation methods include cuttings, layering, or grafting. Because all individuals come from a single mother plant, they inherit exactly the same genetic traits.</p>
 
-    <p>Pada kopi Robusta (<em>Coffea canephora</em>), klon menjadi penting karena Robusta adalah spesies <strong>menyerbuk silang (self-incompatible)</strong>. Artinya, bila kita menanam dari biji, hasil persilangan acak antara serbuk-sari dan putik — anaknya akan beragam genetiknya, sehingga produktivitas dan kualitas sulit dijaga konsistensinya. Solusinya: propagasi klonal, sehingga setiap pohon dapat diprediksi karakteristiknya.</p>
+    <p class="lang-id">Pada kopi Robusta (<em>Coffea canephora</em>), klon menjadi penting karena Robusta adalah spesies <strong>menyerbuk silang (self-incompatible)</strong>. Artinya, bila kita menanam dari biji, hasil persilangan acak antara serbuk-sari dan putik — anaknya akan beragam genetiknya, sehingga produktivitas dan kualitas sulit dijaga konsistensinya. Solusinya: propagasi klonal, sehingga setiap pohon dapat diprediksi karakteristiknya.</p>
+    <p class="lang-en">In Robusta coffee (<em>Coffea canephora</em>), clones matter because Robusta is a <strong>self-incompatible cross-pollinating species</strong>. Planting from seeds yields offspring with diverse genetics from random cross-pollination — making productivity and quality hard to keep consistent. The solution: clonal propagation, so each tree's characteristics are predictable.</p>
 
     <div class="analogy">
-      <div class="label">Analogi untuk Psikolog</div>
-      <p>Anggap klon seperti <em>genotype</em> dalam bahasa perkembangan. Sama-sama bawaan, sama-sama menentukan <em>potensi</em>. Lingkungan kebun (elevasi, curah hujan, tanah) berperan seperti <em>environmental modulator</em> — ia bisa mengekspresikan potensi tersebut, atau membatasinya. <strong>Nature-nurture interaction</strong>, tapi pada konteks tumbuhan. Pilihan klon = pilihan bawaan yang kita sengaja-kan.</p>
+      <div class="label"><span class="lang-id">Analogi untuk Psikolog</span><span class="lang-en">An Analogy for a Psychologist</span></div>
+      <p class="lang-id">Anggap klon seperti <em>genotype</em> dalam bahasa perkembangan. Sama-sama bawaan, sama-sama menentukan <em>potensi</em>. Lingkungan kebun (elevasi, curah hujan, tanah) berperan seperti <em>environmental modulator</em> — ia bisa mengekspresikan potensi tersebut, atau membatasinya. <strong>Nature-nurture interaction</strong>, tapi pada konteks tumbuhan. Pilihan klon = pilihan bawaan yang kita sengaja-kan.</p>
+      <p class="lang-en">Think of a clone as a <em>genotype</em> in developmental language. Both are innate, both determine <em>potential</em>. The garden environment (elevation, rainfall, soil) acts like an <em>environmental modulator</em> — it can express that potential or constrain it. <strong>Nature-nurture interaction</strong>, but in plants. Choosing a clone is choosing the innate, on purpose.</p>
     </div>
 
-    <p>Untuk Robusta yang ditanam di <strong>zona basah</strong> (curah hujan >2.000 mm/tahun, elevasi 400–900 mdpl), Indonesia memiliki sederet klon hasil pemuliaan yang telah berdekade diteliti oleh Puslitkoka Jember dan dilepas secara resmi sebagai bahan tanam anjuran. Mari kita lihat siapa saja kandidatnya.</p>
+    <p class="lang-id">Untuk Robusta yang ditanam di <strong>zona basah</strong> (curah hujan >2.000 mm/tahun, elevasi 400–900 mdpl), Indonesia memiliki sederet klon hasil pemuliaan yang telah berdekade diteliti oleh Puslitkoka Jember dan dilepas secara resmi sebagai bahan tanam anjuran. Mari kita lihat siapa saja kandidatnya.</p>
+    <p class="lang-en">For Robusta planted in the <strong>wet zone</strong> (annual rainfall >2,000 mm, elevation 400–900 m), Indonesia has a lineage of bred clones — decades of research by Puslitkoka Jember — officially released as recommended planting materials. Let us examine the candidates.</p>
   </section>
 
-  <!-- ═══ VISUAL TOUR ═══ -->
+  <!-- VISUAL TOUR -->
   <section class="sec">
     <div class="sec-head">
       <div class="num">3</div>
-      <h2>Visual Tour: Mengenal Tanaman Kopi Robusta</h2>
+      <h2><span class="lang-id">Visual Tour: Mengenal Tanaman Kopi Robusta</span><span class="lang-en">Visual Tour: Meet the Robusta Coffee Plant</span></h2>
       <div class="label">dual coding</div>
     </div>
 
-    <p>Sebelum bicara klon spesifik, mari pahami dulu seperti apa pohon kopi Robusta itu — daunnya, buahnya, struktur botanisnya.</p>
+    <p class="lang-id">Sebelum bicara klon spesifik, mari pahami dulu seperti apa pohon kopi Robusta itu — daunnya, buahnya, struktur botanisnya.</p>
+    <p class="lang-en">Before discussing specific clones, let us understand what a Robusta coffee plant actually looks like — its leaves, fruits, and botanical structure.</p>
 
     <div class="gallery">
       <div class="gallery-item">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Coffea_canephora_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg/640px-Coffea_canephora_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg" alt="Ilustrasi botani Coffea canephora" loading="lazy">
-        <div class="caption">Ilustrasi botani klasik <em>Coffea canephora</em> — daun, bunga, buah ceri, dan biji
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Coffea_canephora_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg/640px-Coffea_canephora_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg" alt="Coffea canephora botanical illustration" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Ilustrasi botani klasik <em>Coffea canephora</em> — daun, bunga, buah ceri, dan biji</span>
+          <span class="lang-en">Classic botanical illustration of <em>Coffea canephora</em> — leaves, flowers, cherry fruit, and seeds</span>
           <div class="credit">Köhler's Medizinal-Pflanzen (1887) · <a href="https://commons.wikimedia.org/wiki/File:Coffea_canephora_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187.jpg" target="_blank" rel="noopener">Wikimedia · Public Domain</a></div>
         </div>
       </div>
       <div class="gallery-item">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Coffee_Cherries.jpg/640px-Coffee_Cherries.jpg" alt="Buah ceri kopi merah matang di tangkai" loading="lazy">
-        <div class="caption">Ceri kopi merah pada tingkat kematangan optimal untuk petik selektif
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Coffee_Cherries.jpg/640px-Coffee_Cherries.jpg" alt="Ripe red coffee cherries on branch" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Ceri kopi merah pada tingkat kematangan optimal untuk petik selektif</span>
+          <span class="lang-en">Red coffee cherries at optimal ripeness for selective hand-picking</span>
           <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Cherries.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
         </div>
       </div>
       <div class="gallery-item">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Coffea_canephora_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187_-_seed.jpg/640px-Coffea_canephora_-_K%C3%B6hler%E2%80%93s_Medizinal-Pflanzen-187_-_seed.jpg" alt="Biji kopi hijau (green bean) Robusta" loading="lazy">
-        <div class="caption">Anatomi biji Robusta — bentuk lebih bulat & lebih kecil dari Arabika
-          <div class="credit"><a href="https://commons.wikimedia.org/wiki/Category:Coffea_canephora" target="_blank" rel="noopener">Wikimedia Commons · Public Domain</a></div>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Roasted_coffee_beans.jpg/640px-Roasted_coffee_beans.jpg" alt="Roasted coffee beans" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Biji kopi setelah disangrai — Robusta umumnya lebih bulat dan kecil dari Arabika</span>
+          <span class="lang-en">Roasted coffee beans — Robusta is generally rounder and smaller than Arabica</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Roasted_coffee_beans.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ DEEP DIVE — APA KATA SAINS ═══ -->
+  <!-- DEEP DIVE -->
   <section class="sec">
     <div class="sec-head">
       <div class="num">4</div>
-      <h2>Apa Kata Sains: Komparasi 3 Sumber Domestik + Validasi Internasional</h2>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 3 Sumber Domestik + Validasi Internasional</span><span class="lang-en">The Science: Comparing 3 Domestic Sources + International Validation</span></h2>
       <div class="label">deep dive</div>
     </div>
 
-    <p>Tiga referensi domestik utama Indonesia secara konvergen menyebut klon-klon Robusta unggul untuk zona basah. Mari bandingkan rekomendasi mereka:</p>
+    <p class="lang-id">Tiga referensi domestik utama Indonesia secara konvergen menyebut klon-klon Robusta unggul untuk zona basah. Mari bandingkan rekomendasi mereka:</p>
+    <p class="lang-en">Three primary Indonesian references converge on the elite Robusta clones for the wet zone. Let us compare their recommendations:</p>
 
     <table class="komparasi">
       <thead>
         <tr>
-          <th>Sumber</th>
-          <th>Klon Anjuran untuk Zona Basah &gt;400 mdpl</th>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Klon Anjuran untuk Zona Basah &gt;400 mdpl</span><span class="lang-en">Recommended Clones for Wet Zone &gt;400 m</span></th>
         </tr>
       </thead>
       <tbody>
         <tr>
           <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong></td>
-          <td>Poliklonal: BP 42 · BP 234 · <strong>BP 358</strong> · <strong>SA 237</strong> (hal 63, Tabel klon Robusta)</td>
+          <td><span class="lang-id">Poliklonal: BP 42 · BP 234 · <strong>BP 358</strong> · <strong>SA 237</strong> (hal 63)</span><span class="lang-en">Polyclonal: BP 42 · BP 234 · <strong>BP 358</strong> · <strong>SA 237</strong> (p 63)</span></td>
         </tr>
         <tr>
           <td><strong>Budidaya Puslitbang (2010)</strong></td>
-          <td>Komposisi <em>BP 42 : BP 234 : BP 358 : SA 237 = 1:1:1:1</em> untuk iklim basah tipe A/B (hal 7, Tabel 1)</td>
+          <td><span class="lang-id">Komposisi <em>BP 42 : BP 234 : BP 358 : SA 237 = 1:1:1:1</em> untuk iklim basah tipe A/B (hal 7)</span><span class="lang-en">Composition <em>BP 42 : BP 234 : BP 358 : SA 237 = 1:1:1:1</em> for wet climate types A/B (p 7)</span></td>
         </tr>
         <tr>
           <td><strong>Pedoman Lampung BRMP (2024)</strong></td>
-          <td>BP 436 · <strong>BP 358</strong> · BP 936 · BP 534 (hal 3)</td>
+          <td><span class="lang-id">BP 436 · <strong>BP 358</strong> · BP 936 · BP 534 (hal 3)</span><span class="lang-en">BP 436 · <strong>BP 358</strong> · BP 936 · BP 534 (p 3)</span></td>
         </tr>
       </tbody>
     </table>
 
-    <p><strong>Pola yang jelas terlihat: BP 358 muncul di semua sumber domestik</strong> sebagai kandidat klon Robusta untuk zona basah. Klon SA 237 juga muncul sebagai backup yang ter-endorsed oleh Edisi 2 + Puslitbang.</p>
+    <p class="lang-id"><strong>Pola yang jelas terlihat: BP 358 muncul di semua sumber domestik</strong> sebagai kandidat klon Robusta untuk zona basah. Klon SA 237 juga muncul sebagai backup yang ter-endorsed oleh Edisi 2 + Puslitbang.</p>
+    <p class="lang-en"><strong>A clear pattern: BP 358 appears across all domestic sources</strong> as the Robusta clone candidate for the wet zone. SA 237 also shows up as a backup endorsed by Edition 2 + Puslitbang.</p>
 
     <div class="box box-moss">
-      <div class="box-label">✓ Validasi Internasional</div>
-      <p>Apa kata literatur internasional? <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">Wintgens (2004)</a> dalam buku otoritatif <em>Coffee: Growing, Processing, Sustainable Production</em> (Wiley-VCH, Ch.2) membahas metodologi seleksi klonal Robusta. Demikian pula <a href="https://iccri.net/bahan-tanam-kopi-2019/" target="_blank" rel="noopener">ICCRI Bahan Tanam Kopi (2019)</a> oleh Hulupi & Martini di Puslitkoka Jember mengkonfirmasi katalog BP & SA series sebagai bahan tanam Robusta nasional yang resmi.</p>
+      <div class="box-label"><span class="lang-id">✓ Validasi Internasional</span><span class="lang-en">✓ International Validation</span></div>
+      <p class="lang-id">Apa kata literatur internasional? <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">Wintgens (2004)</a> dalam buku otoritatif <em>Coffee: Growing, Processing, Sustainable Production</em> (Wiley-VCH, Ch.2) membahas metodologi seleksi klonal Robusta. Demikian pula <a href="https://iccri.net/bahan-tanam-kopi-2019/" target="_blank" rel="noopener">ICCRI Bahan Tanam Kopi (2019)</a> oleh Hulupi & Martini di Puslitkoka Jember mengkonfirmasi katalog BP & SA series sebagai bahan tanam Robusta nasional yang resmi.</p>
+      <p class="lang-en">What does the international literature say? <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">Wintgens (2004)</a>, in the authoritative <em>Coffee: Growing, Processing, Sustainable Production</em> (Wiley-VCH, Ch.2), discusses Robusta clonal selection methodology. Likewise <a href="https://iccri.net/bahan-tanam-kopi-2019/" target="_blank" rel="noopener">ICCRI Coffee Planting Materials (2019)</a> by Hulupi & Martini at Puslitkoka Jember confirms the BP & SA series catalog as Indonesia's official Robusta planting materials.</p>
     </div>
 
-    <p>Untuk melihat proses propagasi klonal secara visual, video berikut menjelaskan teknik sambung pucuk yang biasa digunakan untuk perbanyakan klon Robusta:</p>
-
-    <div class="video-wrap">
-      <iframe src="https://www.youtube.com/embed/videoseries?list=PLNT0Bs7DPnJYZk7QWCQRPxqYHbU5wF-3M" title="Video tutorial propagasi klonal kopi" loading="lazy" allowfullscreen></iframe>
-    </div>
-    <div class="video-credit">Video: kanal YouTube tentang budidaya kopi Indonesia · <em>cari "sambung pucuk kopi Robusta" untuk video terkurasi</em></div>
-
-    <p>Selain referensi tertulis, untuk konteks taksonomi <em>Coffea</em> modern, <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">Davis et al. (2011)</a> di <em>Botanical Journal of the Linnean Society</em> memberikan filogeni molekuler lengkap genus <em>Coffea</em>, yang menjadi rujukan modern untuk semua diskusi tentang varietas dan spesies kopi.</p>
+    <p class="lang-id">Selain referensi tertulis, untuk konteks taksonomi <em>Coffea</em> modern, <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">Davis et al. (2011)</a> di <em>Botanical Journal of the Linnean Society</em> memberikan filogeni molekuler lengkap genus <em>Coffea</em>, yang menjadi rujukan modern untuk semua diskusi tentang varietas dan spesies kopi.</p>
+    <p class="lang-en">Beyond written references, for modern <em>Coffea</em> taxonomy, <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">Davis et al. (2011)</a> in the <em>Botanical Journal of the Linnean Society</em> provides the complete molecular phylogeny of the <em>Coffea</em> genus — the modern reference for every discussion on coffee varieties and species.</p>
   </section>
 
-  <!-- ═══ PRAKTIK STEP-BY-STEP ═══ -->
+  <!-- PRAKTIK STEP-BY-STEP -->
   <section class="sec">
     <div class="sec-head">
-      <div class="num amber">5</div>
-      <h2>Praktik: Apa yang Harus Dilakukan di Kebun Wakaf Ngantang</h2>
-      <div class="label">action items · <span class="progress-counter">0 / 5 langkah selesai</span></div>
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Apa yang Harus Dilakukan di Kebun</span><span class="lang-en">Practice: What to Do in the Garden</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
     </div>
 
-    <p>Berdasarkan sintesa di atas, berikut langkah-langkah konkret untuk implementasi di Kebun Wakaf Ngantang. Klik kotak di sebelah kiri untuk menandai langkah yang sudah selesai (tersimpan otomatis di perangkat ini).</p>
+    <p class="lang-id">Berdasarkan sintesa di atas, berikut langkah-langkah konkret untuk implementasi di Kebun Wakaf Ngantang. Klik kotak untuk menandai langkah yang sudah selesai (tersimpan otomatis di perangkat ini).</p>
+    <p class="lang-en">Based on the synthesis above, here are concrete steps for implementation at Ngantang Waqf Garden. Click a box to mark steps as completed (saved automatically on this device).</p>
 
     <div class="steps">
       <div class="step">
         <div class="step-check" data-step="1"></div>
         <div class="step-body">
-          <div class="step-num">Langkah 1 · Identifikasi Klon Eksisting</div>
-          <div class="step-text">Konsultasi ke <strong>Puslitkoka Jember</strong> untuk skema DNA fingerprinting klon Robusta yang ter-graft di rootstock Excelsa kita (estimasi biaya Rp 3–5 juta). Ambil sampel daun dari 10 pohon representatif per Bidang (1, 2, 3, 4) = total 40 sampel.</div>
+          <div class="step-num"><span class="lang-id">Langkah 1 · Identifikasi Klon Eksisting</span><span class="lang-en">Step 1 · Identify the Existing Clones</span></div>
+          <div class="step-text">
+            <span class="lang-id">Konsultasi ke <strong>Puslitkoka Jember</strong> untuk skema DNA fingerprinting klon Robusta yang ter-graft di rootstock Excelsa kita (estimasi biaya Rp 3–5 juta). Ambil sampel daun dari 10 pohon representatif per Bidang = total 40 sampel.</span>
+            <span class="lang-en">Consult <strong>Puslitkoka Jember</strong> for the DNA fingerprinting protocol for the Robusta clones grafted onto our Excelsa rootstock (estimated cost Rp 3–5 million). Collect leaf samples from 10 representative trees per block × 4 blocks = 40 samples total.</span>
+          </div>
         </div>
       </div>
       <div class="step">
         <div class="step-check" data-step="2"></div>
         <div class="step-body">
-          <div class="step-num">Langkah 2 · Pengadaan Entres Klon Unggul</div>
-          <div class="step-text">Hubungi Puslitkoka Jember untuk pengadaan entres bersertifikat klon <strong>BP 358</strong> sebagai pilihan utama (muncul di semua sumber), dengan <strong>SA 237</strong> sebagai diversifikasi genetik. Pesan saat menjelang musim hujan (Agustus–September) untuk siap top-graft Sep–Des.</div>
+          <div class="step-num"><span class="lang-id">Langkah 2 · Pengadaan Entres Klon Unggul</span><span class="lang-en">Step 2 · Procure Elite Clone Scions</span></div>
+          <div class="step-text">
+            <span class="lang-id">Hubungi Puslitkoka Jember untuk pengadaan entres bersertifikat klon <strong>BP 358</strong> sebagai pilihan utama (muncul di semua sumber), dengan <strong>SA 237</strong> sebagai diversifikasi genetik. Pesan menjelang musim hujan (Agustus–September).</span>
+            <span class="lang-en">Order certified scions of clone <strong>BP 358</strong> from Puslitkoka Jember as the primary choice (it appears across all sources), with <strong>SA 237</strong> as genetic diversification. Order before the rainy season (August–September).</span>
+          </div>
         </div>
       </div>
       <div class="step">
         <div class="step-check" data-step="3"></div>
         <div class="step-body">
-          <div class="step-num">Langkah 3 · Identifikasi Pohon Kandidat Top-Graft</div>
-          <div class="step-text">Pasca-panen September, identifikasi pohon dengan tunas air sehat pada batang bawah Excelsa (diameter ≥3 cm). Prioritaskan pohon yang produktivitas-nya menurun atau yang klon ter-graft-nya teridentifikasi sebagai klon non-optimal.</div>
+          <div class="step-num"><span class="lang-id">Langkah 3 · Identifikasi Pohon Kandidat Top-Graft</span><span class="lang-en">Step 3 · Identify Top-Graft Candidate Trees</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pasca-panen September, identifikasi pohon dengan tunas air sehat pada batang bawah Excelsa (diameter ≥3 cm). Prioritaskan pohon dengan produktivitas menurun atau yang klon ter-graft-nya teridentifikasi sebagai klon non-optimal.</span>
+            <span class="lang-en">After the September harvest, identify trees with healthy water sprouts on the Excelsa rootstock (≥3 cm diameter). Prioritize trees with declining productivity or those whose grafted clones are identified as non-optimal.</span>
+          </div>
         </div>
       </div>
       <div class="step">
         <div class="step-check" data-step="4"></div>
         <div class="step-body">
-          <div class="step-num">Langkah 4 · Eksekusi Top-Graft Tipe "Payung" (Lampung BRMP)</div>
-          <div class="step-text">Sambung pucuk dengan teknik tipe "payung" pada ketinggian 100–150 cm dari permukaan tanah — TIDAK menebang batang utama. Window optimal Sep–Des saat kambium aktif. Eksekusi oleh <strong>Cak Yit</strong> (skill sambung pucuk). Detail teknis ada di Topik G.</div>
+          <div class="step-num"><span class="lang-id">Langkah 4 · Eksekusi Top-Graft Tipe "Payung"</span><span class="lang-en">Step 4 · Execute "Umbrella" Top-Graft</span></div>
+          <div class="step-text">
+            <span class="lang-id">Sambung pucuk dengan teknik tipe "payung" pada ketinggian 100–150 cm dari permukaan tanah — TIDAK menebang batang utama. Window optimal Sep–Des saat kambium aktif. Eksekusi oleh <strong>Cak Yit</strong> (skill sambung pucuk). Detail teknis di Modul G.</span>
+            <span class="lang-en">Graft the scions using the "umbrella" technique at 100–150 cm above ground — without felling the main trunk. The optimal window is Sep–Dec when cambium is active. Executed by <strong>Cak Yit</strong> (grafting specialist). Technical details in Module G.</span>
+          </div>
         </div>
       </div>
       <div class="step">
         <div class="step-check" data-step="5"></div>
         <div class="step-body">
-          <div class="step-num">Langkah 5 · Monitor & Verifikasi</div>
-          <div class="step-text">Buka sungkup plastik setelah 2 minggu jika tunas baru sudah muncul. Monitor 6 bulan ke depan untuk konfirmasi keberhasilan (target ≥70% survival). DNA verifikasi pasca-12 bulan untuk konfirmasi klon ter-graft adalah BP 358 / SA 237.</div>
+          <div class="step-num"><span class="lang-id">Langkah 5 · Monitor & Verifikasi</span><span class="lang-en">Step 5 · Monitor & Verify</span></div>
+          <div class="step-text">
+            <span class="lang-id">Buka sungkup plastik setelah 2 minggu jika tunas baru sudah muncul. Monitor 6 bulan untuk konfirmasi keberhasilan (target ≥70% survival). DNA verifikasi pasca-12 bulan untuk konfirmasi klon ter-graft.</span>
+            <span class="lang-en">Open the plastic cover after 2 weeks once new shoots emerge. Monitor for 6 months to confirm success (target ≥70% survival). DNA verification after 12 months confirms the grafted clone identity.</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ═══ REFLECTION ═══ -->
+  <!-- REFLECTION -->
   <section class="sec">
     <div class="reflection">
-      <div class="label">Refleksi · Active Recall</div>
-      <p class="prompt">1. Apa yang sudah saya observasi sendiri di kebun Bidang 1–4 tentang variasi pohon? Apakah saya bisa melihat dengan mata telanjang perbedaan antara pohon-pohon yang mungkin merupakan klon berbeda? (mis. ukuran daun, bentuk buah, postur cabang)</p>
-      <textarea data-reflect="r1" placeholder="Catat observasi saya di sini..."></textarea>
-      <div class="save-note">💾 Catatan tersimpan di perangkat ini (localStorage). <span class="save-status"></span></div>
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Apa yang sudah saya observasi sendiri di kebun Bidang 1–4 tentang variasi pohon? Apakah saya bisa melihat dengan mata telanjang perbedaan antara pohon-pohon yang mungkin merupakan klon berbeda? (mis. ukuran daun, bentuk buah, postur cabang)</p>
+      <p class="prompt lang-en">1. What have I personally observed across Blocks 1–4 about tree variation? Can I see with the naked eye differences among trees that may be different clones? (e.g., leaf size, fruit shape, branch posture)</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi saya di sini... · Note my observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
     </div>
 
     <div class="reflection">
-      <div class="label">Refleksi · Connection</div>
-      <p class="prompt">2. Saya seorang psikolog. Bagaimana saya bisa menjelaskan konsep "klon = genotype" dan "kebun = environmental modulator" ini ke seseorang menggunakan analogi dari teori perkembangan manusia? Adakah konsep psikologi yang paralel?</p>
-      <textarea data-reflect="r2" placeholder="Catat refleksi saya di sini..."></textarea>
-      <div class="save-note">💾 Catatan tersimpan di perangkat ini. <span class="save-status"></span></div>
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Saya seorang psikolog. Bagaimana saya bisa menjelaskan konsep "klon = genotype" dan "kebun = environmental modulator" ini ke seseorang menggunakan analogi dari teori perkembangan manusia? Adakah konsep psikologi yang paralel?</p>
+      <p class="prompt lang-en">2. I am a psychologist. How would I explain the "clone = genotype" and "garden = environmental modulator" idea to someone using analogies from human developmental theory? Is there a parallel psychological concept?</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi saya... · Note my reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
     </div>
 
     <div class="reflection">
-      <div class="label">Refleksi · Decision</div>
-      <p class="prompt">3. Berdasarkan modul ini, apa pertanyaan yang masih saya miliki sebelum berani memutuskan untuk mulai DNA fingerprinting dan top-graft? Siapa yang perlu saya konsultasikan?</p>
-      <textarea data-reflect="r3" placeholder="Catat pertanyaan saya di sini..."></textarea>
-      <div class="save-note">💾 Catatan tersimpan di perangkat ini. <span class="save-status"></span></div>
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Berdasarkan modul ini, apa pertanyaan yang masih saya miliki sebelum berani memutuskan untuk mulai DNA fingerprinting dan top-graft? Siapa yang perlu saya konsultasikan?</p>
+      <p class="prompt lang-en">3. Based on this module, what questions remain before I am ready to start DNA fingerprinting and top-grafting? Whom should I consult?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan saya... · Note my questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
     </div>
   </section>
 
-  <!-- ═══ SUMBER & RUJUKAN ═══ -->
+  <!-- CITATIONS -->
   <div class="citations">
-    <h3>📚 Sumber & Rujukan Lengkap</h3>
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
     <ul>
-      <li><strong>Pusat Penelitian Kopi & Kakao Indonesia / Puslitkoka (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 63 untuk klon zona basah)</em></li>
-      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(75 hal, hal 7 Tabel 1)</em></li>
-      <li><strong>BPSIP/BRMP Lampung (2024).</strong> Pedoman Robusta Spesifik Lampung. Adaptasi ICARE Tanggamus. <em>(hal 3)</em></li>
-      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.2 — Robusta clonal selection. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 63)</em></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 7, Tabel 1)</em></li>
+      <li><strong>BPSIP/BRMP Lampung (2024).</strong> Pedoman Robusta Spesifik Lampung. <em>(hal 3)</em></li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.2. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
       <li><strong>ICCRI / Hulupi & Martini (2019).</strong> Bahan Tanam Kopi — Katalog klon Robusta. <a href="https://iccri.net/bahan-tanam-kopi-2019/" target="_blank" rel="noopener">iccri.net</a></li>
-      <li><strong>Davis, A.P., Tosh, J., Ruch, N. & Fay, M.F. (2011).</strong> Coffea taxonomy & molecular phylogeny. <em>Botanical Journal of the Linnean Society</em> 167(4):357-377. <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">DOI: 10.1111/j.1095-8339.2011.01177.x</a></li>
-      <li><strong>Media:</strong> Wikimedia Commons (CC BY-SA / Public Domain) untuk foto botani & kebun kopi.</li>
+      <li><strong>Davis, A.P., Tosh, J., Ruch, N. & Fay, M.F. (2011).</strong> Coffea taxonomy. <em>Botanical Journal of the Linnean Society</em> 167(4):357-377. <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">DOI</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
     </ul>
   </div>
 
-  <!-- ═══ MODULE NAV ═══ -->
+  <!-- MODULE NAV -->
   <div class="module-nav">
-    <a href="../index.html">← Semua Topik</a>
-    <a href="../B-excelsa-rootstock/index.html" class="next">Topik B: Excelsa Rootstock →</a>
+    <a href="../../belajar.html"><span class="lang-id">← Semua Modul</span><span class="lang-en">← All Modules</span></a>
+    <a href="#" class="next" style="opacity:.6;pointer-events:none"><span class="lang-id">Modul B (segera) →</span><span class="lang-en">Module B (soon) →</span></a>
   </div>
 
 </div>
 
-<script src="../_assets/learn.js"></script>
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
 </body>
 </html>
