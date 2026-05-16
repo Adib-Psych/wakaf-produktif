@@ -1,9 +1,11 @@
-const CACHE_NAME = 'lapor-ngt-v1';
+const CACHE_NAME = 'lapor-ngt-v2';
 const ASSETS = [
-  'lapor.html',
-  'manifest.json',
-  '../images/logo-wakaf-produktif-transparan.png',
-  // Add more critical assets as built
+  // Paths resolved relative to sw.js location (/demo/)
+  '../lapor.html',                                     // PRODUCTION lapor.html at root (FIX 16 Mei 2026)
+  'manifest.json',                                     // /demo/manifest.json (exists)
+  '../images/logo-wakaf-produktif-2x1-bg.png',         // new 2:1 BG logo (16 Mei 2026)
+  '../images/logo-wakaf-produktif-transparan.png',     // fallback favicon
+  '../firebase-config.js',                             // Firestore config
 ];
 
 self.addEventListener('install', e => {
