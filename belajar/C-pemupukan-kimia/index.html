@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul C — Pemupukan Kimia Umur 5–10 Tahun · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Pemupukan kimia umur 5–10 tahun — dosis BRIN, scaling per pohon aktual, dan analogi klinis dose-response.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul C</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module C</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="C">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul C · Nutrisi & Pemupukan · 3 dari 19</span>
+      <span class="lang-en">Module C · Nutrition & Fertilization · 3 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Pemupukan Kimia <em>Umur 5–10 Tahun</em></span>
+      <span class="lang-en">Chemical Fertilization <em>for 5–10 Year Trees</em></span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Bagaimana dosis BRIN per pohon × jumlah pohon aktual menentukan keberhasilan pemupukan — sebuah analogi dose-response dari klinis ke kebun</span>
+      <span class="lang-en">How BRIN per-tree dose × actual tree count determines fertilization success — a dose-response analogy from the clinic to the garden</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Mengapa empat unsur pupuk berbeda — N, P, K, Mg — masing-masing memiliki peran khas yang tidak bisa saling menggantikan</span>
+          <span class="lang-en">Why four different fertilizer elements — N, P, K, Mg — each play distinct roles that cannot substitute for one another</span>
+        </li>
+        <li>
+          <span class="lang-id">Tabel dosis BRIN untuk umur 5–10 tahun: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g per pohon per aplikasi</span>
+          <span class="lang-en">The BRIN dose table for 5–10 year trees: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g per tree per application</span>
+        </li>
+        <li>
+          <span class="lang-id">Aturan scaling universal: <em>dosis per pohon × jumlah pohon aktual</em> — dari 915 pohon (pre-selection) ke 750 pohon (post-selection target)</span>
+          <span class="lang-en">The universal scaling rule: <em>dose per tree × actual tree count</em> — from 915 trees (pre-selection) to 750 trees (post-selection target)</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa dosis penuh sekaligus berbahaya — dan bagaimana split awal MH + akhir MH meniru prinsip <em>stepped titration</em> dalam farmakoterapi</span>
+          <span class="lang-en">Why a full single dose can be harmful — and how splitting early MH + late MH mirrors the principle of <em>stepped titration</em> in pharmacotherapy</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_farmer_in_Aceh_(4874878298).jpg?width=1280" alt="Indonesian smallholder coffee farmer in Aceh, working among trees" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Petani kopi smallholder di Aceh, Indonesia — pemupukan tradisional di kebun kecil · </span><span class="lang-en">Photo: Smallholder coffee farmer in Aceh, Indonesia — traditional fertilization in a small garden · </span><a href="https://commons.wikimedia.org/wiki/File:Coffee_farmer_in_Aceh_(4874878298).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Sebuah pohon kopi Robusta yang sehat di Jawa Timur, dengan umur 5 sampai 10 tahun, dapat menghasilkan 2–3 kg ceri merah per tahun bila dirawat dengan baik. Sebuah pohon dengan genetik dan iklim yang sama, tetapi tanpa pemupukan yang tepat, sering kali hanya memberikan separo dari potensi itu — atau bahkan kurang. Pertanyaannya: <em>berapa banyak yang harus diberikan, dan kapan?</em></p>
+    <p class="lang-en">A healthy Robusta coffee tree in East Java, aged 5 to 10 years, can produce 2–3 kg of red cherries per year if well cared for. A tree with the same genetics and climate but without proper fertilization often delivers only half that potential — or less. The question: <em>how much should be given, and when?</em></p>
+
+    <p class="lang-id">Jawabannya bukan satu angka tunggal, melainkan <strong>tabel yang membaca tiga variabel sekaligus</strong>: (1) umur pohon, (2) unsur hara yang diperlukan, dan (3) jumlah pohon aktual di kebun. BRIN — Badan Riset dan Inovasi Nasional — telah mensintesa dosis acuan dari riset bertahun-tahun, dan menerbitkannya sebagai rekomendasi resmi untuk Robusta Indonesia. Dosis tersebut bukan resep yang kaku, melainkan <strong>kerangka titrasi</strong>: titik mula yang dapat disesuaikan ke kondisi spesifik kebun.</p>
+    <p class="lang-en">The answer is not a single number, but a <strong>table that reads three variables at once</strong>: (1) tree age, (2) required nutrient element, and (3) actual tree count in the garden. BRIN — Indonesia's National Research and Innovation Agency — has synthesized reference doses from years of research and published them as official recommendations for Indonesian Robusta. These doses are not rigid prescriptions but a <strong>titration framework</strong>: a starting point that can be adjusted to specific garden conditions.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi kopi dari awal — bukan oleh ahli agronomi. Pendekatannya: menggunakan analogi yang familiar dari farmakoterapi klinis — <em>dose-response curve</em>, <em>stepped titration</em>, <em>polypharmacy interaction</em> — untuk membantu memahami logika pemupukan kopi pada kasus nyata <em>kebun kopi wakaf Ngantang</em>.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning coffee agronomy from scratch — not by an agronomist. The approach: use analogies familiar from clinical pharmacotherapy — <em>dose-response curve</em>, <em>stepped titration</em>, <em>polypharmacy interaction</em> — to help make sense of coffee fertilization logic in the real-world case of the <em>Ngantang waqf coffee garden</em>.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Kebun kopi wakaf di Ngantang berdiri pada tanah <strong>Andisol vulkanik</strong> — tanah yang terbentuk dari abu Gunung Kelud, kaya bahan organik tetapi memiliki karakter khas: pH cenderung asam (5,2–5,8), kapasitas fiksasi fosfor (P) yang tinggi (artinya P sering "terkunci" tidak bisa diserap akar), dan ketersediaan kation seperti K dan Mg yang rentan tercuci saat hujan deras. Inilah konteks tanah yang menjadi acuan saat menerjemahkan dosis BRIN ke aplikasi nyata.</p>
+    <p class="lang-en">The Ngantang waqf garden sits on <strong>volcanic Andisol</strong> — soil formed from Mount Kelud's ash, rich in organic matter but with characteristic traits: pH tends toward acidic (5.2–5.8), a high phosphorus (P) fixation capacity (meaning P is often "locked" and unavailable to roots), and the availability of cations like K and Mg vulnerable to leaching during heavy rains. This soil context becomes the reference point when translating BRIN doses into actual applications.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Realitas operasionalnya: kebun memiliki <strong>~915 pohon pre-selection</strong> (per inventarisasi Mas Anto, Mei 2026), dengan target <strong>~750 pohon post-selection</strong> setelah peremajaan pasca-panen September 2026. Selisih 165 pohon adalah pohon dengan produktivitas rendah yang akan diremajakan via top-graft (Modul B). Aturan dosis-per-pohon harus disesuaikan dengan jumlah real yang akan menerima pupuk pada saat aplikasi — bukan jumlah absolut atau jumlah ideal.</p>
+      <p class="lang-en">The operational reality: the garden has <strong>~915 trees pre-selection</strong> (per Mas Anto's inventory, May 2026), with a target of <strong>~750 trees post-selection</strong> after rejuvenation following the September 2026 harvest. The difference of 165 trees represents low-productivity trees that will be rejuvenated via top-grafting (Module B). The dose-per-tree rule must be calibrated against the real number of trees that will receive fertilizer at application time — not an absolute count or an ideal count.</p>
+    </div>
+
+    <p class="lang-id">Implikasinya untuk Modul ini: dua angka yang harus selalu dipegang adalah <strong>dosis per pohon (gram, dari tabel BRIN)</strong> dan <strong>jumlah pohon aktual (yang harus diperbarui setelah setiap seleksi atau peremajaan)</strong>. Salah satu salah, total kebutuhan pupuk salah. RAB Final Wakaf 9 Mei 2026 telah mengoreksi over-allocation Rp 5,3 juta pada Siklus 2027 karena asumsi awal menggunakan dosis besar × jumlah pohon yang terlalu banyak.</p>
+    <p class="lang-en">The implication for this Module: two numbers must always be held — <strong>dose per tree (in grams, from the BRIN table)</strong> and <strong>actual tree count (which must be updated after every selection or rejuvenation)</strong>. Get either wrong and total fertilizer requirements are wrong. The Waqf's Final RAB (9 May 2026) corrected an over-allocation of IDR 5.3 million in Cycle 2027 because the initial assumption used a high dose × an inflated tree count.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Empat Unsur, Empat Peran</span><span class="lang-en">Theory: Four Elements, Four Roles</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Empat unsur hara makro yang menjadi tulang punggung pemupukan Robusta memiliki peran yang sangat khas — dan tidak saling menggantikan:</p><ul style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;"><li><strong>N (Nitrogen)</strong> dari <strong>Urea</strong> — penopang pertumbuhan vegetatif: daun baru, tunas, klorofil. Defisit N terlihat sebagai daun pucat menguning. Sumber: pupuk Urea (46% N).</li><li><strong>P (Fosfor)</strong> dari <strong>SP-36</strong> — pembentukan akar, bunga, dan biji. Penting saat pohon memulai siklus generatif. Defisit P terlihat sebagai daun berwarna ungu-kemerahan. Sumber: SP-36 (36% P₂O₅).</li><li><strong>K (Kalium)</strong> dari <strong>KCl</strong> — kualitas dan ukuran biji, ketahanan stres kering, transport fotosintat. Defisit K terlihat sebagai daun dengan tepi terbakar. Sumber: KCl (60% K₂O).</li><li><strong>Mg (Magnesium)</strong> dari <strong>Kieserit</strong> — komponen utama klorofil. Andisol vulkanik kerap defisit Mg karena tercuci hujan. Sumber: Kieserit (27% MgO, 22% S).</li></ul>
+    <p class="lang-en">The four macro-nutrient elements that form the backbone of Robusta fertilization play very distinct roles — and cannot substitute for one another:</p><ul style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;"><li><strong>N (Nitrogen)</strong> from <strong>Urea</strong> — vegetative growth driver: new leaves, shoots, chlorophyll. N deficit shows as pale-yellowing leaves. Source: Urea (46% N).</li><li><strong>P (Phosphorus)</strong> from <strong>SP-36</strong> — root, flower, and seed formation. Important when the tree begins its generative cycle. P deficit shows as purplish-red leaves. Source: SP-36 (36% P₂O₅).</li><li><strong>K (Potassium)</strong> from <strong>KCl</strong> — bean quality and size, drought stress tolerance, photosynthate transport. K deficit shows as leaves with burnt margins. Source: KCl (60% K₂O).</li><li><strong>Mg (Magnesium)</strong> from <strong>Kieserit</strong> — main component of chlorophyll. Volcanic Andisols are often Mg-deficient due to rainfall leaching. Source: Kieserit (27% MgO, 22% S).</li></ul>
+
+    <p class="lang-id">Tabel dosis BRIN yang menjadi acuan kebun kopi wakaf Ngantang (untuk pohon umur 5–10 tahun) per pohon per aplikasi: <strong>Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g</strong>. Aplikasi dilakukan dua kali setahun — awal Musim Hujan (Oktober/November) dan akhir Musim Hujan (Maret/April) — masing-masing setengah dosis. Total per pohon per tahun: Urea 300g · SP-36 160g · KCl 200g · Kieserit 100g.</p>
+    <p class="lang-en">The BRIN dose table used as reference for the Ngantang waqf garden (for 5–10 year trees) per tree per application: <strong>Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g</strong>. Applications are made twice yearly — early rainy season (October/November) and late rainy season (March/April) — each at half the annual dose. Total per tree per year: Urea 300g · SP-36 160g · KCl 200g · Kieserit 100g.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Dose-Response & Stepped Titration</span><span class="lang-en">An Analogy from Clinical Psychology — Dose-Response & Stepped Titration</span></div>
+      <p class="lang-id">Pemupukan kopi mengikuti logika yang familiar dari farmakoterapi klinis: <strong>dose-response curve</strong>. Pada dosis sub-terapeutik (terlalu rendah), tidak ada respons — pohon tetap defisit. Pada dosis terapeutik (rentang BRIN), respons maksimal — pohon menjawab dengan pertumbuhan dan produksi optimal. Pada dosis di atas terapeutik, kurva tidak lagi naik — justru terjadi toksisitas (akumulasi garam, akar terbakar) dan pencemaran lingkungan (run-off ke sumber air). Inilah mengapa "lebih banyak" bukan berarti "lebih baik".</p>
+      <p class="lang-en">Coffee fertilization follows a logic familiar from clinical pharmacotherapy: the <strong>dose-response curve</strong>. At sub-therapeutic doses (too low), no response — the tree remains deficient. At therapeutic doses (the BRIN range), maximal response — the tree answers with optimal growth and production. Above the therapeutic dose, the curve no longer rises — instead, toxicity emerges (salt accumulation, root burn) and environmental harm (run-off into water sources). This is why "more" does not mean "better".</p>
+    </div>
+
+    <p class="lang-id">Lebih jauh lagi: prinsip <strong>stepped titration</strong> juga berlaku. Klinisi tidak pernah memberikan dosis maksimum sekaligus untuk obat dengan jendela terapeutik sempit — pasien dititrasi bertahap, dosis dipecah menjadi beberapa kali pemberian. Pada pemupukan kopi, prinsip yang sama: dosis BRIN dipecah dua kali (awal MH + akhir MH), bukan diberikan sekaligus. Alasannya identik: meminimalkan risiko toksisitas akut sekaligus menyesuaikan dengan ritme penyerapan pohon yang berubah sepanjang siklus tahunan.</p>
+    <p class="lang-en">Beyond that: the principle of <strong>stepped titration</strong> also applies. A clinician never administers the full maximum dose at once for a drug with a narrow therapeutic window — the patient is titrated gradually, the dose split across multiple administrations. In coffee fertilization, the same principle: the BRIN dose is split into two applications (early rainy season + late rainy season), not delivered all at once. The reason is identical: minimize the risk of acute toxicity while syncing with the tree's absorption rhythm that shifts across the annual cycle.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Mengenal Pupuk, Tanah, dan Tanda-Tanda Defisit</span><span class="lang-en">Visual Tour: Meet the Fertilizers, the Soil, and Deficiency Signs</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Sebelum bicara dosis dan aplikasi, mari mengenal bahan-bahan dan tanda-tanda lapangan yang menjadi referensi visual: bentuk pupuk dalam karung yang akan diaplikasikan, profil Andisol vulkanik Ngantang, hingga foto petani kopi smallholder Indonesia yang menggambarkan skala kebun yang dimaksud.</p>
+    <p class="lang-en">Before discussing doses and applications, let us meet the materials and field signs that serve as visual references: the form of fertilizer in the sack that will be applied, the Ngantang volcanic Andisol soil profile, and photos of Indonesian smallholder coffee farmers that convey the kind of garden being discussed.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg?width=640" alt="Granular Urea fertilizer application" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Aplikasi <strong>pupuk Urea granular</strong> — butiran putih yang menjadi sumber utama Nitrogen. 1 sak (50 kg) Urea = sekitar 333 dosis pohon (150g/pohon)</span>
+          <span class="lang-en"><strong>Granular Urea application</strong> — white pellets that are the main source of Nitrogen. 1 sack (50 kg) of Urea ≈ 333 tree-doses (150 g per tree)</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/NPK_19-19-19_Fertilizer_(2).jpg?width=640" alt="NPK 19-19-19 compound fertilizer pellets" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pupuk NPK majemuk</strong> — N, P, K dalam satu butiran. Praktis tapi tidak selalu optimal: rasio tetap (19-19-19, 16-16-16) jarang cocok dengan kebutuhan spesifik kebun. Pendekatan single-element seperti SOP BRIN memberi kontrol lebih</span>
+          <span class="lang-en"><strong>Compound NPK fertilizer</strong> — N, P, K in a single pellet. Practical but not always optimal: fixed ratios (19-19-19, 16-16-16) rarely match a garden's specific needs. The single-element approach in the BRIN SOP gives more control</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:NPK_19-19-19_Fertilizer_(2).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Andisol.jpg?width=640" alt="Andisol volcanic soil sample" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Andisol vulkanik</strong> — tipe tanah Ngantang (terbentuk dari abu Gunung Kelud). Berwarna gelap, kaya bahan organik, namun memiliki <em>P-fixation</em> tinggi sehingga aplikasi P harus diadaptasi</span>
+          <span class="lang-en"><strong>Volcanic Andisol</strong> — Ngantang's soil type (formed from Mount Kelud ash). Dark in color, organic-matter-rich, but exhibits high <em>P-fixation</em> so P application must be adapted</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Andisol.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Andisol_profile.jpg?width=640" alt="Andisol soil profile cross-section" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Profil tanah Andisol</strong> — perhatikan lapisan-lapisan: top-soil organik (kaya N), sub-soil mineral (tempat akar Excelsa menjelajah lebih dalam dari akar Robusta murni). Konfigurasi rootstock di Ngantang menjadi keuntungan di sini</span>
+          <span class="lang-en"><strong>Andisol soil profile</strong> — note the layers: organic topsoil (rich in N), mineral subsoil (where Excelsa roots explore deeper than pure-Robusta roots). The rootstock configuration in Ngantang becomes an advantage here</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Andisol_profile.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Farmers.jpg?width=640" alt="Smallholder coffee farmers working in plantation" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Petani kopi smallholder</strong> di kebun kecil — skala kebun seperti kebun kopi wakaf Ngantang (~0,49 ha). Pemupukan dilakukan manual per pohon, bukan dengan traktor seperti perkebunan besar</span>
+          <span class="lang-en"><strong>Smallholder coffee farmers</strong> in a small garden — a scale similar to the Ngantang waqf garden (~0.49 ha). Fertilization is done manually tree-by-tree, not by tractor as in large plantations</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Farmers.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_farmer_during_harvesting_time.jpg?width=640" alt="Coffee farmer working among trees during harvest" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Aplikasi manual per pohon</strong> — pekerja membawa wadah pupuk, melingkar ke setiap pohon untuk membuka parit dangkal di proyeksi tajuk lalu menabur dan menutup kembali. Detail teknik aplikasi dibahas di Modul D</span>
+          <span class="lang-en"><strong>Manual application per tree</strong> — workers carry a fertilizer container, circle each tree to open a shallow trench under the canopy projection, broadcast inside, and cover it again. Application technique details are discussed in Module D</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_farmer_during_harvesting_time.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Dosis Pemupukan</span><span class="lang-en">The Science: 4-Source Comparison on Fertilization Dosage</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber yang memberi panduan dosis pemupukan untuk Robusta umur 5–10 tahun:</p>
+    <p class="lang-en">Let us examine four sources that provide fertilization dose guidance for 5–10 year Robusta trees:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Dosis Anjuran untuk Robusta Umur 5–10 Tahun</span><span class="lang-en">Recommended Dose for 5–10 Year Robusta</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>BRIN (Tabel Dosis per Umur, 2024)</strong> ⭐</td>
+          <td><span class="lang-id">Per pohon per aplikasi: <strong>Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g</strong>. Split 2× setahun (awal MH + akhir MH). Ini adalah <em>acuan utama</em> SOP Wakaf Ngantang.</span><span class="lang-en">Per tree per application: <strong>Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g</strong>. Split 2× per year (early + late rainy season). This is the <em>primary reference</em> for the Wakaf Ngantang SOP.</span></td>
+        </tr>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong></td>
+          <td><span class="lang-id">Per pohon per tahun: Urea 250–300g · SP-36 150–200g · KCl 200–250g (hal 71). Kieserit/Mg tidak masuk acuan default — gap dengan BRIN.</span><span class="lang-en">Per tree per year: Urea 250–300g · SP-36 150–200g · KCl 200–250g (p 71). Kieserit/Mg not included in the default reference — a gap with BRIN.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Per pohon per tahun: Urea 280g · SP-36 180g · KCl 220g (hal 19, Tabel 4). Konvergen dengan Kementan 2019. Mg tidak masuk default.</span><span class="lang-en">Per tree per year: Urea 280g · SP-36 180g · KCl 220g (p 19, Table 4). Converges with Kementan 2019. Mg not included by default.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 12 — <em>Coffee Fertilization</em></strong></td>
+          <td><span class="lang-id">Mengintroduksi konsep <strong>soil-test-based dosing</strong>: dosis disesuaikan berdasarkan analisis tanah, bukan dari tabel kaku. Lebih akurat tapi memerlukan lab.</span><span class="lang-en">Introduces the concept of <strong>soil-test-based dosing</strong>: doses are adjusted from soil analysis rather than a rigid table. More accurate but requires laboratory access.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: tiga sumber domestik (BRIN, Kementan, Puslitbang) konvergen pada rentang dosis N-P-K yang serupa untuk umur 5–10 tahun.</strong> Perbedaan utama: BRIN secara eksplisit memasukkan Kieserit (Mg+S), sementara Kementan 2019 dan Puslitbang 2010 menyerahkannya pada "sesuai analisis tanah" — yang dalam praktik sering tidak dilakukan. Inilah <em>upgrade</em> kunci dari tabel BRIN: mengangkat Mg dari unsur sekunder yang sering terlupakan menjadi bagian eksplisit dari resep dasar.</p>
+    <p class="lang-en"><strong>The emerging pattern: three domestic sources (BRIN, Kementan, Puslitbang) converge on similar N-P-K ranges for 5–10 year trees.</strong> The main difference: BRIN explicitly includes Kieserit (Mg+S), while Kementan 2019 and Puslitbang 2010 defer it to "as per soil analysis" — which in practice often goes undone. This is the key <em>upgrade</em> of the BRIN table: elevating Mg from an often-forgotten secondary element to an explicit part of the base recipe.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Aturan Scaling Universal — Kunci Operasional</span><span class="lang-en">✓ The Universal Scaling Rule — Operational Key</span></div>
+      <p class="lang-id">Tabel dosis BRIN selalu disajikan dalam <strong>gram per pohon</strong>, bukan total kebutuhan kebun. Aturan operasional yang harus dipegang: <code>dosis BRIN (g/pohon) × jumlah pohon aktual = total kg yang dibutuhkan</code>. Untuk kebun kopi wakaf Ngantang dengan 750 pohon target (post-selection), setahun penuh per unsur: <strong>Urea = 0,3 kg × 750 = 225 kg (~5 sak Pusri 50kg) · SP-36 = 0,16 × 750 = 120 kg (~3 sak) · KCl = 0,2 × 750 = 150 kg (~3 sak) · Kieserit = 0,1 × 750 = 75 kg (~2 sak)</strong>. Saat jumlah pohon berubah (mis. setelah seleksi pasca-panen), seluruh perhitungan harus disesuaikan — bukan hanya estimasi.</p>
+      <p class="lang-en">BRIN dose tables are always presented in <strong>grams per tree</strong>, not as total garden requirements. The operational rule to remember: <code>BRIN dose (g/tree) × actual tree count = total kg required</code>. For the Ngantang waqf garden with a 750-tree target (post-selection), a full year per element: <strong>Urea = 0.3 kg × 750 = 225 kg (~5 Pusri 50-kg sacks) · SP-36 = 0.16 × 750 = 120 kg (~3 sacks) · KCl = 0.2 × 750 = 150 kg (~3 sacks) · Kieserit = 0.1 × 750 = 75 kg (~2 sacks)</strong>. When tree count changes (e.g., after post-harvest selection), the entire calculation must be re-derived — not estimated.</p>
+    </div>
+
+    <p class="lang-id">Validasi praktis dari RAB Final 9 Mei 2026: koreksi over-allocation Rp 5,3 juta pada Siklus 2027 terjadi karena asumsi awal menggunakan <em>dosis penuh untuk pohon umur >10 tahun</em> dikalikan dengan <em>jumlah pohon pre-selection 915</em>. Setelah dikoreksi ke <em>dosis 5–10 tahun</em> × <em>750 pohon target</em>, total kebutuhan pupuk turun proporsional. Ini ilustrasi konkret kenapa kedua angka (dosis per pohon dan jumlah pohon) harus presisi — bukan estimasi atau optimistis.</p>
+    <p class="lang-en">Practical validation from the Final RAB (9 May 2026): an over-allocation of IDR 5.3 million in Cycle 2027 happened because the initial assumption used <em>the full dose for >10 year trees</em> multiplied by <em>915 pre-selection trees</em>. After correction to the <em>5–10 year dose</em> × <em>750 target trees</em>, total fertilizer requirements fell proportionally. This is a concrete illustration of why both numbers (per-tree dose and tree count) must be precise — not estimates or optimistic.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Pemupukan yang Presisi</span><span class="lang-en">Practice: Five Steps for Precise Fertilization</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Berdasarkan sintesa di atas, berikut lima langkah operasional untuk pemupukan kimia yang presisi pada Robusta umur 5–10 tahun. Diterapkan di kebun kopi wakaf Ngantang sebagai studi kasus. Pembaca dapat memakai kerangka ini untuk skala kebun sendiri dengan mengganti jumlah pohon aktual. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Based on the synthesis above, here are five operational steps for precise chemical fertilization of 5–10 year Robusta trees. Applied at the Ngantang waqf coffee garden as a case study. Readers may use this framework at their own garden scale by substituting in the actual tree count. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Tetapkan Jumlah Pohon Aktual yang Akan Dipupuk</span><span class="lang-en">Step 1 · Establish the Actual Tree Count to be Fertilized</span></div>
+          <div class="step-text">
+            <span class="lang-id">Inventarisasi langsung di lapangan — bukan estimasi. Catat per blok: jumlah pohon umur 5–10 tahun (dosis terpilih), umur &lt;5 tahun (dosis lebih rendah, lihat tabel BRIN), dan &gt;10 tahun (dosis lebih tinggi). Untuk kebun kopi wakaf Ngantang per Mei 2026: ~915 pre-selection, target ~750 post-panen 2026.</span>
+            <span class="lang-en">A direct field inventory — not an estimate. Record per block: number of 5–10 year trees (chosen dose), &lt;5 years (lower dose, see BRIN table), and &gt;10 years (higher dose). For the Ngantang waqf garden as of May 2026: ~915 pre-selection, target ~750 post-harvest 2026.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Hitung Total Kebutuhan Pupuk per Aplikasi</span><span class="lang-en">Step 2 · Calculate Total Fertilizer Needs per Application</span></div>
+          <div class="step-text">
+            <span class="lang-id">Rumus universal: <code>dosis BRIN (g/pohon) × jumlah pohon = total gram</code>. Konversi ke kilogram → ke jumlah sak (1 sak Pusri = 50 kg). Contoh per aplikasi 750 pohon: Urea 150g × 750 = 112,5 kg ≈ 2,25 sak · SP-36 80g × 750 = 60 kg ≈ 1,2 sak · KCl 100g × 750 = 75 kg ≈ 1,5 sak · Kieserit 50g × 750 = 37,5 kg ≈ 0,75 sak.</span>
+            <span class="lang-en">Universal formula: <code>BRIN dose (g/tree) × tree count = total grams</code>. Convert to kg → to sacks (1 Pusri sack = 50 kg). Example per application for 750 trees: Urea 150g × 750 = 112.5 kg ≈ 2.25 sacks · SP-36 80g × 750 = 60 kg ≈ 1.2 sacks · KCl 100g × 750 = 75 kg ≈ 1.5 sacks · Kieserit 50g × 750 = 37.5 kg ≈ 0.75 sacks.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Atur Waktu Aplikasi — Split Dua Kali Setahun</span><span class="lang-en">Step 3 · Schedule Application — Split Twice a Year</span></div>
+          <div class="step-text">
+            <span class="lang-id">Bagi dosis tahunan menjadi dua aplikasi: <strong>Aplikasi 1 — Awal MH (Oktober–November)</strong> saat pohon memasuki fase pertumbuhan vegetatif baru. <strong>Aplikasi 2 — Akhir MH (Maret–April)</strong> saat pengisian biji menjelang panen. Hindari aplikasi saat MK (Mei–September): pupuk tidak terurai tanpa kelembapan, plus risiko terbakar akar.</span>
+            <span class="lang-en">Split the annual dose into two applications: <strong>Application 1 — Early rainy season (October–November)</strong> when the tree enters a new vegetative growth phase. <strong>Application 2 — Late rainy season (March–April)</strong> during bean fill before harvest. Avoid applying during the dry season (May–September): fertilizer cannot dissolve without moisture, plus root-burn risk.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Aplikasi Manual per Pohon (Detail Teknik di Modul D)</span><span class="lang-en">Step 4 · Manual Application Per Tree (Technique Details in Module D)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Cara aplikasi: buka <strong>parit dangkal melingkar</strong> di proyeksi tepi tajuk (radius ~½ diameter tajuk), kedalaman 5–10 cm. Tabur dosis per pohon merata dalam parit, lalu tutup kembali dengan tanah. <strong>Jangan</strong> dilakukan tabur-tebar langsung di permukaan tanah — pupuk akan tercuci hujan atau menguap, dan rentan terbakar oleh sinar matahari.</span>
+            <span class="lang-en">Application method: open a <strong>shallow circular trench</strong> at the canopy edge projection (~½ canopy radius), 5–10 cm deep. Spread the per-tree dose evenly inside the trench, then cover with soil. <strong>Do not</strong> broadcast directly on the surface — the fertilizer will be washed away by rain or volatilize, and is vulnerable to sun damage.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Monitor Respons Pohon & Catat untuk Titrasi Tahun Depan</span><span class="lang-en">Step 5 · Monitor Tree Response & Record for Next Year's Titration</span></div>
+          <div class="step-text">
+            <span class="lang-id">Setelah 3–4 minggu pasca-aplikasi: cek warna daun (harus lebih hijau), pertumbuhan tunas baru, dan ada-tidaknya gejala defisit/toksisitas. Catat di Form Input dashboard monitor-v2: hasil panen tahun lalu, dosis aktual, dan respons. Dosis BRIN adalah <em>titik mula</em>, bukan resep kaku — siklus berikutnya dapat dititrasi naik (jika defisit) atau turun (jika respons sudah optimal).</span>
+            <span class="lang-en">3–4 weeks post-application: check leaf color (should be greener), new shoot growth, and the presence/absence of deficit or toxicity symptoms. Record in the monitor-v2 dashboard Form Input: last year's harvest, actual dose, and response. The BRIN dose is a <em>starting point</em>, not a rigid recipe — the next cycle can be titrated up (if deficient) or down (if response is already optimal).</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Bayangkan Anda menemukan daun-daun pucat menguning pada beberapa pohon kopi setelah aplikasi pupuk dilakukan minggu lalu. Apa hipotesis Anda? Daftarkan minimal tiga kemungkinan penyebab — yang berkaitan dengan dosis, waktu aplikasi, kondisi tanah, atau interaksi pupuk. Mana yang akan Anda cek terlebih dahulu, dan mengapa?</p>
+      <p class="prompt lang-en">1. Imagine you find pale-yellowing leaves on several coffee trees a week after a fertilizer application. What is your hypothesis? List at least three possible causes — related to dose, application timing, soil condition, or fertilizer interaction. Which would you check first, and why?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Penulis modul ini memaparkan analogi <em>dose-response curve</em> dan <em>stepped titration</em> dari farmakoterapi. Pada satu sisi, pupuk dan obat memang berbagi logika dosis-respons. Tetapi di mana batas analoginya — di mana pemupukan kopi sebenarnya <em>berbeda</em> dari pengobatan manusia, dan apa implikasinya untuk cara berpikir Anda tentang kedua hal tersebut?</p>
+      <p class="prompt lang-en">2. The author of this module presents an analogy with the <em>dose-response curve</em> and <em>stepped titration</em> from pharmacotherapy. On one hand, fertilizer and medication do share dose-response logic. But where does the analogy break — where does coffee fertilization actually <em>differ</em> from human medical treatment, and what are the implications for how you think about both?</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Misalkan Anda mengelola kebun yang lebih kecil dari kasus Ngantang — hanya 200 pohon. Bagaimana Anda akan mengadaptasi langkah-langkah di atas? Apakah aturan scaling tetap berlaku? Apakah ada langkah yang harus dilewati atau disederhanakan? Apa risiko dan keuntungannya?</p>
+      <p class="prompt lang-en">3. If you found a legacy garden with an unusual configuration (e.g., Excelsa rootstock where "pure Robusta" might be expected), what ethical and technical considerations would you use to decide: preserve the legacy, or replace it with the modern standard? What is lost and what is gained in each choice?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>BRIN (2024).</strong> Tabel Dosis Pupuk per Umur Tanaman untuk Robusta Indonesia. <em>Acuan utama Modul ini — Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g per pohon per aplikasi untuk umur 5–10 tahun.</em></li>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 71 — Tabel Pemupukan Robusta)</em></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 19, Tabel 4 — Dosis pupuk berdasarkan umur)</em></li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.12 — Coffee Fertilization, soil-test-based dosing. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>RAB Final Wakaf Produktif (9 Mei 2026).</strong> Koreksi over-allocation Siklus 2027 Rp 5,3 juta — ilustrasi praktis aturan scaling per pohon aktual. <em>(Internal · /SOP/RAB_FINAL_9Mei2026.docx)</em></li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../B-excelsa-rootstock/index.html"><span class="lang-id">← Modul B: Excelsa Rootstock</span><span class="lang-en">← Module B: Excelsa Rootstock</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="#" class="next" style="opacity:.6;pointer-events:none"><span class="lang-id">Modul D (segera) →</span><span class="lang-en">Module D (soon) →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>
