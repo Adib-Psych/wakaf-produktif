@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul B — Excelsa sebagai Rootstock · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Excelsa sebagai rootstock — memahami pohon kopi yang adalah dua spesies dalam satu, dan mengapa itu adalah optimasi yang sah.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul B</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module B</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="B">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul B · Material Tanam · 2 dari 19</span>
+      <span class="lang-en">Module B · Planting Material · 2 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Excelsa sebagai <em>Rootstock</em></span>
+      <span class="lang-en">Excelsa as the <em>Rootstock</em></span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Mengapa satu pohon kopi bisa menjadi "dua spesies dalam satu" — dan kenapa itu adalah optimasi yang sah, bukan workaround</span>
+      <span class="lang-en">Why a single coffee tree can be "two species in one" — and why this represents legitimate optimization, not a workaround</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Apa itu sambung pucuk (top-graft) dan mengapa pohon kopi bisa terdiri dari dua spesies sekaligus</span>
+          <span class="lang-en">What top-grafting is and how a coffee tree can comprise two species at once</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa Excelsa (kini diklasifikasikan sebagai varietas <em>Coffea liberica</em>) dipilih sebagai batang bawah pada banyak kebun warisan Hindia Belanda</span>
+          <span class="lang-en">Why Excelsa (now classified as a variety of <em>Coffea liberica</em>) was chosen as rootstock in many Dutch-colonial legacy gardens</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa konfigurasi <em>"Excelsa rootstock + Robusta scion"</em> di Ngantang adalah optimasi sah pada kelas S3, bukan kompromi</span>
+          <span class="lang-en">Why the <em>"Excelsa rootstock + Robusta scion"</em> configuration at Ngantang represents legitimate optimization at class S3, not a compromise</span>
+        </li>
+        <li>
+          <span class="lang-id">Bagaimana strategi pengelolaan berbeda untuk pohon dengan Excelsa rootstock dibandingkan Robusta murni</span>
+          <span class="lang-en">How management strategy differs for trees with Excelsa rootstock versus pure Robusta</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/COLLECTIE_TROPENMUSEUM_Bloeiende_Liberia-koffie_geplant_in_april_1896_cultuuronderneming_Kedongdong_of_Way_Lima_Lampongse_Districten_Zuid-Sumatra._TMnr_60013379.jpg?width=1280" alt="Blooming Liberica coffee planted in 1896, Lampung, Sumatra — Dutch colonial plantation" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Kebun Liberica yang ditanam April 1896 di Way Lima, Lampung — koleksi Tropenmuseum · </span><span class="lang-en">Photo: Liberica coffee planted April 1896 at Way Lima, Lampung — Tropenmuseum collection · </span><a href="https://commons.wikimedia.org/wiki/File:COLLECTIE_TROPENMUSEUM_Bloeiende_Liberia-koffie_geplant_in_april_1896_cultuuronderneming_Kedongdong_of_Way_Lima_Lampongse_Districten_Zuid-Sumatra._TMnr_60013379.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Berdiri di tengah sebuah kebun kopi tua di Ngantang, Malang, perhatikan baik-baik satu pohon. Daun di pucuknya khas Robusta — relatif kecil, hijau tua, permukaan bergelombang. Tetapi turun ke pangkalnya, beberapa tunas muncul dengan daun yang jauh lebih besar, kasar, dan bentuk berbeda. Apa yang terjadi?</p>
+    <p class="lang-en">Standing in an old coffee garden in Ngantang, Malang, look carefully at a single tree. The leaves at the top are unmistakably Robusta — relatively small, dark green, surface wavy. But near the base, a few shoots emerge with leaves that are much larger, coarser, and shaped differently. What is happening here?</p>
+
+    <p class="lang-id">Jawabannya: pohon itu adalah <strong>dua spesies dalam satu tubuh</strong>. Batang bawahnya berasal dari spesies <em>Coffea liberica</em> (dalam praktik Indonesia disebut <strong>Excelsa</strong>); pucuk atasnya adalah klon <em>Coffea canephora</em> (Robusta) yang disambungkan kemudian. Teknik penyambungan dua spesies berbeda dalam satu pohon ini disebut <strong>sambung pucuk (top-graft)</strong>, dan praktiknya telah ada di kebun-kebun Indonesia sejak era kolonial Belanda — terutama setelah serangan karat daun (<em>Hemileia vastatrix</em>) memusnahkan kebun-kebun Arabika di akhir abad ke-19.</p>
+    <p class="lang-en">The answer: this tree is <strong>two species in one body</strong>. Its rootstock comes from <em>Coffea liberica</em> (in Indonesian practice called <strong>Excelsa</strong>); the scion at the top is a <em>Coffea canephora</em> (Robusta) clone joined later. The technique of fusing two different species into one tree is called <strong>top-grafting</strong>, and the practice has existed in Indonesian gardens since the Dutch colonial era — particularly after coffee leaf rust (<em>Hemileia vastatrix</em>) wiped out Arabica plantations in the late 19th century.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi kopi dari awal — bukan oleh ahli agronomi. Pendekatannya: menelusuri sejarah dan sains konfigurasi "Excelsa rootstock + Robusta scion", lalu menguji apakah konfigurasi ini di kasus nyata — <em>kebun kopi wakaf Ngantang</em> — adalah optimasi yang sah, atau kompromi yang perlu dikoreksi.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning coffee agronomy from scratch — not by an agronomist. The approach: trace the history and science of the "Excelsa rootstock + Robusta scion" configuration, then test whether — in a real case, the <em>Ngantang waqf coffee garden</em> — this configuration represents legitimate optimization or a compromise that needs correcting.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Kebun kopi wakaf di Ngantang berada pada elevasi <strong>648 mdpl</strong> dengan curah hujan tahunan <strong>2.500–3.000 mm</strong>. Pada elevasi marginal seperti ini (kelas S3 untuk Robusta murni), pohon yang sepenuhnya Robusta — akar Robusta + pucuk Robusta — dapat mengalami stres berlebih: sistem perakaran Robusta yang relatif dangkal kurang efisien menyerap nutrisi pada Andisol vulkanik yang dalam, dan rentan terhadap fluktuasi kelembapan.</p>
+    <p class="lang-en">The Ngantang waqf garden sits at <strong>648 m elevation</strong> with annual rainfall of <strong>2,500–3,000 mm</strong>. At this marginal elevation (class S3 for pure Robusta), a fully-Robusta tree — Robusta roots and Robusta scion — can experience excessive stress: Robusta's relatively shallow root system is less efficient at absorbing nutrients from deep volcanic Andisols, and is vulnerable to moisture fluctuations.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Inilah yang istimewa di Ngantang: <strong>batang bawah pohon adalah Excelsa (<em>Coffea liberica</em>)</strong> — peninggalan praktik kolonial yang sengaja memilih spesies dengan akar dalam dan ketahanan stres tinggi sebagai dasar. Pucuk Robusta yang disambungkan kemudian menerima manfaat sistem perakaran Excelsa, sambil tetap menghasilkan ceri Robusta yang sesuai pasar. Klarifikasi ini disampaikan langsung oleh tim BRIN Kebun Raya Purwodadi pada pertemuan 5 Mei 2026 — bukan asumsi melainkan observasi botanis terkonfirmasi.</p>
+      <p class="lang-en">Here is what makes Ngantang distinctive: <strong>the rootstock is Excelsa (<em>Coffea liberica</em>)</strong> — a legacy of colonial-era practice that deliberately chose a species with deep roots and high stress tolerance as the foundation. The Robusta scion grafted later inherits the benefit of Excelsa's root system while still producing market-compatible Robusta cherries. This clarification came directly from the BRIN Purwodadi Botanical Garden team at a meeting on 5 May 2026 — not assumption, but botanically confirmed observation.</p>
+    </div>
+
+    <p class="lang-id">Implikasinya: konfigurasi Excelsa rootstock + Robusta scion di Ngantang <strong>bukan workaround yang harus diganti</strong>, melainkan optimasi yang sah untuk kondisi elevasi marginal. Strategi pengelolaan ke depan bukan "bongkar dan ganti dengan Robusta murni", melainkan <strong>mempertahankan dan memaksimalkan konfigurasi yang ada</strong> — sambil meremajakan pucuk Robusta dengan klon-klon unggul (BP 358, SA 237 dari Modul A) saat produktivitas pohon menurun.</p>
+    <p class="lang-en">The implication: the Excelsa rootstock + Robusta scion configuration at Ngantang <strong>is not a workaround to be replaced</strong> but rather legitimate optimization for marginal-elevation conditions. The forward management strategy is not "uproot and replant with pure Robusta", but rather <strong>preserve and maximize the existing configuration</strong> — while rejuvenating the Robusta scion with elite clones (BP 358, SA 237 from Module A) when tree productivity declines.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Rootstock, Scion, dan Excelsa</span><span class="lang-en">Theory: Rootstock, Scion, and Excelsa</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Dalam praktik hortikultura, <strong>rootstock</strong> (batang bawah) adalah bagian pohon yang menyediakan sistem perakaran, sementara <strong>scion</strong> (entres/pucuk) adalah bagian yang menentukan apa yang dipanen — daun, bunga, buah. Saat scion dari satu spesies disambungkan ke rootstock dari spesies lain, hasilnya adalah pohon majemuk dengan keunggulan berlapis: ketahanan akar dari spesies A, kualitas buah dari spesies B. Praktik ini berabad-abad usianya — diterapkan pada anggur, apel, jeruk, dan banyak tanaman komersial.</p>
+    <p class="lang-en">In horticultural practice, the <strong>rootstock</strong> is the part of the tree providing the root system, while the <strong>scion</strong> is the part determining what is harvested — leaves, flowers, fruit. When a scion from one species is grafted onto a rootstock from another, the result is a composite tree with layered advantages: root resilience from species A, fruit quality from species B. This practice is centuries old — applied to grapes, apples, citrus, and many commercial crops.</p>
+
+    <p class="lang-id"><strong>Excelsa</strong> sendiri dahulu dianggap spesies terpisah (<em>Coffea excelsa</em>), tetapi sejak revisi taksonomi <a href="https://doi.org/10.1111/j.1095-8339.2006.00584.x" target="_blank" rel="noopener">Davis et al. (2006)</a> kini diklasifikasikan sebagai varietas dari <em>Coffea liberica</em> — yaitu <em>Coffea liberica</em> var. <em>dewevrei</em>. Karakteristiknya: pohon besar, daun lebar dan kasar, akar yang dalam dan kuat, sangat tahan terhadap karat daun, dan toleran terhadap iklim panas-lembap di dataran rendah. Inilah profil yang membuat Excelsa dipilih sebagai rootstock saat Arabika hancur oleh karat daun pada 1880-an dan Robusta belum sepenuhnya teradaptasi.</p>
+    <p class="lang-en"><strong>Excelsa</strong> was once treated as a separate species (<em>Coffea excelsa</em>), but since the taxonomic revision by <a href="https://doi.org/10.1111/j.1095-8339.2006.00584.x" target="_blank" rel="noopener">Davis et al. (2006)</a> it is now classified as a variety of <em>Coffea liberica</em> — namely <em>Coffea liberica</em> var. <em>dewevrei</em>. Its characteristics: a large tree, broad and coarse leaves, deep and strong roots, high resistance to leaf rust, and tolerance for hot-humid lowland climates. This is the profile that made Excelsa the rootstock of choice when Arabica was devastated by leaf rust in the 1880s and Robusta had not yet fully adapted.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Formulasi Kasus 5P</span><span class="lang-en">An Analogy from Clinical Psychology — The 5P Case Formulation</span></div>
+      <p class="lang-id">Dalam formulasi kasus klinis, kita mengenal kerangka <strong>5P</strong> — <em>Predisposing, Precipitating, Perpetuating, Protective, Presenting</em>. Konfigurasi pohon di Ngantang dapat dipikirkan dengan kerangka ini: rootstock Excelsa adalah <em>predisposing factor</em> — bukan sumber penyakit, tetapi fondasi biologis yang menentukan bagaimana pohon merespons stres lingkungan. Scion Robusta adalah <em>presenting</em> — apa yang terlihat (daun, bunga, buah yang dipanen). Elevasi marginal 648 mdpl adalah <em>perpetuating factor</em> — kondisi yang terus-menerus menekan. Sambungan yang baik di leher (collar) graft adalah <em>protective factor</em> — bila terbentuk dengan baik, melindungi pohon dari kerentanan struktural.</p>
+      <p class="lang-en">In clinical case formulation, we know the <strong>5P</strong> framework — <em>Predisposing, Precipitating, Perpetuating, Protective, Presenting</em>. The tree configuration in Ngantang can be thought of through this frame: Excelsa rootstock is the <em>predisposing factor</em> — not a source of disease, but the biological foundation that determines how the tree responds to environmental stress. The Robusta scion is the <em>presenting</em> — what is visible (leaves, flowers, fruit harvested). The marginal 648 m elevation is the <em>perpetuating factor</em> — a continuously pressing condition. A well-healed graft union at the collar is the <em>protective factor</em> — if formed well, it shields the tree from structural vulnerability.</p>
+    </div>
+
+    <p class="lang-id">Kerangka 5P ini bukan sekadar pelengkap retoris. Implikasi praktisnya: bila kita menganggap Excelsa rootstock sebagai "predisposing factor", maka strategi pengelolaan bergeser dari <em>memperbaiki rootstock</em> (yang sudah tidak bisa diubah pada pohon dewasa) ke <em>memaksimalkan protective factors</em> — pemupukan tepat, pemangkasan menjaga sirkulasi udara, dan pengendalian penyakit yang sesuai untuk konfigurasi dua-spesies. Inilah cara berpikir klinis diterapkan pada kebun.</p>
+    <p class="lang-en">This 5P frame is not mere rhetorical garnish. Its practical implication: if we treat Excelsa rootstock as the "predisposing factor", management strategy shifts from <em>fixing the rootstock</em> (no longer changeable in mature trees) to <em>maximizing protective factors</em> — appropriate fertilization, pruning that preserves airflow, and disease control suited to the two-species configuration. This is clinical thinking applied to the garden.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Mengenal Excelsa & Konfigurasi Sambungan</span><span class="lang-en">Visual Tour: Meet Excelsa & The Graft Configuration</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Bagaimana cara membedakan rootstock Excelsa dari pucuk Robusta saat berdiri di hadapan satu pohon? Enam foto berikut menunjukkan karakteristik <em>Coffea liberica</em> (termasuk varietas Excelsa) — perbandingan daun, buah, dan biji terhadap Robusta — sehingga ketika berjalan di sebuah kebun warisan Hindia Belanda, kita bisa membaca jejak sejarahnya.</p>
+    <p class="lang-en">How can one distinguish Excelsa rootstock from Robusta scion when standing in front of a single tree? The six photos below show the characteristics of <em>Coffea liberica</em> (including the Excelsa variety) — leaf, fruit, and bean comparisons against Robusta — so that walking through a Dutch-colonial legacy garden, one can read its historical traces.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffea_liberica_(5594972157).jpg?width=640" alt="Coffea liberica leaves close-up" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Daun <em>Coffea liberica</em> (termasuk Excelsa) — jauh lebih besar dan kasar daripada Robusta, panjangnya bisa 25–35 cm</span>
+          <span class="lang-en">Leaves of <em>Coffea liberica</em> (including Excelsa) — far larger and coarser than Robusta, reaching 25–35 cm in length</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffea_liberica_(5594972157).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffea_liberica_(5597837873).jpg?width=640" alt="Coffea liberica tree branch" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Ranting & arsitektur <em>Coffea liberica</em> — pohon dewasanya bisa mencapai 9–18 meter (lebih dari dua kali Robusta) bila dibiarkan</span>
+          <span class="lang-en">Branch & architecture of <em>Coffea liberica</em> — a mature tree can reach 9–18 m (more than twice the size of Robusta) if unpruned</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffea_liberica_(5597837873).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Liberian_Coffee_(5597839545).jpg?width=640" alt="Liberian coffee fruits on branch" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Buah Excelsa/Liberica — jauh lebih besar dari ceri Robusta, sering tumbuh memanjang seperti telur kecil</span>
+          <span class="lang-en">Excelsa/Liberica fruits — much larger than Robusta cherries, often growing elongated like small eggs</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Liberian_Coffee_(5597839545).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffea_liberica_(5598419030).jpg?width=640" alt="Coffea liberica flowers and leaves" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Bunga Excelsa/Liberica — putih beraroma melati seperti Robusta, namun tangkainya lebih panjang dan kluster lebih jarang</span>
+          <span class="lang-en">Excelsa/Liberica flowers — white and jasmine-scented like Robusta, but with longer stalks and looser clusters</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffea_liberica_(5598419030).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Size_Comparison_Racemosa_Bean_Liberica_Bean_Arabica_Bean.jpg?width=640" alt="Bean size comparison: Racemosa, Liberica, Arabica" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Perbandingan ukuran biji — kiri ke kanan: <em>Racemosa</em>, <em>Liberica</em> (Excelsa), <em>Arabica</em>. Liberica memiliki biji paling besar di antara empat spesies kopi komersial</span>
+          <span class="lang-en">Bean size comparison — left to right: <em>Racemosa</em>, <em>Liberica</em> (Excelsa), <em>Arabica</em>. Liberica has the largest bean among the four commercial coffee species</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Size_Comparison_Racemosa_Bean_Liberica_Bean_Arabica_Bean.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Detail_of_Coffea_canephora_branch_and_leaves.jpg?width=640" alt="Coffea canephora branch and leaves for comparison" loading="lazy">
+        <div class="caption">
+          <span class="lang-id">Sebagai pembanding: daun & ranting <em>Coffea canephora</em> (Robusta). Saat berdiri di hadapan pohon Ngantang, pucuk yang terlihat adalah <strong>profil ini</strong> — sementara akar tetap profil Liberica</span>
+          <span class="lang-en">For comparison: <em>Coffea canephora</em> (Robusta) branch and leaves. Standing in front of a Ngantang tree, what is visible above is <strong>this profile</strong> — while the roots remain Liberica profile</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Detail_of_Coffea_canephora_branch_and_leaves.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Praktik Rootstock Excelsa</span><span class="lang-en">The Science: 4-Source Comparison on Excelsa Rootstock Practice</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber yang membahas konfigurasi rootstock dalam praktik kopi Indonesia & internasional:</p>
+    <p class="lang-en">Let us examine four sources that discuss rootstock configuration in Indonesian and international coffee practice:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Posisi tentang Excelsa Rootstock</span><span class="lang-en">Position on Excelsa Rootstock</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Awal Pra-Panen Wakaf (Ngantang, 2026)</strong></td>
+          <td><span class="lang-id">Konfigurasi <em>"Excelsa rootstock + Robusta scion"</em> diadopsi sebagai konteks <strong>terkonfirmasi</strong> (BRIN Purwodadi, 5 Mei 2026). Strategi: pertahankan, jangan ganti.</span><span class="lang-en">Configuration <em>"Excelsa rootstock + Robusta scion"</em> adopted as <strong>confirmed</strong> context (BRIN Purwodadi, 5 May 2026). Strategy: preserve, do not replace.</span></td>
+        </tr>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong></td>
+          <td><span class="lang-id">Tidak membahas Excelsa rootstock secara eksplisit — fokus pada perbanyakan Robusta murni dari klon (hal 63). Gap historis: konfigurasi warisan kolonial tidak masuk SOP modern.</span><span class="lang-en">Does not explicitly address Excelsa rootstock — focuses on pure Robusta propagation from clones (p 63). Historical gap: colonial-legacy configurations are absent from modern SOPs.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Membahas peremajaan kopi melalui sambung pucuk pada pohon dewasa (hal 14), namun konteksnya Robusta-on-Robusta. Tidak membahas Liberica rootstock secara eksplisit.</span><span class="lang-en">Discusses rejuvenation via top-grafting on mature trees (p 14), but in a Robusta-on-Robusta context. Liberica rootstock is not explicitly discussed.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004) — <em>Coffee: Growing, Processing</em></strong></td>
+          <td><span class="lang-id">Bab 2 mencatat praktik historis penggunaan <em>Coffea liberica</em> sebagai rootstock di Hindia Belanda pasca-rust 1880-an. Konfigurasi Ngantang konsisten dengan jejak sejarah ini.</span><span class="lang-en">Chapter 2 documents the historical practice of using <em>Coffea liberica</em> as rootstock in the Dutch East Indies after the 1880s rust epidemic. The Ngantang configuration is consistent with this historical trace.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: konfigurasi Excelsa rootstock + Robusta scion adalah jejak historis yang sah, namun tidak terdokumentasi di SOP modern.</strong> Bukan karena dianggap salah — melainkan karena SOP modern (2010, 2019) fokus pada peremajaan dengan Robusta murni untuk efisiensi propagasi massal. Konfigurasi warisan seperti di Ngantang berada di luar cakupan editorial mereka, bukan di luar legitimasi agronomisnya.</p>
+    <p class="lang-en"><strong>The emerging pattern: the Excelsa rootstock + Robusta scion configuration is a legitimate historical trace, but undocumented in modern SOPs.</strong> Not because it is considered wrong — but because modern SOPs (2010, 2019) focus on rejuvenation with pure Robusta for efficient mass propagation. Heritage configurations like Ngantang's fall outside their editorial scope, not outside their agronomic legitimacy.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Validasi Internasional & Klarifikasi BRIN</span><span class="lang-en">✓ International Validation & BRIN Clarification</span></div>
+      <p class="lang-id">Klarifikasi langsung dari tim peneliti <strong>BRIN Kebun Raya Purwodadi pada 5 Mei 2026</strong> (status: pertemuan penjajakan, belum MoU): konfigurasi rootstock Excelsa di kebun-kebun warisan Jawa Timur — termasuk Ngantang — adalah <em>peninggalan agronomis yang sah</em>, bukan kontaminasi atau kesalahan. Pada elevasi marginal 600–700 mdpl dengan curah hujan tinggi, sistem perakaran Excelsa memberikan resiliensi yang Robusta murni tidak miliki. Ini menjadi dasar Wakif memutuskan untuk <strong>mempertahankan konfigurasi yang ada</strong>, dengan strategi peremajaan klonal hanya pada pucuk Robusta.</p>
+      <p class="lang-en">Direct clarification from the <strong>BRIN Purwodadi Botanical Garden research team on 5 May 2026</strong> (status: exploratory meeting, no MoU yet): the Excelsa rootstock configuration in East Java's legacy gardens — including Ngantang — is a <em>legitimate agronomic legacy</em>, not contamination or error. At marginal elevations of 600–700 m with high rainfall, the Excelsa root system provides a resilience that pure Robusta lacks. This is the basis on which the Waqif decided to <strong>preserve the existing configuration</strong>, with clonal rejuvenation applied only to the Robusta scion.</p>
+    </div>
+
+    <p class="lang-id">Untuk konteks taksonomi modern: <a href="https://doi.org/10.1111/j.1095-8339.2006.00584.x" target="_blank" rel="noopener">Davis et al. (2006)</a> dan revisi lanjutannya <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">Davis et al. (2011)</a> menetapkan bahwa Excelsa kini diklasifikasikan sebagai varietas dari <em>Coffea liberica</em>. Klasifikasi ini relevan untuk SOP karena menyatukan tatalaksana penyakit yang sebelumnya terpecah — Liberica dan Excelsa secara genetik sangat dekat dan rentan terhadap patogen yang sama.</p>
+    <p class="lang-en">For modern taxonomic context: <a href="https://doi.org/10.1111/j.1095-8339.2006.00584.x" target="_blank" rel="noopener">Davis et al. (2006)</a> and the follow-up revision <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">Davis et al. (2011)</a> establish that Excelsa is now classified as a variety of <em>Coffea liberica</em>. This classification is relevant to SOPs because it consolidates previously fragmented disease management — Liberica and Excelsa are genetically very close and susceptible to the same pathogens.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Strategi Mengelola Konfigurasi Dua-Spesies</span><span class="lang-en">Practice: Managing the Two-Species Configuration</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Berdasarkan sintesa di atas, berikut lima langkah strategi pengelolaan untuk pohon dengan konfigurasi Excelsa rootstock + Robusta scion — diterapkan di kebun kopi wakaf Ngantang sebagai studi kasus. Pembaca dapat menggunakan kerangka ini untuk kebun warisan dengan profil serupa. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Based on the synthesis above, here are five management strategy steps for trees with the Excelsa rootstock + Robusta scion configuration — applied at the Ngantang waqf coffee garden as a case study. Readers may use this framework for legacy gardens with similar profiles. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Inventarisasi Visual Pohon Berbasis Konfigurasi</span><span class="lang-en">Step 1 · Visual Inventory by Configuration</span></div>
+          <div class="step-text">
+            <span class="lang-id">Catat per pohon: apakah ada tunas air berdaun lebar-kasar di pangkal (indikator rootstock Excelsa masih aktif) vs tunas air berdaun Robusta. Bila rootstock Excelsa masih aktif, pohon tersebut adalah konfigurasi dua-spesies yang harus dipertahankan utuh.</span>
+            <span class="lang-en">Record per tree: are there water sprouts with broad-coarse leaves at the base (indicator that the Excelsa rootstock is still active) versus water sprouts with Robusta leaves? If Excelsa rootstock is still active, the tree is a two-species configuration that must be preserved intact.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Manajemen Tunas Air Excelsa di Pangkal</span><span class="lang-en">Step 2 · Manage Excelsa Water Sprouts at the Base</span></div>
+          <div class="step-text">
+            <span class="lang-id">Tunas air berdaun Excelsa yang muncul di bawah titik sambung <strong>harus dipangkas rutin</strong> — bukan dibiarkan tumbuh. Bila dibiarkan, kompetisi nutrisi akan mengalahkan scion Robusta dan akhirnya hanya akar/cabang Liberica yang produktif (buah tidak sesuai pasar Robusta).</span>
+            <span class="lang-en">Excelsa water sprouts emerging below the graft union <strong>must be routinely pruned</strong> — not left to grow. If allowed, nutrient competition will overpower the Robusta scion, leaving only the Liberica root/branches productive (fruit will not match the Robusta market).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Pemupukan Diadaptasi untuk Akar Excelsa yang Dalam</span><span class="lang-en">Step 3 · Adapt Fertilization for Deep Excelsa Roots</span></div>
+          <div class="step-text">
+            <span class="lang-id">Akar Excelsa menjelajah lebih dalam dari akar Robusta murni. Implikasinya: aplikasi pupuk granular dalam parit lingkar piringan (kedalaman 10–15 cm, bukan permukaan) memaksimalkan penyerapan. Pemupukan tabur-tebar permukaan kurang efisien untuk konfigurasi ini. Detail di Modul D.</span>
+            <span class="lang-en">Excelsa roots explore deeper than pure Robusta roots. The implication: granular fertilizer applied in trenches around the canopy projection (10–15 cm depth, not the surface) maximizes uptake. Broadcast surface application is less efficient for this configuration. Details in Module D.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Peremajaan Scion (Bukan Rootstock) bila Produktivitas Menurun</span><span class="lang-en">Step 4 · Rejuvenate Scion (Not Rootstock) When Productivity Declines</span></div>
+          <div class="step-text">
+            <span class="lang-id">Bila pohon menua dan produktivitasnya turun, <strong>jangan tebang sampai pangkal</strong> — itu akan menghancurkan rootstock Excelsa yang justru aset utama. Yang dilakukan: top-graft baru dengan klon Robusta unggul (BP 358/SA 237 dari Modul A) di leher batang lama. Detail teknik di Modul G.</span>
+            <span class="lang-en">When a tree ages and productivity drops, <strong>do not fell it to the base</strong> — that destroys the Excelsa rootstock which is in fact the primary asset. The action: new top-grafting with elite Robusta clones (BP 358/SA 237 from Module A) at the collar of the existing stem. Technical details in Module G.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Dokumentasi Konfigurasi sebagai Aset Naratif</span><span class="lang-en">Step 5 · Document the Configuration as a Narrative Asset</span></div>
+          <div class="step-text">
+            <span class="lang-id">Foto + catatan konfigurasi dua-spesies di setiap pohon menjadi <em>aset cerita</em> untuk pasar specialty: "kebun warisan dengan rootstock Liberica era kolonial Hindia Belanda". Ini bukan kelemahan untuk disembunyikan, melainkan diferensiasi yang justru bernilai bagi mitra seperti Bonsari Coffee & Nomad Coffee.</span>
+            <span class="lang-en">Photos + notes of the two-species configuration on each tree become a <em>narrative asset</em> for the specialty market: "a legacy garden with Liberica rootstock from the Dutch East Indies era". This is not a weakness to hide but a differentiation that is valuable to partners like Bonsari Coffee & Nomad Coffee.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Jika Anda berdiri di sebuah kebun kopi tua, ciri-ciri visual apa yang dapat Anda gunakan untuk menebak apakah pohon tersebut memiliki rootstock Excelsa atau pure Robusta? Pikirkan dimensi-dimensi observabel: daun di pangkal vs di pucuk, perbedaan tekstur kulit batang di leher graft, postur akar yang terlihat di permukaan.</p>
+      <p class="prompt lang-en">1. If you were standing in an old coffee garden, what visual cues could you use to infer whether a tree has an Excelsa rootstock or pure Robusta? Consider observable dimensions: leaves at the base vs at the top, bark texture differences at the graft collar, surface-visible root posture.</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Penulis modul ini menggunakan kerangka 5P formulasi kasus klinis untuk membaca pohon: <em>rootstock = predisposing, scion = presenting, elevasi = perpetuating, sambungan baik = protective</em>. Andai Anda harus menerapkan kerangka 5P ini pada masalah lain di hidup Anda (kesehatan, hubungan, pekerjaan), bagaimana cara Anda memetakan komponen-komponen tersebut? Apa yang berubah saat Anda berpikir dalam kerangka ini?</p>
+      <p class="prompt lang-en">2. The author of this module uses the 5P clinical case formulation to read the tree: <em>rootstock = predisposing, scion = presenting, elevation = perpetuating, healthy graft union = protective</em>. If you had to apply this 5P frame to another problem in your life (health, relationships, work), how would you map the components? What changes when you think in this frame?</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Jika Anda menemukan sebuah kebun warisan dengan konfigurasi yang tidak biasa (mis. Excelsa rootstock di tempat yang "seharusnya" Robusta murni), apa pertimbangan etis & teknis yang Anda gunakan untuk memutuskan: mempertahankan warisan itu, atau menggantinya dengan standar modern? Apa yang hilang dan apa yang didapat di masing-masing pilihan?</p>
+      <p class="prompt lang-en">3. If you found a legacy garden with an unusual configuration (e.g., Excelsa rootstock where "pure Robusta" might be expected), what ethical and technical considerations would you use to decide: preserve the legacy, or replace it with the modern standard? What is lost and what is gained in each choice?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Notulen Rapat Wakaf Produktif × BRIN Purwodadi (5 Mei 2026).</strong> Pertemuan penjajakan — klarifikasi botanis konfigurasi Excelsa rootstock + Robusta scion di Kebun Ngantang. <em>(Internal · status: belum MoU)</em></li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.2 — historical use of Coffea liberica rootstock in Dutch East Indies post-1880s rust. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>Davis, A.P., Govaerts, R., Bridson, D.M. & Stoffelen, P. (2006).</strong> An annotated taxonomic conspectus of the genus Coffea (Rubiaceae). <em>Botanical Journal of the Linnean Society</em> 152(4):465-512. <a href="https://doi.org/10.1111/j.1095-8339.2006.00584.x" target="_blank" rel="noopener">DOI</a> — basis taxonomic reclassification of Excelsa as Coffea liberica var. dewevrei.</li>
+      <li><strong>Davis, A.P., Tosh, J., Ruch, N. & Fay, M.F. (2011).</strong> Growing coffee: Psilanthus reduces molecularly recognized Coffea. <em>Botanical Journal of the Linnean Society</em> 167(4):357-377. <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" rel="noopener">DOI</a></li>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 14 — rejuvenation via top-graft)</em></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 14)</em></li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain) · Tropenmuseum (KIT, Amsterdam).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../A-klon-robusta-zona-basah/index.html"><span class="lang-id">← Modul A: Klon Robusta</span><span class="lang-en">← Module A: Robusta Clones</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="#" class="next" style="opacity:.6;pointer-events:none"><span class="lang-id">Modul C (segera) →</span><span class="lang-en">Module C (soon) →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>
