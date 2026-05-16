@@ -2284,17 +2284,31 @@ function hideEditBanner() {
   }
 }
 
-function deleteLaporan(id) {
+async function deleteLaporan(id) {
   const lap = STATE.laporan.find(l => l.id === id);
   if (!lap) { alert('Entry tidak ditemukan.'); return; }
   const linkedUpah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.filter(u =>
-    u.tgl === lap.tgl && u.pelapor === lap.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill')
+    u.tgl === lap.tgl && u.pelapor === lap.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill' || u.src === 'auto_firestore')
   ) : [];
   const _lapDetail = getDetailText(lap);
   const msg = `Hapus entry ini?\n\n📅 ${formatTgl(lap.tgl)} · ${lap.pelapor} · Kebun ${lap.bidang} · ${lap.kategori}\n📝 ${_lapDetail.substring(0, 80)}${_lapDetail.length>80?'…':''}\n\n` +
     (linkedUpah.length > 0 ? `⚠️ Ini juga akan menghapus ${linkedUpah.length} linked UPAH entry (status: ${linkedUpah.filter(u=>u.status==='lunas').length} sudah lunas, ${linkedUpah.filter(u=>u.status==='belum').length} belum dibayar). Cashbook auto-entries yang sudah lunas TIDAK terhapus (audit trail).\n\n` : '') +
     'Lanjut?';
   if (!confirm(msg)) return;
+
+  // === FIRESTORE DELETE FIRST (locked 17 Mei 2026 — fix duplikasi-after-delete bug) ===
+  // Entry yang berasal dari Firestore (src 'lapor_pwa') HARUS dihapus dari Firestore juga,
+  // kalau hanya dihapus lokal, listener fires lagi → re-add → muncul lagi.
+  const isFromFirestore = lap.src === 'lapor_pwa' || lap.src === 'auto_firestore';
+  if (isFromFirestore && typeof window.firestoreDelete === 'function') {
+    try {
+      await window.firestoreDelete(id);
+    } catch (e) {
+      alert('Gagal hapus dari Firestore: ' + (e.message || 'error') + '\n\nEntry tidak dihapus untuk avoid out-of-sync state.');
+      return;
+    }
+  }
+
   STATE.laporan = STATE.laporan.filter(l => l.id !== id);
   localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
   // Cascade delete linked UPAH entries (only belum dibayar — preserve lunas untuk audit)
@@ -2307,7 +2321,7 @@ function deleteLaporan(id) {
   }
   renderLog();
   if (typeof renderDashboard === 'function') renderDashboard();
-  showToast(`🗑️ Entry deleted (${linkedUpah.filter(u=>u.status==='belum').length} linked UPAH auto-removed)`);
+  showToast(`🗑️ Entry deleted${isFromFirestore ? ' (Firestore + local)' : ' (local only)'} · ${linkedUpah.filter(u=>u.status==='belum').length} linked UPAH auto-removed`);
 }
 
 // ===== FORM =====
@@ -7858,7 +7872,7 @@ function autoCreateUpahFromEntry(entry) {
 <!-- Firebase Firestore Listener (Phase 1B) — Real-time sync dari Worker PWA submissions -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy }
+  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc }
     from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
@@ -7866,6 +7880,23 @@ function autoCreateUpahFromEntry(entry) {
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);
     const q = query(collection(db, COLLECTIONS.laporan), orderBy('created_at', 'desc'));
+
+    // Expose delete helper to global scope (locked 17 Mei 2026 — fix duplikasi-after-delete bug)
+    // Tombstone tracking: entries di-delete locally TIDAK boleh re-add via listener race condition
+    window._deletedTombstones = window._deletedTombstones || new Set();
+    window.firestoreDelete = async (docId) => {
+      if (!docId) throw new Error('docId required');
+      try {
+        window._deletedTombstones.add(docId);
+        await deleteDoc(doc(db, COLLECTIONS.laporan, docId));
+        console.log('[Firestore] ✓ Deleted doc:', docId);
+        return true;
+      } catch (e) {
+        console.error('[Firestore] delete failed:', e);
+        window._deletedTombstones.delete(docId);  // rollback tombstone on fail
+        throw e;
+      }
+    };
 
     // Normalize incoming Firestore data — bridge field naming between lapor.html (worker PWA) ↔ monitor-v2 (dashboard)
     function normalizeWorkerEntry(data) {
@@ -7933,15 +7964,32 @@ function autoCreateUpahFromEntry(entry) {
     onSnapshot(q, (snapshot) => {
       let newCount = 0;
       let upahCreatedCount = 0;
+      let removedCount = 0;
       snapshot.docChanges().forEach(change => {
+        const docId = change.doc.id;
+
+        if (change.type === 'removed') {
+          // Firestore deletion — remove from local STATE (locked 17 Mei 2026)
+          const idx = STATE.laporan.findIndex(l => l.id === docId);
+          if (idx >= 0) {
+            STATE.laporan.splice(idx, 1);
+            removedCount++;
+          }
+          window._deletedTombstones?.delete(docId);   // clear tombstone after Firestore confirms removal
+          return;
+        }
+
         if (change.type === 'added' || change.type === 'modified') {
+          // Skip if this docId was just locally deleted (race condition — Firestore hasn't propagated yet)
+          if (window._deletedTombstones?.has(docId)) {
+            console.log('[Listener] Skipping tombstoned entry:', docId);
+            return;
+          }
           const data = normalizeWorkerEntry(change.doc.data());
-          // Skip if already in STATE.laporan
           const existingIdx = STATE.laporan.findIndex(l => l.id === data.id);
           if (existingIdx === -1) {
             STATE.laporan.unshift(data);
             newCount++;
-            // Auto-create UPAH entry untuk worker yg punya tarif (YIT/KUMPUL)
             if (typeof autoCreateUpahFromEntry === 'function') {
               const upahEntry = autoCreateUpahFromEntry(data);
               if (upahEntry) upahCreatedCount++;
@@ -7951,7 +7999,7 @@ function autoCreateUpahFromEntry(entry) {
           }
         }
       });
-      if (newCount > 0) {
+      if (newCount > 0 || removedCount > 0) {
         localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
         // Refresh views
         if (typeof renderDashboard === 'function') renderDashboard();
