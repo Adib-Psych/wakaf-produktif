@@ -1283,13 +1283,19 @@ async function init() {
   // 5. Populate kategori dropdown filtered per worker
   populateKategoriDropdown();
 
-  // 6. Network status
+  // 6. Network status + ONLINE-FIRST sync (locked 16 Mei 2026)
   updateNetStatus();
   window.addEventListener('online',  () => { updateNetStatus(); maybeAutoSync(); });
   window.addEventListener('offline', () => updateNetStatus());
 
-  // 7. Refresh queue badge
+  // 7. Refresh queue badge + drain stale queue on page load (kalau ada pending dari sesi lalu)
   refreshQueueBadge();
+  // Drain after 2s delay (biar Firestore init complete)
+  setTimeout(() => {
+    if (navigator.onLine && window.firestoreDB) {
+      maybeAutoSync().catch(e => console.warn('[Initial drain]', e));
+    }
+  }, 2000);
 
   // 8. Hook UI events
   hookEvents();
@@ -1973,11 +1979,37 @@ async function submitForm() {
       _filled_by: filledBy
     };
 
-    await queueSubmission(entry);
+    // ONLINE-FIRST sync (locked 16 Mei 2026 per Adib instruksi):
+    // 1. Queue to IndexedDB (safety net + queue tracking)
+    // 2. If online + Firestore available → push IMMEDIATELY, mark as synced
+    // 3. If offline / Firestore unavailable → entry stays pending, sync on next online
+    const localId = await queueSubmission(entry);
     await refreshQueueBadge();
 
-    // Success modal
-    document.getElementById('successModal').showModal();
+    let directSyncOk = false;
+    if (navigator.onLine && window.firestoreDB && typeof window.firestorePush === 'function') {
+      try {
+        submitBtn.innerHTML = '🔄 Mengirim ke dashboard...';
+        await window.firestorePush(entry, localId);
+        await markSynced(localId);
+        await refreshQueueBadge();
+        directSyncOk = true;
+        console.log('[Submit] ✓ Direct Firestore push success — entry should appear di dashboard <5s');
+      } catch (pushErr) {
+        console.warn('[Submit] Firestore direct push failed, fallback to queue:', pushErr);
+        showToast('⚠️ Sinyal lemah — laporan tersimpan, sync nanti otomatis', 'warning');
+      }
+    }
+
+    // Success modal — beda message based on sync status
+    const successModal = document.getElementById('successModal');
+    if (successModal) {
+      const titleEl = successModal.querySelector('.success-title, h2, h3, [data-success-title]');
+      const msgEl = successModal.querySelector('.success-msg, p, [data-success-msg]');
+      if (directSyncOk && titleEl) titleEl.textContent = '✅ Terkirim ke Dashboard!';
+      if (directSyncOk && msgEl) msgEl.textContent = 'Laporan langsung masuk ke monitor Adib. Barakallahu fiik.';
+      successModal.showModal();
+    }
 
     // Reset form
     resetForm();
