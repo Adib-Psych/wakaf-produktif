@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Sintesa SOP Robusta — Kebun Kopi Wakaf Ngantang (Evidence-Based Comparison)</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Palet Lesson Learned (warm slate + earth accents) */
+  --paper:#FAF7F2; --s1:#FFFFFF; --s2:#EFEAE0; --s3:#DDD5C7;
+  --earth:#3A4A55; --earth-deep:#2D3742; --ink:#3A4A55;
+  --mute:#6B7B85; --mute-light:#8FA0A8;
+  --cherry:#C66E5C; --cherry-dark:#A85645;
+  --amber:#C4906A; --amber-dark:#8B6914;
+  --gold:#C4906A;
+  --moss:#7B9B7E; --moss-dark:#5C7A5E;
+  --sage:#9CB4A4; --sage-light:#C5D5C5;
+  --sand:#DDD5C7; --cream:#FAF7F2;
+  --blue:#5A8AA0; --cyan:#7BA8B5; --purple:#A89BB8; --pink:#D4A89A;
+  /* Status semantic */
+  --conv:#7B9B7E; --conv-bg:#E8EFE9;
+  --div:#C4906A; --div-bg:#F5EBE0;
+  --uniq:#A89BB8; --uniq-bg:#EFE9F2;
+  --crit:#C66E5C; --crit-bg:#F5E3DD;
+}
+html,body{font-family:-apple-system,'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;font-size:13.5px}
+.page{max-width:1600px;margin:0 auto;padding:36px 40px}
+
+/* HEADER — Opsi D: Warm Earth Slate (flat solid, no gradient) */
+.hero{background:var(--earth);color:#fff;padding:46px 52px 46px 60px;border-radius:14px;position:relative;border-left:10px solid var(--cherry);box-shadow:0 4px 0 var(--earth-deep);margin-bottom:28px}
+.hero .tag{font-size:11.5px;font-weight:800;letter-spacing:5px;color:var(--sage);margin-bottom:16px;display:flex;align-items:center;gap:14px}
+.hero .tag .dot{width:14px;height:14px;background:var(--cherry);border-radius:50%}
+.hero h1{font-size:38px;font-weight:900;line-height:1.15;letter-spacing:-1px;margin-bottom:12px}
+.hero h1 em{color:var(--sand);font-style:italic;font-weight:700}
+.hero .sub{font-size:15.5px;color:var(--sand);font-weight:500;max-width:1100px;line-height:1.6}
+.hero .meta{display:flex;gap:28px;margin-top:22px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.22);font-size:12.5px;color:var(--sage);flex-wrap:wrap}
+.hero .meta strong{color:#fff;letter-spacing:1px}
+
+/* SOURCE STRIP */
+.sources{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.src-card{background:#fff;border-radius:14px;padding:20px 22px;box-shadow:0 1px 0 rgba(46,64,64,.06),0 3px 0 var(--earth);border:1px solid rgba(46,64,64,.08);display:flex;flex-direction:column}
+.src-card .top-row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
+.src-card .badge{font-size:9.5px;letter-spacing:1.5px;color:var(--moss);font-weight:800;text-transform:uppercase;flex:1;line-height:1.3}
+.src-card .stat{background:var(--sage);color:var(--earth);padding:4px 10px;border-radius:8px;font-size:10px;font-weight:800;white-space:nowrap;flex-shrink:0}
+.src-card .title{font-size:14.5px;font-weight:800;color:var(--earth);line-height:1.3;margin-bottom:8px}
+.src-card .meta{font-size:11px;color:var(--mute);line-height:1.55}
+.src-card.primary .badge{color:var(--cherry)}
+.src-card.primary{box-shadow:0 1px 0 rgba(193,75,58,.12),0 3px 0 var(--cherry-dark)}
+.src-card.internal{box-shadow:0 1px 0 rgba(139,105,20,.15),0 3px 0 var(--gold)}
+.src-card.internal .badge{color:var(--gold)}
+
+/* SECTION */
+.sec{margin-bottom:30px}
+.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:20px}
+.sec-head .num{width:48px;height:48px;border-radius:50%;background:var(--moss);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;flex-shrink:0;box-shadow:0 3px 0 var(--earth)}
+.sec-head .num.cherry{background:var(--cherry);box-shadow:0 3px 0 var(--cherry-dark)}
+.sec-head .num.gold{background:var(--gold);box-shadow:0 3px 0 #5d4910}
+.sec-head .num.uniq{background:var(--uniq);box-shadow:0 3px 0 #4a1369}
+.sec-head h2{font-size:23.5px;font-weight:900;color:var(--earth);letter-spacing:-0.5px}
+.sec-head .desc{font-size:12.5px;color:var(--mute);font-style:italic;margin-left:10px}
+
+/* CONTEXT NGANTANG BOX */
+.context-box{background:#F5E3DD;border-radius:14px;padding:28px 32px;border:2px solid var(--cherry);margin-bottom:8px;position:relative}
+.context-box::before{content:'⚠';position:absolute;top:18px;right:22px;font-size:32.5px;opacity:0.2}
+.context-box h3{font-size:19px;font-weight:900;color:var(--cherry-dark);margin-bottom:12px}
+.context-box p{font-size:13.5px;color:var(--ink);line-height:1.65;margin-bottom:8px}
+.context-box strong{color:var(--cherry)}
+.context-box .quote{background:#fff;border-left:4px solid var(--cherry);padding:14px 18px;margin-top:14px;font-size:12.5px;font-style:italic;color:var(--mute);border-radius:0 8px 8px 0;line-height:1.55}
+
+/* COMPARISON MATRIX TABLE */
+.matrix{background:#fff;border-radius:14px;box-shadow:0 1px 0 rgba(58,74,85,.06),0 3px 0 var(--earth);border:1px solid rgba(58,74,85,.08);overflow:visible}
+.matrix table{width:100%;border-collapse:separate;border-spacing:0;font-size:12px}
+.matrix thead{position:relative;z-index:20}
+.matrix th{position:sticky;top:0;z-index:20;background:var(--earth);color:#fff;padding:16px 12px;text-align:left;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:1px;box-shadow:inset 0 -2px 0 var(--earth-deep),0 2px 8px rgba(45,55,66,0.18)}
+.matrix th.topic{width:10%}
+.matrix th.ngt{width:18%;background:var(--cherry-dark)}
+.matrix th.ref{width:12%}
+.matrix th.status{width:7%;text-align:center}
+.matrix th.analisa{width:21%;background:var(--amber-dark)}
+.matrix th.validasi{width:20%;background:var(--moss-dark)}
+.matrix td{padding:14px 14px;border-top:1px solid #f0f0f0;vertical-align:top;line-height:1.6;font-size:12px}
+.matrix td.ngt-cell{background:rgba(253,226,220,0.18);border-left:4px solid var(--cherry)}
+.matrix td.analisa-cell{background:rgba(255,248,230,0.4);border-left:4px solid var(--gold);font-size:12px}
+.matrix td.analisa-cell strong{color:var(--gold)}
+.matrix td.analisa-cell .arrow-rec{display:block;margin-top:6px;padding-top:6px;border-top:1px dashed rgba(139,105,20,0.3);color:var(--earth);font-weight:700}
+.matrix td.analisa-cell .arrow-rec::before{content:'→ ';color:var(--cherry);font-weight:900}
+.matrix td.validasi-cell{background:rgba(232,239,233,0.5);border-left:4px solid var(--moss);font-size:11.5px;line-height:1.6}
+.matrix td.validasi-cell strong.tier{color:var(--moss-dark);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;font-weight:800}
+.matrix td.validasi-cell .verdict{display:block;margin-top:8px;padding-top:8px;border-top:1px dashed rgba(123,155,126,0.35);font-weight:700;font-size:11px}
+.matrix td.validasi-cell .v-ok{color:var(--moss-dark)}
+.matrix td.validasi-cell .v-partial{color:var(--amber-dark)}
+.matrix td.validasi-cell .v-gap{color:var(--cherry-dark)}
+.matrix tr.aligned{background:rgba(232,245,233,0.3)}
+.matrix tr.partial{background:rgba(255,248,230,0.3)}
+.matrix tr.divergent{background:rgba(243,229,245,0.3)}
+.matrix tr.critical{background:rgba(253,226,220,0.4)}
+.matrix td.topic-cell{font-weight:800;color:var(--earth);background:#fafbfa;font-size:12.5px}
+.matrix td.topic-cell .subtitle{font-size:10.5px;color:var(--mute);font-weight:500;font-style:italic;margin-top:3px}
+.matrix td .ref{font-size:10.5px;color:var(--mute);font-style:italic;display:block;margin-top:4px}
+.matrix td strong{color:var(--earth)}
+.matrix td em{color:var(--cherry);font-style:normal;font-weight:700}
+.status-badge{display:inline-block;padding:5px 11px;border-radius:12px;font-size:9.5px;font-weight:800;letter-spacing:0.8px;text-transform:uppercase;line-height:1.35}
+.s-conv{background:var(--conv-bg);color:var(--conv)}
+.s-conv-dom{background:#E8EFE9;color:#5C7A5E;border:1px dashed #9CB4A4}
+.s-div{background:var(--div-bg);color:var(--div)}
+.s-crit{background:var(--crit-bg);color:var(--crit)}
+.s-uniq{background:var(--uniq-bg);color:var(--uniq)}
+
+/* CONVERGENCE / DIVERGENCE / UNIQUE GRIDS */
+.findings-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.finding-card{background:#fff;border-radius:14px;padding:22px 26px;box-shadow:0 1px 0 rgba(46,64,64,.06),0 3px 0 var(--earth);border:1px solid rgba(46,64,64,.08);border-top:5px solid var(--conv)}
+.finding-card.div-card{border-top-color:var(--div)}
+.finding-card.uniq-card{border-top-color:var(--uniq)}
+.finding-card h3{font-size:14.5px;font-weight:900;color:var(--earth);margin-bottom:14px;display:flex;align-items:center;gap:10px;text-transform:uppercase;letter-spacing:1px}
+.finding-card h3 .ic{width:28px;height:28px;border-radius:6px;background:var(--conv);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:900}
+.finding-card.div-card h3 .ic{background:var(--div)}
+.finding-card.uniq-card h3 .ic{background:var(--uniq)}
+.finding-card ul{list-style:none;padding:0}
+.finding-card li{padding:10px 0;border-bottom:1px solid #f5f5f5;font-size:12.5px;line-height:1.65;display:flex;gap:10px}
+.finding-card li:last-child{border:none}
+.finding-card li .mark{flex-shrink:0;width:16px;color:var(--conv);font-weight:900}
+.finding-card.div-card li .mark{color:var(--div)}
+.finding-card.uniq-card li .mark{color:var(--uniq)}
+.finding-card li strong{color:var(--earth)}
+
+/* EXCELSA SECTION — flat slate, cherry accent border kiri */
+.excelsa{background:var(--earth);color:#fff;border-radius:14px;padding:36px 42px 36px 50px;position:relative;border-left:10px solid var(--cherry);box-shadow:0 4px 0 var(--earth-deep)}
+.excelsa .badge-top{display:inline-block;background:var(--cherry);color:#fff;padding:6px 16px;border-radius:18px;font-size:10.5px;letter-spacing:2px;font-weight:800;text-transform:uppercase;margin-bottom:16px}
+.excelsa h2{font-size:25px;font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:-0.5px}
+.excelsa .sub{font-size:13.5px;color:var(--sand);font-style:italic;margin-bottom:24px}
+.excelsa-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.excelsa-col h4{font-size:11px;letter-spacing:2px;color:var(--sage);font-weight:800;text-transform:uppercase;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(168,200,188,.3)}
+.excelsa-col .item{margin-bottom:13px;font-size:13px;line-height:1.6;color:var(--cream)}
+.excelsa-col .item strong{color:#fff}
+.excelsa-col .item .src-tag{display:inline-block;font-size:9px;background:rgba(168,200,188,.18);color:var(--sage);padding:2px 7px;border-radius:5px;font-weight:700;margin-left:4px;letter-spacing:0.5px}
+
+/* TOP-GRAFT TIMELINE */
+.tg-timeline{margin-top:22px;background:rgba(255,255,255,0.08);border-radius:12px;padding:18px 22px;border:1px solid rgba(168,200,188,0.18)}
+.tg-timeline h4{font-size:10px;letter-spacing:2px;color:var(--sand);font-weight:800;text-transform:uppercase;margin-bottom:12px}
+.tg-steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.tg-step{text-align:center}
+.tg-step .n{width:32px;height:32px;border-radius:50%;background:var(--cherry);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:900;margin:0 auto 6px}
+.tg-step .lbl{font-size:9px;color:var(--cream);font-weight:700;letter-spacing:0.5px;line-height:1.3}
+
+/* RECOMMENDATIONS */
+.recs{background:#fff;border-radius:14px;padding:28px 32px;box-shadow:0 1px 0 rgba(46,64,64,.06),0 3px 0 var(--moss);border:1px solid rgba(46,64,64,.08)}
+.recs h3{font-size:19px;font-weight:900;color:var(--earth);margin-bottom:8px}
+.recs .sub{font-size:12.5px;color:var(--mute);font-style:italic;margin-bottom:22px}
+.recs-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.rec-item{padding:18px 22px;background:#fafbfa;border-radius:10px;border-left:5px solid var(--moss);font-size:12.5px;line-height:1.65}
+.rec-item .h{font-size:11px;letter-spacing:1.5px;color:var(--moss);font-weight:800;text-transform:uppercase;margin-bottom:7px}
+.rec-item .body{color:var(--ink)}
+.rec-item .body strong{color:var(--earth)}
+.rec-item.cherry{border-left-color:var(--cherry)}
+.rec-item.cherry .h{color:var(--cherry)}
+.rec-item.gold{border-left-color:var(--gold)}
+.rec-item.gold .h{color:var(--gold)}
+
+/* LEGEND */
+.legend{display:flex;gap:18px;align-items:center;margin:8px 0 22px;font-size:10px;color:var(--mute);flex-wrap:wrap}
+.legend .l-item{display:flex;align-items:center;gap:6px}
+.legend .l-dot{width:14px;height:14px;border-radius:3px}
+
+/* FOOTER — flat slate matching hero */
+.foot{margin-top:30px;padding:18px 26px;background:var(--earth);border-left:6px solid var(--cherry);border-radius:14px;color:#fff;font-size:11px;display:flex;justify-content:space-between;align-items:center}
+.foot .l strong{color:var(--sage);display:block;font-size:11.5px;letter-spacing:1px;margin-bottom:2px;font-weight:800}
+.foot .r{text-align:right;color:var(--sage);font-style:italic}
+.foot .r strong{color:#fff;font-style:normal;display:block;font-size:11.5px;letter-spacing:0.5px;margin-bottom:2px}
+.palette{display:flex;gap:5px}
+.palette span{width:24px;height:8px;border-radius:2px}
+
+/* Print */
+@media print{body{background:#fff}.page{max-width:none;padding:0}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HEADER -->
+<div class="hero">
+  <div class="tag"><span class="dot"></span>SOP SYNTHESIS · ROBUSTA · EVIDENCE-BASED COMPARISON</div>
+  <h1>Sintesa SOP Robusta —<em> Kebun Kopi Wakaf Ngantang</em></h1>
+  <div class="sub">Komparasi analitik satu pandangan antara <strong style="color:#fff">SOP Awal Pra-Panen</strong>, <strong style="color:#fff">2 referensi domestik</strong> (Budidaya Puslitbang 2010 · Pedoman Lampung BRMP 2024), <strong style="color:#fff">2 regulasi pendukung</strong> (Permentan 39/2015 pestisida · SNI 01-2907-2008 mutu biji), dan <strong style="color:#fff">validasi jurnal internasional Tier 1-2-5</strong> (ICCRI · Wintgens 2004 · WCR · SCA · jurnal terindeks) — untuk membangun SOP master berbasis bukti yang selaras dengan ekosistem Ngantang: Excelsa rootstock yang di-top-graft Robusta klon pada elevasi <strong style="color:var(--sand)">648 mdpl, kelas kesesuaian S3 zona basah</strong>.<br><br><strong style="color:#fff;font-size:12.5px">📌 Catatan struktur:</strong> kolom "SOP Awal Pra-Panen" merepresentasikan SOP yang ter-implementasi di kebun selama periode pra-panen — secara substansi <strong style="color:var(--sand)">selaras dengan SOP Robusta Edisi 2 Kementan 2019</strong> dengan adaptasi kontekstual ekosistem Ngantang. Kolom "Analisa &amp; Rekomendasi" merupakan <strong style="color:var(--sand)">penyesuaian SOP Pasca-Panen</strong> yang akan dikunci sebagai SOP versi Mei 2026.</div>
+  <div class="meta">
+    <span><strong>5 + 2 + ∞ SUMBER</strong> dianalisa &amp; divalidasi</span>
+    <span><strong>19 TOPIK</strong> dibandingkan</span>
+    <span><strong>FOKUS</strong> Robusta</span>
+    <span><strong>VERSI 2.1</strong> · Mei 2026</span>
+  </div>
+</div>
+
+<!-- 4 SOURCES -->
+<div class="sources">
+  <div class="src-card internal">
+    <div class="top-row">
+      <div class="badge">SOP Ngantang · Periode Pra-Panen</div>
+      <div class="stat">Ngantang</div>
+    </div>
+    <div class="title">SOP Awal Pra-Panen</div>
+    <div class="meta">SOP awal yang ter-implementasi di Kebun Kopi Wakaf Ngantang selama periode pra-panen — selaras dengan SOP Robusta Edisi 2 Kementan dengan adaptasi kontekstual ekosistem 648 mdpl, kelas S3 zona basah. Akan disesuaikan menjadi SOP Pasca-Panen versi Mei 2026 berdasarkan rekomendasi dari sintesa ini.</div>
+  </div>
+  <div class="src-card primary">
+    <div class="top-row">
+      <div class="badge">Referensi Silang · Tier 2 Nasional</div>
+      <div class="stat">75 hal</div>
+    </div>
+    <div class="title">Budidaya &amp; Pascapanen Kopi</div>
+    <div class="meta">Puslitbang Perkebunan Bogor · 2010 · Buku saku praktis Robusta nasional.</div>
+  </div>
+  <div class="src-card">
+    <div class="top-row">
+      <div class="badge">Referensi Silang · Tier 2 Lokal</div>
+      <div class="stat">56 hal</div>
+    </div>
+    <div class="title">Pedoman Robusta Spesifik Lampung</div>
+    <div class="meta">BPSIP/BRMP Lampung · 2024 · Adaptasi ICARE Tanggamus untuk Robusta zona basah.</div>
+  </div>
+  <div class="src-card">
+    <div class="top-row">
+      <div class="badge">Validasi · Tier 1-2-5</div>
+      <div class="stat">∞ ref</div>
+    </div>
+    <div class="title">Jurnal Internasional</div>
+    <div class="meta">ICCRI (anchor nasional-internasional) · Wintgens 2004 (Wiley) · WCR · SCA Coffee Standards · peer-reviewed (PubMed, SciELO, PMC).</div>
+  </div>
+</div>
+
+<!-- BASELINE NORMATIVE + REGULASI PENDUKUNG -->
+<div style="display:flex;gap:12px;align-items:center;margin-bottom:24px;padding:14px 20px;background:rgba(199,75,58,0.06);border-radius:12px;border-left:4px solid var(--cherry);flex-wrap:wrap">
+  <div style="font-size:10px;letter-spacing:2px;color:var(--cherry);font-weight:800;text-transform:uppercase;margin-right:6px">+ Baseline Normative &amp; Regulasi Pendukung:</div>
+  <div style="background:#fff;padding:9px 15px;border-radius:8px;border:1px solid rgba(199,75,58,0.2);font-size:11px">
+    <strong style="color:var(--cherry-dark)">SOP Robusta Edisi 2 (Kementan 2019)</strong> <span style="color:var(--mute)">· 310 hal · baseline SOP Awal Pra-Panen Ngantang</span>
+  </div>
+  <div style="background:#fff;padding:9px 15px;border-radius:8px;border:1px solid rgba(199,75,58,0.2);font-size:11px">
+    <strong style="color:var(--cherry-dark)">Permentan 39/2015</strong> <span style="color:var(--mute)">· Pendaftaran Pestisida Lampiran II (terlarang)</span>
+  </div>
+  <div style="background:#fff;padding:9px 15px;border-radius:8px;border:1px solid rgba(199,75,58,0.2);font-size:11px">
+    <strong style="color:var(--cherry-dark)">SNI 01-2907-2008</strong> <span style="color:var(--mute)">· Standar Mutu Biji Kopi (defect grading 7-kelas)</span>
+  </div>
+</div>
+
+<!-- CONTEXT NGANTANG -->
+<div class="sec">
+  <div class="sec-head"><div class="num cherry">!</div><h2>Konteks Anomali Ngantang</h2><div class="desc">mengapa komparasi ini penting secara spesifik untuk kebun kami</div></div>
+  <div class="context-box">
+    <h3>🏔 Kebun Ngantang di Kelas S3 Robusta — Excelsa Rootstock sebagai Optimization Legacy</h3>
+    <p>Berdasarkan observasi lapangan dan validasi koordinat (Google Earth): kebun wakaf Ngantang adalah <strong>Excelsa rootstock lama yang di-top-graft pucuk Robusta klon (klon belum teridentifikasi)</strong>, berada pada elevasi <strong>648 mdpl</strong> zona basah dengan curah hujan 1.500–3.500 mm/tahun.</p>
+    <p>Per <strong>Puslitbang 2010 hal 8</strong>: tinggi optimal Robusta = 500–700 mdpl — Ngantang 648 mdpl <strong style="color:var(--conv)">masih dalam range optimal</strong>. Per <strong>Robusta Edisi 2 Tabel 1</strong>: kelas kesesuaian <strong>S3 (600–700 mdpl)</strong> = marginal-atas tapi sah untuk Robusta. <em>Ngantang tidak masuk kelas N (>700 mdpl)</em>. Excelsa rootstock = <strong>optimasi adaptif yang sah</strong> per endorsement Puslitbang 2010 hal 46 + Edisi 2 hal 164 — bukan solusi tambal sulam substandar.</p>
+    <div class="quote">Implikasi penempatan posisi: SOP master Ngantang dibingkai ulang sebagai <strong style="color:var(--cherry-dark)">"Robusta zona S3 dengan warisan Excelsa rootstock + Robusta klon top-graft"</strong> — sebuah kondisi <strong>relevan untuk penelitian</strong>, bukan posisi defensif. Konteks ini menjadi nilai tambah untuk penjajakan kerja sama dengan BRIN (lokasi lapangan yang ideal untuk studi adaptasi Robusta pada elevasi marginal) sekaligus narasi pemasaran kepada donor (kebun spesialti dengan inovasi adaptif).</div>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <strong style="color:var(--earth);font-size:11px;letter-spacing:1px;text-transform:uppercase">Keterangan Status:</strong>
+  <div class="l-item"><div class="l-dot" style="background:#2e7d32"></div><span><strong>Konvergen Penuh</strong> — selaras antara Ngantang, 2 referensi domestik, dan validasi internasional</span></div>
+  <div class="l-item"><div class="l-dot" style="background:#7B9B7E"></div><span><strong>Konvergen Domestik</strong> — sumber domestik selaras; validasi internasional bersyarat atau memberikan nuansa</span></div>
+  <div class="l-item"><div class="l-dot" style="background:#c68b0e"></div><span><strong>Divergen</strong> — terdapat perbedaan angka, teknik, atau paradigma antar-sumber</span></div>
+  <div class="l-item"><div class="l-dot" style="background:#6a1b9a"></div><span><strong>Unik</strong> — hanya 1-2 sumber yang membahas (konvensi lokal atau celah literatur)</span></div>
+  <div class="l-item"><div class="l-dot" style="background:#c14b3a"></div><span><strong>Critical</strong> — keputusan struktural Ngantang dengan dampak jangka panjang</span></div>
+</div>
+<p style="font-size:11px;color:var(--mute);font-style:italic;margin:6px 0 22px;line-height:1.55">Mulai versi 1.7, Status mencerminkan komparasi 4-arah: <strong>SOP Awal Pra-Panen Ngantang</strong> + <strong>2 referensi domestik</strong> + <strong>validasi jurnal internasional</strong>. Validasi internasional ditempatkan sebelum Status dalam matriks agar pembaca melihat seluruh bukti sebelum verdict alignment.</p>
+
+<!-- SECTION 2: COMPARISON MATRIX -->
+<div class="sec">
+  <div class="sec-head"><div class="num">1</div><h2>Matriks Komparasi per Topik</h2><div class="desc">~19 topik kunci · referensi silang 4 sumber + validasi internasional · fokus Robusta</div></div>
+  <div class="matrix">
+    <table>
+      <thead>
+        <tr>
+          <th class="topic">Topik</th>
+          <th class="ngt">SOP Awal Pra-Panen<br><span style="font-size:9.5px;opacity:.85;letter-spacing:0.5px">implementasi periode pra-panen · rujukan SOP Kementan (2019)</span></th>
+          <th class="ref">Puslitbang (2010)</th>
+          <th class="ref">Lampung BRMP (2024)</th>
+          <th class="validasi">Validasi Jurnal Internasional<br><span style="font-size:9.5px;opacity:.85;letter-spacing:0.5px">Tier 1-2 + jurnal terkait topik</span></th>
+          <th class="status">Status</th>
+          <th class="analisa">Analisa &amp; Rekomendasi<br><span style="font-size:9.5px;opacity:.85;letter-spacing:0.5px">penyesuaian SOP Pasca-Panen — akan di-lock sebagai SOP Mei 2026</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="aligned">
+          <td class="topic-cell">A. Klon Robusta zona basah<div class="subtitle">Klon target top-graft Ngantang</div></td>
+          <td class="ngt-cell"><strong>Klon eksisting:</strong> belum teridentifikasi (perlu DNA fingerprinting Puslitkoka Jember).<br><strong>Target top-graft baru:</strong> BP 358 atau SA 237.<span class="ref">SOP Awal Pra-Panen · poster A2 Slide 6-7</span></td>
+          <td><strong>Rekomendasi:</strong> komposisi <em>BP 42 : BP 234 : BP 358 : SA 237 = 1:1:1:1</em> untuk iklim basah (tipe A/B) elevasi &gt;400 mdpl.<span class="ref">hal 7, Tabel 1</span></td>
+          <td><strong>Rekomendasi:</strong> untuk basah elevasi 40–900 mdpl, klon yang dianjurkan: <strong>BP 436, BP 358, BP 936, BP 534</strong>.<span class="ref">hal 3</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens, J.N. (Ed.) (2004)</a> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.2 — Robusta clonal selection &amp; polyclonal recommendation.<br><strong class="tier">Tier 1:</strong> <a href="https://iccri.net/bahan-tanam-kopi-2019/" target="_blank" style="color:var(--moss-dark)">ICCRI Bahan Tanam Kopi 2019</a> (Hulupi &amp; Martini, Puslitkoka Jember) — BP &amp; SA series klon Robusta zona basah.<span class="verdict v-ok">✅ Tervalidasi — konvergen lintas Tier 1-2-3.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PENUH</span></td>
+          <td class="analisa-cell"><strong>BP 358 muncul di SEMUA sumber</strong> (domestik &amp; internasional via Wintgens + ICCRI). SA 237 sebagai backup juga endorsed Puslitbang.<span class="arrow-rec">Prioritaskan <strong>BP 358</strong> sebagai entres saat top-graft pucuk baru di atas Excelsa rootstock. SA 237 sebagai diversifikasi.</span></td>
+        </tr>
+        <tr class="critical">
+          <td class="topic-cell">B. Excelsa sebagai rootstock<div class="subtitle">Critical context Ngantang</div></td>
+          <td class="ngt-cell"><strong>Realitas Ngantang:</strong> Excelsa = <em>legacy rootstock</em> (warisan pre-era BP 308). Pucuk Robusta klon sudah di-top-graft di atasnya. <em>Klon Robusta yang ter-graft belum teridentifikasi</em> — perlu DNA fingerprinting Puslitkoka Jember.<span class="ref">Observasi lapangan Ngantang · pending validasi tim ahli</span></td>
+          <td><strong>Strategi anti-nematoda:</strong> tanam pohon di atas batang bawah tahan. Pilihan rootstock yang disebut: <strong>(1) Kopi Excelsa, (2) Kopi Konuga, (3) Klon Robusta BP 961, atau (4) BP 595</strong>.<span class="ref">hal 46</span></td>
+          <td><strong>Pendekatan beda:</strong> tidak menyebut Excelsa. Endorse <strong>BP 308 sebagai rootstock standar tahan nematoda</strong> (pendekatan post-2010, lebih modern).<span class="ref">hal 6, 17, 46</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2 (parsial):</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.2 — menyebut <em>Coffea liberica var. dewevrei</em> (Excelsa) sebagai material interspesifik, namun aplikasi sebagai rootstock-untuk-Robusta bukan fokus utama.<br><strong class="tier">Topical (taksonomi):</strong> <a href="https://doi.org/10.1111/j.1095-8339.2011.01177.x" target="_blank" style="color:var(--moss-dark)">Davis, Tosh, Ruch &amp; Fay (2011)</a> <em>Botanical Journal of the Linnean Society</em> 167:357-377 — filogeni molekuler <em>Coffea</em> &amp; pengakuan C. liberica var. dewevrei (Excelsa).<br><strong class="tier">Topical (grafting):</strong> <a href="https://doi.org/10.21273/HORTSCI.36.2.269" target="_blank" style="color:var(--moss-dark)">Bertrand, Etienne &amp; Eskes (2001)</a> <em>HortScience</em> 36(2):269-273 — interspecific grafting Coffea pada batang bawah canephora/excelsa untuk resistensi nematoda.<br><strong class="tier">⚠ Celah residual:</strong> Excelsa-rootstock untuk top-graft Robusta spesifik di high-rainfall Indonesia belum jadi mainstream peer-review. Kebun Ngantang berpotensi menjadi situs penelitian.<span class="verdict v-partial">⚠ Parsial — taksonomi &amp; konsep grafting tervalidasi; aplikasi spesifik Ngantang masih celah literatur.</span></td>
+          <td><span class="status-badge s-crit">CRITICAL</span><br><span class="status-badge s-uniq" style="margin-top:4px">CELAH LITERATUR INTERNASIONAL</span></td>
+          <td class="analisa-cell"><strong>Excelsa rootstock sah secara akademik</strong> (endorsed referensi domestik). Lampung modern endorse BP 308 — tidak menggugurkan Excelsa, hanya alternatif yang lebih baru. Validasi internasional mengakui Excelsa sebagai material interspesifik valid, namun aplikasi sebagai rootstock-untuk-Robusta di high-rainfall belum mainstream.<span class="arrow-rec">Bingkai Excelsa Ngantang sebagai <strong>"optimasi adaptif warisan"</strong>, bukan kondisi substandar. Aset relevan untuk riset BRIN — kebun berpotensi menjadi lokasi studi rootstock langka.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">C. Pemupukan kimia umur 5–10 thn<div class="subtitle">Dosis per pohon</div></td>
+          <td class="ngt-cell"><strong>Dosis yang direkomendasikan salah satu tim BRIN Purwodadi (9 Mei 2026)</strong> — per aplikasi (2× setahun: awal MH + akhir MH):<br>Urea <strong>150g</strong> + SP-36 <strong>80g</strong> + KCl <strong>100g</strong> + Kieserit <strong>50g</strong> per pohon.<br>+ Dolomit area-based ~10 sak/kebun untuk koreksi pH tanah Andisol.<br><em>Catatan:</em> rekomendasi personal, bukan keputusan formal institusi BRIN — sudah dipakai sebagai default operasional Ngantang.<span class="ref">Komunikasi BRIN Purwodadi 9 Mei 2026 · pending validasi formal</span></td>
+          <td><strong>Rekomendasi total tahunan:</strong> Urea <strong>300</strong> · SP-36 <strong>160</strong> · KCl <strong>200</strong> · <strong>Kieserit 100</strong> g/phn.<br><em>Unsur Mg via Kieserit (bukan Dolomit).</em><span class="ref">hal 25, Tabel 6</span></td>
+          <td><strong>Rekomendasi total tahunan:</strong> Urea <strong>300</strong> · SP-36 <strong>160</strong> · KCl <strong>200</strong> · <strong>Dolomit 75</strong> g/phn (lebih rendah dari Edisi 2).<span class="ref">hal 39–40, Tabel 2</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 3 (regulator):</strong> <a href="https://repository.pertanian.go.id/server/api/core/bitstreams/290afbde-64dc-4aab-941c-aa29b8050085/content" target="_blank" style="color:var(--moss-dark)">Permentan No 49/2014 + Puslitkoka SOP Robusta Edisi 2 (2019)</a> — dosis per umur Robusta.<br><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.8 <em>Mineral Nutrition</em> — kebutuhan N-P-K <em>Coffea canephora</em>.<br><strong class="tier">Topical:</strong> <a href="http://www.ipni.net/4r" target="_blank" style="color:var(--moss-dark)">IPNI 4R Nutrient Stewardship</a> — perbandingan suplai Mg Kieserit vs Dolomit.<span class="verdict v-ok">✅ Tervalidasi — dosis Ngantang selaras dengan baseline Permentan + Wintgens untuk Robusta umur 5-10 tahun.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN N-P-K</span><br><span class="status-badge s-div" style="margin-top:4px">DIVERGEN UNSUR MG</span></td>
+          <td class="analisa-cell"><strong>3 angka pertama (N-P-K) identik</strong> di seluruh sumber domestik &amp; internasional. Yang berbeda: cara suplai Mg — Kieserit (cepat larut) vs Dolomit (lambat + fungsi kapur untuk pH).<span class="arrow-rec"><strong>Keputusan Ngantang yang cerdas: gunakan keduanya</strong> — Kieserit per aplikasi (Mg cepat) + Dolomit berbasis area (Mg lambat + koreksi pH tanah Andisol asam). Mengambil keunggulan dari kedua pendekatan.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">D. Cara aplikasi pupuk<div class="subtitle">Parit lingkar piringan</div></td>
+          <td class="ngt-cell"><strong>Metode Ngantang:</strong> parit lingkar piringan <strong>30–50 cm</strong> dari batang, dalam <strong>2–5 cm</strong>. Pupuk dibenamkan dengan tanah. <em>Ikut default Edisi 2 Kementan.</em><span class="ref">poster A2 Slide 10</span></td>
+          <td><strong>Rekomendasi:</strong> aplikasi pada radius <strong>30–40 cm dari batang pokok</strong>.<span class="ref">hal 24</span></td>
+          <td><strong>Rekomendasi:</strong> parit cincin dengan dimensi spesifik: <strong>jarak 75 cm dari batang</strong>, dalam 2–5 cm, lebar 10 cm. Dolomit ditabur dulu, diamkan 2 minggu, baru pupuk NPK + organik.<span class="ref">hal 41</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 3:</strong> Puslitkoka SOP Robusta Edisi 2 (2019) — parit lingkar piringan 30-50 cm align dgn Ngantang.<br><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.8 — <em>Coffea</em> root architecture: radial roots dominant 30-60 cm dari batang (justifies parit di range tersebut).<br><strong class="tier">Topical:</strong> <a href="http://www.ipni.net/4r" target="_blank" style="color:var(--moss-dark)">IPNI 4R Stewardship</a> — <em>Right Place</em> principle.<span class="verdict v-ok">✅ Tervalidasi — 30-50 cm anchored di radial root zone.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN INTERNASIONAL</span><br><span class="status-badge s-div" style="margin-top:4px">DIVERGEN MINOR DOMESTIK</span></td>
+          <td class="analisa-cell">Lampung paling jauh (75 cm) — kemungkinan asumsi pohon dewasa dengan akar yang sudah menyebar lebar.<span class="arrow-rec">Ngantang default <strong>30–50 cm (Edisi 2)</strong> tepat untuk pohon Excelsa rootstock yang belum tentu setua pohon Lampung. <strong>Adjust ke 50–70 cm untuk pohon paling tua</strong> sebagai kompromi.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">E. Pupuk organik rutin<div class="subtitle">Kandang/kompos per pohon</div></td>
+          <td class="ngt-cell"><strong>Target Ngantang:</strong> <strong>5 kg/phn/thn</strong> (~75 karung 50 kg untuk 750 phn post-selection). Diberikan 1–2× setahun pada awal kemarau atau jelang MH.<span class="ref">poster A2 Slide 9</span></td>
+          <td>Tidak ada dosis rutin eksplisit (hanya kontekstual dalam konteks pemupukan kandang).</td>
+          <td><strong>Rekomendasi:</strong> <strong>10–20 kg/batang per aplikasi</strong>.<span class="ref">hal 39</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 3:</strong> Puslitkoka SOP Robusta Edisi 2 (2019) — dosis organik konteks rehabilitasi kebun pasca-pra-panen.<br><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.5 — Organic Matter Management &amp; soil biology.<br><strong class="tier">Topical:</strong> <a href="https://www.fao.org/conservation-agriculture/en/" target="_blank" style="color:var(--moss-dark)">FAO Conservation Agriculture</a> — program area smallholder coffee.<span class="verdict v-ok">✅ Tervalidasi — Ngantang di lower bound, OK sbg konservatif, scale-up direkomendasi saat budget memungkinkan.</span></td>
+          <td><span class="status-badge s-div">DIVERGEN DOSIS</span></td>
+          <td class="analisa-cell">Satuan & magnitude berbeda — Edisi 2 pakai liter (volume), Lampung pakai kg (berat). Ngantang <strong>5 kg = paling konservatif</strong>, sesuai budget pasca-RAB cut.<span class="arrow-rec">Kalau panen 2026 baik & budget naik, scale ke <strong>10 kg/phn</strong> (range Lampung-bawah) sebagai upgrade.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">F. Pupuk kandang anti-nematoda<div class="subtitle">Khusus pohon terserang</div></td>
+          <td class="ngt-cell"><strong>Protokol Ngantang:</strong> 12 kg/phn/thn + parit isolasi 40×30 cm × jarak 60 cm dari pangkal (ikut Edisi 2). <em>Cadangan apabila gejala nematoda muncul</em> — Excelsa rootstock Ngantang sudah memberikan resistance genetik.<span class="ref">poster A2 Slide 12</span></td>
+          <td><strong>Strategi utama:</strong> pakai batang bawah tahan nematoda (Excelsa, BP 961, BP 595, Konuga) — bukan via pemupukan khusus.<span class="ref">hal 46</span></td>
+          <td><strong>Strategi:</strong> BP 308 rootstock + biopestisida <strong>Bionema 100 ml/L</strong> sebagai pengendalian biologis.<span class="ref">hal 45–47</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.10 — <em>Pratylenchus coffeae</em> management pada Coffea.<br><strong class="tier">Topical (canonical):</strong> <a href="https://brill.com/display/title/13449" target="_blank" style="color:var(--moss-dark)">Castillo &amp; Vovlas (2007)</a> <em>Pratylenchus root-lesion nematodes: diagnosis, biology, pathogenicity &amp; management</em>, Brill Academic, Nematology Monographs Vol.6 (ISBN 978-90-04-15564-0) — referensi otoritatif nematoda akar tropical.<span class="verdict v-ok">✅ Tervalidasi — strategi dual-layer (rootstock + soil amendment) konsisten dgn best practice.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PENUH</span></td>
+          <td class="analisa-cell">3 strategi berbeda untuk goal sama (anti-nematoda): pupuk + parit isolasi (Edisi 2) · rootstock tahan (Puslitbang) · rootstock + biopestisida (Lampung).<span class="arrow-rec">Ngantang punya <strong>BOTH</strong>: Excelsa rootstock (genetik) + pupuk kandang 12 kg <em>siap pakai</em> apabila gejala muncul. Strategi <strong>dual-layer</strong> ini paling konservatif.</span></td>
+        </tr>
+        <tr class="divergent">
+          <td class="topic-cell">G. Pemangkasan Peremajaan<div class="subtitle">Pendekatan rejuvinasi</div></td>
+          <td class="ngt-cell"><strong>Default Ngantang:</strong> tunggul 5–10 cm di atas bumbunan 30 cm (efektif ~35–40 cm dari tanah) — ikut Edisi 2 Kementan.<span class="ref">poster A2 Slide 18</span></td>
+          <td><strong>Rekomendasi (stump tradisional):</strong> pangkas batang pada <strong>~50 cm dari tanah</strong>, menjelang musim hujan. Bila wiwilan sukar keluar, stump 1 tahun sebelumnya.<span class="ref">hal 32</span></td>
+          <td><strong>Pendekatan beda paradigma:</strong> tipe <strong>"payung" 1 etape</strong> — sambung pucuk klon unggul pada ketinggian <strong>100–150 cm dari tanah</strong>, tanpa menebang batang utama. Mempertahankan canopy existing.<span class="ref">hal 34</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.7 <em>Pruning</em> — pruning safety <strong>15-25% per cycle</strong> untuk pohon tua — kritis untuk Excelsa rootstock berumur.<br><strong class="tier">Tier 3:</strong> Puslitkoka SOP Robusta Edisi 2 (2019) — pruning protocols Robusta.<br><strong class="tier">Topical (open access):</strong> <a href="https://doi.org/10.1590/S1677-04202006000100006" target="_blank" style="color:var(--moss-dark)">DaMatta &amp; Ramalho (2006)</a> <em>Brazilian Journal of Plant Physiology</em> 18(1):55-81 — drought &amp; temperature stress canopy management (SciELO open).<span class="verdict v-ok">✅ Tervalidasi — Ngantang pilih Lampung "payung" justified untuk preservasi Excelsa rootstock legacy.</span></td>
+          <td><span class="status-badge s-div">DIVERGEN PARADIGMA</span><br><span class="status-badge s-conv" style="margin-top:4px">KONVERGEN PRINSIP INTERNASIONAL</span></td>
+          <td class="analisa-cell">3 paradigma: stump rendah (Edisi 2 35-40cm) · stump sedang (Puslitbang 50cm) · sambung tinggi tanpa stump (Lampung 100-150cm).<span class="arrow-rec"><strong>Tipe "payung" Lampung paling cocok untuk Ngantang</strong> — Excelsa rootstock legacy berharga (puluhan tahun), destroy via stump = costly. Sambung pada 100-150 cm preserve canopy + introduce klon unggul (BP 358). <strong>Adopt Lampung payung sebagai metode peremajaan Ngantang.</strong></span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">H. Pangkas Berat Pasca-Panen<div class="subtitle">Penentuan Waktu</div></td>
+          <td class="ngt-cell"><strong>Ngantang:</strong> Pangkas Berat dilakukan pada <strong>September</strong> (3 bulan pasca-panen Jun-Sep). Mengikuti default Edisi 2.<span class="ref">poster A2 Slide 17</span></td>
+          <td><strong>Catatan teknis:</strong> sequencing pangkas-pupuk harus diatur (jangan pupuk segera setelah pangkas berat).<span class="ref">hal 32</span></td>
+          <td><strong>Refinement:</strong> pasca panen + <strong>tunggu 2 minggu</strong> sebelum aplikasi pupuk dolomit (biarkan luka tertutup).<span class="ref">hal 41</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> — post-harvest pruning timing Sep-Okt optimal — <strong>8-12 bulan recovery</strong> pre-flowering Mei-Jun.<br><strong class="tier">Tier 3:</strong> Puslitkoka SOP Robusta Edisi 2 (2019) — post-harvest agronomy.<span class="verdict v-ok">✅ Tervalidasi — timing September tepat untuk siklus fenologi Robusta Ngantang.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PENUH</span></td>
+          <td class="analisa-cell">Konvergensi timing pasca-panen. Lampung tambah rule: pangkas → tunggu 2 minggu → pupuk dolomit.<span class="arrow-rec">Ngantang <strong>adopt timing Sep + rule 2-minggu Lampung</strong> sebelum pupuk akhir MH. Lebih konservatif untuk luka pangkas tertutup.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">I. Pangkas Ringan (Wiwilan)<div class="subtitle">Frekuensi rutin</div></td>
+          <td class="ngt-cell"><strong>Ngantang:</strong> wiwilan MH <strong>2 mgg sekali</strong>, Kemarau <strong>4 mgg sekali</strong>. Buang tunas air, cabang dalam tanpa sinar, cabang kering.<span class="ref">poster A2 Slide 17</span></td>
+          <td>Dibahas dalam konteks pangkas produksi (tanpa frekuensi spesifik).</td>
+          <td><strong>Refinement kualitas:</strong> targetkan komposisi cabang ideal — <strong>35% B-0 + 35% B-1 + 30% B-2</strong> (proporsi cabang berdasar umur).<span class="ref">hal 35</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> — manajemen tunas dengan frekuensi mengikuti musim (MH tunas tumbuh padat → interval lebih rapat).<br><strong class="tier">Tier 3:</strong> Puslitkoka SOP Robusta Edisi 2 (2019) — protokol wiwilan Robusta.<br><strong class="tier">⚠ Topical:</strong> Refinement Lampung 35/35/30 rasio cabang — <em>belum divalidasi</em> melalui tabel spesifik Wintgens; menunggu referensi silang formal.<span class="verdict v-partial">✅ Frekuensi dasar tervalidasi · ⚠ rasio cabang butuh referensi silang.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN FREKUENSI</span><br><span class="status-badge s-uniq" style="margin-top:4px">REFINEMENT PENDING VERIFIKASI</span></td>
+          <td class="analisa-cell">Frekuensi konvergen. Lampung tambah refinement <em>distribusi umur cabang</em>.<span class="arrow-rec">Ngantang <strong>adopt rule Lampung sebagai quality check</strong> saat wiwilan — bukan hanya buang yang jelek, tapi <em>kontrol komposisi</em> 35/35/30 untuk produktivitas optimal.</span></td>
+        </tr>
+        <tr class="critical">
+          <td class="topic-cell">J. Penaung Leguminosa<div class="subtitle">Spesies & spacing</div></td>
+          <td class="ngt-cell"><strong>Target Ngantang:</strong> <strong>200–300 batang lamtoro PG 79</strong>, jarak tanam 5×5 m, lubang 60×60×60 cm. Plus durian 10×10 m sebagai penaung tajuk tinggi.<span class="ref">SOP Awal Pra-Panen · poster A2</span></td>
+          <td><strong>Rekomendasi:</strong> <strong>Lamtoro PG 79</strong> spesifik direkomendasikan (tahan kutu loncat).<span class="ref">hal 36</span></td>
+          <td><strong>Rekomendasi spacing:</strong> tajuk sedang (lamtoro, gamal, kaliandra) jarak <strong>4×6 m</strong>; tajuk tinggi (petai, jengkol, alpukat) <strong>15×18 m</strong>.<span class="ref">hal 25</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.4 <em>Shade Management</em> — leguminous shade N fixation rates &amp; intensity 30-75% sesuai umur.<br><strong class="tier">Tier 1 (canonical):</strong> <a href="https://doi.org/10.1023/A:1005956528316" target="_blank" style="color:var(--moss-dark)">Beer, Muschler, Kass &amp; Somarriba (1998)</a> <em>Agroforestry Systems</em> 38:139-164 — "Shade management in coffee &amp; cacao plantations" CATIE canonical reference.<br><strong class="tier">Topical:</strong> <a href="https://doi.org/10.1016/S0167-8809(00)00134-1" target="_blank" style="color:var(--moss-dark)">Soto-Pinto et al. (2000)</a> <em>Agriculture, Ecosystems &amp; Environment</em> 80:61-69 — shade effect on coffee production (Chiapas, Mexico) · yield maintained sampai 50% shade cover.<span class="verdict v-ok">✅ Tervalidasi — lamtoro PG 79 + durian align dgn shade systems literature.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PENUH</span></td>
+          <td class="analisa-cell">3 sumber domestik sepakat <strong>lamtoro PG 79</strong>. Lampung tambah opsi penaung tajuk tinggi (petai/jengkol) yang konvergen dengan keputusan Ngantang (durian).<span class="arrow-rec">Rencana Ngantang (lamtoro 5×5 m + durian 10×10 m) <strong>selaras dengan spesifikasi Lampung</strong>. Implementasi sudah solid.</span></td>
+        </tr>
+        <tr class="critical">
+          <td class="topic-cell">K. Pisang sebagai penaung<div class="subtitle">LARANGAN inang nematoda</div></td>
+          <td class="ngt-cell"><strong>Keputusan Ngantang:</strong> <strong>Bongkar 100% pisang</strong> di kebun setelah panen amanah MWC NU selesai (tanpa pengecualian).<span class="ref">SOP Awal Pra-Panen · poster A2 Slide 28</span></td>
+          <td>Implicit — fokus pada strategi rootstock tahan nematoda (tidak bahas pisang langsung).<span class="ref">hal 46</span></td>
+          <td><strong>Pendekatan pragmatic:</strong> pisang <em>diizinkan terbatas</em> dalam model intercropping, asalkan didampingi BP 308 rootstock yang tahan nematoda.<span class="ref">hal 16–18 model intercropping</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.10 — <em>Pratylenchus coffeae</em> host range termasuk <em>Musa</em> spp. (pisang).<br><strong class="tier">Topical (canonical monograph):</strong> <a href="https://brill.com/display/title/13449" target="_blank" style="color:var(--moss-dark)">Castillo &amp; Vovlas (2007)</a> Brill — Pratylenchus host plant list.<br><strong class="tier">Topical (textbook standard):</strong> Luc, Sikora &amp; Bridge (Eds.) (2005) <em>Plant Parasitic Nematodes in Subtropical and Tropical Agriculture</em>, 2nd ed., CABI Publishing (ISBN 978-0851997278) — tropical multi-host system standard.<span class="verdict v-ok">✅ Tervalidasi — pisang sebagai inang nematoda well-documented; pendekatan konservatif Ngantang justified.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PADA BAHAYA</span><br><span class="status-badge s-div" style="margin-top:4px">DIVERGEN PENDEKATAN</span></td>
+          <td class="analisa-cell">2 paradigma: larang total (Edisi 2) vs manage-risk-dengan-rootstock (Lampung).<span class="arrow-rec">Ngantang pilih <strong>larang total</strong> — bijak karena: (1) Excelsa rootstock belum di-verify lab nematoda Ngantang, (2) konservatif lebih aman untuk amanah wakaf jangka panjang. <strong>Decision sound.</strong></span></td>
+        </tr>
+        <tr class="divergent">
+          <td class="topic-cell">L. Rorak konservasi tanah<div class="subtitle">Lubang serasah pada lereng</div></td>
+          <td class="ngt-cell"><strong>Target Ngantang:</strong> dimensi <strong>100×30×30-50 cm</strong>, jarak vertikal <strong>10 m</strong>, prioritas <strong>Bidang 3</strong> (paling miring) — target 15-20 unit. <em>Spec ikut Edisi 2 hal 149.</em><span class="ref">SOP Awal Pra-Panen · poster A2 Slide 25</span></td>
+          <td>Tidak ada section eksplisit tentang rorak.</td>
+          <td>Disebut sebagai aktivitas konservasi tapi dimensi tidak eksplisit.<span class="ref">hal 6</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.3 <em>Soil Conservation</em> — penghalang kontur &amp; lubang serasah pada pertanian lereng.<br><strong class="tier">Topical (database):</strong> <a href="https://www.wocat.net" target="_blank" style="color:var(--moss-dark)">WOCAT</a> — basis data SLM global (diakui UNCCD, 2.449 praktik). Padanan internasional untuk "rorak": <em>contour swale / soil pit / contour trench</em>.<br><strong class="tier">Topical (program):</strong> <a href="https://www.fao.org/land-water/land/sustainable-land-management/terrafrica/en/" target="_blank" style="color:var(--moss-dark)">FAO TerrAfrica</a> — pengelolaan lahan lereng (SLM).<span class="verdict v-partial">⚠ Parsial — konsep universal tervalidasi; dimensi "rorak" merupakan konvensi lokal Indonesia.</span></td>
+          <td><span class="status-badge s-uniq">UNIK INDONESIA</span><br><span class="status-badge s-conv-dom" style="margin-top:4px">KONSEP UNIVERSAL TERVALIDASI</span></td>
+          <td class="analisa-cell"><strong>Hanya Edisi 2 yang menyediakan spesifikasi dimensi lengkap</strong>. Lampung &amp; Puslitbang tidak rinci.<span class="arrow-rec">Ngantang mengadopsi 100% spesifikasi Edisi 2 — tepat untuk Bidang 3. <strong>Manfaat ganda</strong>: konservasi tanah (mencegah erosi lereng) + kompos in-situ dari serasah daun &amp; kulit kopi.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">M. PBKo (Hypothenemus hampei)<div class="subtitle">Ambang ekonomi & pengendalian</div></td>
+          <td class="ngt-cell"><strong>Protokol Ngantang:</strong> ambang <strong>&gt;5% Watch</strong> (warning) · <strong>&gt;10% Action wajib</strong>. Strategi Brocap: <em>pilot 5 unit Bidang 4 Mei 2026 → full deploy 50 unit Bidang 1-3 Nov-Des 2026</em> (timing optimal 4 bulan pasca-panen per Wiryadiputra, Cilas &amp; Morin 2008 — ASIC Bangalore).<span class="ref">poster A2 Slide 31</span></td>
+          <td><strong>Rekomendasi:</strong> ambang <strong>&gt;10% intensitas</strong> (standar Indonesia).<span class="ref">hal 42</span></td>
+          <td><strong>Metode pengendalian spesifik:</strong> perangkap atraktan etanol — density <strong>20–40 perangkap/ha</strong>, jarak 20 m antar perangkap, tinggi 1,6 m. Plus <strong>Beauveria bassiana 2,5 kg/ha, 3× per musim panen</strong>.<span class="ref">hal 43–45</span></td>
+          <td class="validasi-cell"><strong class="tier">Topical (Indonesian-international anchor):</strong> <strong>Wiryadiputra, Cilas &amp; Morin (2008)</strong> "Brocap trap to control the coffee berry borer in Indonesia", <em>16th ASIC Conference</em> Bangalore (CIRAD/ICCRI). Field basis: trial Lampung 2005-2007 · attractant diffusion data 137-156 days = origin "4 bulan pasca-panen".<br><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.10 — <em>Hypothenemus hampei</em> biology &amp; IPM.<br><strong class="tier">Topical (canonical IPM):</strong> <a href="https://doi.org/10.1017/s0007485300000584" target="_blank" style="color:var(--moss-dark)">Damon (2000)</a> <em>Bulletin of Entomological Research</em> 90(6):453-465 — IPM systematic review CBB.<br><strong class="tier">Topical (book chapter):</strong> Vega, Infante &amp; Johnson (2015) "The genus <em>Hypothenemus</em>" Ch.11 in Vega &amp; Hofstetter (Eds.) <em>Bark Beetles</em>, Academic Press/Elsevier, pp.427-494 — DOI: 10.1016/B978-0-12-417156-5.00011-3.<br><strong class="tier">Topical (biocontrol):</strong> <a href="https://doi.org/10.1079/ber2006434" target="_blank" style="color:var(--moss-dark)">Jaramillo, Borgemeister &amp; Baker (2006)</a> <em>Bulletin of Entomological Research</em> 96(3):223-233 — sustainable CBB control covering <em>Beauveria bassiana</em>.<span class="verdict v-ok">✅ Tervalidasi kuat — Wiryadiputra (2008) = scientific anchor protokol Ngantang.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PENUH</span></td>
+          <td class="analisa-cell">Ambang &gt;10% konvergen. Ngantang tambah granular <strong>Watch zone &gt;5%</strong> sebagai early warning + density Brocap mengikuti Lampung BRMP.<span class="arrow-rec">Ngantang <strong>lebih proaktif</strong>. Sebaiknya tambah Beauveria bassiana ke RAB 2027 sebagai second-line defense saat Brocap full deploy.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">N. Cercospora coffeicola<div class="subtitle">Bercak daun</div></td>
+          <td class="ngt-cell"><strong>Protokol Ngantang:</strong> semprot ekstrak daun cengkeh <strong>1× per 3 minggu</strong> menjelang musim hujan (Sep-Okt) — <em>mengikuti Edisi 2 Kementan</em>.<br><br><strong>Validasi adaptif:</strong> kemungkinan interval lebih pendek (mis. 2 minggu) akan dipertimbangkan jika tersedia (a) data curah hujan &amp; kelembapan aktual dari lapangan, atau (b) advice formal dari Technical Advisor / tim BRIN.<span class="ref">SOP Ngantang · pending validation data lokal</span></td>
+          <td>Dibahas dalam protokol penyakit jamur umum (tanpa frekuensi spesifik Cercospora).<span class="ref">hal 41–42</span></td>
+          <td>Bagian penyakit umum (tanpa Ngantang-specific protocol).</td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.10 <em>Diseases</em> — Cercospora coffeicola management.<br><strong class="tier">Topical (Cercospora):</strong> Souza, A.G.C. et al. (2011) "Brown eye spot of coffee" <em>Outlooks on Pest Management</em> 22(4):161-164. DOI: <a href="https://doi.org/10.1564/22aug03" target="_blank" style="color:var(--moss-dark)">10.1564/22aug03</a>.<br><strong class="tier">Topical (rainfall epidemiology):</strong> <a href="https://doi.org/10.1007/s12571-015-0446-9" target="_blank" style="color:var(--moss-dark)">Avelino et al. (2015)</a> <em>Food Security</em> 7(2):303-321 (open access) — coffee disease epidemics &amp; rainfall pattern drivers.<br><strong class="tier">Topical (broader fungal):</strong> <a href="https://doi.org/10.1111/mpp.12512" target="_blank" style="color:var(--moss-dark)">Talhinhas et al. (2017)</a> <em>Molecular Plant Pathology</em> 18(8):1039-1051 (PMC open access) — Hemileia vastatrix &amp; coffee fungal context.<span class="verdict v-ok">✅ Interval 3 mgg tervalidasi (baseline Wintgens + Souza). Penyesuaian ke 2 mgg <em>akan valid</em> jika data Ngantang mendukung — Avelino menegaskan intensifikasi epidemi yang dipicu pola curah hujan.</span></td>
+          <td><span class="status-badge s-conv-dom">KONVERGEN BASELINE</span><br><span class="status-badge s-uniq" style="margin-top:4px">ADAPTASI POTENSIAL</span></td>
+          <td class="analisa-cell">Ngantang <strong>mengikuti baseline Edisi 2 (3 minggu)</strong> karena data lokal Ngantang (curah hujan harian, RH%, lama daun basah) belum terkumpul untuk justify override frekuensi.<span class="arrow-rec"><strong>Action item Wakif:</strong> (1) <strong>aktivasi auto-prefill weather</strong> di Form Input monitor-v2 (sedang dibangun — rainfall + RH otomatis ter-fetch via GPS lokasi + tanggal entry, pekerja tidak input manual), (2) mulai dokumentasi foto severity bercak daun pre/post spray oleh Pak Kumpul, (3) konsultasi TA / BRIN saat ada data 1-2 musim. <em>Kemungkinan adjust ke 2 minggu valid jika data + advise mendukung — bukan ditolak, hanya butuh evidence dulu.</em></span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">O. Petik Selektif Merah<div class="subtitle">Kriteria mutu panen</div></td>
+          <td class="ngt-cell"><strong>Protokol Ngantang:</strong> petik selektif merah default. Window ≤12 jam dari petik ke proses. <em>Hujan deras: tunda 1-2 hari, jangan borongan.</em><span class="ref">SOP Awal Pra-Panen · poster A2 Slide 31</span></td>
+          <td><strong>Rekomendasi:</strong> petik selektif merah saja untuk mutu tinggi. Robusta masak 8-11 bulan dari kuncup bunga.<span class="ref">hal 48</span></td>
+          <td><strong>Detail prosedur (lebih granular):</strong> <strong>5 stadium kriteria kematangan</strong> + sortasi 2 tahap (pemisahan mentah/lewat masak, lalu perambangan air untuk pisah buah cacat).<span class="ref">hal 50–51</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://sca.coffee/research/coffee-standards" target="_blank" style="color:var(--moss-dark)">Specialty Coffee Association (SCA) Coffee Standards (2021)</a> — selective ripe picking, minimal 4 ronde pemetikan.<br><strong class="tier">Tier 3:</strong> Puslitkoka SOP Robusta Edisi 2 (2019) — interval 10-14 hari antar ronde.<br><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.11 <em>Harvest</em> — selective vs strip picking impact pada cup quality.<span class="verdict v-ok">✅ Tervalidasi — Lampung 5-stadium granularity tidak conflict dgn international standard.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PENUH</span></td>
+          <td class="analisa-cell">Selektif merah konvergen 3 dokumen. Lampung paling granular (5 stadium + 2 tahap sortasi).<span class="arrow-rec">Ngantang bisa <strong>adopt 5 stadium Lampung sebagai SOP yang lebih detail</strong>. Berguna untuk training Cak Yit + pelaporan harian (granularitas).</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">P. Window 12 jam petik→proses<div class="subtitle">Cegah pra-fermentasi</div></td>
+          <td class="ngt-cell"><strong>Ngantang enforcement:</strong> ≤12 jam dari petik ke pulping/jemur. <em>Auto-flag &gt;12 jam di schema laporan v2</em>.<span class="ref">laporan_v2.json</span></td>
+          <td><strong>Rekomendasi:</strong> pulping segera setelah panen.<span class="ref">hal 52</span></td>
+          <td><strong>Refinement:</strong> pulping segera + sungkup para-para untuk pengeringan.<span class="ref">hal 52</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.12 <em>Processing</em> — primary fermentation onset 6-24 jam post-pick (12 jam = conservative middle).<br><strong class="tier">Topical (peer-reviewed):</strong> <a href="https://doi.org/10.1128/aem.02398-16" target="_blank" style="color:var(--moss-dark)">De Bruyn et al. (2017)</a> <em>Applied &amp; Environmental Microbiology</em> 83(1):e02398-16 (ASM open access) — coffee post-harvest microbiota &amp; metabolite profiles.<br><strong class="tier">Topical (Robusta-specific):</strong> Pereira, L.L. et al. (2020) "Chemical &amp; sensory perception of robusta coffees under wet processing" <em>Coffee Science</em> 15:e151672 (UFLA open access).<span class="verdict v-ok">✅ Tervalidasi — jendela 12 jam berada di tengah rentang aman internasional.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN PENUH</span></td>
+          <td class="analisa-cell">Konvergensi seluruh sumber. Ngantang sudah ter-encode auto-flag di schema — <strong>strong compliance enforcement</strong>.<span class="arrow-rec">Tambah <strong>training Cak Yit + Pak Kumpul</strong> tentang prinsip pra-fermentasi (kenapa 12 jam) supaya compliance bukan hanya rule tapi pemahaman.</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell">Q. Kadar air biji<div class="subtitle">Target pengeringan</div></td>
+          <td class="ngt-cell"><strong>Ngantang:</strong> target ≤12,5% (default SNI 01-2907-2008).<span class="ref">poster A2 Slide 31</span></td>
+          <td><strong>Standar + teknik:</strong> ≤12,5% SNI. Untuk Robusta, bisa pakai pengeringan awal 90°C selama 20-24 jam.<span class="ref">hal 57</span></td>
+          <td><strong>Standar lengkap:</strong> SNI Mutu 1 = defect ≤11 (selain kadar air).<span class="ref">hal 53</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://doi.org/10.1002/9783527619627" target="_blank" style="color:var(--moss-dark)">Wintgens (2004)</a> Ch.13 <em>Drying &amp; Storage</em> — moisture content ≤12,5% optimal untuk storage stability.<br><strong class="tier">Standard internasional:</strong> <a href="https://www.iso.org/standard/38375.html" target="_blank" style="color:var(--moss-dark)">ISO 6673:2003</a> "Green coffee — Determination of loss in mass at 105°C".<br><strong class="tier">Standard internasional:</strong> ICO (International Coffee Organization) trade standards — ≤12,5% export grade.<span class="verdict v-ok">✅ Tervalidasi — target Ngantang align dgn ISO 6673 + ICO international standard.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN INTERNASIONAL</span></td>
+          <td class="analisa-cell">Standar SNI konvergen. Puslitbang tambah teknik thermal untuk Robusta (90°C 20-24 jam awal).<span class="arrow-rec">Ngantang pakai pengeringan <strong>sun-dry</strong> dulu (processing via mitra Bonsari Coffee). Roadmap upgrade ke <strong>pengeringan thermal terkendali</strong> untuk konsistensi mutu dan reduce risiko jamur saat musim hujan.<br><br><em style="color:var(--earth);font-weight:600">Harapan support BRIN (status: penjajakan, belum MoU):</em> upgrade infrastruktur thermal ini berpotensi di-support melalui kerja sama riset dengan tim BRIN Serpong yang sedang dijajaki — khususnya PR Teknologi Mesin &amp; Peralatan (Adnan Albahry) dan PR Teknologi Proses Pangan (Dr. Alvi Yani · Heryoki Yohanes) yang memang concern dengan pasca-panen kopi. <strong>Belum komitmen formal</strong> — masuk daftar topik kolaborasi yang akan diangkat saat pertemuan teknis lanjutan.</span></td>
+        </tr>
+        <tr class="critical" style="background:rgba(253,226,220,0.5)">
+          <td class="topic-cell" style="background:#fdf3f0;color:var(--cherry-dark)">R. Pestisida Terlarang<div class="subtitle">⛔ Regulasi pendukung</div></td>
+          <td class="ngt-cell"><strong>Posisi Ngantang:</strong> SOP penyemprotan post-2 Mei 2026 <em>permanently exclude</em> 12 bahan aktif Permentan 39/2015.<br><br><strong>Catatan limitasi:</strong> chemistry era RWI (pra-2 Mei 2026) <em>tidak terdokumentasi</em> ke Wakif — semua aset fisik (wadah, sisa stok) sudah ditarik TA RWI saat transisi out. Audit on-farm pestisida lama TIDAK feasible.<span class="ref">SOP Ngantang post-2 Mei 2026 · forward-compliance only</span></td>
+          <td colspan="2"><strong style="color:var(--cherry-dark)">Sumber utama: Permentan 39/2015 Lampiran II</strong> — daftar <strong>12 bahan aktif DILARANG</strong> untuk pestisida pertanian:<br><em>DDT · Dieldrin · Endrin · Endosulfan · Aldrin · Aldikarb · Diklorvos/DDVP · EDB · Heptachlor · Klordan · Lindane · Paraquat (terbatas)</em><br><strong style="color:var(--cherry-dark)">Status terkini:</strong> Permentan 39/2015 sudah DICABUT (diganti Permentan 43/2019), tapi <em>daftar pestisida terlarang masih relevan</em> sampai cross-check Permentan 43/2019.<br>SOP Robusta Edisi 2 (hal 199) mencantumkan ulang daftar ini sebagai referensi.<span class="ref">Permentan 39/2015 Lampiran II · cross-ref Edisi 2 hal 199</span></td>
+          <td class="validasi-cell"><strong class="tier">International treaty:</strong> <a href="http://www.pops.int" target="_blank" style="color:var(--moss-dark)">Stockholm Convention on POPs (2001)</a> — <strong>Annex A (elimination):</strong> Aldrin, Dieldrin, Endrin, Heptachlor, Chlordane · <strong>Annex B (restriction):</strong> DDT <em>(allowed for vector control under exemption)</em>.<br><strong class="tier">Standard internasional:</strong> <a href="https://www.who.int/publications/i/item/9789240005662" target="_blank" style="color:var(--moss-dark)">WHO Recommended Classification of Pesticides by Hazard (2019 ed., ISBN 978-92-4-000566-2)</a>. <a href="https://www.fao.org/fao-who-codexalimentarius/codex-texts/maximum-residue-limits/en/" target="_blank" style="color:var(--moss-dark)">FAO/WHO Codex Alimentarius MRL</a> (43 pesticide MRLs apply to coffee beans).<br><strong class="tier">Code of practice:</strong> <a href="https://www.fao.org/pest-and-pesticide-management/pesticide-risk-reduction/code-conduct/en/" target="_blank" style="color:var(--moss-dark)">FAO International Code of Conduct on Pesticide Management (revised 2014, ISBN 978-92-5-108548-6)</a>.<span class="verdict v-ok">✅ Tervalidasi — Permentan 39/2015 = domestic implementation Stockholm POPs.</span></td>
+          <td><span class="status-badge s-crit">CRITICAL</span><br><span class="status-badge s-conv" style="margin-top:4px">TERVALIDASI INTERNASIONAL</span></td>
+          <td class="analisa-cell"><strong>Pemeriksaan kepatuhan wajib</strong> untuk sertifikasi (mutu/SNI, organik bila kelak diajukan) &amp; audit (BWI, donor, mitra). Risiko reputasional muncul jika residu pestisida terlarang ditemukan di lapangan atau pada biji.<span class="arrow-rec"><strong>Realitas keterbatasan audit di lapangan:</strong> pada periode pra-2 Mei 2026 (era Nazhir RWI), pengadaan dan aplikasi pestisida dijalankan oleh TA agronomi era RWI. <em>Merek &amp; bahan aktif tidak terdokumentasi ke Wakif</em>, sebagian merek kemungkinan sudah tidak beredar di pasar. <em>Seluruh aset fisik (wadah, sisa stok, alat semprot) telah ditarik TA RWI saat transisi keluar</em> → audit wadah pestisida lama tidak dapat dilakukan karena tidak ada inventaris yang dapat diperiksa.<br><br><strong>Tindakan yang masih dapat dijalankan:</strong><br>(1) <strong>Pengadaan pasca-2026 yang transparan</strong> — semua pestisida yang masuk melalui SOP Ngantang wajib disertai foto label + nomor registrasi Kementan pada Form Input dashboard monitoring (jejak audit mulai dari titik nol baru).<br>(2) <strong>Daftar larangan permanen pada SOP</strong> — 12 bahan aktif Permentan 39/2015 di-blacklist secara permanen, tidak boleh masuk meski tersedia di pasar gelap.<br>(3) <strong>Referensi silang Permentan 43/2019</strong> sebagai daftar terbaru pestisida terdaftar untuk acuan pengadaan.<br>(4) <strong>Uji residu — ditunda</strong> sampai ada pemicu yang jelas (gejala fitotoksisitas, keluhan mitra/donor, atau persiapan sertifikasi organik). Mahal dan bukan prioritas saat ini.<br><br><strong>Pembingkaian untuk Living Lab:</strong> celah historis pengelolaan kimiawi pra-2026 dipublikasikan secara transparan kepada umat &amp; donor sebagai bagian dari baseline — "Wakif tidak memiliki catatan pengelolaan kimiawi era RWI; SOP transparan baru dimulai 2 Mei 2026". Konteks ini juga relevan untuk topik kolaborasi BRIN (status: penjajakan) — sebagai studi "transisi dari riwayat pengelolaan kimiawi yang tidak terdokumentasi menuju SOP berkelanjutan yang terdokumentasi".</span></td>
+        </tr>
+        <tr class="aligned">
+          <td class="topic-cell" style="background:#fafbfa">S. Mutu Biji SNI<div class="subtitle">📊 Standar nasional</div></td>
+          <td class="ngt-cell"><strong>Target Ngantang:</strong> Mutu 3 dulu (Siklus 2026) → bertahap ke Mutu 2 → Mutu 1 sebagai long-term goal.<span class="ref">SOP Awal Pra-Panen · target bertahap</span></td>
+          <td colspan="2"><strong>Sumber utama: SNI 01-2907-2008 (BSN)</strong> — standar mutu biji kopi Robusta:<br><strong>Defect Grading 7-Kelas:</strong> Mutu 1 ≤11 defect · Mutu 2 12-25 · Mutu 3 26-44 · Mutu 4a 45-60 · Mutu 4b 61-80 · Mutu 5 81-150 · Mutu 6 151-225<br><strong>Ayakan Robusta kering:</strong> Besar = tidak lolos 6,5 mm (sieve 16, max 5% lolos) · Kecil = lolos 6,5 mm tidak lolos 3,5 mm (sieve 9)<br><strong>Syarat umum:</strong> kadar air ≤12,5% · kadar kotoran ≤0,5% · tidak ada serangga hidup · tidak ada biji bau busuk/kapang<br>Referenced di Edisi 2 hal 261 + Puslitbang 2010 hal 64.<span class="ref">SNI 01-2907-2008 hal 1–16</span></td>
+          <td class="validasi-cell"><strong class="tier">Tier 2:</strong> <a href="https://sca.coffee/research/coffee-standards" target="_blank" style="color:var(--moss-dark)">SCA Coffee Standards</a> (Green Coffee Grading, Cat 1/Cat 2 defects) — closest international equivalent SNI defect grading.<br><strong class="tier">Standard internasional (defects):</strong> <a href="https://www.iso.org/standard/40401.html" target="_blank" style="color:var(--moss-dark)">ISO 10470:2004 "Green coffee — Defect reference chart"</a>.<br><strong class="tier">Standard internasional (sampling):</strong> ISO 4072:1982 "Green coffee in bags — Sampling" + <a href="https://www.iso.org/standard/44606.html" target="_blank" style="color:var(--moss-dark)">ISO 6666:2011 "Coffee sampling — Triers for green coffee, raw coffee, and parchment coffee"</a>.<br><strong class="tier">Tier 3:</strong> Puslitkoka SOP Robusta Edisi 2 (2019) — mutu biji Robusta. Bertahap Mutu 3→2→1 = approach yang reasonable untuk kebun rehabilitation.<span class="verdict v-ok">✅ Tervalidasi — staged quality target align dgn international rehabilitation practice.</span></td>
+          <td><span class="status-badge s-conv">KONVERGEN INTERNASIONAL</span></td>
+          <td class="analisa-cell">Target Ngantang realistis. <strong>Mutu 3 (defect 26-44)</strong> tepat untuk siklus 2026 — kebun masih recovery + Excelsa legacy belum optimal.<span class="arrow-rec"><strong>Bertahap ke Mutu 2 (12-25)</strong> saat klon top-graft BP 358 sudah produktif (2027-2028). <strong>Mutu 1 (≤11)</strong> = long-term goal pasca-infrastructure jemur + processing upgrade.</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- KONVERGENSI/DIVERGENSI/UNIK -->
+<div class="sec">
+  <div class="sec-head"><div class="num">2</div><h2>Sintesa Temuan</h2><div class="desc">konvergen, divergen, dan unik — implikasi untuk SOP master</div></div>
+  <div class="findings-grid">
+    <div class="finding-card">
+      <h3><span class="ic">✓</span>Konvergensi Kuat</h3>
+      <ul>
+        <li><span class="mark">●</span><div><strong>Dosis pupuk umur 5–10 thn:</strong> Urea 300 · SP-36 160 · KCl 200 — identik di seluruh sumber utama (Edisi 2 Kementan, Puslitbang, dosis BRIN)</div></li>
+        <li><span class="mark">●</span><div><strong>Klon BP 358 untuk basah:</strong> endorsed di Edisi 2 + Puslitbang + Lampung — kandidat target top-graft Ngantang</div></li>
+        <li><span class="mark">●</span><div><strong>Lamtoro PG 79:</strong> tahan kutu loncat — endorsed di Edisi 2 + Puslitbang</div></li>
+        <li><span class="mark">●</span><div><strong>Petik selektif merah:</strong> default semua dokumen, anti-borongan</div></li>
+        <li><span class="mark">●</span><div><strong>Window ≤12 jam:</strong> petik → proses (pra-fermentasi)</div></li>
+        <li><span class="mark">●</span><div><strong>PBKo &gt;10% = action:</strong> ambang ekonomi konvergen Indonesia-wide</div></li>
+        <li><span class="mark">●</span><div><strong>Kadar air 12,5%:</strong> SNI 01-2907-2008 standar nasional</div></li>
+      </ul>
+    </div>
+    <div class="finding-card div-card">
+      <h3><span class="ic">⚠</span>Divergensi yang Membutuhkan Keputusan</h3>
+      <ul>
+        <li><span class="mark">●</span><div><strong>Kieserit vs Dolomit (K-4 pupuk):</strong> Puslitbang+BRIN endorse Kieserit 50g; Lampung endorse Dolomit 75g. Sekarang Ngantang ambil Kieserit per aplikasi + Dolomit ~10 sak/kebun area-based.</div></li>
+        <li><span class="mark">●</span><div><strong>Jarak aplikasi pupuk:</strong> 30–50 cm (Edisi 2) vs 30–40 cm (Puslitbang) vs 75 cm (Lampung) — pengaruh tipe akar pohon dewasa. Ngantang default 30–50 cm reasonable</div></li>
+        <li><span class="mark">●</span><div><strong>Peremajaan: stump 5–50 cm (tradisional) vs sambung "payung" 100–150 cm (Lampung)</strong> — paradigma berbeda. Untuk Excelsa rootstock Ngantang, sambung payung lebih relevan</div></li>
+        <li><span class="mark">●</span><div><strong>Pupuk organik dosis:</strong> 20–40 L (Edisi 2) vs 10–20 kg/aplikasi (Lampung) vs 5 kg/thn (Ngantang). Ngantang lebih konservatif — relevan dengan budget</div></li>
+        <li><span class="mark">●</span><div><strong>Cercospora freq:</strong> Ngantang ikut Edisi 2 = 3 mgg. Interval lebih pendek (mis. 2 mgg) menunggu data curah hujan &amp; RH lapangan atau advice TA.</div></li>
+        <li><span class="mark">●</span><div><strong>Pisang penaung:</strong> dilarang (Edisi 2) vs diizinkan terbatas (Lampung) — Ngantang bongkar 100% post amanah MWC NU</div></li>
+      </ul>
+    </div>
+    <div class="finding-card uniq-card">
+      <h3><span class="ic">★</span>Unik per Sumber</h3>
+      <ul>
+        <li><span class="mark">●</span><div><strong>Edisi 2:</strong> spesifikasi rorak eksplisit (1m × 0,3m × 0,3–0,5m, jarak vertikal 10m) — tidak ada di Puslitbang &amp; Lampung</div></li>
+        <li><span class="mark">●</span><div><strong>Puslitbang 2010:</strong> <em>"kopi ekselsa"</em> disebut langsung sebagai batang bawah tahan nematoda (hal 46) — endorsed paralel dengan BP 961, BP 595</div></li>
+        <li><span class="mark">●</span><div><strong>Lampung BRMP:</strong> tipe "payung" sambung 100–150 cm (paling populer petani) — pendekatan rejuvinasi via grafting bukan stump</div></li>
+        <li><span class="mark">●</span><div><strong>Lampung:</strong> klon lokal Komari, Randu Alas, Kasio, Korolla 1–4 (potensi &gt;2 ton/ha) — opsi adaptasi lokal</div></li>
+        <li><span class="mark">●</span><div><strong>Lampung:</strong> model integrasi kopi-pisang-ternak terstruktur (3 model dengan diagram)</div></li>
+        <li><span class="mark">●</span><div><strong>Ngantang Pra-Panen:</strong> Brocap pilot 5 unit Bidang 4 Mei 2026 → full 50 unit Bidang 1–3 Nov–Des 2026 (timing Wiryadiputra, Cilas &amp; Morin 2008 — 4 bulan pasca-panen)</div></li>
+        <li><span class="mark">●</span><div><strong>Ngantang Pra-Panen:</strong> pada Mei 2026 mengambil mode mitigasi (hanya SP-36 + KCl, skip Urea + Dolomit) karena bunga sudah set</div></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- EXCELSA DEEP DIVE -->
+<div class="sec">
+  <div class="sec-head"><div class="num cherry">3</div><h2>Excelsa Rootstock &amp; Top-Graft Robusta — Telaah Mendalam</h2><div class="desc">membingkai warisan kebun Ngantang sebagai aset penelitian, bukan kondisi substandar</div></div>
+  <div class="excelsa">
+    <span class="badge-top">PENTING UNTUK NGANTANG</span>
+    <h2>Excelsa Rootstock Warisan adalah Solusi Adaptif — Bukan Kondisi Substandar</h2>
+    <div class="sub">Konvergensi literatur menunjukkan Excelsa sebagai batang bawah yang valid untuk pengendalian nematoda. Top-graft Robusta klon di atasnya merupakan <strong>jalur evolusi berbasis riset</strong>.</div>
+    <div class="excelsa-grid">
+      <div class="excelsa-col">
+        <h4>📚 Dokumentasi Akademik Excelsa Rootstock</h4>
+        <div class="item"><strong>SOP Robusta Edisi 2 hal 164:</strong> "Excelsa = batang bawah tahan nematoda" — endorsed framework.<span class="src-tag">Tier 1 · Kementan</span></div>
+        <div class="item"><strong>Puslitbang 2010 hal 46:</strong> "Menanam batang bawah dengan yang tahan nematoda seperti <strong>kopi ekselsa</strong> dan beberapa klon kopi konuga, kopi Robusta klon BP 961 dan BP 595" — endorsed parallel.<span class="src-tag">Tier 2 · Puslitbang</span></div>
+        <div class="item"><strong>Observasi lapangan Ngantang:</strong> kebun wakaf Ngantang adalah Excelsa rootstock yang di-top-graft Robusta klon — "anomali genetik bertingkat" yang menjadi peluang penelitian lapangan.<span class="src-tag">Observasi lapangan</span></div>
+        <div class="item"><strong>Daur hidup nematoda Pratylenchus coffeae:</strong> 45–48 hari, mati 8 bulan tanpa inang, peka suhu 38°C. Excelsa rootstock menahan kolonisasi nematoda di sistem akar (mekanisme genetik resistance).<span class="src-tag">Puslitbang hal 45–46</span></div>
+      </div>
+      <div class="excelsa-col">
+        <h4>🪴 Top-Graft Strategi Ngantang (Sintesa)</h4>
+        <div class="item"><strong>Tipe "payung" 1 etape</strong> (Lampung hal 34): sambung pada ketinggian <strong>100–150 cm</strong> dari permukaan tanah dengan entres "tunas raja" klon unggul. <em>Cocok untuk Ngantang</em> — tidak destroy existing canopy.<span class="src-tag">Lampung BRMP</span></div>
+        <div class="item"><strong>Klon target:</strong> BP 358 (iklim basah, 1.700 kg/ha/th) atau SA 237 (basah &gt;400 mdpl, 2.000 kg/ha) — keduanya endorsed Edisi 2 + Puslitbang.<span class="src-tag">Konvergensi 3 dok</span></div>
+        <div class="item"><strong>Window:</strong> Sep–Des (musim hujan, kambium aktif). Persentase hidup tinggi. STOP top-graft saat kemarau.<span class="src-tag">Edisi 2 + Puslitbang</span></div>
+        <div class="item"><strong>Teknik spesifik:</strong> diameter batang bawah ≥3 cm, irisan V di pangkal, entres 1 ruas 6–8 cm, sungkup plastik transparan dibuka setelah 2 minggu.<span class="src-tag">Konvergensi</span></div>
+        <div class="item"><strong>Identifikasi klon Robusta existing:</strong> DNA fingerprinting Puslitkoka Jember (Rp 3–5 jt) untuk verifikasi klon top-graft yang sudah ada di pohon Ngantang.<span class="src-tag">Menunggu Keputusan Wakif</span></div>
+      </div>
+    </div>
+    <div class="tg-timeline">
+      <h4>🪴 Alur Kerja Top-Graft Periode Sep–Des di Ngantang</h4>
+      <div class="tg-steps">
+        <div class="tg-step"><div class="n">1</div><div class="lbl">Pilih pohon kandidat<br>(pasca-panen Sep)</div></div>
+        <div class="tg-step"><div class="n">2</div><div class="lbl">Identifikasi tunas air<br>(usia 3–4 bulan)</div></div>
+        <div class="tg-step"><div class="n">3</div><div class="lbl">Sambung entres BP 358<br>(potongan-V, 1 ruas 7 cm)</div></div>
+        <div class="tg-step"><div class="n">4</div><div class="lbl">Sungkup plastik 2 minggu<br>(jaga kelembapan)</div></div>
+        <div class="tg-step"><div class="n">5</div><div class="lbl">Buka bertahap +<br>monitor 6 bulan</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- RECOMMENDATIONS -->
+<div class="sec">
+  <div class="sec-head"><div class="num gold">4</div><h2>Rekomendasi untuk SOP Master Ngantang</h2><div class="desc">poin-poin keputusan untuk konsolidasi SOP final</div></div>
+  <div class="recs">
+    <h3>Sintesa Final — Langkah ke Depan untuk SOP Master</h3>
+    <div class="sub">Konsolidasi temuan dari seluruh sumber dipadukan dengan kondisi nyata ekosistem kebun Ngantang.</div>
+    <div class="recs-grid">
+      <div class="rec-item">
+        <div class="h">A. Pondasi SOP</div>
+        <div class="body">Gunakan <strong>SOP Robusta Edisi 2 Kementan (2019)</strong> sebagai kerangka otoritatif (Kementan + Puslitkoka + SCOPI = dukungan paling kuat). Dilengkapi <strong>Puslitbang (2010)</strong> untuk hal yang Edisi 2 ambigu.</div>
+      </div>
+      <div class="rec-item cherry">
+        <div class="h">B. Excelsa Rootstock Framing</div>
+        <div class="body">Tetapkan secara eksplisit di SOP master: "Kebun Wakaf Ngantang menggunakan <strong>Excelsa rootstock warisan (tahan nematoda)</strong> yang di-top-graft Robusta klon — sesuai endorsement Edisi 2 hal 164 &amp; Puslitbang 2010 hal 46." Bukan kondisi substandar, melainkan relevan untuk penelitian.</div>
+      </div>
+      <div class="rec-item gold">
+        <div class="h">C. Top-Graft Protokol</div>
+        <div class="body">Adopsi <strong>tipe "payung" Lampung BRMP</strong> (sambung pada 100–150 cm) sebagai protokol baku untuk peremajaan dan perbaikan klon di Ngantang. Klon target: <strong>BP 358 (zona basah)</strong>, dilakukan pada periode <strong>September–Desember</strong> saja.</div>
+      </div>
+      <div class="rec-item">
+        <div class="h">D. Pemupukan Dosis</div>
+        <div class="body">Adopsi dosis <strong>rekomendasi BRIN</strong> sebagai standar: Urea 300 / SP-36 160 / KCl 200 / <strong>Kieserit 100</strong> per pohon per tahun (terbagi 2× aplikasi) + Dolomit berbasis area ~10 sak/kebun untuk koreksi pH tanah Andisol Ngantang.</div>
+      </div>
+      <div class="rec-item">
+        <div class="h">E. Pemangkasan</div>
+        <div class="body">Pangkas bentuk 180 cm (default), pangkas berat tiap 3 bulan pasca-panen, wiwilan tiap 2 minggu MH / 4 minggu kemarau (konvergensi seluruh sumber). Peremajaan: <strong>tipe payung 100–150 cm</strong> untuk Excelsa rootstock (pola Lampung).</div>
+      </div>
+      <div class="rec-item">
+        <div class="h">F. Penyemprotan Cercospora</div>
+        <div class="body">Ikut Edisi 2: <strong>1× per 3 minggu</strong> menjelang MH (Sep-Okt). Ekstrak daun cengkeh + surfaktan, 70% volume bawah daun. <em style="color:var(--cherry-dark)">Penyesuaian ke 2 minggu menunggu data curah hujan &amp; kelembapan aktual lapangan atau advice formal dari Technical Advisor.</em></div>
+      </div>
+      <div class="rec-item cherry">
+        <div class="h">G. Pisang & Penaung</div>
+        <div class="body"><strong>Bongkar 100% pisang</strong> setelah amanah panen MWC NU selesai (Edisi 2 hal 56). Tanam ulang <strong>lamtoro PG 79 (200–300 batang)</strong> + durian dengan jarak 10×10 m.</div>
+      </div>
+      <div class="rec-item">
+        <div class="h">H. Rorak Konservasi</div>
+        <div class="body">Adopsi spesifikasi Edisi 2 (hal 149): <strong>100×30×30-50 cm</strong>, jarak 10 m vertikal, orientasi memotong lereng. Prioritas Bidang 3 (paling miring) — 15–20 unit. Spesifikasi dimensi ini unik pada Edisi 2 (tidak diberikan oleh Puslitbang &amp; Lampung).</div>
+      </div>
+      <div class="rec-item gold">
+        <div class="h">I. Brocap PBKo</div>
+        <div class="body">Pilot 5 unit di Bidang 4 Mei 2026 sebagai baseline monitoring → penerapan penuh 50 unit Bidang 1–3 Nov–Des 2026 (timing optimal 4-bulan pasca-panen per Wiryadiputra, Cilas &amp; Morin 2008 — ASIC 16th Conference, Bangalore). Kepadatan 25 unit/ha, jarak 20 m, tinggi 1,6 m (mengikuti spesifikasi Lampung BRMP).</div>
+      </div>
+      <div class="rec-item">
+        <div class="h">J. Panen & Pasca-Panen</div>
+        <div class="body">Petik selektif merah sebagai default, jendela waktu ≤12 jam dari petik ke proses, kadar air ≤12,5% sesuai SNI. Target Mutu 3 → 2 → 1 secara bertahap. Saat hujan deras: tunda panen 1–2 hari, hindari borongan campur.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="foot">
+  <div class="l">
+    <strong>WAKAF PRODUKTIF KEBUN KOPI NGANTANG</strong>
+    <div>4.918 m² · ± 750 phn Robusta · 4 Bidang · 648 mdpl (kelas S3 Robusta zona basah)</div>
+    <div class="palette" style="margin-top:6px">
+      <span style="background:#3A4A55"></span><span style="background:#7B9B7E"></span><span style="background:#9CB4A4"></span><span style="background:#C66E5C"></span><span style="background:#DDD5C7"></span><span style="background:#C4906A"></span>
+    </div>
+  </div>
+  <div class="r">
+    <strong>Sintesa SOP Robusta — Evidence-Based Comparison</strong>
+    Sumber domestik: SOP Awal Pra-Panen Ngantang · Budidaya Puslitbang 2010 · Pedoman Lampung BRMP 2024<br>
+    Validasi internasional: ICCRI · Wintgens 2004 · WCR · SCA · peer-reviewed (PubMed/SciELO/PMC)<br>
+    Baseline normative: SOP Robusta Edisi 2 Kementan 2019 · Permentan 39/2015 · SNI 01-2907-2008
+  </div>
+</div>
+
+</div>
+</body>
+</html>
