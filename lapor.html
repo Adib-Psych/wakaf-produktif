@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1F5F47">
+<meta name="description" content="Form lapor harian pekerja kebun kopi wakaf Ngantang">
+<link rel="manifest" href="demo/manifest.json">
+<link rel="icon" type="image/png" href="images/logo-wakaf-produktif-transparan.png">
+<title>Lapor Kebun NGT — Wakaf Produktif</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   WAKAF PRODUKTIF — WORKER PWA LAPOR.HTML PHASE 1A
+   Eucalyptus theme · Mobile-first · Self-contained
+   ============================================================ */
+
+:root {
+  /* Eucalyptus palette */
+  --euca-darkest: #0A3D2C;
+  --euca-primary: #1F5F47;
+  --euca-mid:     #2D8466;
+  --euca-soft:    #5BAE8A;
+  --euca-pale:    #A8D5BD;
+  --euca-bg:      #E8F4ED;
+
+  /* Accents */
+  --cherry:  #C73E3E;
+  --gold:    #D4AF37;
+  --amber:   #F59E0B;
+  --pink:    #EC4899;
+  --purple:  #8B5CF6;
+  --blue:    #3B82F6;
+
+  /* Neutrals */
+  --ink:    #0F1F19;
+  --mute:   #64746B;
+  --line:   #D4E4DA;
+  --bg:     #F4F9F5;
+  --white:  #FFFFFF;
+  --whatsapp: #25D366;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg); color: var(--ink); line-height: 1.5;
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  overscroll-behavior-y: contain;
+}
+body { padding-bottom: env(safe-area-inset-bottom); }
+
+/* ===== APP SHELL ===== */
+.app {
+  max-width: 520px;
+  margin: 0 auto;
+  background: var(--white);
+  min-height: 100vh;
+  padding-bottom: 96px;
+}
+
+/* ===== ERROR PAGE (invalid token) ===== */
+.error-page {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  background: var(--bg);
+}
+.error-page.on { display: flex; }
+.error-page .icon { font-size: 64px; margin-bottom: 16px; }
+.error-page h1 { font-size: 22px; color: var(--cherry); margin-bottom: 12px; font-weight: 800; }
+.error-page p { font-size: 15px; color: var(--mute); max-width: 320px; margin-bottom: 8px; }
+.error-page .hint {
+  margin-top: 24px; padding: 14px 18px;
+  background: var(--white); border: 1px solid var(--line);
+  border-radius: 10px; max-width: 340px; font-size: 14px;
+}
+.error-page .hint b { color: var(--euca-primary); }
+
+/* ===== HEADER (sticky) ===== */
+.header {
+  background: linear-gradient(135deg, var(--euca-darkest) 0%, var(--euca-primary) 60%, var(--euca-mid) 100%);
+  color: var(--white);
+  padding: 18px 18px 14px;
+  position: sticky; top: 0; z-index: 50;
+  box-shadow: 0 2px 12px rgba(10,61,44,.18);
+}
+.header-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 10px;
+}
+.brand {
+  display: flex; align-items: center; gap: 10px;
+}
+.brand-mark {
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,.16);
+  border: 1.5px solid rgba(255,255,255,.32);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+}
+.brand-text { line-height: 1.1; }
+.brand-text .t1 { font-size: 11px; opacity: .85; letter-spacing: .5px; text-transform: uppercase; }
+.brand-text .t2 { font-size: 15px; font-weight: 800; margin-top: 2px; }
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.32);
+  padding: 5px 9px; border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+}
+.status-pill.offline { background: rgba(199,62,62,.22); border-color: rgba(255,255,255,.4); }
+.status-pill .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--euca-pale);
+  box-shadow: 0 0 0 2px rgba(255,255,255,.15);
+}
+.status-pill.offline .dot { background: #ffb3b3; }
+
+.greeting {
+  margin-top: 12px;
+  font-size: 15px; font-weight: 600;
+}
+.greeting .name { color: var(--euca-pale); font-weight: 800; }
+.date-line {
+  font-size: 12px; opacity: .85; margin-top: 2px;
+}
+.queue-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: 8px;
+  padding: 3px 8px; border-radius: 999px;
+  background: var(--amber); color: var(--euca-darkest);
+  font-size: 11px; font-weight: 800;
+}
+.queue-badge.empty { display: none; }
+
+/* ===== SECTION ===== */
+.section {
+  background: var(--white);
+  padding: 18px;
+  border-bottom: 8px solid var(--bg);
+}
+.section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 800;
+  color: var(--euca-primary);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.section-title .num {
+  width: 22px; height: 22px;
+  background: var(--euca-bg);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--euca-primary);
+}
+
+/* Banner warnings */
+.banner {
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex; gap: 8px; align-items: flex-start;
+}
+.banner.amber { background: #FEF3C7; color: #92400E; border-left: 3px solid var(--amber); }
+.banner.pink  { background: #FCE7F3; color: #831843; border-left: 3px solid var(--pink); }
+.banner.info  { background: var(--euca-bg); color: var(--euca-darkest); border-left: 3px solid var(--euca-mid); }
+.banner .ico { font-size: 14px; flex-shrink: 0; }
+
+/* ===== FIELD ===== */
+.field { margin-bottom: 14px; }
+.field:last-child { margin-bottom: 0; }
+.label {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 13px; font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+.label .req { color: var(--cherry); margin-left: 2px; }
+.label .tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: .3px;
+  text-transform: uppercase;
+}
+.label .tag.auto { background: #FEF3C7; color: #92400E; }
+.label .tag.locked { background: var(--euca-bg); color: var(--euca-primary); border: 1px dashed var(--euca-mid); }
+.label .tag.offsop { background: #FEE2E2; color: #991B1B; }
+
+.help {
+  font-size: 11px; color: var(--mute);
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Inputs */
+.input, select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: inherit;
+  background: var(--white);
+  color: var(--ink);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color .15s, background .15s;
+  min-height: 46px;
+}
+.input:focus, select:focus, textarea:focus {
+  border-color: var(--euca-mid);
+  background: #FAFEFC;
+}
+.input[type="number"] { -moz-appearance: textfield; }
+.input[type="number"]::-webkit-inner-spin-button { display: none; }
+textarea { min-height: 84px; resize: vertical; line-height: 1.5; }
+select {
+  appearance: none; -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231F5F47' stroke-width='2.5'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 38px;
+}
+.input.locked, select.locked {
+  background: var(--euca-bg);
+  border-style: dashed;
+  color: var(--euca-darkest);
+}
+
+.input.phase2 { border: 1.5px dashed var(--pink) !important; background: #FDF2F8; }
+.input.nonsop { border: 1.5px dashed var(--amber) !important; background: #FFFBEB; }
+
+/* Radio chip */
+.chip-row {
+  display: flex; flex-wrap: wrap; gap: 7px;
+}
+.chip {
+  padding: 11px 14px;
+  font-size: 14px; font-weight: 600;
+  background: var(--white);
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all .12s;
+  min-height: 44px;
+  display: inline-flex; align-items: center; gap: 6px;
+  color: var(--ink);
+}
+.chip:hover { border-color: var(--euca-soft); }
+.chip.active {
+  background: var(--euca-primary); color: var(--white); border-color: var(--euca-primary);
+  box-shadow: 0 2px 6px rgba(31,95,71,.3);
+}
+.chip.offsop-opt { border-style: dashed; border-color: var(--amber); }
+.chip.offsop-opt::after { content: "off-SOP"; font-size: 9px; color: var(--amber); margin-left: 4px; font-weight: 700; }
+.chip.offsop-opt.active { background: var(--amber); color: var(--euca-darkest); border-color: var(--amber); }
+.chip.kebun-desc { display: flex; flex-direction: column; align-items: flex-start; padding: 9px 12px; min-width: 110px; }
+.chip.kebun-desc .kn { font-size: 14px; font-weight: 800; }
+.chip.kebun-desc .kd { font-size: 10px; opacity: .75; margin-top: 1px; font-weight: 500; }
+.chip.kebun-desc.active .kd { opacity: .9; }
+
+/* Override toggle */
+.override-toggle {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 6px;
+  padding: 5px 9px;
+  background: transparent;
+  border: 1px solid var(--euca-soft);
+  border-radius: 999px;
+  font-size: 11px; font-weight: 700;
+  color: var(--euca-mid);
+  cursor: pointer;
+}
+.override-toggle.active {
+  background: var(--euca-bg); color: var(--euca-darkest);
+}
+
+/* Voice note + photo */
+.voice-btn {
+  width: 100%; padding: 12px;
+  background: var(--euca-bg);
+  border: 1.5px dashed var(--euca-mid);
+  border-radius: 10px;
+  font-size: 13px; font-weight: 700;
+  color: var(--euca-primary);
+  cursor: pointer;
+  margin-top: 6px;
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.voice-btn.recording {
+  background: var(--cherry); color: var(--white);
+  border-color: var(--cherry);
+  animation: pulse 1.2s infinite;
+}
+.voice-btn .pulse {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--white);
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+.voice-clip {
+  margin-top: 8px;
+  padding: 9px 11px;
+  background: var(--bg);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+}
+.voice-clip audio { max-width: 100%; }
+.voice-clip .del {
+  background: transparent; border: 0;
+  color: var(--cherry);
+  font-size: 14px; cursor: pointer;
+  padding: 4px 6px;
+}
+
+.photo-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  margin-top: 8px;
+}
+.photo-tile {
+  aspect-ratio: 1; border-radius: 8px;
+  background: var(--bg);
+  overflow: hidden; position: relative;
+}
+.photo-tile img { width: 100%; height: 100%; object-fit: cover; }
+.photo-tile .x {
+  position: absolute; top: 4px; right: 4px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(0,0,0,.55); color: white;
+  border: 0; font-size: 13px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.photo-add {
+  aspect-ratio: 1;
+  background: var(--euca-bg);
+  border: 1.5px dashed var(--euca-mid);
+  border-radius: 8px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--euca-primary);
+  font-weight: 700;
+  cursor: pointer;
+}
+.photo-add .ic { font-size: 22px; margin-bottom: 2px; }
+.photo-grid input[type="file"] { display: none; }
+
+/* Char counter */
+.char-counter {
+  text-align: right; font-size: 11px; color: var(--mute); margin-top: 4px;
+}
+.char-counter.warn { color: var(--cherry); }
+
+/* SOP topik badge */
+.topik-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  margin-left: 6px;
+  padding: 2px 7px; border-radius: 4px;
+  background: var(--euca-primary); color: var(--white);
+  font-size: 10px; font-weight: 800;
+}
+
+/* ===== SUBMIT (sticky) ===== */
+.submit-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--white);
+  border-top: 1px solid var(--line);
+  padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+  z-index: 40;
+  box-shadow: 0 -2px 16px rgba(15,31,25,.06);
+}
+.submit-bar .row {
+  max-width: 520px; margin: 0 auto;
+  display: flex; gap: 10px; align-items: center;
+}
+.submit-btn {
+  flex: 1;
+  padding: 14px 18px;
+  background: var(--euca-primary);
+  color: white;
+  border: 0; border-radius: 12px;
+  font-size: 16px; font-weight: 800;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  box-shadow: 0 3px 10px rgba(31,95,71,.32);
+  font-family: inherit;
+}
+.submit-btn:active { transform: scale(.98); }
+.submit-btn:disabled {
+  background: var(--mute); box-shadow: none; opacity: .6;
+}
+.queue-btn {
+  padding: 14px 16px;
+  background: var(--euca-bg); color: var(--euca-primary);
+  border: 1.5px solid var(--euca-pale);
+  border-radius: 12px; font-size: 14px; font-weight: 800;
+  cursor: pointer; font-family: inherit;
+  position: relative;
+}
+.queue-btn .count {
+  position: absolute; top: -6px; right: -6px;
+  background: var(--cherry); color: white;
+  font-size: 10px; min-width: 18px; height: 18px;
+  border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-weight: 800; padding: 0 4px;
+}
+
+/* ===== QUEUE PANEL ===== */
+.queue-panel {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: white;
+  border-radius: 18px 18px 0 0;
+  padding: 18px 18px 30px;
+  z-index: 70;
+  transform: translateY(100%);
+  transition: transform .25s;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 -6px 24px rgba(0,0,0,.15);
+}
+.queue-panel.on { transform: translateY(0); }
+.queue-panel h2 {
+  font-size: 18px; color: var(--euca-darkest); font-weight: 800;
+  margin-bottom: 4px;
+}
+.queue-panel .sub {
+  font-size: 12px; color: var(--mute); margin-bottom: 14px;
+}
+.queue-list .qrow {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px;
+  background: var(--bg); border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.queue-list .qrow .meta { color: var(--mute); font-size: 11px; }
+.queue-list .qrow .kat { font-weight: 700; }
+.queue-list .qrow .stat {
+  font-size: 10px; font-weight: 800;
+  padding: 2px 6px; border-radius: 4px;
+}
+.queue-list .qrow .stat.pending { background: var(--amber); color: white; }
+.queue-list .qrow .stat.synced { background: var(--euca-mid); color: white; }
+.queue-actions {
+  display: flex; gap: 8px; margin-top: 14px;
+}
+.queue-actions button {
+  flex: 1;
+  padding: 12px 10px;
+  border: 0; border-radius: 10px;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+}
+.qa-sync { background: var(--euca-primary); color: white; }
+.qa-wa   { background: var(--whatsapp); color: white; }
+.qa-close { background: var(--bg); color: var(--mute); border: 1px solid var(--line) !important; }
+.empty-queue {
+  text-align: center; padding: 30px 10px;
+  color: var(--mute); font-size: 13px;
+}
+.empty-queue .ic { font-size: 36px; margin-bottom: 8px; }
+
+/* ===== SCRIM ===== */
+.scrim {
+  position: fixed; inset: 0;
+  background: rgba(10,31,21,.5);
+  z-index: 60;
+  display: none;
+}
+.scrim.on { display: block; }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  top: 90px; left: 50%;
+  transform: translateX(-50%) translateY(-200%);
+  background: var(--euca-darkest);
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-size: 13px; font-weight: 600;
+  z-index: 80;
+  max-width: 92%;
+  text-align: center;
+  transition: transform .25s ease-out;
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+.toast.on { transform: translateX(-50%) translateY(0); }
+.toast.success { background: var(--euca-mid); }
+.toast.error { background: var(--cherry); }
+
+/* ===== SUCCESS MODAL ===== */
+dialog.success-modal {
+  border: 0; border-radius: 18px; padding: 0;
+  max-width: 340px; width: 90%;
+  background: white;
+  box-shadow: 0 8px 40px rgba(0,0,0,.2);
+}
+dialog.success-modal::backdrop { background: rgba(10,31,21,.6); }
+dialog .modal-body {
+  padding: 28px 24px 22px;
+  text-align: center;
+}
+dialog .icon-circle {
+  width: 64px; height: 64px;
+  background: var(--euca-bg);
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px;
+}
+dialog h2 {
+  font-size: 18px; color: var(--euca-darkest);
+  font-weight: 800; margin-bottom: 8px;
+}
+dialog p {
+  font-size: 14px; color: var(--mute);
+  margin-bottom: 16px; line-height: 1.5;
+}
+dialog .modal-actions {
+  padding: 0 24px 22px;
+  display: flex; gap: 8px;
+}
+dialog .modal-actions button {
+  flex: 1; padding: 12px;
+  border: 0; border-radius: 10px;
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; font-family: inherit;
+}
+.btn-primary { background: var(--euca-primary); color: white; }
+.btn-ghost { background: var(--bg); color: var(--mute); }
+
+/* ===== UTILITY ===== */
+.hidden { display: none !important; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.field-group {
+  background: var(--bg);
+  padding: 12px; border-radius: 10px;
+  margin-top: 6px;
+}
+.field-group .field:last-child { margin-bottom: 0; }
+.field-group-label {
+  font-size: 11px; font-weight: 800;
+  color: var(--mute); text-transform: uppercase;
+  letter-spacing: .8px; margin-bottom: 8px;
+}
+
+@media (max-width: 360px) {
+  .header { padding: 14px 14px 12px; }
+  .section { padding: 14px; }
+  .brand-text .t2 { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     ERROR PAGE (invalid token)
+     ============================================================ -->
+<div id="errorPage" class="error-page">
+  <div class="icon">⚠️</div>
+  <h1>URL tidak valid</h1>
+  <p>Link akses ini tidak dikenali sistem. Pastikan link yang Anda buka berasal dari Pak Adib (Wakif).</p>
+  <div class="hint">
+    Hubungi <b>Pak Adib</b> via WhatsApp untuk mendapatkan link akses yang benar untuk Anda.
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+     ============================================================ -->
+<div id="app" class="app hidden">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-row">
+      <div class="brand">
+        <div class="brand-mark">☕</div>
+        <div class="brand-text">
+          <div class="t1">Wakaf Produktif</div>
+          <div class="t2">Lapor Kebun NGT</div>
+        </div>
+      </div>
+      <div id="netStatus" class="status-pill">
+        <span class="dot"></span><span id="netStatusText">Online</span>
+      </div>
+    </div>
+    <div class="greeting">
+      Assalamu'alaikum, <span id="workerName" class="name">—</span>
+      <span id="queueBadge" class="queue-badge empty"><span id="queueBadgeNum">0</span> pending</span>
+    </div>
+    <div id="dateLine" class="date-line">—</div>
+  </header>
+
+  <!-- SECTION 1: IDENTITAS -->
+  <section class="section">
+    <div class="section-title"><span class="num">1</span> Identitas Aktivitas</div>
+
+    <div class="field">
+      <label class="label" for="f-tgl">📅 Tanggal <span class="req">*</span></label>
+      <input id="f-tgl" class="input" type="date">
+    </div>
+
+    <div class="field">
+      <label class="label">🌳 Kebun mana? <span class="req">*</span></label>
+      <div id="kebun-chips" class="chip-row">
+        <div class="chip kebun-desc" data-val="K1"><span class="kn">K1</span><span class="kd">pinggir jalan kecil</span></div>
+        <div class="chip kebun-desc" data-val="K2"><span class="kn">K2</span><span class="kd">pinggir jalan besar</span></div>
+        <div class="chip kebun-desc" data-val="K3"><span class="kn">K3</span><span class="kd">bawah</span></div>
+        <div class="chip kebun-desc" data-val="K4"><span class="kn">K4</span><span class="kd">belakang Rumah</span></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="label" for="f-blok">📋 Lokasi spesifik <span style="font-weight:500;color:var(--mute);font-size:11px">(opsional)</span></label>
+      <input id="f-blok" class="input" type="text" placeholder="mis. K1-A baris 3">
+    </div>
+  </section>
+
+  <!-- SECTION 2: CUACA (AUTO) -->
+  <section class="section">
+    <div class="section-title"><span class="num">2</span> Cuaca <span class="topik-badge" style="background:var(--amber);color:var(--euca-darkest)">AUTO</span></div>
+
+    <div id="weatherBanner" class="banner info">
+      <span class="ico">☁️</span>
+      <span>Cuaca akan terisi otomatis dari GPS + sistem ramalan. Jika observasi Anda berbeda, tap tombol 🔓 untuk override.</span>
+    </div>
+
+    <div class="field">
+      <label class="label">☀️ Cuaca Pagi <span class="tag locked" id="cp-tag">🔒 Auto</span></label>
+      <div id="cuaca-pagi-chips" class="chip-row">
+        <div class="chip" data-val="cerah">Cerah</div>
+        <div class="chip" data-val="berawan">Berawan</div>
+        <div class="chip" data-val="gerimis">Gerimis</div>
+        <div class="chip" data-val="hujan_deras">Hujan deras</div>
+      </div>
+      <button type="button" class="override-toggle" data-target="cuaca-pagi">🔓 Saya observasi beda</button>
+    </div>
+
+    <div class="field">
+      <label class="label">☁️ Cuaca Siang <span class="tag locked" id="cs-tag">🔒 Auto</span></label>
+      <div id="cuaca-siang-chips" class="chip-row">
+        <div class="chip" data-val="cerah">Cerah</div>
+        <div class="chip" data-val="berawan">Berawan</div>
+        <div class="chip" data-val="gerimis">Gerimis</div>
+        <div class="chip" data-val="hujan_deras">Hujan deras</div>
+      </div>
+      <button type="button" class="override-toggle" data-target="cuaca-siang">🔓 Saya observasi beda</button>
+    </div>
+
+    <div class="row-2">
+      <div class="field">
+        <label class="label" for="f-rain24">🌧️ Hujan kemarin (mm) <span class="tag locked" id="r24-tag">🔒</span></label>
+        <input id="f-rain24" class="input locked" type="number" min="0" step="0.1" readonly>
+      </div>
+      <div class="field">
+        <label class="label" for="f-rain7d">🌧️ Hujan seminggu (mm) <span class="tag locked" id="r7d-tag">🔒</span></label>
+        <input id="f-rain7d" class="input locked" type="number" min="0" step="0.1" readonly>
+      </div>
+    </div>
+    <button type="button" class="override-toggle" data-target="rain">🔓 Saya observasi beda (hujan)</button>
+  </section>
+
+  <!-- SECTION 3: PEKERJAAN -->
+  <section class="section">
+    <div class="section-title"><span class="num">3</span> Pekerjaan</div>
+
+    <div class="field">
+      <label class="label" for="f-kategori">📋 Kategori <span class="req">*</span></label>
+      <select id="f-kategori" class="input">
+        <option value="">— Pilih kategori —</option>
+      </select>
+      <div id="kategori-banner"></div>
+    </div>
+
+    <div class="field">
+      <label class="label">⏱️ Durasi <span class="req">*</span></label>
+      <div id="durasi-chips" class="chip-row">
+        <div class="chip" data-val="setengah_hari">½ hari</div>
+        <div class="chip" data-val="satu_hari">1 hari (full)</div>
+        <div class="chip" data-val="borongan">Borongan</div>
+      </div>
+    </div>
+
+    <div class="row-2">
+      <div class="field">
+        <label class="label" for="f-pekerja">👥 Jumlah Pekerja</label>
+        <input id="f-pekerja" class="input" type="number" min="1" value="1">
+      </div>
+      <div class="field">
+        <label class="label" for="f-pohon">🌳 Jumlah Pohon</label>
+        <input id="f-pohon" class="input" type="number" min="0" placeholder="0">
+      </div>
+    </div>
+
+    <!-- Dynamic sub-fields per kategori -->
+    <div id="dynamic-fields"></div>
+  </section>
+
+  <!-- SECTION 4: CATATAN & BUKTI -->
+  <section class="section">
+    <div class="section-title"><span class="num">4</span> Catatan & Bukti</div>
+
+    <div class="field">
+      <label class="label" for="f-catatan">📝 Catatan</label>
+      <textarea id="f-catatan" maxlength="500" placeholder="Tulis catatan tambahan, observasi unik, atau hal-hal yang perlu Adib tahu..."></textarea>
+      <div id="catatan-counter" class="char-counter">0 / 500</div>
+      <button type="button" id="voiceBtn" class="voice-btn">
+        <span>🎙️</span><span id="voiceBtnText">Rekam catatan suara</span>
+      </button>
+      <div id="voiceClips"></div>
+    </div>
+
+    <div class="field">
+      <label class="label">📷 Foto Bukti <span style="font-weight:500;color:var(--mute);font-size:11px">(maks 3)</span></label>
+      <div id="photoGrid" class="photo-grid">
+        <label class="photo-add" id="photoAddLabel">
+          <span class="ic">📷</span>
+          <span>Tambah</span>
+          <input id="photoInput" type="file" accept="image/*" capture="environment" multiple>
+        </label>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /app -->
+
+<!-- ============================================================
+     SUBMIT BAR (sticky bottom)
+     ============================================================ -->
+<div id="submitBar" class="submit-bar hidden">
+  <div class="row">
+    <button id="submitBtn" class="submit-btn">📤 Kirim Laporan</button>
+    <button id="queueBtn" class="queue-btn">
+      📥 <span id="queueBtnCount" class="count hidden">0</span>
+    </button>
+  </div>
+</div>
+
+<!-- Scrim -->
+<div id="scrim" class="scrim"></div>
+
+<!-- Queue panel -->
+<div id="queuePanel" class="queue-panel">
+  <h2>📥 Laporan Pending</h2>
+  <div class="sub">Akan otomatis terkirim ke Pak Adib saat ada sinyal internet.</div>
+  <div id="queueList" class="queue-list"></div>
+  <div class="queue-actions">
+    <button id="qaSync" class="qa-sync">🔄 Sync Sekarang</button>
+    <button id="qaWa"   class="qa-wa">📤 Export ke WA</button>
+  </div>
+  <div class="queue-actions" style="margin-top:8px">
+    <button id="qaClose" class="qa-close">Tutup</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast"></div>
+
+<!-- Success modal -->
+<dialog id="successModal" class="success-modal">
+  <div class="modal-body">
+    <div class="icon-circle">✅</div>
+    <h2>Laporan tersimpan!</h2>
+    <p>Akan otomatis dikirim ke <b>Pak Adib</b> saat ada sinyal internet.</p>
+  </div>
+  <div class="modal-actions">
+    <button class="btn-primary" id="modalOk">Tutup</button>
+    <button class="btn-ghost" id="modalNew">Lapor lagi</button>
+  </div>
+</dialog>
+
+<!-- ============================================================
+     INLINE SCRIPT — Single-file PWA logic
+     ============================================================ -->
+<script>
+/* ============================================================
+   CONSTANTS & CONFIG
+   ============================================================ */
+const WORKER_MAP = {
+  KUMPUL: { name: 'Pak Kumpul', tarif: { setengah_hari: 50000, satu_hari: 100000 } },
+  YIT:    { name: 'Cak Yit',    tarif: { setengah_hari: 60000, satu_hari: 120000 } },
+  ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity */ }
+};
+
+const KATEGORI_BY_WORKER = {
+  KUMPUL: ['pemupukan_organik', 'pemupukan_kimia', 'babat_rumput', 'build_rorak',
+           'kompos_kulit_kopi', 'tanam_penaung', 'sortasi_buah', 'penjemuran',
+           'brocap_management', 'bokashi_production', 'arachis_management',
+           'biochar_pyrolysis', 'lain'],
+  YIT:    ['pemangkasan', 'panen', 'penyemprotan', 'opt_monitoring',
+           'topgraft_robusta', 'lain'],
+  ANTO:   ['inventarisasi_pohon', 'opt_monitoring', 'soil_test',
+           'komunikasi_stakeholder', 'pisang_management', 'lain']
+};
+
+const KATEGORI_TOPIK_MAP = {
+  pemupukan_organik:    'E', pemupukan_kimia:      'C',
+  pemangkasan:          'I', babat_rumput:         null,
+  penyemprotan:         'R', panen:                'O',
+  sortasi_buah:         'S', penjemuran:           'Q',
+  build_rorak:          'L', kompos_kulit_kopi:    'E',
+  tanam_penaung:        'J', inventarisasi_pohon:  'B',
+  opt_monitoring:       'M', brocap_management:    'M',
+  soil_test:            'E', topgraft_robusta:     'A',
+  bokashi_production:   'E', arachis_management:   null,
+  biochar_pyrolysis:    null, pisang_management:   'K',
+  komunikasi_stakeholder: null, lain: null
+};
+
+const KATEGORI_LABEL = {
+  pemupukan_organik:    { icon: '♻️', label: 'Pupuk Organik (kompos)' },
+  pemupukan_kimia:      { icon: '🌿', label: 'Pupuk Kimia / Anorganik' },
+  pemangkasan:          { icon: '✂️', label: 'Pemangkasan' },
+  babat_rumput:         { icon: '🌾', label: 'Babat Rumput' },
+  penyemprotan:         { icon: '💨', label: 'Penyemprotan OPT' },
+  panen:                { icon: '🍒', label: 'Panen' },
+  sortasi_buah:         { icon: '🔍', label: 'Sortasi Buah' },
+  penjemuran:           { icon: '☀️', label: 'Penjemuran' },
+  build_rorak:          { icon: '⛏️', label: 'Buat Rorak' },
+  kompos_kulit_kopi:    { icon: '🌰', label: 'Kompos Kulit Kopi' },
+  tanam_penaung:        { icon: '🌴', label: 'Tanam Penaung' },
+  inventarisasi_pohon:  { icon: '🌳', label: 'Inventarisasi Pohon' },
+  opt_monitoring:       { icon: '🔬', label: 'OPT Monitoring' },
+  brocap_management:    { icon: '🪤', label: 'Brocap Management' },
+  soil_test:            { icon: '⛰️', label: 'Soil Test' },
+  topgraft_robusta:     { icon: '🌱', label: 'Sambung Pucuk Robusta' },
+  bokashi_production:   { icon: '🧪', label: 'Bokashi Production' },
+  arachis_management:   { icon: '🌿', label: 'Arachis (Phase 2)' },
+  biochar_pyrolysis:    { icon: '🔥', label: 'Biochar (Phase 2)' },
+  pisang_management:    { icon: '🍌', label: 'Pisang (one-off)' },
+  komunikasi_stakeholder: { icon: '💬', label: 'Komunikasi Stakeholder' },
+  lain:                 { icon: '📋', label: 'Lainnya' }
+};
+
+const NON_SOP_ONE_OFF = ['pisang_management'];
+const PHASE2_UNVALIDATED = ['arachis_management', 'biochar_pyrolysis'];
+
+/* ============================================================
+   APP STATE
+   ============================================================ */
+const STATE = {
+  workerToken: null,
+  workerName:  null,
+  selected: {
+    kebun: null,
+    cuaca_pagi: null,
+    cuaca_siang: null,
+    durasi: null
+  },
+  override: {
+    cuaca_pagi: false,
+    cuaca_siang: false,
+    rain: false
+  },
+  weather: {
+    cuaca_pagi: null,
+    cuaca_siang: null,
+    rain_24h: null,
+    rain_7d: null,
+    source: 'open-meteo'
+  },
+  gps: null,
+  voiceClips: [],   // [{ id, blob_b64, duration_sec }]
+  photos: [],       // [{ id, dataUrl, size_kb }]
+  catatan: '',
+  kategori: null,
+  dynamicFields: {},
+  dynamicFilledBy: {},  // per-field _filled_by tracking
+  mediaRecorder: null,
+  audioChunks: [],
+  recording: false,
+  recordStart: null,
+  recordTimer: null
+};
+
+const GLOSSARY = null; // loaded lazily — inline mapping for Phase 1A
+const FIELD_REGISTRY = null;
+
+/* ============================================================
+   INLINE FIELD REGISTRY (subset — worker form only)
+   ============================================================ */
+const REGISTRY = {
+  pemupukan_kimia: {
+    label: 'Pupuk Kimia / Anorganik',
+    fields: [
+      { id: 'jenis_pupuk', label: 'Jenis Pupuk', type: 'select', options: ['Urea (pupuk putih)', 'SP-36 (pupuk fosfor)', 'KCl (pupuk merah)', 'Dolomit (kapur)', 'Kieserit (Mg+S)', 'Phonska / NPK subsidi', 'Phonska Plus (NPK + S + Zn)', 'NPK Yara biru (16-16-16)', 'Lain (catat di catatan)'] },
+      { id: 'dosis_gpohon', label: 'Dosis (gram per pohon)', type: 'number', placeholder: 'mis. 150' },
+      { id: 'jml_pohon_aplikasi', label: 'Jumlah pohon yang dipupuk', type: 'number', placeholder: '0' },
+      { id: 'metode_aplikasi', label: 'Cara aplikasi', type: 'select', options: ['Parit lingkar (alur keliling pohon)', 'Disebar / ditabur (broadcast)', 'Dipendam di rorak', 'Pupuk cair (fertigation)'] },
+      { id: 'jarak_batang_cm', label: 'Jarak dari batang (cm)', type: 'number', placeholder: 'mis. 40' },
+      { id: 'kedalaman_parit_cm', label: 'Kedalaman parit (cm)', type: 'number', placeholder: 'mis. 3' },
+      { id: 'time_gap_hujan_hari', label: 'Berapa hari sejak hujan terakhir?', type: 'number', placeholder: 'mis. 2' }
+    ]
+  },
+  pemupukan_organik: {
+    label: 'Pupuk Organik (Kompos In-Situ)',
+    fields: [
+      { id: 'sumber_kompos', label: 'Sumber kompos', type: 'select', options: ['Kulit kopi sisa kupasan', 'Daun lamtoro kering', 'Daun kopi kering', 'Pupuk kandang kambing / tletong', 'Pupuk kandang ayam', 'Bokashi'] },
+      { id: 'volume_per_pohon', label: 'Volume per pohon (liter)', type: 'number', placeholder: 'mis. 5' },
+      { id: 'total_kg', label: 'Total (kg)', type: 'number', placeholder: '0' },
+      { id: 'kondisi_fermentasi', label: 'Kondisi kompos', type: 'select', options: ['Sudah jadi (matang)', 'Setengah matang', 'Masih mentah'] },
+      { id: 'lokasi_aplikasi', label: 'Lokasi aplikasi', type: 'select', options: ['Piringan (lingkar pohon)', 'Rorak (lubang resapan)', 'Bedeng / lainnya'] }
+    ]
+  },
+  pemangkasan: {
+    label: 'Pemangkasan',
+    fields: [
+      { id: 'tipe_pemangkasan', label: 'Tipe pemangkasan', type: 'select', options: ['Pangkas berat (total)', 'Pangkas ringan rutin', 'Wiwilan (tunas liar)', 'Pangkas bentuk pohon muda', 'Pangkas pohon naungan', 'Peremajaan (potong batang bawah)'] },
+      { id: 'tinggi_pre_cm', label: 'Tinggi pohon SEBELUM (cm)', type: 'number', placeholder: 'mis. 250' },
+      { id: 'tinggi_post_cm', label: 'Tinggi pohon SESUDAH (cm)', type: 'number', placeholder: 'mis. 200' },
+      { id: 'cabang_dibuang', label: 'Cabang yang dibuang (boleh lebih dari 1)', type: 'multi', options: ['Cabang ke dalam / cabang balik', 'Cabang mati / kering', 'Cabang sakit kena penyakit', 'Cabang gak kena matahari'] }
+    ]
+  },
+  panen: {
+    label: 'Panen',
+    fields: [
+      { id: 'metode_petik', label: 'Cara petik', type: 'select', options: ['Petik merah (selektif)', 'Petik separo merah', 'Borongan (semua warna)', 'Lelesan (mungut bawah)'] },
+      { id: 'jam_mulai', label: 'Jam mulai', type: 'time' },
+      { id: 'jam_selesai', label: 'Jam selesai', type: 'time' },
+      { id: 'kg_merah',  label: 'Buah merah (kg)', type: 'number', placeholder: '0' },
+      { id: 'kg_kuning', label: 'Buah kuning (kg)', type: 'number', placeholder: '0' },
+      { id: 'kg_hijau',  label: 'Buah hijau / ijo (kg)', type: 'number', placeholder: '0' },
+      { id: 'kg_hitam',  label: 'Buah hitam / ireng (kg)', type: 'number', placeholder: '0' }
+    ]
+  },
+  penyemprotan: {
+    label: 'Penyemprotan',
+    fields: [
+      { id: 'produk_pestisida', label: 'Apa yang disemprot?', type: 'text', placeholder: 'mis. Beauveria, air cengkeh, obat rumput' },
+      { id: 'target_opt', label: 'Target OPT', type: 'select', options: ['Bubuk buah (PBKo)', 'Bercak daun (Cercospora)', 'Karat daun', 'Kutu putih', 'Penggerek batang', 'Gulma rumput', 'Lain'] },
+      { id: 'volume_total_l', label: 'Volume total (liter)', type: 'number', placeholder: '0' },
+      { id: 'persen_bawah_daun', label: '% volume ke bawah daun', type: 'number', placeholder: 'mis. 70' },
+      { id: 'pakai_surfaktan', label: 'Pakai surfaktan (sabun pestisida)?', type: 'select', options: ['Ya', 'Tidak'] },
+      { id: 'campur_pupuk', label: 'Dicampur dengan pupuk?', type: 'select', options: ['Tidak', 'Ya (sebutkan di catatan)'] }
+    ]
+  },
+  build_rorak: {
+    label: 'Buat Rorak',
+    fields: [
+      { id: 'panjang_m', label: 'Panjang (m)', type: 'number', placeholder: 'mis. 1' },
+      { id: 'lebar_m', label: 'Lebar (m)', type: 'number', placeholder: 'mis. 0.3' },
+      { id: 'kedalaman_m', label: 'Kedalaman (m)', type: 'number', placeholder: 'mis. 0.4' },
+      { id: 'isi_serasah_kg', label: 'Isi serasah awal (kg)', type: 'number', placeholder: '0' }
+    ]
+  },
+  pisang_management: {
+    label: 'Pisang Management (one-off pre-panen 2026)',
+    non_sop_one_off: true,
+    fields: [
+      { id: 'aksi', label: 'Aksi', type: 'select', options: ['Panen oleh MWC NU', 'Tebang pohon pisang', 'Bongkar tunas (rhizoma)', 'Lain'] },
+      { id: 'jml_rumpun', label: 'Jumlah rumpun', type: 'number', placeholder: '0' },
+      { id: 'petugas_panen', label: 'Siapa yang panen?', type: 'select', options: ['MWC NU', 'Ust. Fauzan / TPQ', 'Tim Wakaf', 'Lain'] },
+      { id: 'catatan_amanah', label: 'Catatan amanah (kronologi)', type: 'textarea', placeholder: 'Tulis kronologi singkat...' }
+    ]
+  },
+  inventarisasi_pohon: {
+    label: 'Inventarisasi Pohon',
+    fields: [
+      { id: 'pohon_id', label: 'Pohon ID (P-NNNN)', type: 'text', placeholder: 'mis. P-0123' },
+      { id: 'kondisi', label: 'Kondisi pohon', type: 'select', options: ['Produktif', 'Belum produktif (muda)', 'Rusak / perlu sulam', 'Mati / kosong'] },
+      { id: 'umur_thn', label: 'Estimasi umur (tahun)', type: 'number', placeholder: 'mis. 8' },
+      { id: 'batang_bawah', label: 'Batang bawah', type: 'select', options: ['Excelsa', 'Robusta', 'Belum jelas'] },
+      { id: 'batang_atas', label: 'Batang atas', type: 'select', options: ['Robusta klon unggul', 'Robusta lama', 'Arabika sambungan lama', 'Belum jelas'] },
+      { id: 'tinggi_cm', label: 'Tinggi (cm)', type: 'number', placeholder: 'mis. 220' }
+    ]
+  },
+  tanam_penaung: {
+    label: 'Tanam Penaung',
+    fields: [
+      { id: 'spesies', label: 'Spesies', type: 'select', options: ['Lamtoro PG 79', 'Gamal', 'Durian', 'Sengon', 'Petai'] },
+      { id: 'jml_pohon', label: 'Jumlah pohon', type: 'number', placeholder: '0' },
+      { id: 'jarak_tanam', label: 'Jarak tanam (mis. 5×5 m)', type: 'text', placeholder: '5×5 m' },
+      { id: 'ukuran_lubang_cm', label: 'Ukuran lubang (cm, mis. 60)', type: 'number', placeholder: '60' }
+    ]
+  },
+  kompos_kulit_kopi: {
+    label: 'Kompos Kulit Kopi',
+    fields: [
+      { id: 'sumber', label: 'Sumber kulit kopi', type: 'select', options: ['Pulping Bonsari', 'Pulping di kebun', 'Lain'] },
+      { id: 'lokasi_kompos', label: 'Lokasi kompos', type: 'select', options: ['Rorak', 'Piringan pohon', 'Bedeng kompos terpisah'] },
+      { id: 'rorak_id_target', label: 'Rorak ID target (opsional)', type: 'text', placeholder: 'mis. ROR-2026-005' },
+      { id: 'volume_input_kg', label: 'Volume kulit kopi (kg)', type: 'number', placeholder: '0' },
+      { id: 'tgl_mulai', label: 'Tanggal mulai kompos', type: 'date' },
+      { id: 'est_tgl_jadi', label: 'Estimasi tanggal jadi', type: 'date' }
+    ]
+  },
+  babat_rumput: {
+    label: 'Babat Rumput',
+    fields: [
+      { id: 'method', label: 'Cara babat', type: 'chip-method', options: [
+        { val: 'sabit', label: 'Sabit / arit' },
+        { val: 'brushcutter', label: 'Sengkreng / mesin babat' },
+        { val: 'cover_crops', label: 'Kacang hias (cover)' },
+        { val: 'herbisida', label: 'Obat rumput', off_sop: true }
+      ]},
+      { id: 'area_m2', label: 'Area dibersihkan (m²)', type: 'number', placeholder: '0' },
+      { id: 'tinggi_gulma_pre_cm', label: 'Tinggi gulma sebelum (cm)', type: 'number', placeholder: 'mis. 40' },
+      { id: 'status_mulsa', label: 'Hasil rumput diapakan?', type: 'select', options: ['Disebar piringan (mulsa)', 'Dikumpul jadi kompos', 'Dibakar 🚫 (off-SOP)', 'Dibiarkan'] },
+      { id: 'bahan_habis_rp', label: 'Biaya bahan/bensin (Rp)', type: 'number', placeholder: '0' },
+      { id: 'sumber_tenaga', label: 'Sumber tenaga', type: 'select', options: ['Sendiri', 'Gotong royong', 'Bantuan tim'] }
+    ]
+  },
+  sortasi_buah: {
+    label: 'Sortasi Buah Pre-Pulping',
+    fields: [
+      { id: 'total_sortir_kg', label: 'Total buah sortir (kg)', type: 'number', placeholder: '0' },
+      { id: 'sink_kg', label: 'Sortasi air — tenggelam (kg)', type: 'number', placeholder: '0' },
+      { id: 'float_kg', label: 'Sortasi air — mengapung / kopong (kg)', type: 'number', placeholder: '0' },
+      { id: 'persen_defect', label: '% defect terlihat', type: 'number', placeholder: 'mis. 5' },
+      { id: 'buang_compost', label: 'Buang ke kompos?', type: 'select', options: ['Ya', 'Tidak'] }
+    ]
+  },
+  penjemuran: {
+    label: 'Penjemuran',
+    fields: [
+      { id: 'tahap', label: 'Tahap', type: 'select', options: ['Mulai jemur', 'Pembalikan', 'Tutup (terpal)', 'Angkat (selesai)'] },
+      { id: 'tempat_jemur', label: 'Tempat jemur', type: 'select', options: ['Para-para bambu', 'Lantai semen', 'Terpal / klemar', 'Bedeng tinggi'] },
+      { id: 'ketebalan_cm', label: 'Ketebalan tumpukan (cm)', type: 'number', placeholder: 'mis. 7' },
+      { id: 'frek_balik_jam', label: 'Pembalikan tiap berapa jam?', type: 'number', placeholder: 'mis. 1' },
+      { id: 'moisture_persen', label: 'Kadar air (% jika diukur)', type: 'number', placeholder: 'mis. 12.5' },
+      { id: 'jam_total', label: 'Jam total jemur', type: 'number', placeholder: '0' },
+      { id: 'hasil_kg', label: 'Hasil berat (kg)', type: 'number', placeholder: '0' }
+    ]
+  },
+  opt_monitoring: {
+    label: 'OPT Monitoring',
+    fields: [
+      { id: 'method', label: 'Cara sampling', type: 'select', options: ['5-pohon-diagonal', 'Walking transect', 'Spot check'] },
+      { id: 'jml_pohon_sampling', label: 'Jumlah pohon disampling', type: 'number', placeholder: '5' },
+      { id: 'opt_target', label: 'OPT target utama', type: 'select', options: ['Bubuk buah (PBKo)', 'Bercak daun (Cercospora)', 'Karat daun', 'Jamur akar', 'Penggerek batang', 'Kutu putih', 'Lain'] },
+      { id: 'intensitas_persen', label: 'Intensitas serangan (%)', type: 'number', placeholder: 'mis. 12' },
+      { id: 'distribusi', label: 'Distribusi serangan', type: 'select', options: ['Merata', 'Spot / kantong', 'Pinggir kebun', 'Tengah kebun'] }
+    ]
+  },
+  brocap_management: {
+    label: 'Brocap Management',
+    fields: [
+      { id: 'aksi', label: 'Aksi', type: 'select', options: ['Pasang baru', 'Cek tangkapan', 'Refill atraktan', 'Lepas / pindah'] },
+      { id: 'jml_trap', label: 'Jumlah trap', type: 'number', placeholder: '0' },
+      { id: 'ketinggian_m', label: 'Ketinggian pasang (m)', type: 'number', placeholder: 'mis. 1.5' },
+      { id: 'tangkapan_pbko', label: 'Tangkapan bubuk (jumlah)', type: 'number', placeholder: '0' },
+      { id: 'tipe_trap', label: 'Tipe trap', type: 'select', options: ['Komersial (pabrik)', 'DIY botol aqua', 'Mix'] }
+    ]
+  },
+  topgraft_robusta: {
+    label: 'Sambung Pucuk Robusta',
+    fields: [
+      { id: 'pohon_target_id', label: 'Pohon target ID', type: 'text', placeholder: 'mis. P-0123' },
+      { id: 'diameter_batang_bawah_cm', label: 'Diameter batang bawah (cm)', type: 'number', placeholder: 'mis. 4' },
+      { id: 'tinggi_cut_stump_cm', label: 'Tinggi cut stump (cm)', type: 'number', placeholder: 'mis. 40' },
+      { id: 'jml_pucuk_per_pohon', label: 'Jumlah pucuk per pohon', type: 'number', placeholder: '1' },
+      { id: 'cek_kambium', label: 'Kambium aktif (basah/lengket)?', type: 'select', options: ['Ya — basah / lengket', 'Tidak — kering', 'Belum cek'] },
+      { id: 'window_aplikasi', label: 'Window aplikasi', type: 'select', options: ['Sep-Des (optimal)', 'Lain bulan'] }
+    ]
+  },
+  soil_test: {
+    label: 'Soil Test (Sampling)',
+    fields: [
+      { id: 'method_sampling', label: 'Cara sampling', type: 'select', options: ['Diagonal 5 titik', 'Walking transect', 'Spot'] },
+      { id: 'jml_sample', label: 'Jumlah sample', type: 'number', placeholder: '5' },
+      { id: 'kedalaman_cm', label: 'Kedalaman sampling (cm)', type: 'number', placeholder: '0-30' },
+      { id: 'tgl_kirim_lab', label: 'Tanggal kirim ke lab', type: 'date' },
+      { id: 'estimasi_hasil', label: 'Estimasi tanggal hasil', type: 'date' }
+    ]
+  },
+  bokashi_production: {
+    label: 'Bokashi Production',
+    fields: [
+      { id: 'tahap', label: 'Tahap', type: 'select', options: ['Mixing batch', 'Fermentasi (tutup)', 'Cek suhu', 'Angkat (jadi)'] },
+      { id: 'komposisi_kg', label: 'Komposisi batch (kg total)', type: 'number', placeholder: 'mis. 80' },
+      { id: 'em4_l', label: 'EM4 (liter)', type: 'number', placeholder: 'mis. 0.5' },
+      { id: 'volume_akhir_kg', label: 'Volume akhir (kg)', type: 'number', placeholder: '0' },
+      { id: 'suhu_celcius', label: 'Suhu fermentasi (°C)', type: 'number', placeholder: 'mis. 35' },
+      { id: 'dosis_kg_per_pohon', label: 'Aplikasi dosis (kg per pohon)', type: 'number', placeholder: 'mis. 2.5' }
+    ]
+  },
+  komunikasi_stakeholder: {
+    label: 'Komunikasi Stakeholder',
+    fields: [
+      { id: 'stakeholder', label: 'Stakeholder', type: 'select', options: ['Ust. Fauzan', 'MWC NU', 'Bonsari Coffee', 'Nomad Coffee', 'BRIN', 'Tetangga / komunitas', 'Lain'] },
+      { id: 'channel', label: 'Channel', type: 'select', options: ['WhatsApp', 'Telepon', 'Kunjungan langsung'] },
+      { id: 'topik_utama', label: 'Topik utama', type: 'text', placeholder: 'Ringkasan singkat' },
+      { id: 'status_hasil', label: 'Status hasil', type: 'select', options: ['Selesai (resolved)', 'Perlu eskalasi ke Pak Adib', 'Follow-up nanti'] },
+      { id: 'detail_pembicaraan', label: 'Detail pembicaraan', type: 'textarea', placeholder: 'Tulis kronologi singkat...' }
+    ]
+  },
+  arachis_management: {
+    label: 'Arachis Management',
+    validation_status: 'unvalidated',
+    fields: [
+      { id: 'aksi', label: 'Aksi', type: 'select', options: ['Tanam stek', 'Monitoring survival', 'Cek coverage', 'Pemangkasan'] },
+      { id: 'jml_stek', label: 'Jumlah stek', type: 'number', placeholder: '0' },
+      { id: 'jarak_tanam', label: 'Jarak tanam (mis. 40×40 cm)', type: 'text', placeholder: '40×40 cm' },
+      { id: 'survival_persen', label: 'Survival rate (%)', type: 'number', placeholder: 'mis. 80' },
+      { id: 'coverage_persen', label: 'Coverage (%)', type: 'number', placeholder: 'mis. 60' }
+    ]
+  },
+  biochar_pyrolysis: {
+    label: 'Biochar Pyrolysis',
+    validation_status: 'unvalidated',
+    fields: [
+      { id: 'tahap', label: 'Tahap', type: 'select', options: ['Siapkan bahan baku', 'Pyrolysis aktif', 'Pendinginan', 'Aplikasi ke pohon'] },
+      { id: 'bahan_kg', label: 'Bahan baku (kg)', type: 'number', placeholder: '0' },
+      { id: 'suhu_celcius', label: 'Suhu pyrolysis (°C)', type: 'number', placeholder: '300-500' },
+      { id: 'durasi_jam', label: 'Durasi pyrolysis (jam)', type: 'number', placeholder: 'mis. 4' },
+      { id: 'hasil_kg', label: 'Hasil biochar (kg)', type: 'number', placeholder: '0' },
+      { id: 'dosis_kg_per_pohon', label: 'Dosis aplikasi (kg/pohon)', type: 'number', placeholder: 'mis. 1' }
+    ]
+  },
+  lain: {
+    label: 'Lainnya',
+    fields: [
+      { id: 'deskripsi_kerja', label: 'Deskripsi pekerjaan', type: 'textarea', placeholder: 'Jelaskan pekerjaan yang dilakukan...' }
+    ]
+  }
+};
+
+/* ============================================================
+   IndexedDB Offline Queue (inlined dari offline-queue.js)
+   ============================================================ */
+const DB_NAME = 'lapor_ngt_db';
+const DB_STORE = 'pending_submissions';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, 1);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(DB_STORE)) {
+        const os = db.createObjectStore(DB_STORE, { keyPath: 'id', autoIncrement: true });
+        os.createIndex('status', 'status');
+        os.createIndex('submitted_at', 'submitted_at');
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror  = () => reject(req.error);
+  });
+}
+
+async function queueSubmission(data) {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readwrite');
+  const entry = {
+    data,
+    status: 'pending',
+    submitted_at: new Date().toISOString(),
+    retry_count: 0,
+    last_attempt: null
+  };
+  return new Promise((resolve, reject) => {
+    const req = tx.objectStore(DB_STORE).add(entry);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror  = () => reject(req.error);
+  });
+}
+
+async function getAllSubmissions() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(DB_STORE, 'readonly').objectStore(DB_STORE).getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror  = () => reject(req.error);
+  });
+}
+
+async function getPending() {
+  const db = await openDB();
+  return new Promise((resolve, reject) => {
+    const req = db.transaction(DB_STORE, 'readonly').objectStore(DB_STORE)
+      .index('status').getAll('pending');
+    req.onsuccess = () => resolve(req.result);
+    req.onerror  = () => reject(req.error);
+  });
+}
+
+async function markSynced(id) {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readwrite');
+  const store = tx.objectStore(DB_STORE);
+  return new Promise((resolve, reject) => {
+    const getReq = store.get(id);
+    getReq.onsuccess = () => {
+      const entry = getReq.result;
+      if (entry) {
+        entry.status = 'synced';
+        entry.synced_at = new Date().toISOString();
+        const putReq = store.put(entry);
+        putReq.onsuccess = () => resolve();
+        putReq.onerror  = () => reject(putReq.error);
+      } else resolve();
+    };
+    getReq.onerror = () => reject(getReq.error);
+  });
+}
+
+async function pendingCount() {
+  const list = await getPending();
+  return list.length;
+}
+
+/* ============================================================
+   GLOSSARY HELPER (lazy load)
+   ============================================================ */
+let _glossaryCache = null;
+async function loadGlossary() {
+  if (_glossaryCache) return _glossaryCache;
+  try {
+    const res = await fetch('data/glossary.json');
+    if (!res.ok) throw new Error('not ok');
+    _glossaryCache = await res.json();
+  } catch (e) {
+    console.warn('[Glossary] fetch failed, using inline fallback', e);
+    _glossaryCache = { categories: [] };
+  }
+  return _glossaryCache;
+}
+
+function _g(istilah_ilmiah) {
+  if (!_glossaryCache) return istilah_ilmiah;
+  for (const cat of _glossaryCache.categories || []) {
+    for (const item of cat.items || []) {
+      if (item.istilah_ilmiah === istilah_ilmiah) {
+        return item.bahasa_petani || item.istilah_ilmiah;
+      }
+    }
+  }
+  return istilah_ilmiah;
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+async function init() {
+  // 1. Parse worker token
+  const params = new URLSearchParams(window.location.search);
+  const tokenRaw = (params.get('w') || '').toUpperCase();
+  if (!WORKER_MAP[tokenRaw]) {
+    document.getElementById('errorPage').classList.add('on');
+    return;
+  }
+  STATE.workerToken = tokenRaw;
+  STATE.workerName  = WORKER_MAP[tokenRaw].name;
+
+  // 2. Show app, hide error
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('submitBar').classList.remove('hidden');
+
+  // 3. Brand + greeting
+  document.getElementById('workerName').textContent = STATE.workerName;
+  document.getElementById('dateLine').textContent = formatTodayId();
+
+  // 4. Default tanggal = today
+  document.getElementById('f-tgl').value = todayIso();
+
+  // 5. Populate kategori dropdown filtered per worker
+  populateKategoriDropdown();
+
+  // 6. Network status
+  updateNetStatus();
+  window.addEventListener('online',  () => { updateNetStatus(); maybeAutoSync(); });
+  window.addEventListener('offline', () => updateNetStatus());
+
+  // 7. Refresh queue badge
+  refreshQueueBadge();
+
+  // 8. Hook UI events
+  hookEvents();
+
+  // 9. Register service worker
+  registerSW();
+
+  // 10. Load glossary async (fire-and-forget — already have inline labels)
+  loadGlossary();
+
+  // 11. Try GPS + weather (non-blocking)
+  attemptWeatherFetch();
+}
+
+/* ============================================================
+   UI HELPERS
+   ============================================================ */
+function formatTodayId() {
+  const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const d = new Date();
+  return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function todayIso() {
+  const d = new Date();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${d.getFullYear()}-${m}-${dd}`;
+}
+
+function shortHashFromBrowser() {
+  const ua = navigator.userAgent + '|' + navigator.platform + '|' + screen.width + 'x' + screen.height;
+  let hash = 0;
+  for (let i = 0; i < ua.length; i++) hash = ((hash << 5) - hash) + ua.charCodeAt(i) | 0;
+  return 'd_' + Math.abs(hash).toString(36).substr(0, 8);
+}
+
+function genEntryId() {
+  const d = new Date();
+  const ymd = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`;
+  const rand = Math.random().toString(36).substr(2, 6);
+  return `lap_${ymd}_${rand}`;
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast on ' + type;
+  clearTimeout(t._tmr);
+  t._tmr = setTimeout(() => t.classList.remove('on'), 2800);
+}
+
+function updateNetStatus() {
+  const isOn = navigator.onLine;
+  const el = document.getElementById('netStatus');
+  document.getElementById('netStatusText').textContent = isOn ? 'Online' : 'Offline';
+  el.classList.toggle('offline', !isOn);
+}
+
+async function refreshQueueBadge() {
+  const cnt = await pendingCount();
+  const badge = document.getElementById('queueBadge');
+  document.getElementById('queueBadgeNum').textContent = cnt;
+  badge.classList.toggle('empty', cnt === 0);
+  const btnCount = document.getElementById('queueBtnCount');
+  btnCount.textContent = cnt;
+  btnCount.classList.toggle('hidden', cnt === 0);
+}
+
+/* ============================================================
+   POPULATE KATEGORI DROPDOWN
+   ============================================================ */
+function populateKategoriDropdown() {
+  const sel = document.getElementById('f-kategori');
+  const allowed = KATEGORI_BY_WORKER[STATE.workerToken] || [];
+  sel.innerHTML = '<option value="">— Pilih kategori —</option>';
+  allowed.forEach(k => {
+    const lbl = KATEGORI_LABEL[k];
+    if (!lbl) return;
+    const opt = document.createElement('option');
+    opt.value = k;
+    let txt = `${lbl.icon} ${lbl.label}`;
+    if (NON_SOP_ONE_OFF.includes(k)) txt += '  • non-SOP';
+    if (PHASE2_UNVALIDATED.includes(k)) txt += '  • Phase 2';
+    opt.textContent = txt;
+    sel.appendChild(opt);
+  });
+}
+
+/* ============================================================
+   DYNAMIC FIELDS RENDER
+   ============================================================ */
+function renderDynamicFields(kategori) {
+  const wrap = document.getElementById('dynamic-fields');
+  wrap.innerHTML = '';
+  STATE.dynamicFields = {};
+  STATE.dynamicFilledBy = {};
+
+  if (!kategori || !REGISTRY[kategori]) return;
+
+  const reg = REGISTRY[kategori];
+
+  // Topik badge
+  const topik = KATEGORI_TOPIK_MAP[kategori];
+  const banner = document.getElementById('kategori-banner');
+  banner.innerHTML = '';
+  if (NON_SOP_ONE_OFF.includes(kategori)) {
+    banner.innerHTML = `<div class="banner amber" style="margin-top:8px"><span class="ico">🍌</span><span>Kategori <b>non-SOP one-off</b> (pre-panen 2026). Tetap dicatat untuk audit amanah, dikecualikan dari scoring SOP.</span></div>`;
+  } else if (PHASE2_UNVALIDATED.includes(kategori)) {
+    banner.innerHTML = `<div class="banner pink" style="margin-top:8px"><span class="ico">🧪</span><span>Kategori <b>Phase 2 — belum tervalidasi</b>. Sub-fields draft untuk pilot. Catat hati-hati supaya data pilot solid.</span></div>`;
+  } else if (topik) {
+    banner.innerHTML = `<div class="banner info" style="margin-top:8px"><span class="ico">📐</span><span>Topik SOP: <b>${topik}</b> — sesuai SOP Master Step-by-Step Wakaf NGT.</span></div>`;
+  }
+
+  // Title
+  const groupLabel = document.createElement('div');
+  groupLabel.className = 'field-group-label';
+  groupLabel.textContent = `Detail: ${reg.label}`;
+  wrap.appendChild(groupLabel);
+
+  const grp = document.createElement('div');
+  grp.className = 'field-group';
+
+  const flaggedClass =
+    NON_SOP_ONE_OFF.includes(kategori) ? 'nonsop' :
+    PHASE2_UNVALIDATED.includes(kategori) ? 'phase2' : '';
+
+  reg.fields.forEach(f => {
+    const fld = document.createElement('div');
+    fld.className = 'field';
+
+    const lbl = document.createElement('label');
+    lbl.className = 'label';
+    lbl.innerHTML = `${f.label}`;
+    fld.appendChild(lbl);
+
+    let input;
+    if (f.type === 'select') {
+      input = document.createElement('select');
+      input.className = 'input ' + flaggedClass;
+      input.innerHTML = `<option value="">— pilih —</option>` +
+        f.options.map(o => `<option value="${o}">${o}</option>`).join('');
+    } else if (f.type === 'multi') {
+      input = document.createElement('div');
+      input.className = 'chip-row';
+      f.options.forEach(o => {
+        const c = document.createElement('div');
+        c.className = 'chip';
+        c.dataset.val = o;
+        c.textContent = o;
+        c.onclick = () => {
+          c.classList.toggle('active');
+          const vals = [...input.querySelectorAll('.chip.active')].map(x => x.dataset.val);
+          STATE.dynamicFields[f.id] = vals;
+          STATE.dynamicFilledBy[f.id] = 'worker';
+        };
+        input.appendChild(c);
+      });
+    } else if (f.type === 'chip-method') {
+      input = document.createElement('div');
+      input.className = 'chip-row';
+      f.options.forEach(o => {
+        const c = document.createElement('div');
+        c.className = 'chip' + (o.off_sop ? ' offsop-opt' : '');
+        c.dataset.val = o.val;
+        c.textContent = o.label;
+        c.onclick = () => {
+          [...input.querySelectorAll('.chip')].forEach(x => x.classList.remove('active'));
+          c.classList.add('active');
+          STATE.dynamicFields[f.id] = o.val;
+          STATE.dynamicFilledBy[f.id] = 'worker';
+        };
+        input.appendChild(c);
+      });
+    } else if (f.type === 'textarea') {
+      input = document.createElement('textarea');
+      input.className = 'input ' + flaggedClass;
+      input.placeholder = f.placeholder || '';
+    } else {
+      input = document.createElement('input');
+      input.className = 'input ' + flaggedClass;
+      input.type = f.type;
+      input.placeholder = f.placeholder || '';
+      if (f.type === 'number') input.inputMode = 'decimal';
+    }
+
+    if (f.type !== 'multi' && f.type !== 'chip-method') {
+      input.id = `df-${f.id}`;
+      input.onchange = () => {
+        STATE.dynamicFields[f.id] = input.value;
+        STATE.dynamicFilledBy[f.id] = 'worker';
+      };
+      input.oninput = input.onchange;
+    }
+    fld.appendChild(input);
+    grp.appendChild(fld);
+  });
+
+  wrap.appendChild(grp);
+}
+
+/* ============================================================
+   EVENT HOOKS
+   ============================================================ */
+function hookEvents() {
+
+  // Kebun chips
+  document.querySelectorAll('#kebun-chips .chip').forEach(c => {
+    c.onclick = () => {
+      document.querySelectorAll('#kebun-chips .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      STATE.selected.kebun = c.dataset.val;
+    };
+  });
+
+  // Cuaca pagi chips
+  document.querySelectorAll('#cuaca-pagi-chips .chip').forEach(c => {
+    c.onclick = () => {
+      if (!STATE.override.cuaca_pagi) {
+        showToast('Tap 🔓 untuk override cuaca dulu', 'error');
+        return;
+      }
+      document.querySelectorAll('#cuaca-pagi-chips .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      STATE.selected.cuaca_pagi = c.dataset.val;
+    };
+  });
+
+  // Cuaca siang chips
+  document.querySelectorAll('#cuaca-siang-chips .chip').forEach(c => {
+    c.onclick = () => {
+      if (!STATE.override.cuaca_siang) {
+        showToast('Tap 🔓 untuk override cuaca dulu', 'error');
+        return;
+      }
+      document.querySelectorAll('#cuaca-siang-chips .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      STATE.selected.cuaca_siang = c.dataset.val;
+    };
+  });
+
+  // Durasi chips
+  document.querySelectorAll('#durasi-chips .chip').forEach(c => {
+    c.onclick = () => {
+      document.querySelectorAll('#durasi-chips .chip').forEach(x => x.classList.remove('active'));
+      c.classList.add('active');
+      STATE.selected.durasi = c.dataset.val;
+    };
+  });
+
+  // Override toggles
+  document.querySelectorAll('.override-toggle').forEach(btn => {
+    btn.onclick = () => {
+      const target = btn.dataset.target;
+      const isOn = btn.classList.toggle('active');
+      btn.textContent = isOn ? '🔒 Pakai data otomatis' : '🔓 Saya observasi beda';
+
+      if (target === 'cuaca-pagi') {
+        STATE.override.cuaca_pagi = isOn;
+        document.getElementById('cp-tag').textContent = isOn ? '✏️ Manual' : '🔒 Auto';
+      } else if (target === 'cuaca-siang') {
+        STATE.override.cuaca_siang = isOn;
+        document.getElementById('cs-tag').textContent = isOn ? '✏️ Manual' : '🔒 Auto';
+      } else if (target === 'rain') {
+        STATE.override.rain = isOn;
+        const r24 = document.getElementById('f-rain24');
+        const r7d = document.getElementById('f-rain7d');
+        r24.readOnly = !isOn;
+        r7d.readOnly = !isOn;
+        r24.classList.toggle('locked', !isOn);
+        r7d.classList.toggle('locked', !isOn);
+        document.getElementById('r24-tag').textContent = isOn ? '✏️' : '🔒';
+        document.getElementById('r7d-tag').textContent = isOn ? '✏️' : '🔒';
+      }
+    };
+  });
+
+  // Kategori change
+  document.getElementById('f-kategori').onchange = (e) => {
+    STATE.kategori = e.target.value;
+    renderDynamicFields(STATE.kategori);
+  };
+
+  // Catatan counter
+  const cat = document.getElementById('f-catatan');
+  cat.oninput = () => {
+    STATE.catatan = cat.value;
+    const len = cat.value.length;
+    const ctr = document.getElementById('catatan-counter');
+    ctr.textContent = `${len} / 500`;
+    ctr.classList.toggle('warn', len > 450);
+  };
+
+  // Voice note
+  document.getElementById('voiceBtn').onclick = toggleRecording;
+
+  // Photo
+  document.getElementById('photoInput').onchange = handlePhotoSelect;
+
+  // Submit
+  document.getElementById('submitBtn').onclick = submitForm;
+
+  // Queue panel
+  document.getElementById('queueBtn').onclick = openQueue;
+  document.getElementById('qaClose').onclick = closeQueue;
+  document.getElementById('scrim').onclick = closeQueue;
+  document.getElementById('qaSync').onclick = manualSync;
+  document.getElementById('qaWa').onclick = exportToWA;
+
+  // Modal
+  document.getElementById('modalOk').onclick = () => document.getElementById('successModal').close();
+  document.getElementById('modalNew').onclick = () => {
+    document.getElementById('successModal').close();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+}
+
+/* ============================================================
+   WEATHER (Open-Meteo)
+   ============================================================ */
+function attemptWeatherFetch() {
+  if (!navigator.geolocation) {
+    setWeatherUnavailable('GPS tidak didukung');
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      STATE.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy };
+      try {
+        await fetchOpenMeteo(STATE.gps.lat, STATE.gps.lng);
+      } catch (e) {
+        console.warn('[Weather] fetch error', e);
+        setWeatherUnavailable('Data cuaca offline');
+      }
+    },
+    err => {
+      console.warn('[GPS] denied', err);
+      setWeatherUnavailable('GPS belum diizinkan');
+    },
+    { timeout: 8000, enableHighAccuracy: false, maximumAge: 300000 }
+  );
+}
+
+async function fetchOpenMeteo(lat, lng) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,weather_code,precipitation&hourly=precipitation&past_days=7&forecast_days=1&timezone=Asia%2FJakarta`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('open-meteo http ' + res.status);
+  const data = await res.json();
+
+  // Current weather
+  const wcode = data.current?.weather_code;
+  const cuacaMap = mapWeatherCode(wcode);
+
+  // Precipitation 24h & 7d
+  const hourly = data.hourly?.precipitation || [];
+  let p24 = 0, p7d = 0;
+  const N = hourly.length;
+  for (let i = 0; i < N; i++) {
+    const v = +(hourly[i] || 0);
+    p7d += v;
+    if (i >= N - 24) p24 += v;
+  }
+  p24 = Math.round(p24 * 10) / 10;
+  p7d = Math.round(p7d * 10) / 10;
+
+  STATE.weather.cuaca_pagi  = cuacaMap;
+  STATE.weather.cuaca_siang = cuacaMap;
+  STATE.weather.rain_24h = p24;
+  STATE.weather.rain_7d  = p7d;
+
+  // Reflect to UI
+  applyWeatherToUI();
+}
+
+function mapWeatherCode(code) {
+  // Open-Meteo WMO weather codes
+  if (code == null) return null;
+  if (code === 0) return 'cerah';
+  if (code <= 3) return 'berawan';
+  if ([45, 48, 51, 53, 55, 56, 57].includes(code)) return 'gerimis';
+  if ([61, 63, 65, 80, 81, 82, 95, 96, 99, 71, 73, 75].includes(code)) return 'hujan_deras';
+  return 'berawan';
+}
+
+function applyWeatherToUI() {
+  const { cuaca_pagi, cuaca_siang, rain_24h, rain_7d } = STATE.weather;
+  if (cuaca_pagi) {
+    document.querySelectorAll('#cuaca-pagi-chips .chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.val === cuaca_pagi);
+    });
+    STATE.selected.cuaca_pagi = cuaca_pagi;
+  }
+  if (cuaca_siang) {
+    document.querySelectorAll('#cuaca-siang-chips .chip').forEach(c => {
+      c.classList.toggle('active', c.dataset.val === cuaca_siang);
+    });
+    STATE.selected.cuaca_siang = cuaca_siang;
+  }
+  if (rain_24h != null) document.getElementById('f-rain24').value = rain_24h;
+  if (rain_7d  != null) document.getElementById('f-rain7d').value = rain_7d;
+
+  document.getElementById('weatherBanner').innerHTML =
+    `<span class="ico">✅</span><span>Cuaca terdeteksi dari GPS + Open-Meteo. Tap 🔓 jika observasi Anda berbeda.</span>`;
+  document.getElementById('weatherBanner').className = 'banner info';
+}
+
+function setWeatherUnavailable(reason) {
+  document.getElementById('weatherBanner').innerHTML =
+    `<span class="ico">⚠️</span><span><b>Cuaca tidak terdeteksi otomatis</b> (${reason}). Silakan isi manual — tap 🔓 untuk membuka kunci.</span>`;
+  document.getElementById('weatherBanner').className = 'banner amber';
+
+  // Auto-enable override
+  ['cuaca-pagi', 'cuaca-siang', 'rain'].forEach(t => {
+    const btn = document.querySelector(`.override-toggle[data-target="${t}"]`);
+    if (btn && !btn.classList.contains('active')) {
+      btn.click();
+    }
+  });
+}
+
+/* ============================================================
+   VOICE NOTE
+   ============================================================ */
+async function toggleRecording() {
+  if (STATE.recording) {
+    stopRecording();
+    return;
+  }
+  if (STATE.voiceClips.length >= 3) {
+    showToast('Maks 3 catatan suara', 'error');
+    return;
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const rec = new MediaRecorder(stream);
+    STATE.mediaRecorder = rec;
+    STATE.audioChunks = [];
+    STATE.recordStart = Date.now();
+
+    rec.ondataavailable = e => { if (e.data && e.data.size > 0) STATE.audioChunks.push(e.data); };
+    rec.onstop = async () => {
+      stream.getTracks().forEach(t => t.stop());
+      const blob = new Blob(STATE.audioChunks, { type: 'audio/webm' });
+      const dur  = Math.round((Date.now() - STATE.recordStart) / 1000);
+      const b64  = await blobToBase64(blob);
+      STATE.voiceClips.push({ id: 'v_' + Date.now(), blob_b64: b64, duration_sec: dur, url: URL.createObjectURL(blob) });
+      renderVoiceClips();
+    };
+
+    rec.start();
+    STATE.recording = true;
+    const btn = document.getElementById('voiceBtn');
+    btn.classList.add('recording');
+    btn.innerHTML = '<span class="pulse"></span><span id="voiceBtnText">Rekam... <span id="recTimer">0s</span> (tap stop)</span>';
+
+    STATE.recordTimer = setInterval(() => {
+      const s = Math.round((Date.now() - STATE.recordStart) / 1000);
+      const el = document.getElementById('recTimer');
+      if (el) el.textContent = s + 's';
+      if (s >= 60) stopRecording();
+    }, 500);
+  } catch (e) {
+    console.warn('[Voice] error', e);
+    showToast('Tidak bisa akses microphone', 'error');
+  }
+}
+
+function stopRecording() {
+  if (!STATE.recording) return;
+  try { STATE.mediaRecorder.stop(); } catch (e) {}
+  clearInterval(STATE.recordTimer);
+  STATE.recording = false;
+  const btn = document.getElementById('voiceBtn');
+  btn.classList.remove('recording');
+  btn.innerHTML = '<span>🎙️</span><span id="voiceBtnText">Rekam catatan suara</span>';
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onloadend = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+function renderVoiceClips() {
+  const wrap = document.getElementById('voiceClips');
+  wrap.innerHTML = '';
+  STATE.voiceClips.forEach(v => {
+    const d = document.createElement('div');
+    d.className = 'voice-clip';
+    d.innerHTML = `<audio controls src="${v.url}" preload="none"></audio>
+                   <span style="font-size:11px;color:var(--mute)">${v.duration_sec}s</span>
+                   <button class="del" data-id="${v.id}">🗑️</button>`;
+    d.querySelector('.del').onclick = () => {
+      STATE.voiceClips = STATE.voiceClips.filter(x => x.id !== v.id);
+      renderVoiceClips();
+    };
+    wrap.appendChild(d);
+  });
+}
+
+/* ============================================================
+   PHOTO HANDLING (resize + compress)
+   ============================================================ */
+async function handlePhotoSelect(e) {
+  const files = Array.from(e.target.files || []);
+  e.target.value = ''; // reset
+
+  for (const f of files) {
+    if (STATE.photos.length >= 3) { showToast('Maks 3 foto', 'error'); break; }
+    if (!f.type.startsWith('image/')) continue;
+    try {
+      const compressed = await compressImage(f, 1280, 0.78);
+      STATE.photos.push({
+        id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        dataUrl: compressed,
+        size_kb: Math.round(compressed.length / 1024)
+      });
+    } catch (err) { console.warn('[Photo] compress fail', err); }
+  }
+  renderPhotos();
+}
+
+function compressImage(file, maxW = 1280, quality = 0.78) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const ratio = Math.min(1, maxW / img.width);
+        const w = Math.round(img.width * ratio);
+        const h = Math.round(img.height * ratio);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = reject;
+      img.src = r.result;
+    };
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+function renderPhotos() {
+  const grid = document.getElementById('photoGrid');
+  const tiles = STATE.photos.map(p => `
+    <div class="photo-tile">
+      <img src="${p.dataUrl}" alt="foto">
+      <button class="x" data-id="${p.id}">×</button>
+    </div>`).join('');
+
+  const showAdd = STATE.photos.length < 3 ? `
+    <label class="photo-add" id="photoAddLabel">
+      <span class="ic">📷</span><span>Tambah</span>
+      <input id="photoInput" type="file" accept="image/*" capture="environment" multiple>
+    </label>` : '';
+
+  grid.innerHTML = tiles + showAdd;
+  grid.querySelectorAll('.photo-tile .x').forEach(b => {
+    b.onclick = () => {
+      STATE.photos = STATE.photos.filter(p => p.id !== b.dataset.id);
+      renderPhotos();
+    };
+  });
+  const input = document.getElementById('photoInput');
+  if (input) input.onchange = handlePhotoSelect;
+}
+
+/* ============================================================
+   SUBMIT
+   ============================================================ */
+async function submitForm() {
+  const tgl = document.getElementById('f-tgl').value;
+  if (!tgl) { showToast('Tanggal wajib diisi', 'error'); return; }
+  if (!STATE.selected.kebun) { showToast('Pilih kebun dulu', 'error'); return; }
+  if (!STATE.kategori) { showToast('Pilih kategori dulu', 'error'); return; }
+  if (!STATE.selected.durasi) { showToast('Pilih durasi kerja', 'error'); return; }
+
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '⏳ Menyimpan...';
+
+  try {
+    // Capture GPS one more time if not yet
+    if (!STATE.gps && navigator.geolocation) {
+      try {
+        const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { timeout: 4000 }));
+        STATE.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+      } catch (_) {}
+    }
+
+    // Override-allowed: capture worker values + rainfall manual
+    if (STATE.override.rain) {
+      STATE.weather.rain_24h = +document.getElementById('f-rain24').value || null;
+      STATE.weather.rain_7d  = +document.getElementById('f-rain7d').value  || null;
+    }
+
+    const filledBy = {};
+    filledBy.cuaca_pagi  = STATE.override.cuaca_pagi  ? 'worker_override' : (STATE.weather.cuaca_pagi  ? 'auto' : 'pending');
+    filledBy.cuaca_siang = STATE.override.cuaca_siang ? 'worker_override' : (STATE.weather.cuaca_siang ? 'auto' : 'pending');
+    filledBy.rain_24h    = STATE.override.rain ? 'worker_override' : (STATE.weather.rain_24h != null ? 'auto' : 'pending');
+    filledBy.rain_7d     = STATE.override.rain ? 'worker_override' : (STATE.weather.rain_7d  != null ? 'auto' : 'pending');
+
+    // Build wakif-only stubs based on kategori
+    const wakifOnlyFields = collectWakifOnlyStubs(STATE.kategori);
+    const wakifOnlyData = {};
+    wakifOnlyFields.forEach(f => {
+      wakifOnlyData[f] = null;
+      filledBy[f] = 'pending_wakif';
+    });
+
+    // Merge filledBy with worker-source dynamic fields
+    Object.keys(STATE.dynamicFilledBy).forEach(k => { filledBy[k] = STATE.dynamicFilledBy[k]; });
+
+    const entryId = genEntryId();
+    const entry = {
+      // Auto / system
+      id: entryId,
+      created_at: new Date().toISOString(),
+      compliance: 'pending',
+      schema_version: '1.1',
+
+      // Identitas
+      pelapor: STATE.workerToken,
+      pelapor_name: STATE.workerName,
+      tanggal: tgl,
+      kebun: STATE.selected.kebun,
+      blok: document.getElementById('f-blok').value || null,
+
+      // Cuaca
+      cuaca_pagi: STATE.selected.cuaca_pagi || null,
+      cuaca_siang: STATE.selected.cuaca_siang || null,
+      rain_24h_mm: STATE.weather.rain_24h,
+      rain_7d_mm:  STATE.weather.rain_7d,
+      weather_source: STATE.override.rain ? 'worker_override' : 'open-meteo',
+
+      // Pekerjaan
+      kategori: STATE.kategori,
+      topik_v2: KATEGORI_TOPIK_MAP[STATE.kategori] || null,
+      durasi: STATE.selected.durasi,
+      jumlah_pekerja: +document.getElementById('f-pekerja').value || 1,
+      jumlah_pohon:   +document.getElementById('f-pohon').value   || 0,
+
+      // Dynamic + wakif-only stubs
+      detail: { ...STATE.dynamicFields, ...wakifOnlyData },
+
+      // Notes + media
+      catatan: STATE.catatan || null,
+      voice_notes: STATE.voiceClips.map(v => ({ id: v.id, duration_sec: v.duration_sec, blob_b64: v.blob_b64 })),
+      photos: STATE.photos.map(p => ({ id: p.id, data_url: p.dataUrl, size_kb: p.size_kb })),
+
+      // Audit
+      gps_coords: STATE.gps ? `${STATE.gps.lat.toFixed(6)},${STATE.gps.lng.toFixed(6)}` : null,
+      device_id: shortHashFromBrowser(),
+      _filled_by: filledBy
+    };
+
+    await queueSubmission(entry);
+    await refreshQueueBadge();
+
+    // Success modal
+    document.getElementById('successModal').showModal();
+
+    // Reset form
+    resetForm();
+
+  } catch (e) {
+    console.error('[Submit] failed', e);
+    showToast('Gagal menyimpan: ' + (e.message || 'error'), 'error');
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '📤 Kirim Laporan';
+  }
+}
+
+function collectWakifOnlyStubs(kategori) {
+  // Static map of wakif-only fields per kategori based on field_registry.json
+  const map = {
+    pemupukan_kimia: ['subsidi_rdkk'],
+    panen: ['lot_id', 'processing_partner'],
+    sortasi_buah: ['lot_id_ref', 'lanjut_ke_partner'],
+    penjemuran: ['lot_id_ref'],
+    inventarisasi_pohon: ['klon_id'],
+    topgraft_robusta: ['klon_atas'],
+    soil_test: ['lab_tujuan', 'parameter_diuji'],
+    arachis_management: ['sumber_bibit']
+  };
+  return map[kategori] || [];
+}
+
+function resetForm() {
+  document.getElementById('f-tgl').value = todayIso();
+  document.getElementById('f-blok').value = '';
+  document.getElementById('f-kategori').value = '';
+  document.getElementById('f-pekerja').value = 1;
+  document.getElementById('f-pohon').value = '';
+  document.getElementById('f-catatan').value = '';
+  document.getElementById('catatan-counter').textContent = '0 / 500';
+  document.querySelectorAll('#kebun-chips .chip, #durasi-chips .chip').forEach(c => c.classList.remove('active'));
+  STATE.selected.kebun = null;
+  STATE.selected.durasi = null;
+  STATE.kategori = null;
+  STATE.catatan = '';
+  STATE.voiceClips = [];
+  STATE.photos = [];
+  STATE.dynamicFields = {};
+  STATE.dynamicFilledBy = {};
+  document.getElementById('voiceClips').innerHTML = '';
+  document.getElementById('photoGrid').innerHTML = `
+    <label class="photo-add" id="photoAddLabel">
+      <span class="ic">📷</span><span>Tambah</span>
+      <input id="photoInput" type="file" accept="image/*" capture="environment" multiple>
+    </label>`;
+  document.getElementById('photoInput').onchange = handlePhotoSelect;
+  document.getElementById('dynamic-fields').innerHTML = '';
+  document.getElementById('kategori-banner').innerHTML = '';
+}
+
+/* ============================================================
+   QUEUE PANEL
+   ============================================================ */
+async function openQueue() {
+  const scrim = document.getElementById('scrim');
+  const panel = document.getElementById('queuePanel');
+  scrim.classList.add('on');
+  panel.classList.add('on');
+  await renderQueueList();
+}
+
+function closeQueue() {
+  document.getElementById('scrim').classList.remove('on');
+  document.getElementById('queuePanel').classList.remove('on');
+}
+
+async function renderQueueList() {
+  const list = document.getElementById('queueList');
+  const all = await getAllSubmissions();
+  if (!all.length) {
+    list.innerHTML = `<div class="empty-queue"><div class="ic">📭</div>Belum ada laporan tersimpan.</div>`;
+    return;
+  }
+  all.sort((a, b) => b.submitted_at.localeCompare(a.submitted_at));
+  list.innerHTML = all.map(item => {
+    const d = item.data || {};
+    const lbl = KATEGORI_LABEL[d.kategori] || { icon: '📋', label: d.kategori || '—' };
+    const when = new Date(item.submitted_at);
+    const time = when.toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+    return `<div class="qrow">
+      <div>
+        <div class="kat">${lbl.icon} ${lbl.label}</div>
+        <div class="meta">${d.kebun || '—'} · ${time}</div>
+      </div>
+      <span class="stat ${item.status}">${item.status}</span>
+    </div>`;
+  }).join('');
+}
+
+async function manualSync() {
+  if (!navigator.onLine) {
+    showToast('Tidak ada sinyal — coba lagi nanti', 'error');
+    return;
+  }
+  // Phase 1A: simulate sync by marking pending as synced (Phase 1B: real Firestore push)
+  const pending = await getPending();
+  if (!pending.length) {
+    showToast('Tidak ada pending laporan', '');
+    return;
+  }
+  for (const item of pending) {
+    await markSynced(item.id);
+  }
+  await refreshQueueBadge();
+  await renderQueueList();
+  showToast(`${pending.length} laporan ditandai terkirim (Phase 1A simulasi)`, 'success');
+}
+
+async function exportToWA() {
+  const pending = await getPending();
+  if (!pending.length) {
+    showToast('Tidak ada laporan pending', '');
+    return;
+  }
+  const lines = [`📋 Laporan Kebun NGT — ${STATE.workerName}`, `Total: ${pending.length} entry`, ''];
+  pending.forEach((it, i) => {
+    const d = it.data || {};
+    const lbl = KATEGORI_LABEL[d.kategori] || { label: d.kategori };
+    lines.push(`${i+1}. ${d.tanggal} · ${d.kebun} · ${lbl.label}`);
+    lines.push(`   Durasi: ${d.durasi} · Pohon: ${d.jumlah_pohon}`);
+    if (d.catatan) lines.push(`   Catatan: ${d.catatan.substring(0, 80)}`);
+    lines.push('');
+  });
+  lines.push(`— Dikirim via Lapor PWA (${todayIso()})`);
+  const text = lines.join('\n');
+  const waUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+  window.open(waUrl, '_blank');
+}
+
+async function maybeAutoSync() {
+  // hook for online event — Phase 1B will push to Firestore here
+  console.log('[OnlineSync] Online detected — Phase 1B would push to Firestore here');
+}
+
+/* ============================================================
+   SERVICE WORKER
+   ============================================================ */
+function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  // Use root scope so we can register sw at /demo/sw.js (relative)
+  navigator.serviceWorker.register('demo/sw.js', { scope: 'demo/' })
+    .then(reg => console.log('[SW] registered', reg.scope))
+    .catch(err => console.warn('[SW] register failed', err));
+}
+
+/* ============================================================
+   START
+   ============================================================ */
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

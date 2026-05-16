@@ -1,0 +1,1034 @@
+{
+  "schema_version": "1.1",
+  "locked_at": "2026-05-16",
+  "title": "Role-Based Field Visibility — Schema Design v1.0",
+  "principle": "1 schema, 2 view, 4 visibility tier. Worker PWA cuma lihat field hijau/biru/kuning. Field ungu silent skip — Adib fill di dashboard.",
+  "tiers": {
+    "worker": {
+      "label": "Worker",
+      "color": "#2D8466",
+      "desc": "Worker input source. Adib read-only / bisa edit."
+    },
+    "wakif_only": {
+      "label": "Wakif-Only",
+      "color": "#8B5CF6",
+      "desc": "Hidden silent dari worker form. Adib full input."
+    },
+    "both": {
+      "label": "Both",
+      "color": "#3B82F6",
+      "desc": "Worker default, Adib bisa override."
+    },
+    "auto": {
+      "label": "Auto",
+      "color": "#F59E0B",
+      "desc": "System-filled (GPS/Open-Meteo/token/counter)."
+    }
+  },
+  "master_fields": [
+    {
+      "id": "f-pelapor",
+      "label": "Pelapor",
+      "type": "radio_chip (3 opsi)",
+      "visibility": "auto",
+      "justification": "Worker PWA pre-set dari URL token (e.g., ?w=YIT). Worker tidak pilih manual. Adib lihat read-only di dashboard."
+    },
+    {
+      "id": "f-tgl",
+      "label": "Tanggal Aktivitas",
+      "type": "date",
+      "visibility": "both",
+      "justification": "Worker default today, boleh adjust ±1-2 hari (late entry). Adib bisa override saat reklasifikasi."
+    },
+    {
+      "id": "form-bidang",
+      "label": "Kebun",
+      "type": "radio_chip (4 opsi)",
+      "visibility": "both",
+      "justification": "Worker pilih lokasi kerja. Adib visible — bisa override jika worker salah klasifikasi."
+    },
+    {
+      "id": "f-blok",
+      "label": "Blok / Lokasi spesifik",
+      "type": "text",
+      "visibility": "both",
+      "justification": "Optional, worker boleh isi sub-area (e.g., \"B1-A baris 3\")."
+    },
+    {
+      "id": "form-cuaca-pagi",
+      "label": "Cuaca Pagi",
+      "type": "radio_chip",
+      "visibility": "auto",
+      "justification": "GPS+Open-Meteo pull saat form open. Worker override allowed jika beda dengan observasi langsung."
+    },
+    {
+      "id": "form-cuaca-siang",
+      "label": "Cuaca Siang",
+      "type": "radio_chip",
+      "visibility": "auto",
+      "justification": "Sama — Open-Meteo siang."
+    },
+    {
+      "id": "f-rainfall-24h",
+      "label": "Curah hujan 24h (mm)",
+      "type": "number",
+      "visibility": "auto",
+      "justification": "Open-Meteo precipitation last 24h. Worker override allowed (BMKG / observasi)."
+    },
+    {
+      "id": "f-rainfall-7d",
+      "label": "Curah hujan 7d (mm)",
+      "type": "number",
+      "visibility": "auto",
+      "justification": "Open-Meteo precipitation last 7d. Worker override allowed."
+    },
+    {
+      "id": "form-rainfall-source",
+      "label": "Sumber data hujan",
+      "type": "radio_chip",
+      "visibility": "worker",
+      "justification": "Worker pilih: observasi / BMKG / estimasi / Open-Meteo. Affirms data provenance."
+    },
+    {
+      "id": "f-kategori",
+      "label": "Kategori Aktivitas",
+      "type": "select (21 opsi)",
+      "visibility": "both",
+      "justification": "Worker pilih dari filtered list (SOP-aware untuk worker per role). Adib full access ke 21 kategori."
+    },
+    {
+      "id": "f-durasi",
+      "label": "Durasi Kerja",
+      "type": "radio_chip",
+      "visibility": "worker",
+      "justification": "WAJIB worker — auto-link ke UPAH_ITEMS (sweat equity vs harian vs panjat/pohon). Adib read-only."
+    },
+    {
+      "id": "f-pekerja",
+      "label": "Jumlah Pekerja",
+      "type": "number",
+      "visibility": "worker",
+      "justification": "Worker input (1 default, support gotong royong)."
+    },
+    {
+      "id": "f-pohon",
+      "label": "Jumlah Pohon Dikerjakan",
+      "type": "number",
+      "visibility": "worker",
+      "justification": "Output measurable, worker source."
+    },
+    {
+      "id": "f-catatan",
+      "label": "Catatan Kualitatif",
+      "type": "textarea (+ mic)",
+      "visibility": "worker",
+      "justification": "Free-text + voice transcribe (Phase 1A: Indonesian native browser). Worker source. Channel observasi un-structured."
+    },
+    {
+      "id": "f-foto-files",
+      "label": "Foto Bukti",
+      "type": "file (multi)",
+      "visibility": "worker",
+      "justification": "Worker upload inline. Adib view di gallery."
+    },
+    {
+      "id": "created_at",
+      "label": "Timestamp ISO",
+      "type": "datetime",
+      "visibility": "auto",
+      "justification": "System on submit."
+    },
+    {
+      "id": "id",
+      "label": "Entry UID",
+      "type": "string",
+      "visibility": "auto",
+      "justification": "lap_YYYYMMDD_xxxxx"
+    },
+    {
+      "id": "compliance",
+      "label": "Compliance Status",
+      "type": "enum",
+      "visibility": "auto",
+      "justification": "Derived dari alerts engine."
+    },
+    {
+      "id": "alerts",
+      "label": "Climate Alerts",
+      "type": "array",
+      "visibility": "auto",
+      "justification": "Derived dari computeRainfallAlerts()."
+    },
+    {
+      "id": "gps_coords",
+      "label": "Lat/Lng GPS",
+      "type": "string",
+      "visibility": "auto",
+      "justification": "NEW Phase 1A — Worker PWA capture GPS saat submit untuk audit lokasi kerja."
+    },
+    {
+      "id": "device_id",
+      "label": "Browser Fingerprint",
+      "type": "string",
+      "visibility": "auto",
+      "justification": "NEW Phase 1A — worker device traceability untuk multi-worker conflict."
+    }
+  ],
+  "categories": [
+    {
+      "id": "pemupukan_kimia",
+      "label": "Pemupukan Anorganik",
+      "icon": "🌿",
+      "fields": [
+        {
+          "label": "Jenis Pupuk",
+          "visibility": "worker",
+          "justification": "Worker tau jenis dipakai di lapangan (Urea/SP-36/KCl/Dolomit/Kieserit/Phonska/NPK)"
+        },
+        {
+          "label": "Dosis (g/pohon)",
+          "visibility": "both",
+          "justification": "Worker actual saat aplikasi; Adib reference SOP BRIN 5-10 thn dosis tabel"
+        },
+        {
+          "label": "Jumlah Pohon Aplikasi",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Total kg",
+          "visibility": "auto",
+          "justification": "Auto-compute dari dosis × pohon (formula client-side)"
+        },
+        {
+          "label": "Metode Aplikasi",
+          "visibility": "worker",
+          "justification": "Pilih dari options (parit_lingkar / broadcast / benam_rorak / fertigation)"
+        },
+        {
+          "label": "Jarak dari Batang (cm)",
+          "visibility": "worker",
+          "justification": "SOP-relevant measurement"
+        },
+        {
+          "label": "Kedalaman Parit (cm)",
+          "visibility": "worker",
+          "justification": "SOP-relevant measurement"
+        },
+        {
+          "label": "Time Gap dari Hujan (hari)",
+          "visibility": "worker",
+          "justification": "Worker tau cuaca recent (cross-check Open-Meteo)"
+        },
+        {
+          "label": "Subsidi RDKK?",
+          "visibility": "wakif_only",
+          "justification": "Strategic procurement decision — Adib decide HET vs non-subsidi via Gapoktan"
+        }
+      ]
+    },
+    {
+      "id": "pemupukan_organik",
+      "label": "Composting In-Situ (Q4)",
+      "icon": "♻️",
+      "fields": [
+        {
+          "label": "Sumber",
+          "visibility": "worker",
+          "justification": "Worker tau sumber (kulit kopi / serasah / kandang)"
+        },
+        {
+          "label": "Volume per Pohon (L)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Total kg",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Kondisi Fermentasi",
+          "visibility": "worker",
+          "justification": "Observasi lapangan (kompos jadi / setengah / mentah)"
+        },
+        {
+          "label": "Lokasi Aplikasi",
+          "visibility": "worker",
+          "justification": "Pilihan (piringan / rorak / bedeng)"
+        }
+      ]
+    },
+    {
+      "id": "pemangkasan",
+      "label": "Pemangkasan",
+      "icon": "✂️",
+      "fields": [
+        {
+          "label": "Tipe Pemangkasan",
+          "visibility": "worker",
+          "justification": "Worker tau (produksi berat/ringan, bentuk TBM, peremajaan, penaung)"
+        },
+        {
+          "label": "Tinggi Pohon Pre (cm)",
+          "visibility": "worker",
+          "justification": "Measurable"
+        },
+        {
+          "label": "Tinggi Pohon Post (cm)",
+          "visibility": "worker",
+          "justification": "Measurable"
+        },
+        {
+          "label": "Cabang Dipertahankan (multi)",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Cabang Dibuang (multi)",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        }
+      ]
+    },
+    {
+      "id": "panen",
+      "label": "Panen Selektif (Q6)",
+      "icon": "🍒",
+      "fields": [
+        {
+          "label": "Metode Petik",
+          "visibility": "both",
+          "justification": "Worker default selektif_merah; Adib monitor compliance"
+        },
+        {
+          "label": "Lot ID",
+          "visibility": "wakif_only",
+          "justification": "Strategic assignment — Adib generate per Bidang × Tgl × Partner (format WKKN-YYYY-MM-Bx-NNN)"
+        },
+        {
+          "label": "Jam Petik Mulai",
+          "visibility": "worker",
+          "justification": "Worker timestamp"
+        },
+        {
+          "label": "Jam Petik Selesai",
+          "visibility": "worker",
+          "justification": "Worker timestamp"
+        },
+        {
+          "label": "Buah Merah (kg)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Buah Kuning (kg)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Buah Hijau (kg)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Buah Hitam Overripe (kg)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Processing Partner",
+          "visibility": "wakif_only",
+          "justification": "Strategic offtaker decision (Bonsari / Nomad / in-house) — bukan worker call"
+        }
+      ]
+    },
+    {
+      "id": "penyemprotan",
+      "label": "Penyemprotan OPT",
+      "icon": "💨",
+      "fields": [
+        {
+          "label": "Produk Pestisida",
+          "visibility": "worker",
+          "justification": "Worker tau yang dipakai (reality-first: bisa Beauveria atau \"obat rumput\" generic)"
+        },
+        {
+          "label": "Target OPT",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Volume Total (L)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "% Volume ke Bawah Daun",
+          "visibility": "worker",
+          "justification": "SOP-relevant"
+        },
+        {
+          "label": "Surfaktan?",
+          "visibility": "worker",
+          "justification": "Yes/No"
+        },
+        {
+          "label": "Campur dengan Pupuk?",
+          "visibility": "worker",
+          "justification": "Yes/No (alert trigger)"
+        }
+      ]
+    },
+    {
+      "id": "build_rorak",
+      "label": "Build Rorak (Q8)",
+      "icon": "⛏️",
+      "fields": [
+        {
+          "label": "Rorak ID",
+          "visibility": "auto",
+          "justification": "Auto-generate ROR-YYYY-NNN dari counter"
+        },
+        {
+          "label": "Panjang/Lebar/Kedalaman (m)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "Isi Serasah Awal (kg)",
+          "visibility": "worker",
+          "justification": "Output measurable"
+        },
+        {
+          "label": "GPS coords",
+          "visibility": "auto",
+          "justification": "Phase 1A GPS capture"
+        }
+      ]
+    },
+    {
+      "id": "pisang_management",
+      "label": "Pisang Management (Q3 Amanah) [NON-SOP One-Off 2026]",
+      "icon": "🍌",
+      "fields": [
+        {
+          "label": "Aksi",
+          "visibility": "worker",
+          "justification": "Worker eksekusi (panen MWC NU / tebang / bongkar tunas)"
+        },
+        {
+          "label": "Jumlah Rumpun",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Petugas Panen",
+          "visibility": "worker",
+          "justification": "Worker witness (MWC NU / Ust Fauzan / tim)"
+        },
+        {
+          "label": "Catatan Amanah",
+          "visibility": "both",
+          "justification": "Worker tulis kronologi; Adib append/edit untuk audit trail formal"
+        }
+      ],
+      "non_sop_one_off": true,
+      "note": "NON-SOP one-off task pre-panen 2026 (decision Adib 16 Mei 2026). Tetap available di Form Input untuk worker lapor saat eksekusi, exclude dari SOP compliance scoring."
+    },
+    {
+      "id": "inventarisasi_pohon",
+      "label": "Inventarisasi Pohon",
+      "icon": "🌳",
+      "fields": [
+        {
+          "label": "Pohon ID",
+          "visibility": "worker",
+          "justification": "Mas Anto generate dari counter (P-NNNN)"
+        },
+        {
+          "label": "Kondisi",
+          "visibility": "worker",
+          "justification": "Worker observasi (produktif / belum / rusak / sulam / kosong)"
+        },
+        {
+          "label": "Estimasi Umur (tahun)",
+          "visibility": "worker",
+          "justification": "Worker estimate"
+        },
+        {
+          "label": "Batang Bawah",
+          "visibility": "worker",
+          "justification": "Worker observasi (Excelsa default per BRIN)"
+        },
+        {
+          "label": "Batang Atas",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Klon ID",
+          "visibility": "wakif_only",
+          "justification": "Q1 tunda DNA — default unknown; Adib update setelah BRIN/lab identifikasi"
+        },
+        {
+          "label": "Tinggi (cm)",
+          "visibility": "worker",
+          "justification": "Measurable"
+        }
+      ]
+    },
+    {
+      "id": "tanam_penaung",
+      "label": "Tanam Penaung (Q7)",
+      "icon": "🌴",
+      "fields": [
+        {
+          "label": "Spesies",
+          "visibility": "worker",
+          "justification": "Worker tau (lamtoro / gamal / durian / sengon / petai)"
+        },
+        {
+          "label": "Jumlah Pohon",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Jarak Tanam",
+          "visibility": "worker",
+          "justification": "Field-measurable"
+        },
+        {
+          "label": "Ukuran Lubang (cm)",
+          "visibility": "worker",
+          "justification": "Field-measurable"
+        }
+      ]
+    },
+    {
+      "id": "kompos_kulit_kopi",
+      "label": "Kompos Kulit Kopi (Q4)",
+      "icon": "🌰",
+      "fields": [
+        {
+          "label": "Sumber",
+          "visibility": "worker",
+          "justification": "Worker tau"
+        },
+        {
+          "label": "Lokasi Kompos",
+          "visibility": "worker",
+          "justification": "Worker pilih"
+        },
+        {
+          "label": "Rorak ID Target",
+          "visibility": "worker",
+          "justification": "Worker link ke rorak existing"
+        },
+        {
+          "label": "Volume Input (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Tgl Mulai Kompos",
+          "visibility": "worker",
+          "justification": "Worker timestamp"
+        },
+        {
+          "label": "Est. Tgl Jadi",
+          "visibility": "worker",
+          "justification": "Worker estimate (6-8 minggu)"
+        }
+      ]
+    },
+    {
+      "id": "babat_rumput",
+      "label": "Babat Rumput (Sanitasi Gulma)",
+      "icon": "🌾",
+      "fields": [
+        {
+          "label": "Method",
+          "visibility": "worker",
+          "justification": "Reality-first: worker bisa pilih sabit manual / brushcutter / cover crops / obat rumput (off-SOP). Compliance flag separately."
+        },
+        {
+          "label": "Area Dibersihkan (m²)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Tinggi Gulma Pre (cm)",
+          "visibility": "worker",
+          "justification": "Measurable"
+        },
+        {
+          "label": "Status Mulsa Pasca-Babat",
+          "visibility": "worker",
+          "justification": "Worker pilih (spread piringan / kumpul kompos / dibakar 🚫 / dibiarkan)"
+        },
+        {
+          "label": "Bahan Habis Pakai (Rp)",
+          "visibility": "both",
+          "justification": "Worker input nilai actual; Adib categorize ke RAB"
+        },
+        {
+          "label": "Sumber Tenaga",
+          "visibility": "worker",
+          "justification": "Worker pilih"
+        }
+      ]
+    },
+    {
+      "id": "sortasi_buah",
+      "label": "Sortasi Buah Pre-Pulping",
+      "icon": "🔍",
+      "fields": [
+        {
+          "label": "Lot ID Reference",
+          "visibility": "wakif_only",
+          "justification": "Strategic — terkait Section 3.4 Panen"
+        },
+        {
+          "label": "Total Buah Sortir (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Sortasi Air — Sink (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Sortasi Air — Float (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "% Defect Visual",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Buang ke Composting?",
+          "visibility": "worker",
+          "justification": "Yes/No"
+        },
+        {
+          "label": "Lanjut ke (Processing Partner)",
+          "visibility": "wakif_only",
+          "justification": "Strategic — Adib decide downstream flow"
+        }
+      ]
+    },
+    {
+      "id": "penjemuran",
+      "label": "Penjemuran (Drying)",
+      "icon": "☀️",
+      "fields": [
+        {
+          "label": "Lot ID Reference",
+          "visibility": "wakif_only",
+          "justification": "Strategic"
+        },
+        {
+          "label": "Tahap",
+          "visibility": "worker",
+          "justification": "Worker phase (mulai / balik / tutup / angkat)"
+        },
+        {
+          "label": "Tempat Jemur",
+          "visibility": "worker",
+          "justification": "Worker pilih (para-para / lantai semen / klemar)"
+        },
+        {
+          "label": "Ketebalan Tumpukan (cm)",
+          "visibility": "worker",
+          "justification": "Measurable"
+        },
+        {
+          "label": "Frekuensi Pembalikan (jam)",
+          "visibility": "worker",
+          "justification": "Worker observe"
+        },
+        {
+          "label": "Moisture Reading (%)",
+          "visibility": "worker",
+          "justification": "Jika ada moisture meter (Q10 — TBD vendor Bonsari)"
+        },
+        {
+          "label": "Jam Total Jemur",
+          "visibility": "worker",
+          "justification": "Worker cumulative"
+        },
+        {
+          "label": "Hasil Berat (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        }
+      ]
+    },
+    {
+      "id": "opt_monitoring",
+      "label": "OPT Monitoring (5-pohon-diagonal)",
+      "icon": "🔬",
+      "fields": [
+        {
+          "label": "Method",
+          "visibility": "worker",
+          "justification": "Worker pilih sampling method"
+        },
+        {
+          "label": "Jumlah Pohon Disampling",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "OPT Target Utama",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Intensitas Serangan (%)",
+          "visibility": "worker",
+          "justification": "Worker estimate"
+        },
+        {
+          "label": "Distribusi",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Action Triggered?",
+          "visibility": "both",
+          "justification": "Worker propose action; Adib approve eskalasi (e.g., spray order)"
+        }
+      ]
+    },
+    {
+      "id": "brocap_management",
+      "label": "Brocap Management",
+      "icon": "🪤",
+      "fields": [
+        {
+          "label": "Aksi",
+          "visibility": "worker",
+          "justification": "Worker eksekusi (pasang/cek/refill/lepas)"
+        },
+        {
+          "label": "Kebun",
+          "visibility": "worker",
+          "justification": "Worker location"
+        },
+        {
+          "label": "Jumlah Trap",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Ketinggian Pasang (m)",
+          "visibility": "worker",
+          "justification": "Worker measurable"
+        },
+        {
+          "label": "Tangkapan PBKo",
+          "visibility": "worker",
+          "justification": "Worker count"
+        },
+        {
+          "label": "Tipe Trap",
+          "visibility": "worker",
+          "justification": "Worker pilih (commercial / DIY botol aqua / mix)"
+        }
+      ]
+    },
+    {
+      "id": "topgraft_robusta",
+      "label": "Top-Grafting Robusta (Q2)",
+      "icon": "🌱",
+      "fields": [
+        {
+          "label": "Klon Atas",
+          "visibility": "wakif_only",
+          "justification": "Strategic genetic decision — Adib pilih klon (BP 358 / SA 237 / BP 409 / BP 939) berdasarkan keputusan + sumber bibit"
+        },
+        {
+          "label": "Pohon Target ID",
+          "visibility": "worker",
+          "justification": "Worker link"
+        },
+        {
+          "label": "Diameter Batang Bawah (cm)",
+          "visibility": "worker",
+          "justification": "Worker measurable"
+        },
+        {
+          "label": "Tinggi Cut Stump (cm)",
+          "visibility": "worker",
+          "justification": "Worker measurable"
+        },
+        {
+          "label": "Jumlah Pucuk per Pohon",
+          "visibility": "worker",
+          "justification": "Worker count"
+        },
+        {
+          "label": "Cek Kambium Aktif?",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Window Aplikasi",
+          "visibility": "worker",
+          "justification": "Worker timing"
+        }
+      ]
+    },
+    {
+      "id": "soil_test",
+      "label": "Soil Test (Q9)",
+      "icon": "⛰️",
+      "fields": [
+        {
+          "label": "Method Sampling",
+          "visibility": "worker",
+          "justification": "Worker eksekusi (Mas Anto lead)"
+        },
+        {
+          "label": "Jumlah Sample",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Kedalaman Sampling (cm)",
+          "visibility": "worker",
+          "justification": "Measurable"
+        },
+        {
+          "label": "Lab Tujuan",
+          "visibility": "wakif_only",
+          "justification": "Strategic vendor choice (Lab UB / BPSI Bogor / lain)"
+        },
+        {
+          "label": "Parameter Diuji",
+          "visibility": "wakif_only",
+          "justification": "Strategic cost decision (pH only vs full panel pH+NPK+CEC)"
+        },
+        {
+          "label": "Tgl Kirim ke Lab",
+          "visibility": "worker",
+          "justification": "Worker timestamp"
+        },
+        {
+          "label": "Estimasi Hasil",
+          "visibility": "worker",
+          "justification": "Worker note"
+        }
+      ]
+    },
+    {
+      "id": "bokashi_production",
+      "label": "Bokashi Production (Phase 2)",
+      "icon": "🧪",
+      "fields": [
+        {
+          "label": "Tahap",
+          "visibility": "worker",
+          "justification": "Worker eksekusi"
+        },
+        {
+          "label": "Komposisi Batch (kg)",
+          "visibility": "worker",
+          "justification": "Worker mixing"
+        },
+        {
+          "label": "EM4 Activator (L)",
+          "visibility": "worker",
+          "justification": "Worker measurable"
+        },
+        {
+          "label": "Volume Akhir (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Suhu Fermentasi (°C)",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Aplikasi Dosis (kg/pohon)",
+          "visibility": "both",
+          "justification": "Worker actual; Adib reference SOP 2-3 kg/phn"
+        }
+      ]
+    },
+    {
+      "id": "komunikasi_stakeholder",
+      "label": "Komunikasi Stakeholder",
+      "icon": "💬",
+      "fields": [
+        {
+          "label": "Stakeholder",
+          "visibility": "both",
+          "justification": "Worker (Mas Anto biasa) drafts; Adib decide eskalasi"
+        },
+        {
+          "label": "Channel",
+          "visibility": "worker",
+          "justification": "Worker observasi (WA / telp / kunjungan)"
+        },
+        {
+          "label": "Topik Utama",
+          "visibility": "worker",
+          "justification": "Worker summary"
+        },
+        {
+          "label": "Status Hasil",
+          "visibility": "both",
+          "justification": "Worker propose status; Adib decide perlu_eskalasi_wakif vs resolved"
+        },
+        {
+          "label": "Detail Pembicaraan",
+          "visibility": "worker",
+          "justification": "Worker kronologi"
+        }
+      ]
+    },
+    {
+      "id": "arachis_management",
+      "label": "Arachis Management",
+      "icon": "🌿",
+      "fields": [
+        {
+          "label": "Aksi",
+          "visibility": "worker",
+          "justification": "Worker eksekusi"
+        },
+        {
+          "label": "Jumlah Stek",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Jarak Tanam",
+          "visibility": "worker",
+          "justification": "Worker measurable"
+        },
+        {
+          "label": "Survival Rate (%)",
+          "visibility": "worker",
+          "justification": "Worker monitor"
+        },
+        {
+          "label": "Coverage (%)",
+          "visibility": "worker",
+          "justification": "Worker observasi"
+        },
+        {
+          "label": "Sumber Bibit",
+          "visibility": "wakif_only",
+          "justification": "Strategic procurement (self-prop vs nursery Pujon vs BRIN Purwodadi)"
+        }
+      ],
+      "validation_status": "unvalidated",
+      "validation_note": "Phase 2 — belum tervalidasi di lapangan. Decision Adib 16 Mei 2026: butuh pilot + observasi sebelum locked sebagai SOP recurring. Sub-fields draft untuk reference saat eksekusi pilot."
+    },
+    {
+      "id": "biochar_pyrolysis",
+      "label": "Biochar Pyrolysis",
+      "icon": "🔥",
+      "fields": [
+        {
+          "label": "Tahap",
+          "visibility": "worker",
+          "justification": "Worker eksekusi"
+        },
+        {
+          "label": "Bahan Baku (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Suhu Pyrolysis (°C)",
+          "visibility": "worker",
+          "justification": "Worker observasi (300-500°C)"
+        },
+        {
+          "label": "Durasi Pyrolysis (jam)",
+          "visibility": "worker",
+          "justification": "Worker timing"
+        },
+        {
+          "label": "Hasil Biochar (kg)",
+          "visibility": "worker",
+          "justification": "Output"
+        },
+        {
+          "label": "Aplikasi Dosis (kg/pohon)",
+          "visibility": "both",
+          "justification": "Worker actual; Adib reference 1 kg/phn"
+        }
+      ],
+      "validation_status": "unvalidated",
+      "validation_note": "Phase 2 — belum tervalidasi di lapangan. Decision Adib 16 Mei 2026: butuh pilot + observasi sebelum locked sebagai SOP recurring. Sub-fields draft untuk reference saat eksekusi pilot."
+    }
+  ],
+  "open_questions": [
+    {
+      "id": "Q6.1",
+      "title": "Dynamic visibility (context-dependent)?",
+      "question": "Apakah pattern boleh visibility: {default: \"wakif_only\", after_panen_2026: \"both\"} untuk field yg berubah role over time?",
+      "status": "locked",
+      "locked_decision": "Tidak untuk Phase 1A. Keep visibility static per field. Kalau perlu evolve, ganti di registry + bump schema version + migrate.",
+      "approved_by": "Adib",
+      "approved_date": "2026-05-16"
+    },
+    {
+      "id": "Q6.2",
+      "title": "Default value untuk wakif_only saat worker submit?",
+      "question": "null vs \"TBD by Wakif\" vs undefined",
+      "status": "locked",
+      "locked_decision": "null + _filled_by[field] = 'pending_wakif' metadata. Clean type + explicit pending indicator.",
+      "approved_by": "Adib",
+      "approved_date": "2026-05-16"
+    },
+    {
+      "id": "Q6.3",
+      "title": "UI affordance — apakah worker tau ada field hidden?",
+      "question": "Silent skip vs visible disabled vs free-text fallback",
+      "status": "locked",
+      "locked_decision": "Silent skip + Catatan Kualitatif fallback. Channel observasi via voice note untuk insight unexpected.",
+      "approved_by": "Adib",
+      "approved_date": "2026-05-16"
+    },
+    {
+      "id": "Q6.4",
+      "title": "Override-allowed pada auto fields — UI pattern?",
+      "question": "Read-only + Edit button vs always editable vs locked + override toggle",
+      "status": "locked",
+      "locked_decision": "Locked default + explicit '🔓 Override (saya observasi beda)' toggle. Override sets _filled_by = 'worker_override' untuk audit.",
+      "approved_by": "Adib",
+      "approved_date": "2026-05-16"
+    },
+    {
+      "id": "Q6.5",
+      "title": "Roles_allowed beyond worker/wakif?",
+      "question": "Apakah perlu role 'viewer' (donor, BRIN observer, audit umat)?",
+      "status": "locked",
+      "locked_decision": "Out of scope Phase 1A. Pattern extensible — tambah 'viewer' di visibility enum kalau kelak ada public dashboard.",
+      "approved_by": "Adib",
+      "approved_date": "2026-05-16"
+    },
+    {
+      "id": "Q6.6",
+      "title": "Field deprecation / sunset?",
+      "question": "Kalau kategori sunset (e.g., topgraft selesai setelah 2 thn), backward-compat?",
+      "status": "locked",
+      "locked_decision": "Schema versioning. field_registry carry deprecated:true + sunset_date + replaced_by. Historical entries render. Worker form filter out.",
+      "approved_by": "Adib",
+      "approved_date": "2026-05-16"
+    }
+  ],
+  "adib_approval": "2026-05-16 — Adib approved all 6 tentative answers via chat session, locked as design final v1.1"
+}

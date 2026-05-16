@@ -1,0 +1,1104 @@
+{
+  "schema_version": "1.0",
+  "locked_at": "2026-05-16T-FIX-SENGKRENG",
+  "title": "Glossary Wakaf Produktif — Bahasa Petani ⇄ Istilah Ilmiah SOP",
+  "source": "Website Wakaf Produktif/monitor-v2.html (SOP_AKTIVITAS_PER_BULAN + activity-detail-form + climate/OPT references)",
+  "purpose": "Single source of truth mapping istilah lokal petani ⇄ istilah ilmiah/SOP. Worker form (PWA) pakai column bahasa_petani; dashboard internal monitor-v2 pakai column istilah_ilmiah. Claude bridge translator antara dua layer.",
+  "philosophy": [
+    "Bahasa petani lokal di UI worker, istilah ilmiah di dashboard — Claude bridge translator.",
+    "Field strategis = Wakif-only — hide dari worker form (Processing Partner, Lot ID, dll).",
+    "Form accept reality — off-SOP methods (obat rumput / sengkreng) tetap di-capture, compliance methodology flag separately."
+  ],
+  "status_markers": {
+    "confirmed": "Sudah pasti — dari memory atau decision Adib (marker ✓ di MD)",
+    "needs_confirmation": "Guess — perlu verifikasi workers di lapangan (marker ⚠ di MD)",
+    "missing": "Istilah ilmiah ada tapi bahasa petani belum tau / strategic field (marker ✗ di MD)"
+  },
+  "categories": [
+    {
+      "id": "opt_hama_penyakit",
+      "label": "Hama & Penyakit (OPT)",
+      "items": [
+        {
+          "id": "opt_pbko",
+          "istilah_ilmiah": "PBKo / Penggerek Buah Kopi (Hypothenemus hampei)",
+          "bahasa_petani": "Bubuk buah",
+          "status": "needs_confirmation",
+          "konteks": "Hama bor buah utama Robusta",
+          "sop_ref": "Robusta Edisi 2 hal 161"
+        },
+        {
+          "id": "opt_cercospora",
+          "istilah_ilmiah": "Cercospora coffeicola (bercak daun)",
+          "bahasa_petani": "Bercak daun",
+          "status": "needs_confirmation",
+          "konteks": "Bercak coklat sirkular daun. Ngantang aktif sepanjang tahun (lembab)",
+          "sop_ref": "Robusta Edisi 2 hal 175"
+        },
+        {
+          "id": "opt_karat_daun",
+          "istilah_ilmiah": "Karat Daun (Hemileia vastatrix)",
+          "bahasa_petani": "Karat daun",
+          "status": "needs_confirmation",
+          "konteks": "Bubuk oranye/kuning di bawah daun",
+          "sop_ref": "Robusta Edisi 2 hal 175"
+        },
+        {
+          "id": "opt_jamur_upas",
+          "istilah_ilmiah": "Jamur upas (Corticium salmonicolor)",
+          "bahasa_petani": "Jamur putih di kulit pohon",
+          "status": "needs_confirmation",
+          "konteks": "Membran putih/pink di batang/cabang"
+        },
+        {
+          "id": "opt_jamur_akar",
+          "istilah_ilmiah": "Jamur akar (Rigidoporus)",
+          "bahasa_petani": "Akar busuk",
+          "status": "needs_confirmation",
+          "konteks": "Ngantang fokus prioritas (Andisol lembab)"
+        },
+        {
+          "id": "opt_penggerek_batang",
+          "istilah_ilmiah": "Penggerek batang (Xylosandrus)",
+          "bahasa_petani": "Pohon bolong / ulat batang",
+          "status": "needs_confirmation",
+          "konteks": "Lubang di batang utama"
+        },
+        {
+          "id": "opt_kutu_putih",
+          "istilah_ilmiah": "Kutu putih (Pseudococcidae)",
+          "bahasa_petani": "Kutu putih",
+          "status": "confirmed",
+          "konteks": "Istilah sudah generik di petani"
+        },
+        {
+          "id": "opt_nematoda",
+          "istilah_ilmiah": "Nematoda Pratylenchus coffeae",
+          "bahasa_petani": "Cacing tanah halus",
+          "status": "needs_confirmation",
+          "konteks": "Justifikasi anti-pisang (inang)",
+          "sop_ref": "Robusta Edisi 2 hal 56"
+        },
+        {
+          "id": "opt_beauveria",
+          "istilah_ilmiah": "Beauveria bassiana (biocontrol)",
+          "bahasa_petani": "Obat jamur PBKo",
+          "status": "needs_confirmation",
+          "konteks": "Biopestisida jamur entomopatogen",
+          "sop_ref": "Robusta Edisi 2 hal 167"
+        },
+        {
+          "id": "opt_brocap",
+          "istilah_ilmiah": "Brocap trap (atraktan PBKo)",
+          "bahasa_petani": "Perangkap bubuk",
+          "status": "needs_confirmation",
+          "konteks": "Wiryadiputra & Cilas 2009. Pilot Kebun 4 Mei 2026"
+        },
+        {
+          "id": "opt_atraktan",
+          "istilah_ilmiah": "Atraktan kapsul (alkohol-based)",
+          "bahasa_petani": "Umpan perangkap",
+          "status": "needs_confirmation",
+          "konteks": "Refill kapsul tiap 4-6 minggu"
+        },
+        {
+          "id": "opt_obat_jamur_cengkeh",
+          "istilah_ilmiah": "Ekstrak daun cengkeh (1L + 14L air)",
+          "bahasa_petani": "Air cengkeh",
+          "status": "needs_confirmation",
+          "konteks": "Cercospora prevention",
+          "sop_ref": "Robusta Edisi 2 hal 175"
+        },
+        {
+          "id": "opt_surfaktan",
+          "istilah_ilmiah": "Surfaktan / Wetting agent",
+          "bahasa_petani": "Sabun pestisida",
+          "status": "needs_confirmation",
+          "konteks": "70% volume ke bawah daun + surfaktan"
+        },
+        {
+          "id": "opt_mumifikasi",
+          "istilah_ilmiah": "Buah mumifikasi (PBKo legacy)",
+          "bahasa_petani": "Buah kering hitam di pohon",
+          "status": "needs_confirmation",
+          "konteks": "Source re-infestasi. Sanitasi wajib pasca-panen"
+        }
+      ]
+    },
+    {
+      "id": "pupuk_nutrisi",
+      "label": "Pupuk & Nutrisi",
+      "items": [
+        {
+          "id": "pup_urea",
+          "istilah_ilmiah": "Urea Pusri (46% N)",
+          "bahasa_petani": "Urea / pupuk putih",
+          "status": "confirmed",
+          "konteks": "N source utama. BRIN 5-10 thn: 150 g/phn"
+        },
+        {
+          "id": "pup_sp36",
+          "istilah_ilmiah": "SP-36 Petrokimia (36% P2O5)",
+          "bahasa_petani": "SP-36 / pupuk fosfor",
+          "status": "needs_confirmation",
+          "konteks": "P untuk pembungaan & energy transfer. 80 g/phn"
+        },
+        {
+          "id": "pup_kcl",
+          "istilah_ilmiah": "KCl Mahkota (60% K2O)",
+          "bahasa_petani": "KCl / pupuk kalium / pupuk merah",
+          "status": "needs_confirmation",
+          "konteks": "K untuk kualitas biji + ketahanan. 100 g/phn"
+        },
+        {
+          "id": "pup_dolomit",
+          "istilah_ilmiah": "Dolomit (CaMg(CO3)2)",
+          "bahasa_petani": "Kapur dolomit / kapur pertanian",
+          "status": "confirmed",
+          "konteks": "Lime correction Andisol acidic Ngantang. ~125 g/phn (NGT +25%)"
+        },
+        {
+          "id": "pup_kieserit",
+          "istilah_ilmiah": "Kieserit (MgSO4.H2O)",
+          "bahasa_petani": "Kieserit / pupuk Mg+S",
+          "status": "needs_confirmation",
+          "konteks": "BRIN BARU per tabel 9 Mei 2026. Mg+S soluble, komplemen Dolomit. 50 g/phn"
+        },
+        {
+          "id": "pup_phonska",
+          "istilah_ilmiah": "Phonska 15-15-15 (subsidi)",
+          "bahasa_petani": "Phonska / NPK subsidi",
+          "status": "confirmed",
+          "konteks": "Subsidi RDKK via Gapoktan"
+        },
+        {
+          "id": "pup_phonska_plus",
+          "istilah_ilmiah": "Phonska Plus (NPK + S + Zn)",
+          "bahasa_petani": "Phonska Plus",
+          "status": "needs_confirmation",
+          "konteks": "Non-subsidi, enrichment trace"
+        },
+        {
+          "id": "pup_npk_yaramila",
+          "istilah_ilmiah": "NPK 16-16-16 Yaramila",
+          "bahasa_petani": "NPK Yara / NPK biru",
+          "status": "needs_confirmation",
+          "konteks": "Non-subsidi premium"
+        },
+        {
+          "id": "pup_kompos_kambing",
+          "istilah_ilmiah": "Pupuk kandang kambing",
+          "bahasa_petani": "Pupuk kandang / tletong kambing",
+          "status": "confirmed",
+          "konteks": "5 kg/phn pasca-panen"
+        },
+        {
+          "id": "pup_kompos_ayam",
+          "istilah_ilmiah": "Pupuk kandang ayam",
+          "bahasa_petani": "Pupuk ayam / kotoran ayam",
+          "status": "confirmed",
+          "konteks": "Stok Wahab"
+        },
+        {
+          "id": "pup_kulit_kopi",
+          "istilah_ilmiah": "Kompos kulit kopi pulping",
+          "bahasa_petani": "Kulit kopi / ampas kupasan",
+          "status": "confirmed",
+          "konteks": "Q4 composting in-situ. Slightly alkaline → bantu pH"
+        },
+        {
+          "id": "pup_serasah_lamtoro",
+          "istilah_ilmiah": "Serasah daun lamtoro (mulsa)",
+          "bahasa_petani": "Daun lamtoro kering / serasah",
+          "status": "needs_confirmation",
+          "konteks": "N gratis dari leguminosa"
+        },
+        {
+          "id": "pup_serasah_kopi",
+          "istilah_ilmiah": "Serasah daun kopi (mulsa)",
+          "bahasa_petani": "Daun kopi kering",
+          "status": "needs_confirmation",
+          "konteks": "Mulsa retensi kelembapan"
+        },
+        {
+          "id": "pup_bokashi",
+          "istilah_ilmiah": "Bokashi (fermentasi anaerob EM4)",
+          "bahasa_petani": "Bokashi / kompos fermentasi",
+          "status": "needs_confirmation",
+          "konteks": "Phase 2 cost-effective. 50 kambing + 20 sekam + 10 dedak + 0,5-1L EM4"
+        },
+        {
+          "id": "pup_em4",
+          "istilah_ilmiah": "EM4 Activator (Effective Microorganisms)",
+          "bahasa_petani": "EM4",
+          "status": "confirmed",
+          "konteks": "Activator bokashi. Botol kuning"
+        },
+        {
+          "id": "pup_biochar",
+          "istilah_ilmiah": "Biochar (pyrolysis kulit kopi 300-500°C)",
+          "bahasa_petani": "Arang kulit kopi / arang kopi",
+          "status": "needs_confirmation",
+          "konteks": "Phase 2 Inject Frontiers Soil Science 2024. 1 kg/phn"
+        },
+        {
+          "id": "pup_dosis_setengah",
+          "istilah_ilmiah": "Setengah dosis (split awal MH + akhir MH)",
+          "bahasa_petani": "Setengah dosis / dibagi dua",
+          "status": "needs_confirmation",
+          "konteks": "BRIN tabel split"
+        },
+        {
+          "id": "pup_parit_lingkar",
+          "istilah_ilmiah": "Parit lingkar (30-50 cm dari batang)",
+          "bahasa_petani": "Parit / alur pupuk keliling pohon",
+          "status": "confirmed",
+          "konteks": "SOP metode aplikasi. Dalam 2-5 cm"
+        },
+        {
+          "id": "pup_broadcast",
+          "istilah_ilmiah": "Broadcast (sebar permukaan)",
+          "bahasa_petani": "Disebar / ditabur",
+          "status": "confirmed",
+          "konteks": "Method aplikasi non-SOP (cepat tapi inefisien)"
+        },
+        {
+          "id": "pup_benam_rorak",
+          "istilah_ilmiah": "Benam rorak (di dalam rorak)",
+          "bahasa_petani": "Dipendam di rorak",
+          "status": "needs_confirmation",
+          "konteks": "Method composting in-situ"
+        },
+        {
+          "id": "pup_fertigation",
+          "istilah_ilmiah": "Fertigation (pupuk + air irigasi)",
+          "bahasa_petani": "Pupuk cair",
+          "status": "needs_confirmation",
+          "konteks": "Belum diaplikasi NGT"
+        },
+        {
+          "id": "pup_pencucian",
+          "istilah_ilmiah": "Pencucian / leaching",
+          "bahasa_petani": "Pupuk kebawa hujan / kebawa air",
+          "status": "confirmed",
+          "konteks": "Threshold >100mm/7hari = high risk"
+        }
+      ]
+    },
+    {
+      "id": "pemangkasan_cabang",
+      "label": "Pemangkasan & Cabang",
+      "items": [
+        {
+          "id": "pemang_wiwilan",
+          "istilah_ilmiah": "Wiwilan (pruning tunas air)",
+          "bahasa_petani": "Wiwilan / tunas liar",
+          "status": "confirmed",
+          "konteks": "Tunas tidak produktif di ketiak daun",
+          "sop_ref": "Robusta Edisi 2 hal 122-135"
+        },
+        {
+          "id": "pemang_produksi_berat",
+          "istilah_ilmiah": "Pemangkasan produksi berat",
+          "bahasa_petani": "Pangkas berat / pangkas total",
+          "status": "needs_confirmation",
+          "konteks": "Pasca-panen, peremajaan"
+        },
+        {
+          "id": "pemang_produksi_ringan",
+          "istilah_ilmiah": "Pemangkasan produksi ringan",
+          "bahasa_petani": "Pangkas ringan",
+          "status": "confirmed",
+          "konteks": "Rutin tiap 4 mgg, fase non-bunga"
+        },
+        {
+          "id": "pemang_bentuk_tbm",
+          "istilah_ilmiah": "Pemangkasan bentuk TBM (Tanaman Belum Menghasilkan)",
+          "bahasa_petani": "Pangkas bentuk pohon muda",
+          "status": "needs_confirmation",
+          "konteks": "Untuk pohon belum produktif"
+        },
+        {
+          "id": "pemang_peremajaan",
+          "istilah_ilmiah": "Peremajaan (cut stump 30-50 cm)",
+          "bahasa_petani": "Pangkas mati / potong batang bawah",
+          "status": "needs_confirmation",
+          "konteks": "Untuk pohon tua >25 thn",
+          "sop_ref": "Budidaya 2010 hal 31"
+        },
+        {
+          "id": "pemang_penaung",
+          "istilah_ilmiah": "Pemangkasan penaung",
+          "bahasa_petani": "Pangkas pohon naungan",
+          "status": "needs_confirmation",
+          "konteks": "Lamtoro, durian"
+        },
+        {
+          "id": "cab_primer_produktif",
+          "istilah_ilmiah": "Cabang primer produktif",
+          "bahasa_petani": "Cabang utama berbuah",
+          "status": "needs_confirmation",
+          "konteks": "Dipertahankan"
+        },
+        {
+          "id": "cab_gemuk_berbuah",
+          "istilah_ilmiah": "Cabang gemuk berbuah",
+          "bahasa_petani": "Cabang gemuk / cabang isi",
+          "status": "needs_confirmation",
+          "konteks": "Dipertahankan"
+        },
+        {
+          "id": "cab_kena_sinar",
+          "istilah_ilmiah": "Cabang kena sinar",
+          "bahasa_petani": "Cabang dapat matahari",
+          "status": "needs_confirmation",
+          "konteks": "Dipertahankan"
+        },
+        {
+          "id": "cab_balik",
+          "istilah_ilmiah": "Cabang balik (tumbuh ke dalam)",
+          "bahasa_petani": "Cabang ke dalam / cabang balik",
+          "status": "needs_confirmation",
+          "konteks": "Dibuang"
+        },
+        {
+          "id": "cab_kering",
+          "istilah_ilmiah": "Cabang kering",
+          "bahasa_petani": "Cabang mati / cabang kering",
+          "status": "confirmed",
+          "konteks": "Dibuang"
+        },
+        {
+          "id": "cab_dalam",
+          "istilah_ilmiah": "Cabang dalam",
+          "bahasa_petani": "Cabang dalam / cabang gak kena matahari",
+          "status": "needs_confirmation",
+          "konteks": "Dibuang"
+        },
+        {
+          "id": "cab_opt",
+          "istilah_ilmiah": "Cabang terserang OPT",
+          "bahasa_petani": "Cabang sakit / cabang kena penyakit",
+          "status": "confirmed",
+          "konteks": "Dibuang + bakar"
+        },
+        {
+          "id": "pemang_kambium",
+          "istilah_ilmiah": "Kambium aktif (basah/lengket)",
+          "bahasa_petani": "Kulit basah / kambium hidup",
+          "status": "needs_confirmation",
+          "konteks": "Cek pre-graft. Window Sep-Des"
+        },
+        {
+          "id": "pemang_topgraft",
+          "istilah_ilmiah": "Top-grafting (sambung pucuk Robusta)",
+          "bahasa_petani": "Sambung pucuk / nyambung pohon",
+          "status": "confirmed",
+          "konteks": "BP 358 / SA 237. Q2 keputusan"
+        },
+        {
+          "id": "pemang_klon",
+          "istilah_ilmiah": "Klon unggul (BP 358, SA 237, BP 409)",
+          "bahasa_petani": "Bibit unggul / klon kopi",
+          "status": "needs_confirmation",
+          "konteks": "Pucuk batang atas"
+        }
+      ]
+    },
+    {
+      "id": "gulma_sanitasi",
+      "label": "Gulma & Sanitasi",
+      "items": [
+        {
+          "id": "gul_sabit",
+          "istilah_ilmiah": "Manual sabit",
+          "bahasa_petani": "Sabit / dibabat sabit",
+          "status": "confirmed",
+          "konteks": "Manual sabit, paling murah. Hasil: rumput pendek, pangkal masih di tanah (mirip brushcutter)."
+        },
+        {
+          "id": "gul_brushcutter",
+          "istilah_ilmiah": "Brushcutter sewa (mesin pemotong rumput)",
+          "bahasa_petani": "Mesin babat / gendongan",
+          "status": "confirmed",
+          "konteks": "Mesin pemotong rumput sewa. Cost-effective. Hasil: rumput pendek, pangkal masih di tanah (regrow lebih cepat)."
+        },
+        {
+          "id": "gul_sengkreng_cangkul",
+          "istilah_ilmiah": "Manual mechanical weeding via cangkul (hoeing) — sub-surface removal",
+          "bahasa_petani": "Sengkreng",
+          "status": "confirmed",
+          "konteks": "Manual pakai cangkul → mencabut rumput sampai akar/pangkal terangkat. Hasil: tanah tampak bersih, regrow lebih lambat dari brushcutter. Lebih tahan lama, lebih labor-intensive. Istilah lokal Ngantang."
+        },
+        {
+          "id": "gul_herbisida",
+          "istilah_ilmiah": "Herbisida (glifosat / 2,4-D)",
+          "bahasa_petani": "Obat rumput",
+          "status": "confirmed",
+          "konteks": "Off-SOP — Adib decision: capture sebagai reality, flag compliance separately",
+          "off_sop": true
+        },
+        {
+          "id": "gul_mulsa_tebal",
+          "istilah_ilmiah": "Mulsa tebal pruning",
+          "bahasa_petani": "Mulsa daun kering / tutup tanah",
+          "status": "confirmed",
+          "konteks": "Cost-effective + retensi kelembapan"
+        },
+        {
+          "id": "gul_cover_crops",
+          "istilah_ilmiah": "Cover crops (Arachis pintoi)",
+          "bahasa_petani": "Kacang hias / kacang merambat",
+          "status": "confirmed",
+          "konteks": "Phase 2 pilot Kebun 4"
+        },
+        {
+          "id": "gul_piringan",
+          "istilah_ilmiah": "Piringan pohon (zona 0-1m radius)",
+          "bahasa_petani": "Piringan / lingkar pohon",
+          "status": "confirmed",
+          "konteks": "Zona prioritas bersih gulma"
+        },
+        {
+          "id": "gul_sanitasi_buah",
+          "istilah_ilmiah": "Sanitasi buah jatuh (PBKo source)",
+          "bahasa_petani": "Pungut buah jatuh / bersihin buah busuk",
+          "status": "confirmed",
+          "konteks": "Cegah re-infestasi PBKo"
+        },
+        {
+          "id": "gul_bakar",
+          "istilah_ilmiah": "Pembakaran sampah (avoid)",
+          "bahasa_petani": "Dibakar / dibakari",
+          "status": "confirmed",
+          "konteks": "SOP hindari (CO2 + hilang nutrisi)",
+          "off_sop": true
+        }
+      ]
+    },
+    {
+      "id": "konservasi_cover",
+      "label": "Konservasi & Cover",
+      "items": [
+        {
+          "id": "kon_rorak",
+          "istilah_ilmiah": "Rorak (lubang resapan organik)",
+          "bahasa_petani": "Lubang rorak / lubang pupuk",
+          "status": "needs_confirmation",
+          "konteks": "1m x 0,3m x 0,3-0,5m. Q8 keputusan",
+          "sop_ref": "Robusta Edisi 2 hal 149"
+        },
+        {
+          "id": "kon_lereng",
+          "istilah_ilmiah": "Lereng / kemiringan",
+          "bahasa_petani": "Tanah miring",
+          "status": "confirmed",
+          "konteks": "Prioritas rorak di area paling miring (Kebun 3)"
+        },
+        {
+          "id": "kon_infiltrasi",
+          "istilah_ilmiah": "Infiltrasi air (rorak)",
+          "bahasa_petani": "Air masuk ke tanah",
+          "status": "needs_confirmation",
+          "konteks": "Indikator rorak berfungsi"
+        },
+        {
+          "id": "kon_lamtoro",
+          "istilah_ilmiah": "Lamtoro PG 79 (Leucaena leucocephala)",
+          "bahasa_petani": "Lamtoro",
+          "status": "confirmed",
+          "konteks": "Penaung leguminosa default. 200-300 phn / 0,49 ha, jarak 5x5 m"
+        },
+        {
+          "id": "kon_gamal",
+          "istilah_ilmiah": "Gamal / Gliricidia sepium",
+          "bahasa_petani": "Gamal / gamal-gamalan",
+          "status": "confirmed",
+          "konteks": "Penaung leguminosa alternatif"
+        },
+        {
+          "id": "kon_durian",
+          "istilah_ilmiah": "Durian (penaung jarak 10x10 m)",
+          "bahasa_petani": "Durian",
+          "status": "confirmed",
+          "konteks": "Penaung produktif + komoditas. Q7 keputusan"
+        },
+        {
+          "id": "kon_sengon",
+          "istilah_ilmiah": "Sengon (Albizia chinensis)",
+          "bahasa_petani": "Sengon",
+          "status": "confirmed",
+          "konteks": "Penaung kayu cepat tumbuh"
+        },
+        {
+          "id": "kon_petai",
+          "istilah_ilmiah": "Petai (Parkia speciosa)",
+          "bahasa_petani": "Petai",
+          "status": "confirmed",
+          "konteks": "Penaung leguminosa + buah"
+        },
+        {
+          "id": "kon_andisol",
+          "istilah_ilmiah": "Tanah Andisol acidic",
+          "bahasa_petani": "Tanah merah masam / tanah Ngantang",
+          "status": "needs_confirmation",
+          "konteks": "Karakter tanah NGT (pH 4,5-5,5)"
+        },
+        {
+          "id": "kon_lubang_tanam",
+          "istilah_ilmiah": "Ukuran lubang tanam (60x60x60 cm SOP)",
+          "bahasa_petani": "Lubang tanam",
+          "status": "confirmed",
+          "konteks": "Pre-tutup 1-3 bulan sebelum tanam"
+        },
+        {
+          "id": "kon_arachis_stek",
+          "istilah_ilmiah": "Stek Arachis pintoi",
+          "bahasa_petani": "Stek kacang hias",
+          "status": "needs_confirmation",
+          "konteks": "250 pilot, jarak 40x40 cm"
+        },
+        {
+          "id": "kon_la_nina",
+          "istilah_ilmiah": "La Nina (anomali iklim — MH prolonged)",
+          "bahasa_petani": "Musim hujan panjang",
+          "status": "needs_confirmation",
+          "konteks": "2026 NGT pattern"
+        }
+      ]
+    },
+    {
+      "id": "panen_processing",
+      "label": "Panen & Processing",
+      "items": [
+        {
+          "id": "pn_selektif_merah",
+          "istilah_ilmiah": "Petik selektif merah (Q6 default)",
+          "bahasa_petani": "Petik merah / petik pilihan",
+          "status": "confirmed",
+          "konteks": "Default SOP. Trade-off kualitas vs volume"
+        },
+        {
+          "id": "pn_setengah_selektif",
+          "istilah_ilmiah": "Setengah selektif",
+          "bahasa_petani": "Petik separo merah",
+          "status": "needs_confirmation",
+          "konteks": "Campuran merah + kuning"
+        },
+        {
+          "id": "pn_lelesan",
+          "istilah_ilmiah": "Lelesan (petik buah jatuh)",
+          "bahasa_petani": "Lelesan / mungut bawah",
+          "status": "confirmed",
+          "konteks": "Istilah Jawa standar. Kualitas rendah"
+        },
+        {
+          "id": "pn_borongan",
+          "istilah_ilmiah": "Borongan (semua warna)",
+          "bahasa_petani": "Borongan / petik semua",
+          "status": "confirmed",
+          "konteks": "Trigger alert SOP"
+        },
+        {
+          "id": "pn_buah_merah",
+          "istilah_ilmiah": "Buah merah / ripe cherry",
+          "bahasa_petani": "Buah merah / kopi merah",
+          "status": "confirmed",
+          "konteks": "Target petik selektif"
+        },
+        {
+          "id": "pn_buah_kuning",
+          "istilah_ilmiah": "Buah kuning / yellow cherry",
+          "bahasa_petani": "Buah kuning",
+          "status": "confirmed",
+          "konteks": "Sub-optimal"
+        },
+        {
+          "id": "pn_buah_hijau",
+          "istilah_ilmiah": "Buah hijau / underripe",
+          "bahasa_petani": "Buah ijo / kopi muda",
+          "status": "confirmed",
+          "konteks": "Hindari di petik selektif"
+        },
+        {
+          "id": "pn_buah_hitam",
+          "istilah_ilmiah": "Buah hitam overripe / black cherry",
+          "bahasa_petani": "Buah ireng / kopi busuk",
+          "status": "needs_confirmation",
+          "konteks": "Reject mutu"
+        },
+        {
+          "id": "pn_window_12jam",
+          "istilah_ilmiah": "Window 12 jam (petik-ke-proses)",
+          "bahasa_petani": "12 jam maksimal / jangan nginep",
+          "status": "needs_confirmation",
+          "konteks": "Cegah fermentasi liar",
+          "sop_ref": "Robusta Edisi 2 hal 225"
+        },
+        {
+          "id": "pn_sortasi_air",
+          "istilah_ilmiah": "Sortasi air pre-pulping (sink-float test)",
+          "bahasa_petani": "Cuci kopi / tes air / kopong-isi",
+          "status": "needs_confirmation",
+          "konteks": "Tenggelam = bagus, mengapung = kopong",
+          "sop_ref": "Robusta Edisi 2 hal 230"
+        },
+        {
+          "id": "pn_pulping",
+          "istilah_ilmiah": "Pulping (kupas kulit basah)",
+          "bahasa_petani": "Kupas kulit kopi / pulping",
+          "status": "needs_confirmation",
+          "konteks": "Manual pulper / mesin penggilingan"
+        },
+        {
+          "id": "pn_kulit_pulping",
+          "istilah_ilmiah": "Kulit pulping (waste → Q4 compost)",
+          "bahasa_petani": "Kulit kopi sisa kupasan / ampas",
+          "status": "confirmed",
+          "konteks": "Bahan baku biochar + kompos"
+        },
+        {
+          "id": "pn_para_para",
+          "istilah_ilmiah": "Para-para bambu (penjemuran tinggi)",
+          "bahasa_petani": "Para-para / rigen / bedeng jemur",
+          "status": "needs_confirmation",
+          "konteks": "SOP penjemuran",
+          "sop_ref": "Robusta Edisi 2 hal 235"
+        },
+        {
+          "id": "pn_terpal",
+          "istilah_ilmiah": "Terpal lantai",
+          "bahasa_petani": "Terpal jemur / klemar",
+          "status": "confirmed",
+          "konteks": "Alternatif para-para"
+        },
+        {
+          "id": "pn_bedeng_tinggi",
+          "istilah_ilmiah": "Bedeng tinggi (raised drying bed)",
+          "bahasa_petani": "Bedeng tinggi",
+          "status": "needs_confirmation",
+          "konteks": "Optimal sirkulasi udara"
+        },
+        {
+          "id": "pn_kadar_air",
+          "istilah_ilmiah": "Kadar air <=12,5% (green bean)",
+          "bahasa_petani": "Kering banget / kering kayu",
+          "status": "needs_confirmation",
+          "konteks": "Target SNI 01-2907-2008"
+        },
+        {
+          "id": "pn_moisture_meter",
+          "istilah_ilmiah": "Moisture meter (Sinar AP-6060)",
+          "bahasa_petani": "Alat ukur kering",
+          "status": "needs_confirmation",
+          "konteks": "Q10. DEFER Bonsari pinjam"
+        },
+        {
+          "id": "pn_pembalikan",
+          "istilah_ilmiah": "Pembalikan 1 jam/balik",
+          "bahasa_petani": "Dibalik / dibolak-balik tiap jam",
+          "status": "needs_confirmation",
+          "konteks": "SOP penjemuran"
+        },
+        {
+          "id": "pn_ketebalan_tumpukan",
+          "istilah_ilmiah": "Ketebalan tumpukan 6-10 cm",
+          "bahasa_petani": "Setebal jari / setinggi 6-10 cm",
+          "status": "needs_confirmation",
+          "konteks": "SOP penjemuran",
+          "sop_ref": "Robusta Edisi 2 hal 235"
+        },
+        {
+          "id": "pn_defect_grading",
+          "istilah_ilmiah": "Defect grading per 300g sampel",
+          "bahasa_petani": "Sortir cacat / pilih biji rusak",
+          "status": "needs_confirmation",
+          "konteks": "SNI 01-2907-2008"
+        },
+        {
+          "id": "pn_peaberry",
+          "istilah_ilmiah": "Peaberry (biji tunggal)",
+          "bahasa_petani": "Lanang / biji bulat tunggal",
+          "status": "needs_confirmation",
+          "konteks": "Premium grade"
+        },
+        {
+          "id": "pn_monokotil",
+          "istilah_ilmiah": "Monokotil (biji belah satu)",
+          "bahasa_petani": "Monokotil",
+          "status": "needs_confirmation",
+          "konteks": "Defect grade"
+        },
+        {
+          "id": "pn_lot_id",
+          "istilah_ilmiah": "Lot ID (WKKN-YYYY-MM-Kebun-LOT)",
+          "bahasa_petani": "Kode panen / nomor batch",
+          "status": "missing",
+          "konteks": "Strategic field — Wakif-only, hide dari worker form",
+          "wakif_only": true
+        },
+        {
+          "id": "pn_processing_partner",
+          "istilah_ilmiah": "Processing partner (Bonsari/penggilingan)",
+          "bahasa_petani": "Tempat olah / partner giling",
+          "status": "missing",
+          "konteks": "Strategic field — Wakif-only, hide dari worker form",
+          "wakif_only": true
+        },
+        {
+          "id": "pn_specialty",
+          "istilah_ilmiah": "Specialty lot (premium grade)",
+          "bahasa_petani": "Lot premium / kopi kelas A",
+          "status": "missing",
+          "konteks": "Strategic — Wakif decision Q12",
+          "wakif_only": true
+        },
+        {
+          "id": "pn_green_bean",
+          "istilah_ilmiah": "Green bean (biji kopi pasca-jemur)",
+          "bahasa_petani": "Kopi beras / biji kering",
+          "status": "confirmed",
+          "konteks": "Output akhir pra-roast"
+        },
+        {
+          "id": "pn_fermentasi_liar",
+          "istilah_ilmiah": "Fermentasi liar (over-12h)",
+          "bahasa_petani": "Kopi peyot / kopi rusak",
+          "status": "needs_confirmation",
+          "konteks": "Risk dari window break"
+        }
+      ]
+    },
+    {
+      "id": "tools_equipment",
+      "label": "Tools & Equipment",
+      "items": [
+        {
+          "id": "tool_sabit",
+          "istilah_ilmiah": "Sabit",
+          "bahasa_petani": "Sabit / arit",
+          "status": "confirmed",
+          "konteks": "Standard manual"
+        },
+        {
+          "id": "tool_brushcutter",
+          "istilah_ilmiah": "Brushcutter (mesin pemotong rumput)",
+          "bahasa_petani": "Mesin babat / gendongan",
+          "status": "confirmed",
+          "konteks": "Mesin pemotong rumput sewa. Bukan = sengkreng (sengkreng = manual cangkul)."
+        },
+        {
+          "id": "tool_cangkul_sengkreng",
+          "istilah_ilmiah": "Cangkul (hoe) untuk sengkreng",
+          "bahasa_petani": "Cangkul (untuk sengkreng)",
+          "status": "confirmed",
+          "konteks": "Cangkul standar Indonesia, dipakai untuk metode sengkreng (mencabut rumput sampai akar)."
+        },
+        {
+          "id": "tool_gergaji",
+          "istilah_ilmiah": "Gergaji pangkas",
+          "bahasa_petani": "Gergaji",
+          "status": "confirmed",
+          "konteks": "Pemangkasan cabang besar"
+        },
+        {
+          "id": "tool_gunting_pangkas",
+          "istilah_ilmiah": "Gunting pangkas",
+          "bahasa_petani": "Gunting pangkas / sekator",
+          "status": "needs_confirmation",
+          "konteks": "Pemangkasan cabang kecil"
+        },
+        {
+          "id": "tool_pulper",
+          "istilah_ilmiah": "Pulper manual (mesin kupas)",
+          "bahasa_petani": "Pulper / mesin kupas kulit kopi",
+          "status": "needs_confirmation",
+          "konteks": "CUT dari RAB 2026"
+        },
+        {
+          "id": "tool_brocap_komersial",
+          "istilah_ilmiah": "Brocap commercial official",
+          "bahasa_petani": "Perangkap pabrik / brocap asli",
+          "status": "needs_confirmation",
+          "konteks": "Atraktan + botol"
+        },
+        {
+          "id": "tool_brocap_diy",
+          "istilah_ilmiah": "Brocap DIY (botol aqua bekas)",
+          "bahasa_petani": "Perangkap botol aqua / DIY",
+          "status": "needs_confirmation",
+          "konteks": "Cost-effective alternative"
+        },
+        {
+          "id": "tool_drum_pyrolysis",
+          "istilah_ilmiah": "Drum pyrolysis (biochar setup)",
+          "bahasa_petani": "Drum bakar arang",
+          "status": "needs_confirmation",
+          "konteks": "Phase 2. Rp 1,5-2 jt setup"
+        },
+        {
+          "id": "tool_apd",
+          "istilah_ilmiah": "APD (Alat Pelindung Diri)",
+          "bahasa_petani": "Pelindung kerja / sarung tangan + masker",
+          "status": "needs_confirmation",
+          "konteks": "CUT — workers siapkan sendiri (RAB decision)"
+        },
+        {
+          "id": "tool_tongkat_ukur",
+          "istilah_ilmiah": "Tongkat ukur tinggi pohon",
+          "bahasa_petani": "Tongkat ukur",
+          "status": "needs_confirmation",
+          "konteks": "Inventarisasi pohon"
+        },
+        {
+          "id": "tool_gps_handheld",
+          "istilah_ilmiah": "GPS handheld / GPS smartphone",
+          "bahasa_petani": "GPS / lokasi HP",
+          "status": "needs_confirmation",
+          "konteks": "Rorak ID + Pohon ID"
+        },
+        {
+          "id": "tool_em4_botol",
+          "istilah_ilmiah": "EM4 botol kuning",
+          "bahasa_petani": "EM4 botol kuning",
+          "status": "confirmed",
+          "konteks": "Bokashi activator"
+        },
+        {
+          "id": "tool_lantai_jemur",
+          "istilah_ilmiah": "Lantai jemur semen",
+          "bahasa_petani": "Lantai jemur",
+          "status": "confirmed",
+          "konteks": "Alternative para-para"
+        },
+        {
+          "id": "tool_sprayer",
+          "istilah_ilmiah": "Sprayer / hand sprayer",
+          "bahasa_petani": "Semprotan / sprayer",
+          "status": "confirmed",
+          "konteks": "Aplikasi pestisida + foliar"
+        },
+        {
+          "id": "tool_pH_meter",
+          "istilah_ilmiah": "pH meter tanah",
+          "bahasa_petani": "Alat ukur pH",
+          "status": "needs_confirmation",
+          "konteks": "Soil test field"
+        }
+      ]
+    },
+    {
+      "id": "soil_tanah",
+      "label": "Soil & Tanah",
+      "items": [
+        {
+          "id": "soil_andisol",
+          "istilah_ilmiah": "Andisol acidic (NGT)",
+          "bahasa_petani": "Tanah Ngantang / tanah merah",
+          "status": "needs_confirmation",
+          "konteks": "pH 4,5-5,5"
+        },
+        {
+          "id": "soil_ph",
+          "istilah_ilmiah": "pH tanah",
+          "bahasa_petani": "Asam basa tanah / pH",
+          "status": "needs_confirmation",
+          "konteks": "Target 5,5-6,5 kopi"
+        },
+        {
+          "id": "soil_ec",
+          "istilah_ilmiah": "EC / electrical conductivity",
+          "bahasa_petani": "EC / hantar listrik tanah",
+          "status": "missing",
+          "konteks": "Lab parameter. Hide worker",
+          "wakif_only": true
+        },
+        {
+          "id": "soil_oc",
+          "istilah_ilmiah": "OC / organic carbon",
+          "bahasa_petani": "Bahan organik / OC",
+          "status": "missing",
+          "konteks": "Lab parameter. Hide worker",
+          "wakif_only": true
+        },
+        {
+          "id": "soil_cec",
+          "istilah_ilmiah": "CEC / cation exchange capacity",
+          "bahasa_petani": "CEC / kapasitas tukar kation",
+          "status": "missing",
+          "konteks": "Lab parameter. Hide worker",
+          "wakif_only": true
+        },
+        {
+          "id": "soil_npk_lab",
+          "istilah_ilmiah": "NPK lab test",
+          "bahasa_petani": "Test NPK",
+          "status": "needs_confirmation",
+          "konteks": "Lab UB Brawijaya. Q9"
+        },
+        {
+          "id": "soil_tekstur",
+          "istilah_ilmiah": "Tekstur tanah (pasir/lempung/liat)",
+          "bahasa_petani": "Tanah pasir/liat",
+          "status": "needs_confirmation",
+          "konteks": "Lab parameter"
+        },
+        {
+          "id": "soil_diagonal",
+          "istilah_ilmiah": "Sampling diagonal 5 titik",
+          "bahasa_petani": "Ambil contoh tanah 5 titik silang",
+          "status": "needs_confirmation",
+          "konteks": "BRIN rekomendasi method"
+        },
+        {
+          "id": "soil_top_soil",
+          "istilah_ilmiah": "Top soil (0-30 cm)",
+          "bahasa_petani": "Tanah atas / lapisan atas",
+          "status": "needs_confirmation",
+          "konteks": "Sampling depth"
+        },
+        {
+          "id": "soil_kedalaman_parit",
+          "istilah_ilmiah": "Kedalaman parit 2-5 cm",
+          "bahasa_petani": "Dalam parit pupuk 2-5 cm",
+          "status": "needs_confirmation",
+          "konteks": "SOP aplikasi pemupukan"
+        },
+        {
+          "id": "soil_jarak_batang",
+          "istilah_ilmiah": "Jarak parit 30-50 cm dari batang",
+          "bahasa_petani": "Jauh 30-50 cm dari pohon",
+          "status": "needs_confirmation",
+          "konteks": "SOP parit lingkar"
+        }
+      ]
+    },
+    {
+      "id": "iklim_cuaca",
+      "label": "Iklim & Cuaca",
+      "items": [
+        {
+          "id": "iklim_cerah",
+          "istilah_ilmiah": "Cerah",
+          "bahasa_petani": "Cerah / panas",
+          "status": "confirmed",
+          "konteks": "Cuaca pagi/siang radio option"
+        },
+        {
+          "id": "iklim_berawan",
+          "istilah_ilmiah": "Berawan",
+          "bahasa_petani": "Mendung / berawan",
+          "status": "confirmed",
+          "konteks": "Cuaca pagi/siang"
+        },
+        {
+          "id": "iklim_hujan_ringan",
+          "istilah_ilmiah": "Hujan ringan / drizzle",
+          "bahasa_petani": "Gerimis",
+          "status": "confirmed",
+          "konteks": "Cuaca pagi/siang"
+        },
+        {
+          "id": "iklim_hujan_deras",
+          "istilah_ilmiah": "Hujan deras",
+          "bahasa_petani": "Hujan deras / hujan gede",
+          "status": "confirmed",
+          "konteks": "Cuaca pagi/siang. Trigger alerts"
+        },
+        {
+          "id": "iklim_rainfall_24h",
+          "istilah_ilmiah": "Rainfall 24 jam (mm)",
+          "bahasa_petani": "Hujan kemarin (mm)",
+          "status": "needs_confirmation",
+          "konteks": "Form input field"
+        },
+        {
+          "id": "iklim_rainfall_7d",
+          "istilah_ilmiah": "Rainfall 7 hari (mm)",
+          "bahasa_petani": "Hujan seminggu (mm)",
+          "status": "needs_confirmation",
+          "konteks": "Threshold 100mm → pemupukan tunda"
+        },
+        {
+          "id": "iklim_bmkg",
+          "istilah_ilmiah": "BMKG Karangploso (referensi forecast)",
+          "bahasa_petani": "Ramalan BMKG",
+          "status": "needs_confirmation",
+          "konteks": "Cek sebelum pemupukan/penyemprotan"
+        },
+        {
+          "id": "iklim_la_nina",
+          "istilah_ilmiah": "La Nina (anomali iklim)",
+          "bahasa_petani": "Musim hujan kepanjangan",
+          "status": "needs_confirmation",
+          "konteks": "2026 pattern"
+        },
+        {
+          "id": "iklim_mh",
+          "istilah_ilmiah": "MH / Musim Hujan",
+          "bahasa_petani": "Musim hujan / rendeng",
+          "status": "confirmed",
+          "konteks": "Nov-Apr default"
+        },
+        {
+          "id": "iklim_mk",
+          "istilah_ilmiah": "MK / Musim Kemarau",
+          "bahasa_petani": "Musim kemarau / mareng",
+          "status": "needs_confirmation",
+          "konteks": "Mei-Okt default"
+        },
+        {
+          "id": "iklim_pembungaan",
+          "istilah_ilmiah": "Fase pembungaan (Mar-Apr NGT)",
+          "bahasa_petani": "Fase berbunga / lagi mekar",
+          "status": "needs_confirmation",
+          "konteks": "Pemangkasan berat dilarang"
+        },
+        {
+          "id": "iklim_pentil",
+          "istilah_ilmiah": "Fase pentil (Apr-Mei)",
+          "bahasa_petani": "Fase pentil / mulai berisi",
+          "status": "needs_confirmation",
+          "konteks": "Pre-panen prep window"
+        },
+        {
+          "id": "iklim_panen",
+          "istilah_ilmiah": "Fase panen (Jun-Sep NGT)",
+          "bahasa_petani": "Musim panen / panenan",
+          "status": "confirmed",
+          "konteks": "Window kritis"
+        },
+        {
+          "id": "iklim_pasca_panen",
+          "istilah_ilmiah": "Fase pasca-panen",
+          "bahasa_petani": "Sehabis panen",
+          "status": "confirmed",
+          "konteks": "Peremajaan window"
+        },
+        {
+          "id": "iklim_off_season",
+          "istilah_ilmiah": "Off-season / Pre-bloom",
+          "bahasa_petani": "Sela / belum berbunga",
+          "status": "needs_confirmation",
+          "konteks": "Jan-Feb. Sanitasi window"
+        }
+      ]
+    }
+  ],
+  "pending_confirmation_workflow": [
+    "Adib + workers review v1.0 — print PDF / share via WhatsApp.",
+    "Workers confirm bahasa petani actual — diskusi in-person dengan Pak Kumpul, Cak Yit, Mas Anto.",
+    "Update entries flagged needs_confirmation to confirmed — edit MD + JSON, bump version ke v1.1.",
+    "Lock v1.1 saat final SOP available — file ditandai _locked_at final, di-commit ke git.",
+    "Plug-in to worker PWA glossary translation layer — JSON di-load di PWA, render label bahasa_petani di UI worker, simpan istilah_ilmiah di backend sync ke dashboard."
+  ],
+  "wakif_only_fields_note": "Fields with wakif_only:true HIDE dari worker form per filosofi #2 (Field strategis = Wakif-only). Examples: Lot ID, Processing Partner, Specialty lot, Lab parameters (EC, OC, CEC).",
+  "off_sop_reality_note": "Fields with off_sop:true tetap di-capture di worker form per filosofi #3 (Form accept reality). Compliance methodology flag separately. Examples: obat rumput (herbisida), dibakar (sampah bakar).",
+  "changelog": [
+    {
+      "date": "2026-05-16",
+      "change": "Sengkreng correction: dipisah dari brushcutter (different method — sengkreng = manual cangkul sub-surface removal, brushcutter = mesin babat surface cut)",
+      "approved_by": "Adib"
+    }
+  ]
+}
