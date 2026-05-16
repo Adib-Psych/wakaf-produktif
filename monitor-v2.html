@@ -4795,7 +4795,7 @@ function openPATSetupDlg() {
 // Key format: `${bulanN}-${aktivitasIdx}` → { status, note, ts }
 // status: 'belum' | 'sudah' | 'tidak_sesuai' | 'na'
 // SOP_STATUS schema bump for production clean
-const SOP_STATUS_VERSION = '1.2';
+const SOP_STATUS_VERSION = '1.3';
 const sopStoredVer = localStorage.getItem('wkkn_sop_status_ver');
 if (sopStoredVer !== SOP_STATUS_VERSION) {
   localStorage.removeItem('wkkn_sop_status_v1');
@@ -4897,6 +4897,40 @@ const STATUS_VISUAL = {
 // 🔒 SOP Project Anchor — adopsi resmi SOP Mei 2026 (Notulen 1-2 Mei 2026)
 // Items di bulan SEBELUM ini dianggap pre-project / N/A (bukan overdue).
 const SOP_PROJECT_START = { year: 2026, month: 1 };  // Jan 2026 (era T.A. RWI included as pre-T0 contribution per Adib 15 Mei)
+const SOP_V2_TRANSITION = { year: 2026, month: 10 };  // Oct 2026 onwards = apply SOP v2.1 Trifecta (Adib 16 Mei 2026). Months <10 in 2026 = pre-panen, keep current SOP. Months >=10 in 2026 + all 2027+ = v2.1 with 19 topik A-S.
+// SOP v2.1 — 19 Topik (A-S) mapping per Sintesa SOP Robusta Ngantang 16 Mei 2026
+const SOP_V2_TOPIK = {
+  A: { label: 'Klon Robusta zona basah', status: 'KONVERGEN_PENUH' },
+  B: { label: 'Excelsa sebagai rootstock', status: 'CRITICAL' },
+  C: { label: 'Pemupukan kimia umur 5-10 thn', status: 'DIVERGEN_MG' },
+  D: { label: 'Cara aplikasi pupuk', status: 'KONVERGEN_PENUH' },
+  E: { label: 'Pupuk organik rutin', status: 'DIVERGEN_DOSIS' },
+  F: { label: 'Pupuk kandang anti-nematoda', status: 'KONVERGEN_PENUH' },
+  G: { label: 'Pemangkasan peremajaan', status: 'DIVERGEN_PARADIGMA' },
+  H: { label: 'Pangkas berat pasca-panen', status: 'KONVERGEN_PENUH' },
+  I: { label: 'Pangkas ringan (wiwilan)', status: 'KONVERGEN_FREKUENSI' },
+  J: { label: 'Penaung leguminosa (lamtoro PG 79)', status: 'KONVERGEN_PENUH' },
+  K: { label: 'Pisang sebagai penaung', status: 'KONVERGEN_BAHAYA' },
+  L: { label: 'Rorak konservasi tanah', status: 'UNIK_UNIVERSAL' },
+  M: { label: 'PBKo (Hypothenemus hampei)', status: 'KONVERGEN_PENUH' },
+  N: { label: 'Cercospora coffeicola', status: 'KONVERGEN_BASELINE' },
+  O: { label: 'Petik selektif merah', status: 'KONVERGEN_PENUH' },
+  P: { label: 'Window 12 jam petik-ke-proses', status: 'KONVERGEN_PENUH' },
+  Q: { label: 'Kadar air biji', status: 'KONVERGEN_PENUH' },
+  R: { label: 'Pestisida terlarang', status: 'CRITICAL' },
+  S: { label: 'Mutu biji SNI', status: 'KONVERGEN_PENUH' }
+};
+const SOP_V2_STATUS_STYLE = {
+  KONVERGEN_PENUH:     { label: '✅ Konvergen Penuh',     bg: '#E8F4ED', color: '#0A3D2C', border: '#2D8466' },
+  KONVERGEN_FREKUENSI: { label: '✅ Konvergen Frekuensi', bg: '#E8F4ED', color: '#0A3D2C', border: '#2D8466' },
+  KONVERGEN_BASELINE:  { label: '🟡 Konvergen Baseline',  bg: '#FEF3C7', color: '#92400E', border: '#F59E0B' },
+  KONVERGEN_BAHAYA:    { label: '⚠️ Konvergen Bahaya',   bg: '#FEF3C7', color: '#92400E', border: '#F59E0B' },
+  DIVERGEN_MG:         { label: '⚠️ Divergen Mg',        bg: '#FEF3C7', color: '#92400E', border: '#F59E0B' },
+  DIVERGEN_DOSIS:      { label: '⚠️ Divergen Dosis',     bg: '#FEF3C7', color: '#92400E', border: '#F59E0B' },
+  DIVERGEN_PARADIGMA:  { label: '⚠️ Divergen Paradigma', bg: '#FEF3C7', color: '#92400E', border: '#F59E0B' },
+  CRITICAL:            { label: '🔴 Critical',            bg: '#FEE2E2', color: '#7F1D1D', border: '#C73E3E' },
+  UNIK_UNIVERSAL:      { label: '🌟 Unik · Universal',    bg: '#EDE9FE', color: '#5B21B6', border: '#8B5CF6' }
+};
 
 function getComplianceMetrics() {
   let total = 0, sudah = 0, belum = 0, tidakSesuai = 0, na = 0;
@@ -5083,10 +5117,11 @@ const SOP_AKTIVITAS_PER_BULAN = {
   10: {
     fase: 'Pasca-Panen Lanjut + SELEKSI POHON',
     warna: 'moss',
+    v2_apply: true,
     aktivitas: [
-      {t:'🌳 SELEKSI POHON pasca-panen (tebang + peremajaan) — TARGET 750 phn ideal', sop:'RAB Final 9 Mei + density ideal 1.333 phn/ha', prio:'wajib', siapa:'Wakif + Mas Anto', dosis:'<strong>Dari ~915 phn aktual → target 750 phn pasca-seleksi</strong><br>Kriteria tebang: pohon non-produktif, sakit kronis, terlalu rapat (<2 m antar pohon), buah PBKo-damaged dominan<br>Kriteria peremajaan: pohon tua >25 thn, batang busuk, hasil <0,3 kg/thn', lokal:'<strong>📍 NGT MILESTONE Adib 9 Mei:</strong> Density target 1.333 phn/ha (jarak 3 × 2,5 m) untuk 0,49 ha. Pasca-seleksi → update jumlah final di CLAUDE.md → dashboard auto-recompute dosis pemupukan Nov MH proporsional.'},
-      {t:'Lanjutan top-graft (musim hujan = kambium aktif)', sop:'Budidaya 2010 hal 21', prio:'rekomendasi', siapa:'Cak Yit', lokal:'<strong>Ngantang adaptive:</strong> La Nina perpanjang masa hujan → window top-graft bisa lebih lebar (Sep-Des). Cek kambium aktif dengan iris kulit pucuk — kalau basah/lengket = aktif. Monitor BMKG Karangploso untuk forecast.'},
-      {t:'Bongkar tunas pisang (jika tahap 1 sudah)', sop:'Robusta Edisi 2 hal 56', prio:'wajib', siapa:'Pak Kumpul'},
+      {t:'🌳 SELEKSI POHON pasca-panen (tebang + peremajaan) — TARGET 750 phn ideal', sop:'RAB Final 9 Mei + density ideal 1.333 phn/ha', prio:'wajib', siapa:'Wakif + Mas Anto', topik_v2:'G', dosis:'<strong>Dari ~915 phn aktual → target 750 phn pasca-seleksi</strong><br>Kriteria tebang: pohon non-produktif, sakit kronis, terlalu rapat (<2 m antar pohon), buah PBKo-damaged dominan<br>Kriteria peremajaan: pohon tua >25 thn, batang busuk, hasil <0,3 kg/thn', lokal:'<strong>📍 NGT MILESTONE Adib 9 Mei:</strong> Density target 1.333 phn/ha (jarak 3 × 2,5 m) untuk 0,49 ha. Pasca-seleksi → update jumlah final di CLAUDE.md → dashboard auto-recompute dosis pemupukan Nov MH proporsional.'},
+      {t:'Lanjutan top-graft (musim hujan = kambium aktif)', sop:'Budidaya 2010 hal 21', prio:'rekomendasi', siapa:'Cak Yit', topik_v2:'A', lokal:'<strong>Ngantang adaptive:</strong> La Nina perpanjang masa hujan → window top-graft bisa lebih lebar (Sep-Des). Cek kambium aktif dengan iris kulit pucuk — kalau basah/lengket = aktif. Monitor BMKG Karangploso untuk forecast.'},
+      {t:'Bongkar tunas pisang (jika tahap 1 sudah)', sop:'Robusta Edisi 2 hal 56', prio:'wajib', siapa:'Pak Kumpul', topik_v2:'K'},
       {t:'Soil test diagonal 5 titik × 4 Kebun (Q9)', sop:'BRIN 5 Mei + Robusta Edisi 2 hal 155', prio:'rekomendasi', siapa:'Wakif + lab UB/BRIN'},
       {t:'Evaluasi siklus tahunan + planning siklus berikutnya', sop:'—', prio:'rutin', siapa:'Wakif + Tim Ahli'}
     ]
@@ -5094,12 +5129,13 @@ const SOP_AKTIVITAS_PER_BULAN = {
   11: {
     fase: 'Awal Musim Hujan',
     warna: 'sage',
+    v2_apply: true,
     aktivitas: [
-      {t:'Pemupukan awal MH ½ dosis (BRIN tabel umur 5-10 thn) — DUAL BASELINE', sop:'BRIN 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Pak Kumpul per instruksi Cak Yit', dosis:'<strong>RUMUS UNIVERSAL: dosis_BRIN(g/phn) × jumlah_pohon_aktual = total_kg</strong><br>BRIN ½ dosis awal MH per pohon: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g · Dolomit ~125g (NGT +25%)<br><br><strong>📅 Nov 2025 (lewat) — Pre-selection (~915 phn):</strong> historical reference<br><strong>📅 Nov 2026+ — Post-selection (target 750 phn ideal):</strong> Urea 113 kg (2,3 sak) · SP-36 60 kg (1,2 sak) · KCl 75 kg (1,5 sak) · Kieserit 38 kg (0,75 sak) · Dolomit 94 kg (1,9 sak)<br><strong>⚠️ Kalau seleksi belum 100% selesai Nov 2026:</strong> pakai jumlah pohon aktual transition (mungkin 800-850), scale dosis proporsional naik dari baseline 750.', lokal:'<strong>Aturan workflow:</strong> Sebelum Nov 2026 = pakai jumlah pohon aktual (~915). Setelah Nov 2026 = pakai 750 phn baseline ATAU jumlah final hasil seleksi (update di CLAUDE.md).<br><strong>Kieserit BARU per BRIN tabel 9 Mei</strong> + La Nina prolonged → MH bisa mulai lebih awal/akhir Okt. Monitor BMKG Karangploso, aplikasi setelah rainfall pattern stabil.'},
-      {t:'Mulsa untuk konservasi kelembapan', sop:'Robusta Edisi 2 hal 117', prio:'rekomendasi', siapa:'Pak Kumpul'},
-      {t:'🪤 Brocap trap FULL DEPLOY (50 unit Kebun 1-3 + refill Kebun 4) — 4 bln post-panen optimal', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul', dosis:'50 unit × Rp 25K + atraktan 50 kapsul × Rp 25K = ~Rp 2,5 jt total', lokal:'<strong>📍 NGT TIMING (post Adib decision 9 Mei):</strong> Pasang Nov-Des 2026 = 4 bulan setelah panen Jul-Sep 2026 (per jurnal Wiryadiputra & Cilas 2009). Tangkap PBKo dewasa generasi pertama yang keluar dari buah jatuh/mumifikasi → cegah re-infestasi siklus 2027. Pasang ketinggian 0,6-1,2 m, density 25 unit/ha. Pilot Kebun 4 Mei sudah memberikan baseline data.'},
+      {t:'Pemupukan awal MH ½ dosis (BRIN tabel umur 5-10 thn) — DUAL BASELINE', sop:'BRIN 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Pak Kumpul per instruksi Cak Yit', topik_v2:'C', dosis:'<strong>RUMUS UNIVERSAL: dosis_BRIN(g/phn) × jumlah_pohon_aktual = total_kg</strong><br>BRIN ½ dosis awal MH per pohon: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g · Dolomit ~125g (NGT +25%)<br><br><strong>📅 Nov 2025 (lewat) — Pre-selection (~915 phn):</strong> historical reference<br><strong>📅 Nov 2026+ — Post-selection (target 750 phn ideal):</strong> Urea 113 kg (2,3 sak) · SP-36 60 kg (1,2 sak) · KCl 75 kg (1,5 sak) · Kieserit 38 kg (0,75 sak) · Dolomit 94 kg (1,9 sak)<br><strong>⚠️ Kalau seleksi belum 100% selesai Nov 2026:</strong> pakai jumlah pohon aktual transition (mungkin 800-850), scale dosis proporsional naik dari baseline 750.', lokal:'<strong>Aturan workflow:</strong> Sebelum Nov 2026 = pakai jumlah pohon aktual (~915). Setelah Nov 2026 = pakai 750 phn baseline ATAU jumlah final hasil seleksi (update di CLAUDE.md).<br><strong>Kieserit BARU per BRIN tabel 9 Mei</strong> + La Nina prolonged → MH bisa mulai lebih awal/akhir Okt. Monitor BMKG Karangploso, aplikasi setelah rainfall pattern stabil.'},
+      {t:'Mulsa untuk konservasi kelembapan', sop:'Robusta Edisi 2 hal 117', prio:'rekomendasi', siapa:'Pak Kumpul', topik_v2:'I'},
+      {t:'🪤 Brocap trap FULL DEPLOY (50 unit Kebun 1-3 + refill Kebun 4) — 4 bln post-panen optimal', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'wajib', siapa:'Pak Kumpul', topik_v2:'M', dosis:'50 unit × Rp 25K + atraktan 50 kapsul × Rp 25K = ~Rp 2,5 jt total', lokal:'<strong>📍 NGT TIMING (post Adib decision 9 Mei):</strong> Pasang Nov-Des 2026 = 4 bulan setelah panen Jul-Sep 2026 (per jurnal Wiryadiputra & Cilas 2009). Tangkap PBKo dewasa generasi pertama yang keluar dari buah jatuh/mumifikasi → cegah re-infestasi siklus 2027. Pasang ketinggian 0,6-1,2 m, density 25 unit/ha. Pilot Kebun 4 Mei sudah memberikan baseline data.'},
       {t:'Tanam Arachis pintoi (kacang hias) — pilot Kebun 4 Rumah Wakif', sop:'Phase 2 Inject — CIFOR-ICRAF agroforestry 2024', prio:'rekomendasi', siapa:'Pak Kumpul', phase2:true, lokal:'<strong>PENYESUAIAN DARI SOP — bukan SOP nasional.</strong> "Kacang hias" = istilah lokal untuk Arachis pintoi (kacang merambat berbunga kuning). Pilot 250 stek di Kebun 4 (~Rp 100-200rb). Manfaat: N gratis dari udara (kurangi Urea 30-50%), suppress gulma 60-90% di tahun 2-3, mengurangi babat rumput. Bibit dicarikan Mas Anto. Lihat panduan: <code>SOP/Penjelasan_Biochar_CoverCrops_A4.pdf</code>'},
-      {t:'Build rorak (kondisi optimal saat tanah lembab)', sop:'Robusta Edisi 2 hal 149', prio:'rekomendasi', siapa:'Pak Kumpul'},
+      {t:'Build rorak (kondisi optimal saat tanah lembab)', sop:'Robusta Edisi 2 hal 149', prio:'rekomendasi', siapa:'Pak Kumpul', topik_v2:'L'},
       {t:'Tanam jahe Pak Kumpul di Kebun 3 (self-financed)', sop:'Notulen 1-2 Mei', prio:'wajib', siapa:'Pak Kumpul'},
       {t:'Sanitasi gulma menyeluruh', sop:'Robusta Edisi 2 hal 145', prio:'wajib', siapa:'Pak Kumpul'}
     ]
@@ -5107,10 +5143,11 @@ const SOP_AKTIVITAS_PER_BULAN = {
   12: {
     fase: 'Off-Season Awal',
     warna: 'sage',
+    v2_apply: true,
     aktivitas: [
-      {t:'Monitoring infiltrasi rorak setelah hujan', sop:'Robusta Edisi 2 hal 149', prio:'rutin', siapa:'Mas Anto'},
-      {t:'Pemangkasan ringan (cabang sakit/non-produktif)', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Cak Yit'},
-      {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Mas Anto/Cak Yit'},
+      {t:'Monitoring infiltrasi rorak setelah hujan', sop:'Robusta Edisi 2 hal 149', prio:'rutin', siapa:'Mas Anto', topik_v2:'L'},
+      {t:'Pemangkasan ringan (cabang sakit/non-produktif)', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Cak Yit', topik_v2:'I'},
+      {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Mas Anto/Cak Yit', topik_v2:'N'},
       {t:'Review tahunan + planning Kebun/blok prioritas', sop:'—', prio:'rutin', siapa:'Wakif + tim Ahli'}
     ]
   }
@@ -5372,10 +5409,26 @@ function showBulanAktif(n, year) {
     'rencana':{bg:'#f0f0f5',fg:'#666',label:'RENCANA'}
   };
 
-  ic.innerHTML = sop.aktivitas.map((a,i) => {
+  // SOP v2.1 transition banner — show kalau bulan ini apply SOP Trifecta v2.1 (Oct 2026+)
+  const v2Banner = sop.v2_apply
+    ? `<div style="margin-bottom:14px;padding:14px 18px;background:linear-gradient(135deg,#EDE9FE 0%,#FEF3C7 100%);border-left:5px solid #8B5CF6;border-radius:8px;font-size:12px;line-height:1.55;color:#3A2D5C">
+         <div style="font-weight:800;font-size:13px;color:#5B21B6;margin-bottom:6px;letter-spacing:0.3px">📚 SOP v2.1 — Trifecta Sintesa (Validated 4-arah) · Mulai Oktober 2026</div>
+         <div style="color:#4A3F60">Mulai bulan ini, aktivitas SOP merujuk ke <strong>Sintesa SOP Robusta v2.1</strong> (16 Mei 2026) dengan komparasi 4-arah: SOP Awal Ngantang + Puslitbang 2010 + Pedoman Lampung BRMP 2024 + Validasi Jurnal Internasional. Setiap aktivitas yang ditandai badge <strong style="background:#FEF3C7;padding:1px 6px;border-radius:3px;color:#92400E">📊 Topik X</strong> punya status komparasi terlampir — klik <a href="#" onclick="document.querySelector('[data-panel=sintesa]').click();return false;" style="color:#5B21B6;font-weight:700;text-decoration:underline">Tab Sintesa SOP</a> untuk komparasi lengkap 19 topik (A–S).</div>
+       </div>`
+    : '';
+
+  ic.innerHTML = v2Banner + sop.aktivitas.map((a,i) => {
     const p = prioMap[a.prio] || prioMap['rutin'];
     const dosisRow = a.dosis
       ? `<div style="margin-top:8px;padding:8px 10px;background:#fdf6e3;border-left:3px solid var(--gold);border-radius:6px;font-size:11px;color:var(--earth);line-height:1.5"><strong style="color:var(--gold)">📐 Dosis untuk 915 pohon:</strong> ${a.dosis}</div>`
+      : '';
+    // SOP v2.1 topik badge
+    const topikBadge = (a.topik_v2 && SOP_V2_TOPIK[a.topik_v2])
+      ? (() => {
+          const t = SOP_V2_TOPIK[a.topik_v2];
+          const s = SOP_V2_STATUS_STYLE[t.status] || SOP_V2_STATUS_STYLE.KONVERGEN_PENUH;
+          return ` <span style="background:${s.bg};color:${s.color};border:1px solid ${s.border};padding:2px 7px;border-radius:4px;font-size:9px;font-weight:700;letter-spacing:.3px" title="Topik ${a.topik_v2}: ${t.label} — ${s.label}">📊 Topik ${a.topik_v2} · ${s.label}</span>`;
+        })()
       : '';
     const lokalRow = a.lokal
       ? (a.phase2
@@ -5403,7 +5456,7 @@ function showBulanAktif(n, year) {
     return `<div style="display:grid;grid-template-columns:30px 1fr 130px;gap:12px;padding:11px;border-bottom:1px solid #eee;align-items:start">
       <div style="width:24px;height:24px;background:var(--moss);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:2px">${i+1}</div>
       <div>
-        <div style="font-weight:600;color:var(--earth);font-size:13px;margin-bottom:3px">${a.t}${a.phase2 ? ' <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">🌱 PHASE 2 INJECT</span>' : (a.lokal ? ' <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">📍 NGT ADJUST</span>' : '')}</div>
+        <div style="font-weight:600;color:var(--earth);font-size:13px;margin-bottom:3px">${a.t}${a.phase2 ? ' <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">🌱 PHASE 2 INJECT</span>' : (a.lokal ? ' <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">📍 NGT ADJUST</span>' : '')}${topikBadge}</div>
         <div style="font-size:10px;color:var(--mute)">📖 ${a.sop} · 👤 ${a.siapa}</div>
         ${dosisRow}
         ${lokalRow}
