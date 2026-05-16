@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul E — Pupuk Organik Rutin · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Pupuk organik rutin — kandang/kompos per pohon, biochar dari pulp kopi, dan analogi maintenance therapy klinis.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul E</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module E</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="E">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul E · Nutrisi & Pemupukan · 5 dari 19</span>
+      <span class="lang-en">Module E · Nutrition & Fertilization · 5 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Pupuk Organik <em>Rutin</em></span>
+      <span class="lang-en"><em>Routine</em> Organic Fertilizer</span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Kandang, kompos, dan biochar — analogi <em>maintenance therapy</em> dari pengobatan klinis jangka panjang</span>
+      <span class="lang-en">Manure, compost, and biochar — a <em>maintenance therapy</em> analogy from long-term clinical care</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Mengapa pupuk organik bukan pelengkap melainkan fondasi — yang membangun bahan organik tanah dari waktu ke waktu</span>
+          <span class="lang-en">Why organic fertilizer is not a supplement but the foundation — building soil organic matter over time</span>
+        </li>
+        <li>
+          <span class="lang-id">Dosis acuan: <strong>10–20 kg kompos/kandang per pohon per tahun</strong>, aplikasi pasca-panen sebelum awal MH</span>
+          <span class="lang-en">Reference dose: <strong>10–20 kg compost/manure per tree per year</strong>, applied post-harvest before early rainy season</span>
+        </li>
+        <li>
+          <span class="lang-id">Composting in-situ kulit kopi (pulp) — limbah pasca-panen yang menjadi aset, bukan beban pembuangan</span>
+          <span class="lang-en">In-situ composting of coffee pulp — post-harvest waste that becomes an asset rather than a disposal burden</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa biochar dari pulp kopi membantu Andisol vulkanik Ngantang — pH buffering pada tanah asam</span>
+          <span class="lang-en">Why biochar from coffee pulp helps the Ngantang volcanic Andisol — pH buffering on acidic soil</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Compost_pile.JPG?width=1280" alt="Compost pile in farmland setting" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Tumpukan kompos yang sedang matang — input organik yang menjadi tulang punggung kebun berkelanjutan · </span><span class="lang-en">Photo: A maturing compost pile — the organic input that forms the backbone of sustainable gardens · </span><a href="https://commons.wikimedia.org/wiki/File:Compost_pile.JPG" target="_blank" rel="noopener">Wikimedia Commons</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Bila Modul C tentang pupuk kimia adalah <em>intervensi akut</em> — dosis terukur, respons cepat, jendela waktu sempit — maka Modul E tentang pupuk organik adalah <em>perawatan jangka panjang</em>. Tidak ada efek instan. Tetapi tanpanya, sekuat apapun pupuk kimia diaplikasikan, kebun perlahan-lahan kehilangan kesuburan dasarnya.</p>
+    <p class="lang-en">If Module C on chemical fertilizer is the <em>acute intervention</em> — measured doses, fast response, narrow timing window — then Module E on organic fertilizer is the <em>long-term care</em>. There is no instant effect. But without it, no matter how potent the chemical fertilizer, the garden slowly loses its underlying fertility.</p>
+
+    <p class="lang-id">Pupuk organik bekerja pada dimensi yang berbeda dengan pupuk kimia. Kimia menyediakan unsur hara yang langsung tersedia bagi akar; organik membangun <strong>bahan organik tanah</strong> — humus — yang menjadi reservoir nutrisi jangka panjang, memperbaiki struktur tanah, meningkatkan retensi air, dan menjadi rumah bagi mikrobioma tanah yang sehat. Ini investasi jangka multi-tahun, bukan untuk siklus panen tunggal.</p>
+    <p class="lang-en">Organic fertilizer works on a different dimension from chemical. Chemicals deliver nutrients directly available to roots; organics build <strong>soil organic matter</strong> — humus — which serves as a long-term nutrient reservoir, improves soil structure, enhances water retention, and houses a healthy soil microbiome. This is a multi-year investment, not a single-harvest play.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi kopi dari awal. Pendekatannya: meminjam analogi <em>maintenance therapy</em> dari farmakoterapi klinis. Sebagaimana pasien dengan kondisi kronis tidak cukup diberi obat akut saja — mereka memerlukan terapi pemeliharaan yang membentuk basis kesehatan jangka panjang — kebun kopi pun tidak cukup hanya diberi pupuk kimia berkala. Pemupukan organik adalah <em>maintenance therapy</em>-nya tanah.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning coffee agronomy from scratch. The approach: borrow the <em>maintenance therapy</em> analogy from clinical pharmacotherapy. Just as patients with chronic conditions are not adequately served by acute medication alone — they need maintenance therapy that forms the long-term health baseline — a coffee garden is not adequately served by periodic chemical fertilization alone. Organic fertilization is the soil's <em>maintenance therapy</em>.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Tanah Andisol di Ngantang kaya bahan organik dari abu Gunung Kelud yang tercampur dengan serasah pohon di permukaan. Tetapi ini adalah <em>stok historis</em> — yang akan terus berkurang bila tidak ditambah kembali. Setiap kg ceri kopi yang dipanen membawa keluar nutrisi & karbon yang berasal dari bahan organik tanah. Tanpa input organik balik, tanah Andisol bahkan yang paling subur sekalipun akan terdegradasi dalam 10–20 tahun.</p>
+    <p class="lang-en">The Andisol soil at Ngantang is rich in organic matter from Mount Kelud ash mixed with surface litter. But this is a <em>historical stock</em> — one that depletes if not replenished. Every kilogram of coffee cherries harvested removes nutrients and carbon that originated from soil organic matter. Without organic input back, even the most fertile Andisol soil degrades within 10–20 years.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Sumber pupuk organik untuk kebun kopi wakaf Ngantang ada tiga jalur: <strong>(1) Kompos kandang ayam</strong> dari Pak Wahab (mitra lokal) — yang sudah dipakai di Siklus 2026 dan tersedia. <strong>(2) Composting in-situ pulp kopi</strong> — kulit ceri pasca-pulping yang dikomposkan kembali ke kebun. <strong>(3) Biochar dari pulp kopi yang dibakar</strong> — investasi pilot Q4 Opsi B yang sudah disetujui di Klarifikasi Wakif 8 Mei 2026. Ketiganya pelengkap, bukan saling menggantikan.</p>
+      <p class="lang-en">There are three sources of organic fertilizer for the Ngantang waqf garden: <strong>(1) Chicken manure compost</strong> from Pak Wahab (local partner) — already used in Cycle 2026 and available. <strong>(2) In-situ composting of coffee pulp</strong> — cherry skins post-pulping composted back to the garden. <strong>(3) Biochar from burned coffee pulp</strong> — a pilot Q4 Option B investment approved in the Waqif Clarification (8 May 2026). All three are complementary, not substitutes.</p>
+    </div>
+
+    <p class="lang-id">Implikasi RAB: Siklus 2027 mengalokasikan 75 karung kompos kandang (di-koreksi dari 90 di review 9 Mei) — itu sekitar 1.500 kg untuk 750 pohon = 2 kg/pohon/aplikasi × 1 aplikasi tahunan. Targetnya menambah 1–2% bahan organik tanah setiap tahun. Ini target konservatif; kebun yang ingin agresif dapat naik ke 5 kg/pohon/aplikasi atau 2× aplikasi/tahun. Selama 3–5 tahun konsisten, dampak struktural pada tanah mulai terukur.</p>
+    <p class="lang-en">RAB implication: Cycle 2027 allocates 75 sacks of manure compost (corrected down from 90 in the 9 May review) — that is about 1,500 kg for 750 trees = 2 kg/tree per application × 1 annual application. The target is to add 1–2% soil organic matter each year. This is a conservative target; gardens seeking faster build-up can scale to 5 kg/tree per application or 2× applications per year. Over 3–5 consistent years, the structural impact on soil becomes measurable.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Tiga Lapis Pupuk Organik</span><span class="lang-en">Theory: Three Layers of Organic Input</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Pupuk organik bukan satu jenis bahan tunggal, melainkan kategori yang mencakup beragam input dengan profil dan fungsi yang berbeda. Bagi kebun kopi, tiga lapis yang paling relevan:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Pupuk kandang / kompos matang</strong> — sumber utama N, P, K organik plus bahan humus. Dosis acuan: 10–20 kg/pohon/tahun. Aplikasi pasca-panen sebelum awal MH.</li>
+      <li><strong>Mulsa serasah</strong> — daun-daun dan ranting yang dibiarkan terurai di permukaan tanah. Bukan pupuk yang dihitung dosis, melainkan praktik konservasi yang mengembalikan karbon ke tanah perlahan.</li>
+      <li><strong>Biochar (arang biomassa)</strong> — produk pirolisis bahan organik. Tidak menyediakan N-P-K langsung tetapi <em>memperbaiki struktur tanah</em>, meningkatkan retensi air, dan menjadi habitat permanen bagi mikroba tanah. Khusus untuk Andisol asam: biochar berfungsi sebagai pH buffer.</li>
+    </ul>
+    <p class="lang-en">Organic fertilizer is not a single material but a category covering diverse inputs with different profiles and functions. For coffee gardens, the three most relevant layers:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Manure / mature compost</strong> — main source of organic N, P, K plus humus content. Reference dose: 10–20 kg/tree/year. Applied post-harvest before the early rainy season.</li>
+      <li><strong>Litter mulch</strong> — leaves and twigs left to decompose on the soil surface. Not a dose-quantified fertilizer but a conservation practice that slowly returns carbon to the soil.</li>
+      <li><strong>Biochar (biomass charcoal)</strong> — a pyrolysis product of organic material. Does not provide direct N-P-K but <em>improves soil structure</em>, enhances water retention, and forms a permanent habitat for soil microbes. For acidic Andisols specifically: biochar acts as a pH buffer.</li>
+    </ul>
+
+    <p class="lang-id">Kunci untuk diingat: pupuk organik dan kimia <strong>tidak saling menggantikan</strong>. Pupuk kimia menyediakan unsur hara langsung untuk konsumsi pohon dalam siklus panen tahun ini. Pupuk organik membangun kapasitas tanah untuk menahan dan menyediakan nutrisi di tahun-tahun mendatang. Kebun yang hanya andalkan kimia tanpa organik akan kehilangan respons pupuk dari waktu ke waktu — fenomena yang disebut <em>fertilizer dependency syndrome</em> dalam literatur agronomi.</p>
+    <p class="lang-en">A key to remember: organic and chemical fertilizers <strong>do not substitute for one another</strong>. Chemical fertilizer delivers nutrients directly for this year's tree consumption and harvest cycle. Organic fertilizer builds the soil's capacity to hold and supply nutrients in years to come. A garden relying on chemicals alone without organics will see fertilizer response decline over time — a phenomenon known as <em>fertilizer dependency syndrome</em> in the agronomy literature.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Maintenance Therapy</span><span class="lang-en">An Analogy from Clinical Psychology — Maintenance Therapy</span></div>
+      <p class="lang-id">Dalam farmakoterapi pasien dengan kondisi kronis (misalnya depresi rekuren atau gangguan bipolar), klinisi mengenal perbedaan dua fase: <strong>fase akut</strong> — menggunakan dosis lebih agresif untuk mengatasi episode aktif, dan <strong>fase pemeliharaan (maintenance)</strong> — dosis lebih rendah tetapi konsisten untuk mencegah relaps dan mempertahankan stabilitas jangka panjang. Tanpa fase pemeliharaan, fase akut yang berulang akan kehilangan efektivitasnya dan pasien tetap rentan.</p>
+      <p class="lang-en">In pharmacotherapy for chronic conditions (e.g., recurrent depression or bipolar disorder), clinicians distinguish two phases: an <strong>acute phase</strong> — more aggressive dosing to manage an active episode, and a <strong>maintenance phase</strong> — lower but consistent dosing to prevent relapse and sustain long-term stability. Without the maintenance phase, repeated acute interventions lose efficacy and the patient remains vulnerable.</p>
+    </div>
+
+    <p class="lang-id">Hubungan antara pupuk kimia dan organik di kebun kopi adalah analog langsung. Pupuk kimia adalah fase akut — intervensi cepat di siklus panen aktif. Pupuk organik adalah fase pemeliharaan — investasi lambat tetapi kumulatif di kapasitas dasar tanah. Mengandalkan satu tanpa yang lain berarti mengabaikan dimensi kritis. Kebun yang hanya memakai kimia akan mengalami "fertilizer dependency syndrome"; kebun yang hanya memakai organik akan kehilangan respons cepat pada siklus panen tertentu. Keduanya bekerja sama, dengan ritme dan dimensi yang berbeda.</p>
+    <p class="lang-en">The relationship between chemical and organic fertilizers in a coffee garden is a direct analog. Chemical fertilizer is the acute phase — fast intervention in the active harvest cycle. Organic fertilizer is the maintenance phase — a slow but cumulative investment in the soil's baseline capacity. Relying on one without the other neglects a critical dimension. Chemical-only gardens develop "fertilizer dependency syndrome"; organic-only gardens lose fast response in specific harvest cycles. The two work together, in different rhythms and dimensions.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Bahan, Proses, dan Hasil Pemupukan Organik</span><span class="lang-en">Visual Tour: Materials, Process, and Outcomes of Organic Fertilization</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Pupuk organik paling mudah dipahami melalui visual karena bahan dan prosesnya konkret. Enam gambar berikut menunjukkan: tumpukan kompos matang, biochar yang siap aplikasi, profil tanah yang menunjukkan akumulasi bahan organik, hingga konteks kebun Ngantang.</p>
+    <p class="lang-en">Organic fertilizer is most easily understood visually because the materials and processes are concrete. The six images below show: a mature compost pile, biochar ready for application, a soil profile showing organic-matter accumulation, and the Ngantang garden context.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Compost_pile.JPG?width=640" alt="Mature compost pile" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Tumpukan kompos matang</strong> — bahan baku berasal dari kotoran ternak + jerami + sisa tanaman. Berwarna coklat gelap, beraroma tanah hutan (bukan amonia). Siap diaplikasikan ke kebun</span>
+          <span class="lang-en"><strong>Mature compost pile</strong> — sourced from livestock manure + straw + plant residue. Dark brown, smelling of forest soil (not ammonia). Ready for garden application</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Compost_pile.JPG" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Biochar_pile.jpg?width=640" alt="Biochar ready for soil application" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Biochar (arang biomassa)</strong> — produk pirolisis bahan organik. Tidak memberikan N-P-K langsung tetapi memperbaiki struktur tanah dan menjadi habitat mikroba. Khusus untuk Andisol asam Ngantang: berfungsi sebagai pH buffer</span>
+          <span class="lang-en"><strong>Biochar (biomass charcoal)</strong> — a pyrolysis product of organic matter. Does not provide direct N-P-K but improves soil structure and houses microbes. Especially for the acidic Ngantang Andisol: acts as a pH buffer</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Biochar_pile.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Andisol_profile.jpg?width=640" alt="Andisol soil profile with rich organic topsoil" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Profil Andisol Ngantang</strong> — perhatikan lapisan top-soil yang gelap (kaya bahan organik). Pupuk organik rutin yang dijalankan 3–5 tahun akan menebalkan lapisan ini secara terukur</span>
+          <span class="lang-en"><strong>Ngantang Andisol profile</strong> — note the dark topsoil layer (rich in organic matter). Routine organic fertilization sustained for 3–5 years measurably thickens this layer</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Andisol_profile.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffea_canephora_berries.JPG?width=640" alt="Coffee cherries before harvest — the source of pulp for in-situ composting" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Ceri kopi sebelum panen</strong> — setiap kg ceri yang dipanen menyisakan ~40% pulp (kulit). Pulp ini, alih-alih dibuang, dapat dikomposkan kembali ke kebun: "limbah" yang menjadi aset</span>
+          <span class="lang-en"><strong>Coffee cherries pre-harvest</strong> — each kg of harvested cherries leaves ~40% pulp (skin). Rather than discarded, this pulp can be composted back to the garden: "waste" that becomes an asset</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffea_canephora_berries.JPG" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Farmers.jpg?width=640" alt="Smallholder farmers working in coffee garden" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Aplikasi manual per pohon</strong> — kompos disebar di parit lingkar piringan (sama dengan teknik Modul D) sebelum aplikasi pupuk kimia. Urutan: organik dulu, kimia kemudian, ditutup tanah</span>
+          <span class="lang-en"><strong>Manual application per tree</strong> — compost is spread in the canopy-ring trench (same technique as Module D) before chemical fertilizer. Sequence: organic first, chemical next, then soil-covered</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Farmers.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_plantation_on_Gumitir.jpg?width=640" alt="Established coffee plantation with healthy organic layer" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Kebun matang Jawa Timur</strong> — kebun yang konsisten menjalankan pemupukan organik selama bertahun-tahun memiliki lapisan serasah yang tebal di permukaan, indikator kesehatan tanah jangka panjang</span>
+          <span class="lang-en"><strong>Mature East Java garden</strong> — gardens that consistently apply organic fertilization over years exhibit a thick surface litter layer, an indicator of long-term soil health</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_plantation_on_Gumitir.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div></section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Pupuk Organik</span><span class="lang-en">The Science: 4-Source Comparison on Organic Fertilization</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber tentang dosis dan jenis pupuk organik untuk Robusta:</p>
+    <p class="lang-en">Let us examine four sources on the dose and type of organic fertilizer for Robusta:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Anjuran Pupuk Organik</span><span class="lang-en">Organic Fertilizer Recommendation</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id">Kompos/kandang 10–20 kg/pohon/tahun, aplikasi pasca-panen. Tekankan pentingnya bahan organik tanah sebagai fondasi (hal 70).</span><span class="lang-en">Compost/manure 10–20 kg/tree/year, post-harvest application. Emphasizes soil organic matter as foundation (p 70).</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Konvergen 10–15 kg/pohon untuk pohon dewasa. Detail jenis: pukan ayam, kambing, sapi — preferensi pukan ayam karena rasio C:N rendah.</span><span class="lang-en">Converges at 10–15 kg/tree for mature trees. Material detail: chicken, goat, cow manure — preference for chicken manure due to lower C:N ratio.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 12</strong></td>
+          <td><span class="lang-id">Integrated nutrient management: kombinasi mineral + organik untuk sustainability. Pulp coffee composting di-direkomendasikan sebagai daur ulang on-site.</span><span class="lang-en">Integrated nutrient management: mineral + organic combo for sustainability. Recommends coffee pulp composting as on-site recycling.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Biochar references (multiple peer-reviewed)</strong></td>
+          <td><span class="lang-id">Coffee pulp biochar untuk Andisol asam: peer-reviewed studies di Brazil & Kosta Rika menunjukkan peningkatan retensi air, pH buffering, dan respons hasil dalam 2–3 siklus. Disetujui Wakif 8 Mei sebagai investasi pilot.</span><span class="lang-en">Coffee pulp biochar for acidic Andisols: peer-reviewed studies in Brazil & Costa Rica show improved water retention, pH buffering, and yield response within 2–3 cycles. Approved by the Waqif on 8 May as a pilot investment.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: konvergensi penuh pada prinsip "pemupukan organik adalah fondasi", dosis 10–20 kg/pohon/tahun, dan aplikasi pasca-panen.</strong> Perbedaan utama adalah pada level inovasi: SOP Kementan & Puslitbang menyajikan baseline tradisional (kompos/kandang), sementara Wintgens dan literatur biochar membuka pintu pendekatan terintegrasi yang lebih sustainable.</p>
+    <p class="lang-en"><strong>The emerging pattern: full convergence on the principle that "organic fertilization is foundational", a dose of 10–20 kg/tree/year, and post-harvest application.</strong> The main difference is at the innovation level: the Kementan SOP & Puslitbang present a traditional baseline (compost/manure), while Wintgens and the biochar literature open the door to more sustainable integrated approaches.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Composting In-Situ Pulp Kopi — Aset, Bukan Limbah</span><span class="lang-en">✓ In-Situ Composting of Coffee Pulp — Asset, Not Waste</span></div>
+      <p class="lang-id">Setelah pulping (pengupasan kulit ceri pasca-panen), kulit ceri yang menyumbang ~40% bobot ceri sering dianggap limbah dan dibuang. Padahal: <strong>pulp kopi adalah salah satu input organik berkualitas tinggi yang tersedia GRATIS di setiap kebun pasca-panen</strong>. Kandungan N tinggi, C:N ratio bagus, mudah dikomposkan dalam 8–12 minggu. Setiap 1 ton ceri segar = ~400 kg pulp = setelah composting jadi ~150 kg kompos matang. Untuk 750 pohon × 2 kg/pohon target = 1.500 kg kompos kebutuhan tahunan, yang dapat sebagian besar dipenuhi dari recycling internal.</p>
+      <p class="lang-en">After pulping (cherry-skin removal post-harvest), the skins — about 40% of cherry weight — are often regarded as waste and discarded. Yet: <strong>coffee pulp is one of the highest-quality organic inputs available FREE at every garden post-harvest</strong>. High N content, good C:N ratio, easily composted in 8–12 weeks. Every 1 ton of fresh cherries = ~400 kg pulp = ~150 kg mature compost post-composting. For 750 trees × 2 kg/tree target = 1,500 kg annual compost demand, the majority of which can be met from internal recycling.</p>
+    </div>
+
+    <p class="lang-id">Untuk kebun kopi wakaf Ngantang, strategi praktisnya: <strong>(1) Tahun 1–2:</strong> pakai kompos kandang ayam Pak Wahab sebagai sumber utama, eksperimen composting pulp pasca-panen 2026. <strong>(2) Tahun 3 onward:</strong> targetkan 50–70% kebutuhan organik dari recycling internal (pulp + serasah kebun), sisanya dari mitra. <strong>(3) Pilot biochar:</strong> Q4 2026 ke 2027, ukur respons hasil 2 siklus, putuskan apakah scale-up. Strategi bertahap ini meminimalkan ketergantungan input eksternal sambil membangun kapasitas internal.</p>
+    <p class="lang-en">For the Ngantang waqf garden, the practical strategy: <strong>(1) Year 1–2:</strong> use Pak Wahab's chicken manure compost as the main source, experiment with post-harvest 2026 pulp composting. <strong>(2) Year 3 onward:</strong> target 50–70% of organic needs from internal recycling (pulp + garden litter), the remainder from partners. <strong>(3) Biochar pilot:</strong> Q4 2026 through 2027, measure yield response over 2 cycles, decide whether to scale up. This staged strategy minimizes external input dependence while building internal capacity.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Pemupukan Organik Rutin</span><span class="lang-en">Practice: Five Steps for Routine Organic Fertilization</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Lima langkah operasional untuk pemupukan organik di kebun kopi wakaf Ngantang. Dilakukan oleh Pak Kumpul pasca-panen. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Five operational steps for organic fertilization at the Ngantang waqf garden. Performed by Pak Kumpul post-harvest. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Siapkan Kompos Matang Pasca-Panen</span><span class="lang-en">Step 1 · Prepare Mature Compost Post-Harvest</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pilih kompos yang sudah matang penuh: berwarna coklat gelap homogen, beraroma tanah hutan (bukan amonia/busuk), tekstur remah. Hindari kompos "muda" yang masih panas — bisa membakar akar. Kompos kandang ayam Pak Wahab: standar acuan kebun kopi wakaf Ngantang.</span>
+            <span class="lang-en">Choose fully mature compost: uniformly dark brown, smelling of forest soil (not ammonia/rot), crumbly texture. Avoid "young" compost that is still warm — it can burn roots. Pak Wahab's chicken manure compost: the reference standard for the Ngantang waqf garden.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Aplikasi di Parit Lingkar Piringan (Sebelum Pupuk Kimia)</span><span class="lang-en">Step 2 · Apply in the Canopy-Ring Trench (Before Chemical Fertilizer)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Buka parit lingkar piringan sesuai Modul D (kedalaman 5–10 cm di proyeksi tajuk). Tabur kompos <strong>10–20 kg per pohon</strong>, atau target awal 2 kg/pohon untuk Siklus 2027. Aplikasi organik dilakukan <em>sebelum</em> pupuk kimia — bukan dicampur. Tujuannya: kompos mengondisikan tanah agar kimia lebih efisien diserap.</span>
+            <span class="lang-en">Open the canopy-ring trench per Module D (5–10 cm deep at the drip-line). Spread <strong>10–20 kg compost per tree</strong>, or an initial target of 2 kg/tree for Cycle 2027. Apply organic <em>before</em> chemical fertilizer — not mixed. Aim: compost conditions the soil so chemicals are absorbed more efficiently.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Composting In-Situ Pulp Kopi Pasca-Panen</span><span class="lang-en">Step 3 · In-Situ Compost Coffee Pulp Post-Harvest</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pulp dari pulping disebarkan dalam tumpukan di area tertentu di kebun, dilembabkan, ditutup terpal/dedaunan untuk mempercepat dekomposisi. Aktivator: pukan ayam atau EM4. Waktu matang: 8–12 minggu. Hasil: ~150 kg kompos matang per ton ceri. Investasi: hampir nol (kecuali tenaga + terpal).</span>
+            <span class="lang-en">Pulp from pulping is heaped in a designated area of the garden, moistened, covered with tarp/leaves to speed decomposition. Activator: chicken manure or EM4. Maturation time: 8–12 weeks. Output: ~150 kg mature compost per ton of cherries. Investment: near zero (apart from labor + tarp).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Pilot Biochar dari Pulp (Q4 2026 → 2027)</span><span class="lang-en">Step 4 · Pilot Biochar from Pulp (Q4 2026 → 2027)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Sebagian pulp kering dibakar dalam kondisi miskin oksigen (pirolisis sederhana) untuk menghasilkan biochar. Investasi setup Rp 1,5–2 juta sudah disetujui di Klarifikasi Wakif. Aplikasi: 0,5–1 kg biochar per pohon, dicampur dengan kompos. Tujuan pilot: ukur respons hasil pada 2 siklus, lalu putuskan scale-up.</span>
+            <span class="lang-en">A portion of dry pulp is burned under oxygen-limited conditions (simple pyrolysis) to produce biochar. The Rp 1.5–2 million setup investment is approved in the Waqif Clarification. Application: 0.5–1 kg biochar per tree, mixed with compost. Pilot aim: measure yield response over 2 cycles, then decide scale-up.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Monitor Bahan Organik Tanah Multi-Tahun</span><span class="lang-en">Step 5 · Monitor Soil Organic Matter Across Years</span></div>
+          <div class="step-text">
+            <span class="lang-id">Setiap 2–3 tahun: kirim sampel tanah ke Lab UB Brawijaya untuk pengukuran SOM (Soil Organic Matter %). Target: kenaikan 1–2% per tahun. Catat hasil di dashboard monitor-v2 untuk tracking jangka panjang. Bila SOM tidak naik setelah 3 tahun, evaluasi: dosis kurang? Kualitas kompos? Kompetisi dengan run-off?</span>
+            <span class="lang-en">Every 2–3 years: send a soil sample to the UB Brawijaya Lab for SOM (Soil Organic Matter %) measurement. Target: 1–2% increase per year. Record results in the monitor-v2 dashboard for long-term tracking. If SOM does not rise after 3 years, evaluate: dose too low? Compost quality? Run-off competition?</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Pupuk kimia menunjukkan respons dalam beberapa minggu; pupuk organik dalam beberapa tahun. Bagaimana cara seorang pengelola kebun (atau pengelola program kesehatan, atau pengelola apapun yang punya horizon waktu multi-tahun) menjaga komitmen pada investasi yang lambat berbuah, di tengah tekanan untuk menunjukkan hasil cepat?</p>
+      <p class="prompt lang-en">1. Chemical fertilizer shows response in weeks; organic fertilizer in years. How does a garden manager (or a health program manager, or any manager with a multi-year horizon) sustain commitment to a slow-fruiting investment under pressure to show fast results?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Analogi <em>maintenance therapy</em> memerlukan pengakuan bahwa "tidak ada efek dramatis" tidak berarti "tidak bekerja". Bagaimana Anda akan menjelaskan ini kepada pihak yang mengharapkan return investasi yang terukur cepat — misalnya donor atau dewan pengurus yayasan?</p>
+      <p class="prompt lang-en">2. The <em>maintenance therapy</em> analogy requires acknowledging that "no dramatic effect" does not mean "not working". How would you explain this to stakeholders who expect quickly-measurable ROI — for example donors or a foundation board?</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Composting in-situ pulp adalah praktik "limbah menjadi aset" yang berdampak ekologis dan ekonomis sekaligus. Pikirkan satu "limbah" lain di hidup atau pekerjaan Anda yang berpotensi menjadi aset bila dilihat ulang. Apa langkah pertama untuk mengaktifkan potensi itu?</p>
+      <p class="prompt lang-en">3. In-situ pulp composting is a "waste-becomes-asset" practice with both ecological and economic impact. Think of one other "waste" in your life or work that could become an asset if re-examined. What is the first step to activate that potential?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 70 — Pupuk organik kandang/kompos)</em> ⭐</li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.12 — Integrated nutrient management. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 22 — Pupuk organik)</em></li>
+      <li><strong>Cely-Reyes, G.E. et al. (2018).</strong> Coffee pulp biochar effects on Andisol properties. <em>Soil Use & Management</em>. Reference for biochar pilot decision (Wakif Clarification 8 May 2026).</li>
+      <li><strong>Penjelasan Biochar & Cover Crops A4 (Wakif Internal).</strong> /SOP/Penjelasan_Biochar_CoverCrops_A4.pdf — analisis ROI biochar pilot Rp 1,5–2 juta, break-even tahun 2–3.</li>
+      <li><strong>Modul C — Pemupukan Kimia (Mei 2026).</strong> <a href="../C-pemupukan-kimia/index.html">Cross-reference</a> — pasangan fase akut yang melengkapi fase pemeliharaan modul ini.</li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../D-cara-aplikasi-pupuk/index.html"><span class="lang-id">← Modul D: Cara Aplikasi Pupuk</span><span class="lang-en">← Module D: Fertilizer Application</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="../F-pupuk-anti-nematoda/index.html" class="next"><span class="lang-id">Modul F: Anti-Nematoda →</span><span class="lang-en">Module F: Anti-Nematode →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>
