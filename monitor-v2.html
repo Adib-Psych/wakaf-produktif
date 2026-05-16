@@ -7757,9 +7757,19 @@ function autoCreateUpahFromEntry(entry) {
         normalized.tgl = normalized.tanggal;
       }
       // lapor.html pakai 'kebun' (K1/K2/K3/K4) → dashboard pakai 'bidang' (1/2/3/4)
+      // Multi-select support (16 Mei 2026): kebun bisa ARRAY ['K1','K3'] atau STRING 'K1'
       if (normalized.kebun !== undefined && normalized.bidang === undefined) {
-        const m = String(normalized.kebun).match(/[KkBb]?(\d)/);
-        normalized.bidang = m ? m[1] : normalized.kebun;
+        if (Array.isArray(normalized.kebun)) {
+          // Multi-kebun: display joined string ('K1+K3'), bidang = first for backward-compat
+          normalized.kebun_list = [...normalized.kebun];                   // preserve array
+          const firstK = normalized.kebun[0] || '';
+          const m = String(firstK).match(/[KkBb]?(\d)/);
+          normalized.bidang = m ? m[1] : firstK;
+          normalized.kebun = normalized.kebun.join('+');                   // display string 'K1+K3'
+        } else {
+          const m = String(normalized.kebun).match(/[KkBb]?(\d)/);
+          normalized.bidang = m ? m[1] : normalized.kebun;
+        }
       }
       // lapor.html pakai 'catatan' (narrative text) + 'detail' (object dynamic fields)
       // Dashboard pakai 'detail' sbg STRING narrative untuk display di table.

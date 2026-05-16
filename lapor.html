@@ -102,13 +102,13 @@ body { padding-bottom: env(safe-area-inset-bottom); }
 .brand {
   display: flex; align-items: center; gap: 10px;
 }
-.brand-mark {
-  width: 36px; height: 36px;
-  background: rgba(255,255,255,.16);
-  border: 1.5px solid rgba(255,255,255,.32);
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 20px;
+.brand-logo {
+  height: 38px; width: auto; max-width: 76px;
+  border-radius: 6px;
+  display: block;
+  background: rgba(255,255,255,.92);
+  padding: 3px 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.12);
 }
 .brand-text { line-height: 1.1; }
 .brand-text .t1 { font-size: 11px; opacity: .85; letter-spacing: .5px; text-transform: uppercase; }
@@ -595,7 +595,7 @@ dialog .modal-actions button {
   <header class="header">
     <div class="header-row">
       <div class="brand">
-        <div class="brand-mark">☕</div>
+        <img class="brand-logo" src="images/logo-wakaf-produktif-2x1-bg.png" alt="Wakaf Produktif" loading="eager">
         <div class="brand-text">
           <div class="t1">Wakaf Produktif</div>
           <div class="t2">Lapor Kebun NGT</div>
@@ -622,13 +622,14 @@ dialog .modal-actions button {
     </div>
 
     <div class="field">
-      <label class="label">🌳 Kebun mana? <span class="req">*</span></label>
+      <label class="label">🌳 Kebun mana? <span class="req">*</span> <span style="font-weight:500;color:var(--mute);font-size:11px">(bisa pilih lebih dari 1 — tap untuk toggle)</span></label>
       <div id="kebun-chips" class="chip-row">
         <div class="chip kebun-desc" data-val="K1"><span class="kn">K1</span><span class="kd">pinggir jalan kecil</span></div>
         <div class="chip kebun-desc" data-val="K2"><span class="kn">K2</span><span class="kd">pinggir jalan besar</span></div>
         <div class="chip kebun-desc" data-val="K3"><span class="kn">K3</span><span class="kd">bawah</span></div>
         <div class="chip kebun-desc" data-val="K4"><span class="kn">K4</span><span class="kd">belakang Rumah</span></div>
       </div>
+      <div id="kebun-selected-preview" style="margin-top:6px;font-size:11px;color:var(--mute);font-style:italic"></div>
     </div>
 
     <div class="field">
@@ -723,8 +724,8 @@ dialog .modal-actions button {
 
     <div class="field">
       <label class="label" for="f-catatan">📝 Catatan</label>
-      <textarea id="f-catatan" maxlength="500" placeholder="Tulis catatan tambahan, observasi unik, atau hal-hal yang perlu Adib tahu..."></textarea>
-      <div id="catatan-counter" class="char-counter">0 / 500</div>
+      <textarea id="f-catatan" maxlength="2000" rows="5" placeholder="Tulis catatan tambahan, observasi unik, atau hal-hal yang perlu Adib tahu. Boleh panjang — sampai 2000 huruf."></textarea>
+      <div id="catatan-counter" class="char-counter">0 / 2000</div>
       <button type="button" id="voiceBtn" class="voice-btn">
         <span>🎙️</span><span id="voiceBtnText">Rekam catatan suara</span>
       </button>
@@ -869,7 +870,7 @@ const STATE = {
   workerToken: null,
   workerName:  null,
   selected: {
-    kebun: null,
+    kebun: [],     // ARRAY (multi-select, locked 16 Mei 2026 — worker bisa kerja di >1 kebun/hari)
     cuaca_pagi: null,
     cuaca_siang: null,
     durasi: null
@@ -1496,12 +1497,31 @@ function renderDynamicFields(kategori) {
    ============================================================ */
 function hookEvents() {
 
-  // Kebun chips
+  // Kebun chips — MULTI-SELECT (16 Mei 2026: worker bisa kerja di >1 kebun/hari)
   document.querySelectorAll('#kebun-chips .chip').forEach(c => {
     c.onclick = () => {
-      document.querySelectorAll('#kebun-chips .chip').forEach(x => x.classList.remove('active'));
-      c.classList.add('active');
-      STATE.selected.kebun = c.dataset.val;
+      const val = c.dataset.val;
+      // Ensure STATE.selected.kebun is array
+      if (!Array.isArray(STATE.selected.kebun)) STATE.selected.kebun = [];
+      const idx = STATE.selected.kebun.indexOf(val);
+      if (idx >= 0) {
+        // De-select
+        STATE.selected.kebun.splice(idx, 1);
+        c.classList.remove('active');
+      } else {
+        // Select
+        STATE.selected.kebun.push(val);
+        c.classList.add('active');
+      }
+      // Sort for consistent display order (K1, K2, K3, K4)
+      STATE.selected.kebun.sort();
+      // Update preview text
+      const preview = document.getElementById('kebun-selected-preview');
+      if (preview) {
+        preview.textContent = STATE.selected.kebun.length === 0
+          ? ''
+          : `✓ ${STATE.selected.kebun.length} kebun terpilih: ${STATE.selected.kebun.join(' + ')}`;
+      }
     };
   });
 
@@ -1573,14 +1593,14 @@ function hookEvents() {
     renderDynamicFields(STATE.kategori);
   };
 
-  // Catatan counter
+  // Catatan counter (max 2000 chars, locked 16 Mei 2026)
   const cat = document.getElementById('f-catatan');
   cat.oninput = () => {
     STATE.catatan = cat.value;
     const len = cat.value.length;
     const ctr = document.getElementById('catatan-counter');
-    ctr.textContent = `${len} / 500`;
-    ctr.classList.toggle('warn', len > 450);
+    ctr.textContent = `${len} / 2000`;
+    ctr.classList.toggle('warn', len > 1800);
   };
 
   // Voice note
@@ -1868,7 +1888,7 @@ function renderPhotos() {
 async function submitForm() {
   const tgl = document.getElementById('f-tgl').value;
   if (!tgl) { showToast('Tanggal wajib diisi', 'error'); return; }
-  if (!STATE.selected.kebun) { showToast('Pilih kebun dulu', 'error'); return; }
+  if (!Array.isArray(STATE.selected.kebun) || STATE.selected.kebun.length === 0) { showToast('Pilih minimal 1 kebun', 'error'); return; }
   if (!STATE.kategori) { showToast('Pilih kategori dulu', 'error'); return; }
   if (!STATE.selected.durasi) { showToast('Pilih durasi kerja', 'error'); return; }
 
@@ -1920,7 +1940,9 @@ async function submitForm() {
       pelapor: STATE.workerToken,
       pelapor_name: STATE.workerName,
       tanggal: tgl,
-      kebun: STATE.selected.kebun,
+      kebun: STATE.selected.kebun,                          // ARRAY (multi-select, e.g. ['K1','K3'])
+      kebun_primary: STATE.selected.kebun[0] || null,       // First selected — for backward-compat display
+      kebun_list_str: STATE.selected.kebun.join('+'),       // Display-friendly string ('K1+K3')
       blok: document.getElementById('f-blok').value || null,
 
       // Cuaca
@@ -1991,9 +2013,11 @@ function resetForm() {
   document.getElementById('f-pekerja').value = 1;
   document.getElementById('f-pohon').value = '';
   document.getElementById('f-catatan').value = '';
-  document.getElementById('catatan-counter').textContent = '0 / 500';
+  document.getElementById('catatan-counter').textContent = '0 / 2000';
+  const kebunPreview = document.getElementById('kebun-selected-preview');
+  if (kebunPreview) kebunPreview.textContent = '';
   document.querySelectorAll('#kebun-chips .chip, #durasi-chips .chip').forEach(c => c.classList.remove('active'));
-  STATE.selected.kebun = null;
+  STATE.selected.kebun = [];        // Array (multi-select)
   STATE.selected.durasi = null;
   STATE.kategori = null;
   STATE.catatan = '';
