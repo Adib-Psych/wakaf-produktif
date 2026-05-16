@@ -803,13 +803,19 @@ const WORKER_MAP = {
   ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity */ }
 };
 
+// KATEGORI_BY_WORKER — Role-based filter (Notulen 1-2 Mei 2026, updated 16 Mei 2026)
+// Pemupukan: flexible co-executor (Wakif + Mas Anto + Pak Kumpul + Cak Yit) per klarifikasi
+// 16 Mei 2026 — sometimes Pak Kumpul, kadang Cak Yit, biar fleksibel di lapangan.
 const KATEGORI_BY_WORKER = {
   KUMPUL: ['pemupukan_organik', 'pemupukan_kimia', 'babat_rumput', 'build_rorak',
            'kompos_kulit_kopi', 'tanam_penaung', 'sortasi_buah', 'penjemuran',
            'brocap_management', 'bokashi_production', 'arachis_management',
            'biochar_pyrolysis', 'lain'],
   YIT:    ['pemangkasan', 'panen', 'penyemprotan', 'opt_monitoring',
-           'topgraft_robusta', 'lain'],
+           'topgraft_robusta',
+           // Flexible co-executor pemupukan (added 16 Mei 2026)
+           'pemupukan_organik', 'pemupukan_kimia',
+           'lain'],
   ANTO:   ['inventarisasi_pohon', 'opt_monitoring', 'soil_test',
            'komunikasi_stakeholder', 'pisang_management', 'lain']
 };
