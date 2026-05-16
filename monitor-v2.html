@@ -7043,13 +7043,38 @@ function autoCreateUpahFromEntry(entry) {
     const db = getFirestore(fbApp);
     const q = query(collection(db, COLLECTIONS.laporan), orderBy('created_at', 'desc'));
 
+    // Normalize incoming Firestore data — bridge field naming between lapor.html (worker PWA) ↔ monitor-v2 (dashboard)
+    function normalizeWorkerEntry(data) {
+      const normalized = { ...data };
+      // lapor.html pakai 'jumlah_pohon' → dashboard pakai 'pohon'
+      if (normalized.jumlah_pohon !== undefined && normalized.pohon === undefined) {
+        normalized.pohon = +normalized.jumlah_pohon || 0;
+      }
+      // lapor.html pakai 'tanggal' → dashboard pakai 'tgl'
+      if (normalized.tanggal !== undefined && normalized.tgl === undefined) {
+        normalized.tgl = normalized.tanggal;
+      }
+      // lapor.html pakai 'kebun' (K1/K2/K3/K4) → dashboard pakai 'bidang' (1/2/3/4)
+      if (normalized.kebun !== undefined && normalized.bidang === undefined) {
+        const m = String(normalized.kebun).match(/[KkBb]?(\d)/);
+        normalized.bidang = m ? m[1] : normalized.kebun;
+      }
+      // lapor.html pakai 'catatan' → dashboard pakai 'detail'
+      if (normalized.catatan !== undefined && normalized.detail === undefined) {
+        normalized.detail = normalized.catatan;
+      }
+      // Tag source
+      normalized.src = normalized.src || 'lapor_pwa';
+      return normalized;
+    }
+
     // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
     onSnapshot(q, (snapshot) => {
       let newCount = 0;
       let upahCreatedCount = 0;
       snapshot.docChanges().forEach(change => {
         if (change.type === 'added' || change.type === 'modified') {
-          const data = change.doc.data();
+          const data = normalizeWorkerEntry(change.doc.data());
           // Skip if already in STATE.laporan
           const existingIdx = STATE.laporan.findIndex(l => l.id === data.id);
           if (existingIdx === -1) {
