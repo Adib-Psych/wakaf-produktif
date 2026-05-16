@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul G — Pemangkasan Peremajaan · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Pemangkasan peremajaan (rejuvinasi) — stumping atau top-graft untuk pohon tua/produktivitas menurun, dengan analogi klinis radical reset.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul G</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module G</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="G">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul G · Pemangkasan · 7 dari 19</span>
+      <span class="lang-en">Module G · Pruning · 7 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Pemangkasan <em>Peremajaan</em></span>
+      <span class="lang-en"><em>Rejuvenation</em> Pruning</span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Stumping & top-graft sebagai "reset radikal" untuk pohon tua — analogi <em>radical intervention</em> dari klinis: kapan pendekatan moderat tidak lagi cukup</span>
+      <span class="lang-en">Stumping & top-grafting as a "radical reset" for old trees — a <em>radical intervention</em> analogy from clinic: when moderate approaches are no longer sufficient</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Apa yang dimaksud "pohon perlu diremajakan" — kriteria objektif vs subjektif untuk memutuskan</span>
+          <span class="lang-en">What "this tree needs rejuvenation" actually means — objective vs subjective criteria for the decision</span>
+        </li>
+        <li>
+          <span class="lang-id">Dua metode utama peremajaan: <strong>stumping</strong> (tebang batas pendek) vs <strong>top-graft</strong> (sambung pucuk klon unggul) — kapan masing-masing dipakai</span>
+          <span class="lang-en">Two main rejuvenation methods: <strong>stumping</strong> (cut to a short stub) vs <strong>top-grafting</strong> (clone scion grafted on) — when each is used</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa peremajaan adalah intervensi <em>radikal</em> — risiko tinggi, potensi hasil sangat tinggi, tidak boleh sembarangan</span>
+          <span class="lang-en">Why rejuvenation is a <em>radical</em> intervention — high risk, very high potential payoff, not to be done casually</span>
+        </li>
+        <li>
+          <span class="lang-id">Bagaimana strategi peremajaan terintegrasi dengan rootstock Excelsa di Ngantang — keuntungan struktural yang dimanfaatkan</span>
+          <span class="lang-en">How a rejuvenation strategy integrates with the Excelsa rootstock at Ngantang — leveraging the structural advantage</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_a_coffee_plant_22.jpg?width=1280" alt="Coffee plant being pruned — major cut for rejuvenation" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Pemangkasan kopi — gerakan tegas yang menjadi titik balik bagi pohon yang sebelumnya stagnan · </span><span class="lang-en">Photo: Coffee pruning — the decisive cut that becomes a turning point for a previously stagnant tree · </span><a href="https://commons.wikimedia.org/wiki/File:Pruning_a_coffee_plant_22.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Sebuah pohon kopi telah menua. Daunnya masih hijau, tetapi cabang produksi yang dahulu penuh ceri kini menghasilkan hanya segenggam. Pemupukan tidak banyak menolong; pemangkasan ringan rutin juga tidak. Pohon tersebut sudah "berhenti berkembang" — sebagaimana pasien yang terjebak dalam stagnasi yang tidak responsif terhadap intervensi inkremental.</p>
+    <p class="lang-en">A coffee tree has aged. Its leaves remain green, but production branches that once carried full cherries now yield only a handful. Fertilization does not help much; routine light pruning does not either. The tree has "stopped developing" — similar to a patient stuck in a stagnation unresponsive to incremental interventions.</p>
+
+    <p class="lang-id">Pada titik ini, intervensi yang dibutuhkan bukan lagi <em>lebih banyak dari yang sama</em>, melainkan <em>reset radikal</em>. Pohon dipotong drastis — bisa sampai 30–50 cm dari permukaan tanah (stumping) atau dipertahankan batang utama untuk disambung dengan pucuk klon unggul (top-graft). Sisa kayu pohon yang telah memberikan energi bertahun-tahun "dikorbankan" untuk memberi kesempatan pertumbuhan baru, lebih produktif, dari sistem akar yang masih kuat.</p>
+    <p class="lang-en">At this point, the needed intervention is no longer <em>more of the same</em>, but a <em>radical reset</em>. The tree is drastically cut — to 30–50 cm above ground (stumping) or its main trunk preserved for grafting with an elite clone scion (top-grafting). The remaining wood that delivered years of energy is "sacrificed" to give a chance for new, more productive growth from a still-strong root system.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi dari awal. Pendekatannya: meminjam analogi <em>radical intervention</em> dari klinis. Sebagaimana ECT (electroconvulsive therapy) atau program rehabilitasi residensial tidak dipakai pada kondisi yang masih responsif terhadap psikoterapi outpatient — tetapi menjadi penyelamat saat intervensi moderat sudah gagal — peremajaan kopi adalah intervensi yang disimpan untuk situasi spesifik: ketika pohon sudah tidak responsif terhadap perawatan biasa.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning agronomy from scratch. The approach: borrow the <em>radical intervention</em> analogy from clinic. Just as ECT (electroconvulsive therapy) or residential rehabilitation programs are not used on conditions still responsive to outpatient psychotherapy — but become lifesavers when moderate interventions have failed — coffee rejuvenation is an intervention reserved for specific situations: when a tree no longer responds to ordinary care.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Di kebun kopi wakaf Ngantang, kondisi struktural memberi peluang khas: <strong>rootstock Excelsa yang masih kuat di hampir semua pohon</strong>. Ini berarti peremajaan tidak perlu memulai dari bibit baru — investasi waktu 4–5 tahun sebelum produksi pertama. Yang dibutuhkan hanya <em>mengganti pucuknya</em> dengan klon Robusta unggul (BP 358, SA 237 dari Modul A) via top-graft. Akar yang sudah mature memberi sokongan instan; pohon "baru" mulai produksi setelah 18–24 bulan, bukan 4–5 tahun.</p>
+    <p class="lang-en">At the Ngantang waqf garden, structural conditions create a distinctive opportunity: <strong>the Excelsa rootstock remains strong in nearly all trees</strong>. This means rejuvenation does not need to start from a new seedling — a 4–5 year wait before first production. What is needed is only <em>replacing the scion</em> with an elite Robusta clone (BP 358, SA 237 from Module A) via top-grafting. The mature root system provides instant support; the "new" tree starts producing in 18–24 months, not 4–5 years.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Skala peremajaan di kebun kopi wakaf Ngantang pasca-panen 2026 telah ditetapkan di Klarifikasi Wakif 8 Mei: ~165 pohon target (selisih ~915 pre-selection → ~750 post-selection). Yang menjadi kandidat: pohon dengan produktivitas paling rendah, atau yang klon ter-graft-nya terindentifikasi sebagai klon non-optimal (informasi yang menunggu DNA fingerprinting di Modul A). Eksekusi via Cak Yit yang memiliki keterampilan sambung pucuk Robusta.</p>
+      <p class="lang-en">The rejuvenation scale at the Ngantang waqf garden post-2026-harvest is set by the Waqif Clarification of 8 May: ~165 target trees (the gap from ~915 pre-selection → ~750 post-selection). Candidates: trees with lowest productivity, or those whose grafted clone is identified as non-optimal (information pending the DNA fingerprinting in Module A). Execution by Cak Yit, who has the Robusta top-grafting skill.</p>
+    </div>
+
+    <p class="lang-id">Implikasi RAB: peremajaan adalah intervensi besar tetapi terbatas — bukan rutin tahunan. Biaya: entres klon unggul (~Rp 10–15 ribu/entres × 165 pohon = Rp 1,65–2,5 juta) + tenaga sambung pucuk borongan (TBD per pohon, masih dalam diskusi tim per CLAUDE.md). Risiko: tingkat keberhasilan sambungan target ≥70% (per Wintgens 2004 untuk teknik tipe "payung"). Bila gagal: pohon di-stumping ulang Q4 2027.</p>
+    <p class="lang-en">RAB implication: rejuvenation is a major but bounded intervention — not an annual routine. Cost: elite-clone scions (~IDR 10–15K/scion × 165 trees = IDR 1.65–2.5 million) + grafting labor (TBD per tree, still in team discussion per CLAUDE.md). Risk: target ≥70% graft success (per Wintgens 2004 for the "umbrella" technique). If failure: tree re-stumped in Q4 2027.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Stumping, Top-Graft, dan Logika Reset</span><span class="lang-en">Theory: Stumping, Top-Grafting, and the Reset Logic</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Dua metode peremajaan utama, dengan konsekuensi yang sangat berbeda:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Stumping</strong> — tebang batang utama hingga 30–50 cm dari permukaan tanah. Pohon "memulai ulang" pertumbuhan dari tunas air yang muncul di sisa batang. Cocok untuk: pohon sangat tua, atau pohon dengan klon yang tetap diinginkan dipertahankan. Waktu pemulihan: 24–30 bulan sebelum produksi penuh.</li>
+      <li><strong>Top-graft</strong> — batang utama dipertahankan, tetapi pucuknya dipotong di ketinggian 100–150 cm dan disambung dengan entres dari klon unggul. Cocok untuk: pohon dengan rootstock yang baik tetapi klon scion-nya non-optimal (kasus Ngantang persis). Waktu pemulihan: 18–24 bulan.</li>
+      <li><strong>Re-graft</strong> — varian top-graft yang dilakukan pada pohon yang sebelumnya pernah di-top-graft tetapi gagal. Tekniknya sama, lokasi sambungan biasanya di atas titik sambungan sebelumnya.</li>
+    </ul>
+    <p class="lang-id">Logika dasar semua metode peremajaan: <strong>sistem akar yang sudah mature adalah aset yang tidak boleh dibuang</strong>. Energi yang dikumpulkan oleh akar selama bertahun-tahun ditransfer ke pucuk baru, mempercepat fase produksi secara dramatis dibanding bibit baru.</p>
+    <p class="lang-en">Two main rejuvenation methods, with very different consequences:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Stumping</strong> — cut the main trunk to 30–50 cm above ground. The tree "restarts" growth from water sprouts emerging on the stump. Suitable for: very old trees, or trees whose clone is to be retained. Recovery time: 24–30 months before full production.</li>
+      <li><strong>Top-grafting</strong> — the main trunk is preserved, but the canopy is cut at 100–150 cm and joined with an elite-clone scion. Suitable for: trees with good rootstock but non-optimal scion clone (Ngantang exactly). Recovery time: 18–24 months.</li>
+      <li><strong>Re-grafting</strong> — a variant top-graft on a tree that was previously top-grafted but failed. The technique is the same, with the graft union usually above the previous one.</li>
+    </ul>
+    <p class="lang-en">The underlying logic of all rejuvenation methods: <strong>the already-mature root system is an asset not to be discarded</strong>. The energy accumulated by the roots over years is transferred to the new shoot, dramatically accelerating the production phase compared to a new seedling.</p>
+
+    <p class="lang-id">Mengapa intervensi ini disebut "radikal"? Bukan karena agresif tanpa pertimbangan — melainkan karena ia <strong>tidak reversibel</strong>. Sekali batang ditebang, tidak bisa dikembalikan. Sekali entres disambung, jendela waktu untuk koreksi hanya 2 minggu (saat kallus belum terbentuk). Kesalahan eksekusi atau pilihan yang buruk pada pohon target tidak dapat dibatalkan. Inilah mengapa peremajaan memerlukan: (a) kriteria kandidat yang jelas, (b) eksekutor terampil, (c) jendela waktu optimal yang dijaga ketat, (d) monitoring intens pasca-eksekusi.</p>
+    <p class="lang-en">Why is this intervention called "radical"? Not because it is aggressive without consideration — but because it is <strong>irreversible</strong>. Once the trunk is felled, it cannot be put back. Once a scion is grafted, the correction window is only 2 weeks (before callus forms). Execution errors or poor target-tree choices cannot be undone. This is why rejuvenation requires: (a) clear candidate criteria, (b) skilled executor, (c) strictly preserved optimal timing window, (d) intense post-execution monitoring.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Radical Intervention & The Stepped-Up Care Model</span><span class="lang-en">An Analogy from Clinical Psychology — Radical Intervention & The Stepped-Up Care Model</span></div>
+      <p class="lang-id">Dalam perawatan klinis kondisi kronis (depresi treatment-resistant, gangguan substansi, gangguan makan berat), klinisi mengenal <strong>stepped care model</strong>: intervensi dimulai dari yang paling ringan (psikoedukasi, self-help, psikoterapi outpatient), lalu dieskalasi bila tidak responsif (psikoterapi intensif, farmakoterapi, kombinasi). Pada titik tertentu, intervensi <em>radikal</em> menjadi pilihan: ECT, hospitalisasi, rehabilitasi residensial, atau dalam kasus ekstrem deep-brain stimulation. Setiap step-up adalah keputusan klinis yang berat — bukan kegagalan, tetapi pengakuan bahwa modalitas saat ini tidak cukup.</p>
+      <p class="lang-en">In clinical care for chronic conditions (treatment-resistant depression, substance disorders, severe eating disorders), clinicians use a <strong>stepped care model</strong>: interventions begin with the lightest (psychoeducation, self-help, outpatient psychotherapy), then escalate if unresponsive (intensive psychotherapy, pharmacotherapy, combinations). At a certain point, <em>radical</em> intervention becomes an option: ECT, hospitalization, residential rehabilitation, or in extreme cases deep-brain stimulation. Each step-up is a weighty clinical decision — not failure, but recognition that current modalities are insufficient.</p>
+    </div>
+
+    <p class="lang-id">Peremajaan kopi mengikuti logika stepped care yang persis sama. Modul C-E (pemupukan kimia, aplikasi tepat, organik rutin) adalah level dasar — diterapkan ke semua pohon. Modul F (anti-nematoda) adalah escalation tertarget pada subset. Modul G (peremajaan) adalah <em>radical step-up</em> ketika subset tertentu pohon sudah tidak responsif terhadap level di bawahnya. Mengaplikasikan peremajaan terlalu dini = boros dan tidak menghormati respons pohon yang masih ada; menundanya terlalu lama = membiarkan kapasitas kebun terus turun. Kebijaksanaan klinis (dan agronomis) adalah membaca kapan saat yang tepat untuk step up.</p>
+    <p class="lang-en">Coffee rejuvenation follows exactly the same stepped-care logic. Modules C-E (chemical fertilization, correct application, routine organic) are the base level — applied to all trees. Module F (anti-nematode) is escalation targeted at a subset. Module G (rejuvenation) is the <em>radical step-up</em> when a particular subset of trees no longer responds to lower levels. Applying rejuvenation too early = wasteful and disrespects remaining tree response; delaying too long = letting garden capacity decline. The clinical (and agronomic) wisdom is reading when the right moment to step up has arrived.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Pemangkasan Drastis, Top-Graft, dan Hasil Multi-Tahun</span><span class="lang-en">Visual Tour: Radical Pruning, Top-Grafting, and Multi-Year Outcomes</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Peremajaan adalah intervensi visual yang dramatis — pohon yang dahulu tampak rimbun mendadak menjadi "kosong". Enam gambar berikut menunjukkan: pemangkasan kopi yang sedang berlangsung, perangkat sambung pucuk, dan referensi pohon Liberica/Robusta yang relevan.</p>
+    <p class="lang-en">Rejuvenation is a dramatically visual intervention — a tree that was once lush suddenly becomes "empty". The six images below show: ongoing coffee pruning, grafting equipment, and Liberica/Robusta tree references.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_a_coffee_plant_22.jpg?width=640" alt="Coffee plant being pruned with shears" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pemangkasan kopi sedang berlangsung</strong> — gerakan tegas pekerja menggunakan gunting pangkas pada batang & cabang yang ditargetkan. Untuk peremajaan, potongan jauh lebih radikal daripada wiwilan rutin</span>
+          <span class="lang-en"><strong>Coffee pruning in progress</strong> — the worker's decisive cut with pruning shears on targeted trunks and branches. For rejuvenation, the cuts are far more radical than routine light pruning</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Pruning_a_coffee_plant_22.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_a_coffee_plant_07.jpg?width=640" alt="Coffee tree after major pruning, showing stripped framework" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pasca-pemangkasan radikal</strong> — kerangka batang yang tersisa terlihat "kosong". Yang penting: titik sambung sehat tanpa kerusakan kulit, dan rootstock di bawah tetap utuh. Pemulihan dimulai dari tunas air yang muncul 4–8 minggu kemudian</span>
+          <span class="lang-en"><strong>Post-radical pruning</strong> — the remaining trunk framework looks "empty". What matters: a healthy graft point without bark damage, and the rootstock below intact. Recovery begins from water sprouts emerging 4–8 weeks later</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Pruning_a_coffee_plant_07.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_Shears.jpg?width=640" alt="Pruning shears — the key tool" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Gunting pangkas tajam</strong> — alat utama. Untuk batang &gt;3 cm: gergaji tangan yang bersih. Sterilisasi alat antar-pohon (alkohol 70%) wajib untuk hindari transmisi penyakit. Ini bukan detail kosmetik</span>
+          <span class="lang-en"><strong>Sharp pruning shears</strong> — the main tool. For trunks &gt;3 cm: a clean hand saw. Tool sterilization between trees (70% alcohol) is mandatory to avoid disease transmission. This is not a cosmetic detail</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Pruning_Shears.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffea_liberica_(5597837873).jpg?width=640" alt="Coffea liberica rootstock — the asset preserved during rejuvenation" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Rootstock Excelsa yang dipertahankan</strong> — saat peremajaan top-graft dilakukan, akar besar di bawah ini yang menjadi sumber energi untuk pucuk baru. Inilah keunggulan Ngantang vs kebun yang harus mulai dari bibit baru</span>
+          <span class="lang-en"><strong>Preserved Excelsa rootstock</strong> — when top-graft rejuvenation is done, the large root below is the energy source for the new shoot. This is Ngantang's advantage over gardens that must restart from new seedlings</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffea_liberica_(5597837873).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Detail_of_Coffea_canephora_branch_and_leaves.jpg?width=640" alt="Robusta scion — the new top after rejuvenation" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pucuk Robusta klon unggul</strong> — yang disambungkan ke rootstock. Setelah 18–24 bulan, pohon yang sebelumnya stagnan kini menghasilkan ceri klon unggul (BP 358, SA 237 dari Modul A) dengan kualitas seragam</span>
+          <span class="lang-en"><strong>Elite Robusta clone scion</strong> — joined onto the rootstock. After 18–24 months, the previously stagnant tree now produces cherries from the elite clone (BP 358, SA 237 from Module A) with uniform quality</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Detail_of_Coffea_canephora_branch_and_leaves.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Plantation_in_Coorg.jpg?width=640" alt="Mixed-age coffee plantation showing succession of generations" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Kebun multi-generasi</strong> — pengelolaan kebun jangka panjang berarti selalu ada subset pohon di tahap peremajaan, sementara mayoritas dalam fase produksi penuh. Rotasi ini menjaga produktivitas total kebun tetap stabil dari dekade ke dekade</span>
+          <span class="lang-en"><strong>Multi-generation garden</strong> — long-term garden management means there is always a subset of trees in rejuvenation, while the majority remain in full production. This rotation keeps total garden productivity stable across decades</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation_in_Coorg.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div></section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Peremajaan</span><span class="lang-en">The Science: 4-Source Comparison on Rejuvenation</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber tentang strategi peremajaan kopi Robusta:</p>
+    <p class="lang-en">Let us examine four sources on Robusta coffee rejuvenation strategy:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Anjuran Peremajaan</span><span class="lang-en">Rejuvenation Recommendation</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id">Dua metode: stumping (tebang 30–50 cm) atau top-graft tipe "payung" (100–150 cm dari tanah). Waktu optimal: pasca-panen sebelum awal MH (hal 84–86).</span><span class="lang-en">Two methods: stumping (cut to 30–50 cm) or "umbrella" top-grafting (100–150 cm above ground). Optimal timing: post-harvest before early rainy season (p 84–86).</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 5</strong></td>
+          <td><span class="lang-id">Detail teknis sambung pucuk Robusta: rasio batang-pucuk, jenis sayatan, perawatan pasca-sambung. Target survival ≥70% untuk eksekutor terampil.</span><span class="lang-en">Technical details of Robusta grafting: trunk-scion ratio, cut types, post-graft care. Target survival ≥70% for skilled executors.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Konvergen dengan Edisi 2 pada metode. Tambahan: rotasi peremajaan blok-per-blok untuk menjaga produktivitas total kebun (hal 14, peremajaan progresif).</span><span class="lang-en">Converges with Edition 2 on methods. Adds: block-by-block rejuvenation rotation to maintain total garden productivity (p 14, progressive rejuvenation).</span></td>
+        </tr>
+        <tr>
+          <td><strong>Klarifikasi Wakif 8 Mei 2026 (Q2)</strong></td>
+          <td><span class="lang-id">Keputusan: STOP top-graft Arabika (yang sempat dibahas era RWI), FOKUS klon Robusta unggul. Eksekutor: Cak Yit yang memiliki skill sambung pucuk. Target: pasca-panen September 2026.</span><span class="lang-en">Decision: STOP Arabica top-grafting (discussed under the RWI era), FOCUS on elite Robusta clones. Executor: Cak Yit with grafting skill. Target: post-harvest September 2026.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: empat sumber konvergen pada metode (stumping/top-graft) dan timing (pasca-panen sebelum awal MH).</strong> Yang spesifik di Ngantang: kombinasi Excelsa rootstock + Robusta elite scion = strategi optimal yang memanfaatkan struktur warisan kebun, bukan menggantikannya. Modul G berfungsi sebagai jembatan teknis antara keputusan klon (Modul A), konteks rootstock (Modul B), dan eksekusi lapangan.</p>
+    <p class="lang-en"><strong>The emerging pattern: four sources converge on method (stumping/top-grafting) and timing (post-harvest before early rainy season).</strong> Specific to Ngantang: the Excelsa rootstock + elite Robusta scion combination = optimal strategy that leverages the garden's legacy structure rather than replacing it. Module G acts as a technical bridge between clone decisions (Module A), rootstock context (Module B), and field execution.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Top-Graft Tipe "Payung" — Teknik Pilihan Ngantang</span><span class="lang-en">✓ The "Umbrella" Top-Graft — Ngantang's Chosen Technique</span></div>
+      <p class="lang-id">Teknik top-graft <em>tipe payung</em> yang digunakan di kebun kopi wakaf Ngantang: batang utama dipotong di ketinggian 100–150 cm dari permukaan tanah pada sudut miring. Entres klon unggul disayat <em>V-cut</em> di pangkalnya, dimasukkan ke celah pada batang, diikat dengan tali rafia, dan ditutup dengan kantong plastik bening (sungkup) selama 2 minggu untuk menjaga kelembapan. Setelah tunas baru muncul, sungkup dibuka. Setelah 12 bulan, tali rafia dipotong. Setelah 18–24 bulan, pohon mulai produksi. Investasi besar di muka, tetapi efisien dibanding menanam bibit baru yang butuh 4–5 tahun.</p>
+      <p class="lang-en">The <em>umbrella</em> top-graft technique used at the Ngantang waqf garden: the main trunk is cut at 100–150 cm above ground at an angle. The elite-clone scion is shaped into a <em>V-cut</em> at its base, inserted into the trunk slit, tied with raffia, and covered by a clear plastic bag (sungkup) for 2 weeks to retain moisture. Once new shoots emerge, the bag is removed. After 12 months, the raffia is cut. After 18–24 months, the tree begins production. A heavy upfront investment, but efficient versus planting new seedlings that require 4–5 years.</p>
+    </div>
+
+    <p class="lang-id">Untuk kebun kopi wakaf Ngantang, peremajaan diintegrasikan dengan empat modul lain: <strong>Modul A</strong> (memilih klon unggul untuk entres), <strong>Modul B</strong> (memahami nilai rootstock Excelsa yang dipertahankan), <strong>Modul H</strong> (pangkas berat pasca-panen, yang sering dilakukan bersamaan), dan <strong>Modul I</strong> (wiwilan rutin pada tunas-tunas baru pasca-graft). Modul G bukan modul tunggal yang berdiri sendiri — ia adalah <em>titik keputusan</em> dalam ekosistem perawatan kebun jangka panjang.</p>
+    <p class="lang-en">For the Ngantang waqf garden, rejuvenation integrates with four other modules: <strong>Module A</strong> (choosing elite clone scions), <strong>Module B</strong> (understanding the value of preserved Excelsa rootstock), <strong>Module H</strong> (heavy post-harvest pruning, often done concurrently), and <strong>Module I</strong> (routine wiwilan light pruning on new post-graft shoots). Module G is not a stand-alone module — it is a <em>decision point</em> in the long-term garden care ecosystem.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Peremajaan Top-Graft</span><span class="lang-en">Practice: Five Steps for Top-Graft Rejuvenation</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Lima langkah operasional peremajaan top-graft di kebun kopi wakaf Ngantang. Eksekusi oleh Cak Yit yang memiliki keterampilan sambung pucuk Robusta. Pasca-panen September 2026.</p>
+    <p class="lang-en">Five operational steps for top-graft rejuvenation at the Ngantang waqf garden. Executed by Cak Yit, skilled in Robusta top-grafting. Post-harvest September 2026.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Pilih Pohon Kandidat (Kriteria Objektif)</span><span class="lang-en">Step 1 · Select Candidate Trees (Objective Criteria)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Kriteria: (a) produktivitas 2 siklus terakhir di bawah rata-rata kebun, atau (b) klon ter-graft terindentifikasi non-optimal (info dari DNA fingerprinting Modul A), atau (c) usia &gt;20 tahun dengan tanda penuaan struktural. Tandai pohon dengan label fisik di lapangan; catat di Form Input.</span>
+            <span class="lang-en">Criteria: (a) productivity in the last 2 cycles below garden average, or (b) grafted clone identified as non-optimal (from Module A DNA fingerprinting), or (c) age &gt;20 years with structural senescence signs. Tag trees with physical labels in the field; record in the Form Input.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Pesan Entres Klon Unggul</span><span class="lang-en">Step 2 · Order Elite-Clone Scions</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pemesanan entres bersertifikat BP 358 (utama) dan SA 237 (diversifikasi) ke Puslitkoka Jember pada Agustus 2026, untuk eksekusi pasca-panen September. Kebutuhan: ~165 entres + 20% cadangan = ~200 entres. Estimasi biaya: Rp 2–3 juta. Entres datang dalam media moist, harus disambung dalam 48–72 jam.</span>
+            <span class="lang-en">Order certified BP 358 (primary) and SA 237 (diversification) scions from Puslitkoka Jember in August 2026, for post-harvest September execution. Need: ~165 scions + 20% reserve = ~200 scions. Estimated cost: IDR 2–3 million. Scions arrive in moist media; must be grafted within 48–72 hours.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Eksekusi Top-Graft Tipe "Payung" oleh Cak Yit</span><span class="lang-en">Step 3 · "Umbrella" Top-Graft Execution by Cak Yit</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pada setiap pohon kandidat: potong batang utama di 100–150 cm dengan sudut miring 30°. Sayat V-cut pada pangkal entres (panjang 3–4 cm). Masukkan entres ke celah, tutup tali rafia rapat. Pasang sungkup plastik bening tertutup tali di pangkal. Sterilisasi alat antar-pohon dengan alkohol 70%. Tarif borongan: TBD per pohon (per CLAUDE.md masih dalam diskusi).</span>
+            <span class="lang-en">On each candidate tree: cut the main trunk at 100–150 cm with a 30° angle. V-cut the scion base (3–4 cm length). Insert into the slit, tie raffia tightly. Place a clear plastic bag tied at the base. Sterilize tools between trees with 70% alcohol. Per-tree contract rate: TBD (per CLAUDE.md still in team discussion).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Buka Sungkup Setelah 2 Minggu, Monitor 6 Bulan</span><span class="lang-en">Step 4 · Open the Bag After 2 Weeks, Monitor 6 Months</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pasca-2 minggu: cek tunas baru. Bila muncul: buka sungkup pelan-pelan agar tidak shock. Bila belum: tunggu 1 minggu lagi, lalu evaluasi. Monitor mingguan selama 6 bulan: pertumbuhan tunas baru harus kontinyu. Pangkas wiwilan tunas air dari rootstock di bawah titik sambung — agar energi mengalir ke pucuk baru.</span>
+            <span class="lang-en">Post-2-weeks: check for new shoots. If emerged: slowly open the bag to avoid shock. If not: wait one more week, then re-evaluate. Weekly monitoring for 6 months: new shoot growth must be continuous. Wiwilan-prune water sprouts from the rootstock below the graft point — to channel energy to the new top.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Verifikasi Keberhasilan 12 Bulan & Re-graft yang Gagal</span><span class="lang-en">Step 5 · Verify 12-Month Success & Re-graft Failures</span></div>
+          <div class="step-text">
+            <span class="lang-id">Setelah 12 bulan: hitung pohon yang berhasil (target ≥70% per Wintgens 2004). Pohon yang gagal: stumping ulang atau re-graft di siklus berikutnya. Bila berhasil: tunggu siklus produksi pertama di 18–24 bulan untuk benchmark hasil vs target. Pohon yang berhasil masuk pool produktif penuh untuk dekade berikutnya.</span>
+            <span class="lang-en">After 12 months: count successful trees (target ≥70% per Wintgens 2004). Failed trees: stumping again or re-graft in the next cycle. If successful: await the first production cycle at 18–24 months for yield-vs-target benchmark. Successful trees enter the full-production pool for the next decade.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Peremajaan adalah keputusan "tidak reversibel". Dalam praktik klinis Anda, kapan terakhir kali Anda menghadapi keputusan yang tidak reversibel (intervensi besar, perubahan modalitas, dll.)? Bagaimana cara Anda menyaring keyakinan sebelum mengambil keputusan tersebut?</p>
+      <p class="prompt lang-en">1. Rejuvenation is an "irreversible" decision. In your clinical practice, when did you last face an irreversible decision (major intervention, modality change, etc.)? How do you build conviction before such a decision?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Stepped care: mulai dari intervensi paling ringan, eskalasi bila tidak responsif. Logika ini bekerja di klinik dan agronomi. Tetapi ada kondisi tertentu — baik klinis maupun agronomis — di mana stepped care tidak tepat (mis. krisis akut yang butuh intervensi segera). Bagaimana cara Anda membedakan situasi yang membutuhkan stepped care vs intervensi langsung pada level tinggi?</p>
+      <p class="prompt lang-en">2. Stepped care: start from the lightest intervention, escalate if unresponsive. This logic works in clinic and agronomy. But certain conditions — clinical or agronomic — make stepped care inappropriate (e.g., acute crises needing immediate high-level intervention). How do you distinguish situations needing stepped care vs direct high-level intervention?</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Top-graft Ngantang memanfaatkan rootstock Excelsa yang sudah mature — keuntungan struktural warisan kolonial Belanda. Adakah konteks lain di hidup Anda di mana "warisan yang tidak Anda pilih sendiri" justru menjadi aset bila dipakai dengan tepat? Bagaimana Anda bersikap pada warisan tersebut: lihat-pertahankan, ubah, atau abaikan?</p>
+      <p class="prompt lang-en">3. Ngantang's top-graft leverages mature Excelsa rootstock — a structural advantage from Dutch colonial heritage. Are there other contexts in your life where an "inheritance you did not choose" became an asset when used correctly? How do you relate to such inheritance: preserve, change, or ignore?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. <em>(hal 84–86 — Stumping & Top-grafting)</em> ⭐</li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.5 — Coffee Propagation & Grafting. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI</a></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 14 — Peremajaan progresif blok-per-blok)</em></li>
+      <li><strong>Klarifikasi Wakif 8 Mei 2026 (Q2).</strong> STOP top-graft Arabika, FOKUS klon Robusta unggul. <em>(Internal · /SOP/Klarifikasi_Wakif_8Mei2026.docx)</em></li>
+      <li><strong>Modul A — Klon Robusta Zona Basah.</strong> <a href="../A-klon-robusta-zona-basah/index.html">Cross-reference</a> — pilihan entres BP 358 dan SA 237.</li>
+      <li><strong>Modul B — Excelsa Rootstock.</strong> <a href="../B-excelsa-rootstock/index.html">Cross-reference</a> — basis konfigurasi yang dipertahankan saat peremajaan.</li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../F-pupuk-anti-nematoda/index.html"><span class="lang-id">← Modul F: Pupuk Anti-Nematoda</span><span class="lang-en">← Module F: Anti-Nematode Manure</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="../H-pangkas-berat-pasca-panen/index.html" class="next"><span class="lang-id">Modul H: Pangkas Berat Pasca-Panen →</span><span class="lang-en">Module H: Heavy Post-Harvest Pruning →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>

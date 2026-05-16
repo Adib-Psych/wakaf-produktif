@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul H — Pangkas Berat Pasca-Panen · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Pangkas berat pasca-panen — jendela waktu kritis 2–4 minggu, dengan analogi klinis critical period intervention.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul H</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module H</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="H">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul H · Pemangkasan · 8 dari 19</span>
+      <span class="lang-en">Module H · Pruning · 8 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Pangkas Berat <em>Pasca-Panen</em></span>
+      <span class="lang-en"><em>Heavy</em> Post-Harvest Pruning</span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Jendela 2–4 minggu pasca-panen sebelum bunga baru muncul — analogi <em>critical period</em> dari psikologi klinis: kapan timing menentukan segalanya</span>
+      <span class="lang-en">A 2–4 week window post-harvest before new flowering — a <em>critical period</em> analogy from clinical psychology: when timing determines everything</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Apa yang dimaksud "pangkas berat" vs "pangkas ringan" (wiwilan di Modul I) — bukan sekadar volume potongan, tetapi keputusan struktural pohon</span>
+          <span class="lang-en">What "heavy pruning" vs "light pruning" (wiwilan in Module I) actually means — not merely the cut volume but a structural tree decision</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa jendela waktu 2–4 minggu pasca-panen adalah <em>critical window</em> — terlewatkan = produktivitas siklus berikutnya menurun signifikan</span>
+          <span class="lang-en">Why the 2–4 week post-harvest window is a <em>critical period</em> — missing it = significant productivity decline in the next cycle</span>
+        </li>
+        <li>
+          <span class="lang-id">Empat tujuan pangkas berat: regenerasi cabang produksi, kontrol tinggi tajuk, perbaikan sirkulasi udara/cahaya, hilangkan kayu mati & cabang sakit</span>
+          <span class="lang-en">Four aims of heavy pruning: regeneration of production branches, canopy height control, improved air/light circulation, removal of deadwood and diseased branches</span>
+        </li>
+        <li>
+          <span class="lang-id">Bagaimana pangkas berat berinteraksi dengan keputusan peremajaan (Modul G) dan wiwilan rutin (Modul I) — tiga modul yang membentuk arsitektur pohon</span>
+          <span class="lang-en">How heavy pruning interacts with rejuvenation decisions (Module G) and routine wiwilan (Module I) — three modules that shape tree architecture</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_a_coffee_plant_31.jpg?width=1280" alt="Coffee plant being heavily pruned post-harvest" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Pemangkasan berat kopi pasca-panen — keputusan struktural yang menentukan produktivitas siklus berikutnya · </span><span class="lang-en">Photo: Heavy post-harvest coffee pruning — the structural decision that determines next-cycle productivity · </span><a href="https://commons.wikimedia.org/wiki/File:Pruning_a_coffee_plant_31.jpg" target="_blank" rel="noopener">Wikimedia Commons</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Panen kopi baru saja selesai. Pohon tampak lelah — cabang-cabangnya kosong setelah ceri merah dipetik. Ada godaan untuk membiarkan pohon "istirahat" beberapa minggu sebelum melakukan intervensi apa pun. Sayangnya, justru di jendela waktu inilah — pasca-panen tetapi sebelum bunga baru muncul — keputusan pemangkasan berat harus dilakukan. Tunggu terlalu lama, dan bunga baru sudah mulai terbentuk; memangkas pada titik itu = mengorbankan produksi siklus berikutnya.</p>
+    <p class="lang-en">The coffee harvest has just ended. The tree looks exhausted — its branches empty after red cherries were picked. There is a temptation to let the tree "rest" for several weeks before any intervention. Unfortunately, it is precisely in this window — post-harvest but before new flowering — that the heavy pruning decision must be made. Wait too long, and new buds have started forming; pruning at that point = sacrificing the next cycle's production.</p>
+
+    <p class="lang-id">Pangkas berat pasca-panen bukanlah peremajaan radikal (Modul G) — pohon tetap dipertahankan. Bukan pula pangkas ringan rutin (Modul I) — yang dilakukan kapan saja sepanjang tahun. Ia adalah intervensi tahunan yang spesifik: dilakukan satu kali per siklus, di jendela waktu sempit, dengan target struktural yang jelas. Bila dilakukan tepat, pohon masuk siklus berikutnya dengan arsitektur yang dioptimalkan untuk produksi. Bila terlewatkan, kebun perlahan-lahan kehilangan kapasitas produksinya.</p>
+    <p class="lang-en">Heavy post-harvest pruning is not radical rejuvenation (Module G) — the tree is preserved. Nor is it routine light pruning (Module I) — done anytime throughout the year. It is a specific annual intervention: done once per cycle, in a narrow time window, with a clear structural target. Done correctly, the tree enters the next cycle with optimized architecture for production. Missed, the garden slowly loses productive capacity.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi dari awal. Pendekatannya: meminjam analogi <em>critical period</em> dari psikologi klinis dan ilmu saraf perkembangan. Sebagaimana terdapat jendela waktu spesifik dalam perkembangan manusia di mana intervensi tertentu paling efektif (debriefing pasca-trauma 24–72 jam, intervensi attachment di tahun-tahun pertama, terapi bicara pasca-stroke), pohon kopi memiliki jendela waktu fisiologis yang persis sama — pangkas berat efektif hanya bila dilakukan di jendela 2–4 minggu pasca-panen.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning agronomy from scratch. The approach: borrow the <em>critical period</em> analogy from clinical psychology and developmental neuroscience. Just as there are specific time windows in human development when particular interventions are most effective (post-trauma debriefing 24–72 hours, attachment interventions in the first years, post-stroke speech therapy), coffee trees have exactly analogous physiological windows — heavy pruning is effective only within the 2–4 week post-harvest window.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Di kebun kopi wakaf Ngantang, panen utama berlangsung Juli–September (tergantung kematangan kebun & cuaca). Itu berarti jendela pangkas berat: <strong>September minggu ke-3 hingga Oktober minggu ke-3</strong> — segera setelah panen terakhir. Bunga baru biasanya mulai terbentuk di November bila MH sudah dimulai. Pak Kumpul dan Cak Yit, bersama Mas Anto sebagai koordinator, harus memprioritaskan eksekusi pangkas berat di jendela ini di atas semua aktivitas non-darurat lain.</p>
+    <p class="lang-en">At the Ngantang waqf garden, the main harvest runs July–September (depending on garden maturity and weather). That places the heavy-pruning window: <strong>3rd week of September through 3rd week of October</strong> — right after the last harvest. New buds typically begin forming in November once the rainy season starts. Pak Kumpul and Cak Yit, with Mas Anto as coordinator, must prioritize heavy pruning in this window above all other non-emergency activity.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Yang membuat jendela ini menantang: aktivitas pasca-panen sangat padat. Selain pangkas berat, harus juga: (a) pemupukan organik awal MH (Modul E), (b) persiapan top-graft untuk peremajaan (Modul G) bila tahun itu ada agenda peremajaan, (c) bongkar pisang pasca-panen amanah (Modul K) di tahun pertama strategi anti-nematoda, dan (d) processing biji panen di mitra (Bonsari Coffee/Nomad). Tim kecil + jendela waktu sempit + banyak agenda paralel = perencanaan minggu-per-minggu yang ketat.</p>
+      <p class="lang-en">What makes this window challenging: post-harvest activity is dense. Besides heavy pruning, the team must also: (a) early-MH organic fertilization (Module E), (b) top-graft preparation for rejuvenation (Module G) if scheduled that year, (c) banana removal post-harvest of trusteed bananas (Module K) in year-one of the anti-nematode strategy, and (d) bean processing at partners (Bonsari Coffee/Nomad). Small team + narrow window + many parallel agendas = tight week-by-week planning.</p>
+    </div>
+
+    <p class="lang-id">Implikasi RAB Siklus 2027: pangkas berat termasuk aktivitas rutin dianggarkan. Tarif harian Cak Yit (Rp 60K ½ hari / Rp 120K full day) × estimasi 15–20 hari kerja untuk seluruh kebun 750 pohon. Pak Kumpul lebih banyak fokus pada pemupukan & bongkar pisang di jendela yang sama. Mas Anto sebagai koordinator memantau kemajuan harian via Form Input dan menjadi quality-control bahwa setiap pohon menerima pangkasan sesuai standar.</p>
+    <p class="lang-en">RAB implication for Cycle 2027: heavy pruning is a budgeted routine activity. Cak Yit's daily rate (IDR 60K half-day / IDR 120K full-day) × estimated 15–20 workdays for the entire 750-tree garden. Pak Kumpul focuses more on fertilization & banana removal in the same window. Mas Anto as coordinator monitors daily progress via the Form Input and acts as quality control that every tree receives pruning per standard.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Empat Tujuan Pangkas Berat</span><span class="lang-en">Theory: Four Aims of Heavy Pruning</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Pangkas berat pasca-panen bukan tindakan tunggal melainkan paket empat tujuan yang dieksekusi simultan:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Regenerasi cabang produksi</strong> — cabang yang telah memproduksi 2–3 siklus mulai menurun. Memotongnya hingga node terdekat mendorong cabang baru yang lebih produktif tumbuh menggantikan.</li>
+      <li><strong>Kontrol tinggi tajuk</strong> — pohon dipertahankan pada ketinggian 2,5–3 meter untuk memudahkan panen dan pemeliharaan. Memotong pucuk yang melebihi tinggi target.</li>
+      <li><strong>Sirkulasi udara & cahaya</strong> — cabang yang tumbuh ke dalam atau saling silang dipangkas. Tujuannya: setiap daun mendapat cukup cahaya, dan udara mengalir bebas untuk mengurangi risiko penyakit jamur (Cercospora, di Modul N).</li>
+      <li><strong>Sanitasi</strong> — kayu mati, cabang terinfeksi penyakit, atau cabang patah pasca-panen semua dipotong dan dibuang dari kebun (atau dikomposkan terpisah).</li>
+    </ul>
+    <p class="lang-en">Heavy post-harvest pruning is not a single action but a package of four aims executed simultaneously:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Production-branch regeneration</strong> — branches that have produced 2–3 cycles begin declining. Cutting them back to the nearest node induces new, more productive branches to grow in replacement.</li>
+      <li><strong>Canopy height control</strong> — the tree is kept at 2.5–3 m height to facilitate harvest and maintenance. Cut shoots exceeding the target height.</li>
+      <li><strong>Air & light circulation</strong> — inward-growing or crossing branches are pruned. Aim: each leaf gets enough light, and air flows freely to reduce fungal disease risk (Cercospora, in Module N).</li>
+      <li><strong>Sanitation</strong> — deadwood, disease-infected branches, and post-harvest broken branches all cut and removed from the garden (or composted separately).</li>
+    </ul>
+
+    <p class="lang-id">Aturan praktis di lapangan: pangkasan tidak boleh menghilangkan lebih dari 30% massa daun total pohon dalam satu sesi. Bila pohon membutuhkan reduksi lebih ekstrem, itu masuk kategori peremajaan (Modul G). Pangkas berat adalah recalibrasi tahunan — bukan reset radikal. Filosofi yang dipegang: <em>mempertahankan integritas pohon sambil mengoptimalkan arsitekturnya untuk siklus berikutnya</em>.</p>
+    <p class="lang-en">Field rule of thumb: a single pruning session should not remove more than 30% of the tree's total leaf mass. If a tree needs more extreme reduction, that falls into rejuvenation (Module G). Heavy pruning is annual recalibration — not radical reset. The guiding philosophy: <em>preserve tree integrity while optimizing its architecture for the next cycle</em>.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Critical Period & Window of Opportunity</span><span class="lang-en">An Analogy from Clinical Psychology — Critical Period & Window of Opportunity</span></div>
+      <p class="lang-id">Dalam psikologi perkembangan dan klinis, kita mengenal konsep <strong>critical period</strong> — jendela waktu di mana sistem biologis maksimal responsif terhadap input tertentu. Sebelum jendela, sistem belum siap; setelah jendela, plastisitas menurun dan input yang sama tidak lagi memberi dampak yang sebanding. Contoh klinis: pemberian terapi bahasa pasca-stroke paling efektif di 3–6 bulan pertama; debriefing pasca-insiden traumatis di 24–72 jam awal; intervensi attachment di tahun-tahun pertama kehidupan. Bukan berarti intervensi setelah jendela "tidak mungkin" — tetapi rasio effort-to-impact berubah dramatis.</p>
+      <p class="lang-en">In developmental and clinical psychology, we know the concept of <strong>critical period</strong> — a time window when a biological system is maximally responsive to a particular input. Before the window, the system is not ready; after the window, plasticity declines and the same input no longer produces comparable impact. Clinical examples: post-stroke speech therapy is most effective in the first 3–6 months; post-traumatic-incident debriefing in the first 24–72 hours; attachment interventions in the first years of life. This does not mean post-window intervention is "impossible" — but the effort-to-impact ratio shifts dramatically.</p>
+    </div>
+
+    <p class="lang-id">Pangkas berat kopi memiliki critical period yang sangat mirip. Jendela fisiologis: 2–4 minggu pasca-panen, sebelum hormon pohon mulai aktivasi pembentukan bunga baru. Memangkas di jendela ini = pohon mengarahkan energi pertumbuhan ke cabang baru yang akan berproduksi tahun depan. Memangkas di luar jendela: pohon kehilangan bunga yang sudah terbentuk atau dalam pembentukan, kapasitas produksi siklus berikutnya menurun. Disiplin jendela ini bukan formalitas — ia memerlukan perencanaan tim 3–4 bulan di muka, agar saat panen selesai semua alat dan personel siap.</p>
+    <p class="lang-en">Heavy coffee pruning has a strikingly similar critical period. The physiological window: 2–4 weeks post-harvest, before tree hormones activate new-bud formation. Pruning within the window = the tree directs growth energy into new branches that will produce next year. Pruning outside the window: the tree loses already-formed or forming buds, and next-cycle production capacity drops. This window discipline is not a formality — it requires 3–4 months of advance team planning so that when harvest ends, all tools and personnel are ready.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Sebelum, Saat, dan Sesudah Pangkas Berat</span><span class="lang-en">Visual Tour: Before, During, and After Heavy Pruning</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Pangkas berat paling baik dipahami melalui kontras visual: pohon sebelum dan sesudah, alat yang dipakai, kerangka pohon yang ideal pasca-pangkasan. Enam gambar berikut memberi referensi visual.</p>
+    <p class="lang-en">Heavy pruning is best understood through visual contrast: trees before and after, tools used, the ideal post-prune skeleton. The six images below provide visual references.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_a_coffee_plant_22.jpg?width=640" alt="Coffee plant pruning in progress" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pangkas berat sedang berlangsung</strong> — eksekutor (Cak Yit) memilih cabang per cabang. Kriteria: cabang produksi yang sudah 2–3 siklus, cabang tumbuh ke dalam, cabang patah. Keputusan dibuat sambil berdiri di hadapan pohon, bukan dari resep tertulis</span>
+          <span class="lang-en"><strong>Heavy pruning in progress</strong> — the executor (Cak Yit) chooses branch by branch. Criteria: production branches having served 2–3 cycles, inward-growing branches, broken branches. Decisions are made standing before the tree, not from a written recipe</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Pruning_a_coffee_plant_22.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_a_coffee_plant_31.jpg?width=640" alt="Coffee tree after heavy pruning, showing optimized framework" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pasca-pangkas berat</strong> — pohon tampak lebih "kosong" tetapi arsitekturnya bersih: 3–4 cabang utama dengan jarak proporsional, tidak ada cabang saling silang, ruang antara terbuka untuk sirkulasi. Inilah kerangka yang siap menerima pertumbuhan baru</span>
+          <span class="lang-en"><strong>After heavy pruning</strong> — the tree looks "emptier" but its architecture is clean: 3–4 main branches with proportional spacing, no crossing branches, open spaces for circulation. This is the framework ready to receive new growth</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Pruning_a_coffee_plant_31.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_a_coffee_plant_32.jpg?width=640" alt="Detail of pruning cut on coffee branch" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Detail potongan yang benar</strong> — potongan miring 45° dekat node (titik percabangan), bukan di tengah cabang. Tujuan: meminimalkan luas luka untuk pemulihan cepat, dan tunas baru muncul dari node terdekat</span>
+          <span class="lang-en"><strong>Correct cut detail</strong> — a 45° angled cut near the node (branching point), not in the middle of the branch. Aim: minimize wound area for fast recovery, and new shoots emerge from the nearest node</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Pruning_a_coffee_plant_32.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Pruning_Shears.jpg?width=640" alt="Pruning shears, sharp and clean" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Gunting pangkas yang tajam</strong> — tajam = potongan rapi, luka cepat pulih. Tumpul = potongan robek, pintu masuk penyakit. Sterilisasi alkohol 70% antar-pohon adalah standar yang sering dilupakan tetapi krusial</span>
+          <span class="lang-en"><strong>Sharp pruning shears</strong> — sharp = clean cut, fast wound healing. Dull = ragged cut, disease entry point. 70% alcohol sterilization between trees is a standard often forgotten but crucial</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Pruning_Shears.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Plantation_in_Coorg.jpg?width=640" alt="Coffee plantation showing trees at uniform height after annual pruning" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Kebun dengan pangkas berat konsisten</strong> — perhatikan keseragaman tinggi tajuk dan jarak antar pohon. Konsistensi tahun-ke-tahun di jendela waktu yang sama yang menciptakan struktur kebun seperti ini, bukan tunggal kerja keras eksekutor</span>
+          <span class="lang-en"><strong>A garden with consistent heavy pruning</strong> — note the uniform canopy height and spacing. Year-to-year consistency within the same time window creates a garden structure like this, not single-shot hard work from the executor</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation_in_Coorg.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffea_canephora_berries.JPG?width=640" alt="Coffee branch with developing cherries — result of correct previous pruning" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Cabang dengan ceri berkembang</strong> — hasil pangkas berat yang baik di siklus sebelumnya. Cabang baru, kuat, posisi terbuka, dengan ceri yang merata. Inilah yang ingin dicapai: cabang produksi berkualitas, bukan sekadar banyak cabang</span>
+          <span class="lang-en"><strong>Branch with developing cherries</strong> — the result of good heavy pruning in the previous cycle. New, strong branch, open position, with evenly-spaced cherries. This is what is sought: high-quality production branches, not merely many branches</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffea_canephora_berries.JPG" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div></section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Pangkas Berat</span><span class="lang-en">The Science: 4-Source Comparison on Heavy Pruning</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber tentang waktu dan teknik pangkas berat Robusta:</p>
+    <p class="lang-en">Let us examine four sources on Robusta heavy pruning timing and technique:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Anjuran Waktu & Volume Pangkas</span><span class="lang-en">Recommended Timing & Volume</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id">Pangkas pemeliharaan dilakukan <strong>segera pasca-panen</strong>, sebelum bunga baru muncul. Volume: maksimal 30% massa daun. Empat tujuan: regenerasi, kontrol tinggi, sirkulasi, sanitasi (hal 87–88).</span><span class="lang-en">Maintenance pruning is done <strong>immediately post-harvest</strong>, before new flowering. Volume: max 30% leaf mass. Four aims: regeneration, height control, circulation, sanitation (p 87–88).</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 4</strong> — <em>Tree Architecture</em></td>
+          <td><span class="lang-id">Detail arsitektur pohon ideal: 3–4 cabang utama, tinggi target 2,5–3 m, struktur "open vase" untuk maksimalkan light interception. Window timing dijustifikasi via fisiologi hormonal pohon (auksin & sitokinin).</span><span class="lang-en">Detail of ideal tree architecture: 3–4 main branches, target height 2.5–3 m, "open vase" structure to maximize light interception. Window timing justified by tree hormone physiology (auxin & cytokinin).</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Konvergen dengan SOP Edisi 2. Tambahan: pangkasan berat pohon dewasa rotasional — tidak semua pohon dipangkas berat setiap tahun, ⅓ pohon per tahun untuk menjaga produktivitas total kebun (hal 16).</span><span class="lang-en">Converges with SOP Edition 2. Addition: heavy pruning on mature trees is rotational — not all trees pruned heavily every year, ⅓ of trees per year to maintain total garden productivity (p 16).</span></td>
+        </tr>
+        <tr>
+          <td><strong>SOP NGT Wakaf (2026, internal)</strong></td>
+          <td><span class="lang-id">Adopsi SOP Kementan + Wintgens. Modifikasi: jendela waktu di-anchor ke kalender Jawa Timur (Sept minggu ke-3 → Okt minggu ke-3). Eksekutor: Cak Yit (Bagian Atas). Quality control: Mas Anto via Form Input.</span><span class="lang-en">Adopts Kementan SOP + Wintgens. Modification: timing window anchored to East Java calendar (3rd Sept week → 3rd Oct week). Executor: Cak Yit (Upper Branch worker). QC: Mas Anto via Form Input.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: empat sumber konvergen pada timing (pasca-panen sebelum bunga baru), volume (maks 30%), dan empat tujuan strukturalnya.</strong> Yang spesifik di Ngantang: rotasi pangkasan berat (Puslitbang) belum diadopsi sepenuhnya — di tahun perdana, semua 750 pohon menerima pangkas berat untuk reset arsitektur pasca-era RWI. Dari tahun ke-2, rotasi ⅓ pohon per tahun dapat dipertimbangkan untuk efisiensi tenaga.</p>
+    <p class="lang-en"><strong>The emerging pattern: four sources converge on timing (post-harvest before new flowering), volume (max 30%), and the four structural aims.</strong> Specific to Ngantang: rotational heavy pruning (Puslitbang) is not yet fully adopted — in year one, all 750 trees receive heavy pruning to reset architecture post-RWI era. From year two, ⅓-tree rotation per year may be considered for labor efficiency.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Critical Window — Mengapa Tepat Waktu Bukan Negotiable</span><span class="lang-en">✓ The Critical Window — Why Timing Is Non-Negotiable</span></div>
+      <p class="lang-id">Pasca-panen, pohon kopi memasuki fase fisiologis yang dikontrol oleh hormon. Selama 2–4 minggu pertama, level <em>auksin</em> dari cabang sisa masih dominan — kondisi yang menekan pembentukan bunga. Inilah jendela di mana pemangkasan dapat dilakukan tanpa "memotong" produksi siklus berikutnya. Setelah ~4 minggu, level auksin mulai turun dan <em>sitokinin</em> meningkat — sinyal bahwa pohon mulai aktivasi pembentukan bunga baru. Memangkas di luar jendela = ikut memotong tunas-tunas reproduktif yang sedang terbentuk = produksi siklus berikutnya menurun. Inilah mengapa "tunggu sebentar" pasca-panen bukan opsi netral — itu trade-off langsung dengan kapasitas produksi.</p>
+      <p class="lang-en">Post-harvest, the coffee tree enters a physiological phase controlled by hormones. During the first 2–4 weeks, <em>auxin</em> levels from residual branches remain dominant — a condition that suppresses flower formation. This is the window when pruning can be done without "cutting away" next-cycle production. After ~4 weeks, auxin levels begin to fall and <em>cytokinin</em> rises — signaling that the tree is activating new bud formation. Pruning outside the window = also cutting reproductive buds in formation = next-cycle production declines. This is why "waiting a bit" post-harvest is not a neutral option — it is a direct trade-off with production capacity.</p>
+    </div>
+
+    <p class="lang-id">Untuk kebun kopi wakaf Ngantang, strategi pangkas berat diintegrasikan dengan: <strong>Modul G</strong> (peremajaan — pada pohon yang dipilih untuk top-graft, pangkas berat tidak diperlukan karena sudah dipotong drastis), <strong>Modul I</strong> (wiwilan rutin — pasca-pangkas berat, wiwilan mulai aktif untuk merapikan tunas air baru), dan <strong>Modul N</strong> (Cercospora — pangkas berat membantu sirkulasi udara yang mengurangi tekanan jamur). Tiga modul ini bersama-sama membentuk arsitektur pohon yang sehat untuk dekade berikutnya.</p>
+    <p class="lang-en">For the Ngantang waqf garden, heavy-pruning strategy integrates with: <strong>Module G</strong> (rejuvenation — trees selected for top-graft do not need heavy pruning because they are radically cut), <strong>Module I</strong> (routine wiwilan — post-heavy-pruning, wiwilan becomes active to manage new water sprouts), and <strong>Module N</strong> (Cercospora — heavy pruning supports air circulation that reduces fungal pressure). Together, these three modules shape the tree's healthy architecture for the next decade.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Eksekusi Pangkas Berat</span><span class="lang-en">Practice: Five Steps to Execute Heavy Pruning</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Lima langkah operasional pangkas berat pasca-panen di kebun kopi wakaf Ngantang. Eksekusi oleh Cak Yit, monitoring oleh Mas Anto. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Five operational steps for post-harvest heavy pruning at the Ngantang waqf garden. Execution by Cak Yit, monitoring by Mas Anto. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Persiapan 3–4 Minggu Sebelum Panen Selesai</span><span class="lang-en">Step 1 · Prep 3–4 Weeks Before Harvest Ends</span></div>
+          <div class="step-text">
+            <span class="lang-id">Saat panen masih berlangsung Juli–Agustus, persiapkan: (a) jadwal kerja Cak Yit 15–20 hari, (b) gunting pangkas tajam + gergaji tangan + alkohol 70%, (c) wadah untuk membawa kayu pangkasan keluar dari kebun, (d) brief Mas Anto tentang quality criteria. Jangan tunggu panen selesai untuk mulai prep — jendela waktu terlalu sempit.</span>
+            <span class="lang-en">While harvest is still in July–August, prepare: (a) Cak Yit's 15–20 day work schedule, (b) sharp pruning shears + hand saw + 70% alcohol, (c) containers to carry pruned wood out of the garden, (d) brief Mas Anto on quality criteria. Do not wait for harvest end to start prep — the window is too narrow.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Mulai Pangkas Berat dalam Minggu Pertama Pasca-Panen Akhir</span><span class="lang-en">Step 2 · Begin Heavy Pruning in Week 1 Post-Final-Harvest</span></div>
+          <div class="step-text">
+            <span class="lang-id">Hari ke-1 pasca-panen terakhir: Cak Yit mulai blok pertama (Bidang 1, paling kecil dan jaminan kemudahan untuk kalibrasi). Target 50–60 pohon/hari. Berhati-hati: lebih baik 30 pohon dengan kualitas tinggi daripada 70 pohon dengan kualitas medioker. Mas Anto mengecek output setiap akhir hari.</span>
+            <span class="lang-en">Day 1 post-final-harvest: Cak Yit starts the first block (Block 1, smallest, ensuring an easy calibration). Target 50–60 trees/day. Caution: better 30 high-quality trees than 70 mediocre. Mas Anto checks output at the end of each day.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Identifikasi Empat Kategori Cabang per Pohon</span><span class="lang-en">Step 3 · Identify Four Branch Categories per Tree</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pada setiap pohon, kategorisasi cabang: <strong>(a) cabang produksi muda</strong> — pertahankan, dasar produksi siklus berikutnya. <strong>(b) cabang produksi tua (sudah 2–3 siklus)</strong> — pangkas balik ke node terdekat. <strong>(c) cabang tumbuh ke dalam / saling silang</strong> — potong total. <strong>(d) kayu mati / cabang sakit</strong> — potong total, buang ke luar kebun.</span>
+            <span class="lang-en">On each tree, categorize branches: <strong>(a) young production branches</strong> — preserve, the base for next-cycle production. <strong>(b) old production branches (2–3 cycles)</strong> — cut back to the nearest node. <strong>(c) inward-growing / crossing branches</strong> — cut entirely. <strong>(d) deadwood / diseased branches</strong> — cut entirely, dispose outside the garden.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Eksekusi Potongan dengan Standar Teknis</span><span class="lang-en">Step 4 · Execute Cuts with Technical Standards</span></div>
+          <div class="step-text">
+            <span class="lang-id">Setiap potongan: sudut 45° miring, dekat node (1–2 cm dari titik percabangan), gunting tajam (bukan robek), sterilisasi alkohol 70% antar-pohon untuk mencegah transmisi Cercospora & jamur lain. Untuk batang &gt;3 cm: gergaji tangan, bukan gunting. Maksimum 30% massa daun dihilangkan per pohon.</span>
+            <span class="lang-en">Each cut: 45° angled, near the node (1–2 cm from the branching point), sharp shears (not ragged), 70% alcohol sterilization between trees to prevent Cercospora & fungal transmission. For trunks &gt;3 cm: hand saw, not shears. Maximum 30% leaf mass removed per tree.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Selesai Jendela 4 Minggu, Transisi ke Wiwilan Rutin</span><span class="lang-en">Step 5 · Complete Within 4-Week Window, Transition to Routine Wiwilan</span></div>
+          <div class="step-text">
+            <span class="lang-id">Target: 750 pohon pangkas berat selesai dalam jendela 4 minggu (Sept minggu ke-3 → Okt minggu ke-3). Bila jadwal molor: prioritaskan blok yang belum tersentuh, sisakan tunas-tunas baru kurang prioritas untuk wiwilan ringan (Modul I). Setelah Oct akhir, lanjutkan dengan pemupukan organik (Modul E) saat MH dimulai.</span>
+            <span class="lang-en">Target: 750 trees heavy-pruned within the 4-week window (3rd week Sept → 3rd week Oct). If delayed: prioritize untouched blocks, defer lower-priority new sprouts to light wiwilan (Module I). After late Oct, continue with organic fertilization (Module E) as the rainy season starts.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Critical window di klinis (debriefing 24–72 jam, intervensi attachment di tahun pertama) memerlukan kesiapan tim yang luar biasa di muka. Bagaimana Anda mempertahankan kesiapan untuk intervensi yang jendelanya sempit, di tengah aktivitas rutin yang padat?</p>
+      <p class="prompt lang-en">1. Critical windows in clinic (24–72 hour debriefing, first-year attachment interventions) require extraordinary team readiness in advance. How do you maintain readiness for narrow-window interventions amid routine activity?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Aturan 30% massa daun maksimal per sesi pangkas adalah pembatasan struktural agar pohon tidak shock. Dalam praktik klinis Anda, apakah ada aturan "maksimum perubahan per sesi" yang Anda pegang? Apa konsekuensi pelanggarannya?</p>
+      <p class="prompt lang-en">2. The max-30%-leaf-mass-per-session rule is a structural limit so the tree does not shock. In your clinical practice, is there a "max change per session" rule you follow? What are the consequences of violating it?</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Pangkas berat dieksekusi oleh Cak Yit, tetapi quality control via Mas Anto. Pemisahan eksekutor dan reviewer ini analog dengan supervisi klinis. Mengapa pemisahan ini penting? Apa risikonya bila eksekutor sekaligus reviewer atas pekerjaannya sendiri?</p>
+      <p class="prompt lang-en">3. Heavy pruning is executed by Cak Yit but quality-controlled by Mas Anto. This separation of executor and reviewer is analogous to clinical supervision. Why is this separation important? What is the risk when the executor is also the reviewer of their own work?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. <em>(hal 87–88 — Pangkas pemeliharaan pasca-panen)</em> ⭐</li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.4 — Tree Architecture & Pruning. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI</a></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 16 — Pangkasan rotasional)</em></li>
+      <li><strong>Modul G — Pemangkasan Peremajaan.</strong> <a href="../G-pemangkasan-peremajaan/index.html">Cross-reference</a> — peremajaan radikal untuk pohon yang tidak responsif pada pangkas berat rutin.</li>
+      <li><strong>Modul I — Wiwilan (Pangkas Ringan).</strong> <a href="../I-wiwilan/index.html">Cross-reference</a> — pangkasan rutin frekuensi tinggi yang melengkapi pangkas berat tahunan.</li>
+      <li><strong>Modul N — Cercospora coffeicola.</strong> <a href="../N-cercospora/index.html">Cross-reference</a> — sirkulasi udara hasil pangkas berat menurunkan tekanan jamur.</li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../G-pemangkasan-peremajaan/index.html"><span class="lang-id">← Modul G: Pemangkasan Peremajaan</span><span class="lang-en">← Module G: Rejuvenation Pruning</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="../I-wiwilan/index.html" class="next"><span class="lang-id">Modul I: Wiwilan (Pangkas Ringan) →</span><span class="lang-en">Module I: Wiwilan (Light Pruning) →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>

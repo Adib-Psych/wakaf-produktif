@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul F — Pupuk Kandang Anti-Nematoda · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Pupuk kandang anti-nematoda — intervensi tertarget untuk pohon terinfestasi Pratylenchus, dengan analogi klinis targeted therapy.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul F</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module F</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="F">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul F · Nutrisi & Pemupukan · 6 dari 19</span>
+      <span class="lang-en">Module F · Nutrition & Fertilization · 6 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Pupuk Kandang <em>Anti-Nematoda</em></span>
+      <span class="lang-en"><em>Anti-Nematode</em> Manure</span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Intervensi tertarget pada pohon terserang <em>Pratylenchus coffeae</em> — analogi <em>targeted therapy</em> dari klinis: bukan untuk semua, tetapi untuk subset spesifik dengan presisi tinggi</span>
+      <span class="lang-en">A targeted intervention for trees infested by <em>Pratylenchus coffeae</em> — a <em>targeted therapy</em> analogy from clinic: not for all, but for a specific subset with high precision</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Apa itu nematoda parasit akar (<em>Pratylenchus coffeae</em>) dan mengapa ia menjadi salah satu ancaman tersembunyi di kebun kopi tropis</span>
+          <span class="lang-en">What root parasitic nematodes (<em>Pratylenchus coffeae</em>) are and why they are one of the hidden threats in tropical coffee gardens</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa pupuk kandang dosis tinggi (50–100 kg/pohon) menjadi anjuran spesifik untuk pohon terserang — bukan pohon sehat</span>
+          <span class="lang-en">Why high-dose manure (50–100 kg/tree) is a specific recommendation for infested trees — not healthy ones</span>
+        </li>
+        <li>
+          <span class="lang-id">Bagaimana cara mengidentifikasi pohon yang terinfestasi: gejala visual di atas tanah, dan diagnostik akar yang lebih pasti</span>
+          <span class="lang-en">How to identify infested trees: visible above-ground symptoms and more definitive root diagnostics</span>
+        </li>
+        <li>
+          <span class="lang-id">Strategi pengelolaan terintegrasi: kombinasi pupuk kandang + bahan organik tinggi + rotasi tindakan, bukan satu intervensi tunggal</span>
+          <span class="lang-en">Integrated management strategy: combining manure + high organic matter + rotated actions, rather than a single intervention</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Guava_Root-Knot_Nematode_Research_(20180907-ARS-WR-0001).jpg?width=1280" alt="Root-knot nematode research — visible galls on root system" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Penelitian nematoda akar — galls pada akar tanaman, manifestasi visual dari infestasi yang sering tidak terdiagnosis · </span><span class="lang-en">Photo: Root nematode research — galls on a plant root system, the visible manifestation of an often-undiagnosed infestation · </span><a href="https://commons.wikimedia.org/wiki/File:Guava_Root-Knot_Nematode_Research_(20180907-ARS-WR-0001).jpg" target="_blank" rel="noopener">Wikimedia Commons</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Sebuah pohon kopi di pojok kebun mulai mengalami penurunan produksi. Daunnya tetap hijau (tidak ada gejala defisit nutrisi yang jelas), tetapi pertumbuhan tunas baru melambat, ceri yang dihasilkan lebih kecil, dan pasca-pemupukan respons jauh lebih lemah dibanding pohon tetangga. Sembilan dari sepuluh petani akan menyimpulkan: "pupuknya kurang". Kemungkinan yang sebenarnya: <em>akarnya sedang diserang oleh parasit yang tidak terlihat</em>.</p>
+    <p class="lang-en">A coffee tree in a corner of the garden begins to decline in production. Its leaves remain green (no obvious nutrient deficit), but new shoot growth slows, cherries are smaller, and the post-fertilization response is far weaker than its neighbors. Nine of ten farmers would conclude: "needs more fertilizer". The real likelihood: <em>its roots are being attacked by an invisible parasite</em>.</p>
+
+    <p class="lang-id">Nematoda parasit akar — terutama <em>Pratylenchus coffeae</em> — adalah ancaman tersembunyi di kebun kopi tropis. Cacing mikroskopis ini hidup di tanah, masuk ke jaringan akar pohon, dan secara perlahan merusak sistem penyerapan air dan nutrisi. Pohon tidak mati segera, tetapi kapasitasnya untuk menanggapi pemupukan dan pengairan menurun drastis. Karena gejala atas-tanah tidak khas, infestasi sering berlangsung bertahun-tahun tanpa terdiagnosis.</p>
+    <p class="lang-en">Root parasitic nematodes — particularly <em>Pratylenchus coffeae</em> — are a hidden threat in tropical coffee gardens. These microscopic worms live in the soil, enter root tissue, and slowly damage the tree's water-and-nutrient uptake system. The tree does not die immediately, but its capacity to respond to fertilization and irrigation drops sharply. Because above-ground symptoms are non-specific, infestations often persist for years undiagnosed.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi dari awal. Pendekatannya: meminjam analogi <em>targeted therapy</em> dari farmakoterapi. Pemupukan kimia umum di Modul C adalah intervensi populasi — diberikan ke semua pohon. Pupuk kandang anti-nematoda berbeda: ia adalah intervensi <em>tertarget</em>, hanya untuk subset pohon dengan profil masalah spesifik. Mengaplikasikannya ke pohon sehat = pemborosan; tidak mengaplikasikannya ke pohon terinfestasi = membiarkan masalah memburuk.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning agronomy from scratch. The approach: borrow the <em>targeted therapy</em> analogy from pharmacotherapy. The general chemical fertilization in Module C is a population-level intervention — given to every tree. Anti-nematode manure is different: it is a <em>targeted</em> intervention, only for the subset of trees with a specific problem profile. Applying it to healthy trees = waste; not applying it to infested trees = letting the problem worsen.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Di kebun kopi wakaf Ngantang, salah satu alasan struktural mengapa nematoda menjadi risiko relevan adalah <strong>sejarah pisang sebagai tumpang sari</strong>. Pisang adalah <em>inang nematoda Pratylenchus coffeae</em> (lihat Modul K — Pisang sebagai LARANGAN). Bertahun-tahun penanaman pisang di antara kopi menciptakan reservoir populasi nematoda yang dapat menyerang akar kopi saat pisang dibongkar atau saat density nematoda mencapai ambang merusak.</p>
+    <p class="lang-en">At the Ngantang waqf garden, one structural reason nematodes are a relevant risk is the <strong>history of banana intercropping</strong>. Banana is a host of <em>Pratylenchus coffeae</em> (see Module K — Banana FORBIDDEN). Years of banana planting between coffee creates a nematode population reservoir that can attack coffee roots when bananas are removed or when nematode density crosses the damage threshold.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Strategi pengelolaan di kebun kopi wakaf Ngantang per Klarifikasi Wakif 8 Mei 2026: <strong>(1) Tahap inventarisasi</strong> — Mas Anto dan Pak Kumpul mencatat pohon-pohon dengan gejala penurunan produksi yang tidak terjelaskan oleh kekurangan nutrisi. <strong>(2) Diagnostik akar selektif</strong> — pada beberapa pohon target, gali akar untuk cek visual gejala (akar bengkok, knots/galls, atau memang kosong). <strong>(3) Intervensi tertarget</strong> — pohon yang terkonfirmasi terinfestasi menerima dosis pupuk kandang ekstra 50–100 kg + bahan organik tinggi. <strong>(4) Bongkar pisang & tunas</strong> — Q4 2026, hilangkan reservoir nematoda.</p>
+      <p class="lang-en">Management strategy at the Ngantang waqf garden per the Waqif Clarification (8 May 2026): <strong>(1) Inventory phase</strong> — Mas Anto and Pak Kumpul record trees showing unexplained production decline despite normal nutrition. <strong>(2) Selective root diagnosis</strong> — on target trees, expose roots to visually check for symptoms (bent roots, knots/galls, or hollow). <strong>(3) Targeted intervention</strong> — confirmed-infested trees receive an extra 50–100 kg manure dose + high organic matter. <strong>(4) Banana removal</strong> — Q4 2026, eliminate the nematode reservoir.</p>
+    </div>
+
+    <p class="lang-id">Implikasi: intervensi anti-nematoda tidak boleh masuk ke RAB sebagai item rutin universal. Yang dianggarkan adalah <em>reserve</em> pupuk kandang ekstra — taksiran 10% dari populasi pohon yang akan membutuhkan dosis tertarget. Untuk 750 pohon × 10% × 50–100 kg = 3,75–7,5 ton pupuk kandang ekstra di tahun perdana, lalu menurun seiring populasi nematoda terkontrol. Anggaran ini tetap kecil dibanding kerugian potensial bila dibiarkan: pohon terinfestasi yang produktivitasnya turun 30–50% selama bertahun-tahun.</p>
+    <p class="lang-en">Implication: anti-nematode intervention should not enter the RAB as a universal routine item. What is budgeted is a <em>reserve</em> of extra manure — estimated 10% of tree population that will require targeted dosing. For 750 trees × 10% × 50–100 kg = 3.75–7.5 tons extra manure in year one, declining as nematode populations come under control. This budget remains small compared to the potential loss if left unaddressed: infested trees producing 30–50% less for years.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Pratylenchus coffeae dan Mekanisme Supresi</span><span class="lang-en">Theory: Pratylenchus coffeae and Suppression Mechanisms</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id"><em>Pratylenchus coffeae</em> — disebut juga "lesion nematode" — adalah cacing mikroskopis (panjang ~0,5 mm) yang hidup di tanah dan jaringan akar tanaman. Siklus hidupnya:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Infestasi awal</strong> — nematoda menembus epidermis akar muda, masuk ke kortek akar.</li>
+      <li><strong>Reproduksi internal</strong> — berkembang biak di dalam jaringan akar, menyebabkan lesion (luka) yang menjadi pintu infeksi sekunder oleh jamur dan bakteri.</li>
+      <li><strong>Migrasi & re-infestasi</strong> — keluar dari akar yang rusak, masuk ke tanah, lalu menemukan akar baru. Populasi terakumulasi dari waktu ke waktu.</li>
+      <li><strong>Konsekuensi struktural</strong> — sistem perakaran menjadi pendek, bercabang abnormal, kapasitas penyerapan turun. Pohon "terlihat sehat" di atas tanah tetapi <em>fungsional malnutrisi</em>.</li>
+    </ul>
+    <p class="lang-id">Mekanisme supresi via pupuk kandang berdosis tinggi tidak bekerja melalui pembunuhan langsung, melainkan via beberapa jalur tidak langsung:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Stimulasi mikroba antagonis tanah</strong> — bahan organik tinggi mengaktifkan jamur dan bakteri yang mengonsumsi nematoda atau memproduksi senyawa nematicidal alami.</li>
+      <li><strong>Peningkatan resiliensi pohon</strong> — nutrisi & struktur tanah yang lebih baik membantu pohon mengompensasi kerusakan akar.</li>
+      <li><strong>Pengenceran populasi nematoda</strong> — volume akar baru yang dihasilkan pohon yang lebih sehat melebihi laju penghancuran nematoda.</li>
+    </ul>
+    <p class="lang-en"><em>Pratylenchus coffeae</em> — also called the "lesion nematode" — is a microscopic worm (~0.5 mm long) that lives in soil and root tissue. Its life cycle:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Initial infestation</strong> — the nematode penetrates the young root epidermis and enters the cortex.</li>
+      <li><strong>Internal reproduction</strong> — multiplies within root tissue, causing lesions that become entry points for secondary fungal and bacterial infection.</li>
+      <li><strong>Migration & re-infestation</strong> — exits damaged roots, returns to soil, finds new roots. Populations accumulate over time.</li>
+      <li><strong>Structural consequence</strong> — the root system becomes short, abnormally branched, with reduced absorptive capacity. The tree "looks healthy" above ground but is <em>functionally malnourished</em>.</li>
+    </ul>
+    <p class="lang-en">The suppression mechanism via high-dose manure works not through direct killing, but via several indirect pathways:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Soil antagonist microbe stimulation</strong> — high organic matter activates fungi and bacteria that consume nematodes or produce natural nematicidal compounds.</li>
+      <li><strong>Tree resilience boost</strong> — better nutrition and soil structure help the tree compensate for root damage.</li>
+      <li><strong>Nematode population dilution</strong> — the volume of new roots produced by a healthier tree outpaces the nematode destruction rate.</li>
+    </ul>
+
+    <p class="lang-id">Pendekatan ini disebut <strong>biological suppression</strong> — supresi populasi nematoda melalui pemberdayaan ekosistem tanah, bukan melalui pembunuhan kimiawi. Mengapa tidak pakai nematisida kimia? Karena: (a) banyak nematisida sintetis terlarang di Indonesia (Permentan 39/2015 — lihat Modul R), (b) nematisida sintetis juga membunuh mikroba bermanfaat di tanah, justru memperparah masalah jangka panjang, dan (c) pupuk kandang lebih murah dan tersedia secara konsisten di sentra peternakan lokal.</p>
+    <p class="lang-en">This approach is called <strong>biological suppression</strong> — population suppression via empowering the soil ecosystem, not chemical killing. Why not use chemical nematicides? Because: (a) many synthetic nematicides are banned in Indonesia (Permentan 39/2015 — see Module R), (b) synthetic nematicides also kill beneficial soil microbes, worsening the long-term problem, and (c) manure is cheaper and consistently available from local livestock centers.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Targeted Therapy & Subgroup Treatment</span><span class="lang-en">An Analogy from Clinical Psychology — Targeted Therapy & Subgroup Treatment</span></div>
+      <p class="lang-id">Dalam farmakoterapi, ada perbedaan kategorik antara <strong>broad-spectrum intervention</strong> (diberikan ke semua pasien dengan diagnosis umum, mis. SSRI untuk depresi) dan <strong>targeted therapy</strong> (intervensi spesifik untuk subset pasien dengan biomarker atau presentasi tertentu, mis. terapi tertarget pada mutasi tertentu di onkologi). Kunci klinis: targeted therapy bekerja <em>karena</em> ia spesifik. Diberikan ke populasi umum, ia kurang berguna atau bahkan merugikan; diberikan ke subset yang tepat, ia bisa transformatif.</p>
+      <p class="lang-en">In pharmacotherapy, a categorical distinction exists between <strong>broad-spectrum interventions</strong> (given to all patients with a general diagnosis, e.g., SSRIs for depression) and <strong>targeted therapy</strong> (specific intervention for a subset of patients with a particular biomarker or presentation, e.g., targeted therapy for specific mutations in oncology). The clinical key: targeted therapy works <em>because</em> it is specific. Given to the general population, it is less useful or even harmful; given to the right subset, it can be transformative.</p>
+    </div>
+
+    <p class="lang-id">Pupuk kandang anti-nematoda mengikuti logika yang sama. Bila diberikan ke seluruh kebun tanpa diagnostik, ia akan menjadi pengeluaran besar dengan dampak marginal pada pohon sehat. Tetapi bila diberikan secara <em>tertarget</em> pada 10–15% pohon yang sebenarnya terinfestasi, ia mengubah trajektori produktivitas pohon-pohon tersebut secara signifikan. Yang dibutuhkan adalah <strong>diagnostik di muka</strong> — inventarisasi pohon underperforming yang tidak terjelaskan oleh penyebab lain. Modul ini ada karena tanpa pendekatan tertarget, kebun akan terus kehilangan kapasitas pada subset pohon yang gejalanya tidak terbaca.</p>
+    <p class="lang-en">Anti-nematode manure follows the same logic. If applied across the entire garden without diagnostics, it becomes a large expenditure with marginal impact on healthy trees. But if applied <em>targeted</em> at the 10–15% of trees actually infested, it significantly changes the productivity trajectory of those trees. What is required is <strong>upfront diagnostics</strong> — inventory of underperforming trees not explained by other causes. This module exists because without a targeted approach, the garden continues losing capacity in the subset of trees whose symptoms are unread.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Nematoda, Akar, dan Indikasi Diagnostik</span><span class="lang-en">Visual Tour: Nematodes, Roots, and Diagnostic Indicators</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Karena nematoda terlalu kecil untuk dilihat mata telanjang, identifikasi mengandalkan tanda-tanda tidak langsung. Enam gambar berikut menunjukkan: gall pada akar, kontras akar sehat vs terinfestasi, alat diagnostik lapangan, dan konteks lapangan kebun Ngantang.</p>
+    <p class="lang-en">Because nematodes are too small to see with the naked eye, identification relies on indirect signs. The six images below show: root galls, the contrast between healthy and infested roots, field diagnostic tools, and the Ngantang garden field context.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Guava_Root-Knot_Nematode_Research_(20180907-ARS-WR-0001).jpg?width=640" alt="Root knot nematode galls on plant roots" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Gall (knot) pada akar</strong> akibat infestasi nematoda — pembengkakan abnormal di sepanjang akar adalah tanda visual paling khas. Pada kopi, gejala mirip ini menunjukkan kerusakan struktural akar</span>
+          <span class="lang-en"><strong>Root galls (knots)</strong> caused by nematode infestation — abnormal swellings along the root are the most distinctive visible sign. In coffee, similar symptoms indicate structural root damage</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Guava_Root-Knot_Nematode_Research_(20180907-ARS-WR-0001).jpg" target="_blank" rel="noopener">USDA ARS · Wikimedia · Public Domain</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Guava_Root-Knot_Nematode_Research_(20190130-ARS-WR-0001).jpg?width=640" alt="Comparison of nematode-infested vs healthy roots" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Akar terinfestasi vs sehat</strong> — perbedaan paling nyata: akar terinfestasi lebih pendek, bercabang abnormal, sering memiliki bagian yang menggelap. Akar sehat panjang, lurus, putih kekuningan</span>
+          <span class="lang-en"><strong>Infested vs healthy roots</strong> — the clearest difference: infested roots are shorter, abnormally branched, often with darkened sections. Healthy roots are long, straight, yellow-white</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Guava_Root-Knot_Nematode_Research_(20190130-ARS-WR-0001).jpg" target="_blank" rel="noopener">USDA ARS · Wikimedia · Public Domain</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Compost_pile.JPG?width=640" alt="Mature compost pile — the anti-nematode treatment" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pupuk kandang matang</strong> — "obat" untuk pohon terinfestasi. Dosis ekstra 50–100 kg per pohon target (vs 10–20 kg dosis rutin di Modul E). Aktivasi mikroba antagonis nematoda</span>
+          <span class="lang-en"><strong>Mature manure</strong> — the "medicine" for infested trees. Extra dose 50–100 kg per target tree (vs 10–20 kg routine dose in Module E). Activates nematode-antagonist microbes</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Compost_pile.JPG" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Banana_plantation_with_coffee.jpg?width=640" alt="Banana intercropped with coffee — a nematode reservoir" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Pisang sebagai tumpang sari kopi</strong> — praktik historis yang menciptakan reservoir nematoda. Pisang adalah inang <em>Pratylenchus coffeae</em>. Pembongkaran pisang (Modul K) adalah prasyarat keberhasilan strategi anti-nematoda</span>
+          <span class="lang-en"><strong>Banana intercropped with coffee</strong> — a historic practice that creates a nematode reservoir. Banana is host to <em>Pratylenchus coffeae</em>. Banana removal (Module K) is a prerequisite for anti-nematode strategy success</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Banana_plantation_with_coffee.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Men_digging_(1).jpg?width=640" alt="Manual root excavation for diagnostic inspection" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Diagnostik akar lapangan</strong> — gali tanah di sekitar drip-line pohon target sedalam 20–30 cm, ekspos sebagian akar. Periksa visual: ada gall? Akar mati/menggelap? Sistem perakaran pendek abnormal? Tutup kembali tanpa merusak</span>
+          <span class="lang-en"><strong>Field root diagnostics</strong> — dig 20–30 cm around the drip-line of the target tree, expose part of the root. Visual inspection: any galls? Dead/darkened roots? Abnormally shortened root system? Cover back without damage</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Men_digging_(1).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_plantation_on_Gumitir.jpg?width=640" alt="East Java coffee plantation with mixed tree health" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Kebun matang Jawa Timur</strong> — di kebun seperti ini, biasanya 10–15% pohon adalah underperformer kronis. Sebagian kemungkinan terinfestasi nematoda. Inventarisasi sistematis di Form Input membantu identifikasi</span>
+          <span class="lang-en"><strong>Mature East Java garden</strong> — in gardens like this, typically 10–15% of trees are chronic underperformers. Some are likely nematode-infested. Systematic inventory in the Form Input aids identification</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_plantation_on_Gumitir.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div></section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Pengelolaan Nematoda</span><span class="lang-en">The Science: 4-Source Comparison on Nematode Management</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber tentang strategi pengelolaan nematoda di kopi:</p>
+    <p class="lang-en">Let us examine four sources on coffee nematode management strategy:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Posisi tentang Anti-Nematoda</span><span class="lang-en">Position on Anti-Nematode Strategy</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id">Eksplisit menganjurkan pupuk kandang dosis ekstra 50–100 kg/pohon untuk pohon terserang (hal 73). Mencatat <em>P. coffeae</em> sebagai patogen utama di kopi Indonesia.</span><span class="lang-en">Explicitly recommends extra manure 50–100 kg/tree for infested trees (p 73). Notes <em>P. coffeae</em> as a primary pathogen in Indonesian coffee.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Hindorf & Omondi (2011) — <em>Coffee Pests & Diseases</em></strong></td>
+          <td><span class="lang-id">Kompilasi internasional patogen kopi. <em>P. coffeae</em> diklasifikasi sebagai "yield-limiting nematode" di wilayah tropis basah. Manajemen: kombinasi resistant rootstock + organic amendments.</span><span class="lang-en">International compilation of coffee pathogens. <em>P. coffeae</em> classified as a "yield-limiting nematode" in wet tropics. Management: combine resistant rootstock + organic amendments.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 8</strong></td>
+          <td><span class="lang-id">Bab khusus tentang penyakit kopi. <strong>Excelsa rootstock</strong> (yang ada di Ngantang!) disebut memiliki resistensi parsial terhadap <em>P. coffeae</em> — relevan dengan Modul B.</span><span class="lang-en">Dedicated chapter on coffee diseases. <strong>Excelsa rootstock</strong> (present at Ngantang!) is noted to have partial resistance to <em>P. coffeae</em> — relevant to Module B.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Klarifikasi Wakif 8 Mei 2026</strong></td>
+          <td><span class="lang-id">Strategi terintegrasi diadopsi: <em>(1) bongkar pisang (Modul K) sebagai prasyarat, (2) inventarisasi pohon underperformer, (3) dosis ekstra pupuk kandang tertarget, (4) leverage Excelsa rootstock yang sudah resisten parsial</em>.</span><span class="lang-en">Integrated strategy adopted: <em>(1) banana removal (Module K) as prerequisite, (2) inventory of underperforming trees, (3) targeted extra manure dose, (4) leverage Excelsa rootstock which already has partial resistance</em>.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: empat sumber konvergen pada pendekatan biological suppression melalui pupuk kandang tinggi, bukan nematisida kimia.</strong> Yang istimewa pada konteks Ngantang: rootstock Excelsa yang sudah ada (Modul B) memberikan resistensi parsial pra-bawaan. Konfigurasi ini ternyata sudah "anti-nematoda" secara struktural — strategi pengelolaan hanya melengkapi keunggulan biologis yang sudah ada.</p>
+    <p class="lang-en"><strong>The emerging pattern: four sources converge on biological suppression via high manure, not chemical nematicides.</strong> Special to the Ngantang context: the existing Excelsa rootstock (Module B) provides pre-built partial resistance. This configuration is structurally "anti-nematode" already — management strategy merely complements the existing biological advantage.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Excelsa Rootstock sebagai "Built-In Resistance"</span><span class="lang-en">✓ Excelsa Rootstock as "Built-In Resistance"</span></div>
+      <p class="lang-id">Salah satu insight terpenting dari literatur (Wintgens 2004, Ch. 8 dan ICCRI references): rootstock <em>Coffea liberica</em> (varietas Excelsa) memiliki <strong>resistensi parsial terhadap <em>Pratylenchus coffeae</em></strong> dibanding Robusta murni. Ini bukan resistensi total — pohon masih bisa terserang — tetapi laju infestasi dan dampak fungsionalnya lebih rendah. Konsekuensi untuk kebun kopi wakaf Ngantang: konfigurasi rootstock Excelsa yang sudah ada sebenarnya bagian dari strategi anti-nematoda yang tidak sengaja dirancang oleh praktik kolonial Hindia Belanda. Inilah keunggulan "warisan" yang seringkali tidak dipahami pengelola kebun modern.</p>
+      <p class="lang-en">One of the most important insights from the literature (Wintgens 2004, Ch. 8 and ICCRI references): the <em>Coffea liberica</em> rootstock (Excelsa variety) has <strong>partial resistance to <em>Pratylenchus coffeae</em></strong> compared to pure Robusta. This is not total resistance — trees can still be attacked — but the infestation rate and functional impact are lower. Consequence for the Ngantang waqf garden: the existing Excelsa rootstock configuration is actually part of an unintentional anti-nematode strategy designed by Dutch colonial practice. This is the "legacy" advantage often unrecognized by modern garden managers.</p>
+    </div>
+
+    <p class="lang-id">Untuk kebun kopi wakaf Ngantang, strategi praktisnya tersusun bertingkat: <strong>(1) Bongkar pisang Q4 2026</strong> menghilangkan reservoir nematoda. <strong>(2) Inventarisasi 1 tahun pertama</strong> identifikasi 10–15% pohon underperformer kronis. <strong>(3) Diagnostik akar pada subset terpilih</strong> konfirmasi keterlibatan nematoda. <strong>(4) Aplikasi dosis ekstra pupuk kandang</strong> tertarget hanya pada pohon terkonfirmasi. <strong>(5) Monitor multi-tahun</strong> respons pohon-pohon yang diintervensi via Form Input. Strategi tertarget ini jauh lebih efisien dari pendekatan kebun-luas yang membuang sumber daya.</p>
+    <p class="lang-en">For the Ngantang waqf garden, the practical strategy unfolds in stages: <strong>(1) Banana removal Q4 2026</strong> eliminates the nematode reservoir. <strong>(2) Year-one inventory</strong> identifies 10–15% chronic underperforming trees. <strong>(3) Root diagnostics on the selected subset</strong> confirms nematode involvement. <strong>(4) Targeted extra manure application</strong> only on confirmed-infested trees. <strong>(5) Multi-year monitoring</strong> of intervened-tree response via the Form Input. This targeted strategy is far more efficient than garden-wide approaches that waste resources.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Identifikasi & Intervensi Anti-Nematoda</span><span class="lang-en">Practice: Five Steps for Anti-Nematode Identification & Intervention</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Lima langkah operasional untuk kebun kopi wakaf Ngantang. Inventarisasi & diagnostik dilakukan oleh Mas Anto sebagai Koordinator Lapangan; aplikasi pupuk dilakukan oleh Pak Kumpul. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Five operational steps for the Ngantang waqf garden. Inventory & diagnostics by Mas Anto as Field Coordinator; fertilizer application by Pak Kumpul. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Inventarisasi Pohon Underperformer Kronis</span><span class="lang-en">Step 1 · Inventory Chronically Underperforming Trees</span></div>
+          <div class="step-text">
+            <span class="lang-id">Selama satu siklus panen (12 bulan), catat per pohon hasil panen aktual di Form Input. Identifikasi 10–15% pohon dengan produksi paling rendah yang tidak dapat dijelaskan oleh umur, kondisi tajuk, atau riwayat pemangkasan baru. Pohon-pohon inilah kandidat diagnostik nematoda.</span>
+            <span class="lang-en">Over one harvest cycle (12 months), record per-tree actual harvest in the Form Input. Identify the 10–15% lowest-producing trees not explained by age, canopy condition, or recent pruning history. These are nematode-diagnostic candidates.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Diagnostik Akar Lapangan</span><span class="lang-en">Step 2 · Field Root Diagnostics</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pada pohon kandidat: gali tanah sedalam 20–30 cm di sekitar drip-line, ekspos sebagian akar serap. Periksa visual: ada gall? Akar memendek/menggelap? Sistem akar tampak "tidak normal"? Bila ya, kategori "kemungkinan terinfestasi". Bila ragu, kirim sampel akar ke Lab UB Brawijaya untuk konfirmasi mikroskopik (Rp 200–300K).</span>
+            <span class="lang-en">On candidate trees: dig 20–30 cm deep around the drip-line, expose part of feeder roots. Visual inspection: galls? Shortened/darkened roots? Root system appearing "abnormal"? If yes, category "likely infested". If unsure, send a root sample to the UB Brawijaya Lab for microscopic confirmation (IDR 200–300K).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Aplikasi Dosis Ekstra Pupuk Kandang</span><span class="lang-en">Step 3 · Apply Extra Manure Dose</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pada pohon "kemungkinan terinfestasi": aplikasi <strong>50–100 kg pupuk kandang matang</strong> per pohon (vs 10–20 kg dosis rutin Modul E). Aplikasi via parit lingkar piringan yang lebih lebar (Modul D), kedalaman 10–15 cm. Tujuan: aktivasi mikrobioma anti-nematoda di zona akar.</span>
+            <span class="lang-en">On "likely infested" trees: apply <strong>50–100 kg mature manure</strong> per tree (vs 10–20 kg routine dose in Module E). Apply via a wider canopy-ring trench (Module D), 10–15 cm deep. Aim: activate the anti-nematode microbiome in the root zone.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Hilangkan Reservoir Nematoda — Bongkar Pisang (Cross-Ref Modul K)</span><span class="lang-en">Step 4 · Remove the Nematode Reservoir — Banana Removal (Cross-Ref Module K)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Strategi anti-nematoda gagal bila pisang masih ditumpangsarikan. Q4 2026 sesuai Klarifikasi Wakif: panen pisang amanah MWC NU, lalu tebang batang + bongkar rhizoma + buang tunas. Detail di Modul K. Tanpa langkah ini, populasi nematoda akan terus tersuplai.</span>
+            <span class="lang-en">The anti-nematode strategy fails if banana is still intercropped. Q4 2026 per the Waqif Clarification: harvest the trusteed banana for MWC NU, then fell stalk + remove rhizome + discard suckers. Details in Module K. Without this step, the nematode population is continuously supplied.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Monitor Respons 2 Siklus Panen</span><span class="lang-en">Step 5 · Monitor Response Over 2 Harvest Cycles</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pohon yang diintervensi dicatat khusus di dashboard monitor-v2. Bandingkan hasil panen tahun ke-1 dan ke-2 pasca-intervensi vs baseline. Target: pemulihan minimal 50% kapasitas produksi dalam 2 siklus. Bila tidak ada respons setelah 2 siklus, pertimbangkan: (a) intensifikasi dosis, atau (b) peremajaan via top-graft (Modul G).</span>
+            <span class="lang-en">Intervened trees are specially flagged in the monitor-v2 dashboard. Compare year-1 and year-2 post-intervention harvests against baseline. Target: at least 50% productive capacity recovery within 2 cycles. If no response after 2 cycles, consider: (a) dose intensification, or (b) rejuvenation via top-grafting (Module G).</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Nematoda tidak terlihat mata. Gejalanya non-spesifik (penurunan produksi yang juga bisa disebabkan banyak hal lain). Dalam klinik psikologi, kondisi yang mirip "tidak terlihat" termasuk apa saja? Bagaimana klinisi menyaring kemungkinan sebelum berani memberi diagnosis dan intervensi tertarget?</p>
+      <p class="prompt lang-en">1. Nematodes are invisible to the eye. Their symptoms are non-specific (production decline can have many causes). In clinical psychology, what "invisible" conditions parallel this? How do clinicians narrow down possibilities before settling on a diagnosis and targeted intervention?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Strategi tertarget memerlukan investasi diagnostik di muka (waktu, biaya lab). Pendekatan "siram semua pohon dengan dosis tinggi" lebih sederhana tetapi memboroskan. Bagaimana Anda akan menjustifikasi investasi diagnostik kepada pengelola yang ingin "tindakan cepat"?</p>
+      <p class="prompt lang-en">2. A targeted strategy requires upfront diagnostic investment (time, lab cost). The "high-dose for all trees" approach is simpler but wasteful. How would you justify the diagnostic investment to a manager who prefers "fast action"?</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Rootstock Excelsa di Ngantang memberi resistensi parsial pra-bawaan terhadap nematoda — keuntungan struktural yang tidak sengaja diturunkan oleh praktik kolonial Belanda. Dalam karir atau hidup Anda, adakah "warisan tak terlihat" yang ternyata menjadi keunggulan struktural? Apa yang berubah saat Anda menyadari nilai itu?</p>
+      <p class="prompt lang-en">3. The Excelsa rootstock at Ngantang provides pre-built partial resistance to nematodes — a structural advantage unintentionally bequeathed by Dutch colonial practice. In your career or life, is there an "invisible legacy" that turned out to be a structural advantage? What changed when you became aware of its value?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. <em>(hal 73 — Pupuk kandang anti-nematoda)</em> ⭐</li>
+      <li><strong>Hindorf, H. & Omondi, C.O. (2011).</strong> Coffee leaf rust and other coffee pests & diseases. International compilation. <em>P. coffeae management strategies.</em></li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.8 — Coffee Diseases & Pests. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI</a></li>
+      <li><strong>Klarifikasi Wakif 8 Mei 2026.</strong> Q3 — Bongkar pisang amanah MWC NU sebagai prasyarat strategi anti-nematoda. <em>(Internal · /SOP/Klarifikasi_Wakif_8Mei2026.docx)</em></li>
+      <li><strong>Modul B — Excelsa Rootstock.</strong> <a href="../B-excelsa-rootstock/index.html">Cross-reference</a> — basis biologis resistensi parsial Excelsa.</li>
+      <li><strong>Modul K — Pisang sebagai LARANGAN.</strong> <a href="../K-pisang-larangan/index.html">Cross-reference</a> — pisang sebagai reservoir nematoda; pembongkaran sebagai prasyarat.</li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain) · USDA ARS (Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../E-pupuk-organik-rutin/index.html"><span class="lang-id">← Modul E: Pupuk Organik Rutin</span><span class="lang-en">← Module E: Routine Organic Fertilizer</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="../G-pemangkasan-peremajaan/index.html" class="next"><span class="lang-id">Modul G: Pemangkasan Peremajaan →</span><span class="lang-en">Module G: Rejuvenation Pruning →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>
