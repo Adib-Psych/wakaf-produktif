@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Belajar SOP · Kebun Wakaf Ngantang — Personal Learning Garden</title>
+<link rel="stylesheet" href="_assets/style.css">
+<style>
+  .landing-hero{background:var(--earth);color:#fff;padding:48px 44px;border-radius:14px;border-left:8px solid var(--cherry);box-shadow:var(--shadow-card);margin-bottom:36px}
+  .landing-hero h1{font-size:36px;font-weight:900;letter-spacing:-0.5px;margin-bottom:10px;color:#fff}
+  .landing-hero h1 em{color:var(--sand);font-style:italic}
+  .landing-hero .sub{font-size:16px;color:var(--sand);max-width:680px;line-height:1.6}
+  .modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;margin-top:24px}
+  .module-card{background:#fff;border:1px solid rgba(58,74,85,0.12);border-radius:12px;padding:18px 20px;text-decoration:none;color:var(--ink);transition:all 0.18s;display:flex;flex-direction:column;box-shadow:var(--shadow-soft);position:relative}
+  .module-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-card);border-color:var(--moss)}
+  .module-card.locked{opacity:0.55;cursor:not-allowed}
+  .module-card.locked:hover{transform:none;box-shadow:var(--shadow-soft);border-color:rgba(58,74,85,0.12)}
+  .module-code{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--cherry-dark);text-transform:uppercase;margin-bottom:4px}
+  .module-title{font-size:16px;font-weight:800;color:var(--earth);line-height:1.3;margin-bottom:8px}
+  .module-desc{font-size:13px;color:var(--mute);line-height:1.5;flex:1;margin-bottom:10px}
+  .module-meta{font-size:11px;color:var(--mute);padding-top:10px;border-top:1px solid rgba(58,74,85,0.08);display:flex;justify-content:space-between;align-items:center}
+  .module-status{padding:2px 8px;border-radius:6px;font-size:10px;font-weight:800;letter-spacing:0.5px;text-transform:uppercase}
+  .status-ready{background:var(--moss-bg);color:var(--moss-dark)}
+  .status-soon{background:#f0f0f0;color:#999}
+  .progress-mini{height:3px;background:rgba(58,74,85,0.08);border-radius:3px;overflow:hidden;margin-top:6px}
+  .progress-mini-fill{height:100%;background:var(--moss);transition:width 0.4s}
+  .section-label{font-size:12px;letter-spacing:2px;font-weight:800;color:var(--cherry-dark);text-transform:uppercase;margin:32px 0 14px}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <nav class="nav">
+    <div class="brand">📚 Belajar SOP · Kebun Wakaf Ngantang</div>
+    <div class="breadcrumb"><a href="../monitor-v2.html">← Dashboard</a> · <a href="../sintesa-sop.html">Sintesa SOP</a></div>
+  </nav>
+
+  <div class="landing-hero">
+    <h1>Personal Learning Garden — <em>Adib's SOP Study</em></h1>
+    <p class="sub">Kurikulum modular 19 topik SOP perawatan Robusta Kebun Wakaf Ngantang, dirancang untuk pendalaman teoretis dengan pendekatan praktis. Setiap modul memuat narasi, visual dari sumber terbuka (open resources), step-by-step praktik, dan refleksi diri. Catatan & progres tersimpan otomatis di perangkat Anda.</p>
+  </div>
+
+  <div class="section-label">🌱 SOP Awal Pra-Panen — 19 Modul</div>
+
+  <div class="modules-grid">
+
+    <a href="A-klon-robusta-zona-basah/index.html" class="module-card">
+      <div class="module-code">Topik A</div>
+      <div class="module-title">Klon Robusta Zona Basah</div>
+      <div class="module-desc">Mengapa pemilihan klon menentukan masa depan kebun. BP 358 & SA 237 sebagai kandidat top-graft.</div>
+      <div class="module-meta">
+        <span class="module-status status-ready">Siap Dipelajari</span>
+        <span>~20 menit</span>
+      </div>
+    </a>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik B</div>
+      <div class="module-title">Excelsa sebagai Rootstock</div>
+      <div class="module-desc">Konteks kritis kebun NGT — Excelsa legacy sebagai optimization adaptive.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~20 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik C</div>
+      <div class="module-title">Pemupukan Kimia Umur 5–10 Thn</div>
+      <div class="module-desc">Dosis BRIN — Urea, SP-36, KCl, Kieserit, plus Dolomit untuk koreksi pH Andisol.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~20 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik D</div>
+      <div class="module-title">Cara Aplikasi Pupuk</div>
+      <div class="module-desc">Parit lingkar piringan — kenapa 30–50 cm dari batang adalah zona akar radial dominan.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik E</div>
+      <div class="module-title">Pupuk Organik Rutin</div>
+      <div class="module-desc">5 kg/pohon/tahun — kompos kandang sebagai amandemen tanah Andisol.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik F</div>
+      <div class="module-title">Pupuk Kandang Anti-Nematoda</div>
+      <div class="module-desc">Strategi dual-layer: rootstock genetik + parit isolasi + pupuk kandang reaktif.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik G</div>
+      <div class="module-title">Pemangkasan Peremajaan</div>
+      <div class="module-desc">Tipe "payung" Lampung 100–150 cm — preserve Excelsa rootstock legacy.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~25 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik H</div>
+      <div class="module-title">Pangkas Berat Pasca-Panen</div>
+      <div class="module-desc">Timing September — 8-12 bulan recovery sebelum pembungaan Mei-Jun.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik I</div>
+      <div class="module-title">Pangkas Ringan (Wiwilan)</div>
+      <div class="module-desc">Frekuensi MH vs Kemarau · rasio cabang ideal 35/35/30.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik J</div>
+      <div class="module-title">Penaung Leguminosa</div>
+      <div class="module-desc">Lamtoro PG 79 + durian sebagai sistem agroforestri syariah-aware.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~20 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik K</div>
+      <div class="module-title">Pisang sebagai Penaung</div>
+      <div class="module-desc">Larangan total — Pratylenchus coffeae host range termasuk Musa spp.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik L</div>
+      <div class="module-title">Rorak Konservasi Tanah</div>
+      <div class="module-desc">100×30×30 cm di Bidang 3 — dual benefit: konservasi + kompos in-situ.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik M</div>
+      <div class="module-title">PBKo (Hypothenemus hampei)</div>
+      <div class="module-desc">Brocap trap — pilot Mei 2026 Bidang 4 → full deploy Nov-Des 2026.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~25 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik N</div>
+      <div class="module-title">Cercospora coffeicola</div>
+      <div class="module-desc">Bercak daun — ekstrak cengkeh 1× per 3 minggu menjelang MH.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~20 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik O</div>
+      <div class="module-title">Petik Selektif Merah</div>
+      <div class="module-desc">Kriteria mutu panen — 5 stadium kematangan + 2 tahap sortasi.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik P</div>
+      <div class="module-title">Window 12 Jam Petik→Proses</div>
+      <div class="module-desc">Cegah pra-fermentasi spontan — 12 jam = conservative middle of 6-24 jam international.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~10 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik Q</div>
+      <div class="module-title">Kadar Air Biji</div>
+      <div class="module-desc">≤12,5% SNI — sun-dry via Bonsari sekarang, roadmap thermal upgrade dengan BRIN.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik R</div>
+      <div class="module-title">Pestisida Terlarang</div>
+      <div class="module-desc">Forward-compliance — Stockholm POPs + Permentan 39/2015 (12 bahan aktif).</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~20 menit</span>
+      </div>
+    </div>
+
+    <div class="module-card locked">
+      <div class="module-code">Topik S</div>
+      <div class="module-title">Mutu Biji SNI</div>
+      <div class="module-desc">Target bertahap Mutu 3 → 2 → 1 dengan staged quality improvement.</div>
+      <div class="module-meta">
+        <span class="module-status status-soon">Segera Hadir</span>
+        <span>~15 menit</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-label">📖 Filosofi Belajar</div>
+
+  <div class="box box-moss">
+    <div class="box-label">🎯 Format Hybrid · Personal Learning Garden</div>
+    <p style="margin:0;font-size:14.5px;color:var(--ink);line-height:1.65">Setiap modul mengikuti alur: <strong>Story Intro</strong> → <strong>Konteks Ngantang</strong> → <strong>Teori Dasar</strong> (dengan analogi psikologi untuk schema building) → <strong>Visual Tour</strong> (foto open-source) → <strong>Deep Dive</strong> (komparasi 4-arah + video referensi) → <strong>Praktik Step-by-Step</strong> (checklist tersimpan) → <strong>Refleksi</strong> (3 prompt, catatan tersimpan otomatis).</p>
+  </div>
+
+  <div class="box box-amber">
+    <div class="box-label">📷 Sumber Media Terbuka</div>
+    <p style="margin:0;font-size:14.5px;color:var(--ink);line-height:1.65">Foto, video, dan infografis di setiap modul diambil dari sumber terbuka (Wikimedia Commons, Unsplash, YouTube CC-licensed, FAO image library, jurnal Open Access) dengan atribusi lengkap. Strategi ini memungkinkan modul live secepatnya, dan akan diganti bertahap dengan media produksi sendiri seiring waktu.</p>
+  </div>
+
+  <div class="box box-uniq">
+    <div class="box-label">💾 Privacy & Storage</div>
+    <p style="margin:0;font-size:14.5px;color:var(--ink);line-height:1.65">Catatan refleksi dan progres checklist tersimpan secara lokal di perangkat ini saja (browser localStorage) — tidak dikirim ke server mana pun. Untuk akses dari perangkat lain, ekspor catatan secara manual.</p>
+  </div>
+
+</div>
+
+</body>
+</html>

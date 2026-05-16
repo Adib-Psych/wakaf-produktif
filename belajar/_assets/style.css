@@ -1,0 +1,157 @@
+/* ═══════════════════════════════════════════════
+   Belajar SOP — Personal Learning Garden
+   Wakaf Produktif Kebun Kopi Ngantang
+   Palette: Lesson Learned (warm slate + earth)
+   ═══════════════════════════════════════════════ */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  /* Lesson Learned palette */
+  --paper:#FAF7F2; --s1:#FFFFFF; --s2:#EFEAE0; --s3:#DDD5C7;
+  --earth:#3A4A55; --earth-deep:#2D3742; --ink:#3A4A55;
+  --mute:#6B7B85; --mute-light:#8FA0A8;
+  --cherry:#C66E5C; --cherry-dark:#A85645; --cherry-bg:#F5E3DD;
+  --amber:#C4906A; --amber-dark:#8B6914; --amber-bg:#F5EBE0;
+  --gold:#C4906A;
+  --moss:#7B9B7E; --moss-dark:#5C7A5E; --moss-bg:#E8EFE9; --moss-light:#EFF4ED;
+  --sage:#9CB4A4; --sand:#DDD5C7; --cream:#FAF7F2;
+  --blue:#5A8AA0; --uniq:#A89BB8; --uniq-bg:#EFE9F2;
+  --shadow-soft:0 2px 8px rgba(46,55,66,0.08);
+  --shadow-card:0 4px 16px rgba(46,55,66,0.10);
+}
+
+html,body{font-family:'Aptos','Aptos Light',-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;
+  background:var(--paper);color:var(--ink);line-height:1.65;font-size:16px;-webkit-font-smoothing:antialiased}
+
+.page{max-width:880px;margin:0 auto;padding:32px 24px 80px}
+
+/* ───── HEADER NAV ───── */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(58,74,85,0.12);margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.nav .brand{font-size:13px;font-weight:800;letter-spacing:3px;color:var(--cherry-dark);text-transform:uppercase}
+.nav .breadcrumb{font-size:13px;color:var(--mute)}
+.nav .breadcrumb a{color:var(--moss-dark);text-decoration:none;font-weight:700}
+.nav .breadcrumb a:hover{text-decoration:underline}
+
+/* ───── HERO ───── */
+.hero{background:var(--earth);color:#fff;padding:36px 36px 36px 44px;border-radius:14px;border-left:8px solid var(--cherry);box-shadow:var(--shadow-card);margin-bottom:32px;position:relative}
+.hero .topic-badge{font-size:11px;font-weight:800;letter-spacing:4px;color:var(--sage);margin-bottom:10px;display:flex;align-items:center;gap:12px}
+.hero .topic-badge .dot{width:10px;height:10px;background:var(--cherry);border-radius:50%}
+.hero h1{font-size:32px;font-weight:900;line-height:1.2;letter-spacing:-0.5px;margin-bottom:8px;color:#fff}
+.hero h1 em{color:var(--sand);font-style:italic;font-weight:700}
+.hero .subtitle{font-size:15px;color:var(--sand);font-weight:500;margin-bottom:18px}
+.hero .outcomes{background:rgba(255,255,255,0.08);border-radius:10px;padding:16px 18px;font-size:14px}
+.hero .outcomes-label{font-size:10px;letter-spacing:2px;color:var(--sage);font-weight:800;text-transform:uppercase;margin-bottom:8px}
+.hero .outcomes ul{list-style:none;padding:0}
+.hero .outcomes li{padding:4px 0 4px 22px;position:relative;color:var(--cream);line-height:1.5}
+.hero .outcomes li::before{content:'→';position:absolute;left:0;color:var(--cherry);font-weight:900}
+
+/* ───── HERO IMAGE (open-source attribution) ───── */
+.hero-img{margin-bottom:32px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow-card);position:relative}
+.hero-img img{width:100%;height:auto;display:block;max-height:400px;object-fit:cover}
+.hero-img .credit{position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.65);color:#fff;padding:6px 12px;font-size:11px;border-top-left-radius:8px}
+.hero-img .credit a{color:#fff;text-decoration:underline}
+
+/* ───── SECTIONS ───── */
+.sec{margin-bottom:36px}
+.sec-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.sec-head .num{width:36px;height:36px;border-radius:50%;background:var(--moss);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;flex-shrink:0;box-shadow:0 2px 0 var(--moss-dark)}
+.sec-head .num.cherry{background:var(--cherry);box-shadow:0 2px 0 var(--cherry-dark)}
+.sec-head .num.amber{background:var(--gold);box-shadow:0 2px 0 #5d4910}
+.sec-head .num.uniq{background:var(--uniq);box-shadow:0 2px 0 #4a1369}
+.sec-head h2{font-size:22px;font-weight:900;color:var(--earth);letter-spacing:-0.3px}
+.sec-head .label{font-size:11px;letter-spacing:2px;color:var(--mute);font-style:italic;text-transform:uppercase}
+
+.sec p{margin-bottom:14px;font-size:15.5px;text-align:justify;color:var(--ink)}
+.sec p strong{color:var(--earth)}
+.sec p em{color:var(--cherry-dark);font-style:italic;font-weight:600}
+.sec a{color:var(--moss-dark);font-weight:600;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+.sec a:hover{color:var(--cherry-dark)}
+
+/* ───── COLORED BOXES ───── */
+.box{padding:18px 22px;border-radius:12px;margin:18px 0;position:relative}
+.box-cherry{background:var(--cherry-bg);border-left:5px solid var(--cherry-dark)}
+.box-moss{background:var(--moss-bg);border-left:5px solid var(--moss-dark)}
+.box-amber{background:var(--amber-bg);border-left:5px solid var(--amber-dark)}
+.box-uniq{background:var(--uniq-bg);border-left:5px solid var(--uniq)}
+.box .box-label{font-size:11px;letter-spacing:2px;font-weight:800;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.box-cherry .box-label{color:var(--cherry-dark)}
+.box-moss .box-label{color:var(--moss-dark)}
+.box-amber .box-label{color:var(--amber-dark)}
+.box-uniq .box-label{color:var(--uniq)}
+
+/* ───── ANALOGY CALLOUT (psikologi → agronomi) ───── */
+.analogy{background:linear-gradient(135deg,#EFE9F2 0%,#E5DFE9 100%);border:1px dashed var(--uniq);padding:18px 22px;border-radius:12px;margin:20px 0}
+.analogy .label{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--uniq);text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.analogy .label::before{content:'🧠';font-size:14px}
+
+/* ───── MEDIA GALLERY ───── */
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:20px 0}
+.gallery-item{background:#fff;border:1px solid rgba(58,74,85,0.1);border-radius:10px;overflow:hidden;box-shadow:var(--shadow-soft);transition:transform 0.2s}
+.gallery-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-card)}
+.gallery-item img{width:100%;height:160px;object-fit:cover;display:block}
+.gallery-item .caption{padding:10px 12px;font-size:12.5px;color:var(--ink);line-height:1.4}
+.gallery-item .credit{font-size:10px;color:var(--mute);margin-top:6px;font-style:italic}
+.gallery-item .credit a{color:var(--moss-dark)}
+
+/* ───── VIDEO EMBED ───── */
+.video-wrap{position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:10px;margin:18px 0;box-shadow:var(--shadow-card)}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.video-credit{font-size:12px;color:var(--mute);font-style:italic;margin-top:-8px;margin-bottom:18px;text-align:right}
+.video-credit a{color:var(--moss-dark)}
+
+/* ───── KOMPARASI TABLE ───── */
+.komparasi{width:100%;border-collapse:separate;border-spacing:0;margin:20px 0;font-size:13.5px;box-shadow:var(--shadow-soft);border-radius:10px;overflow:hidden}
+.komparasi th{background:var(--earth);color:#fff;padding:10px 12px;text-align:left;font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.komparasi td{padding:12px 14px;border-top:1px solid #f0f0f0;vertical-align:top;line-height:1.55;background:#fff}
+.komparasi td strong{color:var(--earth)}
+
+/* ───── PRACTICE CHECKLIST ───── */
+.steps{counter-reset:step-counter;padding:8px 0}
+.step{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid rgba(58,74,85,0.08);align-items:flex-start}
+.step:last-child{border-bottom:none}
+.step-check{width:24px;height:24px;border-radius:6px;border:2px solid var(--moss);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:#fff;transition:all 0.15s}
+.step-check.done{background:var(--moss);border-color:var(--moss-dark)}
+.step-check.done::after{content:'✓';color:#fff;font-weight:900;font-size:14px}
+.step-body{flex:1}
+.step-num{display:inline-block;font-size:11px;letter-spacing:1px;font-weight:800;color:var(--cherry-dark);text-transform:uppercase;margin-bottom:2px}
+.step-text{font-size:14.5px;color:var(--ink);line-height:1.55}
+
+/* ───── REFLECTION ───── */
+.reflection{background:#fff;border:2px solid var(--moss-dark);border-radius:14px;padding:24px 26px;margin:24px 0;position:relative}
+.reflection::before{content:'🪞';position:absolute;top:-12px;left:24px;background:var(--paper);padding:0 10px;font-size:20px}
+.reflection .label{font-size:12px;letter-spacing:2px;color:var(--moss-dark);font-weight:800;text-transform:uppercase;margin-bottom:14px}
+.reflection .prompt{font-size:14.5px;color:var(--ink);margin-bottom:10px;line-height:1.6;font-style:italic}
+.reflection textarea{width:100%;min-height:120px;padding:12px 14px;border:1px solid rgba(58,74,85,0.2);border-radius:8px;font-family:inherit;font-size:14px;line-height:1.55;color:var(--ink);background:var(--paper);resize:vertical}
+.reflection textarea:focus{outline:2px solid var(--moss);outline-offset:2px;border-color:var(--moss)}
+.reflection .save-note{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:12px;color:var(--mute);font-style:italic}
+.reflection .save-status{color:var(--moss-dark);font-weight:600}
+
+/* ───── CITATION FOOTER ───── */
+.citations{background:#fff;border:1px solid rgba(58,74,85,0.12);border-radius:12px;padding:22px 26px;margin-top:32px;font-size:13px}
+.citations h3{font-size:14px;font-weight:900;color:var(--earth);margin-bottom:14px;text-transform:uppercase;letter-spacing:1.5px}
+.citations ul{list-style:none;padding:0}
+.citations li{padding:6px 0 6px 18px;position:relative;color:var(--mute);line-height:1.5;font-size:12.5px}
+.citations li::before{content:'•';position:absolute;left:4px;color:var(--moss);font-weight:900}
+.citations li strong{color:var(--earth)}
+.citations a{color:var(--moss-dark);text-decoration:underline}
+
+/* ───── NAV PREV/NEXT ───── */
+.module-nav{display:flex;justify-content:space-between;align-items:center;margin-top:32px;padding-top:24px;border-top:1px solid rgba(58,74,85,0.12)}
+.module-nav a{padding:10px 18px;background:#fff;border:1px solid rgba(58,74,85,0.15);border-radius:8px;color:var(--earth);text-decoration:none;font-weight:600;font-size:13.5px;transition:all 0.15s}
+.module-nav a:hover{background:var(--moss-bg);border-color:var(--moss)}
+.module-nav .next{background:var(--moss);color:#fff;border-color:var(--moss-dark)}
+.module-nav .next:hover{background:var(--moss-dark)}
+
+/* ───── PROGRESS BAR (header) ───── */
+.progress-bar{height:4px;background:rgba(58,74,85,0.08);border-radius:4px;overflow:hidden;margin:8px 0 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--moss) 0%,var(--cherry) 100%);transition:width 0.4s ease;border-radius:4px}
+
+/* ───── RESPONSIVE ───── */
+@media (max-width:640px){
+  .page{padding:20px 16px 60px}
+  .hero{padding:24px}
+  .hero h1{font-size:24px}
+  .gallery{grid-template-columns:1fr}
+  .sec-head h2{font-size:18px}
+}
