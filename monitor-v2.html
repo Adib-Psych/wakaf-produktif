@@ -7761,14 +7761,41 @@ function autoCreateUpahFromEntry(entry) {
         const m = String(normalized.kebun).match(/[KkBb]?(\d)/);
         normalized.bidang = m ? m[1] : normalized.kebun;
       }
-      // lapor.html pakai 'catatan' → dashboard pakai 'detail'
-      if (normalized.catatan !== undefined && normalized.detail === undefined) {
+      // lapor.html pakai 'catatan' (narrative text) + 'detail' (object dynamic fields)
+      // Dashboard pakai 'detail' sbg STRING narrative untuk display di table.
+      // Strategy: pindahkan object 'detail' ke 'detail_fields' (preserve structured data),
+      // lalu set 'detail' = 'catatan' (narrative text untuk display).
+      if (normalized.detail !== undefined && typeof normalized.detail === 'object' && normalized.detail !== null) {
+        normalized.detail_fields = normalized.detail;
+        normalized.detail = normalized.catatan || '';
+      } else if (normalized.catatan !== undefined && (normalized.detail === undefined || normalized.detail === null || normalized.detail === '')) {
         normalized.detail = normalized.catatan;
       }
       // Tag source
       normalized.src = normalized.src || 'lapor_pwa';
       return normalized;
     }
+
+    // Migration: fix existing STATE.laporan entries that have detail as object (legacy data)
+    function fixLegacyDetailObjects() {
+      let fixedCount = 0;
+      if (Array.isArray(STATE.laporan)) {
+        STATE.laporan.forEach(l => {
+          if (l.detail && typeof l.detail === 'object') {
+            l.detail_fields = l.detail;
+            l.detail = l.catatan || '';
+            fixedCount++;
+          }
+        });
+        if (fixedCount > 0) {
+          localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+          console.log(`[Migration] Fixed ${fixedCount} legacy entries with object detail`);
+          if (typeof renderLog === 'function') renderLog();
+        }
+      }
+    }
+    // Run migration on page load
+    fixLegacyDetailObjects();
 
     // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
     onSnapshot(q, (snapshot) => {
