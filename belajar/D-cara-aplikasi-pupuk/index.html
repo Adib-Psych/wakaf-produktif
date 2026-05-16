@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul D — Cara Aplikasi Pupuk: Parit Lingkar Piringan · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Cara aplikasi pupuk yang benar — parit lingkar piringan, kedalaman 5–10 cm, dan analogi klinis routes of administration.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul D</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module D</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="D">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul D · Nutrisi & Pemupukan · 4 dari 19</span>
+      <span class="lang-en">Module D · Nutrition & Fertilization · 4 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Cara Aplikasi Pupuk: <em>Parit Lingkar Piringan</em></span>
+      <span class="lang-en">Fertilizer Application: <em>The Canopy-Ring Trench</em></span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Bukan hanya berapa banyak, tetapi <em>di mana dan bagaimana</em> pupuk ditempatkan — analogi <em>routes of administration</em> dari farmakoterapi klinis</span>
+      <span class="lang-en">Not only how much, but <em>where and how</em> fertilizer is placed — a <em>routes of administration</em> analogy from clinical pharmacotherapy</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Mengapa lokasi penempatan pupuk (proyeksi tajuk, bukan pangkal batang) menentukan bioavailability — bukan hanya jumlah yang ditabur</span>
+          <span class="lang-en">Why placement location (canopy projection, not the trunk base) determines bioavailability — not merely the amount applied</span>
+        </li>
+        <li>
+          <span class="lang-id">Anatomi parit lingkar piringan: lebar 15–20 cm, kedalaman 5–10 cm, radius pada proyeksi tepi tajuk (drip-line)</span>
+          <span class="lang-en">Anatomy of the canopy-ring trench: 15–20 cm wide, 5–10 cm deep, at the canopy drip-line radius</span>
+        </li>
+        <li>
+          <span class="lang-id">Tiga kesalahan umum yang menggagalkan pemupukan: terlalu dekat pangkal · terlalu dangkal/tidak ditutup · tabur-tebar permukaan</span>
+          <span class="lang-en">Three common mistakes that derail fertilization: too close to the trunk · too shallow / uncovered · surface broadcast</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa <em>routes of administration</em> (rute pemberian) sebanding pentingnya dengan dosis — analogi obat oral vs IV vs topical pada manusia</span>
+          <span class="lang-en">Why <em>routes of administration</em> matter as much as dose — the analogy of oral vs IV vs topical drug delivery in humans</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Plantation_in_Coorg.jpg?width=1280" alt="Coffee plantation rows on hillside, Coorg, India" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Kebun kopi di lereng Coorg, India — arsitektur tajuk pohon yang menentukan lokasi aplikasi pupuk · </span><span class="lang-en">Photo: Coffee plantation on a hillside in Coorg, India — canopy architecture that determines where fertilizer is applied · </span><a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation_in_Coorg.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Dua pohon kopi di kebun yang sama. Keduanya menerima jumlah pupuk yang persis sama dari sak yang sama. Tetapi setelah enam bulan: pohon A tumbuh lebat, daun hijau pekat, cabang produksi penuh. Pohon B tetap kerdil, daun pucat, hasil panen menurun. Apa yang berbeda? Bukan dosisnya — melainkan <em>cara pupuk itu ditempatkan di tanah</em>.</p>
+    <p class="lang-en">Two coffee trees in the same garden. Both receive the exact same amount of fertilizer from the same sack. But after six months: tree A grows lush, deep-green leaves, production branches full. Tree B remains stunted, pale leaves, harvest declining. What is different? Not the dose — but <em>how the fertilizer is placed in the soil</em>.</p>
+
+    <p class="lang-id">Setelah Modul C mengunci <em>berapa banyak</em> dan <em>kapan</em>, modul ini menjawab pertanyaan berikutnya: <em>di mana dan bagaimana</em>. Pemupukan kopi memiliki teknik aplikasi yang sangat spesifik — disebut <strong>parit lingkar piringan</strong>. Bukan sekadar tabur di sekitar pohon, melainkan menggali parit dangkal di lokasi yang tepat, menempatkan pupuk di dalamnya, lalu menutup kembali dengan tanah. Setiap langkah memiliki alasan biologis yang dapat dijelaskan.</p>
+    <p class="lang-en">After Module C locked in <em>how much</em> and <em>when</em>, this module answers the next question: <em>where and how</em>. Coffee fertilization has a very specific application technique — called the <strong>canopy-ring trench</strong>. Not merely scattered around the tree, but a shallow trench dug at the right location, the fertilizer placed inside, and then covered with soil. Every step has a biological reason that can be explained.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi kopi dari awal — bukan oleh ahli agronomi. Pendekatannya: meminjam konsep <em>routes of administration</em> dari farmakoterapi klinis. Sebagaimana obat yang identik dapat memberikan efek berbeda tergantung rute pemberiannya (oral, IV, topikal, sublingual), pupuk yang identik juga memberikan ketersediaan hayati yang sangat berbeda tergantung cara aplikasinya di tanah.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning coffee agronomy from scratch — not by an agronomist. The approach: borrow the concept of <em>routes of administration</em> from clinical pharmacotherapy. Just as an identical drug can produce very different effects depending on its route (oral, IV, topical, sublingual), an identical fertilizer also delivers vastly different bioavailability depending on how it is applied in the soil.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Kebun kopi wakaf di Ngantang berada pada lereng dengan kemiringan yang nyata — terutama di Bidang 3 (yang paling miring). Saat hujan deras turun (2.500–3.000 mm setahun), tanah dengan kemiringan ini mudah mengalami <em>surface run-off</em>: air mengalir di permukaan, membawa pupuk yang ditabur ke arah lembah, jauh dari pohon yang membutuhkan. Topografi ini menambah satu alasan struktural lagi mengapa pupuk harus <strong>masuk ke dalam tanah</strong> via parit, bukan tertinggal di permukaan.</p>
+    <p class="lang-en">The Ngantang waqf garden sits on a noticeably sloping terrain — especially Block 3 (the steepest). When heavy rains fall (2,500–3,000 mm per year), soil with this slope is prone to <em>surface run-off</em>: water flows across the surface, carrying surface-broadcast fertilizer toward the valley, away from the trees that need it. This topography adds one more structural reason why fertilizer must <strong>enter the soil</strong> via a trench, not be left on the surface.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Di Ngantang, eksekusi lapangan dilakukan oleh <strong>Pak Kumpul</strong> sebagai pekerja Bagian Bawah Pohon (yang sebelumnya juga membangun rorak — Modul L). Aplikasi pupuk parit lingkar piringan memerlukan: cangkul atau garpu tanah, pengukur (langkah kaki cukup), wadah pupuk, dan disiplin untuk konsisten radius dan kedalaman di semua pohon. Untuk 750 pohon × dua aplikasi setahun, total ada 1.500 kali "buka-tutup parit" — pekerjaan yang serius dan layak dianggarkan tersendiri di RAB.</p>
+      <p class="lang-en">In Ngantang, field execution is carried out by <strong>Pak Kumpul</strong> as the Below-Tree worker (who has also built the rorak conservation pits — Module L). Trench-application fertilization requires: a hoe or garden fork, a measure (foot-paces will do), a fertilizer container, and the discipline to maintain consistent radius and depth across all trees. For 750 trees × two applications per year, that means a total of 1,500 trench "open-and-close" cycles — serious work that deserves its own budget line in the RAB.</p>
+    </div>
+
+    <p class="lang-id">Implikasinya: cara aplikasi bukan detail kosmetik melainkan <strong>multiplier dari investasi pupuk</strong>. Pupuk Rp 27 juta setahun (RAB Siklus 2027) yang ditabur tebar di permukaan dapat memberi hasil yang sebanding dengan setengah dosis tetapi diaplikasikan benar. Sebaliknya: dosis benar + aplikasi benar = nilai investasi penuh tercapai. Modul ini sangat penting di-cross-check oleh Wakif sebelum eksekusi aplikasi pertama, supaya tidak terjadi kebocoran nilai.</p>
+    <p class="lang-en">The implication: application technique is not a cosmetic detail but a <strong>multiplier of the fertilizer investment</strong>. An IDR 27 million annual fertilizer outlay (RAB Cycle 2027) broadcast on the surface can yield results comparable to half the dose applied correctly. Conversely: correct dose + correct application = full investment value realized. This Module deserves a careful cross-check from the Waqif before the first application, to prevent value leakage.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Anatomi Parit Lingkar Piringan</span><span class="lang-en">Theory: Anatomy of the Canopy-Ring Trench</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Mengapa parit, bukan sekadar tabur? Karena akar kopi yang menyerap nutrisi — disebut <strong>akar serap (feeder roots)</strong> — bukan akar tunggang yang besar di dekat pangkal batang, melainkan akar halus yang menyebar mendatar di lapisan tanah atas 5–20 cm, terkonsentrasi di sekitar <strong>proyeksi tepi tajuk (drip-line)</strong>. Inilah lokasi biologis tempat pupuk perlu ditempatkan agar terambil — bukan di mana pun lain.</p>
+    <p class="lang-id">Anatomi parit lingkar piringan yang menjadi standar:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Lokasi</strong> — melingkar pada proyeksi tepi tajuk pohon (di tanah, tepat di bawah ujung dedaunan terjauh). Bukan di pangkal batang. Bukan di luar tajuk.</li>
+      <li><strong>Kedalaman</strong> — 5–10 cm. Cukup dalam agar pupuk tidak terbawa run-off, cukup dangkal agar berada di zona akar serap aktif.</li>
+      <li><strong>Lebar</strong> — 15–20 cm. Memberi ruang penyebaran pupuk yang merata, bukan terkonsentrasi di satu titik.</li>
+      <li><strong>Penutup</strong> — pasca-aplikasi, parit harus ditutup kembali dengan tanah yang sama. Tanah penutup mengurangi penguapan, melindungi dari sinar UV, dan mempercepat reaksi dengan kelembapan tanah.</li>
+    </ul>
+    <p class="lang-en">Why a trench, not merely scattering? Because the coffee roots that absorb nutrients — called <strong>feeder roots</strong> — are not the large taproots near the trunk base, but fine roots spreading horizontally through the upper 5–20 cm of soil, concentrated around the <strong>canopy drip-line (the projection of the canopy edge)</strong>. This is the biological location where fertilizer must be placed for uptake — not anywhere else.</p>
+    <p class="lang-en">The standard anatomy of the canopy-ring trench:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Location</strong> — circling the canopy drip-line (on the ground directly below the outermost reach of leaves). Not at the trunk base. Not outside the canopy.</li>
+      <li><strong>Depth</strong> — 5–10 cm. Deep enough that fertilizer is not washed off by run-off, shallow enough to remain in the active feeder-root zone.</li>
+      <li><strong>Width</strong> — 15–20 cm. Provides room for even spread of fertilizer, not concentrated at a single point.</li>
+      <li><strong>Cover</strong> — after application, the trench must be closed back with the same soil. The soil cover reduces volatilization, protects from UV, and speeds reaction with soil moisture.</li>
+    </ul>
+
+    <p class="lang-id">Kenapa proyeksi tajuk, bukan pangkal batang? Karena <strong>akar serap berada di sana</strong>. Akar pohon kopi yang aktif menyerap air dan nutrisi terkonsentrasi di area yang diteduhi oleh tajuk — tepat di bawah ujung dedaunan terjauh. Pangkal batang justru sebaliknya: di sana hanya ada akar tunggang dan akar struktural yang fungsinya jangkar mekanis, bukan penyerap. Menabur pupuk di pangkal batang sama dengan memberikan obat di lokasi yang tidak ada reseptornya — sia-sia dan kadang justru merusak (akumulasi garam pada leher batang dapat menyebabkan "girdling" / pengikatan dan luka kulit).</p>
+    <p class="lang-en">Why the canopy drip-line, not the trunk base? Because <strong>that is where the feeder roots live</strong>. The coffee roots actively absorbing water and nutrients are concentrated in the area shaded by the canopy — directly below the outermost reach of the leaves. The trunk base is the opposite: only taproots and structural anchor-roots are there, with the function of mechanical anchorage, not absorption. Broadcasting fertilizer at the trunk base is like giving a drug at a site without receptors — futile and sometimes harmful (salt accumulation around the trunk collar can cause "girdling" / strangulation and bark injury).</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Routes of Administration</span><span class="lang-en">An Analogy from Clinical Psychology — Routes of Administration</span></div>
+      <p class="lang-id">Dalam farmakoterapi, satu konsep dasar yang diajarkan di semester awal: <strong>route of administration</strong> menentukan <em>bioavailability</em> sebuah obat. Aspirin oral, intravena, atau topikal — molekul aktifnya identik, tetapi efek klinisnya bisa sangat berbeda. Aspirin IV menghasilkan kadar plasma puncak dalam menit; aspirin oral memerlukan 30–60 menit karena harus melewati lambung dan first-pass metabolism; aspirin topikal hampir tidak mencapai darah sistemik. <em>Rute pemberian sama pentingnya dengan dosis itu sendiri.</em></p>
+      <p class="lang-en">In pharmacotherapy, one foundational concept taught in the first semester: <strong>route of administration</strong> determines a drug's <em>bioavailability</em>. Oral aspirin, IV aspirin, or topical aspirin — the active molecule is identical, but the clinical effect can differ vastly. IV aspirin produces peak plasma levels in minutes; oral aspirin takes 30–60 minutes because it must pass through the stomach and first-pass metabolism; topical aspirin barely reaches systemic circulation. <em>The route of administration is as important as the dose itself.</em></p>
+    </div>
+
+    <p class="lang-id">Pemupukan kopi mengikuti logika yang sama. Urea yang sama, diberikan via tiga rute berbeda di kebun, menghasilkan bioavailability yang sangat berbeda: <strong>(1) tabur tebar permukaan</strong> — pupuk menguap (NH₃ dari Urea), tercuci hujan, terbakar UV. Bioavailability ke akar pohon mungkin hanya 20–30%. <strong>(2) parit lingkar piringan ditutup tanah</strong> — pupuk terlindung, perlahan terurai oleh kelembapan tanah, langsung di zona akar serap. Bioavailability 70–85%. <strong>(3) injeksi langsung ke akar atau hidroponik</strong> — bioavailability 100%, tetapi memerlukan infrastruktur khusus yang tidak praktis di kebun. Cara aplikasi parit adalah optimasi praktis terbaik yang tersedia untuk skala kebun kecil/menengah.</p>
+    <p class="lang-en">Coffee fertilization follows the same logic. The same Urea, given via three different routes in the garden, yields vastly different bioavailability: <strong>(1) surface broadcast</strong> — fertilizer volatilizes (NH₃ from Urea), is washed away by rain, burnt by UV. Bioavailability to roots may be only 20–30%. <strong>(2) canopy-ring trench, soil-covered</strong> — fertilizer is protected, slowly dissolved by soil moisture, directly in the feeder-root zone. Bioavailability 70–85%. <strong>(3) direct root injection or hydroponics</strong> — bioavailability 100%, but requires specialized infrastructure that is impractical at garden scale. The trench application is the best practical optimization available at small-to-medium garden scale.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Anatomi Tajuk, Akar Serap, dan Cara Eksekusi</span><span class="lang-en">Visual Tour: Canopy Anatomy, Feeder Roots, and How to Execute</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Cara aplikasi pupuk paling baik dipahami secara visual. Enam gambar berikut menjelaskan: lokasi proyeksi tepi tajuk, alat manual yang dipakai, kontras antara aplikasi benar dan aplikasi salah, hingga referensi profil tanah Ngantang yang menjadi konteks teknik ini.</p>
+    <p class="lang-en">Fertilizer application is best understood visually. The six images below explain: the canopy drip-line location, the manual tools used, the contrast between correct and incorrect application, and a reference to the Ngantang soil profile that frames this technique.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Tree-dripline.png?width=640" alt="Diagram showing tree canopy, drip-line, and feeder root zone" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Diagram drip-line</strong> — garis bayangan tajuk pohon. Akar serap (feeder roots) terkonsentrasi tepat di bawah ujung dedaunan terjauh ini, bukan di pangkal batang. Inilah lokasi parit lingkar piringan</span>
+          <span class="lang-en"><strong>Drip-line diagram</strong> — the projected canopy edge on the ground. Feeder roots concentrate directly beneath this outermost canopy reach, not at the trunk base. This is the canopy-ring trench location</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Tree-dripline.png" target="_blank" rel="noopener">Wikimedia Commons · Public Domain</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Detail_of_Coffea_canephora_branch_and_leaves.jpg?width=640" alt="Coffea canephora branch and canopy structure" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Tajuk pohon Robusta</strong> — diameter tajuk pohon dewasa biasanya 1,5–2,5 meter. Radius parit lingkar piringan adalah <strong>setengah diameter tajuk</strong> dari pangkal batang. Pohon kecil = parit kecil; pohon dewasa = parit lebih lebar</span>
+          <span class="lang-en"><strong>Robusta canopy</strong> — a mature tree's canopy diameter is typically 1.5–2.5 m. The trench radius is <strong>half the canopy diameter</strong> from the trunk. Small tree = small trench; mature tree = wider trench</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Detail_of_Coffea_canephora_branch_and_leaves.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Men_digging_(1).jpg?width=640" alt="Men digging soil with hand tools" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Alat manual untuk parit</strong> — cangkul atau garpu tanah. Untuk 750 pohon × 2 aplikasi/tahun = 1.500 kali buka-tutup parit. Pak Kumpul biasanya menyelesaikan 100–150 pohon per hari kerja, jadi total ~10 hari kerja per aplikasi</span>
+          <span class="lang-en"><strong>Manual trench tools</strong> — hoe or garden fork. For 750 trees × 2 applications/year = 1,500 trench open-close cycles. Pak Kumpul typically finishes 100–150 trees per workday, totalling ~10 workdays per application</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Men_digging_(1).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg?width=640" alt="Granular Urea application — surface broadcast (incorrect method for coffee)" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>⚠ Cara yang SALAH</strong> — tabur-tebar pupuk langsung di permukaan (broadcast) yang umum di sawah/ladang besar. Untuk kopi di lereng berhujan, cara ini memboroskan 50–70% nilai pupuk: Urea menguap sebagai NH₃, KCl tercuci, SP-36 terkunci oleh sinar UV pada permukaan tanah</span>
+          <span class="lang-en"><strong>⚠ The WRONG way</strong> — surface broadcast of fertilizer, common in rice paddies or large fields. For coffee on rainy slopes, this wastes 50–70% of the fertilizer value: Urea volatilizes as NH₃, KCl is leached, SP-36 is locked by UV on the soil surface</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Andisol_profile.jpg?width=640" alt="Andisol soil profile showing organic topsoil and mineral subsoil" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Profil tanah Andisol</strong> — zona akar serap kopi (5–20 cm dari permukaan) berada di lapisan top-soil organik gelap. Parit kedalaman 5–10 cm menempatkan pupuk persis di zona aktif ini, bukan terlalu dangkal (tercuci) atau terlalu dalam (di luar jangkauan akar serap)</span>
+          <span class="lang-en"><strong>Andisol soil profile</strong> — the coffee feeder-root zone (5–20 cm from surface) lies in the dark organic topsoil layer. A 5–10 cm trench depth places fertilizer precisely in this active zone, not too shallow (washes off) or too deep (beyond feeder-root reach)</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Andisol_profile.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Plantation_in_Coorg.jpg?width=640" alt="Coffee plantation rows on hillside with visible tree spacing" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Geometri kebun</strong> — pohon kopi ditanam pada jarak 3×2,5 m (~1.333 phn/ha). Parit lingkar piringan tiap pohon berdiameter ~1,5–2 m, sehingga tidak tumpang-tindih dengan parit pohon tetangga. Setiap pohon mendapat "wilayah pemupukan" yang jelas</span>
+          <span class="lang-en"><strong>Garden geometry</strong> — coffee trees are planted at 3×2.5 m spacing (~1,333 trees/ha). Each tree's canopy-ring trench is ~1.5–2 m in diameter, so it does not overlap with the neighbouring tree's trench. Each tree gets its own clear "fertilization zone"</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation_in_Coorg.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Cara Aplikasi</span><span class="lang-en">The Science: 4-Source Comparison on Application Method</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber yang membahas cara aplikasi pupuk pada Robusta:</p>
+    <p class="lang-en">Let us examine four sources that discuss fertilizer application techniques on Robusta:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Posisi tentang Cara Aplikasi</span><span class="lang-en">Position on Application Method</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id">Eksplisit menyarankan <strong>parit lingkar piringan</strong> di proyeksi tajuk, kedalaman 5–10 cm, ditutup tanah pasca-aplikasi (hal 71–72). Inilah acuan utama Modul ini.</span><span class="lang-en">Explicitly recommends <strong>the canopy-ring trench</strong> at the drip-line, 5–10 cm deep, soil-covered after application (p 71–72). This is the primary reference for this Module.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Menyebut "ditaburkan dalam alur melingkar di proyeksi tajuk" (hal 19), namun tidak sedetail Edisi 2 dalam dimensi parit. Konvergen secara prinsip.</span><span class="lang-en">Mentions "broadcast within a ring furrow at the canopy projection" (p 19), but less detailed than Edition 2 on trench dimensions. Convergent in principle.</span></td>
+        </tr>
+        <tr>
+          <td><strong>BRIN (2024)</strong></td>
+          <td><span class="lang-id">Fokus pada <strong>dosis per umur</strong>, asumsi cara aplikasi mengikuti SOP Kementan. Tidak menyajikan teknik aplikasi tersendiri — pelengkap, bukan pengganti.</span><span class="lang-en">Focuses on <strong>dose per age</strong>, assuming application method follows the Kementan SOP. Does not present its own application technique — complementary, not a replacement.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 12</strong></td>
+          <td><span class="lang-id">Mengontekstualisasi parit dengan teori <em>nutrient placement</em>: tempatkan pupuk di zona aktif akar serap untuk maximizing <em>fertilizer use efficiency (FUE)</em>. Robusta FUE optimal ketika pupuk dalam radius drip-line.</span><span class="lang-en">Contextualizes the trench with <em>nutrient placement</em> theory: place fertilizer in the active feeder-root zone to maximize <em>fertilizer use efficiency (FUE)</em>. Robusta FUE is optimal when fertilizer is within the drip-line radius.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: empat sumber konvergen — cara aplikasi pupuk Robusta adalah parit lingkar piringan di proyeksi tajuk, ditutup tanah.</strong> Bukan tabur tebar permukaan, bukan injeksi dekat batang. Kementan 2019 memberikan dimensi paling presisi (kedalaman 5–10 cm), Wintgens memberi justifikasi teoritis (nutrient placement dan FUE), Puslitbang konvergen secara prinsip, BRIN melengkapi dengan dosis spesifik per umur.</p>
+    <p class="lang-en"><strong>The emerging pattern: all four sources converge — the Robusta fertilizer application method is the canopy-ring trench at the drip-line, soil-covered.</strong> Not surface broadcast, not injection near the trunk. Kementan 2019 provides the most precise dimensions (5–10 cm depth), Wintgens supplies the theoretical justification (nutrient placement and FUE), Puslitbang converges in principle, BRIN complements with age-specific doses.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Tiga Kesalahan Umum yang Menggagalkan Pemupukan</span><span class="lang-en">✓ Three Common Mistakes that Derail Fertilization</span></div>
+      <p class="lang-id"><strong>(1) Terlalu dekat pangkal batang</strong> — Pupuk menumpuk di leher akar, menyebabkan akumulasi garam dan kerusakan kulit (girdling). Akar serap di sini tidak ada, jadi penyerapan minimal. <strong>(2) Terlalu dangkal atau tidak ditutup</strong> — Urea menguap sebagai amonia, KCl dan Kieserit tercuci hujan permukaan, SP-36 terkunci oleh fiksasi P akibat kontak langsung dengan oksigen dan UV. <strong>(3) Tabur tebar (broadcast) tanpa parit</strong> — Kombinasi kerugian #1 dan #2 sekaligus, plus run-off pada lereng. Ini cara yang paling sering dilakukan petani tradisional dan paling sering dikoreksi oleh penyuluh.</p>
+      <p class="lang-en"><strong>(1) Too close to the trunk</strong> — Fertilizer accumulates at the root collar, causing salt buildup and bark damage (girdling). Feeder roots are absent here, so uptake is minimal. <strong>(2) Too shallow or uncovered</strong> — Urea volatilizes as ammonia, KCl and Kieserit are washed away by surface rain, SP-36 is locked by P fixation due to direct exposure to oxygen and UV. <strong>(3) Surface broadcast without a trench</strong> — Combines mistakes #1 and #2, plus run-off on slopes. This is the most common mistake made by traditional farmers and the most-frequently corrected by extension officers.</p>
+    </div>
+
+    <p class="lang-id">Implikasi finansial: nilai pemupukan Rp 27 juta/tahun (RAB Siklus 2027) yang diaplikasikan dengan cara salah dapat kehilangan 50–70% nilainya — setara dengan Rp 13,5–18,9 juta yang menguap, tercuci, atau merusak pohon. Investasi terbesar bukan di pupuknya, melainkan di disiplin eksekusi parit. Inilah mengapa Modul D ditetapkan sebagai prasyarat (prerequisite) sebelum eksekusi Modul C — meskipun urutan A→S menyiratkan sebaliknya, di lapangan keduanya tidak bisa dipisah.</p>
+    <p class="lang-en">Financial implication: an IDR 27 million/year fertilizer outlay (RAB Cycle 2027) applied incorrectly can lose 50–70% of its value — equivalent to IDR 13.5–18.9 million volatilizing, leaching, or damaging trees. The biggest investment is not the fertilizer itself, but the discipline of trench execution. This is why Module D is set as a prerequisite to executing Module C — although the A→S sequence implies the reverse, in the field these two are inseparable.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Eksekusi Parit Lingkar Piringan</span><span class="lang-en">Practice: Five Steps to Execute the Canopy-Ring Trench</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Berikut lima langkah operasional eksekusi parit lingkar piringan di kebun kopi wakaf Ngantang. Diterapkan oleh Pak Kumpul sebagai pekerja Bagian Bawah Pohon. Pembaca dapat memakai langkah ini sebagai checklist untuk kebun sendiri — atau sebagai materi briefing untuk pekerja yang menjalankan aplikasi pupuk. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Here are five operational steps to execute the canopy-ring trench at the Ngantang waqf coffee garden. Applied by Pak Kumpul as the Below-Tree worker. Readers may use these steps as a checklist for their own garden — or as briefing material for workers running fertilizer application. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Tentukan Proyeksi Tajuk per Pohon</span><span class="lang-en">Step 1 · Identify the Canopy Drip-Line per Tree</span></div>
+          <div class="step-text">
+            <span class="lang-id">Berdiri di samping pohon, lihat ke atas. Catat ujung dedaunan terjauh — itulah titik proyeksi tajuk di tanah (drip-line). Untuk Robusta dewasa di Ngantang, biasanya 75–125 cm dari pangkal batang. Konsisten antar pohon: gunakan langkah kaki sebagai pengukur cepat (~50 cm per langkah).</span>
+            <span class="lang-en">Stand beside the tree and look up. Note the farthest reach of leaves — that is the canopy projection on the ground (drip-line). For a mature Robusta in Ngantang, this is typically 75–125 cm from the trunk. Stay consistent across trees: use foot-paces as a quick measure (~50 cm per pace).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Buka Parit Melingkar — Dalam 5–10 cm, Lebar 15–20 cm</span><span class="lang-en">Step 2 · Open the Ring Trench — 5–10 cm Deep, 15–20 cm Wide</span></div>
+          <div class="step-text">
+            <span class="lang-id">Gunakan cangkul. Buka parit melingkar pada radius drip-line. Kedalaman <strong>5–10 cm</strong> (cukup tertutup tanah saat ditutup kembali, tidak melukai akar serap). Lebar <strong>15–20 cm</strong>. Tanah yang digali tumpuk di tepi luar parit — siap dipakai untuk menutup nanti. Untuk pohon di lereng curam (Bidang 3), parit dibuat sedikit lebih dalam di sisi atas dan dangkal di sisi bawah (mengikuti kontur).</span>
+            <span class="lang-en">Use a hoe. Open a ring trench at the drip-line radius. Depth <strong>5–10 cm</strong> (enough to be soil-covered later, not deep enough to injure feeder roots). Width <strong>15–20 cm</strong>. Pile the excavated soil on the outer edge of the trench — ready for backfill. For trees on steep slopes (Block 3), make the trench slightly deeper on the uphill side and shallower on the downhill side (following contour).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Tabur Pupuk Merata di Dalam Parit</span><span class="lang-en">Step 3 · Spread Fertilizer Evenly Inside the Trench</span></div>
+          <div class="step-text">
+            <span class="lang-id">Ambil dosis pre-takar per pohon (lihat Modul C — Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g per aplikasi untuk umur 5–10 tahun). Tabur secara merata di sepanjang parit melingkar — jangan menumpuk di satu titik. Empat unsur dapat dicampur sebelum ditabur untuk efisiensi waktu, atau ditabur berurutan bila pekerja masih belajar mengukur dosis.</span>
+            <span class="lang-en">Take the pre-measured per-tree dose (see Module C — Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g per application for 5–10 year trees). Spread evenly along the ring trench — do not pile at one point. The four elements can be mixed before spreading for time efficiency, or applied sequentially if the worker is still learning dose measurement.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Tutup Parit dengan Tanah Galian</span><span class="lang-en">Step 4 · Close the Trench with the Excavated Soil</span></div>
+          <div class="step-text">
+            <span class="lang-id">Dorong kembali tanah dari tepi parit (Langkah 2) untuk menutup pupuk. Pastikan seluruh permukaan pupuk tertutup tanah — tidak ada butiran pupuk yang terlihat. Tepuk-tepuk lembut dengan punggung cangkul agar tanah duduk rata, tetapi <strong>jangan dipadatkan</strong> (tanah padat menghalangi infiltrasi air ke zona akar).</span>
+            <span class="lang-en">Push the soil from the trench edge (Step 2) back to cover the fertilizer. Make sure the entire fertilizer surface is soil-covered — no fertilizer pellets visible. Gently tamp with the back of the hoe so the soil settles evenly, but <strong>do not compact</strong> (dense soil blocks water infiltration to the root zone).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Catat Eksekusi di Form Input — Per Blok, Per Tanggal</span><span class="lang-en">Step 5 · Record Execution in the Form Input — Per Block, Per Date</span></div>
+          <div class="step-text">
+            <span class="lang-id">Foto + catat di dashboard monitor-v2 Form Input: blok mana, jumlah pohon yang diaplikasi hari ini, jam mulai-selesai, kendala (hujan deras tiba-tiba? pohon yang dilewati karena pasca-top-graft?). Catatan ini menjadi audit trail dan basis evaluasi efisiensi (pohon/hari) untuk siklus berikutnya.</span>
+            <span class="lang-en">Photo + record in the monitor-v2 dashboard Form Input: which block, number of trees applied today, start-end times, issues (sudden heavy rain? trees skipped due to recent top-grafting?). These notes become the audit trail and the basis for evaluating efficiency (trees/day) for the next cycle.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Anda berkunjung ke kebun seorang petani yang menabur pupuk di pangkal batang pohonnya (broadcast). Anda telah mempelajari Modul D dan tahu cara yang benar. Bagaimana Anda menyampaikan koreksi ini secara konstruktif — tanpa menyinggung pengetahuan turun-temurun yang sudah ia praktikkan bertahun-tahun? Penjelasan apa yang paling efektif: ekonomi (kerugian Rp), teknis (bioavailability), atau analogi (rute obat)?</p>
+      <p class="prompt lang-en">1. You visit a farmer who broadcasts fertilizer at the trunk base. You have studied Module D and know the correct method. How would you constructively offer this correction — without dismissing the inherited knowledge they have practiced for years? Which explanation lands best: economic (rupiah loss), technical (bioavailability), or analogy (drug route)?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Penulis modul ini memakai analogi <em>routes of administration</em> dari farmakologi. Tabur permukaan vs parit lingkar piringan disetarakan dengan oral vs IV. Andai Anda harus mengajarkan konsep ini kepada anak SD atau remaja, analogi apa yang lebih konkret yang bisa Anda pakai dari kehidupan sehari-hari mereka? (Misalnya: minum air vs menetes mata vs disuntik?)</p>
+      <p class="prompt lang-en">2. The author of this module uses the <em>routes of administration</em> analogy from pharmacology. Surface broadcast vs canopy-ring trench is paralleled to oral vs IV drug delivery. If you had to teach this concept to a primary-school child or teenager, what more concrete analogy could you use from their everyday life? (For example: drinking water vs eye drops vs an injection?)</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Modul ini menetapkan dimensi parit (kedalaman 5–10 cm, lebar 15–20 cm) sebagai standar tetap, tetapi mungkinkah ada konteks di mana dimensi ini perlu diadaptasi? Pikirkan: pohon muda (umur &lt;5 tahun), pohon yang baru di-top-graft, kebun di lereng sangat curam (&gt;30°), atau musim hujan yang ekstrem. Bagaimana logika "in situ adaptation" tetap menjaga prinsip dasarnya?</p>
+      <p class="prompt lang-en">3. This module sets trench dimensions (5–10 cm deep, 15–20 cm wide) as a fixed standard, but might there be contexts where these need adapting? Consider: young trees (&lt;5 years), recently top-grafted trees, gardens on very steep slopes (&gt;30°), or extreme rainy seasons. How can "in-situ adaptation" preserve the underlying principles?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 71–72 — Teknik aplikasi pupuk parit lingkar piringan)</em> ⭐ Acuan utama Modul ini.</li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.12 — Coffee Fertilization, nutrient placement & fertilizer use efficiency (FUE). <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 19 — Aplikasi dalam alur melingkar pada proyeksi tajuk)</em></li>
+      <li><strong>BRIN (2024).</strong> Tabel Dosis Pupuk per Umur Tanaman untuk Robusta Indonesia. <em>Sumber dosis yang dieksekusi via teknik aplikasi modul ini.</em></li>
+      <li><strong>Modul C — Pemupukan Kimia 5–10 Tahun (Mei 2026).</strong> <a href="../C-pemupukan-kimia/index.html">Cross-reference</a> — modul ini menjawab "bagaimana" untuk dosis yang dijelaskan di Modul C ("berapa banyak dan kapan").</li>
+      <li><strong>RAB Final Wakaf Produktif (9 Mei 2026).</strong> Implikasi ekonomis: nilai pupuk Rp 27 jt/tahun yang diaplikasi salah dapat kehilangan Rp 13,5–18,9 jt. <em>(Internal · /SOP/RAB_FINAL_9Mei2026.docx)</em></li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../C-pemupukan-kimia/index.html"><span class="lang-id">← Modul C: Pemupukan Kimia</span><span class="lang-en">← Module C: Chemical Fertilization</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="#" class="next" style="opacity:.6;pointer-events:none"><span class="lang-id">Modul E (segera) →</span><span class="lang-en">Module E (soon) →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>
