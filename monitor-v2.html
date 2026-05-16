@@ -2383,7 +2383,25 @@ function renderActivityForm() {
         <div class="card-title"><span class="num">🌾</span>Detail Babat Rumput / Sanitasi Gulma</div>
         <div class="form-grid">
           <div class="field"><label class="field-lbl">Method <span class="req">*</span></label>
-            <select><option>manual_sabit</option><option>brushcutter_sewa (cost-effective)</option><option>cover_crops_arachis (Phase 2)</option><option>mulsa_tebal_pruning (cost-effective)</option><option>kombinasi</option></select></div>
+            <select>
+              <optgroup label="✅ SOP-aligned (Surface Cut)">
+                <option>manual_sabit</option>
+                <option>brushcutter_sewa (mesin babat — cost-effective)</option>
+              </optgroup>
+              <optgroup label="🌿 SOP-aligned (Sub-surface / Konservasi)">
+                <option>sengkreng_manual_cangkul (lokal Ngantang — bersih sampai akar, tahan lama)</option>
+                <option>cover_crops_arachis (Phase 2 — Arachis pintoi)</option>
+                <option>mulsa_tebal_pruning (cost-effective)</option>
+              </optgroup>
+              <optgroup label="⚠️ Off-SOP (Reality-First — di-flag compliance)">
+                <option>obat_rumput_herbisida (glifosat / 2,4-D — off-SOP, regen lambat)</option>
+              </optgroup>
+              <optgroup label="🔀 Kombinasi">
+                <option>kombinasi_sabit_sengkreng</option>
+                <option>kombinasi_brushcutter_obat_rumput</option>
+                <option>kombinasi_lainnya</option>
+              </optgroup>
+            </select></div>
           <div class="field"><label class="field-lbl">Area Dibersihkan (m²)</label><input type="number" placeholder="cth: 500"></div>
           <div class="field"><label class="field-lbl">Tinggi Gulma Pre (cm)</label><input type="number" placeholder="cth: 40"></div>
           <div class="field"><label class="field-lbl">Status Mulsa Pasca-Babat</label>
