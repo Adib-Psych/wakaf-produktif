@@ -7843,9 +7843,11 @@ function autoCreateUpahFromEntry(entry) {
   const aktivitasLbl = `${(entry.kategori || '').replace(/_/g,' ')} di Kebun ${entry.bidang}` +
                       ((entry.pohon || entry.jumlah_pohon) ? ` (${entry.pohon || entry.jumlah_pohon} phn)` : '');
 
+  // Durasi mapping — accept all variants from lapor.html & Form Input (locked 17 Mei 2026)
   if (entry.durasi === 'setengah_hari' || entry.durasi === '½_hari' || entry.durasi === 'half_day') {
     satuanLbl = '½ hari'; tarifVal = tarif.setengah_hari;
-  } else if (entry.durasi === 'full_day' || entry.durasi === '1_hari') {
+  } else if (entry.durasi === 'full_day' || entry.durasi === '1_hari' || entry.durasi === 'satu_hari' || entry.durasi === 'full') {
+    // 'satu_hari' = lapor.html chip data-val (line 701) — was missing, caused UPAH not link bug
     satuanLbl = 'full day'; tarifVal = tarif.full_day;
   } else if (entry.durasi === 'panjat_per_pohon' || entry.durasi === 'borongan') {
     satuan = 'borongan_generic';
@@ -7934,6 +7936,31 @@ function autoCreateUpahFromEntry(entry) {
       } else if (normalized.catatan !== undefined && (normalized.detail === undefined || normalized.detail === null || normalized.detail === '')) {
         normalized.detail = normalized.catatan;
       }
+      // Rainfall field bridge (locked 17 Mei 2026): lapor.html pakai rain_24h_mm/rain_7d_mm, dashboard expect rainfall_24h/rainfall_7d
+      if (normalized.rain_24h_mm !== undefined && normalized.rainfall_24h === undefined) {
+        normalized.rainfall_24h = +normalized.rain_24h_mm || 0;
+      }
+      if (normalized.rain_7d_mm !== undefined && normalized.rainfall_7d === undefined) {
+        normalized.rainfall_7d = +normalized.rain_7d_mm || 0;
+      }
+      // Re-compute compliance (locked 17 Mei 2026): lapor.html ship 'pending' default,
+      // dashboard compute via computeRainfallAlerts → set 'compliant' or 'partial'
+      if (normalized.compliance === 'pending' && typeof computeRainfallAlerts === 'function') {
+        try {
+          const alerts = computeRainfallAlerts(
+            normalized.kategori,
+            normalized.rainfall_24h || 0,
+            normalized.rainfall_7d || 0,
+            normalized.cuaca_pagi,
+            normalized.cuaca_siang
+          );
+          const hasHighAlert = alerts.some(a => a.sev === 'tinggi');
+          normalized.compliance = hasHighAlert ? 'partial' : 'compliant';
+          normalized.alerts = alerts.map(a => a.msg);
+        } catch (e) {
+          console.warn('[compliance compute] fail, keep pending:', e.message);
+        }
+      }
       // Tag source
       normalized.src = normalized.src || 'lapor_pwa';
       return normalized;
@@ -7957,8 +7984,48 @@ function autoCreateUpahFromEntry(entry) {
         }
       }
     }
-    // Run migration on page load
+
+    // Migration: re-process pending entries (locked 17 Mei 2026)
+    // (a) Re-compute compliance kalau masih 'pending'
+    // (b) Re-create UPAH linkages untuk YIT/KUMPUL yang belum punya UPAH entry
+    function reprocessPendingEntries() {
+      if (!Array.isArray(STATE.laporan)) return;
+      let complianceFixed = 0;
+      let upahCreated = 0;
+      STATE.laporan.forEach(l => {
+        // (a) Re-compute compliance
+        if (l.compliance === 'pending' && typeof computeRainfallAlerts === 'function') {
+          // Bridge rain fields kalau perlu
+          if (l.rain_24h_mm !== undefined && l.rainfall_24h === undefined) l.rainfall_24h = +l.rain_24h_mm || 0;
+          if (l.rain_7d_mm !== undefined && l.rainfall_7d === undefined) l.rainfall_7d = +l.rain_7d_mm || 0;
+          try {
+            const alerts = computeRainfallAlerts(l.kategori, l.rainfall_24h || 0, l.rainfall_7d || 0, l.cuaca_pagi, l.cuaca_siang);
+            const hasHighAlert = alerts.some(a => a.sev === 'tinggi');
+            l.compliance = hasHighAlert ? 'partial' : 'compliant';
+            l.alerts = alerts.map(a => a.msg);
+            complianceFixed++;
+          } catch (e) { /* keep pending */ }
+        }
+        // (b) Re-create UPAH untuk YIT/KUMPUL yang belum ter-link
+        if ((l.pelapor === 'YIT' || l.pelapor === 'KUMPUL') && l.durasi && typeof autoCreateUpahFromEntry === 'function') {
+          const newUpah = autoCreateUpahFromEntry(l);
+          if (newUpah) upahCreated++;
+        }
+      });
+      if (complianceFixed > 0 || upahCreated > 0) {
+        localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+        console.log(`[Migration] reprocess: ${complianceFixed} compliance fixed, ${upahCreated} UPAH created`);
+        if (typeof renderLog === 'function') renderLog();
+        if (typeof renderUpahTable === 'function') renderUpahTable();
+        if (typeof renderUpahSummary === 'function') renderUpahSummary();
+        if (typeof renderDashboard === 'function') renderDashboard();
+      }
+    }
+
+    // Run migrations on page load
     fixLegacyDetailObjects();
+    // Delay reprocess until other render functions are ready (3s after load)
+    setTimeout(reprocessPendingEntries, 3000);
 
     // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
     onSnapshot(q, (snapshot) => {
