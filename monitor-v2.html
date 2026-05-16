@@ -6986,6 +6986,49 @@ if (document.readyState === 'loading'){
   initFormHero();
 }
 
+// Auto-create UPAH entry dari Firestore-sourced laporan (reusable for Phase 1B sync)
+function autoCreateUpahFromEntry(entry) {
+  if (typeof UPAH_ITEMS === 'undefined') return null;
+  if (entry.pelapor !== 'YIT' && entry.pelapor !== 'KUMPUL') return null;  // ANTO = sweat equity, skip
+  if (!entry.durasi) return null;
+  // Skip if already auto-created for same tgl + pelapor
+  const existing = UPAH_ITEMS.find(u =>
+    u.tgl === entry.tgl && u.pelapor === entry.pelapor &&
+    (u.src === 'auto_form' || u.src === 'auto_firestore')
+  );
+  if (existing) return null;
+
+  const tarif = TARIF_PEKERJA[entry.pelapor];
+  if (!tarif) return null;
+  let satuan = entry.durasi;
+  let satuanLbl = '', model = 'harian', tarifVal = 0, qty = 1;
+  const aktivitasLbl = `${(entry.kategori || '').replace(/_/g,' ')} di Kebun ${entry.bidang}` +
+                      ((entry.pohon || entry.jumlah_pohon) ? ` (${entry.pohon || entry.jumlah_pohon} phn)` : '');
+
+  if (entry.durasi === 'setengah_hari' || entry.durasi === '½_hari' || entry.durasi === 'half_day') {
+    satuanLbl = '½ hari'; tarifVal = tarif.setengah_hari;
+  } else if (entry.durasi === 'full_day' || entry.durasi === '1_hari') {
+    satuanLbl = 'full day'; tarifVal = tarif.full_day;
+  } else if (entry.durasi === 'panjat_per_pohon' || entry.durasi === 'borongan') {
+    satuan = 'borongan_generic';
+    satuanLbl = 'borongan (set tarif manual)';
+    tarifVal = (typeof BORONGAN_PRESETS !== 'undefined' && BORONGAN_PRESETS.panjat_durian) || 20000;
+    model = 'borongan';
+    qty = +entry.pohon || +entry.jumlah_pohon || 1;
+  }
+
+  if (tarifVal <= 0) return null;
+  const newId = (UPAH_ITEMS.length > 0 ? Math.max(...UPAH_ITEMS.map(it => +it.id || 0)) : 0) + 1;
+  const upahEntry = {
+    id: newId, tgl: entry.tgl, pelapor: entry.pelapor, aktivitas: aktivitasLbl,
+    model, satuan, satuan_lbl: satuanLbl, qty, tarif: tarifVal, status: 'belum',
+    src: 'auto_firestore'  // tag: created via Firestore listener
+  };
+  UPAH_ITEMS.push(upahEntry);
+  if (typeof saveUpah === 'function') saveUpah();
+  return upahEntry;
+}
+
 </script>
 
 <!-- Firebase Firestore Listener (Phase 1B) — Real-time sync dari Worker PWA submissions -->
@@ -7000,9 +7043,10 @@ if (document.readyState === 'loading'){
     const db = getFirestore(fbApp);
     const q = query(collection(db, COLLECTIONS.laporan), orderBy('created_at', 'desc'));
 
-    // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan
+    // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
     onSnapshot(q, (snapshot) => {
       let newCount = 0;
+      let upahCreatedCount = 0;
       snapshot.docChanges().forEach(change => {
         if (change.type === 'added' || change.type === 'modified') {
           const data = change.doc.data();
@@ -7011,6 +7055,11 @@ if (document.readyState === 'loading'){
           if (existingIdx === -1) {
             STATE.laporan.unshift(data);
             newCount++;
+            // Auto-create UPAH entry untuk worker yg punya tarif (YIT/KUMPUL)
+            if (typeof autoCreateUpahFromEntry === 'function') {
+              const upahEntry = autoCreateUpahFromEntry(data);
+              if (upahEntry) upahCreatedCount++;
+            }
           } else if (change.type === 'modified') {
             STATE.laporan[existingIdx] = { ...STATE.laporan[existingIdx], ...data };
           }
@@ -7018,16 +7067,18 @@ if (document.readyState === 'loading'){
       });
       if (newCount > 0) {
         localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
-        // Refresh views if functions available
+        // Refresh views
         if (typeof renderDashboard === 'function') renderDashboard();
         if (typeof renderLog === 'function') renderLog();
+        if (upahCreatedCount > 0 && typeof renderUpah === 'function') renderUpah();
         // Show toast notification
         const toast = document.createElement('div');
-        toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#2D8466;color:#fff;padding:14px 22px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);font-weight:600;z-index:9999;animation:slideIn 0.3s';
-        toast.innerHTML = `🔥 ${newCount} laporan baru dari worker (Firestore live sync)`;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#2D8466;color:#fff;padding:14px 22px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);font-weight:600;z-index:9999;max-width:340px';
+        const upahLine = upahCreatedCount > 0 ? `<br><span style="font-size:11px;opacity:0.9">💰 ${upahCreatedCount} entry upah dibuat otomatis</span>` : '';
+        toast.innerHTML = `🔥 ${newCount} laporan baru dari worker${upahLine}`;
         document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 5000);
-        console.log(`[Firestore Listener] +${newCount} entries synced from workers`);
+        setTimeout(() => toast.remove(), 6000);
+        console.log(`[Firestore Listener] +${newCount} entries, +${upahCreatedCount} upah auto-created`);
       }
     }, (err) => {
       console.error('[Firestore Listener] error:', err);
