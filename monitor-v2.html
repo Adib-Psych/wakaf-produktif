@@ -376,7 +376,7 @@
             <thead>
               <tr>
                 <th>Tgl</th><th>Pelapor</th><th>Kebun</th><th>Kategori</th>
-                <th>Phn</th><th>Detail</th><th>Compliance</th><th>Alerts</th><th style="width:110px">Aksi</th>
+                <th title="Jumlah pohon dikerjakan">Pohon</th><th>Detail</th><th>Compliance</th><th>Alerts</th><th style="width:110px">Aksi</th>
               </tr>
             </thead>
             <tbody id="log-tbody"></tbody>
@@ -521,16 +521,13 @@
             </select>
           </div>
           <div class="field">
-            <label class="field-lbl">Durasi Kerja</label>
+            <label class="field-lbl">Durasi Kerja <span class="req">*</span></label>
             <div class="radio-row" id="form-durasi">
               <div class="radio-pill" data-val="setengah_hari" onclick="setRadio('form-durasi',this)">🌅 Setengah Hari</div>
               <div class="radio-pill" data-val="full_day" onclick="setRadio('form-durasi',this)">☀️ Full Day</div>
-              <div class="radio-pill" data-val="panjat_per_pohon" onclick="setRadio('form-durasi',this)">🪜 Panjat/Pohon</div>
+              <div class="radio-pill" data-val="panjat_per_pohon" onclick="setRadio('form-durasi',this)">📦 Borongan</div>
             </div>
-          </div>
-          <div class="field">
-            <label class="field-lbl">Jumlah Pekerja</label>
-            <input type="number" id="f-pekerja" min="1" max="10" value="1">
+            <div style="font-size:10px;color:var(--mute);margin-top:4px">Wajib diisi untuk Cak Yit / Pak Kumpul (auto-link ke Upah). Borongan = pekerjaan per-output (panjat durian, rorak, lubang lamtoro, dll).</div>
           </div>
           <div class="field">
             <label class="field-lbl">Jumlah Pohon Dikerjakan</label>
@@ -1949,12 +1946,27 @@ function renderLog() {
   const tbody = document.getElementById('log-tbody');
   tbody.innerHTML = data.map(d => {
     const [name,cls] = roleMap[d.pelapor];
+    // Pohon display: prefer top-level d.pohon, fallback ke detail_form sub-field kalau ada (jumlah pohon, qty pohon, dll)
+    let pohonDisp = '<span style="color:#bbb">-</span>';
+    let pohonTitle = '';
+    const topPohon = +d.pohon || 0;
+    if (topPohon > 0) {
+      pohonDisp = `<strong style="color:var(--moss)">${topPohon}</strong>`;
+      pohonTitle = `${topPohon} pohon dikerjakan`;
+    } else if (d.detail_form) {
+      // Scan detail_form for any sub-field hinting "pohon"/"jumlah" (e.g. tanam_penaung "Jumlah Pohon")
+      const sub = Object.entries(d.detail_form).find(([k,v]) => /pohon|jumlah/i.test(k) && +v > 0);
+      if (sub) {
+        pohonDisp = `<span style="color:var(--mute);font-size:11px">(${sub[1]})</span>`;
+        pohonTitle = `${sub[0]}: ${sub[1]} (dari detail aktivitas)`;
+      }
+    }
     return `<tr>
       <td style="white-space:nowrap">${formatTgl(d.tgl)}</td>
       <td><span class="pill ${cls}">${name}</span></td>
       <td><span class="pill bidang-${d.bidang}">B${d.bidang}</span></td>
       <td>${d.kategori.replace(/_/g,' ')}</td>
-      <td>${d.pohon||'-'}</td>
+      <td title="${pohonTitle}">${pohonDisp}</td>
       <td style="font-size:11px">${d.detail||'-'}</td>
       <td><span class="pill ${d.compliance}">${d.compliance}</span></td>
       <td>${(d.alerts||[]).map(a=>'<span class="pill alert">'+a+'</span>').join('')||'<span style="color:#aaa">none</span>'}</td>
@@ -2149,7 +2161,7 @@ function renderActivityForm() {
         <div class="card-title"><span class="num">⚗️</span>Detail Pemupukan Anorganik (BRIN dosis 5-10 thn)</div>
         <div class="form-grid">
           <div class="field"><label class="field-lbl">Jenis Pupuk</label>
-            <select><option>Urea Pusri</option><option>SP-36 Petrokimia</option><option>KCl Mahkota</option><option>Dolomit (lime correction)</option><option>Kieserit (Mg+S, BRIN baru)</option><option>Phonska 15-15-15 (subsidi)</option><option>Phonska Plus</option><option>NPK 16-16-16 Yaramila</option></select></div>
+            <select><option>Urea Pusri</option><option>SP-36 Petrokimia</option><option>KCl Mahkota</option><option>Dolomit (lime correction)</option><option>Kieserit (Mg+S)</option><option>Phonska 15-15-15 (subsidi)</option><option>Phonska Plus</option><option>NPK 16-16-16 Yaramila</option></select></div>
           <div class="field"><label class="field-lbl">Dosis (g/pohon) — sesuai BRIN tabel</label><input type="number" placeholder="Urea 150, SP36 80, KCl 100, Kieserit 50"></div>
           <div class="field"><label class="field-lbl">Jumlah Pohon Aplikasi</label><input type="number" placeholder="cth: 750 (post-selection) / 915 (pre)"></div>
           <div class="field"><label class="field-lbl">Total kg</label><input type="number" step="0.1"></div>
@@ -2184,7 +2196,7 @@ function renderActivityForm() {
         <div class="card-title"><span class="num">✂️</span>Detail Pemangkasan</div>
         <div class="form-grid">
           <div class="field"><label class="field-lbl">Tipe Pemangkasan</label>
-            <select><option>produksi_berat</option><option>produksi_ringan</option><option>bentuk_tbm</option><option>peremajaan</option><option>penaung</option></select></div>
+            <select><option value="pruning_berat">pruning_berat</option><option value="pruning_ringan">pruning_ringan</option><option value="bentuk_tbm">bentuk_tbm</option><option value="peremajaan">peremajaan</option><option value="penaung">penaung</option></select></div>
           <div class="field"><label class="field-lbl">Tinggi Pohon Pre (cm)</label><input type="number"></div>
           <div class="field"><label class="field-lbl">Tinggi Pohon Post (cm)</label><input type="number" placeholder="180-200 ideal"></div>
         </div>
@@ -2337,14 +2349,15 @@ function renderActivityForm() {
             <select><option>spread_di_piringan_pohon (rekomendasi)</option><option>dikumpulkan_kompos</option><option>dibakar (❌ avoid)</option><option>dibiarkan</option></select></div>
           <div class="field"><label class="field-lbl">Bahan Habis Pakai (Rp)</label><input type="number" placeholder="0 manual / sewa brushcutter"></div>
           <div class="field"><label class="field-lbl">Sumber Tenaga</label>
-            <select><option>pekerja_internal (Pak Kumpul)</option><option>borongan_per_area (Rp 50K/100m²)</option><option>gotong_royong_komunitas</option></select></div>
+            <select><option>pekerja_internal (Pak Kumpul)</option><option>borongan_per_area</option><option>gotong_royong_komunitas</option></select></div>
         </div>
       </div>`,
     sortasi_buah: `
       <div class="card">
         <div class="card-title"><span class="num">🫘</span>Detail Sortasi Buah Pre-Pulping (SOP hal 230)</div>
         <div class="form-grid">
-          <div class="field"><label class="field-lbl">Lot ID Reference</label><input type="text" placeholder="WKKN-2026-07-B1-001"></div>
+          <div class="field"><label class="field-lbl">Lot ID Reference (Kebun)</label>
+            <select><option value="">— pilih kebun —</option><option value="kebun_1">Kebun 1 (pinggir jalan, kecil)</option><option value="kebun_2">Kebun 2 (pinggir jalan, besar)</option><option value="kebun_3">Kebun 3 (bawah)</option><option value="kebun_4">Kebun 4 (belakang Rumah)</option></select></div>
           <div class="field"><label class="field-lbl">Total Buah Sortir (kg)</label><input type="number" step="0.1"></div>
           <div class="field"><label class="field-lbl">Sortasi Air — Tenggelam/Sink (kg)</label><input type="number" step="0.1" placeholder="biji bagus"></div>
           <div class="field"><label class="field-lbl">Sortasi Air — Mengapung/Float (kg)</label><input type="number" step="0.1" placeholder="biji kopong/kosong"></div>
@@ -2362,7 +2375,8 @@ function renderActivityForm() {
       <div class="card">
         <div class="card-title"><span class="num">☀️</span>Detail Penjemuran / Drying (SOP hal 235 + SNI 01-2907-2008)</div>
         <div class="form-grid">
-          <div class="field"><label class="field-lbl">Lot ID Reference</label><input type="text" placeholder="WKKN-2026-07-B1-001"></div>
+          <div class="field"><label class="field-lbl">Lot ID Reference (Kebun)</label>
+            <select><option value="">— pilih kebun —</option><option value="kebun_1">Kebun 1 (pinggir jalan, kecil)</option><option value="kebun_2">Kebun 2 (pinggir jalan, besar)</option><option value="kebun_3">Kebun 3 (bawah)</option><option value="kebun_4">Kebun 4 (belakang Rumah)</option></select></div>
           <div class="field"><label class="field-lbl">Tahap</label>
             <select><option>mulai_jemur</option><option>balik_pertama</option><option>balik_rutin</option><option>tutup_hujan</option><option>angkat_selesai</option></select></div>
           <div class="field"><label class="field-lbl">Tempat Jemur</label>
@@ -2583,6 +2597,16 @@ function updateRainfallAlert() {
     </div>`).join('');
 }
 
+// ===== Display normalization: old enum values → new labels (Track 4-5 backward compat 16 Mei 2026) =====
+// Old entries di STATE.laporan masih simpan "produksi_berat"/"produksi_ringan" → display sebagai pruning_*
+const ENUM_DISPLAY_REMAP = {
+  produksi_berat: 'pruning_berat',
+  produksi_ringan: 'pruning_ringan'
+};
+function normalizeEnumDisplay(v) {
+  return ENUM_DISPLAY_REMAP[v] || v;
+}
+
 // ===== HARVEST DETAIL FORM — capture all sub-fields per kategori (fix 16 Mei 2026) =====
 function harvestDetailForm() {
   const container = document.getElementById('activity-detail-form');
@@ -2629,6 +2653,12 @@ function submitForm() {
 
   if (!STATE.pelapor || !STATE.bidang || !kategori) {
     alert('Field wajib belum lengkap: Pelapor, Kebun, Kategori');
+    return;
+  }
+  // Comment 2 (16 Mei): Durasi Kerja wajib untuk YIT/KUMPUL (auto-link ke Upah Pekerja).
+  // Mas Anto = sweat equity, durasi opsional (boleh kosong).
+  if ((STATE.pelapor === 'YIT' || STATE.pelapor === 'KUMPUL') && !STATE.durasi) {
+    alert('Durasi Kerja wajib diisi untuk ' + (STATE.pelapor === 'YIT' ? 'Cak Yit' : 'Pak Kumpul') + ' (auto-link ke Upah Pekerja).\n\nPilih: 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
     return;
   }
   // Compute alerts based on rainfall + kategori
@@ -2704,8 +2734,11 @@ function submitForm() {
       satuanLbl = 'full day';
       tarifVal = tarif.full_day;
     } else if (STATE.durasi === 'panjat_per_pohon') {
-      satuan = 'panjat_durian';
-      satuanLbl = 'pohon durian';
+      // Track 2 (16 Mei): "panjat_per_pohon" data-val tetap utk backward compat localStorage,
+      // tapi labeling sekarang generic "Borongan" — Wakif tentukan satuan & tarif manual
+      // via tab Upah Pekerja (default fallback ke panjat durian Rp 20K/pohon).
+      satuan = 'borongan_generic';
+      satuanLbl = 'borongan (set tarif manual)';
       tarifVal = BORONGAN_PRESETS.panjat_durian || 20000;
       model = 'borongan';
       qty = +pohon || 1;
@@ -2782,7 +2815,6 @@ function generatePreview() {
     aktivitas: {
       kategori: document.getElementById('f-kategori').value,
       durasi_kerja: STATE.durasi,
-      jumlah_pekerja: +document.getElementById('f-pekerja').value,
       pohon_dikerjakan: +document.getElementById('f-pohon').value
     },
     catatan_kualitatif: document.getElementById('f-catatan').value
