@@ -818,8 +818,7 @@
             <div style="font-size:24px;font-weight:800;color:var(--cherry);margin-top:4px" id="total-pengeluaran-display">Rp. 0,-</div>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:#d4a017;color:#fff;font-size:11px">+ Transfer ke Anto</button>
-            <button class="btn btn-primary" onclick="openTrxModal('keluar_langsung')" style="background:var(--cherry);color:#fff;font-size:11px">+ Belanja / Bayar Pekerja</button>
+            <button class="btn btn-primary" onclick="openTrxModal('keluar_langsung')" style="background:var(--cherry);color:#fff;font-size:11px">+ Tambah Pengeluaran</button>
           </div>
         </div>
 
@@ -835,14 +834,14 @@
             <option value="">Semua Tipe</option>
             <option value="transfer_anto">🏦 Transfer ke Anto</option>
             <option value="bayar_upah">💵 Bayar Upah Langsung</option>
-            <option value="keluar_langsung">🛍️ Belanja Lain</option>
+            <option value="keluar_langsung">🛍️ Pengeluaran Lain-lain</option>
           </select>
           <button class="btn btn-secondary" onclick="exportCashbookCSV()" style="font-size:11px;padding:6px 12px">📥 Export CSV</button>
         </div>
         <div class="table-wrap">
           <table style="font-size:11.5px">
             <thead style="background:var(--cream)">
-              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Jumlah Keluar</th><th>Nota</th><th>Source</th></tr>
+              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Jumlah Keluar</th><th>Nota</th><th>Source</th><th style="text-align:center">Aksi</th></tr>
             </thead>
             <tbody id="cashbook-tbody"></tbody>
           </table>
@@ -872,13 +871,13 @@
           </div>
         </div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-          <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:var(--moss);font-size:11px">+ Transfer ke Anto</button>
-          <button class="btn btn-primary" onclick="openTrxModal('keluar_anto')" style="background:var(--cherry);font-size:11px">+ Pengeluaran via Anto</button>
+          <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:var(--moss);font-size:11px" title="Top-up saldo: Adib transfer uang ke Anto untuk modal belanja lapangan">+ Tambah Transfer ke Anto</button>
+          <button class="btn btn-primary" onclick="openTrxModal('keluar_anto')" style="background:var(--cherry);font-size:11px" title="Catat pengeluaran yang sudah Anto bayar pakai petty cash (settle nota)">+ Tambah Pengeluaran Anto</button>
         </div>
         <div class="table-wrap">
           <table style="font-size:11.5px">
             <thead style="background:var(--cream)">
-              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo Anto</th><th>Nota</th></tr>
+              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo Anto</th><th>Nota</th><th style="text-align:center">Aksi</th></tr>
             </thead>
             <tbody id="anto-tbody"></tbody>
           </table>
@@ -7364,7 +7363,7 @@ function renderCashbook() {
 
   const tipeLabel = {
     masuk: '💰 Masuk',
-    keluar_langsung: '💸 Keluar Lgs',
+    keluar_langsung: '💸 Pengeluaran Lain-lain',
     transfer_anto: '🏦 → Anto',
     keluar_anto: '🛒 via Anto',
     bayar_upah: '💵 Bayar Upah'
@@ -7381,6 +7380,11 @@ function renderCashbook() {
 
   document.getElementById('cashbook-tbody').innerHTML = filtered.map(t => {
     const srcInfo = srcLabel[t.src] || { icon: '?', desc: 'Unknown source' };
+    // Edit/Delete button — manual only. Autolink = locked supaya tidak break UPAH-Cashbook sync.
+    const isManual = t.src === 'manual';
+    const actionBtns = isManual
+      ? `<button onclick="editTrx('${t.id}')" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Edit transaksi">✏️ Edit</button><button onclick="deleteTrx('${t.id}')" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Hapus transaksi">🗑️</button>`
+      : `<span style="font-size:10px;color:#bbb;cursor:help" title="Auto-link dari UPAH Pekerja — untuk edit/batal, gunakan tombol di tab Upah Pekerja (↺ Batal). Mencegah sync break antara UPAH dan Cashbook.">🔒 locked</span>`;
     return `
     <tr>
       <td>${formatTglShort(t.tgl)}</td>
@@ -7390,8 +7394,9 @@ function renderCashbook() {
       <td style="text-align:right;color:${t.keluar>0?'var(--cherry)':'#bbb'};font-weight:600">${t.keluar > 0 ? fmtRp(t.keluar) : '—'}</td>
       <td style="text-align:center">${t.nota ? `<button onclick="viewNota('${t.nota}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="Lihat nota">📎</button>` : '<span style="color:#ddd">—</span>'}</td>
       <td style="text-align:center" title="${srcInfo.desc}"><span style="cursor:help;font-size:13px">${srcInfo.icon}</span></td>
+      <td style="text-align:center;white-space:nowrap">${actionBtns}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada pengeluaran sesuai filter.</td></tr>';
+  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada pengeluaran sesuai filter.</td></tr>';
 }
 
 function renderAntoLedger() {
@@ -7420,6 +7425,11 @@ function renderAntoLedger() {
   document.getElementById('anto-tbody').innerHTML = antoTrx.map(t => {
     if (t.tipe === 'transfer_anto') run += t.keluar;
     else run -= t.keluar;
+    // Edit/Delete — manual only. Autolink (kalau ada dari UPAH lewat Anto) = locked.
+    const isManual = t.src === 'manual';
+    const actionBtns = isManual
+      ? `<button onclick="editTrx('${t.id}')" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Edit transaksi">✏️ Edit</button><button onclick="deleteTrx('${t.id}')" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Hapus transaksi">🗑️</button>`
+      : `<span style="font-size:10px;color:#bbb;cursor:help" title="Auto-link dari UPAH Pekerja — untuk edit/batal, gunakan tombol di tab Upah Pekerja (↺ Batal).">🔒 locked</span>`;
     return `<tr>
       <td>${formatTglShort(t.tgl)}</td>
       <td>${tipeLabel[t.tipe]}</td>
@@ -7429,25 +7439,92 @@ function renderAntoLedger() {
       <td style="text-align:right;color:${t.tipe==='keluar_anto'?'var(--cherry)':'#bbb'}">${t.tipe==='keluar_anto'?fmtRp(t.keluar):'—'}</td>
       <td style="text-align:right;font-weight:700;color:${run<0?'var(--cherry)':'var(--earth)'}">${fmtRp(run)}</td>
       <td style="text-align:center">${t.nota ? `<button onclick="viewNota('${t.nota}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="Lihat nota">📎</button>` : '<span style="color:#ddd">—</span>'}</td>
+      <td style="text-align:center;white-space:nowrap">${actionBtns}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--mute)">Belum ada transaksi Petty Cash Anto.</td></tr>';
+  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--mute)">Belum ada transaksi Petty Cash Anto.</td></tr>';
 }
 
 // ---------- TRX MODAL ----------
 let TRX_PRESET_TIPE = null;
+let TRX_EDIT_ID = null;  // null = create mode, string id = edit mode
 function openTrxModal(presetTipe) {
   TRX_PRESET_TIPE = presetTipe || null;
+  TRX_EDIT_ID = null;  // reset edit mode
   document.getElementById('trx-tgl').valueAsDate = new Date();
   document.getElementById('trx-tipe').value = presetTipe || 'masuk';
   document.getElementById('trx-ket').value = '';
   document.getElementById('trx-jml').value = '';
   document.getElementById('trx-nota').value = '';
+  // Reset modal title to default
+  const titleEl = document.getElementById('trx-modal-title');
+  if (titleEl) titleEl.textContent = 'Tambah Transaksi';
   populateKategoriDropdown();
   onTrxTipeChange();
   document.getElementById('trx-modal-overlay').style.display = 'flex';
 }
 function closeTrxModal() {
   document.getElementById('trx-modal-overlay').style.display = 'none';
+  TRX_EDIT_ID = null;  // cleanup
+}
+
+// EDIT mode: load existing transaction into modal, then user can update + save.
+// Safety guard: only allow edit for src='manual' entries — autolink locked to prevent UPAH-Cashbook desync.
+function editTrx(id) {
+  const t = CASHBOOK.find(x => x.id === id);
+  if (!t) { alert('Transaksi tidak ditemukan'); return; }
+  if (t.src !== 'manual') {
+    alert(
+      'Transaksi ini auto-link dari UPAH Pekerja, tidak bisa di-edit langsung di sini.\n\n' +
+      'Untuk batalkan: buka tab "Upah Pekerja" → klik tombol "↺ Batal" pada baris yang sesuai.\n' +
+      'Untuk koreksi: ↺ Batal dulu, lalu Bayar ulang dengan data yang benar.'
+    );
+    return;
+  }
+  // Load existing data
+  TRX_EDIT_ID = id;
+  TRX_PRESET_TIPE = t.tipe;
+  document.getElementById('trx-tgl').value = t.tgl;
+  document.getElementById('trx-tipe').value = t.tipe;
+  document.getElementById('trx-ket').value = t.ket || '';
+  document.getElementById('trx-jml').value = t.tipe === 'masuk' ? (t.masuk || 0) : (t.keluar || 0);
+  document.getElementById('trx-nota').value = '';  // file input cannot be pre-filled; user re-upload kalau mau ganti
+  // Set title to indicate edit mode
+  const titleEl = document.getElementById('trx-modal-title');
+  if (titleEl) titleEl.textContent = '✏️ Edit Transaksi';
+  populateKategoriDropdown();
+  setTimeout(() => {
+    if (t.kat) document.getElementById('trx-kat').value = t.kat;
+  }, 50);  // populate dropdown async, then set value
+  onTrxTipeChange();
+  document.getElementById('trx-modal-overlay').style.display = 'flex';
+}
+
+// DELETE manual transaction with confirmation.
+function deleteTrx(id) {
+  const t = CASHBOOK.find(x => x.id === id);
+  if (!t) { alert('Transaksi tidak ditemukan'); return; }
+  if (t.src !== 'manual') {
+    alert(
+      'Transaksi ini auto-link dari UPAH Pekerja, tidak bisa dihapus langsung.\n\n' +
+      'Untuk hapus: buka tab "Upah Pekerja" → klik tombol "↺ Batal" pada baris yang sesuai.'
+    );
+    return;
+  }
+  const jml = t.tipe === 'masuk' ? t.masuk : t.keluar;
+  const msg = `🗑️ Hapus transaksi ini?\n\n` +
+              `Tgl: ${(typeof formatTglShort==='function')?formatTglShort(t.tgl):t.tgl}\n` +
+              `Tipe: ${t.tipe}\n` +
+              `Keterangan: ${t.ket}\n` +
+              `Jumlah: ${(typeof fmtRp==='function')?fmtRp(jml):jml}\n\n` +
+              `Lanjut hapus?`;
+  if (!confirm(msg)) return;
+  CASHBOOK = CASHBOOK.filter(x => x.id !== id);
+  if (typeof saveCashbook === 'function') saveCashbook();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderAntoLedger === 'function') renderAntoLedger();
+  if (typeof renderRAB === 'function') renderRAB();
+  if (typeof showToast === 'function') showToast(`🗑️ Transaksi "${(t.ket||'').substring(0,30)}…" dihapus`);
 }
 function populateKategoriDropdown() {
   const sel = document.getElementById('trx-kat');
@@ -7482,10 +7559,41 @@ async function saveTrx() {
     alert('Kategori RAB wajib untuk pengeluaran.');
     return;
   }
+  // Handle nota: if new file uploaded, save; else preserve existing (edit mode) or null (create)
   let notaId = null;
   if (notaFile) {
     notaId = await saveNotaToIDB(notaFile);
   }
+  // EDIT MODE — update existing entry, preserve id + src + ref + existing nota if not replaced
+  if (TRX_EDIT_ID) {
+    const existing = CASHBOOK.find(x => x.id === TRX_EDIT_ID);
+    if (!existing) {
+      alert('Transaksi tidak ditemukan untuk di-edit. Mungkin sudah dihapus.');
+      closeTrxModal();
+      return;
+    }
+    if (existing.src !== 'manual') {
+      alert('Transaksi ini tidak bisa di-edit (auto-link dari UPAH).');
+      closeTrxModal();
+      return;
+    }
+    existing.tgl = tgl;
+    existing.tipe = tipe;
+    existing.kat = kat;
+    existing.ket = ket;
+    existing.masuk = tipe === 'masuk' ? jml : 0;
+    existing.keluar = tipe === 'masuk' ? 0 : jml;
+    if (notaId) existing.nota = notaId;  // preserve old nota kalau tidak ada upload baru
+    saveCashbook();
+    closeTrxModal();
+    renderKeuangan();
+    renderCashbook && renderCashbook();
+    renderAntoLedger && renderAntoLedger();
+    renderRAB();
+    showToast('✏️ Transaksi di-update: ' + ket);
+    return;
+  }
+  // CREATE MODE — new entry
   const id = 'cb_' + Date.now();
   const entry = {
     id, tgl, tipe, kat, ket,
@@ -7497,6 +7605,8 @@ async function saveTrx() {
   saveCashbook();
   closeTrxModal();
   renderKeuangan();
+  renderCashbook && renderCashbook();
+  renderAntoLedger && renderAntoLedger();
   renderRAB();
   showToast('✅ Transaksi tercatat: ' + ket);
 }
