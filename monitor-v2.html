@@ -763,52 +763,58 @@
     <!-- ============ LAPORAN KEUANGAN (WAKIF ONLY) ============ -->
     <div class="panel" id="panel-keuangan">
 
-      <!-- Banner: Saldo -->
-      <div class="card" style="background:linear-gradient(135deg,#1f5f47,#2e4040);color:#f5f0e6;border:0">
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+      <!-- ============ SECTION 1 — UANG MASUK ============ -->
+      <div class="card" style="border-left:4px solid var(--moss)">
+        <div class="card-title" style="color:var(--moss)"><span class="num">1</span>💰 Laporan Uang Masuk</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pemasukan ke Kas Wakif: hasil panen kopi, donasi, hibah, atau transfer ke kebun. Belum ada pemasukan saat ini — akan muncul setelah panen 2026 atau ada donor.</p>
+        <div style="display:flex;justify-content:space-between;align-items:center;background:#f5fbf7;padding:14px 18px;border-radius:8px;margin-bottom:12px;gap:14px;flex-wrap:wrap">
           <div>
-            <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800">💼 KAS WAKIF</div>
-            <div style="font-size:24px;font-weight:800;margin-top:6px" id="saldo-wakif-display">Rp —</div>
-            <div style="font-size:11px;color:#c5d8d2;margin-top:2px">Total kas master ledger</div>
+            <div style="font-size:11px;color:var(--mute);letter-spacing:.5px;font-weight:700">TOTAL UANG MASUK</div>
+            <div style="font-size:24px;font-weight:800;color:var(--moss);margin-top:4px" id="total-masuk-display">Rp. 0,-</div>
           </div>
-          <div>
-            <div style="font-size:11px;letter-spacing:1.5px;color:#fde2dc;font-weight:800">🏦 PETTY CASH MAS ANTO</div>
-            <div style="font-size:24px;font-weight:800;margin-top:6px;color:#fde2dc" id="saldo-anto-display">Rp —</div>
-            <div style="font-size:11px;color:#c5d8d2;margin-top:2px" id="saldo-anto-meta">Belum settle: Rp —</div>
-          </div>
-          <div>
-            <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800">📈 BULAN INI</div>
-            <div style="font-size:14px;margin-top:6px;color:#a8c8bc">Masuk: <strong style="color:#fff" id="bulan-masuk">Rp 0</strong></div>
-            <div style="font-size:14px;color:#fde2dc">Keluar: <strong id="bulan-keluar">Rp 0</strong></div>
-          </div>
-          <div style="display:flex;flex-direction:column;justify-content:center;gap:8px">
-            <button class="btn btn-primary" onclick="openTrxModal()" style="background:var(--cherry);color:#fff;border:0">+ Tambah Transaksi</button>
-            <button class="btn btn-secondary" onclick="exportNotaZip()" style="background:#fff;color:var(--earth)">💾 Export Nota Backup</button>
-          </div>
+          <button class="btn btn-primary" onclick="openTrxModal('masuk')" style="background:var(--moss);color:#fff">+ Tambah Pemasukan</button>
+        </div>
+        <div class="table-wrap" id="masuk-table-wrap">
+          <!-- Empty state OR table render here via JS -->
         </div>
       </div>
 
-      <!-- Petty Cash Anto Detail -->
+      <!-- ============ SECTION 2 — PENGELUARAN KAS WAKIF ============ -->
       <div class="card" style="border-left:4px solid var(--cherry)">
-        <div class="card-title" style="color:var(--cherry)"><span class="num" style="background:var(--cherry)">1</span>Petty Cash Mas Anto — Advance & Settlement Tracker</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Adib transfer dana ke Anto → Anto belanja → upload nota → saldo otomatis dikurangi. Kategori RAB di-tag otomatis.</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-          <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:var(--moss)">+ Transfer ke Anto</button>
-          <button class="btn btn-primary" onclick="openTrxModal('keluar_anto')" style="background:var(--cherry)">+ Pengeluaran via Anto</button>
-        </div>
-        <div class="table-wrap">
-          <table style="font-size:11.5px">
-            <thead style="background:var(--cream)">
-              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo</th><th>Nota</th></tr>
-            </thead>
-            <tbody id="anto-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+        <div class="card-title" style="color:var(--cherry)"><span class="num" style="background:var(--cherry)">2</span>💸 Pengeluaran Kas Wakif</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Semua pengeluaran dari Kas Wakif. Tidak menampilkan saldo (mode pengeluaran-only sampai ada pemasukan).</p>
 
-      <!-- Cashbook Master Ledger -->
-      <div class="card">
-        <div class="card-title"><span class="num">2</span>Cashbook — Master Ledger (Semua Transaksi)</div>
+        <!-- Breakdown 3 kategori -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px">
+          <div style="background:#fff8f0;padding:12px 14px;border-radius:8px;border-left:3px solid #d4a017">
+            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">🏦 TRANSFER KE MAS ANTO</div>
+            <div style="font-size:17px;font-weight:800;color:#8B6914;margin-top:4px" id="total-transfer-anto-display">Rp. 0,-</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px">Advance untuk petty cash Anto</div>
+          </div>
+          <div style="background:#fff0f0;padding:12px 14px;border-radius:8px;border-left:3px solid var(--cherry)">
+            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">💵 BAYAR PEKERJA LANGSUNG</div>
+            <div style="font-size:17px;font-weight:800;color:var(--cherry);margin-top:4px" id="total-bayar-pekerja-display">Rp. 0,-</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px">Upah dari Adib langsung (bukan via Anto)</div>
+          </div>
+          <div style="background:#fef9e7;padding:12px 14px;border-radius:8px;border-left:3px solid #8a6d1f">
+            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">🛍️ BELANJA LAIN-LAIN</div>
+            <div style="font-size:17px;font-weight:800;color:#8a6d1f;margin-top:4px" id="total-belanja-display">Rp. 0,-</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px">Pupuk, alat, bahan operasional</div>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;background:#fbf3f3;padding:14px 18px;border-radius:8px;margin-bottom:14px;gap:14px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:11px;color:var(--mute);letter-spacing:.5px;font-weight:700">TOTAL PENGELUARAN KAS WAKIF</div>
+            <div style="font-size:24px;font-weight:800;color:var(--cherry);margin-top:4px" id="total-pengeluaran-display">Rp. 0,-</div>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:#d4a017;color:#fff;font-size:11px">+ Transfer ke Anto</button>
+            <button class="btn btn-primary" onclick="openTrxModal('keluar_langsung')" style="background:var(--cherry);color:#fff;font-size:11px">+ Belanja / Bayar Pekerja</button>
+          </div>
+        </div>
+
+        <!-- Filter + Table -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
           <select id="filter-cb-bulan" onchange="renderCashbook()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <option value="">Semua Bulan</option>
@@ -818,23 +824,81 @@
           </select>
           <select id="filter-cb-tipe" onchange="renderCashbook()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <option value="">Semua Tipe</option>
-            <option value="masuk">💰 Masuk</option>
-            <option value="keluar_langsung">💸 Keluar Langsung</option>
             <option value="transfer_anto">🏦 Transfer ke Anto</option>
-            <option value="keluar_anto">🛒 Keluar via Anto</option>
-            <option value="bayar_upah">💵 Bayar Upah (auto)</option>
+            <option value="bayar_upah">💵 Bayar Upah Langsung</option>
+            <option value="keluar_langsung">🛍️ Belanja Lain</option>
           </select>
           <button class="btn btn-secondary" onclick="exportCashbookCSV()" style="font-size:11px;padding:6px 12px">📥 Export CSV</button>
         </div>
         <div class="table-wrap">
           <table style="font-size:11.5px">
             <thead style="background:var(--cream)">
-              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo Wakif</th><th>Nota</th><th>Source</th></tr>
+              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Jumlah Keluar</th><th>Nota</th><th>Source</th></tr>
             </thead>
             <tbody id="cashbook-tbody"></tbody>
           </table>
         </div>
-        <p style="font-size:10px;color:var(--mute);margin-top:8px"><strong>Source legend:</strong> ✏️ Manual entry · 🔗 Auto-link dari "Tandai Dibayar" di tab Distribusi Tugas · 🏦 Auto dari Anto petty cash settlement</p>
+        <p style="font-size:10px;color:var(--mute);margin-top:8px"><strong>Source legend:</strong> ✏️ Manual · 🔗 Auto-link dari Upah Pekerja · 🏦 Auto dari Anto petty cash settlement. <em>Saldo column dihapus (menunggu pemasukan pertama biar tidak minus).</em></p>
+      </div>
+
+      <!-- ============ SECTION 3 — KAS MAS ANTO ============ -->
+      <div class="card" style="border-left:4px solid #d4a017">
+        <div class="card-title" style="color:#8B6914"><span class="num" style="background:#d4a017">3</span>🏦 Kas Mas Anto (Petty Cash)</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Saldo dana yang Adib transfer ke Mas Anto untuk belanja lapangan. Adib transfer (in) → Mas Anto pakai (out) → sisa saldo.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px">
+          <div style="background:#f5fbf7;padding:12px 14px;border-radius:8px">
+            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">📥 TRANSFER IN</div>
+            <div style="font-size:18px;font-weight:800;color:var(--moss);margin-top:4px" id="anto-total-in">Rp. 0,-</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px">Dari Adib</div>
+          </div>
+          <div style="background:#fff0f0;padding:12px 14px;border-radius:8px">
+            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">📤 SUDAH DIPAKAI</div>
+            <div style="font-size:18px;font-weight:800;color:var(--cherry);margin-top:4px" id="anto-total-out">Rp. 0,-</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px">Upah + belanja lapangan</div>
+          </div>
+          <div style="background:#fbf3f3;padding:12px 14px;border-radius:8px" id="anto-sisa-card">
+            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">📊 SISA DI ANTO</div>
+            <div style="font-size:18px;font-weight:800;margin-top:4px" id="anto-sisa">Rp. 0,-</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px" id="anto-sisa-note">—</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:var(--moss);font-size:11px">+ Transfer ke Anto</button>
+          <button class="btn btn-primary" onclick="openTrxModal('keluar_anto')" style="background:var(--cherry);font-size:11px">+ Pengeluaran via Anto</button>
+        </div>
+        <div class="table-wrap">
+          <table style="font-size:11.5px">
+            <thead style="background:var(--cream)">
+              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo Anto</th><th>Nota</th></tr>
+            </thead>
+            <tbody id="anto-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ============ SECTION 4 — RINGKASAN ============ -->
+      <div class="card" style="background:linear-gradient(135deg,#1f5f47,#2e4040);color:#f5f0e6;border:0">
+        <div class="card-title" style="color:#f5f0e6;border-bottom:1px solid #4a6960;padding-bottom:8px"><span class="num" style="background:rgba(255,255,255,.2);color:#fff">4</span>📊 Ringkasan Keseluruhan</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:14px">
+          <div>
+            <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:700">💰 TOTAL PEMASUKAN</div>
+            <div style="font-size:24px;font-weight:800;margin-top:6px;color:#a8c8bc" id="ringkasan-masuk">Rp. 0,-</div>
+            <div style="font-size:11px;color:#c5d8d2;margin-top:2px" id="ringkasan-masuk-note">Belum ada — akan muncul saat panen 2026 / donasi</div>
+          </div>
+          <div>
+            <div style="font-size:11px;letter-spacing:1.5px;color:#fde2dc;font-weight:700">💸 TOTAL PENGELUARAN</div>
+            <div style="font-size:24px;font-weight:800;margin-top:6px;color:#fde2dc" id="ringkasan-keluar">Rp. 0,-</div>
+            <div style="font-size:11px;color:#c5d8d2;margin-top:2px">Semua transaksi keluar cumulative</div>
+          </div>
+        </div>
+        <div id="ringkasan-saldo-wrap" style="margin-top:14px;padding-top:14px;border-top:1px solid #4a6960;display:none">
+          <div style="font-size:11px;letter-spacing:1.5px;color:#fff;font-weight:700">💼 SALDO BERSIH</div>
+          <div style="font-size:28px;font-weight:800;margin-top:6px" id="ringkasan-saldo">Rp. 0,-</div>
+          <div style="font-size:11px;color:#c5d8d2;margin-top:2px">Pemasukan dikurangi pengeluaran. Tampil otomatis kalau pemasukan ≥ 0.</div>
+        </div>
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary" onclick="exportNotaZip()" style="background:#fff;color:var(--earth);font-size:11px">💾 Export Nota Backup</button>
+        </div>
       </div>
 
       <!-- Status Storage Nota -->
@@ -7087,24 +7151,33 @@ function renderRABCharts() {
 }
 
 // ---------- RENDER LAPORAN KEUANGAN ----------
+// Post-redesign 17 Mei 2026: KPI rendering pindah ke renderCashbook (Section 1/2/4)
+// dan renderAntoLedger (Section 3). renderKeuangan tinggal orchestrator.
 function renderKeuangan() {
-  const s = computeSaldo();
-  document.getElementById('saldo-wakif-display').textContent = fmtRp(s.kasWakif);
-  document.getElementById('saldo-anto-display').textContent = fmtRp(s.antoSaldo);
-  document.getElementById('saldo-anto-meta').textContent = `Transfer in: ${fmtRp(s.antoIn)} · Settle: ${fmtRp(s.antoOut)}`;
-
-  // Bulan ini
-  const now = new Date();
-  const ym = now.toISOString().slice(0,7);
-  let masukBln = 0, keluarBln = 0;
-  CASHBOOK.forEach(t => {
-    if (!t.tgl.startsWith(ym)) return;
-    if (t.tipe === 'masuk') masukBln += t.masuk;
-    else if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah') keluarBln += t.keluar;
-    else if (t.tipe === 'transfer_anto') keluarBln += t.keluar;
-  });
-  document.getElementById('bulan-masuk').textContent = fmtRp(masukBln);
-  document.getElementById('bulan-keluar').textContent = fmtRp(keluarBln);
+  // Defensive — legacy element references (di-keep untuk compat dgn computeSaldo callers lain)
+  const elW = document.getElementById('saldo-wakif-display');
+  const elA = document.getElementById('saldo-anto-display');
+  const elM = document.getElementById('saldo-anto-meta');
+  if (elW || elA || elM) {
+    const s = computeSaldo();
+    if (elW) elW.textContent = fmtRp(s.kasWakif);
+    if (elA) elA.textContent = fmtRp(s.antoSaldo);
+    if (elM) elM.textContent = `Transfer in: ${fmtRp(s.antoIn)} · Settle: ${fmtRp(s.antoOut)}`;
+  }
+  const elBM = document.getElementById('bulan-masuk');
+  const elBK = document.getElementById('bulan-keluar');
+  if (elBM || elBK) {
+    const now = new Date();
+    const ym = now.toISOString().slice(0,7);
+    let masukBln = 0, keluarBln = 0;
+    CASHBOOK.forEach(t => {
+      if (!t.tgl.startsWith(ym)) return;
+      if (t.tipe === 'masuk') masukBln += t.masuk;
+      else if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah' || t.tipe === 'transfer_anto') keluarBln += t.keluar;
+    });
+    if (elBM) elBM.textContent = fmtRp(masukBln);
+    if (elBK) elBK.textContent = fmtRp(keluarBln);
+  }
 
   populateCashbookFilters();
   renderCashbook();
@@ -7129,26 +7202,86 @@ function populateCashbookFilters() {
 }
 
 function renderCashbook() {
+  // === NEW 4-section architecture (locked 17 Mei 2026 per Adib redesign) ===
+  // Compute aggregates per category — show TOTAL only, no negative saldo.
+  const allMasuk = CASHBOOK.filter(t => t.tipe === 'masuk');
+  const totalMasuk = allMasuk.reduce((s, t) => s + (t.masuk || 0), 0);
+  const totalTransferAnto = CASHBOOK.filter(t => t.tipe === 'transfer_anto').reduce((s, t) => s + (t.keluar || 0), 0);
+  const totalBayarPekerja = CASHBOOK.filter(t => t.tipe === 'bayar_upah').reduce((s, t) => s + (t.keluar || 0), 0);
+  const totalBelanjaLain = CASHBOOK.filter(t => t.tipe === 'keluar_langsung').reduce((s, t) => s + (t.keluar || 0), 0);
+  const totalPengeluaran = totalTransferAnto + totalBayarPekerja + totalBelanjaLain;
+
+  // Section 1: total uang masuk
+  const elMasuk = document.getElementById('total-masuk-display');
+  if (elMasuk) elMasuk.textContent = fmtRp(totalMasuk);
+
+  // Section 2: breakdown 3 kategori + total
+  const elTrAnto = document.getElementById('total-transfer-anto-display');
+  if (elTrAnto) elTrAnto.textContent = fmtRp(totalTransferAnto);
+  const elBayar = document.getElementById('total-bayar-pekerja-display');
+  if (elBayar) elBayar.textContent = fmtRp(totalBayarPekerja);
+  const elBelanja = document.getElementById('total-belanja-display');
+  if (elBelanja) elBelanja.textContent = fmtRp(totalBelanjaLain);
+  const elPeng = document.getElementById('total-pengeluaran-display');
+  if (elPeng) elPeng.textContent = fmtRp(totalPengeluaran);
+
+  // Section 1 table — masuk entries (or empty state)
+  const masukWrap = document.getElementById('masuk-table-wrap');
+  if (masukWrap) {
+    if (allMasuk.length === 0) {
+      masukWrap.innerHTML = `<div style="padding:24px;text-align:center;background:#fafaf6;border:1.5px dashed #ddd;border-radius:8px;color:var(--mute);font-size:12px;font-style:italic">
+        Belum ada pemasukan tercatat.<br>
+        Akan otomatis muncul saat ada: hasil jual panen kopi, donasi, hibah, atau transfer ke kebun.
+      </div>`;
+    } else {
+      const renameKebun = (text) => (text || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
+      masukWrap.innerHTML = `<table style="font-size:11.5px;width:100%">
+        <thead style="background:var(--cream)"><tr><th>Tgl</th><th>Keterangan</th><th style="text-align:right">Jumlah Masuk</th><th>Nota</th></tr></thead>
+        <tbody>${allMasuk.sort((a,b)=>b.tgl.localeCompare(a.tgl)).map(t => `
+          <tr>
+            <td>${formatTglShort(t.tgl)}</td>
+            <td>${renameKebun(t.ket)}</td>
+            <td style="text-align:right;color:var(--moss);font-weight:600">${fmtRp(t.masuk)}</td>
+            <td style="text-align:center">${t.nota ? `<button onclick="viewNota('${t.nota}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="Lihat nota">📎</button>` : '<span style="color:#ddd">—</span>'}</td>
+          </tr>`).join('')}</tbody>
+      </table>`;
+    }
+  }
+
+  // Section 4: Ringkasan
+  const elRingMasuk = document.getElementById('ringkasan-masuk');
+  if (elRingMasuk) elRingMasuk.textContent = fmtRp(totalMasuk);
+  const elRingMasukNote = document.getElementById('ringkasan-masuk-note');
+  if (elRingMasukNote) elRingMasukNote.textContent = totalMasuk > 0 ? `${allMasuk.length} transaksi pemasukan tercatat` : 'Belum ada — akan muncul saat panen 2026 / donasi';
+  const elRingKeluar = document.getElementById('ringkasan-keluar');
+  if (elRingKeluar) elRingKeluar.textContent = fmtRp(totalPengeluaran);
+  // Saldo bersih: tampil HANYA kalau ada pemasukan (per Adib spec)
+  const elSaldoWrap = document.getElementById('ringkasan-saldo-wrap');
+  const elSaldo = document.getElementById('ringkasan-saldo');
+  if (elSaldoWrap && elSaldo) {
+    if (totalMasuk > 0) {
+      const saldo = totalMasuk - totalPengeluaran;
+      elSaldo.textContent = fmtRp(saldo);
+      elSaldo.style.color = saldo >= 0 ? '#a8c8bc' : '#fde2dc';
+      elSaldoWrap.style.display = 'block';
+    } else {
+      elSaldoWrap.style.display = 'none';
+    }
+  }
+
+  // === Section 2 main table — pengeluaran kas wakif ONLY (no saldo column) ===
   const fBln = document.getElementById('filter-cb-bulan').value;
   const fKat = document.getElementById('filter-cb-kat').value;
   const fTipe = document.getElementById('filter-cb-tipe').value;
+  // Filter to pengeluaran kas wakif only (exclude masuk + keluar_anto — those have own sections)
   const filtered = CASHBOOK.filter(t => {
+    // Only include pengeluaran kas wakif: transfer_anto, bayar_upah, keluar_langsung
+    if (!['transfer_anto', 'bayar_upah', 'keluar_langsung'].includes(t.tipe)) return false;
     if (fBln && !t.tgl.startsWith(fBln)) return false;
     if (fKat && (!t.kat || t.kat.split('.')[0] !== fKat)) return false;
     if (fTipe && t.tipe !== fTipe) return false;
     return true;
   }).sort((a,b) => b.tgl.localeCompare(a.tgl));
-
-  let saldo = 0;
-  // Compute running saldo (of WHOLE cashbook chronologically)
-  const allSorted = [...CASHBOOK].sort((a,b) => a.tgl.localeCompare(b.tgl));
-  const saldoMap = {};
-  let run = 0;
-  allSorted.forEach(t => {
-    if (t.tipe === 'masuk') run += t.masuk;
-    else if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah' || t.tipe === 'transfer_anto') run -= t.keluar;
-    saldoMap[t.id] = run;
-  });
 
   const tipeLabel = {
     masuk: '💰 Masuk',
@@ -7168,8 +7301,6 @@ function renderCashbook() {
   const renameKebun = (text) => (text || '').replace(/Bidang\s+(\d)/g, 'Kebun $1').replace(/Bidang\s+(\w+)/g, 'Kebun $1');
 
   document.getElementById('cashbook-tbody').innerHTML = filtered.map(t => {
-    const saldoVal = (t.tipe!=='keluar_anto') ? saldoMap[t.id] : null;
-    const saldoColor = saldoVal === null ? '#bbb' : (saldoVal >= 0 ? 'var(--moss)' : 'var(--cherry)');
     const srcInfo = srcLabel[t.src] || { icon: '?', desc: 'Unknown source' };
     return `
     <tr>
@@ -7177,19 +7308,33 @@ function renderCashbook() {
       <td>${tipeLabel[t.tipe] || t.tipe}</td>
       <td>${renameKebun(t.ket)}</td>
       <td>${t.kat ? `<code style="font-size:10px;background:var(--cream);padding:2px 5px;border-radius:3px">${t.kat}</code>` : '<span style="color:#bbb">—</span>'}</td>
-      <td style="text-align:right;color:${t.masuk>0?'var(--moss)':'#bbb'}">${t.masuk > 0 ? fmtRp(t.masuk) : '—'}</td>
-      <td style="text-align:right;color:${t.keluar>0?'var(--cherry)':'#bbb'}">${t.keluar > 0 ? fmtRp(t.keluar) : '—'}</td>
-      <td style="text-align:right;font-weight:600;color:${saldoColor}">${saldoVal !== null ? fmtRp(saldoVal) : '<span style="color:#bbb;font-size:10px">(via Anto)</span>'}</td>
+      <td style="text-align:right;color:${t.keluar>0?'var(--cherry)':'#bbb'};font-weight:600">${t.keluar > 0 ? fmtRp(t.keluar) : '—'}</td>
       <td style="text-align:center">${t.nota ? `<button onclick="viewNota('${t.nota}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="Lihat nota">📎</button>` : '<span style="color:#ddd">—</span>'}</td>
       <td style="text-align:center" title="${srcInfo.desc}"><span style="cursor:help;font-size:13px">${srcInfo.icon}</span></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada transaksi sesuai filter.</td></tr>';
+  }).join('') || '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada pengeluaran sesuai filter.</td></tr>';
 }
 
 function renderAntoLedger() {
   const antoTrx = CASHBOOK.filter(t => t.tipe === 'transfer_anto' || t.tipe === 'keluar_anto')
     .sort((a,b) => a.tgl.localeCompare(b.tgl));
   let run = 0;
+  // Compute totals for Section 3 KPI cards
+  const totalIn = antoTrx.filter(t => t.tipe === 'transfer_anto').reduce((s, t) => s + (t.keluar || 0), 0);
+  const totalOut = antoTrx.filter(t => t.tipe === 'keluar_anto').reduce((s, t) => s + (t.keluar || 0), 0);
+  const sisa = totalIn - totalOut;
+  const elIn = document.getElementById('anto-total-in'); if (elIn) elIn.textContent = fmtRp(totalIn);
+  const elOut = document.getElementById('anto-total-out'); if (elOut) elOut.textContent = fmtRp(totalOut);
+  const elSisa = document.getElementById('anto-sisa');
+  const elSisaNote = document.getElementById('anto-sisa-note');
+  if (elSisa) {
+    elSisa.textContent = fmtRp(Math.abs(sisa));
+    elSisa.style.color = sisa < 0 ? 'var(--cherry)' : (sisa > 0 ? 'var(--moss)' : 'var(--mute)');
+  }
+  if (elSisaNote) {
+    elSisaNote.textContent = sisa < 0 ? '⚠️ Anto sudah keluarkan lebih — Adib utang transfer susulan' :
+                              sisa > 0 ? '✓ Saldo masih ada di Anto' : 'Saldo settle (0)';
+  }
   const tipeLabel = { transfer_anto: '🏦 Transfer In', keluar_anto: '🛒 Pengeluaran' };
   // Render-time rename Bidang → Kebun (cosmetic, preserve stored data)
   const renameKebun = (text) => (text || '').replace(/Bidang\s+(\d)/g, 'Kebun $1').replace(/Bidang\s+(\w+)/g, 'Kebun $1');
