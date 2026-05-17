@@ -3406,7 +3406,13 @@ function renderUpahTable() {
   }).join('');
 }
 
+// DEPRECATED — markPaid tanpa source picker + cashbook auto-link akan create orphan.
+// Tombol per row dari UPAH table pakai openPaidModalById() → confirmPaid() (yg auto-link cashbook).
+// Function ini disisakan untuk backward compat kalau ada caller eksternal, tapi sekarang
+// secara internal forward ke modal pattern supaya sync UPAH ↔ Cashbook tetap terjaga.
 function markPaid(id) {
+  if (typeof openPaidModalById === 'function') return openPaidModalById(id);
+  console.warn('[markPaid] openPaidModalById not available — falling back to status-only mark (RISK: cashbook orphan)');
   const it = UPAH_ITEMS.find(x => x.id === id);
   if (!it) return;
   it.status = 'lunas';
@@ -3415,13 +3421,46 @@ function markPaid(id) {
   renderUpahSummary(); renderUpahTable();
 }
 
+// FIXED 17 Mei 2026: markUnpaid sekarang proper rollback — hapus cashbook entry yang
+// dulu di-create via confirmPaid/batchPay (filter by ref='upah_'+id), restore saldo
+// Anto kalau bayar_source='anto'. Sebelum fix ini: UPAH status balik ke belum tapi
+// cashbook entry tetap nempel → orphan → laporan keuangan out of sync.
+// Pattern mirror dari auditUnmarkPaid (line 8313) tapi tanpa reopen audit modal.
 function markUnpaid(id) {
   const it = UPAH_ITEMS.find(x => x.id === id);
-  if (!it) return;
+  if (!it) { console.warn('[markUnpaid] UPAH not found id=', id); return; }
+  const ref = 'upah_' + id;
+  const linkedCb = (typeof CASHBOOK !== 'undefined') ? CASHBOOK.filter(t => t.ref === ref) : [];
+  const nm = (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[it.pelapor]) ? NAMA_PEKERJA[it.pelapor] : it.pelapor;
+  const totalRp = (typeof calcTotal === 'function') ? calcTotal(it) : (it.tarif * it.qty);
+  const wasViaAnto = it.bayar_source === 'anto';
+  const msg = `↺ Batalkan pembayaran "${nm} — ${(it.aktivitas||'').substring(0,40)}" (${(typeof formatTglShort==='function')?formatTglShort(it.tgl):it.tgl})?\n\n` +
+              `Roll back ini akan:\n` +
+              `• Set UPAH status: belum dibayar\n` +
+              `• Hapus ${linkedCb.length} cashbook entry yang link ke UPAH ini (${(typeof fmtRp==='function')?fmtRp(totalRp):totalRp})\n` +
+              (wasViaAnto ? `• Saldo Kas Anto auto-naik kembali ${(typeof fmtRp==='function')?fmtRp(totalRp):totalRp}\n` : '') +
+              `\nLanjut?`;
+  if (!confirm(msg)) return;
+  // Roll back UPAH status
   it.status = 'belum';
   delete it.bayar_tgl;
+  delete it.bayar_source;
+  // Delete linked cashbook entries (auto-link by ref)
+  if (typeof CASHBOOK !== 'undefined') {
+    CASHBOOK = CASHBOOK.filter(t => t.ref !== ref);
+    if (typeof saveCashbook === 'function') saveCashbook();
+  }
   saveUpah();
-  renderUpahSummary(); renderUpahTable();
+  // Re-render all affected views
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderAntoLedger === 'function') renderAntoLedger();
+  if (typeof renderRAB === 'function') renderRAB();
+  if (typeof showToast === 'function') {
+    showToast(`↺ UPAH ${nm} batal — ${linkedCb.length} cashbook entry dihapus${wasViaAnto?' · saldo Anto restored':''}`);
+  }
 }
 
 function batchPay() {
