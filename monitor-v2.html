@@ -3350,10 +3350,12 @@ function batchPay() {
       const tipe = source === 'anto' ? 'keluar_anto' : 'bayar_upah';
       const katRAB = it.model === 'borongan' ? '4.1' : (it.pelapor === 'YIT' ? '3.1' : '3.2');
       const nm = NAMA_PEKERJA[it.pelapor] || it.pelapor;
+      // Description: auto-rename Bidang → Kebun untuk konsistensi (17 Mei 2026)
+      const aktivitasClean = (it.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
       CASHBOOK.push({
         id: 'cb_pay_' + Date.now() + '_' + it.id,
         tgl: today, tipe, kat: katRAB,
-        ket: `Upah ${nm} — ${it.aktivitas} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto·batch]':'[lgs·batch]'}`,
+        ket: `Upah ${nm} — ${aktivitasClean} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto·batch]':'[lgs·batch]'}`,
         masuk: 0, keluar: calcTotal(it),
         src: 'autolink', nota: null, ref: 'upah_' + it.id
       });
@@ -7155,21 +7157,33 @@ function renderCashbook() {
     keluar_anto: '🛒 via Anto',
     bayar_upah: '💵 Bayar Upah'
   };
-  const srcLabel = { manual:'✏️', autolink:'🔗', anto:'🏦' };
+  const srcLabel = {
+    manual:    { icon: '✏️', desc: 'Manual input via Tambah Transaksi' },
+    autolink:  { icon: '🔗', desc: 'Auto-linked dari UPAH Pekerja (lunas)' },
+    anto:      { icon: '🏦', desc: 'Petty Cash Mas Anto' }
+  };
 
-  document.getElementById('cashbook-tbody').innerHTML = filtered.map(t => `
+  // Helper: render-time rename Bidang → Kebun untuk konsistensi naming (locked 17 Mei 2026)
+  // Tidak mutate stored data — preserve audit trail
+  const renameKebun = (text) => (text || '').replace(/Bidang\s+(\d)/g, 'Kebun $1').replace(/Bidang\s+(\w+)/g, 'Kebun $1');
+
+  document.getElementById('cashbook-tbody').innerHTML = filtered.map(t => {
+    const saldoVal = (t.tipe!=='keluar_anto') ? saldoMap[t.id] : null;
+    const saldoColor = saldoVal === null ? '#bbb' : (saldoVal >= 0 ? 'var(--moss)' : 'var(--cherry)');
+    const srcInfo = srcLabel[t.src] || { icon: '?', desc: 'Unknown source' };
+    return `
     <tr>
       <td>${formatTglShort(t.tgl)}</td>
       <td>${tipeLabel[t.tipe] || t.tipe}</td>
-      <td>${t.ket}</td>
+      <td>${renameKebun(t.ket)}</td>
       <td>${t.kat ? `<code style="font-size:10px;background:var(--cream);padding:2px 5px;border-radius:3px">${t.kat}</code>` : '<span style="color:#bbb">—</span>'}</td>
       <td style="text-align:right;color:${t.masuk>0?'var(--moss)':'#bbb'}">${t.masuk > 0 ? fmtRp(t.masuk) : '—'}</td>
       <td style="text-align:right;color:${t.keluar>0?'var(--cherry)':'#bbb'}">${t.keluar > 0 ? fmtRp(t.keluar) : '—'}</td>
-      <td style="text-align:right;font-weight:600">${(t.tipe!=='keluar_anto')?fmtRp(saldoMap[t.id]):'<span style="color:#bbb;font-size:10px">(via Anto)</span>'}</td>
+      <td style="text-align:right;font-weight:600;color:${saldoColor}">${saldoVal !== null ? fmtRp(saldoVal) : '<span style="color:#bbb;font-size:10px">(via Anto)</span>'}</td>
       <td style="text-align:center">${t.nota ? `<button onclick="viewNota('${t.nota}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="Lihat nota">📎</button>` : '<span style="color:#ddd">—</span>'}</td>
-      <td>${srcLabel[t.src]||'?'}</td>
-    </tr>
-  `).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada transaksi sesuai filter.</td></tr>';
+      <td style="text-align:center" title="${srcInfo.desc}"><span style="cursor:help;font-size:13px">${srcInfo.icon}</span></td>
+    </tr>`;
+  }).join('') || '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada transaksi sesuai filter.</td></tr>';
 }
 
 function renderAntoLedger() {
@@ -7177,13 +7191,15 @@ function renderAntoLedger() {
     .sort((a,b) => a.tgl.localeCompare(b.tgl));
   let run = 0;
   const tipeLabel = { transfer_anto: '🏦 Transfer In', keluar_anto: '🛒 Pengeluaran' };
+  // Render-time rename Bidang → Kebun (cosmetic, preserve stored data)
+  const renameKebun = (text) => (text || '').replace(/Bidang\s+(\d)/g, 'Kebun $1').replace(/Bidang\s+(\w+)/g, 'Kebun $1');
   document.getElementById('anto-tbody').innerHTML = antoTrx.map(t => {
     if (t.tipe === 'transfer_anto') run += t.keluar;
     else run -= t.keluar;
     return `<tr>
       <td>${formatTglShort(t.tgl)}</td>
       <td>${tipeLabel[t.tipe]}</td>
-      <td>${t.ket}</td>
+      <td>${renameKebun(t.ket)}</td>
       <td>${t.kat ? `<code style="font-size:10px;background:var(--cream);padding:2px 5px;border-radius:3px">${t.kat}</code>` : '<span style="color:#bbb">—</span>'}</td>
       <td style="text-align:right;color:${t.tipe==='transfer_anto'?'var(--moss)':'#bbb'}">${t.tipe==='transfer_anto'?fmtRp(t.keluar):'—'}</td>
       <td style="text-align:right;color:${t.tipe==='keluar_anto'?'var(--cherry)':'#bbb'}">${t.tipe==='keluar_anto'?fmtRp(t.keluar):'—'}</td>
@@ -7421,10 +7437,12 @@ async function confirmPaid() {
   const tipe = source === 'anto' ? 'keluar_anto' : 'bayar_upah';
   const katRAB = it.model === 'borongan' ? '4.1' : (it.pelapor === 'YIT' ? '3.1' : '3.2');
   const nm = (typeof NAMA_PEKERJA !== 'undefined') ? NAMA_PEKERJA[it.pelapor] : it.pelapor;
+  // Description: auto-rename Bidang → Kebun untuk konsistensi (17 Mei 2026)
+  const aktivitasClean = (it.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
   CASHBOOK.push({
     id: 'cb_pay_' + Date.now() + '_' + it.id,
     tgl, tipe, kat: katRAB,
-    ket: `Upah ${nm} — ${it.aktivitas} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto]':'[lgs]'}`,
+    ket: `Upah ${nm} — ${aktivitasClean} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto]':'[lgs]'}`,
     masuk: 0, keluar: total,
     src: 'autolink', nota: notaId, ref: 'upah_' + it.id
   });
