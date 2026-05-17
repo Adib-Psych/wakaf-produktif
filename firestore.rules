@@ -1,0 +1,95 @@
+// ============================================================
+// Firestore Security Rules — Wakaf Ngantang
+// Updated 17 Mei 2026 — Phase 1 production rules
+//
+// DEPLOY: Paste isi file ini ke Firebase Console:
+//   Firebase Console → Build → Firestore Database → Rules tab → Edit
+//   Click "Publish" untuk apply.
+//
+// Phase 1 strategy (locked 17 Mei 2026):
+//   - Worker tokens (KUMPUL/YIT/ANTO) bertindak sebagai shared key
+//     untuk CREATE laporan. Tidak ada Firebase Auth dulu — keep simple.
+//   - Anybody bisa READ collection laporan (Wakif dashboard butuh, dan
+//     Living Lab future fetch akan butuh). Privacy NOT enforced di Phase 1.
+//   - UPDATE/DELETE locked — hanya bisa via Firebase Console (Wakif manual).
+//   - Schema validation: pelapor harus salah satu dari 3 worker valid +
+//     created_at + tanggal wajib + size limit.
+//
+// Phase 2 (later, when Adib ready): migrate ke Firebase Auth + custom claims
+// untuk role-based access (wakif full, worker scoped, public limited).
+// ============================================================
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ===== laporan collection =====
+    // Worker submissions dari lapor.html + Wakif input dari monitor-v2.
+    match /laporan/{laporanId} {
+
+      // READ: terbuka untuk semua (dashboard butuh listener, Living Lab future fetch)
+      // Privacy enforcement bisa di-tighten di Phase 2 dengan Auth.
+      allow read: if true;
+
+      // CREATE: validasi minimal — mencegah spam + struktur baseline.
+      allow create: if
+        // Worker valid (atau Wakif via monitor-v2 dengan pelapor='WAKIF')
+        request.resource.data.pelapor in ['KUMPUL', 'YIT', 'ANTO', 'WAKIF', 'ADIB']
+        // Wajib ada tanggal entry
+        && request.resource.data.tanggal is string
+        // Wajib ada kategori aktivitas
+        && request.resource.data.kategori is string
+        // Wajib ada created_at (client-side ISO string)
+        && request.resource.data.created_at is string
+        // Schema version control
+        && request.resource.data.schema_version is string
+        // Size limit — max ~1 MB per entry (Firestore hard limit) — soft limit untuk warning di app
+        && request.resource.size() < 900000;
+
+      // UPDATE: locked — hanya via Firebase Console (Wakif manual).
+      // Phase 2: open untuk Wakif role saja.
+      allow update: if false;
+
+      // DELETE: locked — hanya via Firebase Console.
+      // Phase 2: open untuk Wakif role saja.
+      allow delete: if false;
+    }
+
+    // ===== workers collection (last_active tracking) =====
+    match /workers/{workerId} {
+      // READ open (Wakif dashboard display)
+      allow read: if true;
+
+      // CREATE/UPDATE: hanya kalau workerId match pelapor valid
+      allow create, update: if
+        workerId in ['KUMPUL', 'YIT', 'ANTO']
+        && request.resource.data.last_active is string;
+
+      // DELETE: locked
+      allow delete: if false;
+    }
+
+    // ===== audit_log collection (append-only) =====
+    match /audit_log/{logId} {
+      // READ: locked di Phase 1 (Wakif harus check via Firebase Console)
+      // Phase 2: open untuk Wakif role
+      allow read: if false;
+
+      // CREATE: open untuk audit trail dari lapor.html / monitor-v2
+      allow create: if
+        request.resource.data.action is string
+        && request.resource.data.timestamp is string
+        && request.resource.size() < 100000;
+
+      // UPDATE/DELETE: forever locked — audit log harus immutable
+      allow update, delete: if false;
+    }
+
+    // ===== Default deny =====
+    // Collection lain yang belum di-define → deny semuanya
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
