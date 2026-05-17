@@ -119,8 +119,15 @@
   .hero-lightbox .lb-close{position:absolute;top:18px;right:22px;background:rgba(255,255,255,.18);color:#fff;border:none;width:40px;height:40px;border-radius:50%;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
   /* KPI GRID */
-  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:14px}
+  .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px}
   .kpi{background:#fff;border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);position:relative;overflow:hidden}
+  /* Wide KPI row — for Burn Rate yang butuh nominal full Rupiah readable (locked 17 Mei 2026) */
+  .kpi-wide{background:#fff;border-radius:var(--r);padding:16px 20px;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;border-top:3px solid var(--gold)}
+  .kpi-wide-info{flex:1;min-width:180px}
+  .kpi-wide-info .kpi-lbl{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--mute);text-transform:uppercase;margin-bottom:4px}
+  .kpi-wide-info .kpi-trend{font-size:11px;color:var(--green);font-weight:600}
+  .kpi-wide-num{font-size:18px;font-weight:800;color:var(--earth);line-height:1.3;white-space:nowrap;text-align:right;letter-spacing:-.3px}
+  @media (max-width:640px){.kpi-wide{flex-direction:column;align-items:flex-start}.kpi-wide-num{text-align:left;font-size:16px;white-space:normal}}
   .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--moss)}
   .kpi.danger::before{background:var(--red)}
   .kpi.warn::before{background:var(--orange)}
@@ -321,8 +328,16 @@
         <div class="kpi"><div class="kpi-num" id="kpi-pohon">—</div><div class="kpi-lbl">Pohon Dikerjakan</div><div class="kpi-trend" id="kpi-pohon-trend">Belum ada data</div></div>
         <div class="kpi gold"><div class="kpi-num" id="kpi-compliance">—</div><div class="kpi-lbl">SOP Compliance %</div><div class="kpi-trend" id="kpi-compliance-trend">Belum ada data</div></div>
         <div class="kpi warn"><div class="kpi-num" id="kpi-alerts">—</div><div class="kpi-lbl">Active Alerts</div><div class="kpi-trend dn">→ Cek tab OPT Heatmap</div></div>
-        <div class="kpi" data-tier="wakif"><div class="kpi-num" id="kpi-budget">—</div><div class="kpi-lbl">Burn Rate Anggaran</div><div class="kpi-trend" id="kpi-budget-trend">Cek tab RAB Siklus</div></div>
         <div class="kpi"><div class="kpi-num" id="kpi-countdown">—</div><div class="kpi-lbl">Hari Menuju Panen</div><div class="kpi-trend">🍒 Window Jul-Sep 2026 <span style="color:var(--cherry)">(NGT)</span></div></div>
+      </div>
+
+      <!-- Burn Rate Anggaran — pindah ke row sendiri (locked 17 Mei 2026 per Adib): nominal Rupiah full terbaca jelas. SOT: CASHBOOK + RAB_DATA (sama dengan tab Anggaran). -->
+      <div class="kpi-wide" data-tier="wakif">
+        <div class="kpi-wide-info">
+          <div class="kpi-lbl">💰 Burn Rate Anggaran</div>
+          <div class="kpi-trend" id="kpi-budget-trend">Cek tab RAB Siklus</div>
+        </div>
+        <div class="kpi-wide-num" id="kpi-budget">—</div>
       </div>
 
       <div class="card">
@@ -2082,9 +2097,37 @@ function renderDashboard() {
   const cutoffStr = cutoff.toISOString().slice(0,10);
   const recent30 = data.filter(d => d.tgl >= cutoffStr);
   document.getElementById('kpi-laporan').textContent = recent30.length;
-  document.getElementById('kpi-pohon').textContent = data.reduce((s,d)=>s+(+d.pohon||0),0);
-  const compliantCount = data.filter(d=>d.compliance==='compliant').length;
-  document.getElementById('kpi-compliance').textContent = data.length ? Math.round((compliantCount/data.length)*100) + '%' : '—';
+  // Pohon Dikerjakan — handle dual-schema (legacy `pohon` from Form Input + new `jumlah_pohon` from Worker PWA lapor.html)
+  // Fix locked 17 Mei 2026: sebelumnya hanya hitung d.pohon → entries dari lapor.html (jumlah_pohon) tidak dihitung.
+  document.getElementById('kpi-pohon').textContent = data.reduce((s,d)=>s+(+d.pohon||+d.jumlah_pohon||0),0);
+
+  // SOP Compliance % — pakai getComplianceMetrics() (sumber sama dengan tab "SOP Compliance" + "SOP Kalender")
+  // Locked 17 Mei 2026: sebelumnya hitung per-entry flag (default 'compliant' → selalu 100% misleading).
+  // Sekarang ratio "items SOP sudah dikerjakan" vs "items in-scope" (exclude N/A pre-project).
+  let compliancePct = null;
+  let complianceTrend = 'Belum ada data';
+  if (typeof getComplianceMetrics === 'function') {
+    try {
+      const m = getComplianceMetrics();
+      const inScope = m.total - (m.na || 0);
+      if (inScope > 0) {
+        compliancePct = Math.round((m.sudah / inScope) * 100);
+        complianceTrend = `${m.sudah}/${inScope} SOP items selesai` + (m.tidakSesuai > 0 ? ` · ${m.tidakSesuai} deviation` : '');
+      }
+    } catch(e) { console.warn('[KPI compliance] getComplianceMetrics failed:', e); }
+  }
+  // Fallback to per-entry tag if SOP metrics not available
+  if (compliancePct === null) {
+    const compliantCount = data.filter(d=>d.compliance==='compliant').length;
+    if (data.length) {
+      compliancePct = Math.round((compliantCount/data.length)*100);
+      complianceTrend = compliantCount + '/' + data.length + ' compliant (per-entry)';
+    }
+  }
+  document.getElementById('kpi-compliance').textContent = compliancePct !== null ? compliancePct + '%' : '—';
+  const trCEl = document.getElementById('kpi-compliance-trend');
+  if (trCEl) trCEl.textContent = complianceTrend;
+
   const alertsCount = data.reduce((s,d)=>s+(d.alerts?d.alerts.length:0),0);
   document.getElementById('kpi-alerts').textContent = alertsCount;
 
@@ -2115,13 +2158,12 @@ function renderDashboard() {
   }
 
   // Auto-update KPI trends "Belum ada data" → real metrics
+  // Note: kpi-compliance-trend sudah di-set di block compliance di atas (locked 17 Mei 2026).
   if (data.length > 0) {
     const trL = document.getElementById('kpi-laporan-trend');
     if (trL) trL.textContent = `${data.length} total all-time`;
     const trP = document.getElementById('kpi-pohon-trend');
     if (trP) trP.textContent = data.length + ' laporan';
-    const trC = document.getElementById('kpi-compliance-trend');
-    if (trC) trC.textContent = compliantCount + '/' + data.length + ' compliant';
   }
 
   // countdown to July 1 panen window
