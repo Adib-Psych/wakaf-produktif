@@ -147,6 +147,25 @@ span.lang-en { display: none; }
 }
 .page-hero-inner {
   max-width: 1200px; margin: 0 auto; position: relative;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 3rem;
+  align-items: center;
+}
+.page-hero-text { min-width: 0; }
+.page-hero-art {
+  display: flex; align-items: center; justify-content: center;
+}
+.page-hero-art img {
+  width: 100%; max-width: 300px; height: auto; aspect-ratio: 1/1;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.18);
+  display: block;
+}
+@media (max-width: 800px) {
+  .page-hero-inner { grid-template-columns: 1fr; gap: 1.6rem; }
+  .page-hero-art { order: -1; }
+  .page-hero-art img { max-width: 180px; }
 }
 .page-hero-eyebrow {
   display: inline-flex; align-items: center; gap: 0.4rem;
@@ -570,30 +589,35 @@ p,
 <!-- ══ PAGE HERO ══ -->
 <section class="page-hero">
   <div class="page-hero-inner">
-    <div class="page-hero-eyebrow">
-      <span class="badge-dot"></span>
-      <span class="lang-id">Platform Pembelajaran Terbuka</span>
-      <span class="lang-en">Open Learning Platform</span>
+    <div class="page-hero-text">
+      <div class="page-hero-eyebrow">
+        <span class="badge-dot"></span>
+        <span class="lang-id">Platform Pembelajaran Terbuka</span>
+        <span class="lang-en">Open Learning Platform</span>
+      </div>
+      <h1>
+        <span class="lang-id">Ruang Belajar, <em>Terbuka untuk Semua</em></span>
+        <span class="lang-en">A Learning Space, <em>Open to Everyone</em></span>
+      </h1>
+      <p class="page-hero-lead lang-id">
+        Kurikulum SOP Robusta Ngantang — 19 modul (A–S) yang menemani perjalanan pohon dari klon, pemupukan, pemangkasan, penaung, hingga panen dan pasca-panen. Disusun dari komparasi 4-arah: SOP Awal Pra-Panen Wakaf, SOP Kementan Edisi 2 (2019), Puslitbang (2010), dan validasi jurnal internasional Tier 1–2.
+      </p>
+      <p class="page-hero-lead lang-en">
+        Robusta SOP Curriculum for Ngantang — 19 modules (A–S) accompanying the tree's journey from clone selection, fertilization, pruning, shade, to harvest and post-harvest. Built from 4-way comparison: Wakaf Pre-Harvest SOP, Kementan SOP 2nd Edition (2019), Puslitbang (2010), and Tier 1–2 international journal validation.
+      </p>
+      <div class="hero-tags">
+        <span class="hero-tag lang-id">☕ SOP Robusta</span>
+        <span class="hero-tag lang-en">☕ Robusta SOP</span>
+        <span class="hero-tag lang-id">🌱 Pertanian Berkelanjutan</span>
+        <span class="hero-tag lang-en">🌱 Sustainable Agriculture</span>
+        <span class="hero-tag lang-id">📊 Berbasis Bukti</span>
+        <span class="hero-tag lang-en">📊 Evidence-Based</span>
+        <span class="hero-tag lang-id">🤝 Wakaf Produktif</span>
+        <span class="hero-tag lang-en">🤝 Productive Waqf</span>
+      </div>
     </div>
-    <h1>
-      <span class="lang-id">Ruang Belajar, <em>Terbuka untuk Semua</em></span>
-      <span class="lang-en">A Learning Space, <em>Open to Everyone</em></span>
-    </h1>
-    <p class="page-hero-lead lang-id">
-      Kurikulum SOP Robusta Ngantang — 19 modul (A–S) yang menemani perjalanan pohon dari klon, pemupukan, pemangkasan, penaung, hingga panen dan pasca-panen. Disusun dari komparasi 4-arah: SOP Awal Pra-Panen Wakaf, SOP Kementan Edisi 2 (2019), Puslitbang (2010), dan validasi jurnal internasional Tier 1–2.
-    </p>
-    <p class="page-hero-lead lang-en">
-      Robusta SOP Curriculum for Ngantang — 19 modules (A–S) accompanying the tree's journey from clone selection, fertilization, pruning, shade, to harvest and post-harvest. Built from 4-way comparison: Wakaf Pre-Harvest SOP, Kementan SOP 2nd Edition (2019), Puslitbang (2010), and Tier 1–2 international journal validation.
-    </p>
-    <div class="hero-tags">
-      <span class="hero-tag lang-id">☕ SOP Robusta</span>
-      <span class="hero-tag lang-en">☕ Robusta SOP</span>
-      <span class="hero-tag lang-id">🌱 Pertanian Berkelanjutan</span>
-      <span class="hero-tag lang-en">🌱 Sustainable Agriculture</span>
-      <span class="hero-tag lang-id">📊 Berbasis Bukti</span>
-      <span class="hero-tag lang-en">📊 Evidence-Based</span>
-      <span class="hero-tag lang-id">🤝 Wakaf Produktif</span>
-      <span class="hero-tag lang-en">🤝 Productive Waqf</span>
+    <div class="page-hero-art">
+      <img src="images/logo-only-kebun-wakaf-bg.png" alt="Logo Kebun Wakaf — Wakaf Produktif Kebun Kopi Ngantang" loading="eager">
     </div>
   </div>
 </section>
