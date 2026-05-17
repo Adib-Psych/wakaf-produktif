@@ -7936,6 +7936,42 @@ function autoCreateUpahFromEntry(entry) {
       } else if (normalized.catatan !== undefined && (normalized.detail === undefined || normalized.detail === null || normalized.detail === '')) {
         normalized.detail = normalized.catatan;
       }
+      // ===== Glossary bridge (locked 17 Mei 2026): translate bahasa petani → token ilmiah =====
+      // Worker form pakai bahasa awam, dashboard pakai token snake_case. Saat normalize, map both arah.
+      const PRUNING_TYPE_BRIDGE = {
+        'Pangkas berat (total)': 'pruning_berat',
+        'Pangkas ringan rutin': 'pruning_ringan',
+        'Wiwilan (tunas liar)': 'wiwilan',
+        'Pangkas bentuk pohon muda': 'bentuk_tbm',
+        'Pangkas pohon naungan': 'penaung',
+        'Peremajaan (potong batang bawah)': 'peremajaan'
+      };
+      const CABANG_DIPERTAHANKAN_BRIDGE = {
+        'Cabang gemuk yang berbuah lebat': 'cabang_gemuk_berbuah',
+        'Cabang yang kena matahari banyak': 'cabang_kena_sinar',
+        'Cabang utama / primer produktif': 'cabang_primer_produktif'
+      };
+      const CABANG_DIBUANG_BRIDGE = {
+        'Cabang ke dalam / cabang balik': 'cabang_balik',
+        'Cabang mati / kering': 'cabang_kering',
+        'Cabang sakit kena penyakit': 'cabang_sakit',
+        'Cabang gak kena matahari': 'cabang_dalam',
+        'Tunas air (wiwilan)': 'wiwilan',
+        'Cabang ada hama (OPT)': 'terserang_OPT'
+      };
+      // Apply bridges if entry has these fields (likely in detail_fields after object detail moved)
+      if (normalized.detail_fields) {
+        const df = normalized.detail_fields;
+        if (df.tipe_pemangkasan && PRUNING_TYPE_BRIDGE[df.tipe_pemangkasan]) {
+          df.tipe_pemangkasan_token = PRUNING_TYPE_BRIDGE[df.tipe_pemangkasan];
+        }
+        if (Array.isArray(df.cabang_dipertahankan)) {
+          df.cabang_dipertahankan_tokens = df.cabang_dipertahankan.map(v => CABANG_DIPERTAHANKAN_BRIDGE[v] || v);
+        }
+        if (Array.isArray(df.cabang_dibuang)) {
+          df.cabang_dibuang_tokens = df.cabang_dibuang.map(v => CABANG_DIBUANG_BRIDGE[v] || v);
+        }
+      }
       // Rainfall field bridge (locked 17 Mei 2026): lapor.html pakai rain_24h_mm/rain_7d_mm, dashboard expect rainfall_24h/rainfall_7d
       if (normalized.rain_24h_mm !== undefined && normalized.rainfall_24h === undefined) {
         normalized.rainfall_24h = +normalized.rain_24h_mm || 0;

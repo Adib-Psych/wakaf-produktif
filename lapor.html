@@ -936,7 +936,9 @@ const REGISTRY = {
       { id: 'tipe_pemangkasan', label: 'Tipe pemangkasan', type: 'select', options: ['Pangkas berat (total)', 'Pangkas ringan rutin', 'Wiwilan (tunas liar)', 'Pangkas bentuk pohon muda', 'Pangkas pohon naungan', 'Peremajaan (potong batang bawah)'] },
       { id: 'tinggi_pre_cm', label: 'Tinggi pohon SEBELUM (cm)', type: 'number', placeholder: 'mis. 250' },
       { id: 'tinggi_post_cm', label: 'Tinggi pohon SESUDAH (cm)', type: 'number', placeholder: 'mis. 200' },
-      { id: 'cabang_dibuang', label: 'Cabang yang dibuang (boleh lebih dari 1)', type: 'multi', options: ['Cabang ke dalam / cabang balik', 'Cabang mati / kering', 'Cabang sakit kena penyakit', 'Cabang gak kena matahari'] }
+      // NEW (locked 17 Mei 2026 — align dgn Wakif form): petani decide cabang mana DIPELIHARA
+      { id: 'cabang_dipertahankan', label: 'Cabang yang DIPELIHARA (jangan dibuang, boleh lebih dari 1)', type: 'multi', options: ['Cabang gemuk yang berbuah lebat', 'Cabang yang kena matahari banyak', 'Cabang utama / primer produktif'] },
+      { id: 'cabang_dibuang', label: 'Cabang yang DIBUANG (boleh lebih dari 1)', type: 'multi', options: ['Cabang ke dalam / cabang balik', 'Cabang mati / kering', 'Cabang sakit kena penyakit', 'Cabang gak kena matahari', 'Tunas air (wiwilan)', 'Cabang ada hama (OPT)'] }
     ]
   },
   panen: {
