@@ -763,6 +763,15 @@
     <!-- ============ LAPORAN KEUANGAN (WAKIF ONLY) ============ -->
     <div class="panel" id="panel-keuangan">
 
+      <!-- ============ TOOLBAR: AUDIT & CLEANUP ============ -->
+      <div class="card" style="background:#fff8e5;border-left:4px solid #d4a017;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#8B6914">🔍 Audit & Cleanup Tool</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Cek konsistensi UPAH Pekerja ↔ Cashbook: siapa sudah dibayar, siapa belum, duplikat, orphan</div>
+        </div>
+        <button class="btn btn-primary" onclick="openAuditModal()" style="background:#d4a017;color:#fff;font-weight:700">🔍 Buka Audit Sync</button>
+      </div>
+
       <!-- ============ SECTION 1 — UANG MASUK ============ -->
       <div class="card" style="border-left:4px solid var(--moss)">
         <div class="card-title" style="color:var(--moss)"><span class="num">1</span>💰 Laporan Uang Masuk</div>
@@ -907,6 +916,37 @@
       </div>
 
     </div>
+
+    <!-- ============ AUDIT & CLEANUP MODAL ============ -->
+    <div id="audit-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:9100;justify-content:center;align-items:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;max-width:1100px;width:100%;max-height:92vh;display:flex;flex-direction:column;overflow:hidden">
+        <div style="padding:18px 24px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;background:#fff8e5">
+          <div>
+            <div style="font-size:17px;font-weight:800;color:#8B6914">🔍 Audit & Cleanup Sync — UPAH ↔ Cashbook</div>
+            <div style="font-size:11px;color:var(--mute);margin-top:2px" id="audit-summary-line">Loading…</div>
+          </div>
+          <button onclick="closeAuditModal()" style="background:none;border:none;font-size:24px;color:var(--mute);cursor:pointer">✕</button>
+        </div>
+        <div style="display:flex;border-bottom:1px solid #eee;background:#fafaf6">
+          <button class="audit-tab on" data-tab="paid" onclick="switchAuditTab('paid')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">✅ Sudah Dibayar <span id="audit-cnt-paid" class="audit-cnt">0</span></button>
+          <button class="audit-tab" data-tab="unpaid" onclick="switchAuditTab('unpaid')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">⏳ Belum Dibayar <span id="audit-cnt-unpaid" class="audit-cnt">0</span></button>
+          <button class="audit-tab" data-tab="dup" onclick="switchAuditTab('dup')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">🚨 Duplikat <span id="audit-cnt-dup" class="audit-cnt">0</span></button>
+          <button class="audit-tab" data-tab="orphan" onclick="switchAuditTab('orphan')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">⚠️ Orphan <span id="audit-cnt-orphan" class="audit-cnt">0</span></button>
+        </div>
+        <div style="padding:16px 22px;overflow-y:auto;flex:1" id="audit-content">
+          <div style="text-align:center;padding:40px;color:var(--mute)">Loading…</div>
+        </div>
+        <div style="padding:12px 22px;border-top:1px solid #eee;background:#fafaf6;display:flex;justify-content:space-between;align-items:center;gap:10px">
+          <div style="font-size:11px;color:var(--mute)">Catatan: action <strong>Delete duplikat</strong> dan <strong>Sync status</strong> ireversible. Backup data dulu kalau ragu.</div>
+          <button class="btn btn-secondary" onclick="closeAuditModal()">Tutup</button>
+        </div>
+      </div>
+    </div>
+    <style>
+      .audit-tab.on { background:#fff !important; border-bottom-color:#d4a017 !important; color:#8B6914 }
+      .audit-cnt { display:inline-block;background:#eee;color:#666;padding:1px 7px;border-radius:10px;font-size:10px;margin-left:4px;font-weight:600 }
+      .audit-tab.on .audit-cnt { background:#d4a017;color:#fff }
+    </style>
 
     <!-- ============ TRANSAKSI MODAL ============ -->
     <div id="trx-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9000;justify-content:center;align-items:center;padding:20px">
@@ -8030,6 +8070,234 @@ function autoCreateUpahFromEntry(entry) {
   UPAH_ITEMS.push(upahEntry);
   if (typeof saveUpah === 'function') saveUpah();
   return upahEntry;
+}
+
+// ====================================================================
+// AUDIT & CLEANUP — UPAH ↔ Cashbook reconcile (locked 17 Mei 2026)
+// ====================================================================
+let AUDIT_STATE = { paid: [], unpaid: [], dup: [], orphan: [], activeTab: 'paid' };
+
+function computeAudit() {
+  const upah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS : [];
+  const cb   = (typeof CASHBOOK !== 'undefined') ? CASHBOOK : [];
+
+  // Build refs map: cashbook entries indexed by ref
+  const cbByRef = {};
+  cb.forEach(t => {
+    if (t.ref && t.ref.startsWith('upah_')) {
+      if (!cbByRef[t.ref]) cbByRef[t.ref] = [];
+      cbByRef[t.ref].push(t);
+    }
+  });
+
+  const paid = [];     // UPAH lunas, with cashbook status
+  const unpaid = [];   // UPAH belum dibayar
+  const dup = [];      // refs with >1 cashbook entry
+  const orphan = [];   // cashbook with ref but UPAH not found OR UPAH unpaid
+
+  upah.forEach(u => {
+    const ref = 'upah_' + u.id;
+    const cbEntries = cbByRef[ref] || [];
+    if (u.status === 'lunas') {
+      paid.push({
+        upah: u,
+        cashbook: cbEntries,
+        hasCashbook: cbEntries.length > 0,
+        isDuplicate: cbEntries.length > 1
+      });
+      if (cbEntries.length > 1) {
+        dup.push({ ref, upah: u, entries: cbEntries });
+      }
+    } else {
+      unpaid.push({
+        upah: u,
+        hasOrphanCashbook: cbEntries.length > 0,
+        orphanEntries: cbEntries
+      });
+      if (cbEntries.length > 0) {
+        // UPAH masih belum, tapi ada cashbook → orphan/stale
+        cbEntries.forEach(cbE => orphan.push({ ref, upah: u, cashbookEntry: cbE, reason: 'UPAH masih belum dibayar tapi sudah ada di cashbook' }));
+      }
+    }
+  });
+
+  // Check cashbook entries with ref tapi UPAH tidak ditemukan
+  Object.entries(cbByRef).forEach(([ref, entries]) => {
+    const upahId = +ref.replace('upah_', '');
+    const found = upah.find(u => u.id === upahId);
+    if (!found) {
+      entries.forEach(cbE => orphan.push({ ref, upah: null, cashbookEntry: cbE, reason: 'UPAH ID ' + upahId + ' sudah dihapus, tapi cashbook entry masih ada' }));
+    }
+  });
+
+  AUDIT_STATE.paid = paid;
+  AUDIT_STATE.unpaid = unpaid;
+  AUDIT_STATE.dup = dup;
+  AUDIT_STATE.orphan = orphan;
+  return AUDIT_STATE;
+}
+
+function openAuditModal() {
+  computeAudit();
+  document.getElementById('audit-modal-overlay').style.display = 'flex';
+  document.getElementById('audit-cnt-paid').textContent = AUDIT_STATE.paid.length;
+  document.getElementById('audit-cnt-unpaid').textContent = AUDIT_STATE.unpaid.length;
+  document.getElementById('audit-cnt-dup').textContent = AUDIT_STATE.dup.length;
+  document.getElementById('audit-cnt-orphan').textContent = AUDIT_STATE.orphan.length;
+  const totalPaidRp = AUDIT_STATE.paid.reduce((s, p) => s + (calcTotal ? calcTotal(p.upah) : (p.upah.tarif*p.upah.qty)), 0);
+  const totalUnpaidRp = AUDIT_STATE.unpaid.reduce((s, p) => s + (calcTotal ? calcTotal(p.upah) : (p.upah.tarif*p.upah.qty)), 0);
+  document.getElementById('audit-summary-line').textContent =
+    `✅ ${AUDIT_STATE.paid.length} dibayar (${fmtRpShort(totalPaidRp)}) · ⏳ ${AUDIT_STATE.unpaid.length} belum (${fmtRpShort(totalUnpaidRp)}) · 🚨 ${AUDIT_STATE.dup.length} duplikat · ⚠️ ${AUDIT_STATE.orphan.length} orphan`;
+  switchAuditTab(AUDIT_STATE.activeTab);
+}
+
+function closeAuditModal() {
+  document.getElementById('audit-modal-overlay').style.display = 'none';
+}
+
+function switchAuditTab(tab) {
+  AUDIT_STATE.activeTab = tab;
+  document.querySelectorAll('.audit-tab').forEach(b => b.classList.toggle('on', b.dataset.tab === tab));
+  const wrap = document.getElementById('audit-content');
+  const nm = (p) => (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[p]) ? NAMA_PEKERJA[p] : p;
+
+  if (tab === 'paid') {
+    if (AUDIT_STATE.paid.length === 0) {
+      wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--mute)">Belum ada UPAH yang dibayar.</div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <table style="font-size:11.5px;width:100%">
+        <thead style="background:var(--cream)"><tr><th>UPAH Tgl</th><th>Pekerja</th><th>Aktivitas</th><th>Durasi</th><th style="text-align:right">Tarif</th><th>Bayar Tgl</th><th>Sumber</th><th style="text-align:center">Cashbook Sync</th></tr></thead>
+        <tbody>${AUDIT_STATE.paid.map(p => {
+          const u = p.upah;
+          const totalRp = (calcTotal ? calcTotal(u) : u.tarif*u.qty);
+          const syncStatus = !p.hasCashbook
+            ? '<span style="background:#fde2dc;color:#8c2519;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700">⚠️ ORPHAN — tidak ada cashbook</span>'
+            : p.isDuplicate
+              ? `<span style="background:#fef3c7;color:#92400e;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700">🚨 DUPLIKAT (${p.cashbook.length}x)</span>`
+              : '<span style="background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700">✓ SYNC OK</span>';
+          return `<tr>
+            <td>${formatTglShort(u.tgl)}</td>
+            <td>${nm(u.pelapor)}</td>
+            <td style="font-size:11px">${(u.aktivitas||'').substring(0,50)}</td>
+            <td>${u.satuan_lbl||u.satuan}</td>
+            <td style="text-align:right;font-weight:600">${fmtRp(totalRp)}</td>
+            <td>${u.bayar_tgl ? formatTglShort(u.bayar_tgl) : '—'}</td>
+            <td>${u.bayar_source === 'anto' ? '🏦 via Anto' : '💰 Kas Wakif'}</td>
+            <td style="text-align:center">${syncStatus}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  } else if (tab === 'unpaid') {
+    if (AUDIT_STATE.unpaid.length === 0) {
+      wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--moss);font-weight:600">🎉 Tidak ada UPAH yang outstanding!</div>`;
+      return;
+    }
+    const today = new Date();
+    const totalUnpaid = AUDIT_STATE.unpaid.reduce((s, p) => s + (calcTotal ? calcTotal(p.upah) : p.upah.tarif*p.upah.qty), 0);
+    wrap.innerHTML = `
+      <div style="background:#fbf3f3;padding:12px 16px;border-radius:8px;margin-bottom:12px">
+        <strong style="color:var(--cherry)">⏳ Total outstanding: ${fmtRp(totalUnpaid)}</strong> · ${AUDIT_STATE.unpaid.length} item belum dibayar
+      </div>
+      <table style="font-size:11.5px;width:100%">
+        <thead style="background:var(--cream)"><tr><th>UPAH Tgl</th><th>Pekerja</th><th>Aktivitas</th><th>Durasi</th><th style="text-align:right">Tarif</th><th>Days Outstanding</th><th style="text-align:center">⚠️</th></tr></thead>
+        <tbody>${AUDIT_STATE.unpaid.map(p => {
+          const u = p.upah;
+          const totalRp = (calcTotal ? calcTotal(u) : u.tarif*u.qty);
+          const days = Math.round((today - new Date(u.tgl)) / 86400000);
+          return `<tr>
+            <td>${formatTglShort(u.tgl)}</td>
+            <td>${nm(u.pelapor)}</td>
+            <td style="font-size:11px">${(u.aktivitas||'').substring(0,50)}</td>
+            <td>${u.satuan_lbl||u.satuan}</td>
+            <td style="text-align:right;font-weight:600">${fmtRp(totalRp)}</td>
+            <td>${days} hari</td>
+            <td style="text-align:center">${p.hasOrphanCashbook ? '<span title="Ada cashbook entry padahal belum dibayar — periksa di tab Orphan" style="color:var(--cherry);font-weight:700;cursor:help">⚠️</span>' : '—'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+  } else if (tab === 'dup') {
+    if (AUDIT_STATE.dup.length === 0) {
+      wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--moss);font-weight:600">✓ Tidak ada duplikat detected!</div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <div style="background:#fef3c7;padding:12px 16px;border-radius:8px;margin-bottom:12px;font-size:12px">
+        <strong>🚨 ${AUDIT_STATE.dup.length} UPAH dengan duplikat cashbook entry.</strong><br>Klik "Hapus duplikat" untuk keep oldest entry, hapus duplikat lain.
+      </div>
+      ${AUDIT_STATE.dup.map(d => {
+        const u = d.upah;
+        const sortedEntries = [...d.entries].sort((a,b) => (a.id||'').localeCompare(b.id||''));
+        return `<div style="border:1.5px solid #fef3c7;border-radius:8px;padding:12px;margin-bottom:10px">
+          <div style="font-weight:700;color:#92400e;margin-bottom:6px">${nm(u.pelapor)} · ${formatTglShort(u.tgl)} · ${(u.aktivitas||'').substring(0,60)}</div>
+          <table style="font-size:11px;width:100%;margin-top:6px">
+            <thead style="background:#fafaf6"><tr><th>Cashbook ID</th><th>Tgl Bayar</th><th>Tipe</th><th>Keterangan</th><th style="text-align:right">Jumlah</th><th>Action</th></tr></thead>
+            <tbody>${sortedEntries.map((cbE, i) => `
+              <tr style="${i===0?'background:#dcfce7':''}">
+                <td><code style="font-size:10px">${cbE.id.substring(0,20)}</code></td>
+                <td>${formatTglShort(cbE.tgl)}</td>
+                <td>${cbE.tipe}</td>
+                <td style="font-size:10px">${(cbE.ket||'').substring(0,40)}</td>
+                <td style="text-align:right">${fmtRp(cbE.keluar||cbE.masuk)}</td>
+                <td>${i===0 ? '<span style="color:var(--moss);font-weight:600;font-size:10px">✓ KEEP (oldest)</span>' : `<button onclick="auditDeleteCashbook('${cbE.id}')" style="background:var(--cherry);color:#fff;border:0;padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer">🗑 Hapus</button>`}</td>
+              </tr>`).join('')}</tbody>
+          </table>
+        </div>`;
+      }).join('')}`;
+  } else if (tab === 'orphan') {
+    if (AUDIT_STATE.orphan.length === 0) {
+      wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--moss);font-weight:600">✓ Tidak ada orphan cashbook entry!</div>`;
+      return;
+    }
+    wrap.innerHTML = `
+      <div style="background:#fde2dc;padding:12px 16px;border-radius:8px;margin-bottom:12px;font-size:12px">
+        <strong>⚠️ ${AUDIT_STATE.orphan.length} cashbook entry dengan masalah:</strong><br>
+        • UPAH masih belum dibayar tapi sudah ada di cashbook (akan double-count)<br>
+        • UPAH sudah dihapus tapi cashbook masih ada (orphan record)
+      </div>
+      <table style="font-size:11.5px;width:100%">
+        <thead style="background:var(--cream)"><tr><th>Reason</th><th>Cashbook ID</th><th>Tgl</th><th>Keterangan</th><th style="text-align:right">Jumlah</th><th>UPAH Ref</th><th>Action</th></tr></thead>
+        <tbody>${AUDIT_STATE.orphan.map(o => `
+          <tr>
+            <td style="font-size:10px;color:var(--cherry)">${o.reason}</td>
+            <td><code style="font-size:10px">${o.cashbookEntry.id.substring(0,20)}</code></td>
+            <td>${formatTglShort(o.cashbookEntry.tgl)}</td>
+            <td style="font-size:10px">${(o.cashbookEntry.ket||'').substring(0,40)}</td>
+            <td style="text-align:right">${fmtRp(o.cashbookEntry.keluar||o.cashbookEntry.masuk)}</td>
+            <td style="font-size:10px">${o.upah ? `${nm(o.upah.pelapor)} ${formatTglShort(o.upah.tgl)}` : `(deleted: ${o.ref})`}</td>
+            <td>
+              <button onclick="auditDeleteCashbook('${o.cashbookEntry.id}')" style="background:var(--cherry);color:#fff;border:0;padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer">🗑 Hapus CB</button>
+              ${o.upah ? `<button onclick="auditMarkUpahPaid(${o.upah.id})" style="background:var(--moss);color:#fff;border:0;padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer;margin-left:3px">✓ Tandai Bayar</button>` : ''}
+            </td>
+          </tr>`).join('')}</tbody>
+      </table>`;
+  }
+}
+
+function auditDeleteCashbook(cbId) {
+  if (!confirm(`Hapus cashbook entry ${cbId.substring(0,20)}…?\n\nIni TIDAK akan affect UPAH status. Hanya hapus entry duplikat/orphan dari laporan keuangan.`)) return;
+  const idx = CASHBOOK.findIndex(t => t.id === cbId);
+  if (idx < 0) { alert('Cashbook entry tidak ditemukan'); return; }
+  CASHBOOK.splice(idx, 1);
+  if (typeof saveCashbook === 'function') saveCashbook();
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderAntoLedger === 'function') renderAntoLedger();
+  // Refresh audit modal
+  openAuditModal();
+}
+
+function auditMarkUpahPaid(upahId) {
+  const u = UPAH_ITEMS.find(x => x.id === upahId);
+  if (!u) { alert('UPAH tidak ditemukan'); return; }
+  if (!confirm(`Tandai UPAH "${u.aktivitas}" (${formatTglShort(u.tgl)}) sebagai LUNAS?\n\nIni akan sync ke laporan keuangan.`)) return;
+  u.status = 'lunas';
+  u.bayar_tgl = new Date().toISOString().slice(0,10);
+  u.bayar_source = 'wakif';
+  if (typeof saveUpah === 'function') saveUpah();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  openAuditModal();
 }
 
 </script>
