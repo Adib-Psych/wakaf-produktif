@@ -286,25 +286,34 @@
       </div>
     </div>
     <nav class="sb-tabs" id="tabs">
+      <!-- Dashboard (standalone, paling atas) -->
       <div class="sb-tab active" data-panel="dashboard"><span class="ico">📊</span><span class="lbl">Dashboard</span></div>
-      <div class="sb-tab" data-panel="log"><span class="ico">📋</span><span class="lbl">Log Harian</span></div>
-      <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
-      <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi</span></div>
-      <div class="sb-tab" data-panel="prapanen"><span class="ico">🍒</span><span class="lbl">Pra-Panen 2026</span></div>
-      <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Distribusi Tugas</span></div>
-      <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
+
       <div style="height:14px"></div>
-      <div style="font-size:10px;letter-spacing:1.5px;color:var(--gold);padding:4px 14px 6px;font-weight:800">🔒 KEUANGAN — WAKIF ONLY</div>
-      <div class="sb-tab wakif-only" data-panel="rab" data-tier="wakif"><span class="ico">📊</span><span class="lbl">RAB Siklus</span></div>
-      <div class="sb-tab wakif-only" data-panel="keuangan" data-tier="wakif"><span class="ico">📒</span><span class="lbl">Laporan Keuangan</span></div>
-      <div class="sb-tab wakif-only" data-panel="anggaran" data-tier="wakif"><span class="ico">💰</span><span class="lbl">Upah Pekerja</span></div>
-      <div style="height:14px"></div>
+
+      <!-- 📋 SOP — referensi standar operasional -->
       <div style="font-size:10px;letter-spacing:1.5px;color:var(--moss);padding:4px 14px 6px;font-weight:800">📋 SOP</div>
       <div class="sb-tab" data-panel="sintesa"><span class="ico">🔬</span><span class="lbl">Sintesa SOP</span></div>
-      <div class="sb-tab" data-panel="compliance"><span class="ico">✅</span><span class="lbl">SOP Compliance</span></div>
       <div class="sb-tab" data-panel="kalender"><span class="ico">📅</span><span class="lbl">SOP Kalender</span></div>
+      <div class="sb-tab" data-panel="compliance"><span class="ico">✅</span><span class="lbl">SOP Compliance</span></div>
+
       <div style="height:14px"></div>
-      <div style="font-size:10px;letter-spacing:1.5px;color:#D4AF37;padding:4px 14px 6px;font-weight:800">📜 PUBLIK — WAKIF ONLY</div>
+
+      <!-- 🌳 Implementasi Lapangan — eksekusi harian + observasi -->
+      <div style="font-size:10px;letter-spacing:1.5px;color:var(--moss);padding:4px 14px 6px;font-weight:800">🌳 IMPLEMENTASI LAPANGAN</div>
+      <div class="sb-tab" data-panel="log"><span class="ico">📋</span><span class="lbl">Log Harian</span></div>
+      <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Distribusi Tugas</span></div>
+      <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
+      <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
+      <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
+
+      <div style="height:14px"></div>
+
+      <!-- 💰 Wakif — keuangan & publikasi (tier wakif) -->
+      <div style="font-size:10px;letter-spacing:1.5px;color:var(--gold);padding:4px 14px 6px;font-weight:800">💰 WAKIF</div>
+      <div class="sb-tab wakif-only" data-panel="anggaran" data-tier="wakif"><span class="ico">💰</span><span class="lbl">Upah Pekerja</span></div>
+      <div class="sb-tab wakif-only" data-panel="keuangan" data-tier="wakif"><span class="ico">📒</span><span class="lbl">Keuangan / Cashbook</span></div>
+      <div class="sb-tab wakif-only" data-panel="rab" data-tier="wakif"><span class="ico">📊</span><span class="lbl">Anggaran (RAB)</span></div>
       <div class="sb-tab wakif-only" data-panel="milestones" data-tier="wakif"><span class="ico">📜</span><span class="lbl">Milestones Publik</span></div>
     </nav>
     <div class="sb-footer">
@@ -1113,59 +1122,7 @@
       </div>
     </div>
 
-    <!-- ============ PRA-PANEN 2026 ============ -->
-    <div class="panel" id="panel-prapanen">
-      <div class="card">
-        <div class="card-title"><span class="num">1</span>Countdown Panen <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px;margin-left:6px">📍 NGT ADJUST</span></div>
-        <div style="text-align:center;padding:18px 0 8px">
-          <div style="font-size:60px;font-weight:800;color:var(--terra);line-height:1" id="cd-days">—</div>
-          <div style="font-size:12px;color:var(--mute);font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-top:6px">Hari Menuju Awal Window Panen (1 Juli)</div>
-        </div>
-        <div style="background:#fde2dc;border-left:3px solid var(--cherry);padding:11px 14px;border-radius:6px;font-size:12px;color:#4a4030;line-height:1.6;margin-top:14px">
-          <strong style="color:var(--cherry)">📍 Window Panen Ngantang 2026 — Jul-Sep (bergeser dari SOP Jun-Agu)</strong><br>
-          Suhu Ngantang 20-22°C (lebih cooler dari optimal SOP 21-24°C) + La Nina prolonged → maturasi buah lebih lambat 2-4 minggu.
-          <strong>Earliest possible: Jul 1.</strong> Target peak: Agu-awal Sep. Monitor pematangan buah merah dari minggu ke-3 Juni.
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px;font-size:11px;text-align:center">
-          <div style="background:#fff5e6;padding:11px 8px;border-radius:6px">
-            <div style="font-weight:700;color:#e67e22;font-size:13px">JUL</div>
-            <div style="color:var(--mute);margin-top:3px">Mulai pemetik selektif merah · scout buah pertama</div>
-          </div>
-          <div style="background:#c14b3a;color:#fff;padding:11px 8px;border-radius:6px">
-            <div style="font-weight:700;font-size:13px">AGU</div>
-            <div style="color:#fde2dc;margin-top:3px">Peak panen · volume tertinggi</div>
-          </div>
-          <div style="background:#dde9e3;padding:11px 8px;border-radius:6px">
-            <div style="font-weight:700;color:#1f5f47;font-size:13px">SEP</div>
-            <div style="color:var(--mute);margin-top:3px">Tail panen · transisi ke pasca-panen</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="num">2</span>Checklist Pra-Panen (per SOP &amp; Q-decisions)</div>
-        <div id="checklist-prapanen"></div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="num">3</span>Estimasi Produksi (sampling 30 pohon) <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px;margin-left:6px">📍 NGT ADJUST</span></div>
-        <div class="kpi-grid" style="margin-bottom:0">
-          <div class="kpi" style="border-left:3px solid var(--cherry);background:linear-gradient(180deg,#fff,#fff8f5)">
-            <div style="position:absolute;top:0;right:0;background:var(--cherry);color:#fff;font-size:9px;font-weight:800;padding:3px 8px;border-radius:0 var(--r) 0 8px;letter-spacing:.5px">DEFAULT NGT</div>
-            <div class="kpi-num" style="color:var(--cherry)">366<small style="font-size:14px"> kg</small></div>
-            <div class="kpi-lbl">Konservatif</div>
-            <div class="kpi-trend">Rp 22 jt · 0,4 kg/phn</div>
-          </div>
-          <div class="kpi"><div class="kpi-num">640<small style="font-size:14px"> kg</small></div><div class="kpi-lbl">Moderat (after 2-3 musim)</div><div class="kpi-trend">Rp 38,4 jt · 0,7 kg/phn</div></div>
-          <div class="kpi"><div class="kpi-num">1.098<small style="font-size:14px"> kg</small></div><div class="kpi-lbl">Optimistis (jangka panjang)</div><div class="kpi-trend">Rp 65,9 jt · 1,2 kg/phn</div></div>
-        </div>
-        <div style="background:#fde2dc;border-left:3px solid var(--cherry);padding:11px 14px;border-radius:6px;font-size:12px;color:#4a4030;line-height:1.6;margin-top:12px">
-          <strong style="color:var(--cherry)">📍 Mengapa Konservatif jadi Default Ngantang?</strong><br>
-          Elevasi <strong>648 mdpl = kelas S3 (marginal-atas)</strong> untuk Robusta — masih dalam range optimal Puslitbang 2010 (500–700 mdpl) tapi marginal per SOP Edisi 2 Tabel 1 (S1: 300–500 mdpl). Excelsa rootstock + iklim Ngantang membuat target moderat-optimistis baru realistis setelah <strong>2-3 musim observasi data aktual</strong>. Set ekspektasi konservatif dulu untuk planning anggaran &amp; transparansi ke umat dan donor.
-        </div>
-        <p style="font-size:11px;color:var(--mute);margin-top:10px">Asumsi farm-gate Rp 60K/kg. Sampling formal SOP hal 218 belum dilakukan — task <em>P2 — TINGGI</em> (Mei pre-panen).</p>
-      </div>
-    </div>
+    <!-- Pra-Panen 2026 panel REMOVED 17 Mei 2026 (per Adib): duplikasi dengan Dashboard KPI (Countdown) + SOP Kalender (Checklist) + RAB tab (Estimasi). Restore kalau perlu: git log → commit sebelum 0fe582d → SOP/00_FINAL/. -->
 
     <!-- ============ OPT ============ -->
     <div class="panel" id="panel-opt">
@@ -2027,8 +1984,6 @@ function doLiveRefresh() {
   }
   // Re-render compliance progress (in case localStorage changed in another tab)
   if (typeof renderComplianceProgress === 'function') renderComplianceProgress();
-  // Re-render countdown panen
-  if (typeof renderCountdown === 'function') renderCountdown();
   // Update timestamp display kalau ada
   const ts = document.getElementById('live-ts');
   if (ts) ts.textContent = now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'});
@@ -2068,12 +2023,10 @@ function initApp() {
   renderBudgetChart();
   renderUpahSummary();
   renderUpahTable();
-  renderPrapanenChecklist();
   renderHeatmap();
   renderComplianceChart();
   renderDeviations();
   renderP1Status();
-  renderCountdown();
   renderActivityChart();
   renderPelaporChart();
   renderAlerts();
@@ -4059,14 +4012,9 @@ function renderInventoryChart() {
   });
 }
 
-// ===== PRA-PANEN =====
-function renderCountdown() {
-  const today = new Date();
-  const panen = new Date('2026-07-01');
-  const days = Math.ceil((panen-today)/(86400000));
-  const cd = document.getElementById('cd-days');
-  if (cd) cd.textContent = days;
-}
+// ===== PRA-PANEN (panel removed 17 Mei 2026 — duplikasi dengan Dashboard KPI countdown + SOP Kalender) =====
+// renderCountdown() deleted — Dashboard KPI handle countdown inline (see renderDashboard)
+// renderPrapanenChecklist() kept as no-op below for legacy caller defensiveness — bisa di-delete di refactor mendatang
 
 function renderPrapanenChecklist() {
   const items = [
@@ -4090,6 +4038,7 @@ function renderPrapanenChecklist() {
     {done:false, t:'Konfirmasi processing partner per lot', d:'Q12 — Bonsari specialty + processing in-house kebun Ngantang'}
   ];
   const c = document.getElementById('checklist-prapanen');
+  if (!c) return;  // panel removed 17 Mei 2026 — defensive guard
   c.innerHTML = items.map((it,i)=>
     `<div class="check-row ${it.done?'done':''}">
       <input type="checkbox" ${it.done?'checked':''} onchange="this.parentElement.classList.toggle('done')">
