@@ -994,7 +994,8 @@
         <div style="display:flex;border-bottom:1px solid #eee;background:#fafaf6">
           <button class="audit-tab on" data-tab="paid" onclick="switchAuditTab('paid')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">✅ Sudah Dibayar <span id="audit-cnt-paid" class="audit-cnt">0</span></button>
           <button class="audit-tab" data-tab="unpaid" onclick="switchAuditTab('unpaid')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">⏳ Belum Dibayar <span id="audit-cnt-unpaid" class="audit-cnt">0</span></button>
-          <button class="audit-tab" data-tab="dup" onclick="switchAuditTab('dup')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">🚨 Duplikat <span id="audit-cnt-dup" class="audit-cnt">0</span></button>
+          <button class="audit-tab" data-tab="upahdup" onclick="switchAuditTab('upahdup')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent" title="2+ UPAH entries dengan tgl + pelapor sama">🚨 UPAH Duplikat <span id="audit-cnt-upahdup" class="audit-cnt">0</span></button>
+          <button class="audit-tab" data-tab="dup" onclick="switchAuditTab('dup')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent" title="Multiple cashbook entries link ke same UPAH">🔁 Dup Cashbook <span id="audit-cnt-dup" class="audit-cnt">0</span></button>
           <button class="audit-tab" data-tab="orphan" onclick="switchAuditTab('orphan')" style="flex:1;padding:11px 14px;border:0;background:transparent;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent">⚠️ Orphan <span id="audit-cnt-orphan" class="audit-cnt">0</span></button>
         </div>
         <div style="padding:16px 22px;overflow-y:auto;flex:1" id="audit-content">
@@ -8909,16 +8910,21 @@ if (document.readyState === 'loading'){
 }
 
 // Auto-create UPAH entry dari Firestore-sourced laporan (reusable for Phase 1B sync)
+// Fixed 18 Mei 2026: dedupe filter broadened ke SEMUA auto-create + backfill sources untuk
+// cegah duplikat saat Wakif backfill manual + worker juga submit lapor.html paralel.
 function autoCreateUpahFromEntry(entry) {
   if (typeof UPAH_ITEMS === 'undefined') return null;
   if (entry.pelapor !== 'YIT' && entry.pelapor !== 'KUMPUL') return null;  // ANTO = sweat equity, skip
   if (!entry.durasi) return null;
-  // Skip if already auto-created for same tgl + pelapor
+  // Skip if any UPAH already exists for same tgl + pelapor (regardless of src)
+  // Previously filter cuma auto_form|auto_firestore → MISS auto_backfill duplikat (bug 18 Mei laporan Adib)
   const existing = UPAH_ITEMS.find(u =>
-    u.tgl === entry.tgl && u.pelapor === entry.pelapor &&
-    (u.src === 'auto_form' || u.src === 'auto_firestore')
+    u.tgl === entry.tgl && u.pelapor === entry.pelapor
   );
-  if (existing) return null;
+  if (existing) {
+    console.log('[autoCreateUpah] Skip — UPAH already exists for', entry.tgl, entry.pelapor, '(src:', existing.src, ')');
+    return null;
+  }
 
   const tarif = TARIF_PEKERJA[entry.pelapor];
   if (!tarif) return null;
@@ -9138,7 +9144,7 @@ function markLateEntryReviewed(entryId) {
 // ====================================================================
 // AUDIT & CLEANUP — UPAH ↔ Cashbook reconcile (locked 17 Mei 2026)
 // ====================================================================
-let AUDIT_STATE = { paid: [], unpaid: [], dup: [], orphan: [], activeTab: 'paid' };
+let AUDIT_STATE = { paid: [], unpaid: [], dup: [], orphan: [], upahDup: [], activeTab: 'paid' };
 
 function computeAudit() {
   const upah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS : [];
@@ -9155,7 +9161,7 @@ function computeAudit() {
 
   const paid = [];     // UPAH lunas, with cashbook status
   const unpaid = [];   // UPAH belum dibayar
-  const dup = [];      // refs with >1 cashbook entry
+  const dup = [];      // refs with >1 cashbook entry (cashbook side dup)
   const orphan = [];   // cashbook with ref but UPAH not found OR UPAH unpaid
 
   upah.forEach(u => {
@@ -9193,10 +9199,35 @@ function computeAudit() {
     }
   });
 
+  // NEW (18 Mei 2026): Detect duplicate UPAH entries — same tgl + pelapor, multiple UPAH entries
+  // Bug yang Adib report: autoCreateUpah dedupe filter sebelumnya cuma cek auto_form|auto_firestore,
+  // miss auto_backfill → backfill via Recover + worker submit paralel = duplikat. Sekarang dedupe broaden.
+  const upahByKey = {};
+  upah.forEach(u => {
+    if (!u.tgl || !u.pelapor) return;
+    const key = u.tgl + '|' + u.pelapor;
+    if (!upahByKey[key]) upahByKey[key] = [];
+    upahByKey[key].push(u);
+  });
+  const upahDup = [];
+  Object.entries(upahByKey).forEach(([key, entries]) => {
+    if (entries.length > 1) {
+      // Sort: keep oldest (by id) sebagai "primary", duplikat = newer entries
+      entries.sort((a, b) => (+a.id || 0) - (+b.id || 0));
+      upahDup.push({
+        key, tgl: entries[0].tgl, pelapor: entries[0].pelapor,
+        entries,
+        primary: entries[0],
+        duplicates: entries.slice(1)
+      });
+    }
+  });
+
   AUDIT_STATE.paid = paid;
   AUDIT_STATE.unpaid = unpaid;
   AUDIT_STATE.dup = dup;
   AUDIT_STATE.orphan = orphan;
+  AUDIT_STATE.upahDup = upahDup;
   return AUDIT_STATE;
 }
 
@@ -9207,10 +9238,15 @@ function openAuditModal() {
   document.getElementById('audit-cnt-unpaid').textContent = AUDIT_STATE.unpaid.length;
   document.getElementById('audit-cnt-dup').textContent = AUDIT_STATE.dup.length;
   document.getElementById('audit-cnt-orphan').textContent = AUDIT_STATE.orphan.length;
+  // NEW (18 Mei 2026): UPAH duplicate tab counter
+  const upahDupCntEl = document.getElementById('audit-cnt-upahdup');
+  if (upahDupCntEl) upahDupCntEl.textContent = AUDIT_STATE.upahDup.length;
   const totalPaidRp = AUDIT_STATE.paid.reduce((s, p) => s + (calcTotal ? calcTotal(p.upah) : (p.upah.tarif*p.upah.qty)), 0);
   const totalUnpaidRp = AUDIT_STATE.unpaid.reduce((s, p) => s + (calcTotal ? calcTotal(p.upah) : (p.upah.tarif*p.upah.qty)), 0);
+  const dupUpahCount = AUDIT_STATE.upahDup.length;
+  const dupUpahNote = dupUpahCount > 0 ? ` · 🚨 ${dupUpahCount} UPAH duplikat` : '';
   document.getElementById('audit-summary-line').textContent =
-    `✅ ${AUDIT_STATE.paid.length} dibayar (${fmtRpShort(totalPaidRp)}) · ⏳ ${AUDIT_STATE.unpaid.length} belum (${fmtRpShort(totalUnpaidRp)}) · 🚨 ${AUDIT_STATE.dup.length} duplikat · ⚠️ ${AUDIT_STATE.orphan.length} orphan`;
+    `✅ ${AUDIT_STATE.paid.length} dibayar (${fmtRpShort(totalPaidRp)}) · ⏳ ${AUDIT_STATE.unpaid.length} belum (${fmtRpShort(totalUnpaidRp)}) · 🚨 ${AUDIT_STATE.dup.length} dup cashbook · ⚠️ ${AUDIT_STATE.orphan.length} orphan${dupUpahNote}`;
   switchAuditTab(AUDIT_STATE.activeTab);
 }
 
@@ -9317,6 +9353,41 @@ function switchAuditTab(tab) {
           </table>
         </div>`;
       }).join('')}`;
+  } else if (tab === 'upahdup') {
+    // NEW (18 Mei 2026): UPAH duplicate detection — 2+ entries sama tgl + pelapor
+    if (AUDIT_STATE.upahDup.length === 0) {
+      wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--moss);font-weight:600">✓ Tidak ada UPAH duplikat detected!<br><span style="font-size:11px;color:var(--mute);font-weight:400">Dedupe filter sekarang broad (semua src) — duplikat baru otomatis di-skip.</span></div>`;
+      return;
+    }
+    const totalDupRp = AUDIT_STATE.upahDup.reduce((s, d) => s + d.duplicates.reduce((ss, u) => ss + (calcTotal ? calcTotal(u) : (u.tarif*u.qty)), 0), 0);
+    wrap.innerHTML = `
+      <div style="background:#fde2dc;padding:12px 16px;border-radius:8px;margin-bottom:12px;font-size:12px">
+        <strong>🚨 ${AUDIT_STATE.upahDup.length} UPAH duplikat (2+ entries sama tgl + pelapor).</strong> Total "fake" UPAH value: ${fmtRp(totalDupRp)}.<br>
+        <span style="color:var(--mute);font-size:11px">Cause: ${'autoCreateUpahFromEntry'} pre-18 Mei punya dedupe filter lemah — backfill via Recover + worker submit paralel = duplikat. Sekarang filter sudah broad untuk cegah duplikat baru. Yang lama perlu manual cleanup di bawah.</span><br>
+        <strong style="color:#8c2519">Recommended action:</strong> Keep oldest entry (primary), hapus duplikat lain.
+      </div>
+      ${AUDIT_STATE.upahDup.map(d => {
+        const total = (calcTotal ? calcTotal(d.primary) : (d.primary.tarif*d.primary.qty));
+        return `<div style="border:1.5px solid #fde2dc;border-radius:8px;padding:12px;margin-bottom:10px;background:#fffaf9">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+            <div style="font-weight:700;color:#8c2519">${nm(d.pelapor)} · ${formatTglShort(d.tgl)} · ${d.entries.length} entries</div>
+            <button onclick="auditMergeUpahDup('${d.key}')" style="background:#8c2519;color:#fff;border:0;padding:5px 12px;border-radius:5px;font-size:11px;cursor:pointer;font-weight:700">🔀 Merge (Keep Oldest)</button>
+          </div>
+          <table style="font-size:11px;width:100%">
+            <thead style="background:#fafaf6"><tr><th>UPAH ID</th><th>Aktivitas</th><th>Durasi</th><th>Source</th><th>Status</th><th style="text-align:right">Tarif</th><th>Action</th></tr></thead>
+            <tbody>${d.entries.map((u, i) => `
+              <tr style="${i===0?'background:#dcfce7':''}">
+                <td><code style="font-size:10px">${u.id}</code></td>
+                <td style="font-size:10px">${(u.aktivitas||'').substring(0,40)}</td>
+                <td>${u.satuan_lbl || u.satuan || '—'}</td>
+                <td><span style="background:#eee;padding:1px 5px;border-radius:3px;font-size:9px">${u.src||'manual'}</span></td>
+                <td>${u.status === 'lunas' ? '<span style="color:var(--moss)">✓ lunas</span>' : '<span style="color:var(--cherry)">⏳ belum</span>'}</td>
+                <td style="text-align:right">${fmtRp(calcTotal ? calcTotal(u) : (u.tarif*u.qty))}</td>
+                <td>${i===0 ? '<span style="color:var(--moss);font-weight:600;font-size:10px">✓ KEEP</span>' : `<button onclick="auditDeleteUpahDup(${u.id})" style="background:var(--cherry);color:#fff;border:0;padding:3px 8px;border-radius:4px;font-size:10px;cursor:pointer">🗑 Hapus</button>`}</td>
+              </tr>`).join('')}</tbody>
+          </table>
+        </div>`;
+      }).join('')}`;
   } else if (tab === 'orphan') {
     if (AUDIT_STATE.orphan.length === 0) {
       wrap.innerHTML = `<div style="text-align:center;padding:40px;color:var(--moss);font-weight:600">✓ Tidak ada orphan cashbook entry!</div>`;
@@ -9370,6 +9441,88 @@ function auditMarkUpahPaid(upahId) {
   if (typeof renderUpahTable === 'function') renderUpahTable();
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
   openAuditModal();
+}
+
+// NEW (18 Mei 2026): UPAH duplicate cleanup functions
+// Delete single duplicate UPAH entry — also cleanup linked cashbook autolink.
+function auditDeleteUpahDup(upahId) {
+  const u = UPAH_ITEMS.find(x => x.id === upahId);
+  if (!u) { alert('UPAH tidak ditemukan'); return; }
+  const ref = 'upah_' + upahId;
+  const linkedCb = (typeof CASHBOOK !== 'undefined') ? CASHBOOK.filter(t => t.ref === ref) : [];
+  const total = (typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty);
+  const msg = `🗑 Hapus UPAH duplikat?\n\n` +
+              `Pelapor: ${u.pelapor}\n` +
+              `Tgl: ${u.tgl}\n` +
+              `Aktivitas: ${(u.aktivitas || '').substring(0, 60)}\n` +
+              `Tarif: ${(typeof fmtRp === 'function') ? fmtRp(total) : total}\n` +
+              `Status: ${u.status}\n` +
+              `Source: ${u.src || 'manual'}\n\n` +
+              `Effect:\n` +
+              `• UPAH entry dihapus\n` +
+              `• ${linkedCb.length} linked cashbook entry (autolink) dihapus\n` +
+              (u.bayar_source === 'anto' ? `• Saldo Anto auto-naik kembali\n` : '') +
+              `\nLanjut hapus?`;
+  if (!confirm(msg)) return;
+  // Delete UPAH
+  const idx = UPAH_ITEMS.findIndex(x => x.id === upahId);
+  if (idx >= 0) UPAH_ITEMS.splice(idx, 1);
+  // Delete linked cashbook (autolink only)
+  if (typeof CASHBOOK !== 'undefined') {
+    CASHBOOK = CASHBOOK.filter(t => t.ref !== ref);
+    if (typeof saveCashbook === 'function') saveCashbook();
+  }
+  if (typeof saveUpah === 'function') saveUpah();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderAntoLedger === 'function') renderAntoLedger();
+  openAuditModal();
+  if (typeof showToast === 'function') showToast(`🗑 UPAH duplikat ${u.tgl} ${u.pelapor} dihapus · ${linkedCb.length} cashbook cleaned`);
+}
+
+// Bulk merge — keep oldest UPAH, delete all duplicates dgn confirm sekali untuk semua duplicates
+function auditMergeUpahDup(key) {
+  const grp = AUDIT_STATE.upahDup.find(d => d.key === key);
+  if (!grp) { alert('Group duplicate tidak ditemukan — refresh modal'); return; }
+  const dupIds = grp.duplicates.map(u => u.id);
+  const totalCashbookToDelete = grp.duplicates.reduce((s, u) => {
+    const ref = 'upah_' + u.id;
+    return s + ((typeof CASHBOOK !== 'undefined') ? CASHBOOK.filter(t => t.ref === ref).length : 0);
+  }, 0);
+  const totalRp = grp.duplicates.reduce((s, u) => s + ((typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty)), 0);
+  const msg = `🔀 Merge UPAH duplikat — Keep Oldest?\n\n` +
+              `Pelapor: ${grp.pelapor}\n` +
+              `Tgl: ${grp.tgl}\n` +
+              `Total entries: ${grp.entries.length}\n` +
+              `Primary (KEEP): UPAH ID ${grp.primary.id} · src=${grp.primary.src || 'manual'}\n` +
+              `Duplicates to DELETE: ${dupIds.length} (IDs: ${dupIds.join(', ')})\n` +
+              `Linked cashbook to clean: ${totalCashbookToDelete}\n` +
+              `Total "fake" UPAH value: ${(typeof fmtRp === 'function') ? fmtRp(totalRp) : totalRp}\n\n` +
+              `Lanjut merge?`;
+  if (!confirm(msg)) return;
+  // Delete duplicates
+  let deletedCb = 0;
+  dupIds.forEach(id => {
+    const ref = 'upah_' + id;
+    const idx = UPAH_ITEMS.findIndex(x => x.id === id);
+    if (idx >= 0) UPAH_ITEMS.splice(idx, 1);
+    if (typeof CASHBOOK !== 'undefined') {
+      const before = CASHBOOK.length;
+      CASHBOOK = CASHBOOK.filter(t => t.ref !== ref);
+      deletedCb += (before - CASHBOOK.length);
+    }
+  });
+  if (typeof saveUpah === 'function') saveUpah();
+  if (typeof saveCashbook === 'function') saveCashbook();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderAntoLedger === 'function') renderAntoLedger();
+  openAuditModal();
+  if (typeof showToast === 'function') showToast(`🔀 Merged · kept primary UPAH ${grp.primary.id} · ${dupIds.length} duplikat + ${deletedCb} cashbook dihapus`);
 }
 
 // Roll back: set UPAH back to 'belum' + delete linked cashbook entries (locked 17 Mei 2026)
