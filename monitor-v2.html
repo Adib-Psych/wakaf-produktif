@@ -306,6 +306,7 @@
       <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
       <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
       <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
+      <div class="sb-tab" data-panel="workers"><span class="ico">🎫</span><span class="lbl">Manage Workers</span></div>
 
       <div style="height:14px"></div>
 
@@ -412,6 +413,42 @@
           </table>
         </div>
         <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">💡 Klik <b>✏️ Edit</b> untuk koreksi entry yang salah · <b>🗑️ Delete</b> akan hapus entry + auto-remove linked UPAH entry (kalau ada).</p>
+      </div>
+    </div>
+
+    <!-- ============ MANAGE WORKERS (Phase 1B — 18 Mei 2026) ============ -->
+    <div class="panel" id="panel-workers">
+
+      <div class="card" style="background:linear-gradient(135deg,#2D8466,#1F5F47);color:#fff;border:0">
+        <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800;margin-bottom:8px">🎫 WORKER URL MANAGEMENT</div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:6px">Manage Worker Tokens & Activity</div>
+        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit · Mas Anto. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian.</div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span class="num">1</span>Worker URLs</div>
+        <p style="font-size:12px;color:var(--mute);margin-bottom:14px">Setiap worker punya URL unik dengan token. Klik <strong>Copy URL</strong> untuk share via WhatsApp.</p>
+
+        <div id="worker-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px">
+          <!-- Cards rendered by JS -->
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="renderWorkersTab()" style="background:var(--moss)">🔄 Refresh Last Active</button>
+        </div>
+
+        <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = simple worker code (KUMPUL/YIT/ANTO) — no revoke yet.</p>
+      </div>
+
+      <div class="card" style="background:rgba(168,200,188,.15);border-left:3px solid var(--moss)">
+        <div style="font-size:12px;font-weight:700;color:var(--earth);margin-bottom:6px">📱 Cara Worker Pakai</div>
+        <ol style="margin-left:18px;font-size:11.5px;color:var(--mute);line-height:1.7">
+          <li>Adib copy URL dari kartu di atas</li>
+          <li>Share via WhatsApp ke worker (e.g., Pak Kumpul)</li>
+          <li>Worker tap link di HP → buka lapor.html</li>
+          <li>Worker isi form (tanggal, kebun, kategori, durasi, catatan, foto) → submit</li>
+          <li>Entry langsung muncul di dashboard &lt;10 detik via Firestore real-time sync</li>
+        </ol>
       </div>
     </div>
 
@@ -1326,6 +1363,17 @@
     </div>
 
 <div class="panel" id="panel-compliance">
+
+      <!-- ⏰ LATE ENTRY REVIEW QUEUE (Phase 1B — 18 Mei 2026) -->
+      <div class="card" id="late-entry-card" style="border-left:4px solid var(--cherry);background:linear-gradient(135deg,#fef3c7,#fff8e5);display:none">
+        <div class="card-title" style="color:var(--cherry)"><span class="num" style="background:var(--cherry)">⏰</span>Late Entries Inbox <span id="late-entry-count" style="background:var(--cherry);color:#fff;padding:2px 8px;border-radius:10px;font-size:11px;margin-left:6px">0</span></div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Entries dengan <strong>tanggal kerja &gt; 1 hari sebelum tanggal submit</strong>. Worker lapor terlambat — review + decide accept/follow-up. Reviewed entries hidden (state di localStorage).</p>
+        <div id="late-entry-tbody-wrap"></div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-secondary" onclick="renderLateEntryQueue()" style="font-size:11px">🔄 Refresh</button>
+          <button class="btn btn-secondary" onclick="if(confirm('Reset semua reviewed flags? Semua entries akan muncul lagi.')){localStorage.removeItem('wkkn_late_entry_reviewed');renderLateEntryQueue();}" style="font-size:11px;background:#fde2dc;color:#8c2519">🧹 Reset Reviewed</button>
+        </div>
+      </div>
 
       <!-- 🦸 HERO — Lesson Learned Era Pra-Formal SOP (refactored 17 Mei 2026 per Adib) -->
       <div class="card" style="border-left:4px solid var(--gold)">
@@ -8875,6 +8923,188 @@ function autoCreateUpahFromEntry(entry) {
   UPAH_ITEMS.push(upahEntry);
   if (typeof saveUpah === 'function') saveUpah();
   return upahEntry;
+}
+
+// ====================================================================
+// MANAGE WORKERS TAB (Phase 1B — locked 18 Mei 2026)
+// ====================================================================
+const WORKER_DEFS = [
+  { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K' },
+  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K' },
+  { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan', icon: '👷', color: '#5B21B6', tarif_label: 'Sweat Equity (pro-bono)' }
+];
+
+function renderWorkersTab() {
+  const grid = document.getElementById('worker-cards-grid');
+  if (!grid) return;
+
+  // Compute last_active per worker dari STATE.laporan
+  const lastActiveMap = {};
+  if (Array.isArray(STATE.laporan)) {
+    STATE.laporan.forEach(entry => {
+      const pelapor = entry.pelapor;
+      const tgl = entry.tgl || entry.tanggal;
+      if (!pelapor || !tgl) return;
+      if (!lastActiveMap[pelapor] || tgl > lastActiveMap[pelapor].tgl) {
+        lastActiveMap[pelapor] = { tgl, count: 0 };
+      }
+    });
+    STATE.laporan.forEach(entry => {
+      if (lastActiveMap[entry.pelapor]) lastActiveMap[entry.pelapor].count++;
+    });
+  }
+
+  const baseUrl = window.location.origin + (window.location.pathname.includes('/monitor-v2.html') ? window.location.pathname.replace('/monitor-v2.html', '/lapor.html') : '/lapor.html');
+
+  grid.innerHTML = WORKER_DEFS.map(w => {
+    const url = `${baseUrl}?w=${w.token}`;
+    const lastActive = lastActiveMap[w.token];
+    const daysSince = lastActive ? Math.round((Date.now() - new Date(lastActive.tgl).getTime()) / 86400000) : null;
+    const lastActiveText = lastActive
+      ? `${formatTglShort(lastActive.tgl)} (${daysSince === 0 ? 'hari ini' : daysSince + ' hari lalu'}) · ${lastActive.count} entries total`
+      : 'Belum pernah submit';
+    const lastActiveColor = !lastActive ? '#bbb' : (daysSince <= 1 ? 'var(--moss)' : daysSince <= 7 ? '#d4a017' : 'var(--cherry)');
+
+    return `<div style="background:#fff;border:2px solid ${w.color};border-radius:12px;padding:16px 18px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="font-size:28px">${w.icon}</div>
+        <div>
+          <div style="font-size:16px;font-weight:800;color:var(--earth)">${w.nama}</div>
+          <div style="font-size:11px;color:var(--mute)">${w.role}</div>
+        </div>
+      </div>
+      <div style="background:#fafaf6;border:1.5px solid #ddd;border-radius:6px;padding:8px 10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;color:var(--earth);word-break:break-all;margin-bottom:8px;cursor:pointer" onclick="this.style.background='#fef3c7';setTimeout(()=>this.style.background='#fafaf6',300)" title="Klik untuk highlight">${url}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+        <button class="btn btn-primary" onclick="copyWorkerUrl('${url}', this)" style="background:${w.color};color:#fff;font-size:11px;padding:6px 12px;flex:1">📋 Copy URL</button>
+        <a href="${url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:6px 10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" title="Buka di tab baru untuk test">🔗 Open</a>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10.5px">
+        <div style="background:#f5f5f5;padding:6px 8px;border-radius:5px">
+          <div style="color:var(--mute);font-size:9px;letter-spacing:.5px;text-transform:uppercase">Last Active</div>
+          <div style="color:${lastActiveColor};font-weight:600;margin-top:2px">${lastActiveText}</div>
+        </div>
+        <div style="background:#f5f5f5;padding:6px 8px;border-radius:5px">
+          <div style="color:var(--mute);font-size:9px;letter-spacing:.5px;text-transform:uppercase">Tarif</div>
+          <div style="color:var(--earth);font-weight:600;margin-top:2px">${w.tarif_label}</div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyWorkerUrl(url, btn) {
+  navigator.clipboard.writeText(url).then(() => {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✓ Copied!';
+    btn.style.background = '#15803d';
+    setTimeout(() => {
+      btn.innerHTML = orig;
+      btn.style.background = '';
+    }, 1800);
+  }).catch(e => alert('Failed to copy: ' + e.message));
+}
+
+// Trigger render saat tab Workers di-klik
+document.addEventListener('DOMContentLoaded', () => {
+  const workerTab = document.querySelector('.sb-tab[data-panel="workers"]');
+  if (workerTab) {
+    workerTab.addEventListener('click', () => setTimeout(renderWorkersTab, 100));
+  }
+  const complianceTab = document.querySelector('.sb-tab[data-panel="compliance"]');
+  if (complianceTab) {
+    complianceTab.addEventListener('click', () => setTimeout(renderLateEntryQueue, 100));
+  }
+});
+
+// ====================================================================
+// LATE ENTRY REVIEW QUEUE (Phase 1B — locked 18 Mei 2026)
+// ====================================================================
+// Detection: entry.tgl < entry.created_at by > 1 day = late
+// Reviewed entries hidden via localStorage flag
+
+function getLateEntries() {
+  const reviewed = JSON.parse(localStorage.getItem('wkkn_late_entry_reviewed') || '[]');
+  const late = [];
+  (STATE.laporan || []).forEach(entry => {
+    if (reviewed.includes(entry.id)) return;
+    const tglKerja = entry.tgl || entry.tanggal;
+    const createdAtRaw = entry.created_at;
+    if (!tglKerja || !createdAtRaw) return;
+    // Parse createdAt — kalau Firestore Timestamp object, get seconds
+    let createdAtDate;
+    if (typeof createdAtRaw === 'string') {
+      createdAtDate = new Date(createdAtRaw);
+    } else if (createdAtRaw && typeof createdAtRaw.toDate === 'function') {
+      createdAtDate = createdAtRaw.toDate();
+    } else if (createdAtRaw && createdAtRaw.seconds) {
+      createdAtDate = new Date(createdAtRaw.seconds * 1000);
+    } else {
+      return;
+    }
+    const tglKerjaDate = new Date(tglKerja);
+    const daysLate = Math.floor((createdAtDate - tglKerjaDate) / 86400000);
+    if (daysLate > 1) {
+      late.push({ ...entry, days_late: daysLate, submitted_at: createdAtDate });
+    }
+  });
+  return late.sort((a, b) => b.days_late - a.days_late);
+}
+
+function renderLateEntryQueue() {
+  const card = document.getElementById('late-entry-card');
+  const cntEl = document.getElementById('late-entry-count');
+  const wrap = document.getElementById('late-entry-tbody-wrap');
+  if (!card || !wrap) return;
+
+  const late = getLateEntries();
+  if (late.length === 0) {
+    card.style.display = 'none';
+    return;
+  }
+  card.style.display = 'block';
+  if (cntEl) cntEl.textContent = late.length;
+
+  const nameMap = { KUMPUL: 'Pak Kumpul', YIT: 'Cak Yit', ANTO: 'Mas Anto' };
+
+  wrap.innerHTML = `<table style="width:100%;font-size:11.5px;background:#fff;border-radius:8px;overflow:hidden">
+    <thead style="background:var(--earth);color:#fff">
+      <tr>
+        <th style="padding:8px 10px;text-align:left">Pekerja</th>
+        <th style="padding:8px 10px;text-align:left">Tgl Kerja</th>
+        <th style="padding:8px 10px;text-align:left">Tgl Submit</th>
+        <th style="padding:8px 10px;text-align:center">Telat</th>
+        <th style="padding:8px 10px;text-align:left">Kebun / Kategori</th>
+        <th style="padding:8px 10px;text-align:left">Catatan</th>
+        <th style="padding:8px 10px;text-align:center">Action</th>
+      </tr>
+    </thead>
+    <tbody>${late.map(e => {
+      const tglSubmit = formatTglShort(e.submitted_at.toISOString().slice(0,10));
+      const daysColor = e.days_late > 7 ? 'var(--cherry)' : e.days_late > 3 ? '#d4a017' : 'var(--mute)';
+      const kebunDisp = Array.isArray(e.kebun_list) ? e.kebun_list.join('+') : (e.kebun || `K${e.bidang || '?'}`);
+      const detailText = typeof getDetailText === 'function' ? getDetailText(e) : (e.detail || e.catatan || '');
+      return `<tr style="border-bottom:1px solid #eee">
+        <td style="padding:7px 10px"><strong>${nameMap[e.pelapor] || e.pelapor}</strong></td>
+        <td style="padding:7px 10px">${formatTglShort(e.tgl)}</td>
+        <td style="padding:7px 10px">${tglSubmit}</td>
+        <td style="padding:7px 10px;text-align:center;color:${daysColor};font-weight:700">${e.days_late} hari</td>
+        <td style="padding:7px 10px">${kebunDisp} · ${(e.kategori || '').replace(/_/g, ' ')}</td>
+        <td style="padding:7px 10px;font-size:10.5px;max-width:280px">${detailText.substring(0, 80)}${detailText.length > 80 ? '…' : ''}</td>
+        <td style="padding:7px 10px;text-align:center">
+          <button onclick="markLateEntryReviewed('${e.id}')" style="background:var(--moss);color:#fff;border:0;padding:4px 10px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:700">✓ Reviewed</button>
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+function markLateEntryReviewed(entryId) {
+  const reviewed = JSON.parse(localStorage.getItem('wkkn_late_entry_reviewed') || '[]');
+  if (!reviewed.includes(entryId)) {
+    reviewed.push(entryId);
+    localStorage.setItem('wkkn_late_entry_reviewed', JSON.stringify(reviewed));
+  }
+  renderLateEntryQueue();
 }
 
 // ====================================================================
