@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Arsitektur Monitoring Dashboard → Living Lab · Public View — Wakaf Produktif Kebun Kopi Ngantang</title>
-<meta name="description" content="Diagram arsitektur sistem monitoring & living lab Wakaf Produktif Kebun Kopi Ngantang — 5-layer separation, data flow end-to-end, editorial curation. Public reference untuk donatur, BRIN, komunitas.">
+<title>Arsitektur Monitoring Dashboard → Living Lab v2.0 — Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Arsitektur v2.0 (18 Mei 2026): 5-layer separation dengan Worker PWA online-first + Firestore + Glossary translator + Multi-Factor Timing + Phase-aware compliance + AI-assisted curation. Impact propagation visualized per-connection.">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -284,10 +284,10 @@
   <div class="header">
     <div class="header-inner">
       <div class="header-text">
-        <div class="header-tag">🏗️ SYSTEM ARCHITECTURE · DATA FLOW · PUBLIC VIEW</div>
-        <h1>Arsitektur <em>Monitoring Dashboard → Living Lab</em></h1>
-        <div class="sub">Aliran data end-to-end dari input harian Wakif → storage localStorage → curation editorial → public-facing Living Lab. Reference dokumen untuk seluruh stakeholder (Adib, Hendy, tim lapangan, BRIN, donatur, komunitas).</div>
-        <div class="meta">📅 Snapshot 15 Mei 2026 · v1.0 · Wakaf Produktif Kebun Kopi Ngantang</div>
+        <div class="header-tag">🏗️ SYSTEM ARCHITECTURE v2.0 · ONLINE-FIRST · IMPACT MAPPED</div>
+        <h1>Arsitektur <em>Worker PWA → Dashboard → Living Lab</em></h1>
+        <div class="sub">Aliran data end-to-end dari Worker PWA (lapor.html) + Wakif Form Input → Firestore real-time → localStorage processing → AI-assisted curation → public Living Lab. Reference dokumen untuk seluruh stakeholder (Adib, Hendy, tim lapangan, BRIN, donatur, komunitas) dengan <strong>impact propagation per-connection</strong>.</div>
+        <div class="meta">📅 v2.0 · 18 Mei 2026 · Supersede v1.0 (15 Mei) · Wakaf Produktif Kebun Kopi Ngantang</div>
       </div>
       <img src="../images/logo-wakaf-produktif-3x1.png" alt="Wakaf Produktif Kebun Kopi Ngantang" class="header-logo">
     </div>
@@ -659,116 +659,287 @@
         </svg>
       </div>
 
+      <!-- ════════════ IMPACT PROPAGATION MAP (v2.0 NEW) ════════════ -->
+      <div style="margin-top:20px;padding:18px 22px;background:linear-gradient(135deg,#f0e0d4,#fef3d7);border-radius:12px;border-left:5px solid var(--accent)">
+        <div style="font-size:14px;font-weight:800;color:var(--accent);letter-spacing:1px;margin-bottom:10px">🎯 IMPACT PROPAGATION MAP — Kalau X Berubah, Apa Yang Auto-Update?</div>
+        <p style="font-size:11.5px;color:var(--ink);margin-bottom:12px;line-height:1.55">Per-connection impact: setiap data change menyebar ke downstream. Penting untuk debug + understand consequences sebelum action.</p>
+
+        <table style="width:100%;border-collapse:collapse;font-size:11px;background:white;border-radius:8px;overflow:hidden">
+          <thead style="background:var(--earth);color:white">
+            <tr>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px">⚡ TRIGGER</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px">→ IMMEDIATE</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px">→ DOWNSTREAM</th>
+              <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px">🔄 RESYNC NEEDED?</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Worker submit di lapor.html</strong></td>
+              <td style="padding:8px 10px">Firestore <code>laporan</code> doc · IndexedDB queue mark synced</td>
+              <td style="padding:8px 10px">Dashboard listener fire → normalizeWorkerEntry → STATE.laporan unshift → autoCreateUpahFromEntry → UPAH_ITEMS push → Log/Distribusi/OPT/Compliance/Upah tabs auto-rerender</td>
+              <td style="padding:8px 10px;color:var(--moss)">No — onSnapshot real-time</td>
+            </tr>
+            <tr style="background:#fafaf6;border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Wakif delete entry di Log Harian</strong></td>
+              <td style="padding:8px 10px"><code>_deletedTombstones.add(id)</code> · Firestore deleteDoc · STATE.laporan filter</td>
+              <td style="padding:8px 10px">Cascade delete linked UPAH (status 'belum' only) · Cashbook autolink preserved untuk audit · Re-render Log/Upah/Dashboard</td>
+              <td style="padding:8px 10px;color:var(--moss)">No — tombstone prevents race re-add</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Wakif "Tandai Bayar" 1 UPAH</strong></td>
+              <td style="padding:8px 10px">UPAH item status=lunas + bayar_tgl + bayar_source · CASHBOOK.push autolink dgn <code>ref:'upah_'+id</code></td>
+              <td style="padding:8px 10px">Upah Pekerja card KPI update · Pengeluaran S2 breakdown update · RAB %serapan kategori 3.1/3.2/4.1 recompute · Audit Tool tab "Sudah" +1</td>
+              <td style="padding:8px 10px;color:var(--accent)">⚠️ Watch duplikat — sudah pernah autolink?</td>
+            </tr>
+            <tr style="background:#fafaf6;border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Wakif "⟲ Unmark" via Audit Tool</strong></td>
+              <td style="padding:8px 10px">UPAH status='belum' (delete bayar_tgl) · CASHBOOK delete entries by <code>ref='upah_'+id</code></td>
+              <td style="padding:8px 10px">Saldo Anto auto-naik (kalau source='anto') · Pengeluaran S2/S3 total turun · Audit Tool tab "Belum" +1, "Sudah" -1</td>
+              <td style="padding:8px 10px;color:var(--moss)">No — atomic operation</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Wakif klik status SOP Kalender</strong></td>
+              <td style="padding:8px 10px"><code>SOP_STATUS[bulan-idx]</code> = sudah/tidak/na/belum</td>
+              <td style="padding:8px 10px">Phase-aware compliance recompute (Strategy 2) · 4 phase cards Coverage+Timing update · Annual aggregate update · Living Lab phase widget (kalau di-publish via curation)</td>
+              <td style="padding:8px 10px;color:var(--moss)">No — getPhaseComplianceMetrics live</td>
+            </tr>
+            <tr style="background:#fafaf6;border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Update <code>POHON_BASELINE.current</code></strong></td>
+              <td style="padding:8px 10px">Manual edit code (915 → 750 setelah seleksi pasca-panen 2026)</td>
+              <td style="padding:8px 10px">Inventarisasi KPI denominator change · OPT chart per-fase allocation · Multi-kebun aggregation perBidang baseline shift</td>
+              <td style="padding:8px 10px;color:var(--accent)">⚠️ Hard refresh required</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Generate Draft via AI</strong></td>
+              <td style="padding:8px 10px">Anthropic API call · localStorage API key · JSON response parse</td>
+              <td style="padding:8px 10px">Auto-fill Section D form (Title ID/EN, Detail ID/EN, Phase, Tag) · Raw JSON kept di Section C untuk inspect · Cost log di status banner</td>
+              <td style="padding:8px 10px;color:var(--moss)">No — single async call</td>
+            </tr>
+            <tr style="background:#fafaf6;border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Publish Milestone (Wakif decision)</strong></td>
+              <td style="padding:8px 10px">MILESTONES item.published=true · change_log entry</td>
+              <td style="padding:8px 10px">Source entries di-tag 🟢 "In Living Lab" · Auto-suggest excluded · Export JSON akan include · Living Lab fetch akan show after next GitHub push</td>
+              <td style="padding:8px 10px;color:var(--accent)">⚠️ Manual: Export JSON + git push needed</td>
+            </tr>
+            <tr style="border-bottom:1px solid #eee">
+              <td style="padding:8px 10px"><strong>Edit kategori lapor.html (add new)</strong></td>
+              <td style="padding:8px 10px">KATEGORI_BY_WORKER + KATEGORI_LABEL + REGISTRY</td>
+              <td style="padding:8px 10px">⚠️ <strong>WAJIB</strong>: Update <code>normalizeWorkerEntry</code> + Glossary bridges + autoCreateUpahFromEntry (kalau durasi-relevant) + KATEGORI_TOPIK_MAP di monitor-v2 — kalau tidak, silent data loss / silent UPAH miss</td>
+              <td style="padding:8px 10px;color:var(--cherry-1) !important;color:#8c2519">🚨 5 files require sync</td>
+            </tr>
+            <tr style="background:#fafaf6">
+              <td style="padding:8px 10px"><strong>ENSO state change (La Niña detected)</strong></td>
+              <td style="padding:8px 10px">NOAA ONI fetch (24h cache miss) · isLaNina flag toggle</td>
+              <td style="padding:8px 10px">Multi-Factor Timing tolerance extend +14d untuk STRICT & MODERATE · Compliance Timing % recompute · ENSO banner UI update di SOP Compliance</td>
+              <td style="padding:8px 10px;color:var(--moss)">No — auto on next render</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- 4 KEY FLOWS NARRATIVE -->
       <div style="margin-top:14px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px">
         <div style="background:#DCE9F0;border-left:4px solid #2C5B80;padding:12px 14px;border-radius:8px">
-          <div style="font-size:11px;font-weight:800;color:#2C5B80;letter-spacing:1.2px;margin-bottom:5px">🔵 FLOW A — DAILY OPERATIONS</div>
-          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Form Input → STATE.laporan → <strong>4 downstream tabs</strong> (Log Harian + Distribusi Tugas + OPT Heatmap + Milestones suggest) + UPAH_ITEMS auto-link (Yit/Kumpul)</div>
+          <div style="font-size:11px;font-weight:800;color:#2C5B80;letter-spacing:1.2px;margin-bottom:5px">🔵 FLOW A — DAILY OPERATIONS (Worker PWA Path)</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Worker PWA submit (Pak Kumpul/Cak Yit/Anto) → IndexedDB queue + immediate Firestore push → onSnapshot listener → <strong>normalizeWorkerEntry bridge</strong> → STATE.laporan + UPAH_ITEMS auto-create → 5 tabs refresh real-time (Log Harian, Distribusi, OPT, Upah, Dashboard toast)</div>
         </div>
         <div style="background:#E8F1EC;border-left:4px solid #5A9080;padding:12px 14px;border-radius:8px">
-          <div style="font-size:11px;font-weight:800;color:#5A9080;letter-spacing:1.2px;margin-bottom:5px">🟢 FLOW B — SOP COMPLIANCE</div>
-          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">SOP Kalender → SOP_STATUS (+ auto-seed Living Lab Jan-Apr) → <strong>SOP Compliance tab</strong> → Annual Cards (2024/25/26) + Analysis Box + Action Items</div>
+          <div style="font-size:11px;font-weight:800;color:#5A9080;letter-spacing:1.2px;margin-bottom:5px">🟢 FLOW B — SOP COMPLIANCE v2.2 (Phase-Aware + Timing)</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">SOP Kalender click → SOP_STATUS → <strong>2-Strategy compute</strong>: Strategy 1 (3 historikal cards) + Strategy 2 (4 phase fenologi cards Coverage+Timing dual KPI) → Multi-Factor Timing engine integrate ENSO state → Action items highlighted overdue</div>
         </div>
         <div style="background:#FFF4D6;border-left:4px solid #D4AF37;padding:12px 14px;border-radius:8px">
-          <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:1.2px;margin-bottom:5px">🟡 FLOW C — FINANCIAL</div>
-          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Tambah Transaksi → CASHBOOK · Upah Pekerja (batchPay) → CASHBOOK · <strong>Laporan Keuangan</strong> + RAB Siklus tracking. Output: <strong>Bukti Bayar PNG</strong> untuk share WA pekerja.</div>
+          <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:1.2px;margin-bottom:5px">🟡 FLOW C — FINANCIAL (Pengeluaran 4-Section)</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Tambah Transaksi modal → CASHBOOK · Upah Pekerja "Tandai Bayar" → CASHBOOK autolink dgn <code>ref:'upah_'+id</code> · <strong>Audit & Cleanup Tool</strong> guardrail (detect duplicate/orphan, 1-click roll back) · Pengeluaran 4-section view: Masuk + Kas Wakif (3 breakdown) + Anto petty cash + Ringkasan · Bukti Bayar PNG share WA</div>
         </div>
         <div style="background:#f0e0d4;border-left:4px solid #c4906a;padding:12px 14px;border-radius:8px">
-          <div style="font-size:11px;font-weight:800;color:#c4906a;letter-spacing:1.2px;margin-bottom:5px">🟤 FLOW D — CURATION → PUBLIC</div>
-          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Wakif curate di Milestones Publik tab → MILESTONES storage → <strong>Export JSON</strong> (+ GitHub auto-push) → aktivitas-publik.json → <strong>Living Lab Page</strong> fetch → publik visitors browse</div>
+          <div style="font-size:11px;font-weight:800;color:#c4906a;letter-spacing:1.2px;margin-bottom:5px">🟤 FLOW D — AI-ASSISTED CURATION → PUBLIC</div>
+          <div style="font-size:11.5px;color:#1a2828;line-height:1.55">Wakif select entries di Batch Curation → "Generate Draft via API" → Anthropic API direct (Sonnet/Haiku) compose bilingual narrative + kajian teori + validasi SOP → manual edit → Save Draft → Publish → Export JSON + GitHub auto-push → Living Lab Page fetch → publik browse</div>
         </div>
       </div>
     </div>
 
-    <!-- ═══════ LAYER 1 — INPUT SOURCES ═══════ -->
+    <!-- ═══════ LAYER 1 — INPUT SOURCES (v2.0 UPDATED) ═══════ -->
     <div class="layer">
       <div class="layer-tag l1">LAYER 1 · INPUT SOURCES</div>
       <div class="layer-header" style="margin-top:6px">
         <div class="layer-title"><span class="icon">📝</span>Data Entry (Siapa Input Apa)</div>
-        <div class="layer-desc">3 channel input — saat ini Wakif manual, plan Q3 2026: workers via WA link langsung</div>
+        <div class="layer-desc">5 channel input — Worker PWA LIVE sejak 16 Mei + Wakif Form Input + Cashbook Modal + SOP Kalender + Living Lab Seed</div>
       </div>
       <div class="box-grid cols-3">
-        <div class="box input">
-          <div class="box-name"><span class="ico">✏️</span>Form Input (Wakif Manual)</div>
-          <div class="box-detail">Tab Form Input di monitor-v2 — Wakif isi berdasarkan laporan harian dari WA tim lapangan (Anto/Yit/Kumpul). Field: pelapor, tgl, bidang, kategori, durasi, qty, cuaca, dll.</div>
+        <div class="box input" style="background:#dcfce7;border-color:#15803d">
+          <div class="box-name"><span class="ico">📱</span>Worker PWA · lapor.html <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">LIVE</span></div>
+          <div class="box-detail">Mobile-first PWA untuk Pak Kumpul · Cak Yit · Mas Anto. URL token-based (<code>?w=KUMPUL/YIT/ANTO</code>). Multi-select Kebun, role-based KATEGORI dropdown, Glossary translator bahasa awam → token, online-first sync via Firestore. <strong>Impact:</strong> entry langsung muncul di dashboard &lt;10 detik.</div>
         </div>
-        <div class="box input" style="opacity:.7;border-style:dashed">
-          <div class="box-name"><span class="ico">📱</span>WhatsApp Form (Workers — Future)</div>
-          <div class="box-detail">Plan: mobile-first form di <code>lapor.html</code>, link di-share via WA → Pak Kumpul/Cak Yit tap → fill dropdown → submit. Target akurasi data harian.</div>
+        <div class="box input">
+          <div class="box-name"><span class="ico">✏️</span>Wakif Form Input (monitor-v2 tab)</div>
+          <div class="box-detail">Wakif manual entry di Tab Form Input — write langsung ke STATE.laporan (localStorage, bypass Firestore). Pakai untuk backfill atau correct worker submissions. Field: pelapor, tgl, kebun, kategori, durasi, pohon, cuaca, detail_form per-kategori.</div>
+        </div>
+        <div class="box input">
+          <div class="box-name"><span class="ico">💵</span>Tambah Transaksi Modal</div>
+          <div class="box-detail">Cashbook entries (transfer Anto, belanja, bayar pekerja langsung). 3 tipe: <code>masuk</code>, <code>transfer_anto</code>, <code>keluar_langsung</code>, <code>bayar_upah</code>. Manual entry oleh Wakif di Pengeluaran tab.</div>
+        </div>
+        <div class="box input">
+          <div class="box-name"><span class="ico">📅</span>SOP Kalender Click Status</div>
+          <div class="box-detail">Wakif klik status per item SOP (Sudah/Tidak Sesuai/Belum/N/A) di SOP Kalender tab. Update <code>SOP_STATUS</code>. Triggers phase-aware compliance recompute.</div>
         </div>
         <div class="box input" style="background:#fef3d7;border-color:var(--gold)">
           <div class="box-name"><span class="ico">🌱</span>Living Lab Seed (Auto, 1×)</div>
-          <div class="box-detail">Pre-T0 Jan-Apr 2026 era T.A. (RWI) — auto-populate <code>SOP_STATUS</code> dari observation. Tidak overwrite user edits.</div>
+          <div class="box-detail">Era T.A. RWI (Nov 2025–Mar 2026) — auto-populate <code>HISTORICAL_PHASES</code> dari observation dokumen. Sparse data 3-fase pra-formal. Tidak overwrite user edits.</div>
+        </div>
+        <div class="box input" style="background:#fff8e6;border-color:var(--gold)">
+          <div class="box-name"><span class="ico">📚</span>Batch Curation (Wakif Action)</div>
+          <div class="box-detail">Wakif select entries dari Log Harian → "Generate Draft via API" → AI Draft Generator (Anthropic API direct: Sonnet/Haiku) compose bilingual milestone narrative. Stored di MILESTONES.</div>
         </div>
       </div>
     </div>
 
     <div class="flow-arrow"><div class="label">▼ WRITE TO STORAGE</div></div>
 
-    <!-- ═══════ LAYER 2 — STORAGE & PROCESSING ═══════ -->
+    <!-- ═══════ LAYER 2 — UPSTREAM SYNC + STORAGE + PROCESSING (v2.0) ═══════ -->
     <div class="layer">
-      <div class="layer-tag l2">LAYER 2 · STORAGE + PROCESSING</div>
+      <div class="layer-tag l2">LAYER 2 · FIRESTORE + STORAGE + PROCESSING</div>
       <div class="layer-header" style="margin-top:6px">
-        <div class="layer-title"><span class="icon">💾</span>localStorage + Compute Logic</div>
-        <div class="layer-desc">7 storage keys + processing functions — semua client-side, no server backend</div>
+        <div class="layer-title"><span class="icon">💾</span>Cloud Sync + localStorage + Compute Logic</div>
+        <div class="layer-desc">Firestore upstream + 10 storage keys + bridge dictionaries + processing functions</div>
       </div>
 
       <div class="sub-section">
-        <div class="sub-section-label">📦 Storage Keys (localStorage)</div>
-        <div class="box-grid cols-4">
-          <div class="box storage">
-            <div class="box-name"><code>STATE.laporan</code></div>
-            <div class="box-detail">Daily reports array. Auto-populate dari Form Input. v3 schema dgn id + src tags.</div>
+        <div class="sub-section-label">☁️ Upstream Cloud (Firestore Spark plan)</div>
+        <div class="box-grid cols-3">
+          <div class="box storage" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">🔥</span>Firestore: <code>wakaf-ngantang/laporan</code></div>
+            <div class="box-detail">Cloud collection · receives worker PWA submissions via <code>setDoc()</code>. Real-time read via <code>onSnapshot()</code> listener di monitor-v2. Region: asia-southeast2 (Jakarta). <strong>Impact:</strong> worker submit → dashboard auto-update &lt;5s.</div>
           </div>
-          <div class="box storage">
-            <div class="box-name"><code>SOP_STATUS</code></div>
-            <div class="box-detail">Status per item (Belum/Sudah/Tidak Sesuai/N/A). Key: <code>${bulan}-${idx}</code>. Seeded Jan-Apr dari Living Lab.</div>
+          <div class="box storage" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><code>_deletedTombstones</code> Set</div>
+            <div class="box-detail">Race-condition guard. Saat Adib delete entry, ID di-add ke Set sebelum Firestore deleteDoc. Listener skip 'added' event untuk tombstoned IDs (prevent re-add via async propagation).</div>
           </div>
-          <div class="box storage">
-            <div class="box-name"><code>UPAH_ITEMS</code></div>
-            <div class="box-detail">Pekerja harian + borongan tracker. Auto-link dari Form Input untuk Yit/Kumpul.</div>
-          </div>
-          <div class="box storage">
-            <div class="box-name"><code>CASHBOOK</code></div>
-            <div class="box-detail">Cash flow transactions. Auto-link saat batchPay upah lunas → CASHBOOK entry.</div>
-          </div>
-          <div class="box storage">
-            <div class="box-name"><code>MILESTONES</code></div>
-            <div class="box-detail">Curated public milestones bilingual. Schema v3.0 dgn implementasi + benchmark_evaluation.</div>
-          </div>
-          <div class="box storage">
-            <div class="box-name"><code>PETTY_CASH_ANTO</code></div>
-            <div class="box-detail">Petty cash Mas Anto sebagai koordinator lapangan. Track pengeluaran ad-hoc.</div>
-          </div>
-          <div class="box storage">
-            <div class="box-name"><code>ANNUAL_COMPLIANCE</code></div>
-            <div class="box-detail">Historical scores 2024 (12%) · 2025 (16%) · 2026 (dynamic blend).</div>
-          </div>
-          <div class="box storage">
-            <div class="box-name"><code>SOP_AKTIVITAS_PER_BULAN</code></div>
-            <div class="box-detail">Master SOP data — 12 bulan × 58 aktivitas hardcoded. Source: SOP Robusta Edisi 2 + BRIN.</div>
+          <div class="box storage" style="background:#fff8e6;border-color:var(--gold)">
+            <div class="box-name"><span class="ico">📦</span>IndexedDB Queue (offline fallback)</div>
+            <div class="box-detail">lapor.html safety net. Online submit push langsung ke Firestore; kalau offline → queue di IndexedDB. <code>maybeAutoSync()</code> drain pada online event + 2s after page load.</div>
           </div>
         </div>
       </div>
 
       <div class="sub-section">
-        <div class="sub-section-label">⚙️ Processing Functions</div>
+        <div class="sub-section-label">🌉 Bridge Function (CRITICAL — Single Translation Point)</div>
+        <div class="box-grid cols-2">
+          <div class="box bridge" style="border-left:5px solid var(--accent)">
+            <div class="box-name"><span class="ico">🔗</span><code>normalizeWorkerEntry(data)</code></div>
+            <div class="box-detail">SINGLE bridge function untuk translate worker schema ↔ dashboard schema. 12 field aliases:<br>
+            • <code>jumlah_pohon</code>→<code>pohon</code> · <code>tanggal</code>→<code>tgl</code> · <code>kebun</code> (array → bidang + kebun_list + kebun string) · <code>detail</code> (object → detail_fields + detail=catatan) · <code>rain_24h_mm</code>→<code>rainfall_24h</code> · <code>compliance</code> recompute via computeRainfallAlerts · Glossary tokens via PRUNING_TYPE_BRIDGE + CABANG_*_BRIDGE.<br>
+            <strong>Impact:</strong> kalau field baru di lapor.html → WAJIB update normalizeWorkerEntry, kalau tidak silent data loss.</div>
+          </div>
+          <div class="box bridge" style="border-left:5px solid var(--accent)">
+            <div class="box-name"><span class="ico">📖</span>Glossary Bridge Dictionaries</div>
+            <div class="box-detail">3 mapping bahasa awam ↔ token ilmiah:<br>
+            • <code>PRUNING_TYPE_BRIDGE</code>: "Pangkas berat (total)" ↔ <code>pruning_berat</code><br>
+            • <code>CABANG_DIPERTAHANKAN_BRIDGE</code>: "Cabang gemuk berbuah lebat" ↔ <code>cabang_gemuk_berbuah</code><br>
+            • <code>CABANG_DIBUANG_BRIDGE</code>: "Cabang ke dalam / cabang balik" ↔ <code>cabang_balik</code>, dll<br>
+            Token version preserved di <code>detail_fields.*_tokens</code> untuk analisis.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">📦 localStorage Keys (10 keys)</div>
+        <div class="box-grid cols-4">
+          <div class="box storage">
+            <div class="box-name"><code>STATE.laporan</code></div>
+            <div class="box-detail">Daily reports array. Populated dari Firestore listener (worker) + Wakif Form Input. Schema includes <code>detail_fields</code> (preserved dynamic fields).</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>SOP_STATUS</code></div>
+            <div class="box-detail">Status per item SOP_AKTIVITAS_PER_BULAN. Key: <code>${bulan}-${idx}</code>. Schema v1.2 (pisang removed → one-off task).</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>UPAH_ITEMS</code></div>
+            <div class="box-detail">Pekerja harian + borongan tracker. Auto-create via autoCreateUpahFromEntry (Firestore listener). Status: belum/lunas.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>CASHBOOK</code></div>
+            <div class="box-detail">Cash flow transactions. Auto-link via batchPay/confirmPaid → <code>ref: 'upah_'+id</code>. Dedupe via Audit Tool guardrail.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>MILESTONES</code></div>
+            <div class="box-detail">Curated bilingual milestones. Schema v3.0 (implementasi + benchmark_evaluation). Generated via Batch Curation + AI Draft.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>HISTORICAL_PHASES</code></div>
+            <div class="box-detail">Strategy 1 historikal (replace ANNUAL_COMPLIANCE) — 3 fase pra-formal (Nadzir 1, Nadzir 2, RWI Era). Score retroaktif placeholder.</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>SOP_AKTIVITAS_PER_BULAN</code></div>
+            <div class="box-detail">Master SOP — 12 bulan × ~58 items hardcoded. Oct 2026+ pakai 19 topik A-S (KATEGORI_TOPIK_MAP).</div>
+          </div>
+          <div class="box storage">
+            <div class="box-name"><code>LIVING_LAB_PHASE_MAP</code></div>
+            <div class="box-detail">4 fase fenologi (Pre-Panen/Panen/Post-Panen/Awal MH) sync dengan Living Lab. Basis phase-aware Strategy 2.</div>
+          </div>
+          <div class="box storage" style="background:#fff8e6;border-color:var(--orange)">
+            <div class="box-name"><code>POHON_BASELINE</code> config</div>
+            <div class="box-detail">{ pre: 915, post: 750, current: 915, perBidang: [350, 300, 250, 15] }. <strong>Update <code>current</code></strong> setelah seleksi pasca-panen 2026.</div>
+          </div>
+          <div class="box storage" style="background:#fff8e6;border-color:var(--orange)">
+            <div class="box-name"><code>TIMING_TIER_META</code> + RULES</div>
+            <div class="box-detail">4-tier classification: STRICT/MODERATE/FLEXIBLE/EVENT-DRIVEN. Multi-Factor Timing scoring basis. La Niña tolerance +14d.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">🌐 External State Dependencies</div>
+        <div class="box-grid cols-3">
+          <div class="box external">
+            <div class="box-name"><span class="ico">🌊</span>NOAA ONI ENSO state</div>
+            <div class="box-detail">Fetched dari <code>psl.noaa.gov/data/correlation/oni.data</code>. Cache 24 jam di localStorage. La Niña/El Niño extend timing tolerance.</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">🤖</span>Anthropic API Key (localStorage)</div>
+            <div class="box-detail">Disimpan di browser localStorage saja (NOT in git). User input via prompt sekali, persist. Untuk AI Draft Generator.</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">🔐</span>Firebase Config Public Key</div>
+            <div class="box-detail">API key public di-expose (Firebase client-side pattern). Security via Firestore Rules + App Check (TBD).</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">⚙️ Processing Functions (selected)</div>
         <div class="box-grid cols-4">
           <div class="box process">
-            <div class="box-name">getComplianceMetrics()</div>
-            <div class="box-detail">Compute aggregate dari SOP_STATUS (sudah/tidak/belum/na counts + overdue/upcoming items).</div>
+            <div class="box-name">autoCreateUpahFromEntry()</div>
+            <div class="box-detail">Trigger di Firestore listener. Input STATE.laporan entry → output UPAH_ITEMS entry (Yit/Kumpul, dedupe by tgl+pelapor+src).</div>
           </div>
           <div class="box process">
-            <div class="box-name">computeAnnualCompliance(year)</div>
-            <div class="box-detail">2026 YTD blend = (sudah + 0.5×tidak_sesuai) / total · partial credit formula.</div>
+            <div class="box-name">getPhaseComplianceMetrics()</div>
+            <div class="box-detail">Phase-aware compute (Strategy 2). Per-fase Coverage % + Timing % (multi-factor). Excludes items future.</div>
           </div>
           <div class="box process">
-            <div class="box-name">renderComplianceAnalysis()</div>
-            <div class="box-detail">Dynamic analysis "kenapa rendah" — list belum wajib + tidak_sesuai dgn SOP guidance.</div>
+            <div class="box-name">computeTimingScore()</div>
+            <div class="box-detail">Multi-factor: tier × days_late × tolerance × ENSO × graduated penalty. Per-item score 0-100.</div>
           </div>
           <div class="box process">
-            <div class="box-name">5-Dimension Scoring</div>
-            <div class="box-detail">Coverage 30% + Quality 25% + Timing 20% (La Nina ±1bln) + Cost 15% + Doc 10%.</div>
+            <div class="box-name">getKebunIndices()</div>
+            <div class="box-detail">Multi-kebun aware iteration. Returns array of bidang indices dari kebun_list array OR string 'K1+K3' OR single bidang.</div>
+          </div>
+          <div class="box process">
+            <div class="box-name">getDetailText()</div>
+            <div class="box-detail">Defensive helper untuk legacy detail object. Return text version safely (object → catatan fallback).</div>
+          </div>
+          <div class="box process">
+            <div class="box-name">fixLegacyDetailObjects()</div>
+            <div class="box-detail">Migration on page load. Detect detail as object → move to detail_fields + set detail = catatan. Persist via localStorage.</div>
+          </div>
+          <div class="box process">
+            <div class="box-name">reprocessPendingEntries()</div>
+            <div class="box-detail">Migration 3s after load. Recompute compliance for pending entries + auto-create UPAH for unlinked YIT/KUMPUL entries.</div>
+          </div>
+          <div class="box process">
+            <div class="box-name">computeAudit() + audit actions</div>
+            <div class="box-detail">Scan UPAH ↔ Cashbook for duplicates/orphans/syncs. Actions: auditUnmarkPaid() + auditResetAllPaid() + auditDeleteCashbook().</div>
           </div>
         </div>
       </div>
@@ -776,12 +947,12 @@
 
     <div class="flow-arrow"><div class="label">▼ RENDER TO TABS</div></div>
 
-    <!-- ═══════ LAYER 3 — INTERNAL DASHBOARD (monitor-v2.html) ═══════ -->
+    <!-- ═══════ LAYER 3 — INTERNAL DASHBOARD v2.0 (monitor-v2.html) ═══════ -->
     <div class="layer">
       <div class="layer-tag l3">LAYER 3 · INTERNAL DASHBOARD (monitor-v2.html)</div>
       <div class="layer-header" style="margin-top:6px">
         <div class="layer-title"><span class="icon">🔒</span>Private Tabs — Wakif Tier Access</div>
-        <div class="layer-desc">13 tabs · 2 tier (Wakif full · Review limited) · adib-psych.github.io/wakaf-produktif/monitor-v2.html</div>
+        <div class="layer-desc">14 tabs + 2 sub-tools · Wakif full access · adib-psych.github.io/wakaf-produktif/monitor-v2.html</div>
       </div>
 
       <div class="sub-section">
@@ -789,67 +960,79 @@
         <div class="box-grid cols-5">
           <div class="box tab">
             <div class="box-name"><span class="ico">📊</span>Dashboard</div>
-            <div class="box-detail">Overview KPI + alerts harian</div>
+            <div class="box-detail">Overview KPI + alerts harian + worker submissions live toast</div>
           </div>
           <div class="box tab">
             <div class="box-name"><span class="ico">📋</span>Log Harian</div>
-            <div class="box-detail">View/edit/delete STATE.laporan</div>
+            <div class="box-detail">STATE.laporan view/edit/delete. Multi-kebun column (K1+K3 chips). Defensive getDetailText. Filter pelapor/kebun/kategori multi-kebun aware.</div>
           </div>
           <div class="box tab">
-            <div class="box-name"><span class="ico">✏️</span>Form Input</div>
-            <div class="box-detail">Entry harian (hero banner panduan)</div>
+            <div class="box-name"><span class="ico">✏️</span>Form Input (Wakif)</div>
+            <div class="box-detail">Wakif manual entry (alternatif Worker PWA). Hero banner panduan. Edit existing entries dari Log.</div>
           </div>
           <div class="box tab">
             <div class="box-name"><span class="ico">🌳</span>Inventarisasi</div>
-            <div class="box-detail">915 phn → target 750 post-selection</div>
+            <div class="box-detail">POHON_BASELINE.current denominator (915 pre / 750 post). Multi-kebun chart aggregation via getKebunIndices.</div>
           </div>
           <div class="box tab">
             <div class="box-name"><span class="ico">🍒</span>Pra-Panen 2026</div>
-            <div class="box-detail">Jul-Sep target ~366 kg</div>
+            <div class="box-detail">Jul-Sep target ~366 kg · multi-offtaker tracking (Bonsari + Nomad specialty)</div>
           </div>
         </div>
       </div>
 
       <div class="sub-section">
         <div class="sub-section-label">📈 MONITORING & SOP TABS</div>
-        <div class="box-grid cols-4">
+        <div class="box-grid cols-5">
           <div class="box tab">
             <div class="box-name"><span class="ico">👷</span>Distribusi Tugas</div>
-            <div class="box-detail">Auto-link Form Input → cell per pekerja</div>
+            <div class="box-detail">Auto-link Form Input/Firestore → cell per pekerja</div>
           </div>
           <div class="box tab">
             <div class="box-name"><span class="ico">🐛</span>OPT Heatmap</div>
-            <div class="box-detail">Live data dari kategori OPT Monitoring</div>
+            <div class="box-detail">5-pohon-diagonal · multi-kebun aware (kebun_list match logic)</div>
           </div>
           <div class="box tab">
-            <div class="box-name"><span class="ico">✅</span>SOP Compliance</div>
-            <div class="box-detail">Annual cards + Status Eksekusi + Analysis (kenapa rendah)</div>
+            <div class="box-name"><span class="ico">✅</span>SOP Compliance v2.2</div>
+            <div class="box-detail">Phase-aware. Strategy 1 (3 cards historikal) + Strategy 2 (4 phase cards fenologi dengan dual KPI Coverage+Timing).</div>
           </div>
           <div class="box tab">
             <div class="box-name"><span class="ico">📅</span>SOP Kalender</div>
-            <div class="box-detail">Forward View / Year Calendar · 58 aktivitas</div>
+            <div class="box-detail">Year view + Forward view. 19 topik A-S badges (Oct 2026+). ENSO banner.</div>
+          </div>
+          <div class="box tab" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">📚</span>Sintesa SOP <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">NEW</span></div>
+            <div class="box-detail">Iframe embed full sintesa-sop.html (Trifecta v2.1 — 4-way comparison 19 topik). One-click access tanpa leave tab.</div>
           </div>
         </div>
       </div>
 
       <div class="sub-section">
-        <div class="sub-section-label">💰 FINANCIAL TABS (Wakif-only — 🔒 locked)</div>
-        <div class="box-grid cols-4">
-          <div class="box wakif-only">
-            <div class="box-name"><span class="ico">📑</span>RAB Siklus</div>
-            <div class="box-detail">Rp 71,29 jt total · 9 kategori · 2 siklus 2026-2027</div>
+        <div class="sub-section-label">💰 FINANCIAL TABS (Wakif-only — 🔒)</div>
+        <div class="box-grid cols-3">
+          <div class="box wakif-only" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">💸</span>Pengeluaran 4-Section <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">REDESIGNED</span></div>
+            <div class="box-detail">S1 Uang Masuk · S2 Pengeluaran Kas Wakif (3 breakdown: Anto/Pekerja/Belanja) · S3 Kas Mas Anto in/out/sisa · S4 Ringkasan. Saldo positive-only, hidden until pemasukan exist.</div>
           </div>
-          <div class="box wakif-only">
-            <div class="box-name"><span class="ico">💵</span>Laporan Keuangan</div>
-            <div class="box-detail">Cashbook + Petty Cash Anto + Tambah Transaksi modal</div>
+          <div class="box wakif-only" style="background:#fff8e6;border-color:var(--gold)">
+            <div class="box-name"><span class="ico">🔍</span>Audit & Cleanup Sync Tool <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">NEW</span></div>
+            <div class="box-detail">Modal 4-tab: Sudah Dibayar (sync OK/orphan/duplicate badge) · Belum Dibayar · Duplikat (1-click delete) · Orphan (delete/mark paid). Plus 🧹 Bulk Reset.</div>
           </div>
           <div class="box wakif-only">
             <div class="box-name"><span class="ico">💰</span>Upah Pekerja</div>
-            <div class="box-detail">Harian + Borongan tracking · Bukti Bayar PNG generator</div>
+            <div class="box-detail">Harian + Borongan. Tarif lookup TARIF_PEKERJA. Auto-create dari Firestore listener. Status belum/lunas.</div>
+          </div>
+          <div class="box wakif-only">
+            <div class="box-name"><span class="ico">📑</span>RAB Siklus</div>
+            <div class="box-detail">Rp 71,29 jt total · 9 kategori · 2 siklus 2026-2027. Auto-compute %serapan dari Cashbook live.</div>
           </div>
           <div class="box financial">
             <div class="box-name"><span class="ico">📄</span>Bukti Bayar PNG</div>
-            <div class="box-detail">html2canvas → download untuk WA pekerja (logo + signature + terbilang)</div>
+            <div class="box-detail">html2canvas → download (logo + signature + terbilang). Share ke pekerja via WA.</div>
+          </div>
+          <div class="box wakif-only">
+            <div class="box-name"><span class="ico">📜</span>Milestones Publik</div>
+            <div class="box-detail">Curate event signifikan jadi bilingual milestone. Schema v3.0. Batch Curation card untuk multi-entry AI Draft.</div>
           </div>
         </div>
       </div>
@@ -857,29 +1040,61 @@
 
     <div class="flow-arrow bridge"><div class="label">▼ EDITORIAL CURATION</div></div>
 
-    <!-- ═══════ LAYER 4 — CURATION BRIDGE ═══════ -->
+    <!-- ═══════ LAYER 4 — CURATION BRIDGE + AI INTEGRATION (v2.0) ═══════ -->
     <div class="layer" style="background:linear-gradient(135deg,#fff8e6,#fef3d7);border-color:var(--gold)">
-      <div class="layer-tag l4">LAYER 4 · CURATION BRIDGE (Editorial Layer)</div>
+      <div class="layer-tag l4">LAYER 4 · CURATION BRIDGE + AI INTEGRATION</div>
       <div class="layer-header" style="margin-top:6px">
-        <div class="layer-title"><span class="icon">🌉</span>Wakif Editorial Control — NOT Auto-Dump</div>
-        <div class="layer-desc">Wakif review activity → curate jadi milestone bilingual → publish → export JSON → push GitHub</div>
+        <div class="layer-title"><span class="icon">🌉</span>Wakif Editorial Control + AI-Assisted Draft</div>
+        <div class="layer-desc">Wakif review → Batch Curation + AI Draft → manual edit → publish → export JSON → push GitHub</div>
       </div>
-      <div class="box-grid cols-4">
-        <div class="box bridge">
-          <div class="box-name"><span class="ico">📜</span>Tab Milestones Publik</div>
-          <div class="box-detail">Wakif-only · curate event signifikan dari STATE.laporan. Auto-suggest engine + bilingual form (ID required, EN optional).</div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">📜 Editorial Workflow</div>
+        <div class="box-grid cols-3">
+          <div class="box bridge">
+            <div class="box-name"><span class="ico">📜</span>Tab Milestones Publik</div>
+            <div class="box-detail">Wakif curate dari STATE.laporan. Auto-suggest engine + Batch Curation card (checkbox multi-entry). Bilingual form (ID required, EN optional).</div>
+          </div>
+          <div class="box bridge" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">🤖</span>AI Draft Generator <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">NEW</span></div>
+            <div class="box-detail">"Generate Draft via API" button. Bulk-translate worker entries → bilingual narrative + kajian teori + validasi SOP. Anti-hallucination guardrail (no brand name invention) + phase mapping by month.</div>
+          </div>
+          <div class="box bridge">
+            <div class="box-name"><span class="ico">📤</span>Export JSON + GitHub Auto-Push</div>
+            <div class="box-detail">Generate aktivitas-publik.json (published-only, schema v3.0). Fine-grained PAT → commit + push. Fallback: manual git push terminal.</div>
+          </div>
         </div>
-        <div class="box bridge">
-          <div class="box-name"><span class="ico">📤</span>Export JSON</div>
-          <div class="box-detail">Generate aktivitas-publik.json · published-only milestones · schema v3.0 (2-Layer Architecture).</div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">🤖 Anthropic API Integration (Browser-Direct)</div>
+        <div class="box-grid cols-3">
+          <div class="box bridge" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">⚡</span>Models Available</div>
+            <div class="box-detail">• <code>claude-sonnet-4-6</code> — Best Quality · ~Rp 1.500/draft (97s)<br>• <code>claude-haiku-4-5-20251001</code> — Faster · ~Rp 400/draft (30s)<br>Select via dropdown sebelum Generate.</div>
+          </div>
+          <div class="box bridge" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">🔐</span>API Auth (Browser-Direct)</div>
+            <div class="box-detail">Header <code>anthropic-dangerous-direct-browser-access: true</code>. API key di-store di localStorage saja (NOT in git). User input via prompt sekali, persist sampai cleared.</div>
+          </div>
+          <div class="box bridge" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">📐</span>Prompt Template</div>
+            <div class="box-detail">2-layer schema · 3 requirements: (1) translate bahasa awam → ilmiah via Glossary tokens, (2) kajian teori dari Trifecta v2.1, (3) validasi SOP per Compliance v2.2 (alignment_pct + verdict + gap_analysis + roadmap).</div>
+          </div>
         </div>
-        <div class="box bridge">
-          <div class="box-name"><span class="ico">🚀</span>GitHub Auto-Push (PAT)</div>
-          <div class="box-detail">Opsi C: Fine-grained PAT → API call → commit + push otomatis. Fallback: manual git push terminal.</div>
-        </div>
-        <div class="box bridge">
-          <div class="box-name"><span class="ico">⏱️</span>GitHub Pages Deploy</div>
-          <div class="box-detail">~1-2 menit propagation · CDN serve · adib-psych.github.io update otomatis.</div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">🚀 Deploy Chain</div>
+        <div class="box-grid cols-2">
+          <div class="box bridge">
+            <div class="box-name"><span class="ico">⏱️</span>GitHub Pages Deploy</div>
+            <div class="box-detail">~1-2 menit propagation · CDN serve · adib-psych.github.io update otomatis setelah git push main.</div>
+          </div>
+          <div class="box bridge">
+            <div class="box-name"><span class="ico">🛡️</span>Fallback Strategy</div>
+            <div class="box-detail">Kalau Anthropic API gagal (network/quota) → manual flow (Copy Prompt → Claude chat → paste hasil → Re-parse JSON). Kalau JSON fetch gagal di Living Lab → hardcoded HTML fallback.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -939,37 +1154,69 @@
       </div>
     </div>
 
-    <!-- ═══════ EXTERNAL REFERENCES & ANCHORS ═══════ -->
+    <!-- ═══════ EXTERNAL REFERENCES & ANCHORS (v2.0) ═══════ -->
     <div class="external-refs" style="margin-top:24px">
       <div class="external-refs-title">🌍 EXTERNAL ANCHORS — Knowledge Sources & Integrations</div>
-      <div class="box-grid">
-        <div class="box external">
-          <div class="box-name"><span class="ico">📕</span>SOP Robusta Edisi 2 (2019)</div>
-          <div class="box-detail">Kementan + Puslit Koka · 310 hal · source utama untuk SOP_AKTIVITAS_PER_BULAN. Permentan No 49/2014.</div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">📚 Knowledge Sources (Methodology Basis)</div>
+        <div class="box-grid">
+          <div class="box external">
+            <div class="box-name"><span class="ico">📕</span>SOP Robusta Edisi 2 (2019)</div>
+            <div class="box-detail">Kementan + Puslit Koka · 310 hal · source utama SOP_AKTIVITAS_PER_BULAN. Permentan No 49/2014.</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">🧪</span>BRIN Tabel Dosis</div>
+            <div class="box-detail">Locked 9 Mei 2026 · per umur 5-10 thn · Urea + SP-36 + KCl + Kieserit + Dolomit.</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">🌐</span>Wintgens 2004 + Cilas CIRAD + DaMatta & Ramalho 2006</div>
+            <div class="box-detail">International Tier 1-2 references untuk Multi-Factor Timing dasar (timing tier classification + tolerance window basis).</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">📖</span>ICCRI / WCR / SCA / FAO</div>
+            <div class="box-detail">Domestic + International Tier 2-3 references. ICCRI Jember protocols, WCR agronomy, SCA quality assurance, FAO Climate-Smart Agriculture.</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">📚</span>Aset Knowledge Docs</div>
+            <div class="box-detail">Compliance Methodology v2.2 FINAL · Trifecta SOP v2.1 (Synthesis + BRIN Komparasi + Master StepByStep) · Glossary v1.0.</div>
+          </div>
         </div>
-        <div class="box external">
-          <div class="box-name"><span class="ico">🧪</span>BRIN Tabel Dosis</div>
-          <div class="box-detail">Locked 9 Mei 2026 · per umur tanaman 5-10 thn · Urea + SP-36 + KCl + Kieserit + Dolomit.</div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">☁️ Cloud Services + APIs (NEW v2.0)</div>
+        <div class="box-grid">
+          <div class="box external" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">🔥</span>Firebase Firestore <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">NEW</span></div>
+            <div class="box-detail">Project: <code>wakaf-ngantang</code> · Region asia-southeast2 (Jakarta) · Plan Spark (free tier). Collections: <code>laporan</code>, <code>workers</code>, <code>audit_log</code>. Test mode rules expire 2026-06-15.</div>
+          </div>
+          <div class="box external" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">🤖</span>Anthropic API <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">NEW</span></div>
+            <div class="box-detail"><code>api.anthropic.com/v1/messages</code> · Sonnet 4.6 + Haiku 4.5. Browser-direct via dangerous header. localStorage API key. Cost ~Rp 400-1.500/draft.</div>
+          </div>
+          <div class="box external" style="background:#dcfce7;border-color:#15803d">
+            <div class="box-name"><span class="ico">🌊</span>NOAA ONI Data <span style="background:#15803d;color:#fff;padding:1px 6px;border-radius:4px;font-size:9px;margin-left:4px">NEW</span></div>
+            <div class="box-detail"><code>psl.noaa.gov/data/correlation/oni.data</code> · ENSO state (La Niña/El Niño/Neutral). Cache 24h. Input ke Multi-Factor Timing tolerance adjust.</div>
+          </div>
         </div>
-        <div class="box external">
-          <div class="box-name"><span class="ico">🌐</span>ICCRI / Wintgens / WCR</div>
-          <div class="box-detail">International benchmark (Tier 1-2 per hierarchy) · alignment_pct di milestone schema.</div>
-        </div>
-        <div class="box external">
-          <div class="box-name"><span class="ico">🤝</span>BRIN (Penjajakan)</div>
-          <div class="box-detail">5 Mei Purwodadi · 13 Mei Serpong Zoom 5 peneliti · status: pertemuan awal, belum MoU.</div>
-        </div>
-        <div class="box external">
-          <div class="box-name"><span class="ico">📦</span>GitHub Pages (Hosting)</div>
-          <div class="box-detail">Static hosting · adib-psych.github.io/wakaf-produktif/ · ~1-2 min propagation.</div>
-        </div>
-        <div class="box external">
-          <div class="box-name"><span class="ico">📱</span>WhatsApp (Worker Comms)</div>
-          <div class="box-detail">Anto/Yit/Kumpul lapor harian sore. Future: form link via WA untuk akurasi direct.</div>
-        </div>
-        <div class="box external">
-          <div class="box-name"><span class="ico">📚</span>Aset Knowledge Docs</div>
-          <div class="box-detail">SOP_Tertanam v2 · Detail Living Lab v2 · Methodology Guide · Monitor V2 Snapshot.</div>
+      </div>
+
+      <div class="sub-section">
+        <div class="sub-section-label">🤝 Stakeholders + Comms</div>
+        <div class="box-grid">
+          <div class="box external">
+            <div class="box-name"><span class="ico">🤝</span>BRIN (Penjajakan)</div>
+            <div class="box-detail">5 Mei Purwodadi · 13 Mei Serpong Zoom 5 peneliti · status: pertemuan awal, belum MoU.</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">📦</span>GitHub Pages (Hosting)</div>
+            <div class="box-detail">Static hosting · adib-psych.github.io/wakaf-produktif/ · ~1-2 min propagation.</div>
+          </div>
+          <div class="box external">
+            <div class="box-name"><span class="ico">📱</span>WhatsApp (Worker Comms)</div>
+            <div class="box-detail">Anto/Yit/Kumpul lapor harian. Worker PWA link di-share via WA. Bukti Bayar PNG share-back ke pekerja.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -992,8 +1239,8 @@
 
   <!-- FOOTER -->
   <div class="footer">
-    🌱 <strong>Wakaf Produktif Kebun Kopi Ngantang</strong> · Arsitektur Monitoring Dashboard → Living Lab · v1.0 · 15 Mei 2026 · Wakif: Adib Asrori, M.Psi (Mas Tito) · Strategic Executive: Hendy Kurniansyah<br>
-    <em style="color:var(--sage);font-size:10px">Filosofi inti: 5-Layer separation of concerns · client-side only (no server) · editorial curation antara private internal & public Living Lab · honest transparency dengan partial credit untuk fairness.</em>
+    🌱 <strong>Wakaf Produktif Kebun Kopi Ngantang</strong> · Arsitektur Worker PWA → Dashboard → Living Lab · <strong>v2.0 · 18 Mei 2026</strong> · Supersede v1.0 (15 Mei) · Wakif: Adib Asrori, M.Psi (Mas Tito) · Strategic Executive: Hendy Kurniansyah<br>
+    <em style="color:var(--sage);font-size:10px">Filosofi inti v2.0: <strong>5-Layer separation of concerns</strong> · <strong>online-first hybrid</strong> (Firestore real-time + localStorage cache) · <strong>single bridge function</strong> (normalizeWorkerEntry) untuk schema translation · <strong>derived-from-truth</strong> (Cashbook autolink dari UPAH status, never independent) · <strong>AI-assisted editorial curation</strong> dengan anti-hallucination guardrail · <strong>honest transparency</strong> dengan partial credit untuk fairness + phase-aware compliance scoring + 4-tier timing engine.</em>
   </div>
 
 </div>
