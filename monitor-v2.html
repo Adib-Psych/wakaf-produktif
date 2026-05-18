@@ -6240,69 +6240,152 @@ const LIVING_LAB_PHASE_INFO = {
 };
 const ACTIVE_MONITORING_START = { year: 2026, month: 5 };  // Mei 2026 — Strategy 2 baseline (post-RWI)
 
-// Get phase compliance metrics — per-phase breakdown, plus active phase highlight
+// ====================================================================
+// MULTI-FACTOR TIMING SCORE (B-Phase 2, locked 17 Mei 2026)
+// Compute per-item timing score 0-100 with reasoning.
+// Inputs: item, status, bulanItem (month item due), currentMonth, currentYear, ensoLaNinaActive
+// Output: { score: 0-100, tier, reason, late_by_days, in_tolerance, off_window }
+// ====================================================================
+function computeTimingScore(item, status, bulanItem, currentMonth, currentYear, isLaNina) {
+  const tier = getTimingTier(item);
+  const tierMeta = TIMING_TIER_META[tier];
+  const isFuture = bulanItem > currentMonth;
+  // Future month → tidak applicable
+  if (isFuture) return { score: null, tier, reason: 'Future month — belum due', late_by_days: 0, applicable: false };
+
+  // Approximate due-date = bulan ke-15 (mid-month)
+  const dueDate = new Date(currentYear, bulanItem - 1, 15);
+  const today = new Date();
+  const daysLate = Math.max(0, Math.floor((today - dueDate) / 86400000));
+
+  // ENSO adjust — La Niña/El Niño extend tolerance
+  let tolerance = tierMeta.tolerance_days;
+  if (isLaNina && tierMeta.tolerance_la_nina_days) tolerance = tierMeta.tolerance_la_nina_days;
+
+  // FLEXIBLE tier — no late penalty
+  if (tier === 'flexible') {
+    return { score: 100, tier, reason: 'Flexible — rutin/ongoing tanpa window strict', late_by_days: daysLate, in_tolerance: true, applicable: true };
+  }
+
+  // Item already done — credit by status
+  if (status === 'sudah') {
+    return { score: 100, tier, reason: `Sudah dieksekusi (tier ${tierMeta.label})`, late_by_days: 0, in_tolerance: true, applicable: true };
+  }
+  if (status === 'na') return { score: null, tier, reason: 'N/A — exclude dari scoring', late_by_days: 0, applicable: false };
+  if (status === 'tidak_sesuai') {
+    // Deviation — partial credit based on tier strictness
+    const partial = tier === 'strict' ? 25 : (tier === 'moderate' ? 50 : 70);
+    return { score: partial, tier, reason: `Tidak sesuai SOP (${tierMeta.label} = ${partial}% partial credit)`, late_by_days: daysLate, in_tolerance: false, applicable: true };
+  }
+
+  // Status = 'belum' — compute late penalty
+  if (daysLate === 0) {
+    return { score: 100, tier, reason: 'Belum lewat due date', late_by_days: 0, in_tolerance: true, applicable: true };
+  }
+
+  // EVENT-DRIVEN — special handling: penalty hanya kalau jelas miss
+  if (tier === 'event') {
+    if (daysLate <= 14) return { score: 100, tier, reason: 'Event-driven — masih dalam trigger window', late_by_days: daysLate, in_tolerance: true, applicable: true };
+    return { score: 50, tier, reason: `Event-driven late ${daysLate}d — trigger event missed`, late_by_days: daysLate, in_tolerance: false, applicable: true };
+  }
+
+  // STRICT / MODERATE — graduated penalty
+  if (daysLate <= tolerance) {
+    // Linear decay from 100 → 75 within tolerance
+    const decayPct = (daysLate / tolerance) * 25;
+    const score = Math.round(100 - decayPct);
+    return { score, tier, reason: `Late ${daysLate}d (in tolerance ±${tolerance}d${isLaNina ? ' La Niña-adj' : ''})`, late_by_days: daysLate, in_tolerance: true, applicable: true };
+  }
+  if (daysLate <= tolerance * 2) {
+    // 75 → 25 between tolerance and 2× tolerance
+    const decayPct = ((daysLate - tolerance) / tolerance) * 50;
+    const score = Math.round(75 - decayPct);
+    return { score, tier, reason: `Late ${daysLate}d (out of tolerance ±${tolerance}d${isLaNina ? ' La Niña-adj' : ''})`, late_by_days: daysLate, in_tolerance: false, applicable: true };
+  }
+  // > 2× tolerance late
+  if (tier === 'strict') {
+    return { score: 0, tier, reason: `Late ${daysLate}d (> 2× tolerance) — strict miss = 0% credit`, late_by_days: daysLate, in_tolerance: false, applicable: true };
+  }
+  // moderate >> tolerance
+  return { score: 25, tier, reason: `Late ${daysLate}d (substantially overdue)`, late_by_days: daysLate, in_tolerance: false, applicable: true };
+}
+
+// Get phase compliance metrics — per-phase breakdown + multi-factor timing scoring (B-Phase 2)
 function getPhaseComplianceMetrics() {
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
   const currentPhase = LIVING_LAB_PHASE_MAP[currentMonth];
+  const laNina = isLaNinaActive();
   const phases = { 'pre-panen': null, 'panen': null, 'post-panen': null, 'awal-mh': null };
   Object.keys(phases).forEach(ph => {
     phases[ph] = {
       total: 0, sudah: 0, belum: 0, tidakSesuai: 0, na: 0, dueSoFar: 0,
-      months: [],          // Bulan yang termasuk fase ini
-      activeMonths: [],    // Months dalam fase + dalam window active monitoring (>= Mei 2026)
-      isActive: false,     // Apakah ada bulan aktif yang sudah masuk window
-      isPastDue: false,    // Apakah seluruh fase sudah lewat
-      isCurrent: ph === currentPhase,
+      months: [], activeMonths: [],
+      // Multi-factor timing breakdown
+      tierBreakdown: { strict: 0, moderate: 0, flexible: 0, event: 0 },
+      timingScoreSum: 0,     // Σ timing scores (excluding null/N/A)
+      timingScoreCount: 0,   // count of items contributing to timing scoring
+      itemDetails: [],       // {bulanItem, itemIdx, item, status, timingScore}
+      isActive: false, isPastDue: false, isCurrent: ph === currentPhase,
     };
   });
-  // Determine which months are within active monitoring window (Mei 2026 onwards untuk year 2026, atau full year untuk 2027+)
+
   Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(bulanN => {
     const m = +bulanN;
     const ph = LIVING_LAB_PHASE_MAP[m];
     if (!phases[ph]) return;
     phases[ph].months.push(m);
-    // Active window check: year 2026 → Mei onwards; year 2027+ → full year
     const inActiveWindow = (currentYear > ACTIVE_MONITORING_START.year) ||
                            (currentYear === ACTIVE_MONITORING_START.year && m >= ACTIVE_MONITORING_START.month);
     if (inActiveWindow) phases[ph].activeMonths.push(m);
     SOP_AKTIVITAS_PER_BULAN[bulanN].aktivitas.forEach((a, i) => {
-      if (a.prio === 'larangan') return;  // skip "STOP" items
-      // Only count items in active window
+      if (a.prio === 'larangan') return;
       if (!inActiveWindow) return;
       phases[ph].total++;
       const key = `${bulanN}-${i}`;
       const s = SOP_STATUS[key];
       const status = s ? s.status : 'belum';
-      // Items dalam fase yang sudah due = bulan <= currentMonth (kalau masih di tahun yang sama atau tahun sebelum)
-      const isDue = (currentYear > ACTIVE_MONITORING_START.year && m <= currentMonth) ||
-                    (currentYear === ACTIVE_MONITORING_START.year && m <= currentMonth);
+      const isDue = m <= currentMonth;
       if (isDue) phases[ph].dueSoFar++;
+
+      // Status count
       if (status === 'sudah') phases[ph].sudah++;
       else if (status === 'tidak_sesuai') phases[ph].tidakSesuai++;
       else if (status === 'na') phases[ph].na++;
       else phases[ph].belum++;
+
+      // Tier breakdown
+      const tier = getTimingTier(a);
+      phases[ph].tierBreakdown[tier]++;
+
+      // Multi-factor timing score (only for due items)
+      if (isDue) {
+        const ts = computeTimingScore(a, status, m, currentMonth, currentYear, laNina);
+        if (ts.applicable && ts.score !== null) {
+          phases[ph].timingScoreSum += ts.score;
+          phases[ph].timingScoreCount++;
+        }
+        phases[ph].itemDetails.push({ bulanItem: m, itemIdx: i, item: a, status, timingScore: ts });
+      }
     });
   });
-  // Mark active/past flags
+
   Object.keys(phases).forEach(ph => {
     const p = phases[ph];
     if (p.activeMonths.length > 0) p.isActive = true;
-    // Phase fully past = semua bulan dalam fase < currentMonth + currentYear sama atau lewat
     const maxMonthInPhase = Math.max(...p.activeMonths, 0);
     if (maxMonthInPhase > 0 && maxMonthInPhase < currentMonth) p.isPastDue = true;
-    // Phase score formula: sudah / (sudah + belum + tidakSesuai) — exclude N/A
-    // Tapi denominator hanya hitung yang sudah due (bukan future months)
-    // Score = sudah_di_due / due_total_excluding_na
-    const dueTotal = p.dueSoFar;  // approximation — semua items dalam due months
-    // Recalculate dueExcludingNa: butuh re-iterate? Simplification: assume N/A rate sama
-    const naRateApprox = p.total > 0 ? (p.na / p.total) : 0;
-    const dueExcludingNa = Math.max(0, dueTotal - Math.round(dueTotal * naRateApprox));
+
+    // Score 1 — Simple coverage (sudah/dueExcludingNa) — for backward compat display
+    const dueExcludingNa = Math.max(0, p.dueSoFar - p.na);
     p.score = dueExcludingNa > 0 ? Math.round((p.sudah / dueExcludingNa) * 100) : null;
     p.overdue = Math.max(0, p.dueSoFar - p.sudah - p.tidakSesuai - p.na);
+
+    // Score 2 — Multi-factor timing score (B-Phase 2)
+    p.timingScore = p.timingScoreCount > 0 ? Math.round(p.timingScoreSum / p.timingScoreCount) : null;
   });
-  return { phases, currentPhase, currentMonth, currentYear };
+  return { phases, currentPhase, currentMonth, currentYear, ensoState: ENSO_STATE };
 }
 
 function getComplianceMetrics() {
