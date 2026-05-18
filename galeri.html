@@ -381,7 +381,7 @@ a { color: inherit; text-decoration: none; }
   color: rgba(255,255,255,0.88);
 }
 .bento-item .zoom-icon {
-  position: absolute; top: 0.6rem; right: 0.6rem;
+  position: absolute; top: 0.6rem; left: 0.6rem;  /* moved from right → left */
   background: rgba(0,0,0,0.55);
   color: white; width: 28px; height: 28px;
   border-radius: 50%;
@@ -389,26 +389,26 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.85rem;
   opacity: 0;
   transition: opacity 0.3s;
-  z-index: 3;
+  z-index: 4;
 }
 .bento-item:hover .zoom-icon { opacity: 1; }
 .bento-item .date-badge {
-  position: absolute; bottom: 0.5rem; right: 0.5rem;
-  background: rgba(20,30,30,0.78);
+  position: absolute; top: 0.5rem; right: 0.5rem;  /* moved from bottom → top */
+  background: rgba(20,30,30,0.82);
   color: var(--cream);
   font-size: 0.62rem; font-weight: 600;
-  padding: 0.22rem 0.55rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 4px;
   letter-spacing: 0.04em;
   font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
-  z-index: 3;
-  transition: opacity 0.3s;
-  border: 1px solid rgba(232,213,184,0.18);
+  z-index: 4;
+  border: 1px solid rgba(232,213,184,0.2);
   white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
 }
-.bento-item:hover .date-badge { opacity: 0.85; }
+/* Date badge tetap visible saat hover — no fade needed di posisi atas */
 
 /* ══════════════════════════════════
    LIGHTBOX
