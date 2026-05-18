@@ -1384,6 +1384,19 @@
 
     <!-- ============ SOP KALENDER FENOLOGI ============ -->
     <div class="panel" id="panel-kalender">
+
+      <!-- SOP MASTER SYNC TOOLBAR (Phase 1C — 18 Mei 2026) -->
+      <div class="card" style="background:#fff8e5;border-left:4px solid #d4a017;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#8B6914">☁️ SOP Master Sync — Single Source of Truth</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Sync SOP_AKTIVITAS_PER_BULAN ke Firestore (sop_master/active). Future: worker form & dashboard fetch dari cloud → 1 buku, edit sekali → semua update.</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-primary" onclick="window.syncSOPMasterToFirestore && window.syncSOPMasterToFirestore()" style="background:#d4a017;color:#fff;font-weight:700;font-size:12px;padding:8px 14px">🔄 Sync SOP ke Cloud</button>
+          <button class="btn btn-secondary" onclick="window.loadSOPMasterFromFirestore && window.loadSOPMasterFromFirestore().then(d => alert(d ? '✓ Loaded cloud version' : 'No cloud version yet — klik Sync dulu'))" style="font-size:12px;padding:8px 12px">📥 Re-fetch</button>
+        </div>
+      </div>
+
       <!-- NEW: Ngantang Local Context callout -->
       <div class="card" style="background:linear-gradient(135deg,#5a9080,#2e4040);color:#f5f0e6;border:0;border-left:5px solid var(--cherry)">
         <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:#a8c8bc;margin-bottom:8px">⚡ KONTEKS LOKAL NGANTANG &amp; IKLIM 2026</div>
@@ -9624,7 +9637,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 <!-- Firebase Firestore Listener (Phase 1B) — Real-time sync dari Worker PWA submissions -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc }
+  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc, getDoc, setDoc, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
@@ -9649,6 +9662,107 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         throw e;
       }
     };
+
+    // ===== SOP Master Mirror (Phase 1C — locked 18 Mei 2026) =====
+    // Single source of truth untuk SOP data. Adib edit di dashboard → Firestore → worker form auto-sync.
+    // Strategy: cloud sebagai authoritative; localStorage cache; hardcoded fallback.
+
+    window.syncSOPMasterToFirestore = async () => {
+      // ADMIN action — Adib klik tombol "🔄 Sync SOP" untuk push current hardcoded ke Firestore
+      if (typeof SOP_AKTIVITAS_PER_BULAN === 'undefined') {
+        alert('SOP_AKTIVITAS_PER_BULAN tidak ditemukan di global. Refresh page lalu coba lagi.');
+        return false;
+      }
+      try {
+        const payload = {
+          aktivitas_per_bulan: SOP_AKTIVITAS_PER_BULAN,
+          kategori_label: typeof KATEGORI_LABEL !== 'undefined' ? KATEGORI_LABEL : null,
+          kategori_topik_map: typeof KATEGORI_TOPIK_MAP !== 'undefined' ? KATEGORI_TOPIK_MAP : null,
+          version: '1.0',
+          updated_at: serverTimestamp(),
+          updated_by: 'wakif_dashboard',
+          source: 'monitor-v2.html SOP_AKTIVITAS_PER_BULAN'
+        };
+        // Firestore keys must be strings — convert SOP_AKTIVITAS_PER_BULAN numeric keys to strings
+        const sopStringKeyed = {};
+        Object.entries(SOP_AKTIVITAS_PER_BULAN).forEach(([k, v]) => {
+          sopStringKeyed['bulan_' + k] = v;
+        });
+        payload.aktivitas_per_bulan = sopStringKeyed;
+
+        await setDoc(doc(db, COLLECTIONS.sop_master, 'active'), payload);
+        console.log('[SOP Master] ✓ Synced to Firestore sop_master/active');
+        // Update localStorage cache too
+        localStorage.setItem('wkkn_sop_master_v1', JSON.stringify({
+          ...payload,
+          cached_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()  // serverTimestamp not serializable directly
+        }));
+        if (typeof showToast === 'function') showToast(`✅ SOP Master synced ke Firestore (${Object.keys(sopStringKeyed).length} bulan)`, 'success');
+        return true;
+      } catch (e) {
+        console.error('[SOP Master] sync failed:', e);
+        if (typeof showToast === 'function') showToast(`❌ Sync gagal: ${e.message}`, 'error');
+        return false;
+      }
+    };
+
+    window.loadSOPMasterFromFirestore = async () => {
+      // Auto-runs on page load. Fetch cloud SOP, cache to localStorage, override hardcoded.
+      try {
+        const docSnap = await getDoc(doc(db, COLLECTIONS.sop_master, 'active'));
+        if (!docSnap.exists()) {
+          console.log('[SOP Master] No cloud version yet — using hardcoded fallback. Adib bisa klik "🔄 Sync SOP" untuk push initial seed.');
+          return null;
+        }
+        const cloudData = docSnap.data();
+        // Convert back numeric keys
+        const sopFromCloud = {};
+        if (cloudData.aktivitas_per_bulan) {
+          Object.entries(cloudData.aktivitas_per_bulan).forEach(([k, v]) => {
+            const numKey = k.replace('bulan_', '');
+            sopFromCloud[+numKey] = v;
+          });
+        }
+        // Override hardcoded if cloud has data
+        if (Object.keys(sopFromCloud).length > 0 && typeof SOP_AKTIVITAS_PER_BULAN !== 'undefined') {
+          // Mutate keys to update reference (preserve const binding)
+          Object.keys(sopFromCloud).forEach(k => {
+            SOP_AKTIVITAS_PER_BULAN[k] = sopFromCloud[k];
+          });
+          console.log(`[SOP Master] ✓ Loaded from Firestore: ${Object.keys(sopFromCloud).length} bulan, version ${cloudData.version || '?'}`);
+          // Cache
+          localStorage.setItem('wkkn_sop_master_v1', JSON.stringify({
+            ...cloudData,
+            cached_at: new Date().toISOString()
+          }));
+          // Trigger re-render if SOP Kalender already loaded
+          if (typeof renderSOPKalender === 'function') renderSOPKalender();
+          if (typeof renderSOPCompliance === 'function') renderSOPCompliance();
+          return cloudData;
+        }
+        return null;
+      } catch (e) {
+        console.warn('[SOP Master] fetch failed, fallback to localStorage cache then hardcoded:', e.message);
+        // Try localStorage cache
+        const cached = localStorage.getItem('wkkn_sop_master_v1');
+        if (cached) {
+          try {
+            const cachedData = JSON.parse(cached);
+            console.log('[SOP Master] Loaded from localStorage cache (offline mode)');
+            return cachedData;
+          } catch (_) {}
+        }
+        return null;
+      }
+    };
+
+    // Run on page load
+    setTimeout(() => {
+      if (typeof window.loadSOPMasterFromFirestore === 'function') {
+        window.loadSOPMasterFromFirestore();
+      }
+    }, 1500);
 
     // Normalize incoming Firestore data — bridge field naming between lapor.html (worker PWA) ↔ monitor-v2 (dashboard)
     function normalizeWorkerEntry(data) {

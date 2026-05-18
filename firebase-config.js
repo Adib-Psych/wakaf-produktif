@@ -20,4 +20,6 @@ export const COLLECTIONS = {
   laporan: 'laporan',       // Worker submissions (primary collection)
   workers: 'workers',       // Worker activity log (last_active timestamps)
   audit_log: 'audit_log',   // Change tracking for transparency
+  sop_master: 'sop_master', // SOP master single source of truth (Phase 1C — 18 Mei 2026)
+                            // Doc: 'active' contains { aktivitas_per_bulan, kategori_label, kategori_by_worker, kategori_topik_map, version, updated_at }
 };
