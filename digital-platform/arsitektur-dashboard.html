@@ -275,40 +275,7 @@
     .header-logo { width: 130px; height: 65px; }
   }
 </style>
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'base',
-    themeVariables: {
-      primaryColor: '#2D8466',
-      primaryTextColor: '#1a2828',
-      primaryBorderColor: '#5A9080',
-      lineColor: '#5A9080',
-      secondaryColor: '#fff4d6',
-      tertiaryColor: '#f0f5f3',
-      fontFamily: 'Plus Jakarta Sans, sans-serif',
-      fontSize: '18px'
-    },
-    flowchart: {
-      htmlLabels: false,
-      curve: 'linear',
-      padding: 20,
-      nodeSpacing: 55,
-      rankSpacing: 100,
-      useMaxWidth: true
-    }
-  });
-</script>
-<style>
-  /* Mermaid font enlargement v2 — simpler, plain text labels (18 Mei 2026 — Adib feedback round 2) */
-  .mermaid { font-size: 16px; }
-  .mermaid svg { max-width: 100%; height: auto; }
-  .mermaid .nodeLabel { font-size: 15px !important; font-weight: 700 !important; }
-  .mermaid .edgeLabel { font-size: 13px !important; font-weight: 600 !important; background: #ffffff !important; padding: 2px 6px !important; border-radius: 3px; }
-  .mermaid .cluster-label .nodeLabel { font-size: 17px !important; font-weight: 800 !important; }
-  .mermaid .edgePath path { stroke-width: 2px !important; }
-</style>
+<!-- Mermaid removed 18 Mei 2026 (sore) — replaced with matplotlib-rendered SVG (arsitektur_diagram.svg). Reason: Mermaid auto-layout produces illegible text at scale. -->
 </head>
 <body>
 
@@ -338,130 +305,15 @@
         <div class="layer-desc">Diagram koneksi: setiap input/tab menunjukkan downstream-nya. Warna arrow = jenis data.</div>
       </div>
 
-      <div style="overflow-x:auto;padding:14px 4px;background:white;border-radius:10px;border:1px solid #e8e4dc">
-        <div class="mermaid" style="background:white;border-radius:10px;border:1px solid #e8e4dc;padding:24px;overflow:auto;min-height:1200px;font-size:16px">
-flowchart TB
-  %% ===== INPUTS =====
-  subgraph S1[" 📱 INPUTS "]
-    PWA[/"📱 Worker PWA · LIVE 🟢"/]
-    FORM[/"✏️ Form Input Wakif"/]
-    TAMBAH[/"💵 Tambah Transaksi"/]
-    SOPCLICK[/"📅 SOP Kalender Click"/]
-    SEED[/"🌱 Living Lab Seed"/]
-    BATCH[/"🤖 Batch Curation + AI"/]
-  end
-
-  %% ===== BRIDGE / SYNC =====
-  subgraph S2[" ☁️ BRIDGE / SYNC "]
-    FS["🔥 Firestore Cloud<br/>wakaf-ngantang/laporan"]
-    NORM["🌉 normalizeWorkerEntry<br/>CRITICAL bridge"]
-    AUTO["⚙️ autoCreateUpah"]
-  end
-
-  %% ===== STORAGE =====
-  subgraph S3[" 💾 STORAGE localStorage "]
-    STATE[("STATE.laporan")]
-    UPAH[("UPAH_ITEMS")]
-    CASH[("CASHBOOK")]
-    SOPST[("SOP_STATUS")]
-    HIST[("HISTORICAL_PHASES")]
-    MILE[("MILESTONES")]
-    POHON[("POHON_BASELINE")]
-    TIMING[("TIMING_TIER + ENSO")]
-  end
-
-  %% ===== DASHBOARD TABS (flat) =====
-  subgraph S4[" 📊 DASHBOARD TABS "]
-    LOG["📋 Log Harian"]
-    DIST["👷 Distribusi Tugas"]
-    OPT["🐛 OPT Heatmap"]
-    MW["🎫 Manage Workers"]
-    COMP["✅ SOP Compliance v2.2"]
-    SOPKAL["📅 SOP Kalender"]
-    SINT["📚 Sintesa SOP"]
-    LATE["⏰ Late Entry Queue"]
-    PENG["💸 Pengeluaran 4-section 🔒"]
-    AUDIT["🔍 Audit Sync Tool 🔒"]
-    UPAHT["💰 Upah Pekerja 🔒"]
-    RAB["📑 RAB Siklus 🔒"]
-    MILT["📜 Milestones Publik 🔒"]
-  end
-
-  %% ===== OUTPUT =====
-  subgraph S5[" 📤 OUTPUT "]
-    BUKTI["📄 Bukti Bayar PNG"]
-    AI["🤖 AI Draft Generator"]
-    EXPORT["📤 Export JSON"]
-    JSON[/"aktivitas-publik.json"/]
-  end
-
-  %% ===== PUBLIC =====
-  subgraph S6[" 🌐 PUBLIC "]
-    LL[["🌐 Living Lab Page"]]
-    VIS(("👥 Public Visitors"))
-  end
-
-  %% ===== FLOWS =====
-  PWA -->|setDoc| FS
-  FS -->|onSnapshot| NORM
-  NORM -->|unshift| STATE
-  NORM --> AUTO
-  AUTO -->|create| UPAH
-
-  FORM -.->|localStorage| STATE
-  TAMBAH --> CASH
-  SOPCLICK --> SOPST
-  SEED -.-> HIST
-
-  STATE --> LOG
-  STATE --> DIST
-  STATE -.->|if OPT| OPT
-  STATE -.->|filter late| LATE
-
-  UPAH --> UPAHT
-  UPAH -.-> AUDIT
-  CASH --> PENG
-  CASH -.->|%serapan| RAB
-
-  SOPST --> COMP
-  SOPST --> SOPKAL
-  HIST -.->|Strategy 1| COMP
-  POHON -.-> COMP
-  TIMING -.->|Multi-Factor| COMP
-  MILE --> MILT
-
-  UPAHT --> BUKTI
-  UPAHT -.->|batchPay| CASH
-  BATCH -.-> AI
-  MILT --> AI
-  AI -.-> MILT
-  MILT --> EXPORT
-  EXPORT --> JSON
-  JSON ==>|fetch| LL
-  LL --> VIS
-
-  %% ===== STYLING =====
-  classDef live fill:#dcfce7,stroke:#15803d,stroke-width:3px,color:#0a3d2c
-  classDef bridge fill:#f0e0d4,stroke:#c4906a,stroke-width:3px,color:#5a2510
-  classDef storage fill:#fff4d6,stroke:#D4AF37,stroke-width:2px,color:#1a2828
-  classDef config fill:#FFE4B5,stroke:#E67E22,stroke-width:2px,color:#5a2510
-  classDef tab fill:#E8F1EC,stroke:#5A9080,color:#1a2828
-  classDef wakif fill:#fef3d7,stroke:#D4AF37,color:#5a4030
-  classDef warn fill:#fce4dc,stroke:#C73E3E,color:#8c2519
-  classDef output fill:#f0e0d4,stroke:#c4906a,color:#5a2510
-  classDef public fill:#2D8466,stroke:#1F5F47,stroke-width:2px,color:#ffffff
-  classDef input fill:#DCE9F0,stroke:#2C5B80,color:#1a2828
-
-  class PWA,FS,AI,AUTO,BATCH live
-  class NORM bridge
-  class FORM,TAMBAH,SOPCLICK,SEED input
-  class STATE,UPAH,CASH,SOPST,HIST,MILE storage
-  class POHON,TIMING config
-  class LOG,DIST,OPT,MW,COMP,SOPKAL,SINT tab
-  class UPAHT,RAB,PENG,MILT,AUDIT wakif
-  class LATE warn
-  class BUKTI,EXPORT,JSON output
-  class LL,VIS public
+      <!-- Diagram render via matplotlib (SVG vector, manual layout) — replaces Mermaid (18 Mei 2026, sore) -->
+      <!-- Reason: Mermaid auto-layout produces tiny illegible text. matplotlib manual layout gives full control -->
+      <div style="overflow-x:auto;padding:14px 4px;background:white;border-radius:10px;border:1px solid #e8e4dc;text-align:center">
+        <img src="arsitektur_diagram.svg"
+             alt="Arsitektur Sistem v2.0 — 6-Layer Flow Chart Wakaf Produktif Kebun Kopi Ngantang"
+             style="max-width:100%;width:1100px;height:auto;display:inline-block"
+             loading="lazy">
+        <div style="margin-top:10px;padding:8px 14px;background:#f0f5f3;border-radius:8px;font-size:11.5px;color:#5a6b66;font-style:italic">
+          📐 Rendered via matplotlib (Python) · vector SVG · scale-able · Klik kanan → "Open image in new tab" untuk zoom maksimal
         </div>
       </div>
 
