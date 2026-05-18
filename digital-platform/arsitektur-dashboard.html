@@ -51,8 +51,9 @@
 
   /* HEADER */
   .header {
-    background: linear-gradient(135deg, var(--darkgreen), var(--moss));
-    color: white; padding: 28px 36px 22px; position: relative; overflow: hidden;
+    /* Palette: Dark Forest + Gold (premium) — 18 Mei 2026 */
+    background: linear-gradient(135deg, #1F3A2E, #2e4040);
+    color: white; padding: 32px 40px 26px; position: relative; overflow: hidden;
   }
   .header::before {
     content: ""; position: absolute; top: -60px; right: -60px;
@@ -66,18 +67,22 @@
   }
   .header-text { flex: 1; min-width: 300px; }
   .header-logo {
-    width: 160px; height: 80px;
+    /* Enlarged 2x — 18 Mei 2026: 160×80 → 320×160 */
+    width: 320px; height: 160px;
     object-fit: contain;
     flex-shrink: 0;
     position: relative; z-index: 2;
+    /* Soft drop-shadow agar logo (yang ada bg-nya) memisah dari header gradient */
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.18));
+    border-radius: 8px;
   }
   .header-tag {
     font-size: 11px; font-weight: 800; letter-spacing: 2.5px;
-    color: var(--sage); margin-bottom: 8px;
+    color: var(--gold); margin-bottom: 8px;
   }
   .header h1 { font-size: 28px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 6px; line-height: 1.15; }
   .header h1 em { color: var(--gold); font-style: normal; }
-  .header .sub { font-size: 14px; color: var(--sand); max-width: 900px; }
+  .header .sub { font-size: 14px; color: var(--sage); max-width: 900px; }
   .header .meta {
     display: inline-block; margin-top: 12px;
     background: rgba(255,255,255,.16);
@@ -272,7 +277,8 @@
     .layer-header { flex-direction: column; align-items: flex-start; }
     .layer-desc { text-align: left; }
     .header-inner { justify-content: center; }
-    .header-logo { width: 130px; height: 65px; }
+    /* Mobile: scale logo proportional dari 320×160 → 260×130 (still bigger than v1 130×65) */
+    .header-logo { width: 260px; height: 130px; }
   }
 </style>
 <!-- Mermaid removed 18 Mei 2026 (sore) — replaced with matplotlib-rendered SVG (arsitektur_diagram.svg). Reason: Mermaid auto-layout produces illegible text at scale. -->
@@ -290,7 +296,7 @@
         <div class="sub">Aliran data end-to-end dari Worker PWA (lapor.html) + Wakif Form Input → Firestore real-time → localStorage processing → AI-assisted curation → public Living Lab. Reference dokumen untuk seluruh stakeholder (Adib, Hendy, tim lapangan, BRIN, donatur, komunitas) dengan <strong>impact propagation per-connection</strong>.</div>
         <div class="meta">📅 v2.0 · 18 Mei 2026 · Supersede v1.0 (15 Mei) · Wakaf Produktif Kebun Kopi Ngantang</div>
       </div>
-      <img src="../images/logo-wakaf-produktif-3x1.png" alt="Wakaf Produktif Kebun Kopi Ngantang" class="header-logo">
+      <img src="../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" class="header-logo">
     </div>
   </div>
 
