@@ -240,8 +240,26 @@ a { color: inherit; text-decoration: none; }
   font-size: 0.85rem;
   opacity: 0;
   transition: opacity 0.3s;
+  z-index: 3;
 }
 .bento-item:hover .zoom-icon { opacity: 1; }
+.bento-item .date-badge {
+  position: absolute; bottom: 0.5rem; right: 0.5rem;
+  background: rgba(20,30,30,0.78);
+  color: var(--cream);
+  font-size: 0.62rem; font-weight: 600;
+  padding: 0.22rem 0.55rem;
+  border-radius: 4px;
+  letter-spacing: 0.04em;
+  font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 3;
+  transition: opacity 0.3s;
+  border: 1px solid rgba(232,213,184,0.18);
+  white-space: nowrap;
+}
+.bento-item:hover .date-badge { opacity: 0.85; }
 
 /* ══════════════════════════════════
    LIGHTBOX
@@ -402,6 +420,7 @@ span.lang-en { display: none; }
   <div class="lb-caption">
     <div class="lb-caption-title" id="lb-cap-title"></div>
     <div class="lb-caption-desc" id="lb-cap-desc"></div>
+    <div class="lb-caption-date" id="lb-cap-date" style="margin-top:0.5rem;font-size:0.7rem;color:var(--cream);opacity:0.75;font-family:monospace;letter-spacing:0.04em"></div>
   </div>
 </div>
 
@@ -421,6 +440,8 @@ span.lang-en { display: none; }
    GALLERY DATA — 46 foto, 6 kategori
    Caption draft awal — bisa di-refine via iterasi
 ═══════════════════════════════════════════════════════ */
+const EDITION_DATE = '17 Mei 2026';  // Default date untuk current edition (overridable per section)
+
 const SECTIONS = [
   {
     id: 'kebun-landscape',
@@ -539,12 +560,15 @@ function renderGallery() {
   const root = document.getElementById('gallery-root');
   let totalCount = 0;
   const html = SECTIONS.map(sec => {
+    const photoDate = sec.date || EDITION_DATE;
     const items = sec.photos.map(p => {
+      const pDate = p.date || photoDate;  // photo can override section date
       const globalIdx = ALL_PHOTOS.length;
-      ALL_PHOTOS.push(p);
+      ALL_PHOTOS.push({ ...p, _date: pDate });  // attach date for lightbox
       return `<div class="bento-item ${p.size}" onclick="openLightbox(${globalIdx})">
         <img src="images/gallery/thumbs/${p.f}" data-full="images/gallery/${p.f}" alt="${p.title_id}" loading="lazy">
         <div class="zoom-icon">⤢</div>
+        <div class="date-badge" title="Tanggal pengambilan foto">📅 ${pDate}</div>
         <div class="caption">
           <div class="cap-title"><span class="lang-id">${p.title_id}</span><span class="lang-en">${p.title_en}</span></div>
           <div class="cap-desc"><span class="lang-id">${p.cap_id}</span><span class="lang-en">${p.cap_en}</span></div>
@@ -599,6 +623,7 @@ function showLightbox() {
   document.getElementById('lb-img').alt = lang === 'id' ? p.title_id : p.title_en;
   document.getElementById('lb-cap-title').textContent = lang === 'id' ? p.title_id : p.title_en;
   document.getElementById('lb-cap-desc').textContent = lang === 'id' ? p.cap_id : p.cap_en;
+  document.getElementById('lb-cap-date').textContent = `📅 ${lang === 'id' ? 'Diambil:' : 'Captured:'} ${p._date}`;
   document.getElementById('lb-counter').textContent = `${currentIdx + 1} / ${ALL_PHOTOS.length}`;
 }
 
