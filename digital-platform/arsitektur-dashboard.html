@@ -275,6 +275,30 @@
     .header-logo { width: 130px; height: 65px; }
   }
 </style>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      primaryColor: '#2D8466',
+      primaryTextColor: '#1a2828',
+      primaryBorderColor: '#5A9080',
+      lineColor: '#5A9080',
+      secondaryColor: '#fff4d6',
+      tertiaryColor: '#f0f5f3',
+      fontFamily: 'Plus Jakarta Sans, sans-serif',
+      fontSize: '13px'
+    },
+    flowchart: {
+      htmlLabels: true,
+      curve: 'basis',
+      padding: 12,
+      nodeSpacing: 30,
+      rankSpacing: 70
+    }
+  });
+</script>
 </head>
 <body>
 
@@ -305,498 +329,154 @@
       </div>
 
       <div style="overflow-x:auto;padding:14px 4px;background:white;border-radius:10px;border:1px solid #e8e4dc">
-        <svg viewBox="0 0 1500 960" style="width:100%;min-width:1280px;height:auto;display:block" xmlns="http://www.w3.org/2000/svg">
-          <!-- Define arrowhead markers -->
-          <defs>
-            <marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,5 L0,10 z" fill="#2C5B80"/>
-            </marker>
-            <marker id="ah-gold" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,5 L0,10 z" fill="#D4AF37"/>
-            </marker>
-            <marker id="ah-moss" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,5 L0,10 z" fill="#5A9080"/>
-            </marker>
-            <marker id="ah-accent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,5 L0,10 z" fill="#c4906a"/>
-            </marker>
-            <marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,5 L0,10 z" fill="#E67E22"/>
-            </marker>
-            <marker id="ah-dark" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
-              <path d="M0,0 L10,5 L0,10 z" fill="#1F5F47"/>
-            </marker>
-
-            <!-- Box style template -->
-            <linearGradient id="grad-input" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#DCE9F0"/>
-              <stop offset="100%" stop-color="#B8D2DD"/>
-            </linearGradient>
-            <linearGradient id="grad-storage" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#FFF4D6"/>
-              <stop offset="100%" stop-color="#F0E0A0"/>
-            </linearGradient>
-            <linearGradient id="grad-tab" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#E8F1EC"/>
-              <stop offset="100%" stop-color="#D0E4D6"/>
-            </linearGradient>
-            <linearGradient id="grad-bridge" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#f0e0d4"/>
-              <stop offset="100%" stop-color="#e6c5a8"/>
-            </linearGradient>
-            <linearGradient id="grad-public" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#1F5F47"/>
-              <stop offset="100%" stop-color="#5A9080"/>
-            </linearGradient>
-          </defs>
-
-          <!-- ═══════════════════════════════════════════ -->
-          <!-- ═══ v2.1 LAYOUT (18 Mei 2026) — clean orthogonal routing ═══ -->
-          <!-- 6 columns · PWA top · Firestore bridge · ortho arrows ═══ -->
-          <!-- ═══════════════════════════════════════════ -->
-
-          <!-- COLUMN LABELS -->
-          <text x="100" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">📱 INPUTS</text>
-          <text x="320" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">☁️ BRIDGE/SYNC</text>
-          <text x="540" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">💾 STORAGE</text>
-          <text x="780" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">📊 DASHBOARD TABS</text>
-          <text x="1040" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">📤 OUTPUT</text>
-          <text x="1260" y="30" font-family="sans-serif" font-size="11" font-weight="800" fill="#6b7878" letter-spacing="1.5">🌐 PUBLIC</text>
-
-          <!-- ═══ COL 1: INPUTS (x=20, width=200) ═══ -->
-
-          <!-- Worker PWA · TOP (primary entry) -->
-          <g>
-            <rect x="20" y="50" width="200" height="68" rx="10" fill="#dcfce7" stroke="#15803d" stroke-width="3"/>
-            <text x="120" y="73" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#15803d">📱 Worker PWA</text>
-            <text x="120" y="89" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#15803d" font-weight="700">lapor.html · LIVE 🟢</text>
-            <text x="120" y="104" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1a4030">Yit/Kumpul/Anto · primary entry</text>
-          </g>
-
-          <!-- Form Input Wakif · SECOND (manual backfill) -->
-          <g>
-            <rect x="20" y="135" width="200" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2"/>
-            <text x="120" y="158" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">✏️ Form Input Wakif</text>
-            <text x="120" y="176" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">monitor-v2 tab · backfill/correct</text>
-          </g>
-
-          <!-- Tambah Transaksi · financial -->
-          <g>
-            <rect x="20" y="210" width="200" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2"/>
-            <text x="120" y="233" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">💵 Tambah Transaksi</text>
-            <text x="120" y="251" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Cashbook entry modal</text>
-          </g>
-
-          <!-- SOP Kalender Click · Wakif compliance -->
-          <g>
-            <rect x="20" y="285" width="200" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2"/>
-            <text x="120" y="308" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">📅 SOP Kalender Click</text>
-            <text x="120" y="326" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Wakif klik status item</text>
-          </g>
-
-          <!-- Living Lab Seed · 1× historical -->
-          <g>
-            <rect x="20" y="360" width="200" height="56" rx="10" fill="url(#grad-input)" stroke="#2C5B80" stroke-width="2" stroke-dasharray="5,3"/>
-            <text x="120" y="383" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#1a2828">🌱 Living Lab Seed</text>
-            <text x="120" y="401" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Jan-Apr 2026 (RWI era) · 1× auto</text>
-          </g>
-
-          <!-- Batch Curation + AI -->
-          <g>
-            <rect x="20" y="435" width="200" height="56" rx="10" fill="#dcfce7" stroke="#15803d" stroke-width="2"/>
-            <text x="120" y="458" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#15803d">🤖 Batch Curation + AI</text>
-            <text x="120" y="476" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#15803d">Anthropic API · Sonnet/Haiku</text>
-          </g>
-
-          <!-- ═══ COL 2: BRIDGE / SYNC (x=250, width=180) — NEW ═══ -->
-
-          <!-- Firestore Cloud (receives PWA) -->
-          <g>
-            <rect x="250" y="50" width="180" height="68" rx="10" fill="#dcfce7" stroke="#15803d" stroke-width="3"/>
-            <text x="340" y="76" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#15803d">🔥 Firestore</text>
-            <text x="340" y="93" text-anchor="middle" font-family="monospace" font-size="10" font-weight="700" fill="#15803d">wakaf-ngantang/laporan</text>
-            <text x="340" y="107" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#1a4030">cloud real-time · asia-southeast2</text>
-          </g>
-
-          <!-- normalizeWorkerEntry bridge (CRITICAL) -->
-          <g>
-            <rect x="250" y="160" width="180" height="78" rx="10" fill="#f0e0d4" stroke="#c4906a" stroke-width="3"/>
-            <text x="340" y="183" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#8b3a1e">🌉 normalizeWorkerEntry</text>
-            <text x="340" y="200" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b4030">CRITICAL bridge function</text>
-            <text x="340" y="215" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b4030">12 field aliases · Glossary tokens</text>
-            <text x="340" y="230" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b4030">recompute compliance</text>
-          </g>
-
-          <!-- autoCreateUpahFromEntry -->
-          <g>
-            <rect x="250" y="260" width="180" height="62" rx="10" fill="#fff4d6" stroke="#D4AF37" stroke-width="2"/>
-            <text x="340" y="283" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#8b6914">⚙️ autoCreateUpah</text>
-            <text x="340" y="300" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#8b6914">Yit/Kumpul · tarif lookup</text>
-            <text x="340" y="313" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#8b6914">dedupe tgl+pelapor</text>
-          </g>
-
-          <!-- ═══ COL 3: STORAGE (x=460, width=170) ═══ -->
-
-          <!-- STATE.laporan -->
-          <g>
-            <rect x="460" y="50" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
-            <text x="545" y="72" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">STATE.laporan</text>
-            <text x="545" y="88" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">daily reports</text>
-          </g>
-
-          <!-- UPAH_ITEMS -->
-          <g>
-            <rect x="460" y="115" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
-            <text x="545" y="137" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">UPAH_ITEMS</text>
-            <text x="545" y="153" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Yit/Kumpul tracker</text>
-          </g>
-
-          <!-- CASHBOOK -->
-          <g>
-            <rect x="460" y="180" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
-            <text x="545" y="202" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">CASHBOOK</text>
-            <text x="545" y="218" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">cash flow trx</text>
-          </g>
-
-          <!-- SOP_STATUS -->
-          <g>
-            <rect x="460" y="245" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
-            <text x="545" y="267" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">SOP_STATUS</text>
-            <text x="545" y="283" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">item status keys</text>
-          </g>
-
-          <!-- HISTORICAL_PHASES -->
-          <g>
-            <rect x="460" y="310" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
-            <text x="545" y="332" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#1a2828">HISTORICAL_PHASES</text>
-            <text x="545" y="348" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Strategy 1 era T.A.</text>
-          </g>
-
-          <!-- MILESTONES -->
-          <g>
-            <rect x="460" y="375" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#D4AF37" stroke-width="2"/>
-            <text x="545" y="397" text-anchor="middle" font-family="monospace" font-size="12" font-weight="700" fill="#1a2828">MILESTONES</text>
-            <text x="545" y="413" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">curated bilingual</text>
-          </g>
-
-          <!-- POHON_BASELINE -->
-          <g>
-            <rect x="460" y="440" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#E67E22" stroke-width="2"/>
-            <text x="545" y="462" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#1a2828">POHON_BASELINE</text>
-            <text x="545" y="478" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">915 pre / 750 post</text>
-          </g>
-
-          <!-- TIMING_TIER_META + ENSO -->
-          <g>
-            <rect x="460" y="505" width="170" height="48" rx="8" fill="url(#grad-storage)" stroke="#E67E22" stroke-width="2"/>
-            <text x="545" y="527" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#1a2828">TIMING_TIER + ENSO</text>
-            <text x="545" y="543" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">4-tier · NOAA ONI</text>
-          </g>
-
-          <!-- ═══ COL 4: DASHBOARD TABS (x=660, width=180) ═══ -->
-
-          <!-- Log Harian -->
-          <g>
-            <rect x="660" y="50" width="180" height="40" rx="7" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
-            <text x="750" y="68" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📋 Log Harian</text>
-            <text x="750" y="82" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">multi-kebun · edit/delete</text>
-          </g>
-
-          <!-- Distribusi Tugas -->
-          <g>
-            <rect x="660" y="100" width="180" height="40" rx="7" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
-            <text x="750" y="118" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">👷 Distribusi Tugas</text>
-            <text x="750" y="132" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">cells per pekerja</text>
-          </g>
-
-          <!-- OPT Heatmap -->
-          <g>
-            <rect x="660" y="150" width="180" height="40" rx="7" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
-            <text x="750" y="168" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">🐛 OPT Heatmap</text>
-            <text x="750" y="182" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">multi-kebun aware</text>
-          </g>
-
-          <!-- Manage Workers — NEW -->
-          <g>
-            <rect x="660" y="200" width="180" height="40" rx="7" fill="#e8f4f0" stroke="#15803d" stroke-width="1.8"/>
-            <text x="750" y="218" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#15803d">🎫 Manage Workers</text>
-            <text x="750" y="232" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#15803d">URL · last_active</text>
-          </g>
-
-          <!-- SOP Compliance v2.2 -->
-          <g>
-            <rect x="660" y="250" width="180" height="40" rx="7" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
-            <text x="750" y="268" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">✅ SOP Compliance v2.2</text>
-            <text x="750" y="282" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Strategy 1+2 · phase-aware</text>
-          </g>
-
-          <!-- SOP Kalender Tab -->
-          <g>
-            <rect x="660" y="300" width="180" height="40" rx="7" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
-            <text x="750" y="318" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📅 SOP Kalender</text>
-            <text x="750" y="332" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">12 bulan · 19 topik A-S</text>
-          </g>
-
-          <!-- Sintesa SOP iframe -->
-          <g>
-            <rect x="660" y="350" width="180" height="40" rx="7" fill="url(#grad-tab)" stroke="#5A9080" stroke-width="1.5"/>
-            <text x="750" y="368" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📚 Sintesa SOP</text>
-            <text x="750" y="382" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">iframe Trifecta v2.1</text>
-          </g>
-
-          <!-- Pengeluaran 4-section -->
-          <g>
-            <rect x="660" y="400" width="180" height="40" rx="7" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
-            <text x="750" y="418" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">💸 Pengeluaran 🔒</text>
-            <text x="750" y="432" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">4-section · positive only</text>
-          </g>
-
-          <!-- Audit Cleanup Tool — NEW -->
-          <g>
-            <rect x="660" y="450" width="180" height="40" rx="7" fill="#fff8e5" stroke="#D4AF37" stroke-width="2"/>
-            <text x="750" y="468" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#8b6914">🔍 Audit Sync Tool</text>
-            <text x="750" y="482" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#8b6914">4-tab: paid/unpaid/dup/orphan</text>
-          </g>
-
-          <!-- Upah Pekerja -->
-          <g>
-            <rect x="660" y="500" width="180" height="40" rx="7" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
-            <text x="750" y="518" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">💰 Upah Pekerja 🔒</text>
-            <text x="750" y="532" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">harian + borongan</text>
-          </g>
-
-          <!-- RAB Siklus -->
-          <g>
-            <rect x="660" y="550" width="180" height="40" rx="7" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
-            <text x="750" y="568" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📑 RAB Siklus 🔒</text>
-            <text x="750" y="582" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">Rp 71,29 jt 2 siklus</text>
-          </g>
-
-          <!-- Milestones Publik -->
-          <g>
-            <rect x="660" y="600" width="180" height="40" rx="7" fill="#fef3d7" stroke="#D4AF37" stroke-width="1.5"/>
-            <text x="750" y="618" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#1a2828">📜 Milestones Publik 🔒</text>
-            <text x="750" y="632" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">curate + AI Draft</text>
-          </g>
-
-          <!-- Late Entry Queue — NEW -->
-          <g>
-            <rect x="660" y="650" width="180" height="40" rx="7" fill="#fce4dc" stroke="#C73E3E" stroke-width="1.8"/>
-            <text x="750" y="668" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="700" fill="#8c2519">⏰ Late Entry Queue</text>
-            <text x="750" y="682" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#8c2519">tgl_kerja vs created_at</text>
-          </g>
-
-          <!-- ═══ COL 5: OUTPUT (x=880, width=180) ═══ -->
-
-          <!-- Bukti Bayar PNG -->
-          <g>
-            <rect x="880" y="490" width="180" height="50" rx="10" fill="url(#grad-bridge)" stroke="#c4906a" stroke-width="2"/>
-            <text x="970" y="512" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#1a2828">📄 Bukti Bayar PNG</text>
-            <text x="970" y="528" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">html2canvas · share WA</text>
-          </g>
-
-          <!-- AI Draft Generator — NEW -->
-          <g>
-            <rect x="880" y="600" width="180" height="50" rx="10" fill="#dcfce7" stroke="#15803d" stroke-width="2.5"/>
-            <text x="970" y="622" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#15803d">🤖 AI Draft Generator</text>
-            <text x="970" y="638" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#15803d">Anthropic API · bilingual</text>
-          </g>
-
-          <!-- Export JSON -->
-          <g>
-            <rect x="880" y="700" width="180" height="50" rx="10" fill="url(#grad-bridge)" stroke="#c4906a" stroke-width="2"/>
-            <text x="970" y="722" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#1a2828">📤 Export JSON</text>
-            <text x="970" y="738" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">+ GitHub auto-push</text>
-          </g>
-
-          <!-- aktivitas-publik.json -->
-          <g>
-            <rect x="880" y="770" width="180" height="48" rx="10" fill="url(#grad-bridge)" stroke="#c4906a" stroke-width="2"/>
-            <text x="970" y="790" text-anchor="middle" font-family="monospace" font-size="11" font-weight="700" fill="#1a2828">aktivitas-publik.json</text>
-            <text x="970" y="806" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#6b7878">schema v3.0</text>
-          </g>
-
-          <!-- ═══ COL 6: PUBLIC (x=1100, width=220) ═══ -->
-
-          <!-- Living Lab Page -->
-          <g>
-            <rect x="1100" y="540" width="220" height="64" rx="12" fill="url(#grad-public)" stroke="#1F5F47" stroke-width="2.5"/>
-            <text x="1210" y="567" text-anchor="middle" font-family="sans-serif" font-size="14" font-weight="800" fill="white">🌐 Living Lab Page</text>
-            <text x="1210" y="585" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#a8c8bc">living-lab.html · bilingual</text>
-            <text x="1210" y="599" text-anchor="middle" font-family="sans-serif" font-size="9" fill="#a8c8bc">fetch on load · fallback HTML</text>
-          </g>
-
-          <!-- Public Visitors -->
-          <g>
-            <rect x="1100" y="680" width="220" height="60" rx="12" fill="#2E4040" stroke="#1F5F47" stroke-width="2"/>
-            <text x="1210" y="706" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="white">👥 Public Visitors</text>
-            <text x="1210" y="724" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#a8c8bc">Donatur · BRIN · Komunitas</text>
-          </g>
-
-          <!-- ════════════════════════════════════════════ -->
-          <!-- ARROWS — orthogonal routing, color-coded -->
-          <!-- ════════════════════════════════════════════ -->
-
-          <!-- PWA → Firestore (online-first push) -->
-          <path d="M 220 84 L 250 84" stroke="#15803d" stroke-width="3" fill="none" marker-end="url(#ah-dark)"/>
-          <text x="225" y="76" font-family="sans-serif" font-size="9" fill="#15803d" font-weight="700">setDoc()</text>
-
-          <!-- Firestore → normalizeWorkerEntry (onSnapshot listener) -->
-          <path d="M 340 118 L 340 160" stroke="#c4906a" stroke-width="2.5" fill="none" marker-end="url(#ah-accent)"/>
-          <text x="345" y="143" font-family="sans-serif" font-size="9" fill="#c4906a" font-style="italic">onSnapshot</text>
-
-          <!-- normalizeWorkerEntry → STATE.laporan -->
-          <path d="M 430 175 L 460 75" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
-          <text x="435" y="120" font-family="sans-serif" font-size="9" fill="#c4906a" font-style="italic">unshift</text>
-
-          <!-- normalizeWorkerEntry → autoCreateUpah (auto-create) -->
-          <path d="M 340 238 L 340 260" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
-
-          <!-- autoCreateUpah → UPAH_ITEMS -->
-          <path d="M 430 290 L 460 138" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
-          <text x="435" y="195" font-family="sans-serif" font-size="9" fill="#8b6914" font-style="italic">auto-create</text>
-
-          <!-- Form Input Wakif → STATE.laporan (direct local, bypass Firestore) -->
-          <path d="M 220 163 L 240 163 L 240 75 L 460 75" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)" stroke-dasharray="3,2"/>
-          <text x="247" y="115" font-family="sans-serif" font-size="9" fill="#2C5B80" font-style="italic">localStorage</text>
-
-          <!-- Tambah Transaksi → CASHBOOK -->
-          <path d="M 220 238 L 460 204" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)"/>
-
-          <!-- SOP Kalender Click → SOP_STATUS -->
-          <path d="M 220 313 L 460 269" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)"/>
-
-          <!-- Living Lab Seed → HISTORICAL_PHASES -->
-          <path d="M 220 388 L 460 334" stroke="#2C5B80" stroke-width="2" fill="none" marker-end="url(#ah-blue)" stroke-dasharray="5,3"/>
-          <text x="280" y="375" font-family="sans-serif" font-size="9" fill="#2C5B80" font-style="italic">Jan-Apr seed</text>
-
-          <!-- STATE.laporan → Log Harian -->
-          <path d="M 630 70 L 660 70" stroke="#5A9080" stroke-width="2" fill="none" marker-end="url(#ah-moss)"/>
-
-          <!-- STATE.laporan → Distribusi Tugas -->
-          <path d="M 630 90 L 650 90 L 650 120 L 660 120" stroke="#5A9080" stroke-width="2" fill="none" marker-end="url(#ah-moss)"/>
-
-          <!-- STATE.laporan → OPT Heatmap (if OPT category) -->
-          <path d="M 630 90 L 645 90 L 645 170 L 660 170" stroke="#5A9080" stroke-width="1.5" fill="none" marker-end="url(#ah-moss)" stroke-dasharray="3,2"/>
-          <text x="610" y="135" font-family="sans-serif" font-size="9" fill="#5A9080" font-style="italic">if OPT</text>
-
-          <!-- STATE.laporan → Late Entry Queue (filter) -->
-          <path d="M 630 90 L 640 90 L 640 670 L 660 670" stroke="#C73E3E" stroke-width="1.5" fill="none" marker-end="url(#ah-orange)" stroke-dasharray="3,2"/>
-
-          <!-- UPAH_ITEMS → Upah Pekerja -->
-          <path d="M 630 138 L 655 138 L 655 520 L 660 520" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
-
-          <!-- UPAH_ITEMS → Audit Cleanup Tool (cross-ref) -->
-          <path d="M 630 145 L 657 145 L 657 470 L 660 470" stroke="#D4AF37" stroke-width="1.5" fill="none" marker-end="url(#ah-gold)" stroke-dasharray="3,2"/>
-
-          <!-- CASHBOOK → Pengeluaran 4-section -->
-          <path d="M 630 204 L 654 204 L 654 420 L 660 420" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
-
-          <!-- CASHBOOK → RAB Siklus -->
-          <path d="M 630 215 L 651 215 L 651 570 L 660 570" stroke="#D4AF37" stroke-width="1.5" fill="none" marker-end="url(#ah-gold)" stroke-dasharray="3,2"/>
-          <text x="555" y="445" font-family="sans-serif" font-size="9" fill="#8b6914" font-style="italic">%serapan</text>
-
-          <!-- SOP_STATUS → SOP Compliance -->
-          <path d="M 630 269 L 650 269 L 650 270 L 660 270" stroke="#5A9080" stroke-width="2.5" fill="none" marker-end="url(#ah-moss)"/>
-
-          <!-- SOP_STATUS → SOP Kalender tab -->
-          <path d="M 630 280 L 648 280 L 648 320 L 660 320" stroke="#5A9080" stroke-width="2" fill="none" marker-end="url(#ah-moss)"/>
-
-          <!-- HISTORICAL_PHASES → SOP Compliance (Strategy 1) -->
-          <path d="M 630 334 L 648 334 L 648 275 L 660 275" stroke="#D4AF37" stroke-width="1.5" fill="none" marker-end="url(#ah-gold)" stroke-dasharray="3,2"/>
-          <text x="555" y="328" font-family="sans-serif" font-size="9" fill="#8b6914" font-style="italic">Strategy 1</text>
-
-          <!-- MILESTONES → Milestones Publik tab -->
-          <path d="M 630 399 L 656 399 L 656 620 L 660 620" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
-
-          <!-- POHON_BASELINE → SOP Compliance (compute denominator) -->
-          <path d="M 630 464 L 645 464 L 645 280 L 660 280" stroke="#E67E22" stroke-width="1.5" fill="none" marker-end="url(#ah-orange)" stroke-dasharray="3,2"/>
-
-          <!-- TIMING_TIER + ENSO → SOP Compliance (Multi-Factor) -->
-          <path d="M 630 529 L 642 529 L 642 285 L 660 285" stroke="#E67E22" stroke-width="1.5" fill="none" marker-end="url(#ah-orange)" stroke-dasharray="3,2"/>
-          <text x="555" y="490" font-family="sans-serif" font-size="9" fill="#B45309" font-style="italic">Multi-Factor</text>
-
-          <!-- Upah Pekerja → Bukti Bayar PNG (klik Generate) -->
-          <path d="M 840 520 L 880 515" stroke="#D4AF37" stroke-width="2" fill="none" marker-end="url(#ah-gold)"/>
-
-          <!-- Upah Pekerja "Tandai Bayar" → CASHBOOK (back-ref autolink) -->
-          <path d="M 750 540 L 750 700 L 657 700 L 657 215 L 630 215" stroke="#D4AF37" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#ah-gold)"/>
-          <text x="715" y="685" font-family="sans-serif" font-size="9" fill="#8b6914" font-style="italic">batchPay</text>
-
-          <!-- Milestones Publik → AI Draft Generator (Anthropic call) -->
-          <path d="M 840 620 L 880 625" stroke="#15803d" stroke-width="2" fill="none" marker-end="url(#ah-dark)"/>
-
-          <!-- AI Draft → Milestones Publik (response back) -->
-          <path d="M 880 645 L 855 645 L 855 633 L 840 633" stroke="#15803d" stroke-width="1.5" fill="none" stroke-dasharray="3,3" marker-end="url(#ah-dark)"/>
-          <text x="857" y="660" font-family="sans-serif" font-size="9" fill="#15803d" font-style="italic">JSON resp</text>
-
-          <!-- Batch Curation input → AI Draft Generator (full path) -->
-          <path d="M 220 460 L 700 460 L 700 625 L 880 625" stroke="#15803d" stroke-width="1.5" fill="none" stroke-dasharray="4,3"/>
-          <text x="490" y="455" font-family="sans-serif" font-size="9" fill="#15803d" font-style="italic">prompt + entries</text>
-
-          <!-- Milestones Publik → Export JSON -->
-          <path d="M 840 625 L 870 625 L 870 725 L 880 725" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
-
-          <!-- Export JSON → aktivitas-publik.json -->
-          <path d="M 970 750 L 970 770" stroke="#c4906a" stroke-width="2" fill="none" marker-end="url(#ah-accent)"/>
-
-          <!-- aktivitas-publik.json → Living Lab Page -->
-          <path d="M 1060 790 L 1085 790 L 1085 600 L 1100 600" stroke="#1F5F47" stroke-width="3" fill="none" marker-end="url(#ah-dark)"/>
-          <text x="1085" y="695" font-family="sans-serif" font-size="10" fill="#1F5F47" font-weight="700" transform="rotate(-90 1085 695)">fetch on load</text>
-
-          <!-- Living Lab Page → Public Visitors -->
-          <path d="M 1210 604 L 1210 680" stroke="#1F5F47" stroke-width="2.5" fill="none" marker-end="url(#ah-dark)"/>
-
-          <!-- ═══ CLUSTER LABELS ═══ -->
-
-          <!-- Cluster: DAILY OPS -->
-          <rect x="625" y="35" width="220" height="14" rx="3" fill="rgba(168,200,188,0.3)"/>
-          <text x="735" y="46" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="800" fill="#1F5F47" letter-spacing="1">DAILY OPERATIONS</text>
-
-          <!-- Cluster: COMPLIANCE -->
-          <rect x="625" y="245" width="220" height="14" rx="3" fill="rgba(212,175,55,0.25)"/>
-          <text x="735" y="256" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="800" fill="#8b6914" letter-spacing="1">COMPLIANCE & SOP</text>
-
-          <!-- Cluster: FINANCIAL -->
-          <rect x="625" y="395" width="220" height="14" rx="3" fill="rgba(212,175,55,0.18)"/>
-          <text x="735" y="406" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="800" fill="#8b6914" letter-spacing="1">FINANCIAL 🔒</text>
-
-          <!-- Cluster: CURATION -->
-          <rect x="625" y="595" width="220" height="14" rx="3" fill="rgba(196,144,106,0.22)"/>
-          <text x="735" y="606" text-anchor="middle" font-family="sans-serif" font-size="9" font-weight="800" fill="#c4906a" letter-spacing="1">CURATION → PUBLIC</text>
-
-          <!-- ═══ LEGEND inside SVG ═══ -->
-          <g transform="translate(20, 830)">
-            <text x="0" y="0" font-family="sans-serif" font-size="11" font-weight="800" fill="#2E4040">ARROW TYPES:</text>
-
-            <line x1="0" y1="20" x2="40" y2="20" stroke="#2C5B80" stroke-width="2" marker-end="url(#ah-blue)"/>
-            <text x="48" y="24" font-family="sans-serif" font-size="9" fill="#2E4040">Manual input → Storage</text>
-
-            <line x1="200" y1="20" x2="240" y2="20" stroke="#c4906a" stroke-width="2" marker-end="url(#ah-accent)"/>
-            <text x="248" y="24" font-family="sans-serif" font-size="9" fill="#2E4040">Bridge / normalize (Firestore→STATE)</text>
-
-            <line x1="445" y1="20" x2="485" y2="20" stroke="#5A9080" stroke-width="2" marker-end="url(#ah-moss)"/>
-            <text x="493" y="24" font-family="sans-serif" font-size="9" fill="#2E4040">Storage → Tab (read)</text>
-
-            <line x1="650" y1="20" x2="690" y2="20" stroke="#D4AF37" stroke-width="2" marker-end="url(#ah-gold)"/>
-            <text x="698" y="24" font-family="sans-serif" font-size="9" fill="#2E4040">Financial flow (auto-link)</text>
-
-            <line x1="840" y1="20" x2="880" y2="20" stroke="#E67E22" stroke-width="1.5" marker-end="url(#ah-orange)" stroke-dasharray="3,2"/>
-            <text x="888" y="24" font-family="sans-serif" font-size="9" fill="#2E4040">Config dependency</text>
-
-            <line x1="1040" y1="20" x2="1080" y2="20" stroke="#15803d" stroke-width="2.5" marker-end="url(#ah-dark)"/>
-            <text x="1088" y="24" font-family="sans-serif" font-size="9" fill="#2E4040">Cloud / AI / Public layer</text>
-          </g>
-
-          <!-- ═══ NARRATIVE EXAMPLES ═══ -->
-          <g transform="translate(20, 880)">
-            <rect x="0" y="0" width="1460" height="64" rx="8" fill="#fff8e6" stroke="#D4AF37" stroke-width="1.5"/>
-            <text x="14" y="18" font-family="sans-serif" font-size="10" font-weight="800" fill="#8b6914" letter-spacing="1">📖 CONTOH NARASI 1 HARI KERJA (v2.0 ONLINE-FIRST):</text>
-            <text x="14" y="34" font-family="sans-serif" font-size="11" fill="#2E4040"><tspan font-weight="700">07:00</tspan> Cak Yit pemangkasan 5 phn K2 · <tspan font-weight="700">16:30</tspan> tap link <tspan font-family="monospace">lapor.html?w=YIT</tspan> di HP → submit form → <tspan fill="#15803d" font-weight="700">Firestore</tspan> push langsung (online-first)</text>
-            <text x="14" y="50" font-family="sans-serif" font-size="11" fill="#2E4040"><tspan font-weight="700">16:30:05</tspan> <tspan fill="#c4906a" font-weight="700">normalizeWorkerEntry</tspan> di Wakif dashboard → STATE.laporan unshift → <tspan fill="#D4AF37" font-weight="700">autoCreateUpah</tspan> entry Cak Yit ½ hari Rp 60K · Log Harian + Distribusi + Upah auto-refresh &lt;5 detik</text>
-          </g>
-
-        </svg>
+        <div class="mermaid" style="background:white;border-radius:10px;border:1px solid #e8e4dc;padding:20px;overflow-x:auto;min-height:600px">
+flowchart LR
+  %% ===== INPUTS =====
+  subgraph INPUTS["📱 INPUTS"]
+    direction TB
+    PWA["📱 Worker PWA<br/><b>lapor.html · LIVE 🟢</b><br/><small>Yit/Kumpul/Anto · primary entry</small>"]
+    FORM["✏️ Form Input Wakif<br/><small>monitor-v2 tab · backfill/correct</small>"]
+    TAMBAH["💵 Tambah Transaksi<br/><small>Cashbook entry modal</small>"]
+    SOPCLICK["📅 SOP Kalender Click<br/><small>Wakif klik status item</small>"]
+    SEED["🌱 Living Lab Seed<br/><small>Jan-Apr 2026 RWI era · 1× auto</small>"]
+    BATCH["🤖 Batch Curation + AI<br/><small>Anthropic API trigger</small>"]
+  end
+
+  %% ===== BRIDGE / SYNC =====
+  subgraph BRIDGE["☁️ BRIDGE/SYNC"]
+    direction TB
+    FS["🔥 Firestore Cloud<br/><b>wakaf-ngantang/laporan</b><br/><small>asia-southeast2 · real-time</small>"]
+    NORM["🌉 normalizeWorkerEntry<br/><b>CRITICAL bridge function</b><br/><small>12 field aliases · Glossary tokens</small>"]
+    AUTO["⚙️ autoCreateUpah<br/><small>Yit/Kumpul · tarif lookup · dedupe</small>"]
+  end
+
+  %% ===== STORAGE =====
+  subgraph STORAGE["💾 STORAGE localStorage"]
+    direction TB
+    STATE["STATE.laporan<br/><small>daily reports array</small>"]
+    UPAH["UPAH_ITEMS<br/><small>Yit/Kumpul tracker</small>"]
+    CASH["CASHBOOK<br/><small>cash flow trx</small>"]
+    SOPST["SOP_STATUS<br/><small>item status keys</small>"]
+    HIST["HISTORICAL_PHASES<br/><small>Strategy 1 era T.A.</small>"]
+    MILE["MILESTONES<br/><small>curated bilingual</small>"]
+    POHON["POHON_BASELINE<br/><small>915 pre / 750 post</small>"]
+    TIMING["TIMING_TIER + ENSO<br/><small>4-tier · NOAA ONI</small>"]
+  end
+
+  %% ===== DASHBOARD TABS =====
+  subgraph TABS["📊 DASHBOARD TABS"]
+    direction TB
+    subgraph DAILY["🏃 Daily Ops"]
+      LOG["📋 Log Harian"]
+      DIST["👷 Distribusi Tugas"]
+      OPT["🐛 OPT Heatmap"]
+      MW["🎫 Manage Workers"]
+    end
+    subgraph COMPL["✅ Compliance & SOP"]
+      COMP["✅ SOP Compliance v2.2<br/><small>Strategy 1+2</small>"]
+      SOPKAL["📅 SOP Kalender"]
+      SINT["📚 Sintesa SOP"]
+      LATE["⏰ Late Entry Queue"]
+    end
+    subgraph FIN["💰 Financial 🔒"]
+      PENG["💸 Pengeluaran 4-section"]
+      AUDIT["🔍 Audit Sync Tool"]
+      UPAHT["💰 Upah Pekerja"]
+      RAB["📑 RAB Siklus"]
+    end
+    subgraph CURATION["📜 Curation"]
+      MILT["📜 Milestones Publik"]
+    end
+  end
+
+  %% ===== OUTPUT =====
+  subgraph OUTPUT["📤 OUTPUT"]
+    direction TB
+    BUKTI["📄 Bukti Bayar PNG<br/><small>html2canvas · share WA</small>"]
+    AI["🤖 AI Draft Generator<br/><small>Anthropic API · bilingual</small>"]
+    EXPORT["📤 Export JSON<br/><small>+ GitHub auto-push</small>"]
+    JSON["aktivitas-publik.json<br/><small>schema v3.0</small>"]
+  end
+
+  %% ===== PUBLIC =====
+  subgraph PUBLIC["🌐 PUBLIC"]
+    direction TB
+    LL["🌐 Living Lab Page<br/><small>bilingual · fetch + fallback</small>"]
+    VIS["👥 Public Visitors<br/><small>Donatur · BRIN · Komunitas</small>"]
+  end
+
+  %% ===== FLOWS =====
+  PWA -->|setDoc online-first| FS
+  FS -->|onSnapshot| NORM
+  NORM -->|unshift| STATE
+  NORM -->|trigger| AUTO
+  AUTO -->|create entry| UPAH
+
+  FORM -.->|localStorage| STATE
+  TAMBAH -->|push| CASH
+  SOPCLICK -->|status update| SOPST
+  SEED -.->|Jan-Apr seed| HIST
+
+  STATE --> LOG
+  STATE --> DIST
+  STATE -.->|if OPT| OPT
+  STATE -.->|filter late| LATE
+
+  UPAH --> UPAHT
+  UPAH -.->|cross-ref| AUDIT
+  CASH --> PENG
+  CASH -.->|%serapan| RAB
+
+  SOPST --> COMP
+  SOPST --> SOPKAL
+  HIST -.->|Strategy 1| COMP
+  POHON -.->|denominator| COMP
+  TIMING -.->|Multi-Factor| COMP
+  MILE --> MILT
+
+  UPAHT -->|Generate| BUKTI
+  UPAHT -.->|batchPay autolink| CASH
+
+  BATCH -.->|prompt + entries| AI
+  MILT --> AI
+  AI -.->|JSON resp| MILT
+  MILT -->|publish| EXPORT
+  EXPORT --> JSON
+  JSON ==>|fetch on load| LL
+  LL --> VIS
+
+  %% ===== STYLING =====
+  classDef live fill:#dcfce7,stroke:#15803d,stroke-width:3px,color:#0a3d2c
+  classDef bridge fill:#f0e0d4,stroke:#c4906a,stroke-width:3px,color:#5a2510
+  classDef storage fill:#fff4d6,stroke:#D4AF37,stroke-width:2px,color:#1a2828
+  classDef config fill:#FFE4B5,stroke:#E67E22,stroke-width:2px,color:#5a2510
+  classDef tab fill:#E8F1EC,stroke:#5A9080,color:#1a2828
+  classDef wakif fill:#fef3d7,stroke:#D4AF37,color:#5a4030
+  classDef warn fill:#fce4dc,stroke:#C73E3E,color:#8c2519
+  classDef output fill:#f0e0d4,stroke:#c4906a,color:#5a2510
+  classDef public fill:#2D8466,stroke:#1F5F47,stroke-width:2px,color:#ffffff
+  classDef input fill:#DCE9F0,stroke:#2C5B80,color:#1a2828
+
+  class PWA,FS,AI live
+  class AUTO,BATCH live
+  class NORM bridge
+  class FORM,TAMBAH,SOPCLICK input
+  class SEED input
+  class STATE,UPAH,CASH,SOPST,HIST,MILE storage
+  class POHON,TIMING config
+  class LOG,DIST,OPT,MW,COMP,SOPKAL,SINT tab
+  class UPAHT,RAB,PENG,MILT wakif
+  class AUDIT wakif
+  class LATE warn
+  class BUKTI,EXPORT,JSON output
+  class LL,VIS public
+
+  linkStyle 0 stroke:#15803d,stroke-width:3px
+  linkStyle 1 stroke:#c4906a,stroke-width:2.5px
+  linkStyle 2 stroke:#c4906a,stroke-width:2px
+  linkStyle 3 stroke:#c4906a,stroke-width:2px
+  linkStyle 4 stroke:#D4AF37,stroke-width:2px
+        </div>
       </div>
 
       <!-- ════════════ IMPACT PROPAGATION MAP (v2.0 NEW) ════════════ -->
