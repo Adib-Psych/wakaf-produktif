@@ -2159,6 +2159,8 @@ function initApp() {
   renderUpahSummary();
   renderUpahTable();
   renderHeatmap();
+  // ENSO climate state (B-Phase 3) — fetch NOAA in background, fallback cached
+  if (typeof initEnsoState === 'function') initEnsoState();
   // OPT Observasi workflow (locked 17 Mei 2026)
   if (typeof loadOptObs === 'function') { loadOptObs(); renderOptObsTable(); }
   renderComplianceChart();
@@ -7124,6 +7126,30 @@ function renderPhaseComplianceCards() {
   if (!wrap) return;
   const pm = getPhaseComplianceMetrics();
   const phaseOrder = ['pre-panen', 'panen', 'post-panen', 'awal-mh'];
+
+  // ENSO banner (B-Phase 3)
+  const ensoIcon = pm.ensoState.phase === 'la-nina' ? '🌧️' : (pm.ensoState.phase === 'el-nino' ? '🔥' : '⚖️');
+  const ensoLbl = pm.ensoState.phase === 'la-nina' ? 'La Niña' : (pm.ensoState.phase === 'el-nino' ? 'El Niño' : 'Neutral');
+  const ensoSrcLbl = pm.ensoState.source === 'noaa' ? `NOAA ONI ${pm.ensoState.oni_value ? `(${pm.ensoState.oni_value > 0 ? '+' : ''}${pm.ensoState.oni_value})` : ''}` :
+                     pm.ensoState.source === 'manual' ? 'Manual override' : 'Default (cached)';
+  const ensoNote = pm.ensoState.phase === 'la-nina' ? 'Tolerance window timing +14d untuk strict/moderate items' :
+                   pm.ensoState.phase === 'el-nino' ? 'Tolerance window timing +14d untuk strict/moderate items (drought stress shift)' :
+                   'Tolerance window standard (no climate adjust)';
+  const ensoBanner = `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#F0F5F3;border-left:3px solid var(--moss);border-radius:6px;margin-bottom:12px;font-size:11px;flex-wrap:wrap;gap:8px">
+      <div><span style="font-size:14px">${ensoIcon}</span> <b>ENSO: ${ensoLbl}</b> · <span style="color:var(--mute)">${ensoSrcLbl}</span></div>
+      <div style="color:var(--mute);font-style:italic">${ensoNote}</div>
+      <div style="display:flex;gap:4px">
+        <button onclick="fetchEnsoFromNOAA().then(s=>s&&renderPhaseComplianceCards())" style="background:#fff;border:1px solid #ddd;font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer" title="Refresh dari NOAA">🔄 NOAA</button>
+        <select onchange="setEnsoManual(this.value)" style="font-size:10px;padding:3px 6px;border:1px solid #ddd;border-radius:4px" title="Manual override">
+          <option value="">Manual...</option>
+          <option value="la-nina"${pm.ensoState.phase === 'la-nina' ? ' selected' : ''}>La Niña</option>
+          <option value="neutral"${pm.ensoState.phase === 'neutral' ? ' selected' : ''}>Neutral</option>
+          <option value="el-nino"${pm.ensoState.phase === 'el-nino' ? ' selected' : ''}>El Niño</option>
+        </select>
+      </div>
+    </div>`;
+
   const cards = phaseOrder.map(ph => {
     const p = pm.phases[ph];
     const info = LIVING_LAB_PHASE_INFO[ph];
@@ -7132,14 +7158,25 @@ function renderPhaseComplianceCards() {
     const scoreColor = p.score === null ? 'var(--mute)' :
                        p.score >= 80 ? '#2D8466' :
                        p.score >= 50 ? '#B45309' : '#7F1D1D';
+    const timingStr = (p.timingScore !== null) ? `${p.timingScore}%` : '—';
+    const timingColor = p.timingScore === null ? 'var(--mute)' :
+                        p.timingScore >= 80 ? '#2D8466' :
+                        p.timingScore >= 50 ? '#B45309' : '#7F1D1D';
     const statusTag = isCurrent ?
       `<span style="background:${info.color};color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:800;letter-spacing:0.5px">⭐ FASE BERJALAN</span>` :
       (p.dueSoFar === 0 ? `<span style="background:#e8e4dc;color:#4a4030;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700">⏳ FUTURE</span>` :
        p.isPastDue ? `<span style="background:#d4e5dc;color:#1F5F47;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700">✓ PAST</span>` :
        `<span style="background:#fff8e6;color:#8b6914;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700">⊙ AKTIF</span>`);
     const detailBtn = isCurrent ? `<button onclick="showPhaseDetail('${ph}')" style="margin-top:10px;width:100%;background:${info.color};color:#fff;border:0;padding:6px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:700">📋 Lihat Item Detail Fase Ini</button>` : '';
+    // Tier breakdown chips
+    const tierChips = ['strict','moderate','flexible','event'].map(t => {
+      const cnt = p.tierBreakdown[t];
+      if (cnt === 0) return '';
+      const tm = TIMING_TIER_META[t];
+      return `<span style="display:inline-flex;align-items:center;gap:2px;background:${tm.bg};color:${tm.color};padding:1px 5px;border-radius:8px;font-size:9px;font-weight:700" title="${tm.label}: ${tm.desc}">${tm.icon} ${cnt}</span>`;
+    }).filter(Boolean).join(' ');
     const summaryLine = p.dueSoFar > 0
-      ? `${p.sudah}/${p.dueSoFar} due-so-far · ${p.belum} belum · ${p.tidakSesuai} deviation`
+      ? `${p.sudah}/${p.dueSoFar} due · ${p.belum} belum · ${p.tidakSesuai} deviation`
       : `${p.total} total items · belum dimulai`;
     return `
       <div style="background:${isCurrent ? info.bg : '#fff'};border:${isCurrent ? `2px solid ${info.color}` : '1.5px solid #ddd'};border-radius:10px;padding:14px 16px;${isCurrent ? `box-shadow:0 2px 8px ${info.color}22` : ''}">
@@ -7151,13 +7188,23 @@ function renderPhaseComplianceCards() {
           </div>
           <div>${statusTag}</div>
         </div>
-        <div style="font-size:32px;font-weight:800;color:${scoreColor};line-height:1;margin:8px 0 4px">${scoreStr}</div>
-        <div style="font-size:10px;color:var(--mute);line-height:1.4">${summaryLine}</div>
+        <div style="display:flex;gap:14px;align-items:baseline;margin:8px 0 4px">
+          <div>
+            <div style="font-size:9px;color:var(--mute);font-weight:600;letter-spacing:0.3px">COVERAGE</div>
+            <div style="font-size:28px;font-weight:800;color:${scoreColor};line-height:1">${scoreStr}</div>
+          </div>
+          <div>
+            <div style="font-size:9px;color:var(--mute);font-weight:600;letter-spacing:0.3px">TIMING</div>
+            <div style="font-size:20px;font-weight:800;color:${timingColor};line-height:1">${timingStr}</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--mute);line-height:1.4;margin-bottom:6px">${summaryLine}</div>
+        ${tierChips ? `<div style="margin-bottom:4px">${tierChips}</div>` : ''}
         ${detailBtn}
       </div>
     `;
   }).join('');
-  wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">${cards}</div>`;
+  wrap.innerHTML = ensoBanner + `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px">${cards}</div>`;
 }
 
 function showPhaseDetail(phaseKey) {
@@ -7188,14 +7235,25 @@ function showPhaseDetail(phaseKey) {
     na:           { ico:'🔒', lbl:'N/A',            bg:'#f0f0f0', fg:'#888' }
   };
   const monthsHtml = Object.keys(itemsByMonth).sort((a,b) => +a - +b).map(m => {
+    const now = new Date();
+    const cm = now.getMonth() + 1; const cy = now.getFullYear();
+    const laNina = (typeof isLaNinaActive === 'function') ? isLaNinaActive() : false;
     const itemsHtml = itemsByMonth[m].map(it => {
       const v = statusVisual[it.status];
+      const tier = getTimingTier(it.aktivitas);
+      const tm = TIMING_TIER_META[tier];
+      const ts = computeTimingScore(it.aktivitas, it.status, +m, cm, cy, laNina);
+      const tierBadge = `<span style="display:inline-flex;align-items:center;gap:2px;background:${tm.bg};color:${tm.color};padding:1px 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:6px" title="${tm.desc} · tolerance ±${tm.tolerance_days || '∞'}d">${tm.icon} ${tm.label}</span>`;
+      const timingDetail = ts.score !== null
+        ? `<div style="font-size:10px;color:${ts.score >= 80 ? '#2D8466' : ts.score >= 50 ? '#B45309' : '#7F1D1D'};margin-top:3px;font-weight:600">⏱️ Timing: ${ts.score}% — <span style="font-style:italic;color:var(--mute);font-weight:400">${ts.reason}</span></div>`
+        : '';
       return `<div style="display:grid;grid-template-columns:30px 1fr 100px;gap:10px;padding:8px 10px;background:${v.bg};border-radius:5px;margin-bottom:5px;align-items:center">
         <div style="font-size:16px">${v.ico}</div>
         <div>
-          <div style="font-size:12px;font-weight:600;color:${v.fg}">${it.aktivitas.t}</div>
+          <div style="font-size:12px;font-weight:600;color:${v.fg}">${it.aktivitas.t}${tierBadge}</div>
           <div style="font-size:10px;color:var(--mute);margin-top:2px">${it.aktivitas.siapa || '—'} · ${(it.aktivitas.prio || '').toUpperCase()}</div>
           ${it.note ? `<div style="font-size:10px;font-style:italic;color:var(--mute);margin-top:2px">📝 ${it.note}</div>` : ''}
+          ${timingDetail}
         </div>
         <div style="text-align:right;font-size:10px;color:${v.fg};font-weight:700">${v.lbl}</div>
       </div>`;
