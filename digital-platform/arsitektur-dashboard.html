@@ -288,17 +288,28 @@
       secondaryColor: '#fff4d6',
       tertiaryColor: '#f0f5f3',
       fontFamily: 'Plus Jakarta Sans, sans-serif',
-      fontSize: '13px'
+      fontSize: '18px'
     },
     flowchart: {
       htmlLabels: true,
       curve: 'basis',
-      padding: 12,
-      nodeSpacing: 30,
-      rankSpacing: 70
+      padding: 18,
+      nodeSpacing: 45,
+      rankSpacing: 90
     }
   });
 </script>
+<style>
+  /* Mermaid font enlargement — 1.4x default (locked 18 Mei 2026 per Adib feedback) */
+  .mermaid svg { min-width: 1400px; font-size: 16px !important; }
+  .mermaid .nodeLabel, .mermaid .label { font-size: 16px !important; font-weight: 600 !important; }
+  .mermaid .nodeLabel b { font-size: 17px !important; }
+  .mermaid .nodeLabel small { font-size: 13px !important; opacity: 0.85; }
+  .mermaid .edgeLabel { font-size: 13px !important; font-weight: 700 !important; background: white !important; padding: 3px 6px !important; }
+  .mermaid .cluster-label { font-size: 18px !important; font-weight: 800 !important; }
+  .mermaid .cluster rect { stroke-width: 2px !important; }
+  .mermaid .edgePath path { stroke-width: 2.5px !important; }
+</style>
 </head>
 <body>
 
@@ -329,7 +340,7 @@
       </div>
 
       <div style="overflow-x:auto;padding:14px 4px;background:white;border-radius:10px;border:1px solid #e8e4dc">
-        <div class="mermaid" style="background:white;border-radius:10px;border:1px solid #e8e4dc;padding:20px;overflow-x:auto;min-height:600px">
+        <div class="mermaid" style="background:white;border-radius:10px;border:1px solid #e8e4dc;padding:24px;overflow-x:auto;min-height:800px;font-size:16px">
 flowchart LR
   %% ===== INPUTS =====
   subgraph INPUTS["📱 INPUTS"]
