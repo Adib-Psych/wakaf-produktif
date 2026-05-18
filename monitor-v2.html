@@ -1334,10 +1334,18 @@
         <div class="annual-cards" id="annual-compliance-cards"></div>
       </div>
 
-      <!-- Real-time progress dari SOP Kalender checklist -->
+      <!-- 🔍 PHASE-AWARE ACTIVE MONITORING (locked 17 Mei 2026 per Adib) -->
       <div class="card" style="border-left:4px solid var(--moss)">
-        <div class="card-title"><span class="num">1</span>Status Eksekusi SOP — Real-time Tracking</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:14px">Live data dari checklist SOP Kalender. Klik tombol status di Kalender untuk update — progress di sini auto-refresh.</p>
+        <div class="card-title"><span class="num">1</span>🔍 Active Monitoring — Phase-Aware (Mei 2026 onwards)</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Compliance per <strong>fase fenologi</strong> (selaras dengan Living Lab publik). Fase berjalan = HERO (actionable), fase lain = preview/locked. <strong>100% achievable di akhir setiap fase</strong> — tidak perlu nunggu 1 tahun siklus penuh untuk dapat sinyal perlu shift method.</p>
+        <div id="phase-compliance-cards"></div>
+        <div id="phase-compliance-detail" style="margin-top:14px"></div>
+      </div>
+
+      <!-- Real-time progress dari SOP Kalender checklist (YTD aggregate — secondary view) -->
+      <div class="card" style="border-left:4px solid var(--sage)">
+        <div class="card-title"><span class="num">2</span>📈 YTD Aggregate — Linear View</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:14px">View linear progress bar — kumulatif sejak SOP active monitoring start. Phase-Aware (Card 1) lebih actionable untuk perbaikan cepat; YTD ini untuk reporting tahunan / overall snapshot.</p>
         <div id="compliance-progress"></div>
         <div class="kpi-grid" id="compliance-kpis" style="margin-top:14px"></div>
         <div id="compliance-analysis"></div>
@@ -6040,6 +6048,90 @@ const KATEGORI_TOPIK_MAP = {
   lain:                 null  // free-text
 };
 
+// ====================================================================
+// PHASE-AWARE COMPLIANCE (locked 17 Mei 2026 per Adib)
+// Mapping konsisten dgn Living Lab PHASE_LABELS_LL untuk public display alignment.
+// Ngantang adjustment: panen shift Jul-Sep (bukan Jun-Agu SOP standar) — La Nina + suhu cooler.
+// ====================================================================
+const LIVING_LAB_PHASE_MAP = {
+  1:'pre-panen', 2:'pre-panen', 3:'pre-panen', 4:'pre-panen', 5:'pre-panen', 6:'pre-panen',
+  7:'panen', 8:'panen', 9:'panen',
+  10:'post-panen',
+  11:'awal-mh', 12:'awal-mh'
+};
+const LIVING_LAB_PHASE_INFO = {
+  'pre-panen':  { label:'Pre-Panen', label_en:'Pre-Harvest', icon:'🌱', window:'Jan-Jun', color:'#5a9080', bg:'#E8F4ED' },
+  'panen':      { label:'Panen',     label_en:'Harvest',     icon:'☕', window:'Jul-Sep', color:'#c14b3a', bg:'#FDE2DC' },
+  'post-panen': { label:'Post-Panen',label_en:'Post-Harvest',icon:'🌿', window:'Okt',     color:'#8b6914', bg:'#FFF8E5' },
+  'awal-mh':    { label:'Awal MH',   label_en:'Wet Season',  icon:'🌧️', window:'Nov-Des', color:'#3A5A75', bg:'#E5EEF5' }
+};
+const ACTIVE_MONITORING_START = { year: 2026, month: 5 };  // Mei 2026 — Strategy 2 baseline (post-RWI)
+
+// Get phase compliance metrics — per-phase breakdown, plus active phase highlight
+function getPhaseComplianceMetrics() {
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1;
+  const currentYear = now.getFullYear();
+  const currentPhase = LIVING_LAB_PHASE_MAP[currentMonth];
+  const phases = { 'pre-panen': null, 'panen': null, 'post-panen': null, 'awal-mh': null };
+  Object.keys(phases).forEach(ph => {
+    phases[ph] = {
+      total: 0, sudah: 0, belum: 0, tidakSesuai: 0, na: 0, dueSoFar: 0,
+      months: [],          // Bulan yang termasuk fase ini
+      activeMonths: [],    // Months dalam fase + dalam window active monitoring (>= Mei 2026)
+      isActive: false,     // Apakah ada bulan aktif yang sudah masuk window
+      isPastDue: false,    // Apakah seluruh fase sudah lewat
+      isCurrent: ph === currentPhase,
+    };
+  });
+  // Determine which months are within active monitoring window (Mei 2026 onwards untuk year 2026, atau full year untuk 2027+)
+  Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(bulanN => {
+    const m = +bulanN;
+    const ph = LIVING_LAB_PHASE_MAP[m];
+    if (!phases[ph]) return;
+    phases[ph].months.push(m);
+    // Active window check: year 2026 → Mei onwards; year 2027+ → full year
+    const inActiveWindow = (currentYear > ACTIVE_MONITORING_START.year) ||
+                           (currentYear === ACTIVE_MONITORING_START.year && m >= ACTIVE_MONITORING_START.month);
+    if (inActiveWindow) phases[ph].activeMonths.push(m);
+    SOP_AKTIVITAS_PER_BULAN[bulanN].aktivitas.forEach((a, i) => {
+      if (a.prio === 'larangan') return;  // skip "STOP" items
+      // Only count items in active window
+      if (!inActiveWindow) return;
+      phases[ph].total++;
+      const key = `${bulanN}-${i}`;
+      const s = SOP_STATUS[key];
+      const status = s ? s.status : 'belum';
+      // Items dalam fase yang sudah due = bulan <= currentMonth (kalau masih di tahun yang sama atau tahun sebelum)
+      const isDue = (currentYear > ACTIVE_MONITORING_START.year && m <= currentMonth) ||
+                    (currentYear === ACTIVE_MONITORING_START.year && m <= currentMonth);
+      if (isDue) phases[ph].dueSoFar++;
+      if (status === 'sudah') phases[ph].sudah++;
+      else if (status === 'tidak_sesuai') phases[ph].tidakSesuai++;
+      else if (status === 'na') phases[ph].na++;
+      else phases[ph].belum++;
+    });
+  });
+  // Mark active/past flags
+  Object.keys(phases).forEach(ph => {
+    const p = phases[ph];
+    if (p.activeMonths.length > 0) p.isActive = true;
+    // Phase fully past = semua bulan dalam fase < currentMonth + currentYear sama atau lewat
+    const maxMonthInPhase = Math.max(...p.activeMonths, 0);
+    if (maxMonthInPhase > 0 && maxMonthInPhase < currentMonth) p.isPastDue = true;
+    // Phase score formula: sudah / (sudah + belum + tidakSesuai) — exclude N/A
+    // Tapi denominator hanya hitung yang sudah due (bukan future months)
+    // Score = sudah_di_due / due_total_excluding_na
+    const dueTotal = p.dueSoFar;  // approximation — semua items dalam due months
+    // Recalculate dueExcludingNa: butuh re-iterate? Simplification: assume N/A rate sama
+    const naRateApprox = p.total > 0 ? (p.na / p.total) : 0;
+    const dueExcludingNa = Math.max(0, dueTotal - Math.round(dueTotal * naRateApprox));
+    p.score = dueExcludingNa > 0 ? Math.round((p.sudah / dueExcludingNa) * 100) : null;
+    p.overdue = Math.max(0, p.dueSoFar - p.sudah - p.tidakSesuai - p.na);
+  });
+  return { phases, currentPhase, currentMonth, currentYear };
+}
+
 function getComplianceMetrics() {
   let total = 0, sudah = 0, belum = 0, tidakSesuai = 0, na = 0;
   let belumOverdue = 0, preProject = 0;
@@ -6760,8 +6852,111 @@ function renderComplianceAnalysis() {
   `;
 }
 
+// ===== PHASE-AWARE COMPLIANCE CARDS (NEW 17 Mei 2026 — locked per Adib) =====
+function renderPhaseComplianceCards() {
+  const wrap = document.getElementById('phase-compliance-cards');
+  if (!wrap) return;
+  const pm = getPhaseComplianceMetrics();
+  const phaseOrder = ['pre-panen', 'panen', 'post-panen', 'awal-mh'];
+  const cards = phaseOrder.map(ph => {
+    const p = pm.phases[ph];
+    const info = LIVING_LAB_PHASE_INFO[ph];
+    const isCurrent = p.isCurrent;
+    const scoreStr = (p.score !== null && p.dueSoFar > 0) ? `${p.score}%` : '—';
+    const scoreColor = p.score === null ? 'var(--mute)' :
+                       p.score >= 80 ? '#2D8466' :
+                       p.score >= 50 ? '#B45309' : '#7F1D1D';
+    const statusTag = isCurrent ?
+      `<span style="background:${info.color};color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:800;letter-spacing:0.5px">⭐ FASE BERJALAN</span>` :
+      (p.dueSoFar === 0 ? `<span style="background:#e8e4dc;color:#4a4030;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700">⏳ FUTURE</span>` :
+       p.isPastDue ? `<span style="background:#d4e5dc;color:#1F5F47;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700">✓ PAST</span>` :
+       `<span style="background:#fff8e6;color:#8b6914;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:700">⊙ AKTIF</span>`);
+    const detailBtn = isCurrent ? `<button onclick="showPhaseDetail('${ph}')" style="margin-top:10px;width:100%;background:${info.color};color:#fff;border:0;padding:6px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:700">📋 Lihat Item Detail Fase Ini</button>` : '';
+    const summaryLine = p.dueSoFar > 0
+      ? `${p.sudah}/${p.dueSoFar} due-so-far · ${p.belum} belum · ${p.tidakSesuai} deviation`
+      : `${p.total} total items · belum dimulai`;
+    return `
+      <div style="background:${isCurrent ? info.bg : '#fff'};border:${isCurrent ? `2px solid ${info.color}` : '1.5px solid #ddd'};border-radius:10px;padding:14px 16px;${isCurrent ? `box-shadow:0 2px 8px ${info.color}22` : ''}">
+        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:8px">
+          <div>
+            <div style="font-size:18px">${info.icon}</div>
+            <div style="font-size:13px;font-weight:800;color:var(--earth);margin-top:2px">${info.label}</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:1px">${info.window}</div>
+          </div>
+          <div>${statusTag}</div>
+        </div>
+        <div style="font-size:32px;font-weight:800;color:${scoreColor};line-height:1;margin:8px 0 4px">${scoreStr}</div>
+        <div style="font-size:10px;color:var(--mute);line-height:1.4">${summaryLine}</div>
+        ${detailBtn}
+      </div>
+    `;
+  }).join('');
+  wrap.innerHTML = `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">${cards}</div>`;
+}
+
+function showPhaseDetail(phaseKey) {
+  const wrap = document.getElementById('phase-compliance-detail');
+  if (!wrap) return;
+  const info = LIVING_LAB_PHASE_INFO[phaseKey];
+  const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  // Collect items in this phase grouped by month
+  const itemsByMonth = {};
+  Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(bulanN => {
+    const m = +bulanN;
+    if (LIVING_LAB_PHASE_MAP[m] !== phaseKey) return;
+    const inActiveWindow = m >= ACTIVE_MONITORING_START.month || (new Date()).getFullYear() > ACTIVE_MONITORING_START.year;
+    if (!inActiveWindow) return;
+    SOP_AKTIVITAS_PER_BULAN[bulanN].aktivitas.forEach((a, i) => {
+      if (a.prio === 'larangan') return;
+      const key = `${bulanN}-${i}`;
+      const s = SOP_STATUS[key];
+      const status = s ? s.status : 'belum';
+      if (!itemsByMonth[m]) itemsByMonth[m] = [];
+      itemsByMonth[m].push({ idx: i, aktivitas: a, status, note: s?.note || '' });
+    });
+  });
+  const statusVisual = {
+    sudah:        { ico:'✅', lbl:'Sudah',         bg:'#d4f1e4', fg:'#1f5f47' },
+    belum:        { ico:'⏳', lbl:'Belum',         bg:'#e8e4dc', fg:'#4a4030' },
+    tidak_sesuai: { ico:'⚠️', lbl:'Tidak Sesuai',  bg:'#fde2dc', fg:'#8c2519' },
+    na:           { ico:'🔒', lbl:'N/A',            bg:'#f0f0f0', fg:'#888' }
+  };
+  const monthsHtml = Object.keys(itemsByMonth).sort((a,b) => +a - +b).map(m => {
+    const itemsHtml = itemsByMonth[m].map(it => {
+      const v = statusVisual[it.status];
+      return `<div style="display:grid;grid-template-columns:30px 1fr 100px;gap:10px;padding:8px 10px;background:${v.bg};border-radius:5px;margin-bottom:5px;align-items:center">
+        <div style="font-size:16px">${v.ico}</div>
+        <div>
+          <div style="font-size:12px;font-weight:600;color:${v.fg}">${it.aktivitas.t}</div>
+          <div style="font-size:10px;color:var(--mute);margin-top:2px">${it.aktivitas.siapa || '—'} · ${(it.aktivitas.prio || '').toUpperCase()}</div>
+          ${it.note ? `<div style="font-size:10px;font-style:italic;color:var(--mute);margin-top:2px">📝 ${it.note}</div>` : ''}
+        </div>
+        <div style="text-align:right;font-size:10px;color:${v.fg};font-weight:700">${v.lbl}</div>
+      </div>`;
+    }).join('');
+    return `<div style="margin-bottom:14px">
+      <div style="font-weight:700;color:${info.color};font-size:12px;margin-bottom:6px;padding-bottom:4px;border-bottom:1.5px solid ${info.color}">${namaBulan[+m]} 2026</div>
+      ${itemsHtml}
+    </div>`;
+  }).join('');
+  wrap.innerHTML = `
+    <div style="background:${info.bg};border-radius:8px;padding:14px 16px;border-left:4px solid ${info.color}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <div style="font-weight:800;color:${info.color};font-size:14px">${info.icon} Detail Items — Fase ${info.label} (${info.window})</div>
+        <button onclick="document.getElementById('phase-compliance-detail').innerHTML=''" style="background:#fff;border:1px solid #ddd;padding:3px 10px;border-radius:5px;cursor:pointer;font-size:11px">✕ Tutup</button>
+      </div>
+      ${monthsHtml || '<div style="text-align:center;color:var(--mute);padding:20px">Belum ada items dalam window monitoring untuk fase ini.</div>'}
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed ${info.color};font-size:11px;color:var(--mute)">
+        💡 Klik tombol status di tab <a href="#" onclick="document.querySelector('.sb-tab[data-panel=kalender]').click();return false;" style="color:${info.color};font-weight:600">SOP Kalender</a> untuk update status item.
+      </div>
+    </div>`;
+}
+
 // ===== COMPLIANCE PROGRESS (real-time dari SOP_STATUS) =====
 function renderComplianceProgress() {
+  // Render phase-aware first (NEW primary view 17 Mei 2026)
+  if (typeof renderPhaseComplianceCards === 'function') renderPhaseComplianceCards();
+
   const m = getComplianceMetrics();
   const compliancePct = m.total ? Math.round((m.sudah / m.total) * 100) : 0;
   const belumPct = m.total ? Math.round((m.belum / m.total) * 100) : 0;
@@ -6773,9 +6968,9 @@ function renderComplianceProgress() {
   const prog = document.getElementById('compliance-progress');
   if (prog) {
     prog.innerHTML = `
-      <div style="background:linear-gradient(90deg,#E8F4EE 0%,#F5F0E6 100%);padding:10px 14px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:11px;border:1px solid #d4e5dc">
+      <div style="background:linear-gradient(90deg,#E8F4EE 0%,#F5F0E6 100%);padding:10px 14px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;font-size:11px;border:1px solid #d4e5dc;flex-wrap:wrap;gap:8px">
         <div><b style="color:var(--earth)">📅 Bulan berjalan:</b> <span style="color:var(--moss);font-weight:700">${namaBulanFull[m.currentMonth]} ${m.currentYear}</span></div>
-        <div style="color:var(--mute)">SOP aktif sejak ${namaBulanFull[SOP_PROJECT_START.month]} ${SOP_PROJECT_START.year}${m.preProject ? ` · <span style="color:var(--mute)">${m.preProject} item pre-project (N/A)</span>` : ''}</div>
+        <div style="color:var(--mute)">SOP active monitoring sejak ${namaBulanFull[ACTIVE_MONITORING_START.month]} ${ACTIVE_MONITORING_START.year} (pre-panen fase berjalan)${m.preProject ? ` · <span>${m.preProject} item pre-monitoring (N/A)</span>` : ''}</div>
       </div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:14px;font-weight:700;color:var(--earth)">Overall Compliance: <span style="color:var(--green);font-size:22px">${compliancePct}%</span></div>
