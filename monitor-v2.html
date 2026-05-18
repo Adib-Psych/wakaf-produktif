@@ -6049,6 +6049,179 @@ const KATEGORI_TOPIK_MAP = {
 };
 
 // ====================================================================
+// TIMING TIER CLASSIFICATION (locked 17 Mei 2026 — Phase B implementation)
+// Reference: Kementan SOP Robusta Edisi 2 (2019), Wintgens 2004 Coffee Growing,
+// Cilas CIRAD Robusta breeding, ICCRI Jember protocols.
+// ====================================================================
+const TIMING_TIER_META = {
+  strict: { label: 'STRICT', icon: '🔴', tolerance_days: 14, tolerance_la_nina_days: 28,
+            color: '#C73E3E', bg: '#FDE2DC',
+            desc: 'Window biologis sempit; miss = yield/quality impact signifikan' },
+  moderate: { label: 'MODERATE', icon: '🟡', tolerance_days: 28, tolerance_la_nina_days: 42,
+              color: '#B45309', bg: '#FEF3C7',
+              desc: 'Preferred window; bisa shift dalam 2-6 minggu tanpa major impact' },
+  flexible: { label: 'FLEXIBLE', icon: '🟢', tolerance_days: null, tolerance_la_nina_days: null,
+              color: '#2D8466', bg: '#E8F4ED',
+              desc: 'Rutin/ongoing; tidak ada timing window strict' },
+  event: { label: 'EVENT-DRIVEN', icon: '⚡', tolerance_days: 14, tolerance_la_nina_days: 14,
+           color: '#5B21B6', bg: '#DDD6FE',
+           desc: 'Trigger-based (mis. cherry merah 80%, OPT >threshold); timing tied ke event, bukan kalender' }
+};
+
+// Auto-classify items yang tidak punya explicit timing_tier field.
+// Pattern matching berbasis nama aktivitas. Default fallback = 'flexible' (Q3=B per Adib).
+const TIMING_TIER_RULES = [
+  // STRICT — window biologis sempit
+  { tier: 'strict', pattern: /pemupukan\s+(awal|akhir|partial)\s*mh/i },  // pemupukan MH (Nov-Des / Jan-Feb / partial Mei)
+  { tier: 'strict', pattern: /petik\s+selektif|petik\s+merah/i },           // panen selektif merah
+  { tier: 'strict', pattern: /window\s+12\s*jam|sortasi\s+air/i },          // post-harvest 12hr window
+  { tier: 'strict', pattern: /penjemuran/i },                               // drying critical
+  { tier: 'strict', pattern: /pruning\s+total|pangkas\s+(berat|peremajaan)/i }, // pruning pasca-panen
+  { tier: 'strict', pattern: /penyemprotan.*(cercospora|pra-panen|prevention)/i }, // PHI-related
+  { tier: 'strict', pattern: /seleksi\s+pohon/i },                          // window Okt pasca-panen
+  { tier: 'strict', pattern: /pupuk\s+kandang|kompos.*5\s*kg/i },           // organic fert window awal kemarau
+
+  // EVENT-DRIVEN — trigger-based
+  { tier: 'event', pattern: /bongkar\s+(pisang|tunas)/i },                  // trigger: MWC NU panen
+  { tier: 'event', pattern: /lot\s+tracking|setor\s+lot/i },                // trigger: lot completion
+
+  // MODERATE — preferred window flexible
+  { tier: 'moderate', pattern: /pemangkasan\s+ringan|wiwilan/i },
+  { tier: 'moderate', pattern: /opt\s+monitoring/i },
+  { tier: 'moderate', pattern: /inventarisasi|sortasi\s+tanaman|estimasi\s+produksi/i },
+  { tier: 'moderate', pattern: /rorak|composting|biochar|arachis/i },
+  { tier: 'moderate', pattern: /tanam\s+(lamtoro|jahe|ulang)|top-graft/i },
+  { tier: 'moderate', pattern: /brocap|moisture\s+meter/i },
+  { tier: 'moderate', pattern: /defect\s+grading|kadar\s+air/i },
+  { tier: 'moderate', pattern: /mulsa/i },
+  { tier: 'moderate', pattern: /persiapan\s+(pemupukan|infrastruktur|panen)/i },
+  { tier: 'moderate', pattern: /soil\s+test/i },
+  { tier: 'moderate', pattern: /dokumentasi\s+kerontokan/i },
+  { tier: 'moderate', pattern: /konfirmasi\s+processing\s+partner/i },
+  { tier: 'moderate', pattern: /sortasi\s+grade/i },
+  { tier: 'moderate', pattern: /penyelesaian\s+panen/i },
+
+  // FLEXIBLE — rutin/ongoing
+  { tier: 'flexible', pattern: /sanitasi\s+gulma/i },
+  { tier: 'flexible', pattern: /monitoring\s+infiltrasi/i },
+  { tier: 'flexible', pattern: /review\s+tahunan|evaluasi\s+siklus/i }
+];
+
+function getTimingTier(item) {
+  if (!item) return 'flexible';
+  // Explicit tag wins (untuk items yang sangat strict + butuh exact tagging)
+  if (item.timing_tier && TIMING_TIER_META[item.timing_tier]) return item.timing_tier;
+  // Auto-classify via pattern
+  const text = item.t || '';
+  for (const rule of TIMING_TIER_RULES) {
+    if (rule.pattern.test(text)) return rule.tier;
+  }
+  // Default fallback per Q3=B (Adib 17 Mei): flexible = no late penalty
+  return 'flexible';
+}
+
+// ====================================================================
+// ENSO CLIMATE STATE (NOAA ONI — public data, fetched dynamically)
+// El Niño / La Niña / Neutral classification. Affects timing tolerance.
+// ====================================================================
+let ENSO_STATE = {
+  phase: 'la-nina',         // Default: 'la-nina' per memory observation (prolonged 2025-2026)
+  source: 'default',        // 'noaa' | 'manual' | 'default'
+  fetched_at: null,
+  oni_value: null,
+  expires_at: null
+};
+const ENSO_CACHE_HOURS = 24;
+const ENSO_STORAGE_KEY = 'wkkn_v2_enso_state';
+
+function loadEnsoFromCache() {
+  try {
+    const raw = localStorage.getItem(ENSO_STORAGE_KEY);
+    if (!raw) return false;
+    const cached = JSON.parse(raw);
+    if (cached.expires_at && Date.now() < cached.expires_at) {
+      ENSO_STATE = cached;
+      return true;
+    }
+  } catch (e) { console.warn('[ENSO] cache load fail:', e); }
+  return false;
+}
+
+function saveEnsoToCache() {
+  try { localStorage.setItem(ENSO_STORAGE_KEY, JSON.stringify(ENSO_STATE)); }
+  catch (e) { console.warn('[ENSO] cache save fail:', e); }
+}
+
+async function fetchEnsoFromNOAA() {
+  // NOAA ONI (Oceanic Niño Index) — public domain, no auth needed
+  // Source: https://psl.noaa.gov/data/correlation/oni.data (text format)
+  // ONI > +0.5 (3 mo consecutive) = El Niño; < -0.5 = La Niña
+  try {
+    const resp = await fetch('https://psl.noaa.gov/data/correlation/oni.data');
+    if (!resp.ok) throw new Error('NOAA fetch HTTP ' + resp.status);
+    const text = await resp.text();
+    // Parse ONI text format: each line "YYYY VAL01 VAL02 ... VAL12"
+    const lines = text.trim().split('\n').filter(l => /^\s*\d{4}/.test(l));
+    if (lines.length === 0) throw new Error('NOAA ONI parse: no data lines');
+    // Get last 3 months ONI
+    const lastLine = lines[lines.length - 1].trim().split(/\s+/);
+    const year = +lastLine[0];
+    const monthlyVals = lastLine.slice(1).map(parseFloat).filter(v => !isNaN(v) && v > -90);
+    if (monthlyVals.length < 3) {
+      // Try previous year line too if current incomplete
+      const prevLine = lines[lines.length - 2]?.trim().split(/\s+/);
+      const prevVals = prevLine ? prevLine.slice(1).map(parseFloat).filter(v => !isNaN(v) && v > -90) : [];
+      monthlyVals.unshift(...prevVals.slice(-3));
+    }
+    const last3 = monthlyVals.slice(-3);
+    const avgOni = last3.reduce((s, v) => s + v, 0) / last3.length;
+    let phase;
+    if (avgOni >= 0.5) phase = 'el-nino';
+    else if (avgOni <= -0.5) phase = 'la-nina';
+    else phase = 'neutral';
+    ENSO_STATE = {
+      phase,
+      source: 'noaa',
+      fetched_at: new Date().toISOString(),
+      oni_value: +avgOni.toFixed(2),
+      year_ref: year,
+      expires_at: Date.now() + ENSO_CACHE_HOURS * 3600 * 1000
+    };
+    saveEnsoToCache();
+    return ENSO_STATE;
+  } catch (e) {
+    console.warn('[ENSO] NOAA fetch failed, fallback to default:', e.message);
+    return null;
+  }
+}
+
+async function initEnsoState() {
+  if (loadEnsoFromCache()) return ENSO_STATE;
+  // Try NOAA fetch in background; don't block render
+  fetchEnsoFromNOAA().then(state => {
+    if (state && typeof renderPhaseComplianceCards === 'function') {
+      renderPhaseComplianceCards();  // Re-render with fetched ENSO state
+    }
+  });
+  return ENSO_STATE;
+}
+
+function setEnsoManual(phase) {
+  if (!['el-nino', 'la-nina', 'neutral'].includes(phase)) return;
+  ENSO_STATE = {
+    phase,
+    source: 'manual',
+    fetched_at: new Date().toISOString(),
+    oni_value: null,
+    expires_at: Date.now() + 365 * 24 * 3600 * 1000  // 1 yr manual override
+  };
+  saveEnsoToCache();
+  if (typeof renderPhaseComplianceCards === 'function') renderPhaseComplianceCards();
+}
+
+function isLaNinaActive() { return ENSO_STATE.phase === 'la-nina'; }
+
+// ====================================================================
 // PHASE-AWARE COMPLIANCE (locked 17 Mei 2026 per Adib)
 // Mapping konsisten dgn Living Lab PHASE_LABELS_LL untuk public display alignment.
 // Ngantang adjustment: panen shift Jul-Sep (bukan Jun-Agu SOP standar) — La Nina + suhu cooler.
