@@ -623,13 +623,11 @@ span.lang-en { display: none; }
    Format: { key: { label_id, label_en, year, sort (higher=newer), icon } }
 ═══════════════════════════════════════════════════════ */
 const EDITIONS = {
-  '2026-05-17': { label_id: 'Terbaru · 17 Mei 2026', label_en: 'Latest · 17 May 2026', year: 2026, sort: 100, icon: '✨' },
-  '2024-08':    { label_id: 'Agustus 2024',           label_en: 'August 2024',         year: 2024, sort: 88,  icon: '🍒' },
-  '2024-06':    { label_id: 'Juni 2024',              label_en: 'June 2024',           year: 2024, sort: 86,  icon: '🌱' },
-  '2024-03':    { label_id: 'Maret 2024 · Transisi',  label_en: 'March 2024 · Transition', year: 2024, sort: 75, icon: '🌿' },
-  '2024-02':    { label_id: 'Feb 2024 · Pasca Tebang', label_en: 'Feb 2024 · Post-Cutting', year: 2024, sort: 70, icon: '⚠️' },
-  '2023-12':    { label_id: 'Des 2023 · Era Nadzir 1', label_en: 'Dec 2023 · Nazir 1 Era',   year: 2023, sort: 65, icon: '⚠️' },
-  '2023-07':    { label_id: 'Juli 2023 · Pre-Intervensi', label_en: 'July 2023 · Pre-Intervention', year: 2023, sort: 60, icon: '🌳' },
+  '2026-05-17':  { label_id: 'Terbaru · 17 Mei 2026', label_en: 'Latest · 17 May 2026', year: 2026, sort: 100, icon: '✨' },
+  'baseline-k1': { label_id: 'Kebun 1 · Baseline',     label_en: 'Kebun 1 · Baseline',   year: 2024, sort: 88,  icon: '📍' },
+  'baseline-k2': { label_id: 'Kebun 2 · Baseline',     label_en: 'Kebun 2 · Baseline',   year: 2024, sort: 84,  icon: '📍' },
+  'baseline-k3': { label_id: 'Kebun 3 · Baseline',     label_en: 'Kebun 3 · Baseline',   year: 2024, sort: 80,  icon: '📍' },
+  'baseline-k4': { label_id: 'Kebun 4 · Baseline',     label_en: 'Kebun 4 · Baseline',   year: 2023, sort: 76,  icon: '📍' },
 };
 
 /* ═══════════════════════════════════════════════════════
@@ -748,152 +746,83 @@ const SECTIONS = [
   },
 
   /* ═══════════════════════════════════════════════════════
-     BASELINE HISTORICAL — Era-based narrative threading
-     Story arc: Jul 2023 (pre-Nadzir 1) → Dec 2023 (insiden + saran tebang) →
-                Feb 2024 (pasca tebang) → Mar 2024 (transisi) →
-                Jun-Aug 2024 (era Nadzir 2 stabilisasi)
+     BASELINE HISTORICAL — Per-Kebun Grouping (restructured 18 Mei 2026)
+     4 sections (K1, K2, K3, K4). Photos sorted chronologically dalam tiap kebun.
+     Date badge per foto = timeline storytelling element.
+     Read More CTA → lesson-learned.html (general, multi-era).
   ═══════════════════════════════════════════════════════ */
 
-  // ═══ AGUSTUS 2024 ═══
+  // ═══ KEBUN 1 — Baseline (Feb 2024 → Agustus 2024) ═══
   {
-    id: 'cherry-aug-2024', edition: '2024-08', date: 'Agustus 2024',
-    title_id: 'Cherry — Era Stabilisasi (Agustus 2024)',
-    title_en: 'Cherry — Stabilization Era (August 2024)',
-    tag_id: 'Era Nadzir 2', tag_en: 'Nazir 2 Era',
-    desc_id: 'Cherry kopi pasca-stabilisasi pengelolaan oleh Lembaga Nadzir ke-2. Setelah periode turbulent Nadzir 1 (tebang pohon tanpa seleksi) dan transisi awal 2024, pengelolaan mulai punya struktur yang lebih konsisten — visible dari kondisi cherry yang berbuah normal.',
-    desc_en: 'Coffee cherries post-stabilization by Nazir Institution 2. After the turbulent Nazir 1 period (indiscriminate tree felling) and early 2024 transition, management began to have more consistent structure — visible from normally-fruiting cherries.',
-    read_more: 'lesson-learned.html#f3',
+    id: 'baseline-k1', edition: 'baseline-k1', date: 'Feb–Agt 2024',
+    title_id: 'Kebun 1 — Baseline (Feb–Agt 2024)',
+    title_en: 'Kebun 1 — Baseline (Feb–Aug 2024)',
+    tag_id: 'Per-Kebun · Multi-Era', tag_en: 'Per-Plot · Multi-Era',
+    desc_id: 'Kebun 1 (617 m², pinggir jalan beraspal) — perjalanan baseline 4 foto dari 3 periode: pasca babat akhir era Nadzir 1 (Feb 2024), stabilisasi era Nadzir 2 (Juni 2024, 2 angle), dan dokumentasi cherry production Agustus 2024. Story arc: dari beban operasional Wakif solo → pencatatan terbaik era Nadzir 2 → cherry berbuah normal.',
+    desc_en: 'Kebun 1 (617 m², roadside paved access) — baseline journey 4 photos from 3 periods: post-clearing end of Nazir 1 era (Feb 2024), Nazir 2 stabilization (June 2024, 2 angles), and August 2024 cherry production documentation. Story arc: from Wakif solo operational burden → best Nazir 2 recording → normal cherry fruiting.',
+    read_more: 'lesson-learned.html',
     photos: [
-      { f: 'aug-2024-cherry-agustus-2024.jpg', size: 'b-hero', title_id: 'Cherry Agustus 2024', title_en: 'Cherry August 2024', cap_id: 'Dokumentasi cherry kopi periode Agustus 2024 — era Lembaga Nadzir ke-2 (Apr 24 – Okt 25). Sumber pendapatan kebun sudah bergeser dari penjualan kayu (era Nadzir 1) ke kopi (100%), menandakan return-to-core mission.', cap_en: 'Coffee cherry documentation August 2024 — Nazir Institution 2 era (Apr 24 – Oct 25). Revenue source has shifted from wood sales (Nazir 1 era) to coffee (100%), signaling return-to-core mission.' }
+      { f: 'feb-2024-kebun-1-pasca-babat-feb-2024.jpg', size: 'b-hero', title_id: 'Kebun 1 — Pasca Babat (Feb 2024)', title_en: 'Kebun 1 — Post-Clearing (Feb 2024)', cap_id: 'Akhir era Nadzir 1. Kebun 1 setelah pembabatan rumput intensif — kegiatan dibiayai langsung Wakif (Rp 2,75 jt) sebagai konsekuensi rekomendasi TA nadzir yang lembaganya kemudian mundur.', cap_en: 'End of Nazir 1 era. Kebun 1 after intensive grass clearing — activity financed directly by Wakif (Rp 2.75M) as consequence of nazir TA recommendation whose institution then withdrew.' },
+      { f: 'jun-2024-14-juni-2024-kebun-1.jpg', size: 'b-large', title_id: 'Kebun 1 — Stabilisasi Nadzir 2 (Jun 2024)', title_en: 'Kebun 1 — Nazir 2 Stabilization (Jun 2024)', cap_id: '4 bulan kemudian: Kebun 1 di bawah pengelolaan Lembaga Nadzir ke-2. Vegetasi mulai stabil, pohon kopi dalam fase produktif normal. Era ini = pencatatan terbaik (detail per pekerja/hari).', cap_en: '4 months later: Kebun 1 under Nazir Institution 2 management. Vegetation stabilizing, coffee trees in normal productive phase. This era = best recording (per-worker/day detail).' },
+      { f: 'jun-2024-kebun-1-14-juni-2024.jpg', size: 'b-med', title_id: 'Kebun 1 — Sudut Lain (Jun 2024)', title_en: 'Kebun 1 — Another Angle (Jun 2024)', cap_id: 'Sudut berbeda dari kunjungan yang sama (14 Juni 2024). Kepala referensi pengelolaan Nadzir 2 yang konsisten.', cap_en: 'Different angle from same visit (June 14, 2024). Head reference of consistent Nazir 2 management.' },
+      { f: 'aug-2024-cherry-agustus-2024.jpg', size: 'b-med', title_id: 'Cherry Agustus 2024', title_en: 'Cherry August 2024', cap_id: '2 bulan kemudian: cherry kopi berbuah normal — return-to-core mission. Sumber pendapatan kebun sudah 100% dari kopi (vs era Nadzir 1 yang 92% dari penjualan kayu tebang).', cap_en: '2 months later: coffee cherries fruiting normally — return-to-core mission. Garden revenue source now 100% from coffee (vs Nazir 1 era at 92% from felled wood sales).' }
     ]
   },
 
-  // ═══ JUNI 2024 ═══
+  // ═══ KEBUN 2 — Baseline (Dec 2023 → Feb 2024) ═══
   {
-    id: 'k1-jun-2024', edition: '2024-06', date: 'Juni 2024',
-    title_id: 'Kebun 1 — Stabilisasi Era Nadzir 2 (Juni 2024)',
-    title_en: 'Kebun 1 — Nazir 2 Stabilization (June 2024)',
-    tag_id: 'Era Nadzir 2', tag_en: 'Nazir 2 Era',
-    desc_id: 'Kondisi Kebun 1 pada Juni 2024 — di bawah pengelolaan Lembaga Nadzir ke-2 yang fokus pada pencatatan detail per pekerja/hari. Pendapatan murni dari kopi (bukan kayu tebang seperti era sebelumnya), menjadi acuan pencatatan terbaik di antara 3 fase nadzir.',
-    desc_en: 'Kebun 1 condition in June 2024 — under Nazir Institution 2 management focused on detailed per-worker/day records. Pure revenue from coffee (not wood-cutting like previous era), becoming the best recording reference among 3 nazir phases.',
-    read_more: 'lesson-learned.html#f3',
+    id: 'baseline-k2', edition: 'baseline-k2', date: 'Des 2023 – Feb 2024',
+    title_id: 'Kebun 2 — Baseline (Des 2023 – Feb 2024)',
+    title_en: 'Kebun 2 — Baseline (Dec 2023 – Feb 2024)',
+    tag_id: 'Per-Kebun · Multi-Era', tag_en: 'Per-Plot · Multi-Era',
+    desc_id: 'Kebun 2 (paling luas, 2.324 m²) — baseline 8 foto yang merangkum 2 momen krusial: insiden tanah wakaf Desember 2023 (3 sudut + jalan setapak) dan kondisi pasca pembabatan Februari 2024 (4 foto + sisa area kosong). Story arc: Wakif memilih integrity over convenience — batalkan transaksi tanah wakaf meski sebagian sudah dibuka. Area kosong sekarang potensi peremajaan tanaman kopi baru.',
+    desc_en: 'Kebun 2 (largest, 2,324 m²) — baseline 8 photos summarizing 2 crucial moments: December 2023 waqf land incident (3 angles + footpath) and February 2024 post-clearing condition (4 photos + cleared road remnant). Story arc: Wakif chose integrity over convenience — cancelled waqf land transaction even though partly opened. Empty area now potential for new coffee tree replanting.',
+    read_more: 'lesson-learned.html',
     photos: [
-      { f: 'jun-2024-14-juni-2024-kebun-1.jpg', size: 'b-large', title_id: 'Kebun 1 — 14 Juni 2024', title_en: 'Kebun 1 — June 14, 2024', cap_id: 'Snapshot Kebun 1 (617 m², area pinggir jalan akses paling mudah). Visualisasi kondisi pasca-Nadzir 1 — vegetasi mulai stabil, pohon kopi dalam fase produktif normal.', cap_en: 'Snapshot of Kebun 1 (617 m², roadside area with easiest access). Post-Nazir 1 condition — vegetation stabilizing, coffee trees in normal productive phase.' },
-      { f: 'jun-2024-kebun-1-14-juni-2024.jpg', size: 'b-med', title_id: 'Kebun 1 — Detail 14 Juni 2024', title_en: 'Kebun 1 — Detail June 14, 2024', cap_id: 'Sudut lain Kebun 1 dari kunjungan yang sama. Pengelolaan Nadzir 2 mulai konsisten — pencatatan kegiatan per pekerja/hari (standar terbaik di antara 3 fase nadzir).', cap_en: 'Another angle of Kebun 1 from the same visit. Nazir 2 management increasingly consistent — per-worker/day activity recording (best standard among 3 nazir phases).' }
-    ]
-  },
-
-  // ═══ MARET 2024 ═══
-  {
-    id: 'k3-mar-2024', edition: '2024-03', date: 'Maret 2024',
-    title_id: 'Kebun 3 — Transisi Pasca Nadzir 1 (Maret 2024)',
-    title_en: 'Kebun 3 — Post-Nazir 1 Transition (March 2024)',
-    tag_id: 'Transisi', tag_en: 'Transition',
-    desc_id: 'Maret 2024 adalah akhir Fase 2 (Inisiasi Nadzir ke-1). Lembaga akhirnya mundur karena jarak lokasi dan tidak adanya tim operasional. Foto-foto ini menangkap kondisi Kebun 3 setelah serangkaian intervensi (tebang + sengkreng) — vegetasi mulai pulih, namun jejak intervensi masih terlihat.',
-    desc_en: 'March 2024 marks the end of Phase 2 (Nazir 1 Initiation). The institution eventually withdrew due to distance and lack of operational team. These photos capture Kebun 3 condition after series of interventions (felling + sengkreng) — vegetation recovering, but intervention traces still visible.',
-    read_more: 'lesson-learned.html#f2',
-    photos: [
-      { f: 'mar-2024-kebun-3-pasca-sengkreng-mar-2024.jpg', size: 'b-large', title_id: 'Kebun 3 — Pasca Sengkreng', title_en: 'Kebun 3 — Post-Sengkreng', cap_id: 'Kebun 3 pasca proses sengkreng (pembabatan manual rumput resisten). Periode ini = transisi nadzir, dengan Wakif yang menanggung beban operasional langsung saat lembaga mundur.', cap_en: 'Kebun 3 after sengkreng process (manual resistant grass clearing). This period = nazir transition, with Wakif bearing operational burden directly when institution withdrew.' },
-      { f: 'mar-2024-kebun-3-pasce-pembersihan-gulma.jpg', size: 'b-med', title_id: 'Kebun 3 — Pasca Pembersihan Gulma', title_en: 'Kebun 3 — Post-Weed Clearing', cap_id: 'Detail area Kebun 3 setelah pembersihan gulma intensif. Periode ini Wakif keluarkan biaya pembersihan signifikan (Rp 2,75 jt di Feb 2024) untuk recovery pasca-intervensi.', cap_en: 'Kebun 3 area detail after intensive weed clearing. During this period Wakif spent significant clearing costs (Rp 2.75M in Feb 2024) for post-intervention recovery.' },
-      { f: 'mar-2024-kebun-3.jpg', size: 'b-med', title_id: 'Kebun 3 — Maret 2024', title_en: 'Kebun 3 — March 2024', cap_id: 'Snapshot menyeluruh Kebun 3 Maret 2024 — siap menyambut estafet pengelolaan ke Lembaga Nadzir ke-2 (efektif April 2024).', cap_en: 'Overall snapshot of Kebun 3 March 2024 — ready to hand over management to Nazir Institution 2 (effective April 2024).' }
-    ]
-  },
-
-  // ═══ FEBRUARI 2024 — 3 sections (per kebun) ═══
-  {
-    id: 'k1-feb-2024', edition: '2024-02', date: 'Februari 2024',
-    title_id: 'Kebun 1 — Pasca Babat (Februari 2024)',
-    title_en: 'Kebun 1 — Post-Clearing (February 2024)',
-    tag_id: 'Era Nadzir 1 · Akhir', tag_en: 'Nazir 1 Era · Final',
-    desc_id: 'Kebun 1 setelah pembabatan rumput era Nadzir 1. Biaya pembersihan FEB 2024 = Rp 2,75 jt (atas rekomendasi TA Lembaga Nadzir ke-1).',
-    desc_en: 'Kebun 1 after grass clearing in Nazir 1 era. Feb 2024 clearing cost = Rp 2.75M (per Nazir Institution 1 TA recommendation).',
-    read_more: 'lesson-learned.html#f2',
-    photos: [
-      { f: 'feb-2024-kebun-1-pasca-babat-feb-2024.jpg', size: 'b-large', title_id: 'Kebun 1 — Pasca Babat Feb 2024', title_en: 'Kebun 1 — Post-Clearing Feb 2024', cap_id: 'Kebun 1 setelah pembabatan rumput intensif Februari 2024. Hasilnya: akses ke pohon kopi terbuka, namun yang lebih penting adalah dokumentasi bahwa kegiatan ini dibiayai langsung Wakif (Rp 2,75 jt) sebagai konsekuensi rekomendasi TA nadzir yang lembaganya sendiri kemudian mundur.', cap_en: 'Kebun 1 after intensive grass clearing February 2024. Result: open access to coffee trees, but more importantly documenting that this activity was directly financed by Wakif (Rp 2.75M) as consequence of nazir TA recommendations whose institution then withdrew.' }
-    ]
-  },
-  {
-    id: 'k2-feb-2024', edition: '2024-02', date: 'Februari 2024',
-    title_id: 'Kebun 2 — Pasca Babat + Sisa Insiden Tanah Wakaf',
-    title_en: 'Kebun 2 — Post-Clearing + Waqf Land Incident Trace',
-    tag_id: 'Era Nadzir 1 · Akhir', tag_en: 'Nazir 1 Era · Final',
-    desc_id: 'Kebun 2 (paling luas, 2.324 m²) pasca pembabatan, tapi juga menampilkan visual penting dari insiden tanah wakaf Desember 2023 — area kosong yang sudah dibuka untuk rencana akses jalan yang Wakif batalkan setelah terdeteksi intensi pembeli tidak align dengan asas wakaf.',
-    desc_en: 'Kebun 2 (largest, 2,324 m²) post-clearing, also displaying important visual from December 2023 waqf land incident — empty area opened for road access plan that Wakif cancelled after detecting buyer intent not aligned with waqf principles.',
-    read_more: 'lesson-learned.html#f2',
-    photos: [
-      { f: 'feb-2024-kebun-2-yg-td-dibuka-mau-dipake-jalan.jpg', size: 'b-hero', title_id: 'Kebun 2 — Sisa Rencana Jalan (Dibatalkan)', title_en: 'Kebun 2 — Cancelled Road Plan Remnant', cap_id: 'VISUAL PENTING: area yang dulu (akhir 2023) dibuka untuk rencana akses jalan oleh pihak ke-3. Setelah Wakif mendeteksi intensi pembeli tidak sesuai asas wakaf, transaksi dibatalkan. Area ini sekarang potensi peremajaan tanaman kopi baru.', cap_en: 'IMPORTANT VISUAL: area opened in late 2023 for road access plan by third party. After Wakif detected buyer intent did not match waqf principles, transaction was cancelled. This area is now potential for new coffee tree replanting.' },
-      { f: 'feb-2024-kebun-2-pasca-babat-feb-2024.jpg', size: 'b-med', title_id: 'Kebun 2 — Pasca Babat (A)', title_en: 'Kebun 2 — Post-Clearing (A)', cap_id: 'Sudut pertama Kebun 2 pasca pembabatan rumput Februari 2024.', cap_en: 'First angle of Kebun 2 after February 2024 grass clearing.' },
+      { f: 'dec-2023-kebun-2-a.jpg', size: 'b-hero', title_id: 'Insiden Tanah Wakaf — Sudut A (Des 2023)', title_en: 'Waqf Land Incident — Angle A (Dec 2023)', cap_id: 'Awal cerita: pihak ke-3 berniat beli sebagian Kebun 2 untuk akses jalan umum. Wakif setuju awalnya — sebagian bidang sudah dibersihkan selebar rencana jalan. Sudut pertama dokumentasi insiden.', cap_en: 'Start of story: third party intended to buy part of Kebun 2 for public road. Wakif agreed initially — part of plot cleared to road width. First documentation angle.' },
+      { f: 'dec-2023-kebun-2b.jpg', size: 'b-large', title_id: 'Insiden Tanah Wakaf — Sudut B (Des 2023)', title_en: 'Waqf Land Incident — Angle B (Dec 2023)', cap_id: 'Sudut kedua menampilkan luas area Kebun 2 yang terdampak. Wakif memilih integrity over convenience — membatalkan transaksi setelah deteksi intensi pembeli tidak align dengan asas wakaf.', cap_en: 'Second angle showing extent of affected Kebun 2 area. Wakif chose integrity over convenience — cancelled transaction after detecting buyer intent did not align with waqf principles.' },
+      { f: 'dec-2023-kebun-2c.jpg', size: 'b-med', title_id: 'Insiden Tanah Wakaf — Sudut C (Des 2023)', title_en: 'Waqf Land Incident — Angle C (Dec 2023)', cap_id: 'Sudut ketiga: visualisasi rongga kosong di Kebun 2 yang menjadi pengingat permanen pentingnya due diligence dalam transaksi yang melibatkan tanah wakaf.', cap_en: 'Third angle: visualization of empty gaps in Kebun 2 — permanent reminder of due diligence importance in transactions involving waqf land.' },
+      { f: 'dec-2023-jalan-setapak-antara-kebun-1-2.jpg', size: 'b-wide', title_id: 'Jalur Akses Kebun 1 ↔ Kebun 2', title_en: 'Access Path Kebun 1 ↔ Kebun 2', cap_id: 'Konteks geografis: jalan setapak penghubung Kebun 1 (617 m²) dan Kebun 2 (2.324 m²), keduanya pinggir jalan beraspal. Akses logistik termudah untuk supply pupuk, mobilisasi panen, dan kunjungan riset.', cap_en: 'Geographic context: footpath connecting Kebun 1 (617 m²) and Kebun 2 (2,324 m²), both roadside paved. Easiest logistics access for fertilizer supply, harvest mobilization, and research visits.' },
+      { f: 'feb-2024-kebun-2-yg-td-dibuka-mau-dipake-jalan.jpg', size: 'b-hero', title_id: 'Sisa Rencana Jalan — 2 Bulan Kemudian (Feb 2024)', title_en: 'Cancelled Road Remnant — 2 Months Later (Feb 2024)', cap_id: 'VISUAL PENTING: 2 bulan setelah pembatalan transaksi — area kosong dari rencana jalan yang dibatalkan masih terlihat jelas. Sekarang (2026) area ini = potensi peremajaan tanaman kopi baru.', cap_en: 'IMPORTANT VISUAL: 2 months after transaction cancellation — empty area from cancelled road plan still clearly visible. Now (2026) this area = potential for new coffee tree replanting.' },
+      { f: 'feb-2024-kebun-2-pasca-babat-feb-2024.jpg', size: 'b-med', title_id: 'Kebun 2 — Pasca Babat (A, Feb 2024)', title_en: 'Kebun 2 — Post-Clearing (A, Feb 2024)', cap_id: 'Sudut pertama Kebun 2 pasca pembabatan rumput Februari 2024 — akhir era Nadzir 1.', cap_en: 'First angle of Kebun 2 after February 2024 grass clearing — end of Nazir 1 era.' },
       { f: 'feb-2024-kebun-2-pasca-babat-feb-2024a.jpg', size: 'b-square', title_id: 'Kebun 2 — Pasca Babat (B)', title_en: 'Kebun 2 — Post-Clearing (B)', cap_id: 'Sudut kedua menampilkan luas Kebun 2 yang sudah dibuka — area paling luas dari 4 bidang kebun wakaf.', cap_en: 'Second angle showing the expanse of cleared Kebun 2 — the largest of 4 waqf garden plots.' },
       { f: 'feb-2024-kebun-2-pasca-babat-feb-2024b.jpg', size: 'b-square', title_id: 'Kebun 2 — Pasca Babat (C)', title_en: 'Kebun 2 — Post-Clearing (C)', cap_id: 'Sudut ketiga, menampilkan baris pohon kopi yang terlihat setelah rumput diturunkan.', cap_en: 'Third angle, showing coffee tree rows visible after grass cleared.' }
     ]
   },
+
+  // ═══ KEBUN 3 — Baseline (Dec 2023 → Mar 2024) ═══
   {
-    id: 'k3-feb-2024', edition: '2024-02', date: 'Februari 2024',
-    title_id: 'Kebun 3 — Bekas Tebangan (Konsekuensi Saran Nadzir 1)',
-    title_en: 'Kebun 3 — Tree Felling Aftermath (Nazir 1 Recommendation Consequence)',
-    tag_id: 'Era Nadzir 1 · Akhir', tag_en: 'Nazir 1 Era · Final',
-    desc_id: 'Kebun 3 menampilkan visual paling jujur dari era Nadzir 1: bekas tebangan pohon. Pada 9 November 2023, Wakif mengeluarkan Rp 3 jt untuk "Ongkos Potong Pohon" atas rekomendasi TA Lembaga Nadzir ke-1, TANPA seleksi pohon peneduh. 92% pendapatan Fase 2 berasal dari penjualan kayu tebang — angka yang menunjukkan bahwa "pendapatan" era ini sebenarnya efek samping intervensi, bukan strategi.',
-    desc_en: 'Kebun 3 displays the most honest visual from Nazir 1 era: tree felling aftermath. On November 9, 2023, Wakif spent Rp 3M on "Tree Cutting Fees" per Nazir 1 TA recommendation, WITHOUT shade tree selection. 92% of Phase 2 revenue came from felled wood sales — a figure showing this era\'s "revenue" was actually intervention side-effect, not strategy.',
-    read_more: 'lesson-learned.html#f2',
+    id: 'baseline-k3', edition: 'baseline-k3', date: 'Des 2023 – Mar 2024',
+    title_id: 'Kebun 3 — Baseline (Des 2023 – Mar 2024)',
+    title_en: 'Kebun 3 — Baseline (Dec 2023 – Mar 2024)',
+    tag_id: 'Per-Kebun · Multi-Era', tag_en: 'Per-Plot · Multi-Era',
+    desc_id: 'Kebun 3 (1.977 m²) — baseline 6 foto yang menampilkan visual paling jujur dari era Nadzir 1: pre-tebangan (Des 2023) → bekas tebangan (Feb 2024) → recovery pasca-sengkreng (Mar 2024). Pada 9 Nov 2023, Wakif mengeluarkan Rp 3 jt untuk "Ongkos Potong Pohon" atas rekomendasi TA Nadzir 1, TANPA seleksi pohon peneduh. 92% pendapatan Fase 2 dari penjualan kayu tebang — bukti bahwa "pendapatan" era ini sebenarnya efek samping intervensi, bukan strategi.',
+    desc_en: 'Kebun 3 (1,977 m²) — baseline 6 photos showing most honest visual from Nazir 1 era: pre-felling (Dec 2023) → felling aftermath (Feb 2024) → post-sengkreng recovery (Mar 2024). On Nov 9, 2023, Wakif spent Rp 3M on "Tree Cutting Fees" per Nazir 1 TA recommendation, WITHOUT shade tree selection. 92% of Phase 2 revenue from felled wood sales — proof this era\'s "revenue" was intervention side-effect, not strategy.',
+    read_more: 'lesson-learned.html',
     photos: [
-      { f: 'feb-2024-kebun-3-bekas-tebangan-pohon-as-mentioned-earlier.jpg', size: 'b-hero', title_id: 'Kebun 3 — Bekas Tebangan Pohon', title_en: 'Kebun 3 — Tree Felling Aftermath', cap_id: 'VISUAL HISTORIKAL: bekas tebangan pohon di Kebun 3, hasil dari rekomendasi TA Lembaga Nadzir ke-1 (9 Nov 2023). Lessons learned: rekomendasi tanpa seleksi pohon peneduh berdampak struktural pada ekosistem kebun. Pendekatan sekarang (era Nadzir Mandiri) SOP-first dengan referensi Kementan Edisi 2 + BRIN.', cap_en: 'HISTORICAL VISUAL: tree felling aftermath in Kebun 3, result of Nazir Institution 1 TA recommendation (Nov 9, 2023). Lessons learned: recommendations without shade tree selection had structural impact on garden ecosystem. Current approach (Mandiri Nazir era) is SOP-first with Ministry of Agriculture Edition 2 + BRIN references.' },
-      { f: 'feb-2024-kebun-3.jpg', size: 'b-large', title_id: 'Kebun 3 — Snapshot Februari 2024', title_en: 'Kebun 3 — February 2024 Snapshot', cap_id: 'Pemandangan menyeluruh Kebun 3 pasca-tebangan. Area ini = bukti bahwa intervensi nadzir punya dampak permanen — perlu waktu bertahun-tahun untuk recovery vegetasi penaung.', cap_en: 'Overall view of Kebun 3 post-felling. This area = evidence that nazir interventions have permanent impact — requires years for shade vegetation recovery.' }
+      { f: 'dec-2023-kebun-3-dec-2023.jpg', size: 'b-hero', title_id: 'Pre-Tebangan (Des 2023)', title_en: 'Pre-Felling (Dec 2023)', cap_id: 'BEFORE: Kebun 3 sebelum eksekusi rekomendasi tebang dari Nadzir 1. Dokumentasi langka — kondisi yang tidak akan terlihat lagi setelah intervensi tebang. Bandingkan dengan foto Feb/Mar 2024 di bawah.', cap_en: 'BEFORE: Kebun 3 before executing Nazir 1\'s felling recommendation. Rare documentation — condition no longer visible after felling intervention. Compare with Feb/Mar 2024 photos below.' },
+      { f: 'feb-2024-kebun-3-bekas-tebangan-pohon-as-mentioned-earlier.jpg', size: 'b-large', title_id: 'AFTER — Bekas Tebangan Pohon (Feb 2024)', title_en: 'AFTER — Tree Felling Aftermath (Feb 2024)', cap_id: 'AFTER: 2 bulan kemudian, bekas tebangan terlihat jelas. Lessons learned: rekomendasi tanpa seleksi pohon peneduh berdampak struktural pada ekosistem. Pendekatan sekarang (era Mandiri) SOP-first dengan referensi Kementan Edisi 2 + BRIN.', cap_en: 'AFTER: 2 months later, felling aftermath clearly visible. Lessons learned: recommendations without shade tree selection had structural impact on ecosystem. Current approach (Mandiri era) is SOP-first with Ministry of Agriculture Edition 2 + BRIN references.' },
+      { f: 'feb-2024-kebun-3.jpg', size: 'b-med', title_id: 'Kebun 3 — Snapshot Februari 2024', title_en: 'Kebun 3 — February 2024 Snapshot', cap_id: 'Pemandangan menyeluruh pasca-tebangan. Area ini = bukti bahwa intervensi nadzir punya dampak permanen — perlu waktu bertahun-tahun untuk recovery vegetasi penaung.', cap_en: 'Overall view post-felling. This area = evidence that nazir interventions have permanent impact — requires years for shade vegetation recovery.' },
+      { f: 'mar-2024-kebun-3-pasca-sengkreng-mar-2024.jpg', size: 'b-large', title_id: 'Recovery — Pasca Sengkreng (Mar 2024)', title_en: 'Recovery — Post-Sengkreng (Mar 2024)', cap_id: 'RECOVERY: Kebun 3 setelah proses sengkreng manual. Periode transisi nadzir, dengan Wakif yang menanggung beban operasional langsung saat lembaga Nadzir 1 mundur.', cap_en: 'RECOVERY: Kebun 3 after manual sengkreng. Nazir transition period, with Wakif bearing operational burden directly when Nazir 1 institution withdrew.' },
+      { f: 'mar-2024-kebun-3-pasce-pembersihan-gulma.jpg', size: 'b-square', title_id: 'Pasca Pembersihan Gulma (Mar 2024)', title_en: 'Post-Weed Clearing (Mar 2024)', cap_id: 'Detail area setelah pembersihan gulma intensif. Biaya pembersihan signifikan Rp 2,75 jt (Feb 2024) untuk recovery pasca-intervensi.', cap_en: 'Detail after intensive weed clearing. Significant clearing cost Rp 2.75M (Feb 2024) for post-intervention recovery.' },
+      { f: 'mar-2024-kebun-3.jpg', size: 'b-square', title_id: 'Kebun 3 — Maret 2024', title_en: 'Kebun 3 — March 2024', cap_id: 'Snapshot menyeluruh Maret 2024 — siap menyambut estafet pengelolaan ke Lembaga Nadzir ke-2 (efektif April 2024).', cap_en: 'Overall snapshot March 2024 — ready to hand over management to Nazir Institution 2 (effective April 2024).' }
     ]
   },
 
-  // ═══ DESEMBER 2023 — 3 sections (per kebun + jalur akses) ═══
+  // ═══ KEBUN 4 — Baseline (Juli 2023) ═══
   {
-    id: 'k2-dec-2023', edition: '2023-12', date: 'Desember 2023',
-    title_id: 'Kebun 2 — Insiden Tanah Wakaf (Des 2023)',
-    title_en: 'Kebun 2 — Waqf Land Incident (Dec 2023)',
-    tag_id: 'Era Nadzir 1', tag_en: 'Nazir 1 Era',
-    desc_id: 'Desember 2023: Wakif menghadapi situasi yang menjadi pelajaran penting tentang vigilance pengelolaan tanah wakaf. Pihak ke-3 berniat membeli sebagian Kebun 2 untuk dijadikan akses jalan umum. Wakif setuju awalnya, sebagian bidang sudah dibersihkan selebar rencana jalan — sampai terdeteksi intensi pembeli tidak align dengan asas wakaf. Wakif batalkan.',
-    desc_en: 'December 2023: Wakif faced a situation that became important lesson about waqf land management vigilance. A third party intended to buy part of Kebun 2 for public road access. Wakif agreed initially, part of the plot already cleared to road width — until buyer intent detected as not aligned with waqf principles. Wakif cancelled.',
-    read_more: 'lesson-learned.html#f2',
+    id: 'baseline-k4', edition: 'baseline-k4', date: 'Juli 2023',
+    title_id: 'Kebun 4 — Baseline (Juli 2023)',
+    title_en: 'Kebun 4 — Baseline (July 2023)',
+    tag_id: 'Per-Kebun · Pre-Nadzir 1', tag_en: 'Per-Plot · Pre-Nazir 1',
+    desc_id: 'Kebun 4 (824 m², belakang Rumah Wakif) — baseline 4 foto periode AWAL dokumentasi yang tersedia (Juli 2023, sebelum era Lembaga Nadzir ke-1). K4 menjadi titik dokumentasi utama era ini karena akses paling mudah. Pattern penting: bahkan di periode pre-nadzir, sengkreng manual sudah praktek standard di K4 — pattern yang dipertahankan sampai sekarang (K4 = satu-satunya yang konsisten pakai sengkreng manual, K1-3 sekarang pakai herbisida).',
+    desc_en: 'Kebun 4 (824 m², behind Wakif House) — 4 baseline photos from EARLIEST documentation available (July 2023, before Nazir Institution 1 era). K4 was main documentation point this era due to easiest access. Important pattern: even in pre-nazir period, manual sengkreng was already standard practice in K4 — pattern maintained to today (K4 = the only one consistently using manual sengkreng, K1-3 now use herbicide).',
+    read_more: 'lesson-learned.html',
     photos: [
-      { f: 'dec-2023-kebun-2-a.jpg', size: 'b-hero', title_id: 'Kebun 2 — Sudut A (Des 2023)', title_en: 'Kebun 2 — Angle A (Dec 2023)', cap_id: 'Kondisi Kebun 2 saat insiden — sudut pertama yang mendokumentasikan pembersihan awal selebar rencana jalan. Lesson on waqf vigilance: tanah wakaf bukan tanah komersial biasa.', cap_en: 'Kebun 2 condition during incident — first angle documenting initial clearing to road width. Lesson on waqf vigilance: waqf land is not ordinary commercial land.' },
-      { f: 'dec-2023-kebun-2b.jpg', size: 'b-large', title_id: 'Kebun 2 — Sudut B', title_en: 'Kebun 2 — Angle B', cap_id: 'Sudut kedua menampilkan luas area Kebun 2 yang terdampak. Wakif memilih integrity over convenience — membatalkan transaksi meski sebagian area sudah dibuka.', cap_en: 'Second angle showing extent of affected Kebun 2 area. Wakif chose integrity over convenience — cancelled transaction even though part of area was already opened.' },
-      { f: 'dec-2023-kebun-2c.jpg', size: 'b-med', title_id: 'Kebun 2 — Sudut C', title_en: 'Kebun 2 — Angle C', cap_id: 'Sudut ketiga dari sesi dokumentasi yang sama. Visualisasi rongga kosong di Kebun 2 yang menjadi pengingat permanen pentingnya due diligence dalam transaksi yang melibatkan tanah wakaf.', cap_en: 'Third angle from same documentation session. Visualization of empty gaps in Kebun 2 serving as permanent reminder of due diligence importance in transactions involving waqf land.' }
-    ]
-  },
-  {
-    id: 'k3-dec-2023', edition: '2023-12', date: 'Desember 2023',
-    title_id: 'Kebun 3 — Pre-Tebangan (Des 2023)',
-    title_en: 'Kebun 3 — Pre-Felling (Dec 2023)',
-    tag_id: 'Era Nadzir 1', tag_en: 'Nazir 1 Era',
-    desc_id: 'Snapshot Kebun 3 sebelum eksekusi tebang besar-besaran atas rekomendasi TA Nadzir 1. Periode dokumentasi langka — kondisi yang tidak akan terlihat lagi setelah intervensi tebang.',
-    desc_en: 'Kebun 3 snapshot before massive felling execution per Nazir 1 TA recommendation. Rare documentation period — condition no longer visible after felling intervention.',
-    read_more: 'lesson-learned.html#f2',
-    photos: [
-      { f: 'dec-2023-kebun-3-dec-2023.jpg', size: 'b-hero', title_id: 'Kebun 3 — Dokumentasi Pre-Tebangan', title_en: 'Kebun 3 — Pre-Felling Documentation', cap_id: 'Kebun 3 Desember 2023 — kondisi sebelum eksekusi rekomendasi tebang dari Nadzir 1. Dokumentasi langka karena setelah ini struktur vegetasi penaung berubah permanen. Bandingkan dengan foto Februari/Maret 2024 untuk lihat dampaknya.', cap_en: 'Kebun 3 December 2023 — condition before executing Nazir 1\'s felling recommendation. Rare documentation because shade vegetation structure changed permanently afterward. Compare with February/March 2024 photos to see impact.' }
-    ]
-  },
-  {
-    id: 'akses-dec-2023', edition: '2023-12', date: 'Desember 2023',
-    title_id: 'Jalur Akses — Antara Kebun 1 & 2',
-    title_en: 'Access Path — Between Kebun 1 & 2',
-    tag_id: 'Konteks Geografis', tag_en: 'Geographic Context',
-    desc_id: 'Jalan setapak yang menghubungkan Kebun 1 dan Kebun 2 — dokumentasi geografis yang membantu memahami orientasi spatial 4 bidang kebun wakaf. Posisi pinggir jalan beraspal membuat Kebun 1 & 2 punya akses logistik termudah.',
-    desc_en: 'Footpath connecting Kebun 1 and Kebun 2 — geographic documentation helping understand spatial orientation of 4 waqf garden plots. Roadside position makes Kebun 1 & 2 easiest logistics access.',
-    photos: [
-      { f: 'dec-2023-jalan-setapak-antara-kebun-1-2.jpg', size: 'b-wide', title_id: 'Jalan Setapak Kebun 1 ↔ Kebun 2', title_en: 'Footpath Kebun 1 ↔ Kebun 2', cap_id: 'Konteks geografis: jalan setapak ini = penghubung Kebun 1 (617 m²) dan Kebun 2 (2.324 m²) yang keduanya berada di pinggir jalan beraspal. Akses logistik mudah untuk supply pupuk, mobilisasi panen, dan kunjungan riset.', cap_en: 'Geographic context: this footpath connects Kebun 1 (617 m²) and Kebun 2 (2,324 m²), both located along paved road. Easy logistics access for fertilizer supply, harvest mobilization, and research visits.' }
-    ]
-  },
-
-  // ═══ JULI 2023 — Pre-Intervensi (Kebun 4) ═══
-  {
-    id: 'k4-jul-2023', edition: '2023-07', date: 'Juli 2023',
-    title_id: 'Kebun 4 — Pre-Intervensi (Juli 2023)',
-    title_en: 'Kebun 4 — Pre-Intervention (July 2023)',
-    tag_id: 'Pre-Nadzir 1', tag_en: 'Pre-Nazir 1',
-    desc_id: 'Periode AWAL dokumentasi yang tersedia — Juli 2023, sebelum era Lembaga Nadzir ke-1 (Okt 23). Kebun 4 (824 m², area belakang Rumah Wakif) menjadi titik dokumentasi utama karena akses paling mudah. Kondisi: lanskap permukaan cenderung lebih bersih karena posisi di belakang rumah, namun perawatan pohon kopi belum optimal — baseline visual sebelum intervensi nadzir apapun.',
-    desc_en: 'EARLIEST documentation period available — July 2023, before Nazir Institution 1 era (Oct 23). Kebun 4 (824 m², behind Wakif House) became main documentation point due to easiest access. Condition: ground landscape relatively cleaner due to behind-house position, but coffee tree care not yet optimal — visual baseline before any nazir intervention.',
-    read_more: 'lesson-learned.html#f1',
-    photos: [
-      { f: 'jul-2023-kebun-4-cenderung-lbh-bersih-krn-posisi-di-belakang-rumah.jpg', size: 'b-hero', title_id: 'Kebun 4 — Permukaan Lebih Bersih', title_en: 'Kebun 4 — Cleaner Surface', cap_id: 'Kebun 4 Juli 2023: lanskap permukaan cenderung lebih bersih karena posisi di belakang Rumah Wakif (akses + monitoring lebih mudah). Tapi perawatan pohon kopi belum optimal — kebersihan permukaan ≠ kesehatan pohon.', cap_en: 'Kebun 4 July 2023: ground landscape relatively cleaner due to position behind Wakif House (easier access + monitoring). But coffee tree care not yet optimal — surface cleanliness ≠ tree health.' },
-      { f: 'jul-2023-kebun-4.jpg', size: 'b-large', title_id: 'Kebun 4 — Snapshot', title_en: 'Kebun 4 — Snapshot', cap_id: 'Pemandangan umum Kebun 4 sebelum era intervensi. Dokumentasi periode ini langka — periode "wajar" yang menjadi titik referensi sebelum keputusan-keputusan struktural muncul.', cap_en: 'General view of Kebun 4 before intervention era. Documentation from this period is rare — "natural" period serving as reference point before structural decisions emerged.' },
-      { f: 'jul-2023-29-july-2023-kebun-4-pasca-sengkreng.jpg', size: 'b-med', title_id: 'Kebun 4 — Pasca Sengkreng (29 Juli 2023)', title_en: 'Kebun 4 — Post-Sengkreng (July 29, 2023)', cap_id: 'Kebun 4 setelah aksi sengkreng (pembabatan manual). Bahkan di periode pre-nadzir, sengkreng manual sudah menjadi praktek standard di Kebun 4 — pattern yang dipertahankan sampai sekarang (Kebun 4 = satu-satunya kebun yang konsisten pakai sengkreng manual, bukan herbisida).', cap_en: 'Kebun 4 after sengkreng action (manual clearing). Even in pre-nazir period, manual sengkreng was already standard practice in Kebun 4 — a pattern maintained to today (Kebun 4 = the only garden consistently using manual sengkreng, not herbicide).' },
-      { f: 'jul-2023-pohon-kopi-di-kebun-4.jpg', size: 'b-med', title_id: 'Pohon Kopi di Kebun 4 (Juli 2023)', title_en: 'Coffee Tree in Kebun 4 (July 2023)', cap_id: 'Detail pohon kopi di Kebun 4 periode Juli 2023. Bandingkan dengan foto Mei 2026 untuk lihat evolution selama hampir 3 tahun di bawah 3 era nadzir yang berbeda.', cap_en: 'Coffee tree detail in Kebun 4 July 2023 period. Compare with May 2026 photos to see evolution over nearly 3 years under 3 different nazir eras.' }
+      { f: 'jul-2023-kebun-4-cenderung-lbh-bersih-krn-posisi-di-belakang-rumah.jpg', size: 'b-hero', title_id: 'Permukaan Lebih Bersih (Belakang Rumah)', title_en: 'Cleaner Surface (Behind House)', cap_id: 'Kebun 4 Juli 2023: lanskap permukaan cenderung lebih bersih karena posisi di belakang Rumah Wakif (akses + monitoring lebih mudah). Tapi perawatan pohon kopi belum optimal — kebersihan permukaan ≠ kesehatan pohon.', cap_en: 'Kebun 4 July 2023: ground landscape relatively cleaner due to position behind Wakif House (easier access + monitoring). But coffee tree care not yet optimal — surface cleanliness ≠ tree health.' },
+      { f: 'jul-2023-kebun-4.jpg', size: 'b-large', title_id: 'Kebun 4 — Snapshot', title_en: 'Kebun 4 — Snapshot', cap_id: 'Pemandangan umum sebelum era intervensi. Dokumentasi periode ini langka — periode "wajar" yang menjadi titik referensi sebelum keputusan-keputusan struktural muncul.', cap_en: 'General view before intervention era. Documentation from this period is rare — "natural" period serving as reference point before structural decisions emerged.' },
+      { f: 'jul-2023-29-july-2023-kebun-4-pasca-sengkreng.jpg', size: 'b-med', title_id: 'Pasca Sengkreng (29 Juli 2023)', title_en: 'Post-Sengkreng (July 29, 2023)', cap_id: 'Kebun 4 setelah aksi sengkreng manual. Pattern penting: bahkan pre-nadzir, sengkreng manual sudah practice standard di K4 — dipertahankan sampai 2026.', cap_en: 'Kebun 4 after manual sengkreng action. Important pattern: even pre-nazir, manual sengkreng was already standard in K4 — maintained until 2026.' },
+      { f: 'jul-2023-pohon-kopi-di-kebun-4.jpg', size: 'b-med', title_id: 'Pohon Kopi di Kebun 4 (Juli 2023)', title_en: 'Coffee Tree in Kebun 4 (July 2023)', cap_id: 'Detail pohon kopi periode ini. Bandingkan dengan foto K4 17 Mei 2026 (filter "Latest") untuk lihat evolution selama hampir 3 tahun di bawah 3 era nadzir.', cap_en: 'Coffee tree detail this period. Compare with K4 May 17, 2026 photos (filter "Latest") to see evolution over nearly 3 years under 3 nazir eras.' }
     ]
   }
 ];
