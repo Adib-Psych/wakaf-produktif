@@ -1327,10 +1327,10 @@
 
 <div class="panel" id="panel-compliance">
 
-      <!-- NEW (15 Mei 2026): Annual Comparison Cards — Compliance Year-on-Year -->
+      <!-- 🦸 HERO — Lesson Learned Era Pra-Formal SOP (refactored 17 Mei 2026 per Adib) -->
       <div class="card" style="border-left:4px solid var(--gold)">
-        <div class="card-title" style="color:var(--gold)"><span class="num" style="background:var(--gold)">📊</span>Compliance Tahunan — Komparasi Year-on-Year</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:14px">SOP compliance per kalender tahunan. 2024–2025 = historical (sparse data, low compliance baseline). <strong>2026 = YTD</strong> (blend pre-T0 era T.A. Jan–Apr + Mei onwards real-time tracking). Methodology detail di Aset Knowledge: <code>Analisa_Compliance_Methodology_Preview_15Mei2026.html</code></p>
+        <div class="card-title" style="color:var(--gold)"><span class="num" style="background:var(--gold)">📚</span>Lesson Learned — Era Pra-Formal SOP (3 Fase Pengelolaan)</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:14px">Analisa retrospektif compliance against SOP untuk akuntabilitas + dokumentasi pelajaran. Periode pra-T0 (s/d 31 Mar 2026 saat akad wakaf formal + 1 Mei 2026 saat SOP nasional resmi adopted). <strong>Strategy 1 — Lesson Learned</strong> (Strategy 2 active monitoring ada di Card 1 di bawah). Score sebagian masih <em>placeholder</em> pending audit retroaktif Wakif terhadap dokumen tiap fase. Methodology: <code>SOP/05_ASET_KNOWLEDGE/Analisa_Compliance_Methodology_v2.0_16Mei2026.html</code></p>
         <div class="annual-cards" id="annual-compliance-cards"></div>
       </div>
 
@@ -6672,45 +6672,83 @@ function showBulanAktif(n, year) {
 // ===== ANNUAL COMPLIANCE COMPARISON (15 Mei 2026) =====
 // Hardcoded historical estimates (pending detailed Tahap 2 analysis per methodology)
 // Methodology: 5-dimensi scoring (Coverage 30% · Quality 25% · Timing 20% · Cost 15% · Doc 10%)
-// Priority weights: wajib 3× · rekomendasi 2× · rutin 1× · larangan 3× · rencana 0×
-const ANNUAL_COMPLIANCE = {
-  2024: {
-    score: 12,
-    era: 'Era Wakif & Calon Nadzir 1',
-    actual_records: 'Feb pembersihan intensif (55 PD) · Jul-Aug panen perdana ~100 KG (63 KG verified) · Okt replanting 330 bibit gagal',
-    status: 'final',
-    note: 'Estimasi awal — sparse data, pending Tahap 2 detailed analysis'
+// ====================================================================
+// HISTORICAL PHASES — Lesson Learned Era Pra-Formal SOP (locked 17 Mei 2026 per Adib)
+// 3 fase pengelolaan pra-T0 (s/d 1 Mei 2026 saat SOP resmi diadopsi)
+// HERO section untuk akuntabilitas + lesson learned, BUKAN ratio tahunan kontemporer.
+// ====================================================================
+const HISTORICAL_PHASES = {
+  fase2: {
+    label: 'Fase 2 — Inisiasi Nadzir 1',
+    period: 'Okt 2023 – Mar 2024',
+    duration: '~6 bulan',
+    score: 12,                          // Placeholder — pending audit retroaktif manual
+    score_status: 'placeholder',        // 'placeholder' | 'audited' | 'pending'
+    color: '#B83227',
+    bg: '#FDE2DC',
+    actual_records: 'Feb 2024 pembersihan intensif (55 PD) · 8 bulan early-stage minim SOP-aligned activities',
+    lesson: 'Sparse data. Belum ada framework SOP — semua intervensi ad-hoc. Lesson: dokumentasi harian minimal viable adalah baseline akuntabilitas.',
+    audit_note: '⚠️ Score placeholder — Wakif perlu audit dokumen Tahap 2 untuk lengkapi.'
   },
-  2025: {
+  fase3: {
+    label: 'Fase 3 — Nadzir Ke-2',
+    period: 'Apr 2024 – Okt 2025',
+    duration: '~19 bulan',
     score: 16,
-    era: 'Era Lembaga Nadzir 2',
-    actual_records: 'Jul-Aug panen 281 KG (+346% dari 2024) · Sep-Nov MOU Wakaf admin (non-perawatan kopi)',
-    status: 'final',
-    note: 'Estimasi awal — improvement panen tapi sparse SOP-spec match'
+    score_status: 'placeholder',
+    color: '#E67E22',
+    bg: '#FFF5E6',
+    actual_records: 'Jul-Aug 2024 panen 281 KG (+346% vs 2024 baseline) · Sep-Nov 2025 MOU Wakaf admin non-perawatan kopi · Tidak ada tracking SOP per aktivitas',
+    lesson: 'Output panen naik tapi tidak ada systematic SOP compliance tracking. Lesson: panen tinggi ≠ SOP-compliant tinggi — perlu indikator process-level.',
+    audit_note: '⚠️ Score placeholder — Wakif perlu audit log nadzir-2 untuk akurasi.'
   },
-  2026: {
-    score_pre_t0: 40,        // Pilot Jan 40,6%, Feb-Apr placeholder pending
-    pre_t0_months: 4,         // Jan-Apr 2026
-    era: 'Era T.A. (RWI) Pre-T0 → T0 SOP Adoption (Mei)',
-    actual_records: 'Pre-T0: Pemupukan Makro+Mikro T.A. (8 Jan) · Penggemburan + 65 sak kompos ayam (Jan-Feb) · PDAM (7 Mar) · Fish Extract (15 Mar) · Kunjungan T.A. baseline (20 Apr) | Post-T0: Mei+ live tracking',
-    status: 'YTD',
-    note: 'Pilot Jan 40,6%. Feb-Apr estimasi placeholder. Mei+ blend dgn real-time SOP_STATUS.'
+  fase4: {
+    label: 'Fase 4 — RWI Era',
+    period: 'Nov 2025 – 31 Mar 2026',
+    duration: '~6 bulan',
+    score: 40,                          // Pilot Jan 40,6% dari Living Lab seeded data
+    score_status: 'partial-audited',
+    color: '#D4AF37',
+    bg: '#FFF8E5',
+    actual_records: '8 Jan 2026 Pemupukan Makro+Mikro T.A. · Jan-Feb 65 sak kompos ayam · 7 Mar PDAM · 15 Mar Fish Extract · 20 Apr kunjungan T.A. baseline · 31 Mar 2026 akad wakaf formal',
+    lesson: 'Era T.A. RWI: aktivitas frequent tapi pakai brand premium (NPK Yaramila, Karate Plus Boron, Fish Extract) bukan SOP BRIN spec (Urea + SP-36 + KCl + Kieserit + Dolomit). MOU dibatalkan Mei 2026 → lesson: substitusi brand tanpa BRIN consultation = deviation; perlu lock spec di MoU baru.',
+    audit_note: '📊 Score partial — pilot Jan 40,6% audited via Living Lab seed; Feb-Mar pending Wakif review docs RWI.'
   }
 };
 
-function computeAnnualCompliance(year) {
-  const data = ANNUAL_COMPLIANCE[year];
-  if (!data) return 0;
-  // For 2024 and 2025: hardcoded final (sparse historical data, pending Tahap 2 detailed)
-  if (data.status === 'final') return data.score;
-  // For 2026 YTD: live compute dari SOP_STATUS (Jan-Apr already seeded dari Living Lab,
-  // Mei+ live tracking) — partial credit untuk tidak_sesuai (50% of sudah weight)
-  const m = (typeof getComplianceMetrics === 'function') ? getComplianceMetrics() : null;
-  if (!m || !m.total) return 0;
-  // Compliance % with partial credit:
-  // sudah = 100% credit, tidak_sesuai = 50% credit (substituted/approximate masih kontribusi)
-  const credit = m.sudah + (m.tidakSesuai * 0.5);
-  return Math.round((credit / m.total) * 100);
+function renderHistoricalPhasesCards() {
+  const c = document.getElementById('annual-compliance-cards');
+  if (!c) return;
+  const phaseOrder = ['fase2', 'fase3', 'fase4'];
+  const statusBadge = (st) => {
+    if (st === 'audited') return '<span class="annual-status final">✓ AUDITED</span>';
+    if (st === 'partial-audited') return '<span class="annual-status ytd">⊙ PARTIAL</span>';
+    return '<span class="annual-status" style="background:#f3f4f6;color:#374151">⚠ PLACEHOLDER</span>';
+  };
+  c.innerHTML = phaseOrder.map(key => {
+    const p = HISTORICAL_PHASES[key];
+    if (!p) return '';
+    return `<div class="annual-card" style="border-color:${p.color}">
+      <div class="annual-year">
+        <span>${p.label}</span>
+        ${statusBadge(p.score_status)}
+      </div>
+      <div class="annual-score" style="color:${p.color}">${p.score}<span style="font-size:18px">%</span></div>
+      <div class="annual-bar"><div class="annual-fill" style="width:${p.score}%;background:${p.color}"></div></div>
+      <div class="annual-label" style="color:${p.color}">${p.period}</div>
+      <div class="annual-era">${p.duration} · Era Pra-Formal SOP</div>
+      <div class="annual-records"><strong>📋 Catatan Aktivitas:</strong> ${p.actual_records}</div>
+      <div class="annual-note" style="background:${p.bg};padding:8px 10px;border-radius:6px;margin-top:8px;color:#4a4030;font-style:normal">
+        <strong style="color:${p.color}">💡 Lesson Learned:</strong> ${p.lesson}
+      </div>
+      <div class="annual-note" style="margin-top:6px">${p.audit_note}</div>
+    </div>`;
+  }).join('');
+}
+
+// Backward-compat alias — old name still referenced in initApp etc.
+function renderAnnualCompliance() {
+  return renderHistoricalPhasesCards();
 }
 
 function getComplianceColor(score) {
@@ -6719,34 +6757,6 @@ function getComplianceColor(score) {
   if (score < 60) return { bg: '#D4AF37', label: 'Berkembang' };
   if (score < 80) return { bg: '#5A9080', label: 'Baik' };
   return { bg: '#2E7D5E', label: 'Sangat Baik' };
-}
-
-function renderAnnualCompliance() {
-  const c = document.getElementById('annual-compliance-cards');
-  if (!c) return;
-  const yearNow = new Date().getFullYear();
-  const years = [2024, 2025, 2026];
-  c.innerHTML = years.map(year => {
-    const data = ANNUAL_COMPLIANCE[year];
-    if (!data) return '';
-    const score = computeAnnualCompliance(year);
-    const color = getComplianceColor(score);
-    const isCurrent = year === yearNow;
-    const statusCls = data.status === 'YTD' ? 'ytd' : 'final';
-    const statusLbl = data.status === 'YTD' ? 'YTD' : 'FINAL';
-    return `<div class="annual-card ${isCurrent ? 'current' : ''}" style="border-color:${color.bg}">
-      <div class="annual-year">
-        <span>${year}${isCurrent ? ' (Tahun Berjalan)' : ''}</span>
-        <span class="annual-status ${statusCls}">${statusLbl}</span>
-      </div>
-      <div class="annual-score" style="color:${color.bg}">${score}<span style="font-size:18px">%</span></div>
-      <div class="annual-bar"><div class="annual-fill" style="width:${score}%;background:${color.bg}"></div></div>
-      <div class="annual-label" style="color:${color.bg}">${color.label}</div>
-      <div class="annual-era">${data.era}</div>
-      <div class="annual-records"><strong>📋 Records:</strong> ${data.actual_records}</div>
-      <div class="annual-note">💡 ${data.note}</div>
-    </div>`;
-  }).join('');
 }
 
 // ===== COMPLIANCE ANALYSIS — auto-explain kenapa compliance rendah + SOP guidance (15 Mei 2026) =====
