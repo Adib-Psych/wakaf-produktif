@@ -141,9 +141,91 @@ a { color: inherit; text-decoration: none; }
 .page-hero .meta b { color: var(--cream); font-weight: 700; }
 
 /* ══════════════════════════════════
+   FILTER PILLS (Edition switcher)
+══════════════════════════════════ */
+.filter-bar {
+  background: var(--bg-tint);
+  border-bottom: 1px solid rgba(168,200,188,0.3);
+  padding: 1.2rem 2rem;
+  position: sticky; top: 68px; z-index: 50;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.filter-bar-inner {
+  max-width: 1320px; margin: 0 auto;
+  display: flex; align-items: center; gap: 0.8rem;
+  flex-wrap: wrap;
+}
+.filter-label {
+  font-size: 0.72rem; font-weight: 700;
+  color: var(--muted); letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-right: 0.5rem;
+}
+.pill-group { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.pill {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: white;
+  border: 1px solid rgba(168,200,188,0.5);
+  color: var(--muted);
+  font-size: 0.78rem; font-weight: 600;
+  padding: 0.45rem 0.95rem;
+  border-radius: 22px;
+  cursor: pointer;
+  transition: all 0.2s var(--ease);
+  font-family: inherit;
+  white-space: nowrap;
+}
+.pill:hover {
+  background: var(--bg-deep);
+  border-color: var(--medium);
+  color: var(--dark);
+  transform: translateY(-1px);
+}
+.pill.active {
+  background: var(--dark);
+  color: white;
+  border-color: var(--dark);
+  box-shadow: 2px 2px 0 var(--accent);
+}
+.pill .count {
+  background: rgba(0,0,0,0.12);
+  color: inherit;
+  padding: 0.05rem 0.4rem;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+.pill.active .count { background: rgba(255,255,255,0.2); }
+.filter-bar.hidden { display: none; }
+
+/* ══════════════════════════════════
    GALLERY SECTIONS
 ══════════════════════════════════ */
-.gallery-section { padding: 3.5rem 2rem 2rem; max-width: 1320px; margin: 0 auto; }
+.gallery-section {
+  padding: 3.5rem 2rem 2rem; max-width: 1320px; margin: 0 auto;
+  transition: opacity 0.35s ease;
+}
+.gallery-section.filter-hidden { display: none; }
+.year-separator {
+  max-width: 1320px; margin: 4rem auto 0;
+  padding: 0 2rem;
+  display: flex; align-items: center; gap: 1rem;
+}
+.year-separator::before, .year-separator::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(to right, transparent, var(--accent), transparent);
+}
+.year-separator .year-label {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem; font-weight: 700;
+  color: var(--accent);
+  padding: 0.4rem 1.2rem;
+  background: var(--bg);
+  border-radius: 22px;
+  letter-spacing: 0.06em;
+}
+.year-separator.filter-hidden { display: none; }
 .section-header { margin-bottom: 1.8rem; }
 .section-tags {
   display: inline-flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;
@@ -407,6 +489,15 @@ span.lang-en { display: none; }
   </div>
 </section>
 
+<!-- ══ FILTER BAR (Edition switcher) ══ -->
+<div class="filter-bar hidden" id="filter-bar">
+  <div class="filter-bar-inner">
+    <span class="filter-label lang-id">Edisi:</span>
+    <span class="filter-label lang-en">Edition:</span>
+    <div class="pill-group" id="pill-group"></div>
+  </div>
+</div>
+
 <!-- ══ GALLERY SECTIONS ══ -->
 <div id="gallery-root"></div>
 
@@ -437,10 +528,24 @@ span.lang-en { display: none; }
 
 <script>
 /* ═══════════════════════════════════════════════════════
+   EDITION METADATA — untuk filter pills
+   Tambah entry baru saat Adib upload baseline historical
+   Format: { key: { label_id, label_en, year, sort (higher=newer), icon } }
+═══════════════════════════════════════════════════════ */
+const EDITIONS = {
+  '2026-05-17': { label_id: 'Terbaru · 17 Mei 2026', label_en: 'Latest · 17 May 2026', year: 2026, sort: 100, icon: '✨' },
+  // TEMPLATE untuk baseline historical (uncomment + isi saat foto baseline siap):
+  // '2025': { label_id: 'Baseline 2025',  label_en: 'Baseline 2025',  year: 2025, sort: 80, icon: '📅' },
+  // '2024': { label_id: 'Baseline 2024',  label_en: 'Baseline 2024',  year: 2024, sort: 70, icon: '📅' },
+  // '2023': { label_id: 'Baseline 2023',  label_en: 'Baseline 2023',  year: 2023, sort: 60, icon: '📅' },
+};
+
+/* ═══════════════════════════════════════════════════════
    GALLERY DATA — 46 foto, 6 kategori
    Caption draft awal — bisa di-refine via iterasi
 ═══════════════════════════════════════════════════════ */
 const EDITION_DATE = '17 Mei 2026';  // Default date untuk current edition (overridable per section)
+const DEFAULT_EDITION = '2026-05-17';  // Default edition key (used kalau section tidak specify)
 
 const SECTIONS = [
   {
@@ -561,10 +666,11 @@ function renderGallery() {
   let totalCount = 0;
   const html = SECTIONS.map(sec => {
     const photoDate = sec.date || EDITION_DATE;
+    const edition = sec.edition || DEFAULT_EDITION;
     const items = sec.photos.map(p => {
-      const pDate = p.date || photoDate;  // photo can override section date
+      const pDate = p.date || photoDate;
       const globalIdx = ALL_PHOTOS.length;
-      ALL_PHOTOS.push({ ...p, _date: pDate });  // attach date for lightbox
+      ALL_PHOTOS.push({ ...p, _date: pDate, _edition: edition });
       return `<div class="bento-item ${p.size}" onclick="openLightbox(${globalIdx})">
         <img src="images/gallery/thumbs/${p.f}" data-full="images/gallery/${p.f}" alt="${p.title_id}" loading="lazy">
         <div class="zoom-icon">⤢</div>
@@ -576,11 +682,12 @@ function renderGallery() {
       </div>`;
     }).join('');
     totalCount += sec.photos.length;
+    const editionInfo = EDITIONS[edition] || {};
     return `
-      <section class="gallery-section" id="${sec.id}">
+      <section class="gallery-section" id="${sec.id}" data-edition="${edition}">
         <div class="section-header">
           <div class="section-tags">
-            <span class="tag date">17 Mei 2026</span>
+            <span class="tag date">${photoDate}</span>
             <span class="tag">${sec.tag_id}</span>
             <span class="tag count">${sec.photos.length} foto</span>
           </div>
@@ -592,6 +699,77 @@ function renderGallery() {
   }).join('');
   root.innerHTML = html;
   document.getElementById('meta-count').textContent = totalCount;
+}
+
+/* ═══════════════════════════════════════════════════════
+   FILTER PILLS — Edition switcher
+═══════════════════════════════════════════════════════ */
+let activeFilter = null; // null = latest, 'all' = show everything, else = edition key
+
+function renderPills() {
+  // Compute editions yang punya foto
+  const usedEditions = new Set();
+  SECTIONS.forEach(sec => usedEditions.add(sec.edition || DEFAULT_EDITION));
+
+  // Hide filter bar kalau cuma 1 edition (no need for filter UX)
+  if (usedEditions.size <= 1) {
+    document.getElementById('filter-bar').classList.add('hidden');
+    return;
+  }
+  document.getElementById('filter-bar').classList.remove('hidden');
+
+  // Sort editions by sort key descending (newest first)
+  const sortedEditions = Array.from(usedEditions)
+    .filter(k => EDITIONS[k])
+    .sort((a, b) => (EDITIONS[b].sort || 0) - (EDITIONS[a].sort || 0));
+
+  // Count photos per edition
+  const counts = {};
+  SECTIONS.forEach(sec => {
+    const e = sec.edition || DEFAULT_EDITION;
+    counts[e] = (counts[e] || 0) + sec.photos.length;
+  });
+
+  // Active = newest by default
+  if (activeFilter === null) activeFilter = sortedEditions[0];
+
+  const totalPhotos = Object.values(counts).reduce((a, b) => a + b, 0);
+
+  // Build pills HTML
+  const pillsHtml = sortedEditions.map(ed => {
+    const info = EDITIONS[ed];
+    const active = ed === activeFilter ? ' active' : '';
+    return `<button class="pill${active}" data-edition="${ed}" onclick="filterByEdition('${ed}')">
+      ${info.icon} <span class="lang-id">${info.label_id}</span><span class="lang-en">${info.label_en}</span>
+      <span class="count">${counts[ed]}</span>
+    </button>`;
+  }).join('');
+
+  const allActive = activeFilter === 'all' ? ' active' : '';
+  const allPill = `<button class="pill${allActive}" data-edition="all" onclick="filterByEdition('all')">
+    📚 <span class="lang-id">Semua</span><span class="lang-en">All</span>
+    <span class="count">${totalPhotos}</span>
+  </button>`;
+
+  document.getElementById('pill-group').innerHTML = pillsHtml + allPill;
+}
+
+function filterByEdition(edition) {
+  activeFilter = edition;
+  // Hide/show sections
+  document.querySelectorAll('.gallery-section').forEach(s => {
+    if (edition === 'all' || s.dataset.edition === edition) {
+      s.classList.remove('filter-hidden');
+    } else {
+      s.classList.add('filter-hidden');
+    }
+  });
+  // Update active pill state
+  document.querySelectorAll('.pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.edition === edition);
+  });
+  // Scroll to top of gallery smoothly
+  document.getElementById('gallery-root').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -667,6 +845,7 @@ function setLang(lang) {
 
 document.addEventListener('DOMContentLoaded', function() {
   renderGallery();
+  renderPills();
   setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
 });
 </script>
