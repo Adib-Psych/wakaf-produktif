@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Preview Gallery — Curation Tool</title>
+<style>
+:root { --dark:#2e4040; --light:#a8c8bc; --accent:#c4906a; --cream:#e8d5b8; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, system-ui, sans-serif; background: #f5f0e8; color: #1e3030; padding: 2rem; }
+h1 { font-size: 1.6rem; margin-bottom: 0.4rem; color: var(--dark); }
+.lead { color: #527070; font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5; }
+.lead strong { color: var(--accent); }
+h2 { font-size: 1.1rem; color: var(--dark); margin: 2rem 0 0.8rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--accent); display: flex; justify-content: space-between; align-items: center; }
+h2 .count { font-size: 0.7rem; background: var(--accent); color: white; padding: 0.2rem 0.6rem; border-radius: 10px; font-weight: 600; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.8rem; }
+.card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.08); transition: transform 0.2s, box-shadow 0.2s; cursor: pointer; }
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 14px rgba(0,0,0,0.15); }
+.card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.card .name { padding: 0.5rem 0.6rem; font-size: 0.72rem; color: #527070; font-family: monospace; word-break: break-word; }
+.card .num { display: inline-block; background: var(--cream); color: var(--dark); padding: 0.1rem 0.4rem; border-radius: 4px; font-weight: 700; margin-right: 0.3rem; }
+.lightbox { position: fixed; inset: 0; background: rgba(0,0,0,0.92); display: none; align-items: center; justify-content: center; z-index: 100; cursor: pointer; }
+.lightbox.active { display: flex; }
+.lightbox img { max-width: 92vw; max-height: 92vh; object-fit: contain; }
+.lightbox .info { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); color: white; font-family: monospace; font-size: 0.85rem; background: rgba(0,0,0,0.6); padding: 0.6rem 1.2rem; border-radius: 6px; }
+.instruction { background: var(--cream); border-left: 4px solid var(--accent); padding: 1rem 1.2rem; border-radius: 6px; margin-bottom: 2rem; font-size: 0.9rem; line-height: 1.6; }
+.instruction strong { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<h1>🖼️ Preview Gallery — Curation Tool</h1>
+<p class="lead">46 foto dari <strong>Kunjungan Kebun 17 Mei 2026</strong>, dikelompokkan per kategori. Klik foto untuk lightbox view.</p>
+
+<div class="instruction">
+  <strong>Cara pakai:</strong>
+  <ol style="margin: 0.5rem 0 0 1.2rem">
+    <li><strong>Curate:</strong> tandai foto mana yang mau masuk gallery (sebut nomor berurutan, mis. "1, 3, 5, 8, 12...")</li>
+    <li><strong>Context per cluster:</strong> kasih 2-3 kalimat per kategori (kapan, siapa, apa yang dilakukan, makna penting)</li>
+    <li><strong>Highlight:</strong> tandai 2-3 foto yang mau dijadikan <em>hero</em> (foto besar di bento)</li>
+  </ol>
+</div>
+
+<div id="content"></div>
+
+<div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+  <img id="lb-img" src="">
+  <div class="info" id="lb-info"></div>
+</div>
+
+<script>
+const CATEGORIES = {
+  'Cherry Pra-Panen': 'cherry-pra-panen',
+  'Kebun Landscape': 'kebun-landscape',
+  'Pohon Kopi (Detail)': 'pohon-kopi',
+  'Gulma & Vegetasi Kompetitor': 'gulma',
+  'OPT (Hama Penyakit)': 'opt',
+  'Instalasi Air & Infrastruktur': 'instalasi'
+};
+
+async function load() {
+  // Manually list files (no fetch in file:// mode)
+  const files = [
+    'cherry-pra-panen-17-mei-2026-cherry-pra-panen-17-mei-2026-1.jpg',
+    'cherry-pra-panen-17-mei-2026-cherry-pra-panen-17-mei-2026-2.jpg',
+    'cherry-pra-panen-17-mei-2026-cherry-pra-panen-17-mei-2026-3.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5513.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5516.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5518.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5519.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5532.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5533.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5554.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5557.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5565.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5569.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5575.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5577.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5578.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5586.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5603.jpg',
+    'cherry-pra-panen-17-mei-2026-img-5614.jpg',
+    'kebun-landscape-kebun-2-pasca-babat.jpg',
+    'kebun-landscape-kebun-2-pasca-babat-2.jpg',
+    'kebun-landscape-kebun-2-pasca-obat.jpg',
+    'kebun-landscape-kebun-2-pasca-obat-2.jpg',
+    'kebun-landscape-kebun-2.jpg',
+    'kebun-landscape-kebun-3-progress.jpg',
+    'kebun-landscape-kebun-3-progress-2.jpg',
+    'kebun-landscape-kebun-3-proses-babat-pruning.jpg',
+    'pohon-kopi-img-5562.jpg',
+    'pohon-kopi-img-5563.jpg',
+    'pohon-kopi-img-5566.jpg',
+    'pohon-kopi-img-5567.jpg',
+    'pohon-kopi-img-5581.jpg',
+    'pohon-kopi-img-5583.jpg',
+    'pohon-kopi-img-5584.jpg',
+    'pohon-kopi-img-5585.jpg',
+    'pohon-kopi-img-5587.jpg',
+    'pohon-kopi-img-5611.jpg',
+    'pohon-kopi-pohon-kopi-1.jpg',
+    'pohon-kopi-pra-pruning-k4-1.jpg',
+    'pohon-kopi-pra-pruning-k4-2.jpg',
+    'pohon-kopi-pra-pruning-k4-3.jpg',
+    'gulma-gulma-pohon-kopi-1.jpg',
+    'gulma-gulma-pohon-kopi-2.jpg',
+    'gulma-gulma-pohon-kopi-3.jpg',
+    'opt-img-5555.jpg',
+    'instalasi-air-swadaya.jpg'
+  ];
+
+  const groups = {};
+  for (const [name, prefix] of Object.entries(CATEGORIES)) {
+    groups[name] = files.filter(f => f.startsWith(prefix));
+  }
+
+  let html = '';
+  let globalNum = 1;
+  for (const [name, items] of Object.entries(groups)) {
+    if (!items.length) continue;
+    html += `<h2>${name} <span class="count">${items.length} foto</span></h2><div class="grid">`;
+    for (const f of items) {
+      const cleanName = f.replace(/^[a-z-]+(?=img|kebun|cherry|gulma|opt|instalasi|pohon|pra)/, '').replace(/\.jpg$/, '');
+      html += `<div class="card" onclick="lightbox('${f}', '#${globalNum} · ${f}')">
+        <img src="${f}" alt="${cleanName}" loading="lazy">
+        <div class="name"><span class="num">${globalNum}</span>${cleanName}</div>
+      </div>`;
+      globalNum++;
+    }
+    html += `</div>`;
+  }
+  document.getElementById('content').innerHTML = html;
+}
+
+function lightbox(src, info) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb-info').textContent = info;
+  document.getElementById('lightbox').classList.add('active');
+}
+
+load();
+</script>
+
+</body>
+</html>
