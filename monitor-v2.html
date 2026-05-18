@@ -1397,8 +1397,8 @@
         <div id="compliance-progress"></div>
         <div class="kpi-grid" id="compliance-kpis" style="margin-top:14px"></div>
         <div id="compliance-analysis"></div>
-        <div style="margin-top:12px;text-align:right">
-          <button class="btn btn-secondary" onclick="resetSOPStatus()" style="font-size:11px;padding:6px 12px" title="Reset hanya status Mei 2026+ (Active Monitoring). Status Jan-Apr 2026 (seed Strategy 1 era T.A. RWI) LOCKED — preserved.">🔄 Reset Status Mei 2026+</button>
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(168,200,188,0.18);border-left:3px solid var(--moss);border-radius:6px;font-size:11px;color:var(--earth);line-height:1.6">
+          🛡️ <strong>Amanah Principle</strong>: Data entry status di-preserve permanent (no bulk reset). Untuk koreksi salah klik status individual item → klik item di <strong>SOP Kalender</strong> → pilih status baru. Setiap perubahan tercatat dengan timestamp untuk transparansi.
         </div>
       </div>
 
@@ -7485,10 +7485,15 @@ function renderComplianceProgress() {
   if (typeof renderComplianceAnalysis === 'function') renderComplianceAnalysis();
 }
 
+// ⚠️ DEPRECATED 18 Mei 2026 (sore): UI button removed per Adib decision.
+// Filosofi wakaf produktif = amanah + transparansi → data entry preserved permanent.
+// Function di-keep untuk dev/debug via DevTools console kalau-kalau emergency, BUKAN
+// untuk normal workflow. Untuk koreksi individual item, edit via SOP Kalender click.
 function resetSOPStatus() {
-  // SCOPED RESET (locked 18 Mei 2026 per Adib): hanya Mei 2026+ (Strategy 2 Active Monitoring).
+  // SCOPED RESET — hanya Mei 2026+ (Strategy 2 Active Monitoring).
   // Jan-Apr 2026 = seed data Strategy 1 historikal (era T.A. RWI) — LOCKED, jangan di-reset.
   // Format SOP_STATUS keys: "${bulan}-${idx}" where bulan = 1-12 (numeric month)
+  console.warn('[resetSOPStatus] DEPRECATED — UI button removed per Adib decision. Pakai SOP Kalender per-item click untuk koreksi.');
   const ACTIVE_START_MONTH = 5;  // Mei 2026 — sync dgn ACTIVE_MONITORING_START
   const beforeKeys = Object.keys(SOP_STATUS);
   const lockedKeys = beforeKeys.filter(k => {
