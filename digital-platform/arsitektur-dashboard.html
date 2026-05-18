@@ -291,24 +291,23 @@
       fontSize: '18px'
     },
     flowchart: {
-      htmlLabels: true,
-      curve: 'basis',
-      padding: 18,
-      nodeSpacing: 45,
-      rankSpacing: 90
+      htmlLabels: false,
+      curve: 'linear',
+      padding: 20,
+      nodeSpacing: 55,
+      rankSpacing: 100,
+      useMaxWidth: true
     }
   });
 </script>
 <style>
-  /* Mermaid font enlargement — 1.4x default (locked 18 Mei 2026 per Adib feedback) */
-  .mermaid svg { min-width: 1400px; font-size: 16px !important; }
-  .mermaid .nodeLabel, .mermaid .label { font-size: 16px !important; font-weight: 600 !important; }
-  .mermaid .nodeLabel b { font-size: 17px !important; }
-  .mermaid .nodeLabel small { font-size: 13px !important; opacity: 0.85; }
-  .mermaid .edgeLabel { font-size: 13px !important; font-weight: 700 !important; background: white !important; padding: 3px 6px !important; }
-  .mermaid .cluster-label { font-size: 18px !important; font-weight: 800 !important; }
-  .mermaid .cluster rect { stroke-width: 2px !important; }
-  .mermaid .edgePath path { stroke-width: 2.5px !important; }
+  /* Mermaid font enlargement v2 — simpler, plain text labels (18 Mei 2026 — Adib feedback round 2) */
+  .mermaid { font-size: 16px; }
+  .mermaid svg { max-width: 100%; height: auto; }
+  .mermaid .nodeLabel { font-size: 15px !important; font-weight: 700 !important; }
+  .mermaid .edgeLabel { font-size: 13px !important; font-weight: 600 !important; background: #ffffff !important; padding: 2px 6px !important; border-radius: 3px; }
+  .mermaid .cluster-label .nodeLabel { font-size: 17px !important; font-weight: 800 !important; }
+  .mermaid .edgePath path { stroke-width: 2px !important; }
 </style>
 </head>
 <body>
@@ -340,93 +339,79 @@
       </div>
 
       <div style="overflow-x:auto;padding:14px 4px;background:white;border-radius:10px;border:1px solid #e8e4dc">
-        <div class="mermaid" style="background:white;border-radius:10px;border:1px solid #e8e4dc;padding:24px;overflow-x:auto;min-height:800px;font-size:16px">
-flowchart LR
+        <div class="mermaid" style="background:white;border-radius:10px;border:1px solid #e8e4dc;padding:24px;overflow:auto;min-height:1200px;font-size:16px">
+flowchart TB
   %% ===== INPUTS =====
-  subgraph INPUTS["📱 INPUTS"]
-    direction TB
-    PWA["📱 Worker PWA<br/><b>lapor.html · LIVE 🟢</b><br/><small>Yit/Kumpul/Anto · primary entry</small>"]
-    FORM["✏️ Form Input Wakif<br/><small>monitor-v2 tab · backfill/correct</small>"]
-    TAMBAH["💵 Tambah Transaksi<br/><small>Cashbook entry modal</small>"]
-    SOPCLICK["📅 SOP Kalender Click<br/><small>Wakif klik status item</small>"]
-    SEED["🌱 Living Lab Seed<br/><small>Jan-Apr 2026 RWI era · 1× auto</small>"]
-    BATCH["🤖 Batch Curation + AI<br/><small>Anthropic API trigger</small>"]
+  subgraph S1[" 📱 INPUTS "]
+    PWA[/"📱 Worker PWA · LIVE 🟢"/]
+    FORM[/"✏️ Form Input Wakif"/]
+    TAMBAH[/"💵 Tambah Transaksi"/]
+    SOPCLICK[/"📅 SOP Kalender Click"/]
+    SEED[/"🌱 Living Lab Seed"/]
+    BATCH[/"🤖 Batch Curation + AI"/]
   end
 
   %% ===== BRIDGE / SYNC =====
-  subgraph BRIDGE["☁️ BRIDGE/SYNC"]
-    direction TB
-    FS["🔥 Firestore Cloud<br/><b>wakaf-ngantang/laporan</b><br/><small>asia-southeast2 · real-time</small>"]
-    NORM["🌉 normalizeWorkerEntry<br/><b>CRITICAL bridge function</b><br/><small>12 field aliases · Glossary tokens</small>"]
-    AUTO["⚙️ autoCreateUpah<br/><small>Yit/Kumpul · tarif lookup · dedupe</small>"]
+  subgraph S2[" ☁️ BRIDGE / SYNC "]
+    FS["🔥 Firestore Cloud<br/>wakaf-ngantang/laporan"]
+    NORM["🌉 normalizeWorkerEntry<br/>CRITICAL bridge"]
+    AUTO["⚙️ autoCreateUpah"]
   end
 
   %% ===== STORAGE =====
-  subgraph STORAGE["💾 STORAGE localStorage"]
-    direction TB
-    STATE["STATE.laporan<br/><small>daily reports array</small>"]
-    UPAH["UPAH_ITEMS<br/><small>Yit/Kumpul tracker</small>"]
-    CASH["CASHBOOK<br/><small>cash flow trx</small>"]
-    SOPST["SOP_STATUS<br/><small>item status keys</small>"]
-    HIST["HISTORICAL_PHASES<br/><small>Strategy 1 era T.A.</small>"]
-    MILE["MILESTONES<br/><small>curated bilingual</small>"]
-    POHON["POHON_BASELINE<br/><small>915 pre / 750 post</small>"]
-    TIMING["TIMING_TIER + ENSO<br/><small>4-tier · NOAA ONI</small>"]
+  subgraph S3[" 💾 STORAGE localStorage "]
+    STATE[("STATE.laporan")]
+    UPAH[("UPAH_ITEMS")]
+    CASH[("CASHBOOK")]
+    SOPST[("SOP_STATUS")]
+    HIST[("HISTORICAL_PHASES")]
+    MILE[("MILESTONES")]
+    POHON[("POHON_BASELINE")]
+    TIMING[("TIMING_TIER + ENSO")]
   end
 
-  %% ===== DASHBOARD TABS =====
-  subgraph TABS["📊 DASHBOARD TABS"]
-    direction TB
-    subgraph DAILY["🏃 Daily Ops"]
-      LOG["📋 Log Harian"]
-      DIST["👷 Distribusi Tugas"]
-      OPT["🐛 OPT Heatmap"]
-      MW["🎫 Manage Workers"]
-    end
-    subgraph COMPL["✅ Compliance & SOP"]
-      COMP["✅ SOP Compliance v2.2<br/><small>Strategy 1+2</small>"]
-      SOPKAL["📅 SOP Kalender"]
-      SINT["📚 Sintesa SOP"]
-      LATE["⏰ Late Entry Queue"]
-    end
-    subgraph FIN["💰 Financial 🔒"]
-      PENG["💸 Pengeluaran 4-section"]
-      AUDIT["🔍 Audit Sync Tool"]
-      UPAHT["💰 Upah Pekerja"]
-      RAB["📑 RAB Siklus"]
-    end
-    subgraph CURATION["📜 Curation"]
-      MILT["📜 Milestones Publik"]
-    end
+  %% ===== DASHBOARD TABS (flat) =====
+  subgraph S4[" 📊 DASHBOARD TABS "]
+    LOG["📋 Log Harian"]
+    DIST["👷 Distribusi Tugas"]
+    OPT["🐛 OPT Heatmap"]
+    MW["🎫 Manage Workers"]
+    COMP["✅ SOP Compliance v2.2"]
+    SOPKAL["📅 SOP Kalender"]
+    SINT["📚 Sintesa SOP"]
+    LATE["⏰ Late Entry Queue"]
+    PENG["💸 Pengeluaran 4-section 🔒"]
+    AUDIT["🔍 Audit Sync Tool 🔒"]
+    UPAHT["💰 Upah Pekerja 🔒"]
+    RAB["📑 RAB Siklus 🔒"]
+    MILT["📜 Milestones Publik 🔒"]
   end
 
   %% ===== OUTPUT =====
-  subgraph OUTPUT["📤 OUTPUT"]
-    direction TB
-    BUKTI["📄 Bukti Bayar PNG<br/><small>html2canvas · share WA</small>"]
-    AI["🤖 AI Draft Generator<br/><small>Anthropic API · bilingual</small>"]
-    EXPORT["📤 Export JSON<br/><small>+ GitHub auto-push</small>"]
-    JSON["aktivitas-publik.json<br/><small>schema v3.0</small>"]
+  subgraph S5[" 📤 OUTPUT "]
+    BUKTI["📄 Bukti Bayar PNG"]
+    AI["🤖 AI Draft Generator"]
+    EXPORT["📤 Export JSON"]
+    JSON[/"aktivitas-publik.json"/]
   end
 
   %% ===== PUBLIC =====
-  subgraph PUBLIC["🌐 PUBLIC"]
-    direction TB
-    LL["🌐 Living Lab Page<br/><small>bilingual · fetch + fallback</small>"]
-    VIS["👥 Public Visitors<br/><small>Donatur · BRIN · Komunitas</small>"]
+  subgraph S6[" 🌐 PUBLIC "]
+    LL[["🌐 Living Lab Page"]]
+    VIS(("👥 Public Visitors"))
   end
 
   %% ===== FLOWS =====
-  PWA -->|setDoc online-first| FS
+  PWA -->|setDoc| FS
   FS -->|onSnapshot| NORM
   NORM -->|unshift| STATE
-  NORM -->|trigger| AUTO
-  AUTO -->|create entry| UPAH
+  NORM --> AUTO
+  AUTO -->|create| UPAH
 
   FORM -.->|localStorage| STATE
-  TAMBAH -->|push| CASH
-  SOPCLICK -->|status update| SOPST
-  SEED -.->|Jan-Apr seed| HIST
+  TAMBAH --> CASH
+  SOPCLICK --> SOPST
+  SEED -.-> HIST
 
   STATE --> LOG
   STATE --> DIST
@@ -434,26 +419,25 @@ flowchart LR
   STATE -.->|filter late| LATE
 
   UPAH --> UPAHT
-  UPAH -.->|cross-ref| AUDIT
+  UPAH -.-> AUDIT
   CASH --> PENG
   CASH -.->|%serapan| RAB
 
   SOPST --> COMP
   SOPST --> SOPKAL
   HIST -.->|Strategy 1| COMP
-  POHON -.->|denominator| COMP
+  POHON -.-> COMP
   TIMING -.->|Multi-Factor| COMP
   MILE --> MILT
 
-  UPAHT -->|Generate| BUKTI
-  UPAHT -.->|batchPay autolink| CASH
-
-  BATCH -.->|prompt + entries| AI
+  UPAHT --> BUKTI
+  UPAHT -.->|batchPay| CASH
+  BATCH -.-> AI
   MILT --> AI
-  AI -.->|JSON resp| MILT
-  MILT -->|publish| EXPORT
+  AI -.-> MILT
+  MILT --> EXPORT
   EXPORT --> JSON
-  JSON ==>|fetch on load| LL
+  JSON ==>|fetch| LL
   LL --> VIS
 
   %% ===== STYLING =====
@@ -468,25 +452,16 @@ flowchart LR
   classDef public fill:#2D8466,stroke:#1F5F47,stroke-width:2px,color:#ffffff
   classDef input fill:#DCE9F0,stroke:#2C5B80,color:#1a2828
 
-  class PWA,FS,AI live
-  class AUTO,BATCH live
+  class PWA,FS,AI,AUTO,BATCH live
   class NORM bridge
-  class FORM,TAMBAH,SOPCLICK input
-  class SEED input
+  class FORM,TAMBAH,SOPCLICK,SEED input
   class STATE,UPAH,CASH,SOPST,HIST,MILE storage
   class POHON,TIMING config
   class LOG,DIST,OPT,MW,COMP,SOPKAL,SINT tab
-  class UPAHT,RAB,PENG,MILT wakif
-  class AUDIT wakif
+  class UPAHT,RAB,PENG,MILT,AUDIT wakif
   class LATE warn
   class BUKTI,EXPORT,JSON output
   class LL,VIS public
-
-  linkStyle 0 stroke:#15803d,stroke-width:3px
-  linkStyle 1 stroke:#c4906a,stroke-width:2.5px
-  linkStyle 2 stroke:#c4906a,stroke-width:2px
-  linkStyle 3 stroke:#c4906a,stroke-width:2px
-  linkStyle 4 stroke:#D4AF37,stroke-width:2px
         </div>
       </div>
 
