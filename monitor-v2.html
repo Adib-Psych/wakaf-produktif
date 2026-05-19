@@ -4727,56 +4727,159 @@ function renderDistribusi() {
 // PIC LOOKUP HELPERS — cross-tab sync (SOP Kalender + SOP Compliance)
 // ====================================================================
 // 19 Mei 2026: Distribusi Tugas adalah single source of truth untuk PIC.
-// SOP Kalender + SOP Compliance lookup via getPICForMonth() helper.
+// 19 Mei 2026 (sore — era-aware refactor): PIC display temporal-aware
+// untuk respect timeline tim. Pre-Mei 2026 = Era T.A. RWI (tim self-managed
+// belum existed). Post-17 Mei 2026 = Anto transisi (filtered dari display).
+
+// ===== TEAM TIMELINE (locked 19 Mei 2026) =====
+const TEAM_TIMELINE = {
+  // Sebelum tanggal ini, tim self-managed (Anto/Yit/Kumpul) belum formal.
+  // Sebelumnya: Era T.A. RWI (Nov 2025 - Apr 2026) — Pak Tosin + RWI Advisor.
+  ACTIVE_TEAM_START: { year: 2026, month: 5 },
+  // 17 Mei 2026: Mas Anto ditarik atasannya — keterlibatan dipause.
+  ANTO_TRANSITION: { year: 2026, month: 5, day: 17 }
+};
+
+const ERA_LABELS = {
+  pre_project: {
+    label: '📜 Pre-Project',
+    desc: 'Sebelum baseline SOP — data historis dari Living Lab observation',
+    bg: '#F3F4F6', border: '#6B7280', color: '#374151'
+  },
+  pre_active: {
+    label: '📜 Era T.A. RWI',
+    desc: 'Era Trustee Account / Rumah Wakaf Indonesia (Nov 2025 – Apr 2026). Tim self-managed belum terbentuk — aktivitas dieksekusi Pak Tosin + RWI Technical Advisor team. Status SOP dari Living Lab seed (read-only historis).',
+    bg: '#FEF3C7', border: '#D97706', color: '#78350F'
+  },
+  active_full: {
+    label: '👥 Tim Self-Managed (full)',
+    desc: 'Tim self-managed Mei 2026 (1-16 Mei) — Anto/Yit/Kumpul aktif penuh',
+    bg: '#D1FAE5', border: '#10B981', color: '#065F46'
+  },
+  active_post_transition: {
+    label: '👥 Tim Self-Managed (Anto transisi)',
+    desc: 'Tim self-managed post 17 Mei 2026 — Anto dipause, eksekusi diteruskan Yit/Kumpul, verifikasi Adib/Hendy',
+    bg: '#FEE2E2', border: '#EF4444', color: '#991B1B'
+  }
+};
+
+/**
+ * Determine era untuk kombinasi (month, year).
+ * @returns {string} era key dari ERA_LABELS
+ */
+function getEraForMonth(month, year) {
+  if (year < 2026) return 'pre_project';
+  if (year === 2026 && month < TEAM_TIMELINE.ACTIVE_TEAM_START.month) return 'pre_active';
+  // Mei 2026 → split based on today: kalau sekarang sudah > 17 Mei, treat as post-transition.
+  // Mei 2026 historical: Anto active 1-16 Mei → bisa tampil sebagai active_full untuk historikal.
+  if (year === 2026 && month === 5) {
+    // Decision: untuk Mei 2026, gunakan active_full (full team, Anto historical active 1-16 Mei)
+    // Tapi PIC display akan hide Anto by default (active=false). Note di tooltip.
+    return 'active_full';
+  }
+  return 'active_post_transition';
+}
+
+function renderEraBadge(era, opts = {}) {
+  const info = ERA_LABELS[era];
+  if (!info) return '';
+  const compact = opts.compact === true;
+  if (compact) {
+    return `<div style="background:${info.bg};border-left:3px solid ${info.border};padding:6px 10px;border-radius:5px;font-size:10px;color:${info.color};margin:6px 0;display:flex;align-items:center;gap:6px" title="${info.desc.replace(/"/g, '&quot;')}">
+      <strong>${info.label}</strong>
+      <span style="opacity:0.7;font-weight:500;font-style:italic">— PIC display non-applicable untuk periode ini</span>
+    </div>`;
+  }
+  return `<div style="background:${info.bg};border-left:4px solid ${info.border};padding:10px 14px;border-radius:8px;margin:8px 0;font-size:11px;color:${info.color};line-height:1.5">
+    <div style="font-size:13px;font-weight:800;margin-bottom:3px">${info.label}</div>
+    <div style="font-size:10.5px;color:${info.color};opacity:0.85">${info.desc}</div>
+    <div style="font-size:10px;margin-top:6px;font-style:italic;color:${info.color};opacity:0.7">📌 PIC summary card tidak ditampilkan untuk periode ini — tim self-managed sekarang belum existed sebagai struktur formal.</div>
+  </div>`;
+}
 
 /**
  * Get aggregated PIC (Eksekusi + Verifikasi) untuk bulan tertentu.
- * Phase-level resolution (1 bulan → 1 fase fenologi → semua PIC dalam fase tsb).
  * @param {number} month - 1-12
+ * @param {Object} opts - {filterInactive: bool, allowAntoForMei: bool}
  * @returns {Object} {exec: Set, verif: Set, faseLabel: string, fasePeriod: string}
  */
-function getPICForMonth(month) {
+function getPICForMonth(month, opts = {}) {
   const fase = DISTRIBUSI_DATA.find(f => Array.isArray(f.months) && f.months.includes(month));
   if (!fase) return {exec: new Set(), verif: new Set(), faseLabel: '', fasePeriod: ''};
+  const filterInactive = opts.filterInactive !== false;
+  const allowAntoForMei = opts.allowAntoForMei === true;
   const exec = new Set();
   const verif = new Set();
   fase.aktivitas.forEach(a => {
     (Array.isArray(a.exec) ? a.exec : []).forEach(k => exec.add(k));
     (Array.isArray(a.verif) ? a.verif : []).forEach(k => verif.add(k));
   });
+  // Filter inactive PIC (e.g., Anto post-transisi), with exception untuk Mei 2026 historical
+  if (filterInactive) {
+    const filter = (set) => {
+      for (const k of [...set]) {
+        const reg = PIC_REGISTRY[k];
+        if (!reg) { set.delete(k); continue; }
+        // Anto: tampilkan kalau bulan Mei 2026 historical (1-16 Mei dia aktif)
+        if (k === 'ANTO' && allowAntoForMei) continue;
+        if (!reg.active) set.delete(k);
+      }
+    };
+    filter(exec);
+    filter(verif);
+  }
   return {exec, verif, faseLabel: fase.label, fasePeriod: fase.period};
 }
 
 /**
  * Render compact PIC summary card untuk SOP Kalender / SOP Compliance.
+ * Era-aware: pre-Mei 2026 = era badge (no PIC), post = PIC card.
  * @param {number} month - 1-12
- * @param {Object} opts - {compact: bool, showFaseLabel: bool}
+ * @param {Object} opts - {compact: bool, showFaseLabel: bool, year: number}
  * @returns {string} HTML
  */
 function renderPICSummaryForMonth(month, opts = {}) {
-  const {exec, verif, faseLabel, fasePeriod} = getPICForMonth(month);
+  const year = opts.year || new Date().getFullYear();
+  const era = getEraForMonth(month, year);
+
+  // Pre-active eras: tampilkan era badge instead of PIC card
+  if (era === 'pre_project' || era === 'pre_active') {
+    return renderEraBadge(era, {compact: opts.compact !== false});
+  }
+
+  // Active eras: get PIC (filter inactive + special Anto-Mei handling)
+  const allowAntoForMei = (era === 'active_full' && month === 5 && year === 2026);
+  const {exec, verif, faseLabel, fasePeriod} = getPICForMonth(month, {
+    filterInactive: true,
+    allowAntoForMei
+  });
   if (exec.size === 0 && verif.size === 0) return '';
   const execHtml = [...exec].map(k => {
     const reg = PIC_REGISTRY[k];
     if (!reg) return '';
-    return `<span class="pill ${reg.css}" style="margin-right:3px;font-size:10px">${reg.short}</span>`;
+    const transitionMark = (k === 'ANTO' && allowAntoForMei) ? ' <small style="font-size:8px;background:#FBBF24;color:#78350F;padding:1px 4px;border-radius:6px;margin-left:2px" title="Aktif 1-16 Mei 2026, transisi sejak 17 Mei">historis 1-16 Mei</small>' : '';
+    return `<span class="pill ${reg.css}" style="margin-right:3px;font-size:10px">${reg.short}${transitionMark}</span>`;
   }).join('');
   const verifHtml = [...verif].map(k => {
     const reg = PIC_REGISTRY[k];
     if (!reg) return '';
     return `<span class="pill ${reg.css}" style="margin-right:3px;font-size:10px">${reg.short}</span>`;
   }).join('');
+  // Era badge subtle inline (only for transition era)
+  const eraInline = (era === 'active_post_transition')
+    ? '<span style="font-size:9px;background:#FEE2E2;color:#991B1B;padding:1px 6px;border-radius:8px;margin-left:6px;font-weight:700" title="Anto sudah transisi sejak 17 Mei 2026">🟡 Anto transisi</span>'
+    : '';
   const compact = opts.compact !== false;
   if (compact) {
     return `<div style="background:rgba(168,200,188,0.12);border:1px solid var(--bg-deep);border-radius:6px;padding:6px 10px;margin:6px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:10px">
-      <span style="color:var(--mute);font-weight:700;letter-spacing:0.5px">PIC FASE:</span>
+      <span style="color:var(--mute);font-weight:700;letter-spacing:0.5px">PIC FASE:</span>${eraInline}
       ${exec.size > 0 ? `<span style="color:var(--moss);font-weight:700">🔨</span> ${execHtml}` : ''}
       ${verif.size > 0 ? `<span style="color:var(--gold);font-weight:700;margin-left:6px">✅</span> ${verifHtml}` : ''}
       <span style="margin-left:auto;font-size:9px;color:var(--mute);font-style:italic">Sumber: Distribusi Tugas (${fasePeriod})</span>
     </div>`;
   }
   return `<div style="background:#fff;border:1px solid var(--bg-deep);border-radius:8px;padding:10px 12px;margin:8px 0">
-    <div style="font-size:10px;font-weight:800;color:var(--mute);letter-spacing:1px;margin-bottom:6px">PIC ${opts.showFaseLabel ? '· ' + faseLabel : 'BULAN INI'}</div>
+    <div style="font-size:10px;font-weight:800;color:var(--mute);letter-spacing:1px;margin-bottom:6px">PIC ${opts.showFaseLabel ? '· ' + faseLabel : 'BULAN INI'}${eraInline}</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div><div style="font-size:9px;color:var(--mute);margin-bottom:3px">🔨 EKSEKUSI</div>${execHtml || '<span style="color:#bbb;font-size:11px">—</span>'}</div>
       <div><div style="font-size:9px;color:var(--mute);margin-bottom:3px">✅ VERIFIKASI</div>${verifHtml || '<span style="color:#bbb;font-size:11px">—</span>'}</div>
@@ -7318,9 +7421,9 @@ function showBulanAktif(n, year) {
        </div>`
     : '';
 
-  // PIC summary dari Distribusi Tugas — auto-sync (19 Mei 2026)
+  // PIC summary dari Distribusi Tugas — auto-sync + era-aware (19 Mei 2026)
   const picSummary = (typeof renderPICSummaryForMonth === 'function')
-    ? renderPICSummaryForMonth(n, {compact: false, showFaseLabel: true})
+    ? renderPICSummaryForMonth(n, {compact: false, showFaseLabel: true, year: year})
     : '';
 
   ic.innerHTML = v2Banner + picSummary + sop.aktivitas.map((a,i) => {
@@ -7707,8 +7810,8 @@ function showPhaseDetail(phaseKey) {
         <div style="text-align:right;font-size:10px;color:${v.fg};font-weight:700">${v.lbl}</div>
       </div>`;
     }).join('');
-    // PIC summary dari Distribusi Tugas — auto-sync (19 Mei 2026)
-    const picSummary = (typeof renderPICSummaryForMonth === 'function') ? renderPICSummaryForMonth(+m, {compact: true}) : '';
+    // PIC summary dari Distribusi Tugas — auto-sync + era-aware (19 Mei 2026)
+    const picSummary = (typeof renderPICSummaryForMonth === 'function') ? renderPICSummaryForMonth(+m, {compact: true, year: cy}) : '';
     return `<div style="margin-bottom:14px">
       <div style="font-weight:700;color:${info.color};font-size:12px;margin-bottom:6px;padding-bottom:4px;border-bottom:1.5px solid ${info.color}">${namaBulan[+m]} 2026</div>
       ${picSummary}
