@@ -437,9 +437,10 @@
           <div class="field">
             <label class="field-lbl">Pelapor <span class="req">*</span></label>
             <div class="radio-row" id="form-pelapor">
-              <div class="radio-pill" data-val="ANTO" onclick="setRadio('form-pelapor',this)">👷 Mas Anto</div>
+              <!-- Mas Anto removed dari pelapor pre-fill per Adib 19 Mei 2026 (transisi sejak 17 Mei). Worker PWA token `?w=ANTO` tetap functional. Reactivation via Manage Worker tab. -->
               <div class="radio-pill" data-val="YIT" onclick="setRadio('form-pelapor',this)">🪜 Cak Yit</div>
               <div class="radio-pill" data-val="KUMPUL" onclick="setRadio('form-pelapor',this)">🌱 Pak Kumpul</div>
+              <div class="radio-pill" data-val="WAKIF" onclick="setRadio('form-pelapor',this)" style="background:rgba(212,175,55,0.12);border-color:var(--gold)">📋 Adib (Wakif)</div>
             </div>
           </div>
           <div class="field">
@@ -4723,6 +4724,67 @@ function renderDistribusi() {
 }
 
 // ====================================================================
+// PIC LOOKUP HELPERS — cross-tab sync (SOP Kalender + SOP Compliance)
+// ====================================================================
+// 19 Mei 2026: Distribusi Tugas adalah single source of truth untuk PIC.
+// SOP Kalender + SOP Compliance lookup via getPICForMonth() helper.
+
+/**
+ * Get aggregated PIC (Eksekusi + Verifikasi) untuk bulan tertentu.
+ * Phase-level resolution (1 bulan → 1 fase fenologi → semua PIC dalam fase tsb).
+ * @param {number} month - 1-12
+ * @returns {Object} {exec: Set, verif: Set, faseLabel: string, fasePeriod: string}
+ */
+function getPICForMonth(month) {
+  const fase = DISTRIBUSI_DATA.find(f => Array.isArray(f.months) && f.months.includes(month));
+  if (!fase) return {exec: new Set(), verif: new Set(), faseLabel: '', fasePeriod: ''};
+  const exec = new Set();
+  const verif = new Set();
+  fase.aktivitas.forEach(a => {
+    (Array.isArray(a.exec) ? a.exec : []).forEach(k => exec.add(k));
+    (Array.isArray(a.verif) ? a.verif : []).forEach(k => verif.add(k));
+  });
+  return {exec, verif, faseLabel: fase.label, fasePeriod: fase.period};
+}
+
+/**
+ * Render compact PIC summary card untuk SOP Kalender / SOP Compliance.
+ * @param {number} month - 1-12
+ * @param {Object} opts - {compact: bool, showFaseLabel: bool}
+ * @returns {string} HTML
+ */
+function renderPICSummaryForMonth(month, opts = {}) {
+  const {exec, verif, faseLabel, fasePeriod} = getPICForMonth(month);
+  if (exec.size === 0 && verif.size === 0) return '';
+  const execHtml = [...exec].map(k => {
+    const reg = PIC_REGISTRY[k];
+    if (!reg) return '';
+    return `<span class="pill ${reg.css}" style="margin-right:3px;font-size:10px">${reg.short}</span>`;
+  }).join('');
+  const verifHtml = [...verif].map(k => {
+    const reg = PIC_REGISTRY[k];
+    if (!reg) return '';
+    return `<span class="pill ${reg.css}" style="margin-right:3px;font-size:10px">${reg.short}</span>`;
+  }).join('');
+  const compact = opts.compact !== false;
+  if (compact) {
+    return `<div style="background:rgba(168,200,188,0.12);border:1px solid var(--bg-deep);border-radius:6px;padding:6px 10px;margin:6px 0;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:10px">
+      <span style="color:var(--mute);font-weight:700;letter-spacing:0.5px">PIC FASE:</span>
+      ${exec.size > 0 ? `<span style="color:var(--moss);font-weight:700">🔨</span> ${execHtml}` : ''}
+      ${verif.size > 0 ? `<span style="color:var(--gold);font-weight:700;margin-left:6px">✅</span> ${verifHtml}` : ''}
+      <span style="margin-left:auto;font-size:9px;color:var(--mute);font-style:italic">Sumber: Distribusi Tugas (${fasePeriod})</span>
+    </div>`;
+  }
+  return `<div style="background:#fff;border:1px solid var(--bg-deep);border-radius:8px;padding:10px 12px;margin:8px 0">
+    <div style="font-size:10px;font-weight:800;color:var(--mute);letter-spacing:1px;margin-bottom:6px">PIC ${opts.showFaseLabel ? '· ' + faseLabel : 'BULAN INI'}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div><div style="font-size:9px;color:var(--mute);margin-bottom:3px">🔨 EKSEKUSI</div>${execHtml || '<span style="color:#bbb;font-size:11px">—</span>'}</div>
+      <div><div style="font-size:9px;color:var(--mute);margin-bottom:3px">✅ VERIFIKASI</div>${verifHtml || '<span style="color:#bbb;font-size:11px">—</span>'}</div>
+    </div>
+  </div>`;
+}
+
+// ====================================================================
 // PIC EDIT MODAL — Multi-select dropdown per aktivitas (19 Mei 2026)
 // ====================================================================
 // State: pending edit (commit on Simpan)
@@ -4832,6 +4894,17 @@ async function savePICEdit() {
 
   closePICEditModal();
   renderDistribusi();
+
+  // Cross-tab propagation (19 Mei 2026): re-render tab lain yang baca dari DISTRIBUSI_DATA
+  if (typeof renderSOPKalender === 'function') renderSOPKalender();
+  if (typeof showPhaseComplianceDetail === 'function') {
+    const existing = document.getElementById('phase-compliance-detail');
+    if (existing && existing.innerHTML.trim()) {
+      // Re-render only if phase detail is currently open
+      const activePhaseBtn = document.querySelector('[data-active-phase]');
+      if (activePhaseBtn) showPhaseComplianceDetail(activePhaseBtn.dataset.activePhase);
+    }
+  }
 }
 
 // ====================================================================
@@ -7142,7 +7215,12 @@ function showBulanAktif(n, year) {
        </div>`
     : '';
 
-  ic.innerHTML = v2Banner + sop.aktivitas.map((a,i) => {
+  // PIC summary dari Distribusi Tugas — auto-sync (19 Mei 2026)
+  const picSummary = (typeof renderPICSummaryForMonth === 'function')
+    ? renderPICSummaryForMonth(n, {compact: false, showFaseLabel: true})
+    : '';
+
+  ic.innerHTML = v2Banner + picSummary + sop.aktivitas.map((a,i) => {
     const p = prioMap[a.prio] || prioMap['rutin'];
     const dosisRow = a.dosis
       ? `<div style="margin-top:8px;padding:8px 10px;background:#fdf6e3;border-left:3px solid var(--gold);border-radius:6px;font-size:11px;color:var(--earth);line-height:1.5"><strong style="color:var(--gold)">📐 Dosis untuk 915 pohon:</strong> ${a.dosis}</div>`
@@ -7525,8 +7603,11 @@ function showPhaseDetail(phaseKey) {
         <div style="text-align:right;font-size:10px;color:${v.fg};font-weight:700">${v.lbl}</div>
       </div>`;
     }).join('');
+    // PIC summary dari Distribusi Tugas — auto-sync (19 Mei 2026)
+    const picSummary = (typeof renderPICSummaryForMonth === 'function') ? renderPICSummaryForMonth(+m, {compact: true}) : '';
     return `<div style="margin-bottom:14px">
       <div style="font-weight:700;color:${info.color};font-size:12px;margin-bottom:6px;padding-bottom:4px;border-bottom:1.5px solid ${info.color}">${namaBulan[+m]} 2026</div>
+      ${picSummary}
       ${itemsHtml}
     </div>`;
   }).join('');
@@ -9167,11 +9248,47 @@ function autoCreateUpahFromEntry(entry) {
 // ====================================================================
 // MANAGE WORKERS TAB (Phase 1B — locked 18 Mei 2026)
 // ====================================================================
+// WORKER_DEFS — active workers shown by default
+// Mas Anto removed dari pre-fill per Adib 19 Mei (transisi sejak 17 Mei 2026).
+// Re-add via "Aktifkan kembali" button di Manage Workers tab saat dia kembali.
 const WORKER_DEFS = [
-  { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K' },
-  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K' },
-  { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan', icon: '👷', color: '#5B21B6', tarif_label: 'Sweat Equity (pro-bono)' }
+  { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: true },
+  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: true },
+  { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan (transisi)', icon: '👷', color: '#9CA3AF', tarif_label: 'Sweat Equity (dipause)', active: false, transition_note: 'Ditarik atasannya per 17 Mei 2026 — keterlibatan dipause' }
 ];
+
+// LS key untuk persistensi reactivation state (Adib bisa toggle Anto via UI)
+const WORKER_ACTIVE_LS_KEY = 'wkkn_v2_worker_active';
+(function loadWorkerActiveFromLS(){
+  try {
+    const raw = localStorage.getItem(WORKER_ACTIVE_LS_KEY);
+    if (!raw) return;
+    const stored = JSON.parse(raw);
+    WORKER_DEFS.forEach(w => {
+      if (stored[w.token] !== undefined) w.active = stored[w.token];
+    });
+  } catch(e) { /* silent */ }
+})();
+function saveWorkerActiveToLS(){
+  const map = {};
+  WORKER_DEFS.forEach(w => { map[w.token] = w.active; });
+  try { localStorage.setItem(WORKER_ACTIVE_LS_KEY, JSON.stringify(map)); } catch(e) {}
+}
+
+function toggleWorkerActive(token) {
+  const w = WORKER_DEFS.find(x => x.token === token);
+  if (!w) return;
+  w.active = !w.active;
+  // Sync to PIC_REGISTRY active flag bila ada entry yang match
+  if (PIC_REGISTRY[token]) PIC_REGISTRY[token].active = w.active;
+  saveWorkerActiveToLS();
+  renderWorkersTab();
+  // Re-render Distribusi (PIC badges) + Form Input radio
+  if (typeof renderDistribusi === 'function') renderDistribusi();
+  if (typeof showToast === 'function') {
+    showToast(`${w.nama} ${w.active ? 'diaktifkan kembali' : 'dinonaktifkan (transisi)'}`, w.active ? 'success' : 'info');
+  }
+}
 
 function renderWorkersTab() {
   const grid = document.getElementById('worker-cards-grid');
@@ -9204,18 +9321,30 @@ function renderWorkersTab() {
       : 'Belum pernah submit';
     const lastActiveColor = !lastActive ? '#bbb' : (daysSince <= 1 ? 'var(--moss)' : daysSince <= 7 ? '#d4a017' : 'var(--cherry)');
 
-    return `<div style="background:#fff;border:2px solid ${w.color};border-radius:12px;padding:16px 18px">
+    // Inactive (transisi) styling
+    const inactiveCardStyle = w.active ? '' : 'background:#FAFAFA;border-style:dashed;opacity:0.85';
+    const inactiveBadge = w.active ? '' :
+      `<span style="background:#FBBF24;color:#78350F;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px">🟡 TRANSISI</span>`;
+    const reactivateBtn = w.active
+      ? `<button onclick="toggleWorkerActive('${w.token}')" class="btn btn-secondary" style="font-size:10px;padding:5px 10px;border-color:var(--mute);color:var(--mute)" title="Tandai sebagai transisi (sweat equity pause)">⏸ Pause</button>`
+      : `<button onclick="toggleWorkerActive('${w.token}')" class="btn btn-primary" style="background:#15803d;color:#fff;font-size:10px;padding:5px 12px" title="Aktifkan kembali — masuk ke PIC dropdown + Form Input">▶ Aktifkan kembali</button>`;
+    const transitionNote = w.active ? '' :
+      `<div style="background:rgba(212,175,55,0.08);border-left:3px solid var(--gold);padding:8px 10px;border-radius:4px;font-size:10.5px;color:var(--mute);line-height:1.5;margin-bottom:10px">📌 ${w.transition_note || 'Tidak aktif'}</div>`;
+
+    return `<div style="background:#fff;border:2px solid ${w.color};border-radius:12px;padding:16px 18px;${inactiveCardStyle}">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
         <div style="font-size:28px">${w.icon}</div>
-        <div>
-          <div style="font-size:16px;font-weight:800;color:var(--earth)">${w.nama}</div>
+        <div style="flex:1">
+          <div style="font-size:16px;font-weight:800;color:var(--earth);display:flex;align-items:center;flex-wrap:wrap;gap:4px">${w.nama}${inactiveBadge}</div>
           <div style="font-size:11px;color:var(--mute)">${w.role}</div>
         </div>
       </div>
+      ${transitionNote}
       <div style="background:#fafaf6;border:1.5px solid #ddd;border-radius:6px;padding:8px 10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;color:var(--earth);word-break:break-all;margin-bottom:8px;cursor:pointer" onclick="this.style.background='#fef3c7';setTimeout(()=>this.style.background='#fafaf6',300)" title="Klik untuk highlight">${url}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
         <button class="btn btn-primary" onclick="copyWorkerUrl('${url}', this)" style="background:${w.color};color:#fff;font-size:11px;padding:6px 12px;flex:1">📋 Copy URL</button>
         <a href="${url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:6px 10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" title="Buka di tab baru untuk test">🔗 Open</a>
+        ${reactivateBtn}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10.5px">
         <div style="background:#f5f5f5;padding:6px 8px;border-radius:5px">

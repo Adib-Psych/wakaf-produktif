@@ -799,24 +799,31 @@ dialog .modal-actions button {
    CONSTANTS & CONFIG
    ============================================================ */
 const WORKER_MAP = {
-  KUMPUL: { name: 'Pak Kumpul', tarif: { setengah_hari: 50000, satu_hari: 100000 } },
-  YIT:    { name: 'Cak Yit',    tarif: { setengah_hari: 60000, satu_hari: 120000 } },
-  ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity */ }
+  KUMPUL: { name: 'Pak Kumpul', tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true },
+  YIT:    { name: 'Cak Yit',    tarif: { setengah_hari: 60000, satu_hari: 120000 }, active: true },
+  // Mas Anto — transisi sejak 17 Mei 2026 (ditarik atasannya). URL `?w=ANTO` masih functional
+  // untuk emergency ad-hoc reporting, tapi flagged inactive di UI default.
+  // Reactivation via Manage Workers tab di monitor-v2 saat dia kembali.
+  ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity */, active: false, transition_note: 'Ditarik atasannya per 17 Mei 2026' }
 };
 
 // KATEGORI_BY_WORKER — Role-based filter (Notulen 1-2 Mei 2026, updated 16 Mei 2026)
-// Pemupukan: flexible co-executor (Wakif + Mas Anto + Pak Kumpul + Cak Yit) per klarifikasi
-// 16 Mei 2026 — sometimes Pak Kumpul, kadang Cak Yit, biar fleksibel di lapangan.
+// Pemupukan: flexible co-executor (Wakif + Pak Kumpul + Cak Yit) per klarifikasi 16 Mei 2026.
+// Mas Anto categories preserved untuk reactivation future (jangan dihapus, hanya inactive).
 const KATEGORI_BY_WORKER = {
   KUMPUL: ['pemupukan_organik', 'pemupukan_kimia', 'babat_rumput', 'build_rorak',
            'kompos_kulit_kopi', 'tanam_penaung', 'sortasi_buah', 'penjemuran',
            'brocap_management', 'bokashi_production', 'arachis_management',
-           'biochar_pyrolysis', 'lain'],
+           'biochar_pyrolysis',
+           // 19 Mei 2026: Anto transisi → Pak Kumpul handle inventarisasi + komunikasi ad-hoc
+           'inventarisasi_pohon', 'opt_monitoring', 'komunikasi_stakeholder',
+           'lain'],
   YIT:    ['pemangkasan', 'panen', 'penyemprotan', 'opt_monitoring',
            'topgraft_robusta',
            // Flexible co-executor pemupukan (added 16 Mei 2026)
            'pemupukan_organik', 'pemupukan_kimia',
            'lain'],
+  // ANTO list preserved untuk reactivation — saat Mas Anto kembali, flip WORKER_MAP.ANTO.active=true
   ANTO:   ['inventarisasi_pohon', 'opt_monitoring', 'soil_test',
            'komunikasi_stakeholder', 'pisang_management', 'lain']
 };
@@ -1270,6 +1277,7 @@ async function init() {
   }
   STATE.workerToken = tokenRaw;
   STATE.workerName  = WORKER_MAP[tokenRaw].name;
+  STATE.workerActive = WORKER_MAP[tokenRaw].active !== false;  // default true
 
   // 2. Show app, hide error
   document.getElementById('app').classList.remove('hidden');
@@ -1278,6 +1286,16 @@ async function init() {
   // 3. Brand + greeting
   document.getElementById('workerName').textContent = STATE.workerName;
   document.getElementById('dateLine').textContent = formatTodayId();
+
+  // 3b. Transition banner — kalau worker active:false (mis. Mas Anto post 17 Mei 2026)
+  if (!STATE.workerActive) {
+    const note = WORKER_MAP[tokenRaw].transition_note || 'Keterlibatan dipause sementara';
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#78350F;padding:12px 16px;border-radius:8px;margin:10px 12px;font-size:12.5px;line-height:1.5;border-left:4px solid #B45309';
+    banner.innerHTML = `<strong style="font-size:13px;display:block;margin-bottom:3px">🟡 Mode Transisi — ${STATE.workerName}</strong>${note}. URL ini masih bisa digunakan untuk lapor ad-hoc bila ${STATE.workerName} sempat. Wakif (Adib) bisa aktifkan kembali via tab "Tim & Distribusi Tugas" → Manage Workers → tombol "Aktifkan kembali".`;
+    const app = document.getElementById('app');
+    if (app && app.firstChild) app.insertBefore(banner, app.firstChild);
+  }
 
   // 4. Default tanggal = today
   document.getElementById('f-tgl').value = todayIso();
