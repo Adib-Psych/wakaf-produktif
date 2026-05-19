@@ -562,11 +562,9 @@ a   { color: inherit; text-decoration: none; }
   display: flex; justify-content: space-between;
   align-items: center; flex-wrap: wrap; gap: 1rem;
 }
-.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 800; color: #e8f4f0; }
-.footer-links { display: flex; gap: 1.1rem; flex-wrap: wrap; }
-.footer-links a { font-size: 0.7rem; color: #527070; transition: color 0.15s; }
-.footer-links a:hover { color: #a8c8bc; }
-.footer-meta { font-size: 0.75rem; color: #a8c8bc; text-align: right; line-height: 1.6; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.82rem; font-weight: 800; color: #e8f4f0; margin-bottom: 0.3rem; }
+.footer-verse { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.78rem; color: rgba(168,200,188,0.5); line-height: 1.7; max-width: 460px; }
+.footer-meta { font-size: 0.72rem; color: rgba(168,200,188,0.5); text-align: right; line-height: 1.65; }
 
 /* ══════════════════════════════════
    RESPONSIVE
@@ -1455,23 +1453,19 @@ p, .page-hero-desc, .section-lead, .fase-body, .fase-lesson,
 </section>
 
 <!-- ══ FOOTER ══ -->
+<!-- ══ FOOTER (gold standard) ══ -->
 <footer class="footer">
   <div class="footer-inner">
-    <div class="footer-brand">Wakaf Produktif · Kebun Kopi Ngantang</div>
-    <nav class="footer-links">
-      <a href="program.html">Program</a>
-      <a href="belajar.html"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a>
-      <a href="living-lab.html">Living Lab</a>
-      <a href="galeri.html"><span class="lang-id">Galeri</span><span class="lang-en">Gallery</span></a>
-      <a href="kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a>
-    </nav>
-    <div class="footer-meta">
-      <div class="lang-id">Diwakafkan & dikelola oleh:</div>
-      <div class="lang-en">Endowed & managed by:</div>
-      <div style="font-weight:700">Adib Asrori, M.Psi, Psikolog</div>
-      <div style="font-size:0.78em;opacity:0.85" class="lang-id">Wakif & Program Director</div>
-      <div style="font-size:0.78em;opacity:0.85" class="lang-en">Wakif & Program Director</div>
-      <div style="margin-top:0.4em">Ngantang, Malang, Jawa Timur</div>
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh:</span><span class="lang-en">Endowed & managed by:</span> Adib Asrori, M.Psi, Psikolog<br>
+        Ngantang, Malang, Jawa Timur
+      </div>
     </div>
   </div>
   <div class="footer-tagline" style="max-width:720px;margin:1.5rem auto 0;padding-top:1rem;border-top:1px solid rgba(168,200,188,0.15);font-family:'Lora',serif;font-style:italic;font-size:0.82rem;color:rgba(168,200,188,0.75);text-align:center;line-height:1.6">
