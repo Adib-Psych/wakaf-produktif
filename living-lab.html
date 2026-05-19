@@ -416,18 +416,30 @@ span.lang-en { display: none; }
   background: radial-gradient(ellipse 50% 80% at 50% 50%, rgba(90,144,128,0.08) 0%, transparent 70%);
   pointer-events: none;
 }
+/* FENOLOGI 2-COL FLEX — locked 19 Mei 2026 evening (flex lebih reliable drpd grid) */
 .fenologi-layout {
-  display: grid;
-  /* Wheel column dominan (2x), legend kanan minimal 280px — locked 19 Mei 2026 */
-  grid-template-columns: minmax(400px, 2fr) minmax(280px, 1fr);
-  gap: 3rem; align-items: start;
+  display: flex;
+  flex-direction: row;
+  gap: 3rem;
+  align-items: flex-start;
   margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+.fenologi-layout > .fenologi-wheel-wrap {
+  flex: 2 1 480px;
+  min-width: 0;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+.fenologi-layout > div:not(.fenologi-wheel-wrap) {
+  flex: 1 1 280px;
+  min-width: 0;
 }
 @media (max-width: 880px) {
-  .fenologi-layout { grid-template-columns: 1fr; gap: 2rem; }
+  .fenologi-layout { flex-direction: column; gap: 2rem; }
 }
-.fenologi-wheel-wrap { display: flex; justify-content: center; position: relative; }
-.fenologi-svg { width: 100%; max-width: 640px; height: auto; }
+.fenologi-svg { width: 100%; max-width: 640px; height: auto; display: block; }
 /* .fenologi-center-label defined in botanical decoration section below */
 .center-month {
   font-family: 'Playfair Display', serif;
