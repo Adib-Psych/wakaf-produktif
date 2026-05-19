@@ -3108,37 +3108,56 @@ function renderDynamicMilestones(data) {
   const onFarmCandidates = data.milestones.filter(m => LIVING_LAB_VISIBLE_PHASES.includes(m.phase));
 
   // ──────────────────────────────────────────────────────────────────────
-  // SMART DEDUPLIKASI (locked 19 Mei 2026): hindari duplikat dengan hardcoded HTML.
-  // Scan semua judul act-log-item yang sudah ada di tiap year-content. Jika dynamic
-  // milestone title (id) mengandung / dikandung judul hardcoded → skip render.
-  // Substring match karena judul hardcoded sering lebih kaya konteksnya.
-  // Future workflow: Wakif curate milestone baru di Tab Milestones Publik →
-  // kalau judulnya unik (tidak overlap dengan hardcoded) → tampil di Living Lab.
+  // SMART DEDUPLIKASI v2 (rewrite 19 Mei 2026 malam) — 3-tier strategy:
+  //   1. ID match: data-milestone-id attribute === milestone.id (exact, no false positive)
+  //   2. Exact title match: normalized (case-insensitive, alphanumeric only)
+  //   3. NO substring match (deprecated — terlalu aggressive, banyak false positive)
+  //
+  // Future workflow:
+  //   - Hardcoded act-log-item bisa diberi attribute `data-milestone-id="m_..."`
+  //     yang exact match dengan milestone id JSON → otomatis ke-replace
+  //   - Tanpa data-milestone-id: fallback ke exact title match
+  //   - Judul JSON yang BEDA dari hardcoded → tampil sebagai milestone baru (additive)
   // ──────────────────────────────────────────────────────────────────────
   function norm(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
-  const hardcodedTitlesByYear = {};
+
+  const hardcodedByYear = {};
   ['2024','2025','2026'].forEach(function(y){
     const yEl = document.getElementById('year-' + y);
     if (!yEl) return;
+    const ids = [];
     const titles = [];
-    yEl.querySelectorAll('.act-log-item .act-log-title.lang-id').forEach(function(t){
-      const txt = norm(t.textContent);
-      if (txt.length >= 6) titles.push(txt);  // minimal length untuk hindari false positive
+    yEl.querySelectorAll('.act-log-item').forEach(function(item){
+      // Tier 1: data-milestone-id attribute
+      const mid = item.getAttribute('data-milestone-id');
+      if (mid) ids.push(mid);
+      // Tier 2: exact normalized title (preserve hardcoded as catalog)
+      const titleEl = item.querySelector('.act-log-title.lang-id');
+      if (titleEl) {
+        const txt = norm(titleEl.textContent);
+        if (txt.length >= 6) titles.push(txt);
+      }
     });
-    hardcodedTitlesByYear[y] = titles;
+    hardcodedByYear[y] = { ids: ids, titles: titles };
   });
 
   const onFarmMilestones = onFarmCandidates.filter(function(m){
-    const dynTitle = norm(m.title && m.title.id);
-    if (!dynTitle) return true;
-    const hcTitles = hardcodedTitlesByYear[String(m.year)] || [];
-    for (var i = 0; i < hcTitles.length; i++) {
-      if (hcTitles[i].includes(dynTitle) || dynTitle.includes(hcTitles[i])) {
-        console.log('[Living Lab] Dedup skip:', m.title.id, '— overlap with hardcoded');
-        return false;
-      }
+    const yearData = hardcodedByYear[String(m.year)] || { ids: [], titles: [] };
+
+    // Tier 1: ID exact match (no false positive)
+    if (m.id && yearData.ids.includes(m.id)) {
+      console.log('[Living Lab] Dedup skip (ID match):', m.id);
+      return false;
     }
-    return true;
+
+    // Tier 2: exact title normalized match
+    const dynTitle = norm(m.title && m.title.id);
+    if (dynTitle && dynTitle.length >= 6 && yearData.titles.includes(dynTitle)) {
+      console.log('[Living Lab] Dedup skip (exact title match):', m.title.id);
+      return false;
+    }
+
+    return true;  // additive: tampilkan kalau tidak match
   });
 
   const filteredOut = totalCount - onFarmCandidates.length;
