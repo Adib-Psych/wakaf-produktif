@@ -3105,12 +3105,48 @@ function renderDynamicMilestones(data) {
   // ──────────────────────────────────────────────────────────────────────
   const LIVING_LAB_VISIBLE_PHASES = ['pre-panen', 'panen', 'post-panen', 'awal-mh', 'infrastruktur'];
   const totalCount = data.milestones.length;
-  const onFarmMilestones = data.milestones.filter(m => LIVING_LAB_VISIBLE_PHASES.includes(m.phase));
-  const filteredOut = totalCount - onFarmMilestones.length;
-  console.log('[Living Lab] Dynamic on-farm milestones: ' + onFarmMilestones.length + ' (filtered ' + filteredOut + ' governance from ' + totalCount + ' total)');
+  const onFarmCandidates = data.milestones.filter(m => LIVING_LAB_VISIBLE_PHASES.includes(m.phase));
+
+  // ──────────────────────────────────────────────────────────────────────
+  // SMART DEDUPLIKASI (locked 19 Mei 2026): hindari duplikat dengan hardcoded HTML.
+  // Scan semua judul act-log-item yang sudah ada di tiap year-content. Jika dynamic
+  // milestone title (id) mengandung / dikandung judul hardcoded → skip render.
+  // Substring match karena judul hardcoded sering lebih kaya konteksnya.
+  // Future workflow: Wakif curate milestone baru di Tab Milestones Publik →
+  // kalau judulnya unik (tidak overlap dengan hardcoded) → tampil di Living Lab.
+  // ──────────────────────────────────────────────────────────────────────
+  function norm(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
+  const hardcodedTitlesByYear = {};
+  ['2024','2025','2026'].forEach(function(y){
+    const yEl = document.getElementById('year-' + y);
+    if (!yEl) return;
+    const titles = [];
+    yEl.querySelectorAll('.act-log-item .act-log-title.lang-id').forEach(function(t){
+      const txt = norm(t.textContent);
+      if (txt.length >= 6) titles.push(txt);  // minimal length untuk hindari false positive
+    });
+    hardcodedTitlesByYear[y] = titles;
+  });
+
+  const onFarmMilestones = onFarmCandidates.filter(function(m){
+    const dynTitle = norm(m.title && m.title.id);
+    if (!dynTitle) return true;
+    const hcTitles = hardcodedTitlesByYear[String(m.year)] || [];
+    for (var i = 0; i < hcTitles.length; i++) {
+      if (hcTitles[i].includes(dynTitle) || dynTitle.includes(hcTitles[i])) {
+        console.log('[Living Lab] Dedup skip:', m.title.id, '— overlap with hardcoded');
+        return false;
+      }
+    }
+    return true;
+  });
+
+  const filteredOut = totalCount - onFarmCandidates.length;
+  const dedupOut = onFarmCandidates.length - onFarmMilestones.length;
+  console.log('[Living Lab] Dynamic on-farm milestones: ' + onFarmMilestones.length + ' (filtered ' + filteredOut + ' governance + ' + dedupOut + ' duplicates from ' + totalCount + ' total)');
 
   if (onFarmMilestones.length === 0) {
-    console.log('[Living Lab] No on-farm milestones in JSON — keeping hardcoded fallback as-is');
+    console.log('[Living Lab] No NEW on-farm milestones in JSON — section header tidak ditampilkan');
     return false;
   }
 
