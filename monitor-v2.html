@@ -6451,6 +6451,189 @@ function setSOPStatusFromDropdown(key, value) {
   setSOPStatus(key, value);
 }
 
+// ====================================================================
+// LOG HARIAN ↔ SOP KALENDER AUTO-LINK (19 Mei 2026 sore)
+// ====================================================================
+// Display-only badge: tampilkan jumlah laporan worker yang related ke item SOP.
+// Status SOP tetap manual (Adib decide) — badge hanya untuk transparency.
+// Matching strategy: topik_v2 mapping (Oct 2026+) + keyword fallback (Jan-Sep 2026).
+
+// Keyword → kategori_key mapping untuk fallback (Jan-Sep 2026 items tanpa topik_v2)
+const SOP_KEYWORD_KATEGORI_MAP = {
+  // Format: kategori_key → [keywords yang match di SOP item text]
+  pemangkasan:          ['pemangkasan', 'pruning', 'wiwilan', 'peremajaan', 'pangkas'],
+  pemupukan_kimia:      ['pemupukan', 'urea', 'sp-36', 'sp36', 'kcl', 'kieserit', 'dolomit', 'pupuk anorganik', 'pupuk kimia', 'npk'],
+  pemupukan_organik:    ['pupuk kandang', 'kompos', 'pupuk organik', 'bokashi'],
+  panen:                ['panen', 'petik', 'petik selektif', 'window petik'],
+  sortasi_buah:         ['sortasi', 'sortasi air', 'defect grading'],
+  penjemuran:           ['jemur', 'penjemuran'],
+  opt_monitoring:       ['opt monitoring', 'cercospora', 'monitoring opt'],
+  brocap_management:    ['brocap', 'pbko', 'penggerek buah'],
+  inventarisasi_pohon:  ['inventarisasi', 'sensus pohon', 'estimasi produksi'],
+  soil_test:            ['soil test', 'sampling tanah', 'analisis tanah'],
+  babat_rumput:         ['babat rumput', 'sanitasi gulma', 'gulma piringan'],
+  build_rorak:          ['rorak', 'build rorak'],
+  tanam_penaung:        ['lamtoro', 'penaung', 'gamal'],
+  topgraft_robusta:     ['top-graft', 'topgraft', 'sambung pucuk', 'sambung samping', 'bp 358', 'sa 237'],
+  kompos_kulit_kopi:    ['kompos kulit', 'composting kulit'],
+  arachis_management:   ['arachis pintoi', 'arachis'],
+  biochar_pyrolysis:    ['biochar'],
+  pisang_management:    ['pisang', 'mwc nu']
+};
+
+// Reverse lookup: topik_v2 letter → kategori_key array
+function _getKategoriForTopik(topikLetter) {
+  if (typeof KATEGORI_TOPIK_MAP !== 'object') return [];
+  return Object.keys(KATEGORI_TOPIK_MAP).filter(k => KATEGORI_TOPIK_MAP[k] === topikLetter);
+}
+
+// Find laporan worker yang match dengan SOP item, filtered by month + year
+function findMatchingLaporanForSOPItem(sopItem, monthN, year) {
+  if (!Array.isArray(STATE.laporan) || STATE.laporan.length === 0) return [];
+  const itemText = (sopItem.t || '').toLowerCase();
+  const matchingKategori = new Set();
+
+  // Path 1: topik_v2 mapping (Oct 2026+)
+  if (sopItem.topik_v2) {
+    _getKategoriForTopik(sopItem.topik_v2).forEach(k => matchingKategori.add(k));
+  }
+
+  // Path 2: keyword fallback (Jan-Sep 2026 + complement)
+  Object.entries(SOP_KEYWORD_KATEGORI_MAP).forEach(([katKey, keywords]) => {
+    if (keywords.some(kw => itemText.includes(kw.toLowerCase()))) {
+      matchingKategori.add(katKey);
+    }
+  });
+
+  if (matchingKategori.size === 0) return [];
+
+  return STATE.laporan.filter(l => {
+    if (!l.kategori || !matchingKategori.has(l.kategori)) return false;
+    const tgl = l.tgl || l.tanggal;
+    if (!tgl) return false;
+    const date = new Date(tgl);
+    return date.getMonth() + 1 === monthN && date.getFullYear() === year;
+  });
+}
+
+// Render badge inline pada SOP Kalender item
+function renderLaporanBadgeForSOP(sopItem, monthN, year) {
+  const matches = findMatchingLaporanForSOPItem(sopItem, monthN, year);
+  if (matches.length === 0) return '';
+  const latest = matches.reduce((acc, l) => {
+    const tgl = l.tgl || l.tanggal;
+    return (!acc || tgl > acc) ? tgl : acc;
+  }, null);
+  const kategoriList = [...new Set(matches.map(m => m.kategori))].join(',');
+  const totalDurasi = matches.reduce((sum, l) => {
+    if (l.durasi === 'full_day' || l.durasi === 'full day' || l.durasi === '1 hari') return sum + 1;
+    if (l.durasi === 'setengah_hari' || l.durasi === 'half_day' || l.durasi === '½ hari') return sum + 0.5;
+    return sum;
+  }, 0);
+  const durasiHint = totalDurasi > 0 ? ` · ${totalDurasi} hari kerja` : '';
+  return `<button onclick="showLaporanRelatedModal('${encodeURIComponent(JSON.stringify({title: sopItem.t, monthN, year, kategoriList, count: matches.length}))}')"
+    style="background:#E0F2FE;color:#075985;border:1px solid #38BDF8;padding:4px 10px;border-radius:14px;font-size:10px;font-weight:700;cursor:pointer;margin-top:6px;display:inline-flex;align-items:center;gap:5px;transition:.15s"
+    onmouseover="this.style.background='#BAE6FD'" onmouseout="this.style.background='#E0F2FE'"
+    title="Klik untuk lihat detail laporan worker">
+    📋 ${matches.length} laporan terkait${durasiHint}${latest ? ' · terakhir ' + formatTglShort(latest) : ''}
+  </button>`;
+}
+
+// Modal: show detail laporan related ke SOP item
+function showLaporanRelatedModal(encodedCtx) {
+  let ctx;
+  try { ctx = JSON.parse(decodeURIComponent(encodedCtx)); } catch(e) { return; }
+  const {title, monthN, year, kategoriList, count} = ctx;
+  const kategoriArr = (kategoriList || '').split(',').filter(Boolean);
+  const matches = STATE.laporan.filter(l => {
+    if (!l.kategori || !kategoriArr.includes(l.kategori)) return false;
+    const tgl = l.tgl || l.tanggal;
+    if (!tgl) return false;
+    const d = new Date(tgl);
+    return d.getMonth() + 1 === monthN && d.getFullYear() === year;
+  }).sort((a,b) => {
+    const ta = a.tgl || a.tanggal;
+    const tb = b.tgl || b.tanggal;
+    return tb.localeCompare(ta);
+  });
+
+  const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const rowsHtml = matches.map(l => {
+    const tgl = l.tgl || l.tanggal || '';
+    const pelapor = l.pelapor || '—';
+    const kategori = l.kategori || '—';
+    const kebun = l.kebun_list ? (Array.isArray(l.kebun_list) ? l.kebun_list.join('+') : l.kebun_list) : (l.kebun || l.bidang || '—');
+    const durasi = l.durasi || '—';
+    const catatan = l.catatan || l.detail || '';
+    return `<tr style="border-bottom:1px solid #eee">
+      <td style="padding:8px 10px;font-size:11px;color:var(--mute);white-space:nowrap">${formatTglShort(tgl)}</td>
+      <td style="padding:8px 10px;font-size:11px;font-weight:700;color:var(--earth)">${pelapor}</td>
+      <td style="padding:8px 10px;font-size:11px">Kebun ${kebun}</td>
+      <td style="padding:8px 10px;font-size:11px;color:#075985"><code style="background:#E0F2FE;padding:1px 6px;border-radius:3px">${kategori}</code></td>
+      <td style="padding:8px 10px;font-size:11px;color:var(--moss)">${durasi}</td>
+      <td style="padding:8px 10px;font-size:11px;line-height:1.4;color:var(--earth);max-width:280px">${catatan ? catatan.slice(0, 160) + (catatan.length > 160 ? '…' : '') : '<span style="color:#bbb">—</span>'}</td>
+    </tr>`;
+  }).join('');
+
+  const html = `
+    <div id="laporan-related-overlay" onclick="if(event.target===this)closeLaporanRelatedModal()"
+      style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:14px;max-width:880px;width:100%;max-height:88vh;overflow:auto;box-shadow:0 24px 56px rgba(0,0,0,0.3)">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--bg-deep);background:linear-gradient(135deg,#075985,#0EA5E9);color:#fff;border-radius:14px 14px 0 0">
+          <div style="font-size:11px;letter-spacing:2px;color:#BAE6FD;font-weight:800;margin-bottom:4px">📋 LAPORAN WORKER TERKAIT</div>
+          <div style="font-size:15px;font-weight:700;line-height:1.3">${title}</div>
+          <div style="font-size:11px;color:#BAE6FD;margin-top:4px">${namaBulan[monthN]} ${year} · ${matches.length} laporan · kategori: ${kategoriArr.join(' · ')}</div>
+        </div>
+        <div style="padding:14px 22px;overflow-x:auto">
+          ${matches.length === 0 ? '<div style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada laporan worker yang match.</div>' : `
+            <table style="width:100%;border-collapse:collapse">
+              <thead style="background:#F0F9FF;position:sticky;top:0">
+                <tr>
+                  <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;color:#075985">TGL</th>
+                  <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;color:#075985">PELAPOR</th>
+                  <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;color:#075985">KEBUN</th>
+                  <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;color:#075985">KATEGORI</th>
+                  <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;color:#075985">DURASI</th>
+                  <th style="padding:8px 10px;text-align:left;font-size:10px;letter-spacing:1px;color:#075985">CATATAN</th>
+                </tr>
+              </thead>
+              <tbody>${rowsHtml}</tbody>
+            </table>
+          `}
+        </div>
+        <div style="padding:12px 22px;border-top:1px solid var(--bg-deep);display:flex;justify-content:space-between;gap:10px;background:#fafbfa;border-radius:0 0 14px 14px;align-items:center;flex-wrap:wrap">
+          <div style="font-size:11px;color:var(--mute);font-style:italic">💡 Status SOP tetap di-set manual via dropdown. Badge ini hanya transparency dari Log Harian.</div>
+          <div style="display:flex;gap:8px">
+            <button onclick="jumpToLogHarianFiltered('${kategoriList}', ${monthN}, ${year})" class="btn btn-secondary" style="font-size:11px;padding:6px 12px">📋 Buka Log Harian</button>
+            <button onclick="closeLaporanRelatedModal()" class="btn">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLaporanRelatedModal() {
+  const overlay = document.getElementById('laporan-related-overlay');
+  if (overlay) overlay.remove();
+  document.body.style.overflow = '';
+}
+
+function jumpToLogHarianFiltered(kategoriCsv, monthN, year) {
+  closeLaporanRelatedModal();
+  const logTab = document.querySelector('.sb-tab[data-panel="log"]');
+  if (logTab) logTab.click();
+  setTimeout(() => {
+    const panel = document.getElementById('panel-log');
+    if (panel) panel.scrollIntoView({behavior:'smooth', block:'start'});
+  }, 200);
+  if (typeof showToast === 'function') {
+    const namaBulan = ['','Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+    showToast(`📋 Log Harian dibuka · filter manual: kategori ${kategoriCsv} · ${namaBulan[monthN]} ${year}`, 'info');
+  }
+}
+
 // Progress slider modal — Adib bisa adjust persentase custom (default 50%)
 function openProgressSliderModal(key) {
   const entry = SOP_STATUS[key];
@@ -7515,13 +7698,19 @@ function showBulanAktif(n, year) {
       statusBtn = '<div style="font-size:10px;color:var(--red);font-style:italic;margin-top:5px">🚫 Compliance check (otomatis)</div>';
     }
 
-    return `<div style="display:grid;grid-template-columns:30px 1fr 130px;gap:12px;padding:11px;border-bottom:1px solid #eee;align-items:start">
+    // Laporan related badge (auto-link Log Harian → SOP Kalender, 19 Mei 2026 sore)
+    const laporanBadge = (typeof renderLaporanBadgeForSOP === 'function' && a.prio !== 'larangan')
+      ? renderLaporanBadgeForSOP(a, n, year)
+      : '';
+
+    return `<div style="display:grid;grid-template-columns:30px 1fr 160px;gap:12px;padding:11px;border-bottom:1px solid #eee;align-items:start">
       <div style="width:24px;height:24px;background:var(--moss);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:2px">${i+1}</div>
       <div>
         <div style="font-weight:600;color:var(--earth);font-size:13px;margin-bottom:3px">${a.t}${a.phase2 ? ' <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">🌱 PHASE 2 INJECT</span>' : (a.lokal ? ' <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">📍 NGT ADJUST</span>' : '')}${topikBadge}</div>
         <div style="font-size:10px;color:var(--mute)">📖 ${a.sop} · 👤 ${a.siapa}</div>
         ${dosisRow}
         ${lokalRow}
+        ${laporanBadge}
       </div>
       <div style="text-align:right">
         <div style="margin-bottom:5px"><span class="pill" style="background:${p.bg};color:${p.fg}">${p.label}</span></div>
