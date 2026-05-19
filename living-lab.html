@@ -3108,16 +3108,19 @@ function renderDynamicMilestones(data) {
   const onFarmCandidates = data.milestones.filter(m => LIVING_LAB_VISIBLE_PHASES.includes(m.phase));
 
   // ──────────────────────────────────────────────────────────────────────
-  // SMART DEDUPLIKASI v2 (rewrite 19 Mei 2026 malam) — 3-tier strategy:
-  //   1. ID match: data-milestone-id attribute === milestone.id (exact, no false positive)
-  //   2. Exact title match: normalized (case-insensitive, alphanumeric only)
-  //   3. NO substring match (deprecated — terlalu aggressive, banyak false positive)
+  // SMART DEDUPLIKASI HYBRID (per Adib decision 19 Mei malam) — 2-tier preserve backward compat:
+  //   Tier 1 (NEW): ID match — kalau hardcoded act-log-item punya attribute data-milestone-id
+  //                  yang exact match dengan milestone.id JSON → skip render (no false positive)
+  //   Tier 2 (LOCKED — preserve memory CLAUDE.md): substring match per c0efa10
+  //                  - Normalize: lowercase + replace non-alphanumeric → spasi → trim
+  //                  - Min length 6 char setelah normalize
+  //                  - BOTH-ways substring: dynTitle.includes(hcTitle) || hcTitle.includes(dynTitle)
+  //                  - Trade-off: bisa false positive, jadi Adib disiplin judul panjang & unik
   //
-  // Future workflow:
-  //   - Hardcoded act-log-item bisa diberi attribute `data-milestone-id="m_..."`
-  //     yang exact match dengan milestone id JSON → otomatis ke-replace
-  //   - Tanpa data-milestone-id: fallback ke exact title match
-  //   - Judul JSON yang BEDA dari hardcoded → tampil sebagai milestone baru (additive)
+  // History:
+  //   - 19 Mei (commit c0efa10): substring match locked
+  //   - 19 Mei malam: rewrite ke 3-tier (no substring) — REVERTED kembali ke hybrid
+  //                   per Adib decision: preserve backward compat, opt-in upgrade via data-milestone-id
   // ──────────────────────────────────────────────────────────────────────
   function norm(s) { return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim(); }
 
@@ -3128,15 +3131,12 @@ function renderDynamicMilestones(data) {
     const ids = [];
     const titles = [];
     yEl.querySelectorAll('.act-log-item').forEach(function(item){
-      // Tier 1: data-milestone-id attribute
       const mid = item.getAttribute('data-milestone-id');
       if (mid) ids.push(mid);
-      // Tier 2: exact normalized title (preserve hardcoded as catalog)
-      const titleEl = item.querySelector('.act-log-title.lang-id');
-      if (titleEl) {
-        const txt = norm(titleEl.textContent);
-        if (txt.length >= 6) titles.push(txt);
-      }
+    });
+    yEl.querySelectorAll('.act-log-item .act-log-title.lang-id').forEach(function(t){
+      const txt = norm(t.textContent);
+      if (txt.length >= 6) titles.push(txt);
     });
     hardcodedByYear[y] = { ids: ids, titles: titles };
   });
@@ -3144,20 +3144,25 @@ function renderDynamicMilestones(data) {
   const onFarmMilestones = onFarmCandidates.filter(function(m){
     const yearData = hardcodedByYear[String(m.year)] || { ids: [], titles: [] };
 
-    // Tier 1: ID exact match (no false positive)
+    // Tier 1: ID exact match (NEW opt-in — kalau hardcoded item punya data-milestone-id attribute)
     if (m.id && yearData.ids.includes(m.id)) {
       console.log('[Living Lab] Dedup skip (ID match):', m.id);
       return false;
     }
 
-    // Tier 2: exact title normalized match
+    // Tier 2: substring match (LOCKED per memory CLAUDE.md, commit c0efa10)
     const dynTitle = norm(m.title && m.title.id);
-    if (dynTitle && dynTitle.length >= 6 && yearData.titles.includes(dynTitle)) {
-      console.log('[Living Lab] Dedup skip (exact title match):', m.title.id);
-      return false;
+    if (dynTitle) {
+      const hcTitles = yearData.titles;
+      for (var i = 0; i < hcTitles.length; i++) {
+        if (hcTitles[i].includes(dynTitle) || dynTitle.includes(hcTitles[i])) {
+          console.log('[Living Lab] Dedup skip (substring):', m.title.id, '— overlap with hardcoded');
+          return false;
+        }
+      }
     }
 
-    return true;  // additive: tampilkan kalau tidak match
+    return true;
   });
 
   const filteredOut = totalCount - onFarmCandidates.length;
