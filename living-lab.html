@@ -368,6 +368,7 @@ span.lang-en { display: none; }
 .s-ongoing { background: rgba(196,144,106,0.15); color: #8a5030; }
 .s-planned { background: rgba(90,120,120,0.12); color: var(--muted); }
 .s-upcoming{ background: rgba(44,95,122,0.12); color: #2c5f7a; }
+.s-norecord{ background: rgba(170,170,170,0.15); color: #6b6b6b; font-style: italic; }
 .act-label { font-size: 0.82rem; color: var(--text); font-weight: 500; line-height: 1.4; }
 .act-sub   { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
 
@@ -1992,6 +1993,17 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
             <div class="act-log-meta"><strong>Okt–Nov</strong>2026</div>
           </div>
+          <div class="act-log-item">
+            <span class="act-log-status s-norecord lang-id">📋 Belum Aktif</span>
+            <span class="act-log-status s-norecord lang-en">📋 Not Yet Active</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Periode ini belum aktif</div>
+              <div class="act-log-title lang-en">This period is not yet active</div>
+              <div class="act-log-detail lang-id">Pencatatan akan dimulai saat eksekusi pasca-panen 2026 (mulai Sep–Okt onwards). Item terjadwal kolaborasi BRIN tertera di atas sebagai rencana, akan di-update menjadi aktivitas tercatat begitu pelaksanaan dimulai.</div>
+              <div class="act-log-detail lang-en">Recording will begin upon post-harvest 2026 execution (from Sep–Oct onwards). The scheduled BRIN collaboration item appears above as a plan, to be updated to recorded activities once execution begins.</div>
+            </div>
+            <div class="act-log-meta"><strong>Nov – Des 2026</strong>Belum Aktif</div>
+          </div>
         </div>
       </div>
     </div>
@@ -2017,8 +2029,8 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         </div>
         <div class="act-log-list">
           <div class="act-log-item">
-            <span class="act-log-status s-planned lang-id">📋 Tidak Tercatat</span>
-            <span class="act-log-status s-planned lang-en">📋 Not Recorded</span>
+            <span class="act-log-status s-norecord lang-id">📋 Tidak Tercatat</span>
+            <span class="act-log-status s-norecord lang-en">📋 Not Recorded</span>
             <div class="act-log-body">
               <div class="act-log-title lang-id">Periode ini tidak ada pencatatan</div>
               <div class="act-log-title lang-en">No records for this period</div>
@@ -2063,8 +2075,8 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         </div>
         <div class="act-log-list">
           <div class="act-log-item">
-            <span class="act-log-status s-planned lang-id">📋 Tidak Tercatat</span>
-            <span class="act-log-status s-planned lang-en">📋 Not Recorded</span>
+            <span class="act-log-status s-norecord lang-id">📋 Tidak Tercatat</span>
+            <span class="act-log-status s-norecord lang-en">📋 Not Recorded</span>
             <div class="act-log-body">
               <div class="act-log-title lang-id">Periode ini tidak ada pencatatan</div>
               <div class="act-log-title lang-en">No records for this period</div>
@@ -2086,8 +2098,8 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         </div>
         <div class="act-log-list">
           <div class="act-log-item">
-            <span class="act-log-status s-planned lang-id">📋 Tidak Tercatat</span>
-            <span class="act-log-status s-planned lang-en">📋 Not Recorded</span>
+            <span class="act-log-status s-norecord lang-id">📋 Tidak Tercatat</span>
+            <span class="act-log-status s-norecord lang-en">📋 Not Recorded</span>
             <div class="act-log-body">
               <div class="act-log-title lang-id">Periode ini tidak ada pencatatan</div>
               <div class="act-log-title lang-en">No records for this period</div>
@@ -2200,8 +2212,8 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         </div>
         <div class="act-log-list">
           <div class="act-log-item">
-            <span class="act-log-status s-planned lang-id">📋 Tidak Tercatat</span>
-            <span class="act-log-status s-planned lang-en">📋 Not Recorded</span>
+            <span class="act-log-status s-norecord lang-id">📋 Tidak Tercatat</span>
+            <span class="act-log-status s-norecord lang-en">📋 Not Recorded</span>
             <div class="act-log-body">
               <div class="act-log-title lang-id">Periode ini tidak ada pencatatan</div>
               <div class="act-log-title lang-en">No records for this period</div>
@@ -2454,6 +2466,11 @@ var theoryData = {
       id: 'Data soil profile komparatif — antara kondisi awal (April 2026) dan pasca-satu siklus intervensi penuh (Oktober 2026) — memiliki nilai ilmiah signifikan untuk agronomi kopi organik. Perubahan TDS, pH, kandungan organik, dan produktivitas pohon dapat mengkuantifikasi dampak nyata program rehabilitasi. Data ini terbuka untuk peneliti, akademisi, dan program wakaf produktif lain yang ingin mereplikasi pendekatan ini.',
       en: 'Comparative soil profile data — between initial conditions (April 2026) and after one full intervention cycle (October 2026) — holds significant scientific value for organic coffee agronomy. Changes in TDS, pH, organic content, and tree productivity can quantify the real impact of the rehabilitation program. This data is open to researchers, academics, and other productive waqf programs wishing to replicate this approach.',
       tags: ['Data Longitudinal Terbuka', 'Soil Health Before/After']
+    },
+    {
+      id: 'Periode Awal Musim Hujan 2026 (Nov–Des) belum aktif saat ini. Living Lab menampilkan slot fase ini sebagai bagian komitmen transparansi siklus penuh — pencatatan akan dimulai begitu eksekusi pasca-panen 2026 berjalan, dengan dokumentasi harian via lapor.html + dashboard internal monitor-v2 sesuai pattern Self-Managed.',
+      en: 'The 2026 Early Rainy Season period (Nov–Dec) is not yet active. Living Lab displays this phase slot as part of the full-cycle transparency commitment — recording will begin once post-harvest 2026 execution starts, with daily documentation via lapor.html + internal dashboard monitor-v2 per the Self-Managed pattern.',
+      tags: ['Belum Aktif', 'Transparansi Siklus Penuh']
     }
   ]
 };
@@ -2864,6 +2881,25 @@ var evalData = {
         id: 'Aktivitas BELUM TERLAKSANA (planned, Oktober 2026). Persiapan SEKARANG: (1) catat/patok GPS ke-5 titik sampling April 2026, (2) simpan nilai TDS dan pH April 2026 sebagai baseline resmi, (3) rencanakan pengiriman sampel tanah ke lab. Budget analisis: ~Rp 750.000–1.250.000 untuk 5 sampel (BPTP Jatim atau Balai Penelitian Tanah Bogor).',
         en: 'Activity NOT YET EXECUTED (planned, October 2026). Preparations NOW: (1) record/stake GPS coordinates of the 5 April 2026 sampling points, (2) store April 2026 TDS and pH values as official baseline, (3) plan soil sample delivery to lab. Analysis budget: ~IDR 750,000–1,250,000 for 5 samples (BPTP East Java or Bogor Soil Research Institute).'
       }
+    },
+    {
+      grandDesign: {
+        id: 'Periode Awal MH 2026 belum aktif — slot ditampilkan untuk konsistensi siklus penuh fenologi.',
+        en: 'The 2026 Early Rainy Season period is not yet active — slot displayed for full-cycle phenology consistency.'
+      },
+      agronomi: {
+        id: 'Belum ada data untuk dievaluasi. Pencatatan akan dimulai saat eksekusi pasca-panen 2026 (Sep–Okt onwards).',
+        en: 'No data to evaluate yet. Recording will begin upon post-harvest 2026 execution (Sep–Oct onwards).'
+      },
+      badge: 'perhatian',
+      tindakLanjut: {
+        id: 'Persiapkan dokumentasi harian via lapor.html sebelum Sep 2026 — pattern Self-Managed wajib di-apply ke setiap intervensi Awal MH (pemupukan recovery, pruning persiapan flowering, sanitasi).',
+        en: 'Prepare daily documentation via lapor.html before Sep 2026 — the Self-Managed pattern must apply to every Early Rainy Season intervention (recovery fertilization, flowering-prep pruning, sanitation).'
+      },
+      verifikasi: {
+        id: 'Slot menunggu eksekusi — verifikasi akan dilakukan setelah aktivitas Awal MH 2026 dimulai.',
+        en: 'Slot awaiting execution — verification will be done once 2026 Early Rainy Season activities begin.'
+      }
     }
   ]
 };
@@ -2928,6 +2964,7 @@ function buildTheoryColumns() {
         if (statusEl.classList.contains('s-done'))       statusCls = 'status-done';
         else if (statusEl.classList.contains('s-ongoing'))  statusCls = 'status-ongoing';
         else if (statusEl.classList.contains('s-upcoming')) statusCls = 'status-upcoming';
+        else if (statusEl.classList.contains('s-norecord')) statusCls = 'status-norecord';
       }
       item.classList.add(statusCls);
       var orig = item.innerHTML;
