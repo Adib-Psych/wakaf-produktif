@@ -4476,13 +4476,18 @@ function renderInventoryChart() {
     },
     options: {
       responsive: true, maintainAspectRatio: false,
+      // Grouped layout (per Adib 19 Mei malam): bar side-by-side bukan stacked
+      // Lebih ramping per item, mudah baca masing-masing nilai
       scales: {
-        x: { stacked: true },
-        y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Jumlah Pohon (Okt 2023)' } }
+        x: { stacked: false },
+        y: { stacked: false, beginAtZero: true, title: { display: true, text: 'Jumlah Pohon (Okt 2023)' } }
       },
+      // Tipiskan bar (default ~70%, kasih 0.55 supaya makin ramping)
+      datasets: { bar: { categoryPercentage: 0.7, barPercentage: 0.8 } },
       plugins: {
         legend: { position: 'bottom' },
-        title: { display: true, text: 'Komposisi Pohon per Kebun — Baseline Adib Survey Oktober 2023', font: { size: 13, weight: '600' } }
+        title: { display: true, text: 'Komposisi Pohon per Kebun — Baseline Adib Survey Oktober 2023', font: { size: 13, weight: '600' } },
+        datalabels: { display: false }
       }
     }
   });
