@@ -801,10 +801,10 @@ dialog .modal-actions button {
 const WORKER_MAP = {
   KUMPUL: { name: 'Pak Kumpul', tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true },
   YIT:    { name: 'Cak Yit',    tarif: { setengah_hari: 60000, satu_hari: 120000 }, active: true },
-  // Mas Anto — transisi sejak 17 Mei 2026 (ditarik atasannya). URL `?w=ANTO` masih functional
-  // untuk emergency ad-hoc reporting, tapi flagged inactive di UI default.
-  // Reactivation via Manage Workers tab di monitor-v2 saat dia kembali.
-  ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity */, active: false, transition_note: 'Ditarik atasannya per 17 Mei 2026' }
+  // Mas Anto — status pause 17 Mei 2026 dikonversi jadi OUT permanen 19 Mei 2026.
+  // URL `?w=ANTO` di-deprecate (boleh dipertahankan untuk backfill historis dokumen lama).
+  // PIC_REGISTRY.ANTO.active=false permanent. Inventarisasi pohon di-takeover Wakif + Cak Yit/Pak Kumpul.
+  ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity, closed */, active: false, transition_note: 'OUT permanen per 19 Mei 2026 (sebelumnya pause 17 Mei)' }
 };
 
 // KATEGORI_BY_WORKER — Role-based filter (Notulen 1-2 Mei 2026, updated 16 Mei 2026)

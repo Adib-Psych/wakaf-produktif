@@ -5130,7 +5130,7 @@ function renderPICSummaryForMonth(month, opts = {}) {
   const execHtml = [...exec].map(k => {
     const reg = PIC_REGISTRY[k];
     if (!reg) return '';
-    const transitionMark = (k === 'ANTO' && allowAntoForMei) ? ' <small style="font-size:8px;background:#FBBF24;color:#78350F;padding:1px 4px;border-radius:6px;margin-left:2px" title="Aktif 1-16 Mei 2026, transisi sejak 17 Mei">historis 1-16 Mei</small>' : '';
+    const transitionMark = (k === 'ANTO' && allowAntoForMei) ? ' <small style="font-size:8px;background:#FBBF24;color:#78350F;padding:1px 4px;border-radius:6px;margin-left:2px" title="Aktif 1-18 Mei 2026, OUT permanen 19 Mei">historis 1-18 Mei</small>' : '';
     return `<span class="pill ${reg.css}" style="margin-right:3px;font-size:10px">${reg.short}${transitionMark}</span>`;
   }).join('');
   const verifHtml = [...verif].map(k => {
