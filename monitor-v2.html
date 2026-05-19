@@ -4397,123 +4397,190 @@ function renderDeviations() {
 }
 
 // ===== DISTRIBUSI TUGAS =====
-const DISTRIBUSI_DATA = [
+// ====================================================================
+// PIC REGISTRY — Single Source (Locked 19 Mei 2026)
+// ====================================================================
+// Eksekusi pool: field workers (Cak Yit, Pak Kumpul, Tim Panen Ad-Hoc)
+// Verifikasi pool: supervisory (Adib/Wakif, Hendy, Tim BRIN, Tenaga Ahli)
+// Mas Anto: ditarik atasannya per 17 Mei 2026 — keterlibatan dipause (transition)
+// ====================================================================
+const PIC_REGISTRY = {
+  // Eksekusi (field workers)
+  YIT:    {name: 'Cak Yit',          short: 'Cak Yit',         pool: 'eksekusi',  css: 'role-yit',     active: true},
+  KUMPUL: {name: 'Pak Kumpul',       short: 'Pak Kumpul',      pool: 'eksekusi',  css: 'role-kumpul',  active: true},
+  TIM:    {name: 'Tim Panen Ad-Hoc', short: 'Tim Ad-Hoc',      pool: 'eksekusi',  css: 'bidang-4',     active: true},
+  // Verifikasi (supervisory)
+  ADIB:   {name: 'Adib (Wakif)',     short: 'Adib',            pool: 'verifikasi', css: 'bidang-1',    active: true},
+  HENDY:  {name: 'Hendy',            short: 'Hendy',           pool: 'verifikasi', css: 'bidang-2',    active: true},
+  BRIN:   {name: 'Tim BRIN',         short: 'BRIN',            pool: 'verifikasi', css: 'role-tosin',  active: true},
+  TA:     {name: 'Tenaga Ahli',      short: 'TA',              pool: 'verifikasi', css: 'role-tosin',  active: true},
+  // Transition (Mas Anto — keterlibatan dipause per 17 Mei 2026)
+  ANTO:   {name: 'Mas Anto',         short: 'Anto (transisi)', pool: 'transition', css: 'role-anto',   active: false, note: 'Ditarik atasannya per 17 Mei 2026 — keterlibatan dipause'},
+  // Legacy backward-compat (untuk parse data lama)
+  WAKIF:  {name: 'Adib (Wakif)',     short: 'Adib',            pool: 'verifikasi', css: 'bidang-1',    active: true, alias_of: 'ADIB'},
+  TOSIN:  {name: 'Pak Tosin (out)',  short: 'Tosin (out)',     pool: 'inactive',   css: 'role-tosin',  active: false, note: 'Tidak aktif sejak 10 Mei 2026'}
+};
+
+const EKSEKUSI_KEYS    = ['YIT', 'KUMPUL', 'TIM'];
+const VERIFIKASI_KEYS  = ['ADIB', 'HENDY', 'BRIN', 'TA'];
+
+// Migrate ANTO/WAKIF/TOSIN dari data hardcoded lama:
+// — ANTO di exec → KUMPUL (closest field role for coordination/observation tasks)
+// — ANTO di verif → ADIB (Wakif handles personally during transition)
+// — WAKIF → ADIB (rename)
+// — TOSIN → drop (out of team since 10 Mei 2026)
+function migratePIC(arr, slot) {
+  return arr.map(code => {
+    if (code === 'ANTO') return slot === 'exec' ? 'KUMPUL' : 'ADIB';
+    if (code === 'WAKIF') return 'ADIB';
+    if (code === 'TOSIN') return null; // drop
+    return code;
+  }).filter(c => c && c !== '-' && c !== '—');
+}
+
+// Default DISTRIBUSI_DATA — pre-filled (editable via UI, persisted ke localStorage + Firestore)
+const DISTRIBUSI_DATA_DEFAULT = [
   {
-    fase: 'off-season',
-    period: 'JAN-FEB',
-    months: [1, 2],
+    fase: 'off-season', period: 'JAN-FEB', months: [1, 2],
     label: 'Off-Season Akhir / Pre-Bloom',
-    warna: '#a8c8bc',
-    fontColor: '#2e4040',
+    warna: '#a8c8bc', fontColor: '#2e4040',
     aktivitas: [
-      {act: 'Pemangkasan ringan wiwilan (4 mgg sekali)', exec: 'YIT', verif: 'ANTO'},
-      {act: 'Pemupukan awal MH ½ dosis (Urea/SP36/KCl/Dolomit)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Sanitasi gulma piringan', exec: 'KUMPUL', verif: '-'},
-      {act: 'OPT monitoring 5-pohon-diagonal mingguan', exec: 'ANTO', verif: 'WAKIF'}
+      {act: 'Pemangkasan ringan wiwilan (4 mgg sekali)', exec: ['YIT'], verif: ['ADIB']},
+      {act: 'Pemupukan awal MH ½ dosis (Urea/SP36/KCl/Dolomit)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Sanitasi gulma piringan', exec: ['KUMPUL'], verif: []},
+      {act: 'OPT monitoring 5-pohon-diagonal mingguan', exec: ['KUMPUL'], verif: ['ADIB']}
     ]
   },
   {
-    fase: 'bunga',
-    period: 'MAR',
-    months: [3],
+    fase: 'bunga', period: 'MAR', months: [3],
     label: 'Pembungaan',
-    warna: '#e8dec8',
-    fontColor: '#2e4040',
+    warna: '#e8dec8', fontColor: '#2e4040',
     aktivitas: [
-      {act: 'Pemupukan akhir MH ½ dosis (komplemen)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Penyemprotan Cercospora prevention (3 mgg sekali)', exec: 'KUMPUL', verif: '-'},
-      {act: '⚠️ STOP pemangkasan berat (compliance check)', exec: '—', verif: 'YIT'},
-      {act: 'Dokumentasi kerontokan bunga', exec: 'ANTO', verif: 'WAKIF'}
+      {act: 'Pemupukan akhir MH ½ dosis (komplemen)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Penyemprotan Cercospora prevention (3 mgg sekali)', exec: ['KUMPUL'], verif: []},
+      {act: '⚠️ STOP pemangkasan berat (compliance check)', exec: [], verif: ['ADIB']},
+      {act: 'Dokumentasi kerontokan bunga', exec: ['KUMPUL'], verif: ['ADIB']}
     ]
   },
   {
-    fase: 'pentil',
-    period: 'APR-MEI',
-    months: [4, 5],
+    fase: 'pentil', period: 'APR-MEI', months: [4, 5],
     label: 'Pentil → Pre-Panen',
-    warna: '#e8dec8',
-    fontColor: '#2e4040',
+    warna: '#e8dec8', fontColor: '#2e4040',
     aktivitas: [
-      {act: 'Inventarisasi pohon (Kebun 1, 2, 3, 4)', exec: 'ANTO', verif: 'WAKIF'},
-      {act: 'Estimasi produksi formal (sampling 30 phn)', exec: 'ANTO', verif: 'WAKIF'},
-      {act: 'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT, via penggilingan + Bonsari', exec: 'WAKIF+ANTO', verif: 'HENDY'},
-      {act: 'Pemupukan akhir MH PARTIAL (SP-36 2 sak + KCl 2 sak, mitigation only)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Pasang Brocap pilot Kebun 4 (5 unit, baseline monitoring)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Sortasi tanaman + assessment kondisi', exec: 'ANTO+TIM', verif: '-'},
-      {act: 'Konfirmasi processing partner (Bonsari specialty + penggilingan lokal bulk)', exec: 'WAKIF', verif: 'HENDY'},
-      {act: 'Moisture meter — defer (akses Bonsari atau anggaran 2027)', exec: 'WAKIF', verif: '-'}
+      {act: 'Inventarisasi pohon (Kebun 1, 2, 3, 4)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Estimasi produksi formal (sampling 30 phn)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT, via penggilingan + Bonsari', exec: ['TIM'], verif: ['ADIB', 'HENDY']},
+      {act: 'Pemupukan akhir MH PARTIAL (SP-36 2 sak + KCl 2 sak, mitigation only)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Pasang Brocap pilot Kebun 4 (5 unit, baseline monitoring)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Sortasi tanaman + assessment kondisi', exec: ['TIM', 'KUMPUL'], verif: ['ADIB']},
+      {act: 'Konfirmasi processing partner (Bonsari specialty + penggilingan lokal bulk)', exec: [], verif: ['ADIB', 'HENDY']},
+      {act: 'Moisture meter — defer (akses Bonsari atau anggaran 2027)', exec: [], verif: ['ADIB']}
     ]
   },
   {
-    fase: 'panen',
-    period: 'JUN-AGU',
-    months: [6, 7, 8],
+    fase: 'panen', period: 'JUN-AGU', months: [6, 7, 8],
     label: 'Panen Selektif Merah',
-    warna: '#c14b3a',
-    fontColor: '#fff',
+    warna: '#c14b3a', fontColor: '#fff',
     aktivitas: [
-      {act: 'Petik selektif merah harian (default Q6)', exec: 'TIM+YIT+KUMPUL', verif: 'ANTO'},
-      {act: 'Window 12-jam petik-ke-proses (alert otomatis)', exec: 'ANTO', verif: 'WAKIF'},
-      {act: 'Sortasi air pre-pulping (kopong float, bagus tenggelam)', exec: 'TIM', verif: 'ANTO'},
-      {act: 'Penjemuran 6-10 cm + balik tiap 1 jam', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Defect grading per 300g sampel (target Mutu 3)', exec: 'ANTO', verif: 'HENDY'},
-      {act: 'Lot tracking WKKN-YYYY-MM-Kebun-LOT', exec: 'ANTO', verif: 'WAKIF'}
+      {act: 'Petik selektif merah harian (default Q6)', exec: ['TIM', 'YIT', 'KUMPUL'], verif: ['ADIB']},
+      {act: 'Window 12-jam petik-ke-proses (alert otomatis)', exec: ['TIM'], verif: ['ADIB']},
+      {act: 'Sortasi air pre-pulping (kopong float, bagus tenggelam)', exec: ['TIM'], verif: ['ADIB']},
+      {act: 'Penjemuran 6-10 cm + balik tiap 1 jam', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Defect grading per 300g sampel (target Mutu 3)', exec: ['TIM'], verif: ['ADIB', 'HENDY']},
+      {act: 'Lot tracking WKKN-YYYY-MM-Kebun-LOT', exec: ['TIM'], verif: ['ADIB']}
     ]
   },
   {
-    fase: 'pascapanen',
-    period: 'SEP-OKT',
-    months: [9, 10],
+    fase: 'pascapanen', period: 'SEP-OKT', months: [9, 10],
     label: 'Pasca-Panen / SELEKSI POHON',
-    warna: '#5a9080',
-    fontColor: '#fff',
+    warna: '#5a9080', fontColor: '#fff',
     aktivitas: [
-      {act: '🌳 SELEKSI POHON pasca-panen (target ~915 → 750 phn ideal)', exec: 'WAKIF+TOSIN+ANTO', verif: 'HENDY'},
-      {act: 'Pruning total / peremajaan (30-50 cm dari batang)', exec: 'YIT', verif: 'ANTO'},
-      {act: 'Aplikasi pupuk kandang/kompos 5 kg/phn × jumlah pohon final', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Build rorak 15-20 unit (Q8)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Composting kulit kopi pulping in-situ', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Tanam ulang lamtoro PG 79 (200-300 phn)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Top-graft Robusta klon unggul (BP 358/SA 237)', exec: 'YIT', verif: 'ANTO'},
-      {act: 'Soil test diagonal (lab UB Brawijaya)', exec: 'WAKIF+HENDY', verif: 'ANTO'}
+      {act: '🌳 SELEKSI POHON pasca-panen (target ~915 → 750 phn ideal)', exec: ['TIM', 'KUMPUL'], verif: ['ADIB', 'HENDY', 'TA']},
+      {act: 'Pruning total / peremajaan (30-50 cm dari batang)', exec: ['YIT'], verif: ['ADIB']},
+      {act: 'Aplikasi pupuk kandang/kompos 5 kg/phn × jumlah pohon final', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Build rorak 15-20 unit (Q8)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Composting kulit kopi pulping in-situ', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Tanam ulang lamtoro PG 79 (200-300 phn)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Top-graft Robusta klon unggul (BP 358/SA 237)', exec: ['YIT'], verif: ['ADIB', 'BRIN']},
+      {act: 'Soil test diagonal (lab UB Brawijaya)', exec: ['KUMPUL'], verif: ['ADIB', 'HENDY']}
     ]
   },
   {
-    fase: 'awal-mh',
-    period: 'NOV-DES',
-    months: [11, 12],
+    fase: 'awal-mh', period: 'NOV-DES', months: [11, 12],
     label: 'Awal Musim Hujan / Off-Season',
-    warna: '#a8c8bc',
-    fontColor: '#2e4040',
+    warna: '#a8c8bc', fontColor: '#2e4040',
     aktivitas: [
-      {act: 'Pemupukan awal MH ½ dosis BRIN (Urea/SP-36/KCl/Kieserit/Dolomit)', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: '🪤 Brocap full deploy 50 unit (Kebun 1-3 + refill 4) — 4 bln post-panen', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Mulsa untuk konservasi kelembapan', exec: 'KUMPUL', verif: '-'},
-      {act: 'Tanam Arachis pintoi pilot Kebun 4 Rumah Wakif', exec: 'KUMPUL', verif: 'ANTO'},
-      {act: 'Tanam jahe Kebun 3 (self-financed)', exec: 'KUMPUL (sendiri)', verif: 'ANTO'},
-      {act: 'Monitoring infiltrasi rorak post-hujan', exec: 'ANTO', verif: 'WAKIF'},
-      {act: 'Review tahunan + planning siklus berikutnya', exec: 'WAKIF+ANTO', verif: 'HENDY'}
+      {act: 'Pemupukan awal MH ½ dosis BRIN (Urea/SP-36/KCl/Kieserit/Dolomit)', exec: ['KUMPUL'], verif: ['ADIB', 'BRIN']},
+      {act: '🪤 Brocap full deploy 50 unit (Kebun 1-3 + refill 4) — 4 bln post-panen', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Mulsa untuk konservasi kelembapan', exec: ['KUMPUL'], verif: []},
+      {act: 'Tanam Arachis pintoi pilot Kebun 4 Rumah Wakif', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Tanam jahe Kebun 3 (self-financed)', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Monitoring infiltrasi rorak post-hujan', exec: ['KUMPUL'], verif: ['ADIB']},
+      {act: 'Review tahunan + planning siklus berikutnya', exec: [], verif: ['ADIB', 'HENDY']}
     ]
   }
 ];
 
-const PIC_NAMES = {
-  'ANTO':'Mas Anto', 'YIT':'Cak Yit', 'KUMPUL':'Pak Kumpul', 'WAKIF':'Adib (Wakif)', 'HENDY':'Hendy', 'TIM':'Tim Panen Ad-hoc', '-':'—', '—':'—'
-};
+// Active DISTRIBUSI_DATA — diisi dari localStorage / Firestore / default
+let DISTRIBUSI_DATA = JSON.parse(JSON.stringify(DISTRIBUSI_DATA_DEFAULT));
 
-const PIC_CSS = {
-  'ANTO':'role-anto', 'YIT':'role-yit', 'KUMPUL':'role-kumpul', 'WAKIF':'bidang-1', 'HENDY':'bidang-2', 'TIM':'bidang-4'
-};
+const DISTRIBUSI_SCHEMA_VERSION = '2.0';
+const DISTRIBUSI_LS_KEY = 'wkkn_v2_distribusi_pic';
 
-function renderPICBadges(picStr) {
-  return picStr.split('+').map(p => {
-    const trimmed = p.trim();
-    // Strip parentheses for CSS class lookup
-    const key = trimmed.replace(/\s*\(.*\)\s*/, '');
-    if (key === '-' || key === '—') return '<span style="color:#bbb;font-size:11px">—</span>';
-    const css = PIC_CSS[key] || 'bidang-1';
-    const name = PIC_NAMES[key] || trimmed;
-    return `<span class="pill ${css}" style="margin-right:3px">${name}</span>`;
+function loadDistribusiFromLS() {
+  try {
+    const raw = localStorage.getItem(DISTRIBUSI_LS_KEY);
+    if (!raw) return false;
+    const parsed = JSON.parse(raw);
+    if (parsed.version !== DISTRIBUSI_SCHEMA_VERSION) {
+      console.log('[Distribusi] schema version mismatch, using default');
+      return false;
+    }
+    DISTRIBUSI_DATA = parsed.data;
+    return true;
+  } catch (e) {
+    console.warn('[Distribusi] LS parse failed, using default', e);
+    return false;
+  }
+}
+
+function saveDistribusiToLS() {
+  try {
+    localStorage.setItem(DISTRIBUSI_LS_KEY, JSON.stringify({
+      version: DISTRIBUSI_SCHEMA_VERSION,
+      updated_at: new Date().toISOString(),
+      data: DISTRIBUSI_DATA
+    }));
+  } catch (e) { console.warn('[Distribusi] LS save failed', e); }
+}
+
+// Try LS on init
+loadDistribusiFromLS();
+
+// Backward-compat names (untuk grep references lama yang mungkin masih ada)
+const PIC_NAMES = Object.fromEntries(
+  Object.entries(PIC_REGISTRY).map(([k, v]) => [k, v.name])
+);
+const PIC_CSS = Object.fromEntries(
+  Object.entries(PIC_REGISTRY).map(([k, v]) => [k, v.css])
+);
+
+// Render badge array (multi-PIC) → HTML pills
+function renderPICBadges(picArr) {
+  // Backward-compat: accept string "A+B" atau array ['A','B']
+  let arr = picArr;
+  if (typeof picArr === 'string') {
+    if (!picArr || picArr === '-' || picArr === '—') arr = [];
+    else arr = picArr.split('+').map(s => s.trim().replace(/\s*\(.*\)\s*/, ''));
+  }
+  if (!Array.isArray(arr) || arr.length === 0) {
+    return '<span style="color:#bbb;font-size:11px">—</span>';
+  }
+  return arr.map(key => {
+    const reg = PIC_REGISTRY[key];
+    if (!reg) return `<span class="pill bidang-1" style="margin-right:3px">${key}</span>`;
+    const inactiveStyle = reg.active ? '' : 'opacity:0.55;text-decoration:line-through';
+    return `<span class="pill ${reg.css}" style="margin-right:3px;${inactiveStyle}" title="${reg.note || ''}">${reg.short}</span>`;
   }).join('');
 }
 
@@ -4522,23 +4589,29 @@ function renderDistribusi() {
   const kpiC = document.getElementById('distribusi-kpi');
   if (!kpiC) return;
   let totalAct = 0;
-  const counts = {YIT:0, KUMPUL:0, ANTO:0, WAKIF:0, HENDY:0};
+  const counts = {YIT:0, KUMPUL:0, TIM:0, ADIB:0, HENDY:0, BRIN:0, TA:0};
   DISTRIBUSI_DATA.forEach(f => {
     f.aktivitas.forEach(a => {
       totalAct++;
-      a.exec.split('+').forEach(p => {
-        const k = p.trim().replace(/\s*\(.*\)\s*/, '');
+      // Count from exec array
+      (Array.isArray(a.exec) ? a.exec : []).forEach(k => {
+        if (counts[k] !== undefined) counts[k]++;
+      });
+      // Count from verif array
+      (Array.isArray(a.verif) ? a.verif : []).forEach(k => {
         if (counts[k] !== undefined) counts[k]++;
       });
     });
   });
+  const antoNote = '<div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:3px">📌 Mas Anto: keterlibatan dipause per 17 Mei 2026 (ditarik atasannya)</div>';
   kpiC.innerHTML = `
     <div class="kpi"><div class="kpi-num">${DISTRIBUSI_DATA.length}</div><div class="kpi-lbl">Fase Fenologi</div></div>
     <div class="kpi"><div class="kpi-num">${totalAct}</div><div class="kpi-lbl">Aktivitas Per Tahun</div></div>
-    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#8c4a18">${counts.YIT}</div><div class="kpi-lbl">🪜 Tugas Cak Yit</div></div>
-    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#5b4690">${counts.KUMPUL}</div><div class="kpi-lbl">🌱 Tugas Pak Kumpul</div></div>
-    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#1f5f47">${counts.ANTO}</div><div class="kpi-lbl">👷 Tugas Mas Anto (sweat equity)</div></div>
-    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:var(--gold)">${counts.WAKIF + counts.HENDY}</div><div class="kpi-lbl">🔒 Tugas Wakif + Hendy</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#8c4a18">${counts.YIT}</div><div class="kpi-lbl">🪜 Cak Yit</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#5b4690">${counts.KUMPUL}</div><div class="kpi-lbl">🌱 Pak Kumpul</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#2e7d5e">${counts.TIM}</div><div class="kpi-lbl">👥 Tim Ad-Hoc</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:var(--gold)">${counts.ADIB + counts.HENDY}</div><div class="kpi-lbl">🔒 Adib + Hendy (verif)</div></div>
+    <div class="kpi" style="grid-column:1/-1;background:rgba(168,200,188,0.15);border:1px dashed var(--moss)">${antoNote}</div>
   `;
 
   // ===== Reorder: bulan berjalan paling atas, lalu lanjut maju + wrap-around =====
@@ -4568,11 +4641,18 @@ function renderDistribusi() {
 
   listC.innerHTML = bannerHtml + reordered.map((f, displayIdx) => {
     const isActive = activeFase && f === activeFase;
-    const rows = f.aktivitas.map(a => `
+    // Find ORIGINAL index in DISTRIBUSI_DATA (untuk edit reference)
+    const origFaseIdx = DISTRIBUSI_DATA.findIndex(fd => fd.fase === f.fase);
+    const rows = f.aktivitas.map((a, aIdx) => `
       <tr>
         <td style="font-size:12px;max-width:380px;line-height:1.4">${a.act}</td>
         <td>${renderPICBadges(a.exec)}</td>
         <td>${renderPICBadges(a.verif)}</td>
+        <td style="text-align:right;width:50px">
+          <button onclick="openPICEditModal(${origFaseIdx}, ${aIdx})"
+            style="background:none;border:1px solid var(--moss);color:var(--moss);padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer"
+            title="Edit PIC Eksekusi & Verifikasi">✏️</button>
+        </td>
       </tr>
     `).join('');
     const cardStyle = isActive
@@ -4593,9 +4673,10 @@ function renderDistribusi() {
       <div class="table-wrap">
         <table>
           <thead><tr>
-            <th style="width:50%">Aktivitas</th>
-            <th style="width:30%">PIC Eksekusi</th>
-            <th style="width:20%">PIC Verifikasi</th>
+            <th style="width:46%">Aktivitas</th>
+            <th style="width:26%">PIC Eksekusi</th>
+            <th style="width:22%">PIC Verifikasi</th>
+            <th style="width:6%"></th>
           </tr></thead>
           <tbody>${rows}</tbody>
         </table>
@@ -4603,33 +4684,30 @@ function renderDistribusi() {
     </div>`;
   }).join('');
 
-  // Bar chart
+  // Bar chart — eksekusi only (verifikasi tracked di KPI atas)
   const ctx = document.getElementById('chart-distribusi');
   if (ctx) {
-    // Build per-fase × per-PIC matrix
+    // Destroy previous chart instance bila ada (untuk re-render setelah edit)
+    if (window._distribusiChart) { try { window._distribusiChart.destroy(); } catch(e){} }
     const datasets = [
       {label:'Cak Yit', data:[], backgroundColor:'#c4906a'},
       {label:'Pak Kumpul', data:[], backgroundColor:'#9080c0'},
-      {label:'Mas Anto (koord)', data:[], backgroundColor:'#5a9080'},
-      {label:'Wakif + Hendy', data:[], backgroundColor:'#8b6914'}
+      {label:'Tim Ad-Hoc', data:[], backgroundColor:'#2e7d5e'}
     ];
     DISTRIBUSI_DATA.forEach(f => {
-      let yitCount=0, kumpulCount=0, antoCount=0, wakifCount=0;
+      let yitCount=0, kumpulCount=0, timCount=0;
       f.aktivitas.forEach(a => {
-        a.exec.split('+').forEach(p => {
-          const k = p.trim().replace(/\s*\(.*\)\s*/, '');
+        (Array.isArray(a.exec) ? a.exec : []).forEach(k => {
           if (k === 'YIT') yitCount++;
           else if (k === 'KUMPUL') kumpulCount++;
-          else if (k === 'ANTO') antoCount++;
-          else if (k === 'WAKIF' || k === 'HENDY') wakifCount++;
+          else if (k === 'TIM') timCount++;
         });
       });
       datasets[0].data.push(yitCount);
       datasets[1].data.push(kumpulCount);
-      datasets[2].data.push(antoCount);
-      datasets[3].data.push(wakifCount);
+      datasets[2].data.push(timCount);
     });
-    new Chart(ctx, {
+    window._distribusiChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: DISTRIBUSI_DATA.map(f => f.period + ' · ' + f.label),
@@ -4643,6 +4721,125 @@ function renderDistribusi() {
     });
   }
 }
+
+// ====================================================================
+// PIC EDIT MODAL — Multi-select dropdown per aktivitas (19 Mei 2026)
+// ====================================================================
+// State: pending edit (commit on Simpan)
+let _picEditState = null;
+
+function openPICEditModal(faseIdx, aIdx) {
+  const fase = DISTRIBUSI_DATA[faseIdx];
+  if (!fase) return;
+  const akt = fase.aktivitas[aIdx];
+  if (!akt) return;
+
+  _picEditState = {
+    faseIdx, aIdx,
+    exec: [...(Array.isArray(akt.exec) ? akt.exec : [])],
+    verif: [...(Array.isArray(akt.verif) ? akt.verif : [])],
+    aktName: akt.act,
+    fasePeriod: fase.period + ' · ' + fase.label
+  };
+
+  // Render checkbox grid
+  const renderOpts = (poolKeys, selected, slot) => poolKeys.map(k => {
+    const reg = PIC_REGISTRY[k];
+    const checked = selected.includes(k) ? 'checked' : '';
+    return `
+      <label style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:#fff;border:1.5px solid var(--bg-deep);border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.15s">
+        <input type="checkbox" data-slot="${slot}" data-key="${k}" ${checked}
+          onchange="togglePICEdit(this)" style="cursor:pointer;width:16px;height:16px">
+        <span class="pill ${reg.css}" style="margin:0">${reg.short}</span>
+        <span style="font-size:11px;color:var(--mute);margin-left:auto">${reg.name}</span>
+      </label>`;
+  }).join('');
+
+  const html = `
+    <div id="pic-edit-overlay" onclick="if(event.target===this)closePICEditModal()"
+      style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:14px;max-width:580px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 24px 56px rgba(0,0,0,0.3)">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--bg-deep);background:linear-gradient(135deg,#1F3A2E,#2e4040);color:#fff;border-radius:14px 14px 0 0">
+          <div style="font-size:11px;letter-spacing:2px;color:#D4AF37;font-weight:800;margin-bottom:4px">✏️ EDIT PIC</div>
+          <div style="font-size:15px;font-weight:700;line-height:1.3">${akt.act}</div>
+          <div style="font-size:11px;color:#a8c8bc;margin-top:4px">${fase.period} · ${fase.label}</div>
+        </div>
+        <div style="padding:18px 22px">
+          <div style="margin-bottom:18px">
+            <div style="font-size:12px;font-weight:800;color:var(--earth);margin-bottom:8px;letter-spacing:0.5px">🔨 PIC EKSEKUSI <span style="color:var(--mute);font-weight:500;font-size:10px;letter-spacing:0">(multi-pilih)</span></div>
+            <div style="display:grid;grid-template-columns:1fr;gap:6px">${renderOpts(EKSEKUSI_KEYS, _picEditState.exec, 'exec')}</div>
+          </div>
+          <div style="margin-bottom:10px">
+            <div style="font-size:12px;font-weight:800;color:var(--earth);margin-bottom:8px;letter-spacing:0.5px">✅ PIC VERIFIKASI <span style="color:var(--mute);font-weight:500;font-size:10px;letter-spacing:0">(multi-pilih)</span></div>
+            <div style="display:grid;grid-template-columns:1fr;gap:6px">${renderOpts(VERIFIKASI_KEYS, _picEditState.verif, 'verif')}</div>
+          </div>
+          <div style="background:rgba(212,175,55,0.08);border-left:3px solid var(--gold);padding:10px 12px;border-radius:6px;font-size:11px;color:var(--mute);line-height:1.5;margin-top:14px">
+            💡 <strong>Mas Anto status:</strong> ditarik atasannya per 17 Mei 2026, keterlibatan dipause. Tidak muncul di dropdown sampai status aktif kembali. Bila berubah, edit <code>PIC_REGISTRY.ANTO.active = true</code>.
+          </div>
+        </div>
+        <div style="padding:14px 22px;border-top:1px solid var(--bg-deep);display:flex;justify-content:flex-end;gap:10px;background:#fafbfa;border-radius:0 0 14px 14px">
+          <button onclick="closePICEditModal()" class="btn">Batal</button>
+          <button onclick="savePICEdit()" class="btn btn-primary" style="background:var(--moss)">💾 Simpan</button>
+        </div>
+      </div>
+    </div>`;
+
+  // Inject ke body
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.body.style.overflow = 'hidden';
+}
+
+function togglePICEdit(checkbox) {
+  if (!_picEditState) return;
+  const slot = checkbox.dataset.slot;  // 'exec' | 'verif'
+  const key = checkbox.dataset.key;
+  const arr = _picEditState[slot];
+  if (checkbox.checked) {
+    if (!arr.includes(key)) arr.push(key);
+  } else {
+    const idx = arr.indexOf(key);
+    if (idx >= 0) arr.splice(idx, 1);
+  }
+}
+
+function closePICEditModal() {
+  const overlay = document.getElementById('pic-edit-overlay');
+  if (overlay) overlay.remove();
+  document.body.style.overflow = '';
+  _picEditState = null;
+}
+
+async function savePICEdit() {
+  if (!_picEditState) return;
+  const {faseIdx, aIdx, exec, verif} = _picEditState;
+  DISTRIBUSI_DATA[faseIdx].aktivitas[aIdx].exec = [...exec];
+  DISTRIBUSI_DATA[faseIdx].aktivitas[aIdx].verif = [...verif];
+
+  // Persist localStorage
+  saveDistribusiToLS();
+
+  // Push Firestore (online-first, fail-silent kalau offline)
+  try {
+    if (typeof window.syncDistribusiPicToFirestore === 'function') {
+      await window.syncDistribusiPicToFirestore();
+      console.log('[Distribusi] ✓ Firestore push success');
+    } else {
+      console.warn('[Distribusi] Firestore sync not yet wired, saved locally only');
+    }
+  } catch (e) {
+    console.warn('[Distribusi] Firestore push failed (saved locally only):', e);
+  }
+
+  closePICEditModal();
+  renderDistribusi();
+}
+
+// ====================================================================
+// FIRESTORE SYNC — Distribusi PIC (real-time multi-device, 19 Mei 2026)
+// ====================================================================
+// NOTE: Actual Firestore push/load defined inside firebase module script
+// (window.syncDistribusiPicToFirestore + window.loadDistribusiPicFromFirestore).
+// savePICEdit() calls window.syncDistribusiPicToFirestore which is wired below.
 
 // ===========================================================================
 // MILESTONES PUBLIK — Curated Public Layer (jembatan Dashboard ↔ Living Lab)
@@ -10183,6 +10380,75 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         window.loadSOPMasterFromFirestore();
       }
     }, 1500);
+
+    // ===== Distribusi PIC Mirror (19 Mei 2026) — pattern mirror SOP Master =====
+    // Editable PIC Eksekusi & Verifikasi per aktivitas. Cross-device sync via Firestore.
+    window.syncDistribusiPicToFirestore = async () => {
+      if (typeof DISTRIBUSI_DATA === 'undefined') {
+        console.warn('[Distribusi PIC] DISTRIBUSI_DATA tidak ditemukan');
+        return false;
+      }
+      try {
+        const payload = {
+          version: typeof DISTRIBUSI_SCHEMA_VERSION !== 'undefined' ? DISTRIBUSI_SCHEMA_VERSION : '2.0',
+          data: DISTRIBUSI_DATA,
+          updated_at: serverTimestamp(),
+          updated_by: 'wakif_dashboard'
+        };
+        await setDoc(doc(db, 'distribusi_pic', 'active'), payload);
+        console.log('[Distribusi PIC] ✓ Pushed to Firestore');
+        if (typeof showToast === 'function') showToast('✅ PIC tersimpan ke cloud (sync ke device lain)', 'success');
+        return true;
+      } catch (e) {
+        console.error('[Distribusi PIC] push failed:', e);
+        if (typeof showToast === 'function') showToast(`⚠️ Tersimpan lokal saja (cloud gagal: ${e.message})`, 'warning');
+        return false;
+      }
+    };
+
+    window.loadDistribusiPicFromFirestore = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'distribusi_pic', 'active'));
+        if (!docSnap.exists()) {
+          console.log('[Distribusi PIC] No cloud version yet, using localStorage/default');
+          return null;
+        }
+        const cloud = docSnap.data();
+        const localVersion = typeof DISTRIBUSI_SCHEMA_VERSION !== 'undefined' ? DISTRIBUSI_SCHEMA_VERSION : '2.0';
+        if (cloud.version !== localVersion) {
+          console.warn(`[Distribusi PIC] Schema mismatch — cloud=${cloud.version} vs local=${localVersion}, skip override`);
+          return null;
+        }
+        if (cloud.data && Array.isArray(cloud.data) && typeof DISTRIBUSI_DATA !== 'undefined') {
+          // Mutate in-place (preserve const binding) — replace each fase's aktivitas
+          cloud.data.forEach((cloudFase, i) => {
+            if (DISTRIBUSI_DATA[i]) {
+              DISTRIBUSI_DATA[i].aktivitas = cloudFase.aktivitas;
+            }
+          });
+          // Persist to LS
+          if (typeof saveDistribusiToLS === 'function') saveDistribusiToLS();
+          console.log('[Distribusi PIC] ✓ Loaded from Firestore (overrides default)');
+          // Re-render kalau tab sudah aktif
+          if (typeof renderDistribusi === 'function') {
+            const panel = document.getElementById('panel-distribusi');
+            if (panel && panel.classList.contains('active')) renderDistribusi();
+          }
+          return cloud;
+        }
+        return null;
+      } catch (e) {
+        console.warn('[Distribusi PIC] fetch failed:', e.message);
+        return null;
+      }
+    };
+
+    // Auto-load saat page ready (after SOP Master)
+    setTimeout(() => {
+      if (typeof window.loadDistribusiPicFromFirestore === 'function') {
+        window.loadDistribusiPicFromFirestore();
+      }
+    }, 2000);
 
     // Normalize incoming Firestore data — bridge field naming between lapor.html (worker PWA) ↔ monitor-v2 (dashboard)
     function normalizeWorkerEntry(data) {
