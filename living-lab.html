@@ -2706,7 +2706,12 @@ function buildTheoryColumns() {
     var origEvals = evalData[year] || [];
     var globalIdx = 0;
     section.querySelectorAll('.act-log-list').forEach(function(list) {
-      var phaseItems = Array.from(list.children);
+      // ── Bug fix 19 Mei 2026: era-transition-box adalah child .act-log-list tapi
+      //    BUKAN .act-log-item — sebelumnya ikut dihitung di phaseCount → off-by-1
+      //    shift di seluruh mapping theoryData/evalData. Filter ke .act-log-item saja.
+      var phaseItems = Array.from(list.children).filter(function(el) {
+        return el.classList && el.classList.contains('act-log-item');
+      });
       var phaseCount = phaseItems.length;
       // Reverse DOM items dalam phase
       phaseItems.slice().reverse().forEach(function(item) { list.appendChild(item); });
