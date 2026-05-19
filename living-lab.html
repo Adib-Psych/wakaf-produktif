@@ -139,7 +139,16 @@ span.lang-en { display: none; }
     radial-gradient(ellipse 30% 40% at 5% 85%, rgba(196,144,106,0.09) 0%, transparent 55%);
   pointer-events: none;
 }
-.page-hero-inner { max-width: 1600px; margin: 0 auto; position: relative; }
+.page-hero-inner {
+  max-width: 1600px; margin: 0 auto; position: relative;
+  padding: 0 200px;  /* ~200px inset uniform — locked 18 Mei 2026 (Opsi A: align semua) */
+}
+@media (max-width: 1280px) {
+  .page-hero-inner { padding: 0 4rem; }
+}
+@media (max-width: 880px) {
+  .page-hero-inner { padding: 0 1rem; }
+}
 .page-hero-eyebrow {
   display: inline-flex; align-items: center; gap: 0.4rem;
   background: rgba(90,144,128,0.18);
@@ -166,15 +175,8 @@ span.lang-en { display: none; }
   font-family: 'Lora', serif;
   font-size: 1rem; line-height: 1.8;
   color: rgba(168,200,188,0.8);
-  /* ~200px margin kiri-kanan (locked 18 Mei 2026 per Adib feedback) — text width ≈ 1200px */
-  margin: 0 200px;
   text-align: justify;
-}
-@media (max-width: 1280px) {
-  .page-hero-lead { margin: 0 4rem; }  /* scale down: 200px → 64px */
-}
-@media (max-width: 880px) {
-  .page-hero-lead { margin: 0 1rem; }  /* responsive fallback mobile */
+  /* margin handled oleh .page-hero-inner parent padding (~200px inset Opsi A) */
 }
 .hero-stats {
   display: grid; grid-template-columns: repeat(4, 1fr);
@@ -199,17 +201,21 @@ span.lang-en { display: none; }
 /* ══════════════════════════════════
    SECTION COMMONS
 ══════════════════════════════════ */
-.section-inner { max-width: 1600px; margin: 0 auto; padding: 0 2rem; }
+.section-inner {
+  max-width: 1600px; margin: 0 auto;
+  padding: 0 200px;  /* ~200px inset uniform — locked 18 Mei 2026 (Opsi A: align semua) */
+}
+@media (max-width: 1280px) {
+  .section-inner { padding: 0 4rem; }
+}
+@media (max-width: 880px) {
+  .section-inner { padding: 0 1rem; }
+}
 .section-label {
   font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--medium);
-  margin: 0 200px 0.4rem;  /* ~200px kiri-kanan (locked 18 Mei 2026 — align dengan hero lead) */
-}
-@media (max-width: 1280px) {
-  .section-label { margin: 0 4rem 0.4rem; }
-}
-@media (max-width: 880px) {
-  .section-label { margin: 0 0 0.4rem; }
+  margin-bottom: 0.4rem;
+  /* horizontal margin handled oleh .section-inner parent padding (~200px inset Opsi A) */
 }
 .section-label-light {
   font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
@@ -219,14 +225,8 @@ span.lang-en { display: none; }
 .section-title {
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.3rem, 2.5vw, 1.75rem);
-  color: var(--dark); line-height: 1.3;
-  margin: 0 200px 0.65rem;  /* ~200px kiri-kanan (locked 18 Mei 2026 — align dengan hero lead) */
-}
-@media (max-width: 1280px) {
-  .section-title { margin: 0 4rem 0.65rem; }
-}
-@media (max-width: 880px) {
-  .section-title { margin: 0 0 0.65rem; }
+  color: var(--dark); margin-bottom: 0.65rem; line-height: 1.3;
+  /* horizontal margin handled oleh .section-inner parent padding (~200px inset Opsi A) */
 }
 .section-title em { font-style: italic; color: var(--accent); }
 .section-title-light {
@@ -238,14 +238,8 @@ span.lang-en { display: none; }
 .section-desc {
   font-family: 'Lora', serif;
   font-size: 0.92rem; color: var(--muted); line-height: 1.8;
-  text-align: justify;
-  margin: 0 200px 2rem;  /* ~200px kiri-kanan (locked 18 Mei 2026 — align dengan hero lead) */
-}
-@media (max-width: 1280px) {
-  .section-desc { margin: 0 4rem 2rem; }
-}
-@media (max-width: 880px) {
-  .section-desc { margin: 0 0 2rem; }
+  margin-bottom: 2rem; text-align: justify;
+  /* horizontal margin handled oleh .section-inner parent padding (~200px inset Opsi A) */
 }
 .section-desc-light {
   font-family: 'Lora', serif;
