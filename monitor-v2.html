@@ -6332,12 +6332,22 @@ function openPATSetupDlg() {
 // Key format: `${bulanN}-${aktivitasIdx}` → { status, progress, note, ts }
 // status: 'belum' | 'direncanakan' | 'sedang_berjalan' | 'sudah' | 'tidak_sesuai' | 'na'
 // progress: 0-100 (only for sedang_berjalan, default 50 — hybrid 50% + optional slider)
-// SOP_STATUS schema bump v1.5 (19 Mei 2026 sore): added 'direncanakan' state (sudah terkoordinasi tapi pre-eksekusi)
-//   - belum (0%) → direncanakan (0% scoring, workflow tracking only) → sedang_berjalan (progress%) → sudah (100%) → tidak_sesuai (penalty) → na (excluded)
+// Schema versioning history (19 Mei 2026 sore — fix destructive reset bug per Adib):
+//   - 1.3 → 1.4: additive (added 'sedang_berjalan' status + progress field) — no breaking change
+//   - 1.4 → 1.5: additive (added 'direncanakan' status) — no breaking change
+//   - PRESERVE LS untuk additive migrations; only reset untuk genuinely breaking changes
 const SOP_STATUS_VERSION = '1.5';
+const SOP_STATUS_ADDITIVE_VERSIONS = ['1.3', '1.4', '1.5'];  // backward-compat preserve
 const sopStoredVer = localStorage.getItem('wkkn_sop_status_ver');
 if (sopStoredVer !== SOP_STATUS_VERSION) {
-  localStorage.removeItem('wkkn_sop_status_v1');
+  const isAdditiveUpgrade = sopStoredVer && SOP_STATUS_ADDITIVE_VERSIONS.includes(sopStoredVer);
+  if (!isAdditiveUpgrade) {
+    // Genuinely breaking — clear LS
+    localStorage.removeItem('wkkn_sop_status_v1');
+    console.log(`[SOP_STATUS] Schema reset: ${sopStoredVer || 'none'} → ${SOP_STATUS_VERSION} (breaking)`);
+  } else {
+    console.log(`[SOP_STATUS] Schema upgrade additive: ${sopStoredVer} → ${SOP_STATUS_VERSION} (LS preserved)`);
+  }
   localStorage.setItem('wkkn_sop_status_ver', SOP_STATUS_VERSION);
 }
 let SOP_STATUS = JSON.parse(localStorage.getItem('wkkn_sop_status_v1') || '{}');
@@ -6384,9 +6394,41 @@ Object.keys(LIVING_LAB_SEED).forEach(key => {
     _livingLabSeedApplied++;
   }
 });
-if (_livingLabSeedApplied > 0) {
+
+// === MEI 2026 SEED (locked 19 Mei 2026 sore — recovery from schema reset bug) ===
+// Best-effort seed berdasarkan memory + notulen lapangan + RAB Final 9 Mei + Cak Yit 16 Mei + Kunjungan 17 Mei.
+// Status: realistis untuk situasi 19 Mei 2026. Adib bisa edit via dropdown bila perlu adjust.
+// CLAUDE.md memory references: Notulen Rapat 1-2 Mei + Klarifikasi Wakif 8 Mei + RAB Final 9 Mei + Cak Yit 16 Mei + Kunjungan 17 Mei
+const MEI_2026_SEED = {
+  // 5-0: Estimasi produksi formal sampling 30 pohon (10/Kebun)
+  '5-0': { status: 'sedang_berjalan', progress: 40, note: 'Observasi 915 pohon saat kunjungan 17 Mei (Wakif + Cak Yit di Kebun 3) + tali rafia 2-warna inventarisasi. ~40% estimasi kuantitas sudah ter-capture, sampling formal 30 phn pending.', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' },
+  // 5-1: Pemupukan akhir MH PARTIAL SP-36 + KCl (RAB Final 9 Mei + revised 16 Mei)
+  '5-1': { status: 'direncanakan', note: 'RAB locked 9 Mei (SP-36 2 sak + KCl 2 sak mitigation). Revisi 16 Mei: pemupukan post-pruning DISETUJUI dosis recovery (BRIN 5-10 thn full). Procurement pending; eksekusi pasca-Kebun 4 selesai (≈ 23 Mei). PIC: Wakif + Cak Yit + Pak Kumpul flexible co-executor.', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' },
+  // 5-2: Persiapan infrastruktur panen (lantai jemur, terpal)
+  '5-2': { status: 'belum', note: 'Persiapan untuk panen Jun-Agu. Masih awal Mei, belum mulai. Pulper CUT per RAB Final 9 Mei (full processing via penggilingan + Bonsari).', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' },
+  // 5-3: Konfirmasi processing partner (Bonsari + penggilingan lokal)
+  '5-3': { status: 'sedang_berjalan', progress: 60, note: 'Komunikasi Bonsari Coffee ongoing untuk specialty lot. Penggilingan lokal Pujon sudah identified (~Rp 1.500/kg). Konfirmasi final per lot pending Bonsari quote.', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' },
+  // 5-4: Pasang Brocap pilot Kebun 4 (5 unit)
+  '5-4': { status: 'belum', note: 'Pasca-Kebun 4 ready (target post 23 Mei). Wiryadiputra, Cilas & Morin (2008): optimal 4 bln post-panen — pilot Mei = baseline monitoring saja. Full deploy 50 unit Nov-Des 2026.', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' },
+  // 5-5: Moisture meter — DEFER ke Bonsari
+  '5-5': { status: 'na', note: 'DEFER per RAB Final 9 Mei (CUT dari budget Siklus 2026). Pinjam akses moisture meter Bonsari atau anggaran tahun 2027. N/A untuk Siklus 2026.', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' },
+  // 5-6: OPT monitoring intensif menjelang panen
+  '5-6': { status: 'sedang_berjalan', progress: 40, note: 'Ongoing weekly. Kebun 1 & 2 selesai pruning (16 Mei), Kebun 3 in-progress — OPT spot-check rutin saat pruning. Brocap pilot Kebun 4 pending sebagai monitoring tool tambahan.', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' },
+  // 5-7: Pembongkaran pisang (jika MWC NU sudah panen)
+  '5-7': { status: 'belum', note: 'Tunggu panen MWC NU (amanah pisang). Per keputusan Q3 (Klarifikasi Wakif 8 Mei): pembongkaran setelah MWC NU/Ust. Fauzan panen. Tidak tanam pisang baru.', ts: '2026-05-19T08:00:00Z', src: 'mei_2026_seed' }
+};
+
+let _mei2026SeedApplied = 0;
+Object.keys(MEI_2026_SEED).forEach(key => {
+  if (!SOP_STATUS[key]) {
+    SOP_STATUS[key] = MEI_2026_SEED[key];
+    _mei2026SeedApplied++;
+  }
+});
+
+if (_livingLabSeedApplied > 0 || _mei2026SeedApplied > 0) {
   localStorage.setItem('wkkn_sop_status_v1', JSON.stringify(SOP_STATUS));
-  console.log(`[Living Lab Seed] Applied ${_livingLabSeedApplied} pre-T0 SOP statuses from era T.A. observations.`);
+  console.log(`[SOP Seed] Applied ${_livingLabSeedApplied} pre-T0 (Living Lab era T.A.) + ${_mei2026SeedApplied} Mei 2026 (current) statuses.`);
 }
 
 let currentSOPMonth = new Date().getMonth() + 1;
@@ -7136,6 +7178,8 @@ function getComplianceMetrics() {
   let belumOverdue = 0, preProject = 0;
   let sedangBerjalanCount = 0, sedangBerjalanCreditSum = 0;  // 19 Mei 2026 — partial credit tracking
   let direncanakanCount = 0;  // 19 Mei 2026 sore — workflow tracking, 0% scoring
+  let dueSoFar = 0;  // 19 Mei 2026 sore — items yang sudah lewat due date (bulan ≤ currentMonth)
+  let dueSudah = 0, dueSedangBerjalan = 0, dueSedangCredit = 0, dueDirencanakan = 0, dueBelum = 0, dueTidakSesuai = 0, dueNa = 0;  // due-only breakdown untuk YTD scoring
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -7164,27 +7208,31 @@ function getComplianceMetrics() {
       const key = `${bulanN}-${i}`;
       const s = SOP_STATUS[key];
       const status = s ? s.status : 'belum';
-      if (status === 'sudah') sudah++;
+      const isDue = m <= currentMonth;  // 19 Mei 2026 sore — track due-only count for YTD scoring
+      if (isDue) dueSoFar++;
+      if (status === 'sudah') { sudah++; if (isDue) dueSudah++; }
       else if (status === 'sedang_berjalan') {
         // 19 Mei 2026: partial credit for in-progress (default 50%, custom slider 10-90%)
-        if (!window._sedangBerjalanCount) window._sedangBerjalanCount = 0;
         const progress = (typeof s.progress === 'number') ? s.progress : 50;
         sedangBerjalanCount++;
         sedangBerjalanCreditSum += (progress / 100);
+        if (isDue) { dueSedangBerjalan++; dueSedangCredit += (progress / 100); }
         if (m === currentMonth) currentMonthItems.push({bulanN: m, idx: i, aktivitas: a, progress});
       }
       else if (status === 'direncanakan') {
         // 19 Mei 2026 sore: workflow tracking, 0% scoring (sama dengan Belum per Adib)
         direncanakanCount++;
+        if (isDue) dueDirencanakan++;
         if (m === currentMonth) currentMonthItems.push({bulanN: m, idx: i, aktivitas: a, status: 'direncanakan'});
-        // Tracked separately untuk display; tidak count toward belum (overlap counting).
       }
       else if (status === 'tidak_sesuai') {
         tidakSesuai++;
+        if (isDue) dueTidakSesuai++;
         deviationItems.push({bulanN: m, idx: i, aktivitas: a, note: s.note || ''});
-      } else if (status === 'na') na++;
+      } else if (status === 'na') { na++; if (isDue) dueNa++; }
       else {
         belum++;
+        if (isDue) dueBelum++;
         if (m < currentMonth) {
           // Overdue: bulan lewat & masih belum (only counted in window proyek)
           belumOverdue++;
@@ -7201,10 +7249,15 @@ function getComplianceMetrics() {
       }
     });
   });
+  // YTD denominator: dueExcludingNa (items sudah lewat due, exclude N/A)
+  const dueExcludingNa = Math.max(0, dueSoFar - dueNa);
   return { total, sudah,
            sedangBerjalan: sedangBerjalanCount, sedangBerjalanCredit: sedangBerjalanCreditSum,
            direncanakan: direncanakanCount,
            belum, belumOverdue, tidakSesuai, na, preProject,
+           // 19 Mei 2026 sore — Due breakdown for YTD scoring
+           dueSoFar, dueExcludingNa,
+           dueSudah, dueSedangBerjalan, dueSedangCredit, dueDirencanakan, dueBelum, dueTidakSesuai, dueNa,
            overdueItems, deviationItems, currentMonthItems, upcomingItems,
            currentMonth, currentYear };
 }
@@ -8080,14 +8133,21 @@ function renderComplianceProgress() {
   if (typeof renderPhaseComplianceCards === 'function') renderPhaseComplianceCards();
 
   const m = getComplianceMetrics();
-  // 19 Mei 2026: overall compliance includes partial credit dari sedang_berjalan
-  const sedangCredit = m.sedangBerjalanCredit || 0;  // fraction sum (0.5 per item @ 50% default)
+  // 19 Mei 2026 sore — FIX: YTD compliance pakai dueExcludingNa (yang sudah lewat due, exclude N/A)
+  // Items future tidak masuk denominator (sebelumnya: total = 12 bulan → angka terus rendah karena banyak future items)
+  const dueSedangCredit = m.dueSedangCredit || 0;
+  const dueTotalCredit = m.dueSudah + dueSedangCredit;
+  const compliancePct = m.dueExcludingNa ? Math.round((dueTotalCredit / m.dueExcludingNa) * 100) : 0;
+  // For display stacked bar — proportional to dueSoFar (atau total dueExcludingNa)
+  const denom = Math.max(m.dueExcludingNa, 1);
+  const sedangPct = m.dueSedangBerjalan ? Math.round((m.dueSedangBerjalan / denom) * 100) : 0;
+  const direncPct = m.dueDirencanakan ? Math.round((m.dueDirencanakan / denom) * 100) : 0;
+  const belumPct = m.dueBelum ? Math.round((m.dueBelum / denom) * 100) : 0;
+  const deviationPct = m.dueTidakSesuai ? Math.round((m.dueTidakSesuai / denom) * 100) : 0;
+  const naPct = 0;  // N/A excluded from denominator
+  // For legacy compat (totals annual)
+  const sedangCredit = m.sedangBerjalanCredit || 0;
   const totalCredit = m.sudah + sedangCredit;
-  const compliancePct = m.total ? Math.round((totalCredit / m.total) * 100) : 0;
-  const sedangPct = m.total ? Math.round(((m.sedangBerjalan || 0) / m.total) * 100) : 0;
-  const belumPct = m.total ? Math.round((m.belum / m.total) * 100) : 0;
-  const deviationPct = m.total ? Math.round((m.tidakSesuai / m.total) * 100) : 0;
-  const naPct = m.total ? Math.round((m.na / m.total) * 100) : 0;
   const namaBulanFull = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 
   // Progress bar (stacked) + project anchor banner
@@ -8099,16 +8159,15 @@ function renderComplianceProgress() {
         <div style="color:var(--mute)">SOP active monitoring sejak ${namaBulanFull[ACTIVE_MONITORING_START.month]} ${ACTIVE_MONITORING_START.year} (pre-panen fase berjalan)${m.preProject ? ` · <span>${m.preProject} item pre-monitoring (N/A)</span>` : ''}</div>
       </div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
-        <div style="font-size:14px;font-weight:700;color:var(--earth)">Overall Compliance: <span style="color:var(--green);font-size:22px">${compliancePct}%</span></div>
-        <div style="font-size:11px;color:var(--mute)">${m.sudah}✅ + ${m.sedangBerjalan || 0}🟡 (${sedangCredit.toFixed(1)} partial credit) dari ${m.total} aktivitas</div>
+        <div style="font-size:14px;font-weight:700;color:var(--earth)">YTD Compliance: <span style="color:var(--green);font-size:22px">${compliancePct}%</span> <small style="font-size:10px;color:var(--mute);font-weight:500;font-style:italic">(items sudah due, exclude N/A & future)</small></div>
+        <div style="font-size:11px;color:var(--mute)">${m.dueSudah}✅ + ${m.dueSedangBerjalan || 0}🟡 (${dueSedangCredit.toFixed(1)} partial) dari ${m.dueExcludingNa} due · annual scope ${m.total} items</div>
       </div>
       <div style="background:#eee;border-radius:8px;height:18px;overflow:hidden;display:flex;font-size:10px;font-weight:700;color:#fff;text-align:center;line-height:18px">
-        ${m.sudah ? `<div style="background:#5a9080;width:${(m.sudah/m.total*100).toFixed(1)}%" title="Sudah ${m.sudah}">${Math.round(m.sudah/m.total*100)}%</div>` : ''}
-        ${m.sedangBerjalan ? `<div style="background:#F59E0B;color:#fff;width:${sedangPct}%" title="Sedang Berjalan ${m.sedangBerjalan} (avg ${Math.round(sedangCredit/m.sedangBerjalan*100)}%)">${sedangPct}%</div>` : ''}
-        ${m.direncanakan ? `<div style="background:#3B82F6;color:#fff;width:${(m.direncanakan/m.total*100).toFixed(1)}%" title="Direncanakan ${m.direncanakan} (workflow tracking, 0% scoring)">${Math.round(m.direncanakan/m.total*100)}%</div>` : ''}
-        ${m.tidakSesuai ? `<div style="background:#c14b3a;width:${(m.tidakSesuai/m.total*100).toFixed(1)}%" title="Tidak Sesuai ${m.tidakSesuai}">${deviationPct}%</div>` : ''}
-        ${m.belum ? `<div style="background:#a8c8bc;color:#2e4040;width:${(m.belum/m.total*100).toFixed(1)}%" title="Belum ${m.belum}">${belumPct}%</div>` : ''}
-        ${m.na ? `<div style="background:#bbb;width:${(m.na/m.total*100).toFixed(1)}%" title="N/A ${m.na}">${naPct}%</div>` : ''}
+        ${m.dueSudah ? `<div style="background:#5a9080;width:${Math.round(m.dueSudah/denom*100)}%" title="Sudah ${m.dueSudah} (due)">${Math.round(m.dueSudah/denom*100)}%</div>` : ''}
+        ${m.dueSedangBerjalan ? `<div style="background:#F59E0B;color:#fff;width:${sedangPct}%" title="Sedang Berjalan ${m.dueSedangBerjalan} (avg ${m.dueSedangBerjalan ? Math.round(dueSedangCredit/m.dueSedangBerjalan*100) : 0}%)">${sedangPct}%</div>` : ''}
+        ${m.dueDirencanakan ? `<div style="background:#3B82F6;color:#fff;width:${direncPct}%" title="Direncanakan ${m.dueDirencanakan} (workflow tracking)">${direncPct}%</div>` : ''}
+        ${m.dueTidakSesuai ? `<div style="background:#c14b3a;width:${deviationPct}%" title="Tidak Sesuai ${m.dueTidakSesuai}">${deviationPct}%</div>` : ''}
+        ${m.dueBelum ? `<div style="background:#a8c8bc;color:#2e4040;width:${belumPct}%" title="Belum ${m.dueBelum} (${m.belumOverdue} overdue)">${belumPct}%</div>` : ''}
       </div>
       <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;flex-wrap:wrap">
         <span><span style="display:inline-block;width:11px;height:11px;background:#5a9080;border-radius:2px;vertical-align:middle"></span> Sudah ${m.sudah}</span>
