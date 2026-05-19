@@ -3,10 +3,12 @@
   ════════════════════════════════════════════════════════════════════════════════
   CANONICAL METHODOLOGY — Compliance Methodology v2.2 FINAL
   ════════════════════════════════════════════════════════════════════════════════
-  Last update: 18 Mei 2026 (locked v2.2 FINAL)
+  Last update: 18 Mei 2026 (locked v2.2 FINAL · palette unified 18 Mei 2026 malam)
   Source: SOP/05_ASET_KNOWLEDGE/Analisa_Compliance_Methodology_v2.2_18Mei2026.html
   Public URL: https://adib-psych.github.io/wakaf-produktif/methodology-compliance.html
   Referenced from: living-lab.html Annual Compliance widget (Tier 3 footer)
+  Palette: Warm Earth Slate — unified dengan lesson-learned.html + sintesa-sop.html
+          (Inter font + warm cream paper #FAF7F2 + slate #3A4A55 + cherry/moss/amber accents)
 
   UPDATE PROTOCOL — saat ada revisi v2.3+:
   1. Replace seluruh content file ini dari source SOP/05_ASET_KNOWLEDGE/
@@ -29,37 +31,44 @@
 <title>Aset Knowledge — Methodology Compliance v2.2 (Canonical — Phase-Aware + 5-Dim Detail)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
+/* Palette unified dengan lesson-learned.html + sintesa-sop.html (Warm Earth Slate) — 18 Mei 2026 */
 :root {
-  --eucalyptus-1: #0A3D2C;
-  --eucalyptus-2: #1F5F47;
-  --eucalyptus-3: #2D8466;
-  --eucalyptus-5: #A8D5BD;
-  --eucalyptus-6: #E8F4ED;
-  --cherry-1: #8B1A1A;
-  --cherry-2: #C73E3E;
-  --cherry-3: #FDE2DC;
-  --amber-1: #B45309;
-  --amber-2: #F59E0B;
-  --amber-4: #FEF3C7;
-  --gold: #8b6914;
-  --gold-bg: #FFF8E5;
-  --purple-1: #5B21B6;
-  --purple-2: #8B5CF6;
-  --purple-3: #DDD6FE;
-  --gray-1: #111827;
-  --gray-2: #374151;
-  --gray-3: #6B7280;
-  --gray-5: #F3F4F6;
-  --gray-6: #F9FAFB;
+  /* Earth & paper base (warm cream + slate ink) */
+  --eucalyptus-1: #2D3742;  /* deep earth slate (was deep green) — header gradient end */
+  --eucalyptus-2: #3A4A55;  /* earth slate (was medium green) — header gradient start, section heading */
+  --eucalyptus-3: #7B9B7E;  /* moss (was bright green) — section border-left, dim-card top */
+  --eucalyptus-5: #9CB4A4;  /* sage (was light green) — section h2 border-bottom */
+  --eucalyptus-6: #E8EFE9;  /* warm sage tint (was light teal) — callout bg, table hover */
+  /* Cherry warm */
+  --cherry-1: #A85645;      /* cherry-dark (was deep red) */
+  --cherry-2: #C66E5C;      /* cherry warm (was bright red) */
+  --cherry-3: #F5E3DD;      /* cherry tint (was light pink) — callout-critical bg */
+  /* Amber warm earth */
+  --amber-1: #8B6914;       /* gold-dark (was bright amber) — callout-warn text */
+  --amber-2: #C4906A;       /* amber warm earth (was orange) — callout-warn border */
+  --amber-4: #F5EBE0;       /* amber tint warm (was light yellow) — callout-warn bg */
+  /* Gold */
+  --gold: #8B6914;          /* gold-dark (matches amber-1) */
+  --gold-bg: #F5EBE0;       /* warm cream (was light yellow) — changes-summary bg */
+  /* Purple (uniq/lavender mute) */
+  --purple-1: #6B5A85;      /* mute purple (was deep purple) */
+  --purple-2: #A89BB8;      /* uniq purple (was bright purple) — Quality split accent */
+  --purple-3: #EFE9F2;      /* purple tint (was light purple) — TOC bg */
+  /* Grayscale → warm slate */
+  --gray-1: #3A4A55;        /* ink (was deep gray) */
+  --gray-2: #4A5A65;        /* mid-slate (was dark gray) */
+  --gray-3: #6B7B85;        /* mute warm (was mid gray) */
+  --gray-5: #EFEAE0;        /* warm beige (was light gray) — table odd row */
+  --gray-6: #FAF7F2;        /* warm cream paper (was off-white) — body bg */
   --white: #FFFFFF;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: var(--gray-1);
-  background: linear-gradient(135deg, var(--eucalyptus-6) 0%, var(--gray-6) 100%);
+  background: var(--gray-6);  /* warm cream paper, no gradient — match lesson-learned + sintesa-sop */
   min-height: 100vh;
   line-height: 1.6;
   padding: 36px 24px;
@@ -67,12 +76,14 @@ body {
 .container { max-width: 1800px; margin: 0 auto; }
 
 .header {
-  background: linear-gradient(135deg, var(--eucalyptus-1) 0%, var(--eucalyptus-2) 60%, var(--purple-1) 100%);
+  background: linear-gradient(135deg, var(--eucalyptus-2) 0%, var(--eucalyptus-1) 100%);  /* slate gradient — match lesson-learned hdr */
   color: var(--white);
   padding: 54px 54px;
-  border-radius: 21px;
+  border-radius: 14px;
   margin-bottom: 36px;
-  border-bottom: 6px solid var(--gold);
+  border-left: 10px solid var(--cherry-2);  /* warm cherry accent ala sintesa-sop hero */
+  border-bottom: 3px solid var(--eucalyptus-5);  /* sage bottom accent ala lesson-learned hdr */
+  box-shadow: 0 4px 0 var(--eucalyptus-1);  /* depth shadow ala sintesa-sop hero */
 }
 .header-meta { font-size: 16px; font-weight: 700; letter-spacing: 3.8px; text-transform: uppercase; opacity: 0.85; margin-bottom: 12px; }
 .header h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 15px; }
@@ -94,7 +105,7 @@ body {
 .section p { font-size: 20px; color: var(--gray-2); margin-bottom: 15px; line-height: 1.7; }
 
 .changes-summary {
-  background: linear-gradient(135deg, var(--gold-bg) 0%, #FFFAF0 100%);
+  background: linear-gradient(135deg, var(--gold-bg) 0%, #FAF7F2 100%);
   border-left: 8px solid var(--gold); border-radius: 0 18px 18px 0; padding: 30px 36px; margin-bottom: 27px;
 }
 .changes-summary h2 { color: var(--gold); border-bottom: 2px dashed var(--gold); padding-bottom: 12px; margin-bottom: 18px; }
@@ -173,7 +184,7 @@ tr:hover td { background: var(--eucalyptus-6); }
 .callout-critical strong { color: var(--cherry-1); }
 
 .formula {
-  background: #F9F8F4; border: 2.2px solid #E5DECC; border-radius: 9px;
+  background: #FAF7F2; border: 2.2px solid #DDD5C7; border-radius: 9px;
   padding: 18px 24px; font-family: 'SF Mono', Monaco, monospace; font-size: 20px;
   font-weight: 600; color: var(--eucalyptus-1); margin: 18px 0; line-height: 1.6;
 }
@@ -283,22 +294,22 @@ code {
     <div class="strategy-card s1">
       <div class="strategy-tag">📚 Strategy 1</div>
       <h3>Lesson Learned (Historikal)</h3>
-      <p style="font-size:20px;color:#5f4a3a;margin-top:9px"><strong>Tujuan:</strong> Akuntabilitas + dokumentasi pelajaran dari 3 fase pengelolaan pra-formal SOP.</p>
-      <p style="font-size:20px;color:#5f4a3a"><strong>Periode:</strong> Okt 2023 – 31 Mar 2026 (akhir era T.A. RWI).</p>
-      <p style="font-size:20px;color:#5f4a3a"><strong>Sumber data:</strong> Manual audit retroaktif Wakif terhadap dokumen tiap fase.</p>
-      <p style="font-size:20px;color:#5f4a3a"><strong>Nature:</strong> Static — locked once filled.</p>
-      <p style="font-size:20px;color:#5f4a3a"><strong>Display:</strong> 3 hero cards per fase di SOP Compliance tab.</p>
+      <p style="font-size:20px;color:#5C4A30;margin-top:9px"><strong>Tujuan:</strong> Akuntabilitas + dokumentasi pelajaran dari 3 fase pengelolaan pra-formal SOP.</p>
+      <p style="font-size:20px;color:#5C4A30"><strong>Periode:</strong> Okt 2023 – 31 Mar 2026 (akhir era T.A. RWI).</p>
+      <p style="font-size:20px;color:#5C4A30"><strong>Sumber data:</strong> Manual audit retroaktif Wakif terhadap dokumen tiap fase.</p>
+      <p style="font-size:20px;color:#5C4A30"><strong>Nature:</strong> Static — locked once filled.</p>
+      <p style="font-size:20px;color:#5C4A30"><strong>Display:</strong> 3 hero cards per fase di SOP Compliance tab.</p>
       <div class="meta-line">Score ≠ KPI operasional. Buat lesson + transparansi ke publik (donor, BRIN, komunitas).</div>
     </div>
 
     <div class="strategy-card s2">
       <div class="strategy-tag">🔍 Strategy 2</div>
       <h3>Active Monitoring (Forward)</h3>
-      <p style="font-size:20px;color:#1A4030;margin-top:9px"><strong>Tujuan:</strong> Real-time M&E — perbaikan cepat saat ada item tidak sesuai SOP, sebelum fase berikutnya.</p>
-      <p style="font-size:20px;color:#1A4030"><strong>Periode:</strong> 1 Mei 2026 onwards.</p>
-      <p style="font-size:20px;color:#1A4030"><strong>Sumber data:</strong> Live status SOP Kalender + Form Input tim lapangan.</p>
-      <p style="font-size:20px;color:#1A4030"><strong>Nature:</strong> Dinamis — auto-recompute per status change.</p>
-      <p style="font-size:20px;color:#1A4030"><strong>Display:</strong> 4 phase cards fenologi + fase berjalan HERO.</p>
+      <p style="font-size:20px;color:#3A4A55;margin-top:9px"><strong>Tujuan:</strong> Real-time M&E — perbaikan cepat saat ada item tidak sesuai SOP, sebelum fase berikutnya.</p>
+      <p style="font-size:20px;color:#3A4A55"><strong>Periode:</strong> 1 Mei 2026 onwards.</p>
+      <p style="font-size:20px;color:#3A4A55"><strong>Sumber data:</strong> Live status SOP Kalender + Form Input tim lapangan.</p>
+      <p style="font-size:20px;color:#3A4A55"><strong>Nature:</strong> Dinamis — auto-recompute per status change.</p>
+      <p style="font-size:20px;color:#3A4A55"><strong>Display:</strong> 4 phase cards fenologi + fase berjalan HERO.</p>
       <div class="meta-line">100% achievable di akhir setiap fase. Tidak perlu tunggu 1 tahun penuh untuk sinyal perbaikan.</div>
     </div>
   </div>
@@ -351,28 +362,28 @@ code {
   <p>Phase mapping konsisten dengan Living Lab publik (<code>PHASE_LABELS_LL</code> di <code>living-lab.html</code>):</p>
 
   <div class="phase-cards">
-    <div class="phase-mini" style="border-color:#5a9080">
+    <div class="phase-mini" style="border-color:#7B9B7E">
       <span class="icon">🌱</span>
       <div class="lbl">Pre-Panen</div>
       <div class="win">Jan – Jun (Mei-Jun 2026 di-window)</div>
       <div class="pct-target">100%</div>
       <div class="pct-label">Target end-of-phase</div>
     </div>
-    <div class="phase-mini" style="border-color:#c14b3a">
+    <div class="phase-mini" style="border-color:#C66E5C">
       <span class="icon">☕</span>
       <div class="lbl">Panen</div>
       <div class="win">Jul – Sep (Ngantang shift)</div>
       <div class="pct-target">100%</div>
       <div class="pct-label">Target end-of-phase</div>
     </div>
-    <div class="phase-mini" style="border-color:#8b6914">
+    <div class="phase-mini" style="border-color:#C4906A">
       <span class="icon">🌿</span>
       <div class="lbl">Post-Panen</div>
       <div class="win">Okt</div>
       <div class="pct-target">100%</div>
       <div class="pct-label">Target end-of-phase</div>
     </div>
-    <div class="phase-mini" style="border-color:#3A5A75">
+    <div class="phase-mini" style="border-color:#5A8AA0">
       <span class="icon">🌧️</span>
       <div class="lbl">Awal MH</div>
       <div class="win">Nov – Des</div>
@@ -419,22 +430,22 @@ code {
   <h3>Sub-Component A — Tier Alignment (15% of total)</h3>
   <p>Quantifies adherence to SOP procedural standards:</p>
   <div class="status-grid">
-    <div class="status-row" style="background:#E8F4ED;border-left-color:#2D8466"><span class="pct" style="color:#0A3D2C">100%</span> Aligned — sesuai SOP penuh</div>
-    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">75%</span> Approximate — ~10% deviation acceptable</div>
-    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">50%</span> Substituted — metode alternatif (off-SOP)</div>
-    <div class="status-row" style="background:#FCE7F3;border-left-color:#EC4899"><span class="pct" style="color:#9D174D">30%</span> Partial — separuh eksekusi</div>
-    <div class="status-row" style="background:#FEE2E2;border-left-color:#C73E3E"><span class="pct" style="color:#7F1D1D">0%</span> Deviation — tidak comply</div>
+    <div class="status-row" style="background:#E8EFE9;border-left-color:#7B9B7E"><span class="pct" style="color:#5C7A5E">100%</span> Aligned — sesuai SOP penuh</div>
+    <div class="status-row" style="background:#F5EBE0;border-left-color:#C4906A"><span class="pct" style="color:#8B6914">75%</span> Approximate — ~10% deviation acceptable</div>
+    <div class="status-row" style="background:#F5EBE0;border-left-color:#C4906A"><span class="pct" style="color:#8B6914">50%</span> Substituted — metode alternatif (off-SOP)</div>
+    <div class="status-row" style="background:#F5E3DD;border-left-color:#C66E5C"><span class="pct" style="color:#A85645">30%</span> Partial — separuh eksekusi</div>
+    <div class="status-row" style="background:#F5E3DD;border-left-color:#C66E5C"><span class="pct" style="color:#A85645">0%</span> Deviation — tidak comply</div>
   </div>
 
   <h3>Sub-Component B — Convergence Status (10% of total) 🆕</h3>
   <p>NEW sejak v2.0: quantifies confidence level based on 4-way validation Trifecta SOP v2.1 (NGT + Puslitbang + Lampung BRMP + International Tier 1-5):</p>
   <div class="status-grid">
-    <div class="status-row" style="background:#E8F4ED;border-left-color:#2D8466"><span class="pct" style="color:#0A3D2C">100%</span> KONVERGEN PENUH / FREKUENSI — full validation</div>
-    <div class="status-row" style="background:#EDE9FE;border-left-color:#8B5CF6"><span class="pct" style="color:#5B21B6">100%</span> UNIK UNIVERSAL — Indonesia-unique, universally validated</div>
-    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">75%</span> KONVERGEN BASELINE — lower confidence baseline</div>
-    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">60%</span> DIVERGEN (Mg/Dosis/Paradigma) — perlu adaptasi lokal</div>
-    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">50%</span> KONVERGEN BAHAYA — flagged risk (e.g., pisang)</div>
-    <div class="status-row" style="background:#FEE2E2;border-left-color:#C73E3E"><span class="pct" style="color:#7F1D1D">30%</span> CRITICAL — perlu validation BRIN (Excelsa, Pestisida)</div>
+    <div class="status-row" style="background:#E8EFE9;border-left-color:#7B9B7E"><span class="pct" style="color:#5C7A5E">100%</span> KONVERGEN PENUH / FREKUENSI — full validation</div>
+    <div class="status-row" style="background:#EFE9F2;border-left-color:#A89BB8"><span class="pct" style="color:#6B5A85">100%</span> UNIK UNIVERSAL — Indonesia-unique, universally validated</div>
+    <div class="status-row" style="background:#F5EBE0;border-left-color:#C4906A"><span class="pct" style="color:#8B6914">75%</span> KONVERGEN BASELINE — lower confidence baseline</div>
+    <div class="status-row" style="background:#F5EBE0;border-left-color:#C4906A"><span class="pct" style="color:#8B6914">60%</span> DIVERGEN (Mg/Dosis/Paradigma) — perlu adaptasi lokal</div>
+    <div class="status-row" style="background:#F5EBE0;border-left-color:#C4906A"><span class="pct" style="color:#8B6914">50%</span> KONVERGEN BAHAYA — flagged risk (e.g., pisang)</div>
+    <div class="status-row" style="background:#F5E3DD;border-left-color:#C66E5C"><span class="pct" style="color:#A85645">30%</span> CRITICAL — perlu validation BRIN (Excelsa, Pestisida)</div>
   </div>
 
   <div class="callout">
@@ -578,7 +589,7 @@ code {
       <tr><td>Timing (tepat waktu MH)</td><td>100%</td><td>20%</td><td>20,0</td></tr>
       <tr><td>Cost (sesuai RAB)</td><td>100%</td><td>15%</td><td>15,0</td></tr>
       <tr><td>Documentation (lengkap)</td><td>100%</td><td>10%</td><td>10,0</td></tr>
-      <tr style="background:#E8F4ED;font-weight:800"><td colspan="3">TOTAL SCORE</td><td>96,0%</td></tr>
+      <tr style="background:#E8EFE9;font-weight:800"><td colspan="3">TOTAL SCORE</td><td>96,0%</td></tr>
     </tbody>
   </table>
   <div class="callout">
@@ -595,7 +606,7 @@ code {
       <tr><td>Timing</td><td>100%</td><td>20%</td><td>20,0</td></tr>
       <tr><td>Cost</td><td>100%</td><td>15%</td><td>15,0</td></tr>
       <tr><td>Documentation</td><td>100%</td><td>10%</td><td>10,0</td></tr>
-      <tr style="background:#FEE2E2;font-weight:800"><td colspan="3">TOTAL SCORE</td><td>85,5%</td></tr>
+      <tr style="background:#F5E3DD;font-weight:800"><td colspan="3">TOTAL SCORE</td><td>85,5%</td></tr>
     </tbody>
   </table>
   <div class="callout callout-warn">
@@ -610,7 +621,7 @@ code {
       <tr><td>Brocap trap baseline pilot</td><td>Mei</td><td>✅ Sudah</td><td>YA</td></tr>
       <tr><td>Babat rumput sanitasi</td><td>Mei</td><td>✅ Sudah</td><td>YA</td></tr>
       <tr><td>Petik selektif merah test</td><td>Jun</td><td>⏳ Belum (Jun belum mulai)</td><td>TIDAK (future)</td></tr>
-      <tr style="background:#E8F4ED;font-weight:800"><td colspan="3">Phase Score Pre-Panen Mei (3 sudah / 3 in-scope)</td><td>100%</td></tr>
+      <tr style="background:#E8EFE9;font-weight:800"><td colspan="3">Phase Score Pre-Panen Mei (3 sudah / 3 in-scope)</td><td>100%</td></tr>
     </tbody>
   </table>
   <div class="callout">
@@ -624,7 +635,7 @@ code {
     <thead><tr><th>Period</th><th>Strategy</th><th>Methodology Version</th><th>Apa yang Berlaku</th></tr></thead>
     <tbody>
       <tr><td>Okt 2023 – Mar 2026</td><td>📚 Strategy 1 (Lesson Learned)</td><td>v2.2 retroaktif</td><td>3 fase pra-formal (Inisiasi Nadzir 1, Nadzir Ke-2, RWI Era). Score per fase via audit dokumen.</td></tr>
-      <tr style="background:#EDE9FE;font-weight:600"><td>Mei 2026 onwards</td><td>🔍 Strategy 2 (Active Monitoring)</td><td>v2.2 phase-aware</td><td>4 fase fenologi cards. Live data dari SOP Kalender + Form Input. Phase score auto-recompute.</td></tr>
+      <tr style="background:#EFE9F2;font-weight:600"><td>Mei 2026 onwards</td><td>🔍 Strategy 2 (Active Monitoring)</td><td>v2.2 phase-aware</td><td>4 fase fenologi cards. Live data dari SOP Kalender + Form Input. Phase score auto-recompute.</td></tr>
       <tr><td>Quality Convergence sub-component</td><td>Both strategies</td><td>v2.0+ (since 16 Mei)</td><td>Convergence Status 10% apply untuk aktivitas yang punya <code>topik_v2</code> tag (19 topik A-S). Tanpa tag = N/A (Quality full 25% Tier Alignment).</td></tr>
     </tbody>
   </table>
@@ -683,11 +694,11 @@ code {
 
   <h3>🔍 Scoring Logic Documentation Dim</h3>
   <div class="status-grid">
-    <div class="status-row" style="background:#E8F4ED;border-left-color:#2D8466"><span class="pct" style="color:#0A3D2C">100%</span> All SOP-mandated docs delivered + readable</div>
-    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">70%</span> Docs delivered tapi incomplete (mis. partial lab result)</div>
-    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">50%</span> Docs ada tapi tidak readable / hilang sebagian</div>
-    <div class="status-row" style="background:#FEE2E2;border-left-color:#C73E3E"><span class="pct" style="color:#7F1D1D">0%</span> SOP-mandated docs missing entirely</div>
-    <div class="status-row" style="background:#F3F4F6;border-left-color:#9CA3AF"><span class="pct" style="color:#374151">N/A</span> Aktivitas tidak punya SOP-mandated doc → 100% (no penalty)</div>
+    <div class="status-row" style="background:#E8EFE9;border-left-color:#7B9B7E"><span class="pct" style="color:#5C7A5E">100%</span> All SOP-mandated docs delivered + readable</div>
+    <div class="status-row" style="background:#F5EBE0;border-left-color:#C4906A"><span class="pct" style="color:#8B6914">70%</span> Docs delivered tapi incomplete (mis. partial lab result)</div>
+    <div class="status-row" style="background:#F5EBE0;border-left-color:#C4906A"><span class="pct" style="color:#8B6914">50%</span> Docs ada tapi tidak readable / hilang sebagian</div>
+    <div class="status-row" style="background:#F5E3DD;border-left-color:#C66E5C"><span class="pct" style="color:#A85645">0%</span> SOP-mandated docs missing entirely</div>
+    <div class="status-row" style="background:#EFEAE0;border-left-color:#8FA0A8"><span class="pct" style="color:#3A4A55">N/A</span> Aktivitas tidak punya SOP-mandated doc → 100% (no penalty)</div>
   </div>
 
   <div class="callout callout-warn">
@@ -765,7 +776,7 @@ code {
 
 <section id="changes" class="changes-summary">
   <h2>📋 What's Changed — v2.2 FINAL Canonical Merge</h2>
-  <p style="font-size:20px;color:#5f4a3a;margin-bottom:15px"><strong>v2.2 FINAL menyatukan 3 update parallel 16-17 Mei 2026 jadi single source of truth:</strong></p>
+  <p style="font-size:20px;color:#5C4A30;margin-bottom:15px"><strong>v2.2 FINAL menyatukan 3 update parallel 16-17 Mei 2026 jadi single source of truth:</strong></p>
   <ul>
     <li><strong>Dari v2.0 (16 Mei)</strong> — 5-dimensi framework + Quality split (Tier Alignment 15% + Convergence 10%) + Documentation 10% redefined SOP-mandated only + prominent visual percentage cards.</li>
     <li><strong>Dari v2.1 (17 Mei pagi)</strong> — 2-strategy axis (Lesson Learned historikal + Active Monitoring forward) + phase-aware scoring per fase fenologi + 4 fase fenologi Living Lab aligned.</li>
