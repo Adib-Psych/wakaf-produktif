@@ -2265,17 +2265,24 @@ function renderDashboard() {
   document.getElementById('kpi-pohon').textContent = data.reduce((s,d)=>s+(+d.pohon||+d.jumlah_pohon||0),0);
 
   // SOP Compliance % — pakai getComplianceMetrics() (sumber sama dengan tab "SOP Compliance" + "SOP Kalender")
-  // Locked 17 Mei 2026: sebelumnya hitung per-entry flag (default 'compliant' → selalu 100% misleading).
-  // Sekarang ratio "items SOP sudah dikerjakan" vs "items in-scope" (exclude N/A pre-project).
+  // Locked 17 Mei 2026: ratio items SOP sudah dikerjakan vs in-scope.
+  // Updated 19 Mei 2026 sore: switch ke YTD formula (dueExcludingNa denominator + partial credit numerator)
+  // konsisten dengan tab SOP Compliance. Items future tidak masuk denominator.
   let compliancePct = null;
   let complianceTrend = 'Belum ada data';
   if (typeof getComplianceMetrics === 'function') {
     try {
       const m = getComplianceMetrics();
-      const inScope = m.total - (m.na || 0);
-      if (inScope > 0) {
-        compliancePct = Math.round((m.sudah / inScope) * 100);
-        complianceTrend = `${m.sudah}/${inScope} SOP items selesai` + (m.tidakSesuai > 0 ? ` · ${m.tidakSesuai} deviation` : '');
+      // YTD numerator: dueSudah (100%) + dueSedangCredit (progress fraction sum) + direncanakan/belum (0%)
+      const ytdCredit = (m.dueSudah || 0) + (m.dueSedangCredit || 0);
+      const ytdDenom = m.dueExcludingNa || 0;
+      if (ytdDenom > 0) {
+        compliancePct = Math.round((ytdCredit / ytdDenom) * 100);
+        const parts = [`${m.dueSudah || 0}✅`];
+        if (m.dueSedangBerjalan) parts.push(`${m.dueSedangBerjalan}🟡(${(m.dueSedangCredit || 0).toFixed(1)})`);
+        if (m.dueDirencanakan) parts.push(`${m.dueDirencanakan}📝`);
+        if (m.dueTidakSesuai) parts.push(`${m.dueTidakSesuai}⚠️`);
+        complianceTrend = `${parts.join(' + ')} dari ${ytdDenom} due (YTD) · annual ${m.total}`;
       }
     } catch(e) { console.warn('[KPI compliance] getComplianceMetrics failed:', e); }
   }
