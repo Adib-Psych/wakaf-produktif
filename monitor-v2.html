@@ -1214,7 +1214,7 @@
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px">
           <div style="flex:1;min-width:280px">
             <div style="font-size:11px;letter-spacing:2.5px;color:#D4AF37;font-weight:800;margin-bottom:6px">🌳 INVENTARISASI POHON · ESTIMASI 19 MEI 2026</div>
-            <div style="font-size:14px;color:#a8c8bc;line-height:1.5">Census akurat <strong style="color:#fff">sedang dilakukan</strong> Cak Yit menggunakan sistem tali rafia 2-warna (mulai 16 Mei). Angka di bawah = proyeksi dari survey baseline Adib (Oktober 2023) + decay model ~14%/yr (validated Mas Anto observation). File: <code style="background:rgba(255,255,255,.15);padding:1px 6px;border-radius:3px;color:#D4AF37">Baseline_List_Pohon_Kebun_Wakaf_NGT_Oktober2023.xlsx</code></div>
+            <div style="font-size:14px;color:#a8c8bc;line-height:1.5">Census akurat <strong style="color:#fff">sedang dilakukan</strong> Cak Yit menggunakan sistem tali rafia 2-warna (mulai 16 Mei). Angka di bawah = proyeksi dari survey baseline Adib (Oktober 2023) + decay model ~14%/yr (validated estimasi Wakif). File: <code style="background:rgba(255,255,255,.15);padding:1px 6px;border-radius:3px;color:#D4AF37">Baseline_List_Pohon_Kebun_Wakaf_NGT_Oktober2023.xlsx</code></div>
           </div>
           <div style="text-align:right">
             <div style="font-size:56px;font-weight:900;color:#fff;line-height:1">~915</div>
@@ -1242,7 +1242,7 @@
       <!-- ─── TIMELINE 2023 → 2026 → 2027 (data validated dari xlsx Adib 19 Mei 2026) ─── -->
       <div class="card">
         <div class="card-title"><span class="num">1</span>Timeline Populasi Kopi — Baseline 2023 → Target 2027</div>
-        <p style="font-size:11.5px;color:var(--mute);margin-bottom:14px">📁 Source: <code>Baseline_List_Pohon_Kebun_Wakaf_NGT_Oktober2023.xlsx</code> (Adib survey Okt 2023, validated 19 Mei 2026). Asumsi: compound decay <strong>~13-14%/tahun</strong> (implied dari validasi Mas Anto observation Mei 2026).</p>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:14px">📁 Source: <code>Baseline_List_Pohon_Kebun_Wakaf_NGT_Oktober2023.xlsx</code> (Adib survey Okt 2023, validated 19 Mei 2026). Asumsi: compound decay <strong>~13-14%/tahun</strong> (implied dari validasi estimasi Wakif Mei 2026).</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
           <div style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);padding:16px;border-radius:10px;border:1px solid #F59E0B;text-align:center">
             <div style="font-size:10px;letter-spacing:1.5px;color:#78350F;font-weight:800;margin-bottom:4px">📍 BASELINE</div>
@@ -1258,9 +1258,9 @@
           </div>
           <div style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);padding:16px;border-radius:10px;border:2px solid #2563EB;text-align:center;position:relative">
             <div style="position:absolute;top:-10px;right:8px;background:#2563EB;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:800;letter-spacing:.5px">🔥 KINI</div>
-            <div style="font-size:10px;letter-spacing:1.5px;color:#1E3A8A;font-weight:800;margin-bottom:4px">📊 OBSERVASI</div>
+            <div style="font-size:10px;letter-spacing:1.5px;color:#1E3A8A;font-weight:800;margin-bottom:4px">📊 ESTIMASI WAKIF</div>
             <div style="font-size:30px;font-weight:900;color:#1E3A8A">~915</div>
-            <div style="font-size:11px;color:#1E3A8A;font-weight:700">Mei 2026 (Mas Anto)</div>
+            <div style="font-size:11px;color:#1E3A8A;font-weight:700">Mei 2026 (Adib)</div>
             <div style="font-size:9px;color:#1E3A8A;margin-top:4px;font-style:italic;opacity:0.8">Validasi: gap 0,3% vs proyeksi ✓</div>
           </div>
           <div style="background:linear-gradient(135deg,#D1FAE5,#A7F3D0);padding:16px;border-radius:10px;border:1px solid #059669;text-align:center">
@@ -1271,7 +1271,7 @@
           </div>
         </div>
         <div style="margin-top:14px;padding:10px 14px;background:#F0FDF4;border-left:3px solid #16A34A;border-radius:6px;font-size:11px;color:#14532D;line-height:1.6">
-          💡 <strong>Decay rate ~14%/tahun di-derive dari data:</strong> 1.382 (Okt 2023) × 0,86^2,6 yr ≈ 912 → match dengan Mas Anto observation 915 (gap cuma 0,3%, dalam tolerance). Faktor attrition: kematian alami pohon tua (umur produktif 25-30 thn), tanaman mati hama/penyakit, pohon roboh angin, era T.A. RWI seleksi tidak terdokumentasi. Final count Cak Yit akan tighten range ini.
+          💡 <strong>Decay rate ~14%/tahun di-derive dari data:</strong> 1.382 (Okt 2023) × 0,86^2,6 yr ≈ 912 → match dengan estimasi Wakif (Adib) 915 (gap cuma 0,3%, dalam tolerance). Faktor attrition: kematian alami pohon tua (umur produktif 25-30 thn), tanaman mati hama/penyakit, pohon roboh angin, era T.A. RWI seleksi tidak terdokumentasi. Final count Cak Yit akan tighten range ini.
         </div>
       </div>
 
@@ -4459,40 +4459,32 @@ function renderInventoryChart() {
   renderInventoryKPI();
   const ctx = document.getElementById('chart-inventory');
   if (!ctx) return;
-  // PRODUCTION: compute dari STATE.laporan filter inventarisasi_pohon
-  const inv = (STATE.laporan || []).filter(r => r.kategori === 'inventarisasi_pohon');
-  // Group by bidang × kondisi (multi-kebun aware: distribute qty across kebun_list)
-  const bidangs = ['1','2','3','4'];
-  const counts = { produktif:[0,0,0,0], belum_produktif:[0,0,0,0], perlu_sulam:[0,0,0,0], belum_inventaris:[POHON_BASELINE.current,0,0,0] };
-  // Estimasi total per bidang dari config
-  const total = POHON_BASELINE.perBidang.slice();
-  inv.forEach(r => {
-    const idxs = getKebunIndices(r);
-    if (idxs.length === 0) return;
-    const qtyTotal = +r.pohon || 1;
-    const qtyPerKebun = qtyTotal / idxs.length;  // Distribute across multi-kebun
-    const k = (r.kondisi || 'produktif').replace(/-/g,'_');
-    idxs.forEach(bIdx => {
-      if (counts[k]) counts[k][bIdx] += qtyPerKebun;
-    });
-  });
-  // Compute belum_inventaris = total - sum others
-  bidangs.forEach((b, i) => {
-    const sumOther = counts.produktif[i] + counts.belum_produktif[i] + counts.perlu_sulam[i];
-    counts.belum_inventaris[i] = Math.max(0, total[i] - sumOther);
-  });
-  new Chart(ctx, {
+  // Repurposed 19 Mei 2026 malam (per Adib): tampilkan komposisi Kopi vs Non-Kopi baseline Oktober 2023
+  // Source: Baseline_List_Pohon_Kebun_Wakaf_NGT_Oktober2023.xlsx (Adib survey)
+  // Visual baru — bukan progress census, tapi snapshot komposisi 2023 yang validate dari xlsx
+  if (window._inventoryChart) { try { window._inventoryChart.destroy(); } catch(e){} }
+  const kopi = POHON_BASELINE.baseline2023_kopi || [150, 623, 397, 212];
+  const nonkopi = POHON_BASELINE.baseline2023_nonkopi || [22, 74, 42, 28];
+  window._inventoryChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: ['Kebun 1 (pinggir jalan, kecil)','Kebun 2 (pinggir jalan, besar)','Kebun 3 (bawah)','Kebun 4 (belakang Rumah)'],
       datasets: [
-        { label: 'Produktif', data: counts.produktif, backgroundColor: '#5a9080' },
-        { label: 'Belum Produktif', data: counts.belum_produktif, backgroundColor: '#a8c8bc' },
-        { label: 'Perlu Sulam', data: counts.perlu_sulam, backgroundColor: '#c14b3a' },
-        { label: 'Belum Inventaris (estimasi)', data: counts.belum_inventaris, backgroundColor: '#e8dec8' }
+        { label: '☕ Kopi (baseline Okt 2023)', data: kopi, backgroundColor: '#6b3a1f', borderColor: '#4a2812', borderWidth: 1 },
+        { label: '🌳 Non-Kopi (shade + sekunder)', data: nonkopi, backgroundColor: '#5a9080', borderColor: '#1f5f47', borderWidth: 1 }
       ]
     },
-    options: { responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }, plugins: { legend: { position: 'bottom' } } }
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { stacked: true },
+        y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Jumlah Pohon (Okt 2023)' } }
+      },
+      plugins: {
+        legend: { position: 'bottom' },
+        title: { display: true, text: 'Komposisi Pohon per Kebun — Baseline Adib Survey Oktober 2023', font: { size: 13, weight: '600' } }
+      }
+    }
   });
 }
 
@@ -8924,10 +8916,10 @@ function getDetailText(d) {
 // 2023 Baseline NON-KOPI (shade + sekunder: durian, kelapa, lamtoro, petai, rambutan, suren, waru, dll):
 //   K1: 22 · K2: 74 · K3: 42 · K4: 28 = TOTAL 166 pohon non-kopi
 //
-// Derived: decay rate ~13-14%/yr (1.382 × 0.86^2.6 ≈ 915 = Mas Anto Mei 2026 observation)
-//   2026 projected KOPI per kebun: K1:~99 · K2:~411 · K3:~262 · K4:~140 = ~912 (close to Anto 915)
+// Derived: decay rate ~13-14%/yr (1.382 × 0.86^2.6 ≈ 915 = Wakif estimation Mei 2026)
+//   2026 projected KOPI per kebun: K1:~99 · K2:~411 · K3:~262 · K4:~140 = ~912 (match Wakif 915)
 //
-// Pre-selection (Mei-Sep 2026): ~915 phn estimasi (validated Mas Anto observation)
+// Pre-selection (Mei-Sep 2026): ~915 phn estimasi (Wakif Adib personal estimation)
 // Post-selection (Oct 2026 onwards): 750 phn target (jarak 3 × 2,5 m di 0,49 ha)
 // Update POHON_BASELINE.current → 750 setelah seleksi pohon pasca-panen 2026 selesai
 const POHON_BASELINE = {
