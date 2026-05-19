@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════════════
+  CANONICAL METHODOLOGY — Compliance Methodology v2.2 FINAL
+  ════════════════════════════════════════════════════════════════════════════════
+  Last update: 18 Mei 2026 (locked v2.2 FINAL)
+  Source: SOP/05_ASET_KNOWLEDGE/Analisa_Compliance_Methodology_v2.2_18Mei2026.html
+  Public URL: https://adib-psych.github.io/wakaf-produktif/methodology-compliance.html
+  Referenced from: living-lab.html Annual Compliance widget (Tier 3 footer)
+
+  UPDATE PROTOCOL — saat ada revisi v2.3+:
+  1. Replace seluruh content file ini dari source SOP/05_ASET_KNOWLEDGE/
+  2. Bump "Last update" date di comment block ini
+  3. URL TIDAK BERUBAH (methodology-compliance.html) — supaya semua referrer tetap valid
+  4. Versi sebelumnya archived ke SOP/99_ARCHIVE/ untuk audit trail evolusi metodologi
+
+  Schema reference:
+  - 5-dimensi: Coverage 30% + Quality 25% (Tier Alignment 15% + Convergence 10%)
+                + Timing 20% + Cost 15% + Documentation 10% (SOP-mandated only)
+  - 2-strategy: Strategy 1 Lesson Learned (historikal Okt 2023-31 Mar 2026)
+                + Strategy 2 Active Monitoring (1 Apr 2026 forward, phase-aware)
+  - Multi-Factor Timing: 4-tier (STRICT/MODERATE/FLEXIBLE/EVENT-DRIVEN) + ENSO NOAA ONI
+  ════════════════════════════════════════════════════════════════════════════════
+-->
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aset Knowledge — Methodology Compliance v2.2 (Canonical — Phase-Aware + 5-Dim Detail)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --eucalyptus-1: #0A3D2C;
+  --eucalyptus-2: #1F5F47;
+  --eucalyptus-3: #2D8466;
+  --eucalyptus-5: #A8D5BD;
+  --eucalyptus-6: #E8F4ED;
+  --cherry-1: #8B1A1A;
+  --cherry-2: #C73E3E;
+  --cherry-3: #FDE2DC;
+  --amber-1: #B45309;
+  --amber-2: #F59E0B;
+  --amber-4: #FEF3C7;
+  --gold: #8b6914;
+  --gold-bg: #FFF8E5;
+  --purple-1: #5B21B6;
+  --purple-2: #8B5CF6;
+  --purple-3: #DDD6FE;
+  --gray-1: #111827;
+  --gray-2: #374151;
+  --gray-3: #6B7280;
+  --gray-5: #F3F4F6;
+  --gray-6: #F9FAFB;
+  --white: #FFFFFF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: var(--gray-1);
+  background: linear-gradient(135deg, var(--eucalyptus-6) 0%, var(--gray-6) 100%);
+  min-height: 100vh;
+  line-height: 1.6;
+  padding: 36px 24px;
+}
+.container { max-width: 1800px; margin: 0 auto; }
+
+.header {
+  background: linear-gradient(135deg, var(--eucalyptus-1) 0%, var(--eucalyptus-2) 60%, var(--purple-1) 100%);
+  color: var(--white);
+  padding: 54px 54px;
+  border-radius: 21px;
+  margin-bottom: 36px;
+  border-bottom: 6px solid var(--gold);
+}
+.header-meta { font-size: 16px; font-weight: 700; letter-spacing: 3.8px; text-transform: uppercase; opacity: 0.85; margin-bottom: 12px; }
+.header h1 { font-size: 42px; font-weight: 800; line-height: 1.2; margin-bottom: 15px; }
+.header p { font-size: 21px; opacity: 0.9; max-width: 1350px; line-height: 1.7; }
+.version-badge {
+  display: inline-block; background: rgba(255,255,255,0.18); border: 2px solid rgba(255,255,255,0.3);
+  padding: 6px 18px; border-radius: 9px; font-size: 16px; font-weight: 700; margin-top: 18px; letter-spacing: 2px;
+}
+
+.section {
+  background: var(--white); border-radius: 18px; padding: 36px 42px; margin-bottom: 27px;
+  box-shadow: 0 3px 18px rgba(10,61,44,0.05); border-left: 8px solid var(--eucalyptus-3);
+}
+.section h2 {
+  font-size: 30px; font-weight: 800; color: var(--eucalyptus-1); margin-bottom: 21px;
+  padding-bottom: 15px; border-bottom: 3px solid var(--eucalyptus-5);
+}
+.section h3 { font-size: 22px; font-weight: 700; color: var(--gray-1); margin-top: 24px; margin-bottom: 12px; }
+.section p { font-size: 20px; color: var(--gray-2); margin-bottom: 15px; line-height: 1.7; }
+
+.changes-summary {
+  background: linear-gradient(135deg, var(--gold-bg) 0%, #FFFAF0 100%);
+  border-left: 8px solid var(--gold); border-radius: 0 18px 18px 0; padding: 30px 36px; margin-bottom: 27px;
+}
+.changes-summary h2 { color: var(--gold); border-bottom: 2px dashed var(--gold); padding-bottom: 12px; margin-bottom: 18px; }
+.changes-summary ul { padding-left: 30px; }
+.changes-summary li { margin-bottom: 9px; font-size: 20px; color: var(--gray-2); line-height: 1.6; }
+
+table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 20px; }
+th { background: var(--eucalyptus-2); color: var(--white); padding: 15px 18px; text-align: left; font-weight: 700; font-size: 16px; letter-spacing: 0.8px; text-transform: uppercase; }
+td { padding: 15px 18px; border-bottom: 2px solid var(--gray-5); vertical-align: top; }
+tr:nth-child(even) td { background: var(--gray-6); }
+tr:hover td { background: var(--eucalyptus-6); }
+
+.dimension-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px; margin: 24px 0;
+}
+.dim-card {
+  background: var(--white); border-top: 6px solid var(--eucalyptus-3); border-radius: 12px;
+  padding: 21px 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+.dim-card.split { border-top-color: var(--purple-2); background: linear-gradient(to bottom, var(--purple-3) 0%, var(--white) 12%); }
+.dim-card .dim-label { font-size: 15px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-3); }
+.dim-card .dim-weight { font-size: 48px; font-weight: 800; color: var(--gray-1); line-height: 1; }
+.dim-card .dim-name { font-size: 20px; font-weight: 700; color: var(--gray-2); margin-top: 6px; }
+.dim-card .dim-desc { font-size: 16px; color: var(--gray-3); margin-top: 9px; line-height: 1.5; }
+
+.strategy-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 21px 0;
+}
+@media (max-width:1080px){.strategy-grid{grid-template-columns:1fr}}
+.strategy-card {
+  border: 3px solid var(--gray-5); border-radius: 15px; padding: 24px 27px; background: var(--white);
+}
+.strategy-card.s1 { border-color: var(--gold); background: var(--gold-bg); }
+.strategy-card.s2 { border-color: var(--eucalyptus-3); background: var(--eucalyptus-6); }
+.strategy-tag {
+  display: inline-block; padding: 3px 12px; border-radius: 15px; font-size: 15px; font-weight: 800;
+  letter-spacing: 2px; margin-bottom: 9px; text-transform: uppercase;
+}
+.strategy-card.s1 .strategy-tag { background: var(--gold); color: white; }
+.strategy-card.s2 .strategy-tag { background: var(--eucalyptus-3); color: white; }
+.strategy-card .meta-line { font-size: 16px; color: var(--gray-3); margin-top: 9px; font-style: italic; }
+
+.phase-cards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: 18px; margin: 21px 0;
+}
+.phase-mini {
+  padding: 21px 24px; border-radius: 15px; border: 3px solid var(--gray-5);
+  background: var(--white); font-size: 18px;
+}
+.phase-mini .icon { font-size: 33px; }
+.phase-mini .lbl { font-weight: 800; margin-top: 9px; color: var(--eucalyptus-1); font-size: 21px; }
+.phase-mini .win { color: var(--gray-3); font-size: 16px; margin-top: 6px; }
+.phase-mini .pct-target { font-size: 36px; font-weight: 800; color: var(--eucalyptus-2); margin-top: 12px; line-height: 1; }
+.phase-mini .pct-label { font-size: 15px; color: var(--gray-3); letter-spacing: 0.8px; text-transform: uppercase; margin-top: 3px; }
+
+.status-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 15px; margin: 18px 0;
+}
+.status-row {
+  display: flex; align-items: center; gap: 15px; padding: 15px 21px;
+  border-radius: 12px; border-left: 6px solid; font-size: 18px;
+}
+.status-row .pct { font-weight: 800; font-size: 24px; min-width: 75px; }
+
+.callout {
+  background: var(--eucalyptus-6); border-left: 6px solid var(--eucalyptus-3); border-radius: 0 12px 12px 0;
+  padding: 18px 24px; margin: 18px 0; font-size: 18px; line-height: 1.7; color: var(--gray-2);
+}
+.callout strong { color: var(--eucalyptus-1); }
+.callout-warn { background: var(--amber-4); border-left-color: var(--amber-2); }
+.callout-warn strong { color: var(--amber-1); }
+.callout-critical { background: var(--cherry-3); border-left-color: var(--cherry-2); }
+.callout-critical strong { color: var(--cherry-1); }
+
+.formula {
+  background: #F9F8F4; border: 2.2px solid #E5DECC; border-radius: 9px;
+  padding: 18px 24px; font-family: 'SF Mono', Monaco, monospace; font-size: 20px;
+  font-weight: 600; color: var(--eucalyptus-1); margin: 18px 0; line-height: 1.6;
+}
+
+code {
+  background: var(--gray-5); color: var(--cherry-1); padding: 3px 9px; border-radius: 6px;
+  font-family: 'SF Mono', Monaco, monospace; font-size: 16px;
+}
+
+.toc {
+  background: linear-gradient(135deg, var(--purple-3) 0%, #F5F1FF 100%);
+  border-radius: 18px; padding: 27px 33px; margin-bottom: 27px;
+  border-left: 8px solid var(--purple-2);
+}
+.toc h3 { color: var(--purple-1); margin-bottom: 12px; font-size: 21px; }
+.toc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); gap: 9px; font-size: 18px; }
+.toc-grid a { color: var(--purple-1); text-decoration: none; padding: 6px 12px; border-radius: 6px; transition: background 0.15s; }
+.toc-grid a:hover { background: rgba(91,33,182,0.1); }
+
+.footer {
+  margin-top: 48px; padding: 30px 42px; background: var(--white); border-radius: 18px;
+  font-size: 16px; color: var(--gray-3); text-align: center; border-top: 4px solid var(--cherry-2);
+  line-height: 1.7;
+}
+.footer strong { color: var(--gray-1); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="header">
+  <div class="header-meta">📐 ASET KNOWLEDGE · CANONICAL METHODOLOGY</div>
+  <h1>Compliance Methodology v2.2 — FINAL Canonical (Phase-Aware + 5-Dim + Multi-Factor Timing)</h1>
+  <p>Dokumen acuan tunggal untuk SOP Compliance scoring di Wakaf Produktif Kebun Kopi Ngantang. v2.2 FINAL menyatukan <strong>tiga update bersamaan 16-17 Mei 2026</strong>: (1) 5-dimensi framework + Quality split dari v2.0, (2) 2-strategy axis + phase-aware scoring dari v2.1, dan (3) Multi-Factor Timing engine + 4-tier classification + ENSO integration dari v2.2 timing addendum. Supersede v1.0, v2.0, v2.1, dan v2.2 intermediate drafts — semua tetap arsipkan untuk audit trail evolusi metodologi.</p>
+  <div class="version-badge">v2.2 FINAL · 18 MEI 2026 · CANONICAL · MERGED v2.0 + v2.1 + v2.2-TIMING</div>
+</header>
+
+<nav class="toc">
+  <h3>📑 Daftar Isi</h3>
+  <div class="toc-grid">
+    <a href="#five-dim">📐 5-Dimensi Framework</a>
+    <a href="#two-strategy">🎯 Two-Strategy Framework</a>
+    <a href="#strategy1">📚 Strategy 1: Lesson Learned</a>
+    <a href="#strategy2">🔍 Strategy 2: Active Monitoring</a>
+    <a href="#phase-fenologi">🌱 4 Fase Fenologi</a>
+    <a href="#quality-split">⚡ Quality Dimension Split</a>
+    <a href="#multi-factor-timing">⏱️ Multi-Factor Timing Engine</a>
+    <a href="#tier-classification">🎚️ 4-Tier Classification</a>
+    <a href="#dual-kpi">📊 Dual KPI Display</a>
+    <a href="#examples">🧮 Contoh Perhitungan</a>
+    <a href="#boundary">📅 Boundary Apply</a>
+    <a href="#integration">🔄 Living Lab Integration</a>
+    <a href="#documentation">📷 Documentation Definition</a>
+    <a href="#external-refs">📚 External Reference Anchors</a>
+    <a href="#implementation">📋 Implementation Detail</a>
+    <a href="#changes">📋 What's Changed → v2.2 FINAL</a>
+  </div>
+</nav>
+
+<section id="five-dim" class="section">
+  <h2>📐 5-Dimensi Framework (Berlaku Both Strategy)</h2>
+  <p>Kedua strategy (Lesson Learned + Active Monitoring) pakai <strong>5-dimensi yang sama</strong> untuk scoring. Yang berbeda hanya scope: Strategy 1 retroaktif total, Strategy 2 per-fase live.</p>
+
+  <div class="dimension-grid">
+    <div class="dim-card">
+      <div class="dim-label">Dim 1</div>
+      <div class="dim-weight">30%</div>
+      <div class="dim-name">Coverage</div>
+      <div class="dim-desc">% aktivitas SOP yang ter-eksekusi (sudah/total dalam fase)</div>
+    </div>
+    <div class="dim-card split">
+      <div class="dim-label">Dim 2 ⚡ SPLIT</div>
+      <div class="dim-weight">25%</div>
+      <div class="dim-name">Quality</div>
+      <div class="dim-desc"><strong>15%</strong> Tier Alignment +<br><strong>10%</strong> Convergence Status</div>
+    </div>
+    <div class="dim-card" style="border-top-color:var(--amber-2);background:linear-gradient(to bottom,var(--amber-4) 0%,var(--white) 12%)">
+      <div class="dim-label" style="color:var(--amber-1)">Dim 3 ⏱️ MULTI-FACTOR</div>
+      <div class="dim-weight">20%</div>
+      <div class="dim-name">Timing</div>
+      <div class="dim-desc"><strong>Multi-factor</strong>: 4-tier × tolerance × ENSO × graduated penalty. Lihat section dedicated.</div>
+    </div>
+    <div class="dim-card">
+      <div class="dim-label">Dim 4</div>
+      <div class="dim-weight">15%</div>
+      <div class="dim-name">Cost Effective</div>
+      <div class="dim-desc">Efisiensi biaya vs RAB Final per fase</div>
+    </div>
+    <div class="dim-card">
+      <div class="dim-label">Dim 5 📷 SOP-MANDATED</div>
+      <div class="dim-weight">10%</div>
+      <div class="dim-name">Documentation</div>
+      <div class="dim-desc"><strong>SOP-mandated outputs only</strong> (OPT data + lot tracking + soil test + dll). BUKAN foto/voice umum.</div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Total 5-dim = 100%</strong> per fase (Strategy 2) atau per periode pra-formal (Strategy 1). Aggregate YTD = average tertimbang dari per-fase score.
+  </div>
+</section>
+
+<section id="two-strategy" class="section">
+  <h2>🎯 Two-Strategy Framework</h2>
+  <p>Compliance analytics dipisahkan ke 2 axis dengan tujuan & timeline berbeda. Konteks: SOP Robusta Edisi 2 Kementan resmi diadopsi Mei 2026 — sebelumnya kebun melalui 3 fase pengelolaan pra-formal yang perlu di-audit retroaktif.</p>
+
+  <div class="strategy-grid">
+    <div class="strategy-card s1">
+      <div class="strategy-tag">📚 Strategy 1</div>
+      <h3>Lesson Learned (Historikal)</h3>
+      <p style="font-size:20px;color:#5f4a3a;margin-top:9px"><strong>Tujuan:</strong> Akuntabilitas + dokumentasi pelajaran dari 3 fase pengelolaan pra-formal SOP.</p>
+      <p style="font-size:20px;color:#5f4a3a"><strong>Periode:</strong> Okt 2023 – 31 Mar 2026 (akhir era T.A. RWI).</p>
+      <p style="font-size:20px;color:#5f4a3a"><strong>Sumber data:</strong> Manual audit retroaktif Wakif terhadap dokumen tiap fase.</p>
+      <p style="font-size:20px;color:#5f4a3a"><strong>Nature:</strong> Static — locked once filled.</p>
+      <p style="font-size:20px;color:#5f4a3a"><strong>Display:</strong> 3 hero cards per fase di SOP Compliance tab.</p>
+      <div class="meta-line">Score ≠ KPI operasional. Buat lesson + transparansi ke publik (donor, BRIN, komunitas).</div>
+    </div>
+
+    <div class="strategy-card s2">
+      <div class="strategy-tag">🔍 Strategy 2</div>
+      <h3>Active Monitoring (Forward)</h3>
+      <p style="font-size:20px;color:#1A4030;margin-top:9px"><strong>Tujuan:</strong> Real-time M&E — perbaikan cepat saat ada item tidak sesuai SOP, sebelum fase berikutnya.</p>
+      <p style="font-size:20px;color:#1A4030"><strong>Periode:</strong> 1 Mei 2026 onwards.</p>
+      <p style="font-size:20px;color:#1A4030"><strong>Sumber data:</strong> Live status SOP Kalender + Form Input tim lapangan.</p>
+      <p style="font-size:20px;color:#1A4030"><strong>Nature:</strong> Dinamis — auto-recompute per status change.</p>
+      <p style="font-size:20px;color:#1A4030"><strong>Display:</strong> 4 phase cards fenologi + fase berjalan HERO.</p>
+      <div class="meta-line">100% achievable di akhir setiap fase. Tidak perlu tunggu 1 tahun penuh untuk sinyal perbaikan.</div>
+    </div>
+  </div>
+</section>
+
+<section id="strategy1" class="section" style="border-left-color:var(--gold)">
+  <h2 style="color:var(--gold)">📚 Strategy 1 — Lesson Learned (Historikal Compliance)</h2>
+
+  <h3>3 Fase Pengelolaan Pra-Formal SOP</h3>
+  <p>Sebelum SOP Robusta Edisi 2 Kementan resmi diadopsi Mei 2026, kebun Ngantang melalui 3 fase pengelolaan dengan lembaga nadzir yang berbeda. Lesson learned diperlukan untuk akuntabilitas dan setup ekspektasi mitra masa depan.</p>
+
+  <table>
+    <thead><tr><th>Fase</th><th>Periode</th><th>Lembaga</th><th>Score (current placeholder)</th><th>Status Audit</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Fase 2</strong> — Inisiasi Nadzir 1</td><td>Okt 2023 – Mar 2024 (~6 bln)</td><td>Wakif & Calon Nadzir Awal</td><td>12% (sparse data)</td><td>⚠️ Placeholder</td></tr>
+      <tr><td><strong>Fase 3</strong> — Nadzir Ke-2</td><td>Apr 2024 – Okt 2025 (~19 bln)</td><td>Lembaga Nadzir kedua</td><td>16%</td><td>⚠️ Placeholder</td></tr>
+      <tr><td><strong>Fase 4</strong> — RWI Era</td><td>Nov 2025 – 31 Mar 2026 (~6 bln)</td><td>RWI + T.A.</td><td>40% (pilot audited Jan)</td><td>📊 Partial audited</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Methodology Score Retroaktif</h3>
+  <div class="formula">
+    Score(fase) = Σ (item × weight × match_score) / Σ (item × weight)<br>
+    <span style="color:var(--gray-3);font-size:16px">match_score: 100% (sesuai SOP) · 50% (substituted/approximate) · 0% (tidak ada)</span><br>
+    <span style="color:var(--gray-3);font-size:16px">weight: wajib 3× · rekomendasi 2× · rutin 1×</span>
+  </div>
+
+  <div class="callout">
+    <strong>📋 Filosofi Strategy 1:</strong> Score historikal <em>tidak</em> dimaksudkan sebagai blaming era sebelumnya. Tujuan utama adalah:
+    <ol style="margin-top:9px;padding-left:30px">
+      <li>Akuntabilitas — angka konkret untuk laporan ke umat/donor</li>
+      <li>Pelajaran — pattern apa yang konsisten miss (mis. brand substitution tanpa BRIN consultation di era RWI)</li>
+      <li>Baseline calibration — tahu starting point sebelum SOP formal sehingga improvement Mei 2026+ punya konteks</li>
+    </ol>
+  </div>
+
+  <h3>Lesson Learned Insights — Era Pra-Formal</h3>
+  <p>3 pola yang muncul dari Fase 2-3-4 (untuk dihindari di era Self-Managed):</p>
+  <ol style="padding-left:30px;font-size:20px;color:var(--gray-1);line-height:1.7">
+    <li><strong>Sparse documentation</strong> — output panen tercatat (KG-level) tapi proses agronomi tidak tracked. Lesson: <em>minimal viable daily log adalah baseline akuntabilitas</em>.</li>
+    <li><strong>Brand substitution tanpa BRIN consultation</strong> — premium brands (NPK Yaramila, Karate Plus Boron, Fish Extract) substitute SOP BRIN spec (Urea + SP-36 + KCl + Kieserit + Dolomit). Lesson: <em>substitusi merk → lock di MoU baru kalau memang necessary, jangan asumsi setara</em>.</li>
+    <li><strong>Tidak ada SOP-level tracking</strong> — output (panen 281 KG) ≠ compliance tinggi karena tidak ada systematic per-aktivitas check. Lesson: <em>monitor process-level, bukan hanya output</em>.</li>
+  </ol>
+</section>
+
+<section id="strategy2" class="section">
+  <h2>🔍 Strategy 2 — Active Monitoring (Phase-Aware Scoring)</h2>
+
+  <h3 id="phase-fenologi">4 Fase Fenologi Reference (Living Lab Aligned)</h3>
+  <p>Phase mapping konsisten dengan Living Lab publik (<code>PHASE_LABELS_LL</code> di <code>living-lab.html</code>):</p>
+
+  <div class="phase-cards">
+    <div class="phase-mini" style="border-color:#5a9080">
+      <span class="icon">🌱</span>
+      <div class="lbl">Pre-Panen</div>
+      <div class="win">Jan – Jun (Mei-Jun 2026 di-window)</div>
+      <div class="pct-target">100%</div>
+      <div class="pct-label">Target end-of-phase</div>
+    </div>
+    <div class="phase-mini" style="border-color:#c14b3a">
+      <span class="icon">☕</span>
+      <div class="lbl">Panen</div>
+      <div class="win">Jul – Sep (Ngantang shift)</div>
+      <div class="pct-target">100%</div>
+      <div class="pct-label">Target end-of-phase</div>
+    </div>
+    <div class="phase-mini" style="border-color:#8b6914">
+      <span class="icon">🌿</span>
+      <div class="lbl">Post-Panen</div>
+      <div class="win">Okt</div>
+      <div class="pct-target">100%</div>
+      <div class="pct-label">Target end-of-phase</div>
+    </div>
+    <div class="phase-mini" style="border-color:#3A5A75">
+      <span class="icon">🌧️</span>
+      <div class="lbl">Awal MH</div>
+      <div class="win">Nov – Des</div>
+      <div class="pct-target">100%</div>
+      <div class="pct-label">Target end-of-phase</div>
+    </div>
+  </div>
+
+  <h3>Scoring Formula (Per Fase)</h3>
+  <div class="formula">
+    Phase Score = (sudah ÷ items_due_so_far_excluding_NA) × 100%<br>
+    <span style="color:var(--gray-3);font-size:16px">items_due_so_far = items yang seharusnya sudah dikerjakan di bulan ≤ bulan berjalan, dalam fase tsb</span>
+  </div>
+
+  <h3>Kenapa Bukan Linear YTD?</h3>
+  <p>Methodology lama (pre-v2.1) hitung: <code>compliance% = items_sudah ÷ items_total_kalender_YTD</code>. Masalah:</p>
+  <div class="callout callout-warn">
+    <strong>⚠️ Anti-pattern linear YTD:</strong> Items pre-panen sedikit (~15) tapi pre-panen pendek (Mei-Jul 3 bulan); items pemupukan MH banyak (~20) tapi MH-nya November. Hasilnya: di Mei-Jul score akan stuck rendah meski semua pre-panen items sudah selesai, karena denominator = total 60 items setahun. Wakif <strong>tidak akan dapat sinyal perbaikan</strong> sampai akhir tahun.
+  </div>
+  <p>Phase-aware fixes ini: per-fase punya score sendiri yang mature di akhir window-nya. Pre-panen 100% achievable bulan Juli (saat fase selesai), bukan Maret tahun depan.</p>
+
+  <h3>Active Monitoring Window</h3>
+  <p>Baseline = <code>ACTIVE_MONITORING_START = { year: 2026, month: 5 }</code>. Bulan sebelum Mei 2026 tidak masuk denominator (handled oleh Strategy 1 / Hero Historikal). Phase berjalan dihitung dari intersect (bulan berjalan ∈ fase X).</p>
+
+  <h3>Status Klasifikasi per Item</h3>
+  <table>
+    <thead><tr><th>Status</th><th>Visual</th><th>Bobot Score</th><th>Trigger</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Sudah</strong></td><td>✅ Hijau</td><td>100% credit</td><td>Wakif klik di SOP Kalender atau auto-detect dari Form Input</td></tr>
+      <tr><td><strong>Tidak Sesuai</strong></td><td>⚠️ Merah</td><td>0% credit (deviation)</td><td>Wakif klik + tulis catatan kenapa deviation</td></tr>
+      <tr><td><strong>Belum</strong></td><td>⏳ Abu-abu</td><td>0% credit</td><td>Default status — belum dieksekusi</td></tr>
+      <tr><td><strong>N/A</strong></td><td>🔒 Locked</td><td>Exclude dari denominator</td><td>Item tidak applicable (mis. pemupukan kalau soil test baru ke detail)</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout callout-critical">
+    <strong>🚨 Action item highlighting:</strong> Items yang status = "Belum" dan bulan sudah lewat (overdue) → highlight merah di phase detail card. Items "Tidak Sesuai" → require catatan deviation untuk audit trail. Ini channel utama untuk perbaikan cepat — bukan tunggu year-end review.
+  </div>
+</section>
+
+<section id="quality-split" class="section">
+  <h2>⚡ Quality Dimension Split (Detail)</h2>
+
+  <h3>Sub-Component A — Tier Alignment (15% of total)</h3>
+  <p>Quantifies adherence to SOP procedural standards:</p>
+  <div class="status-grid">
+    <div class="status-row" style="background:#E8F4ED;border-left-color:#2D8466"><span class="pct" style="color:#0A3D2C">100%</span> Aligned — sesuai SOP penuh</div>
+    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">75%</span> Approximate — ~10% deviation acceptable</div>
+    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">50%</span> Substituted — metode alternatif (off-SOP)</div>
+    <div class="status-row" style="background:#FCE7F3;border-left-color:#EC4899"><span class="pct" style="color:#9D174D">30%</span> Partial — separuh eksekusi</div>
+    <div class="status-row" style="background:#FEE2E2;border-left-color:#C73E3E"><span class="pct" style="color:#7F1D1D">0%</span> Deviation — tidak comply</div>
+  </div>
+
+  <h3>Sub-Component B — Convergence Status (10% of total) 🆕</h3>
+  <p>NEW sejak v2.0: quantifies confidence level based on 4-way validation Trifecta SOP v2.1 (NGT + Puslitbang + Lampung BRMP + International Tier 1-5):</p>
+  <div class="status-grid">
+    <div class="status-row" style="background:#E8F4ED;border-left-color:#2D8466"><span class="pct" style="color:#0A3D2C">100%</span> KONVERGEN PENUH / FREKUENSI — full validation</div>
+    <div class="status-row" style="background:#EDE9FE;border-left-color:#8B5CF6"><span class="pct" style="color:#5B21B6">100%</span> UNIK UNIVERSAL — Indonesia-unique, universally validated</div>
+    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">75%</span> KONVERGEN BASELINE — lower confidence baseline</div>
+    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">60%</span> DIVERGEN (Mg/Dosis/Paradigma) — perlu adaptasi lokal</div>
+    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">50%</span> KONVERGEN BAHAYA — flagged risk (e.g., pisang)</div>
+    <div class="status-row" style="background:#FEE2E2;border-left-color:#C73E3E"><span class="pct" style="color:#7F1D1D">30%</span> CRITICAL — perlu validation BRIN (Excelsa, Pestisida)</div>
+  </div>
+
+  <div class="callout">
+    <strong>Aturan Kombinasi:</strong> Quality final = (Tier Alignment × 0.60) + (Convergence Status × 0.40). Atau lebih simple: Tier kontribusi 15 poin max + Convergence 10 poin max → total 25 poin max dalam Quality 25%.
+  </div>
+</section>
+
+<section id="multi-factor-timing" class="section" style="border-left-color:var(--amber-2)">
+  <h2 style="color:var(--amber-1)">⏱️ Multi-Factor Timing Engine</h2>
+  <p>Timing 20% sekarang <strong>multi-factor</strong>, bukan simple binary "ada/belum". Function <code>computeTimingScore(item, status, bulanItem, currentMonth, currentYear, isLaNina)</code> di <code>monitor-v2.html</code> compute per-item score 0-100 dengan 5 faktor:</p>
+
+  <h3>Factor 1: Tier Criticality</h3>
+  <p>Determined by <code>getTimingTier(item)</code> — explicit tag <code>timing_tier</code> atau auto-classify via pattern matching. Default fallback: <strong>flexible</strong> untuk items new/un-tagged.</p>
+
+  <h3>Factor 2: Days Late Calculation</h3>
+  <div class="formula">
+    dueDate = mid-month (day 15) of item's bulan<br>
+    daysLate = max(0, today − dueDate) in days
+  </div>
+
+  <h3>Factor 3: Tolerance Window (ENSO-adjusted)</h3>
+  <table>
+    <thead><tr><th>Tier</th><th>Standard Tolerance</th><th>La Niña / El Niño Tolerance</th></tr></thead>
+    <tbody>
+      <tr><td>🔴 STRICT</td><td>±14 hari</td><td>±28 hari</td></tr>
+      <tr><td>🟡 MODERATE</td><td>±28 hari</td><td>±42 hari</td></tr>
+      <tr><td>🟢 FLEXIBLE</td><td>N/A</td><td>N/A</td></tr>
+      <tr><td>⚡ EVENT-DRIVEN</td><td>±14 hari (dari trigger)</td><td>±14 hari (climate-neutral, trigger-based)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Factor 4: Graduated Penalty Curve</h3>
+  <table>
+    <thead><tr><th>Condition</th><th>🔴 STRICT</th><th>🟡 MODERATE</th><th>🟢 FLEXIBLE</th><th>⚡ EVENT</th></tr></thead>
+    <tbody>
+      <tr><td>Sudah dieksekusi on-time</td><td>100%</td><td>100%</td><td>100%</td><td>100%</td></tr>
+      <tr><td>Dalam tolerance window</td><td>Linear 100→75</td><td>Linear 100→75</td><td>100%</td><td>100%</td></tr>
+      <tr><td>Out of tolerance, < 2× tolerance</td><td>Linear 75→25</td><td>Linear 75→25</td><td>100%</td><td>50%</td></tr>
+      <tr><td>> 2× tolerance</td><td>0%</td><td>25%</td><td>100%</td><td>50%</td></tr>
+      <tr><td>Tidak Sesuai (deviation)</td><td>25%</td><td>50%</td><td>70%</td><td>—</td></tr>
+      <tr><td>N/A status</td><td colspan="4">Exclude dari denominator scoring</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Factor 5: ENSO State Integration</h3>
+  <p>NOAA ONI (Oceanic Niño Index) fetched dynamic dari <code>psl.noaa.gov/data/correlation/oni.data</code>:</p>
+  <ul style="padding-left:36px;font-size:20px;line-height:1.7">
+    <li><strong>ONI ≥ +0.5</strong> (3-month avg) = El Niño → tolerance +14d untuk STRICT & MODERATE</li>
+    <li><strong>ONI ≤ −0.5</strong> (3-month avg) = La Niña → tolerance +14d untuk STRICT & MODERATE</li>
+    <li><strong>−0.5 < ONI < +0.5</strong> = Neutral → tolerance standard</li>
+  </ul>
+  <p>Cache 24 jam di localStorage. Manual override available di UI banner kalau Wakif punya local intel berbeda (mis. BMKG Karangploso forecast lebih akurat untuk Ngantang microclimate).</p>
+</section>
+
+<section id="tier-classification" class="section">
+  <h2>🎚️ 4-Tier Classification System</h2>
+  <p>Setiap item SOP_AKTIVITAS_PER_BULAN di-classify ke 1 dari 4 tier:</p>
+
+  <div class="dimension-grid">
+    <div class="dim-card" style="border-top-color:var(--cherry-2);background:linear-gradient(to bottom,var(--cherry-3) 0%,var(--white) 12%)">
+      <div class="dim-label" style="color:var(--cherry-1)">🔴 STRICT</div>
+      <div class="dim-name" style="color:var(--cherry-1);font-size:21px;margin-top:12px">Window Biologis Sempit</div>
+      <div class="dim-desc">Miss = yield/quality impact signifikan. Tolerance ±14d (±28d La Niña). Late > 2× = <strong>0% credit</strong>.</div>
+    </div>
+    <div class="dim-card" style="border-top-color:var(--amber-2);background:linear-gradient(to bottom,var(--amber-4) 0%,var(--white) 12%)">
+      <div class="dim-label" style="color:var(--amber-1)">🟡 MODERATE</div>
+      <div class="dim-name" style="color:var(--amber-1);font-size:21px;margin-top:12px">Preferred Window</div>
+      <div class="dim-desc">Shift 2-6 minggu tanpa major impact. Tolerance ±28d (±42d La Niña). Late > 2× = <strong>25% credit</strong>.</div>
+    </div>
+    <div class="dim-card" style="border-top-color:var(--eucalyptus-3);background:linear-gradient(to bottom,var(--eucalyptus-6) 0%,var(--white) 12%)">
+      <div class="dim-label" style="color:var(--eucalyptus-1)">🟢 FLEXIBLE</div>
+      <div class="dim-name" style="color:var(--eucalyptus-1);font-size:21px;margin-top:12px">Rutin / Ongoing</div>
+      <div class="dim-desc">Tidak ada window strict. Eksekusi kapan saja = <strong>100% credit</strong>. No late penalty.</div>
+    </div>
+    <div class="dim-card split">
+      <div class="dim-label" style="color:var(--purple-1)">⚡ EVENT-DRIVEN</div>
+      <div class="dim-name" style="color:var(--purple-1);font-size:21px;margin-top:12px">Trigger-Based</div>
+      <div class="dim-desc">Trigger: cherry merah 80%, OPT &gt; threshold, dll. Tolerance ±14d dari trigger. Late = <strong>50% credit</strong>.</div>
+    </div>
+  </div>
+
+  <h3>Sample Classification (representative items dari 60+ SOP_AKTIVITAS_PER_BULAN)</h3>
+  <table>
+    <thead><tr><th>Tier</th><th>Sample Items</th></tr></thead>
+    <tbody>
+      <tr><td><span style="color:var(--cherry-2);font-weight:800">🔴 STRICT</span></td><td>Pemupukan awal/akhir MH · Petik selektif merah · Window 12-jam petik-ke-proses · Sortasi air pre-pulping · Penjemuran 6-10cm + balik tiap jam · Pruning total pasca-panen · Penyemprotan Cercospora pra-panen (PHI) · Seleksi pohon pasca-panen · Aplikasi pupuk kandang awal kemarau</td></tr>
+      <tr><td><span style="color:var(--amber-1);font-weight:800">🟡 MODERATE</span></td><td>Pemangkasan ringan wiwilan · OPT monitoring mingguan · Inventarisasi pohon · Estimasi produksi · Build rorak · Composting kulit kopi · Tanam lamtoro PG 79 · Top-graft Robusta · Brocap trap deploy · Soil test diagonal · Defect grading · Mulsa</td></tr>
+      <tr><td><span style="color:var(--eucalyptus-3);font-weight:800">🟢 FLEXIBLE</span></td><td>Sanitasi gulma piringan · Monitoring infiltrasi rorak · Review tahunan + planning · Persiapan pemupukan (planning items)</td></tr>
+      <tr><td><span style="color:var(--purple-1);font-weight:800">⚡ EVENT-DRIVEN</span></td><td>Bongkar pisang (trigger: MWC NU panen) · Bongkar tunas (trigger: tahap 1 sudah) · Lot tracking (trigger: lot completion) · Setor lot ke Bonsari</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="dual-kpi" class="section">
+  <h2>📊 Dual KPI Display (Coverage + Timing per Fase)</h2>
+  <p>Phase card di SOP Compliance tab sekarang display <strong>2 angka berdampingan</strong>, bukan blended single yang ambigu:</p>
+  <div class="callout">
+    <strong>Coverage</strong> = ratio items sudah dieksekusi / items due dalam fase (excluding N/A).<br>
+    <strong>Timing</strong> = average <code>computeTimingScore()</code> result untuk items due dalam fase.
+  </div>
+  <p>Contoh fase Pre-Panen (Mei-Jun 2026, fase berjalan):</p>
+  <ul style="padding-left:36px;font-size:20px;line-height:1.7">
+    <li><strong>Coverage 93%</strong>: 14 dari 15 items due sudah dieksekusi</li>
+    <li><strong>Timing 87%</strong>: rata-rata score timing 87% — 12 items on-time (100%), 2 items late dalam tolerance (75%), 1 item out-of-tolerance (45%)</li>
+  </ul>
+  <p>Wakif lihat keduanya → tahu fase ini eksekusi bagus tapi sedikit late di subset items. Bukan single number ambigu "compliance 89%" yang tidak actionable.</p>
+
+  <h3>Konkret Use Case: 5 Items "Tidak Sesuai" Era RWI (Pre-T0)</h3>
+  <p>Analisa pakai timing-tier lens untuk 5 items yang tertulis "Tidak Sesuai SOP" di SOP Compliance tab:</p>
+  <table>
+    <thead><tr><th>Item (Eksekusi T.A.)</th><th>SOP Window</th><th>Tier</th><th>Timing Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>NPK Yaramila 8 Jan 2026 (substitute pemupukan akhir MH)</td><td>Jan-Feb (akhir MH)</td><td>🔴 STRICT</td><td>✅ Timing OK · ❌ Spec deviation (Quality dim issue, bukan timing)</td></tr>
+      <tr><td>Sanitasi gulma Jan-Feb 2026</td><td>Rutin/ongoing</td><td>🟢 FLEXIBLE</td><td>✅ Timing OK · ⚠️ Approximate (no timing penalty)</td></tr>
+      <tr><td>Fish Extract 15 Mar 2026 (substitute pemupukan akhir MH)</td><td>Jan-Feb (akhir MH)</td><td>🔴 STRICT</td><td>❌ Timing late ~30+ hari · Out of tolerance ±28d La Niña — score ~50% timing</td></tr>
+      <tr><td>Inventarisasi 20 Apr 2026</td><td>Tidak ada window strict</td><td>🟡 MODERATE</td><td>✅ Timing OK</td></tr>
+      <tr><td>Sortasi tanaman 20 Apr 2026</td><td>Pra-panen (ongoing)</td><td>🟡 MODERATE</td><td>✅ Timing OK</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Insight reframe:</strong> Era T.A. RWI sebenarnya <strong>eksekusi banyak items dengan timing OK</strong>. Yang bermasalah:
+    <ol style="margin-top:9px;padding-left:30px">
+      <li>Spec brand premium substitute SOP BRIN (4 items — Quality dim issue, bukan Timing)</li>
+      <li>1 item (Fish Extract Mar) yang late timing strict tier</li>
+    </ol>
+    Score adjusted lebih fair — bukan blanket "70% semua deviasi" yang misleading.
+  </div>
+</section>
+
+<section id="examples" class="section">
+  <h2>🧮 Contoh Perhitungan</h2>
+
+  <h3>Skenario A: Pemupukan kimia BRIN dosis (Topik C — DIVERGEN Mg)</h3>
+  <table>
+    <thead><tr><th>Dimensi</th><th>Score</th><th>Bobot</th><th>Kontribusi</th></tr></thead>
+    <tbody>
+      <tr><td>Coverage (eksekusi tepat)</td><td>100%</td><td>30%</td><td>30,0</td></tr>
+      <tr><td>Quality — Tier Alignment (sesuai SOP)</td><td>100%</td><td>15%</td><td>15,0</td></tr>
+      <tr><td>Quality — Convergence (DIVERGEN Mg)</td><td>60%</td><td>10%</td><td>6,0</td></tr>
+      <tr><td>Timing (tepat waktu MH)</td><td>100%</td><td>20%</td><td>20,0</td></tr>
+      <tr><td>Cost (sesuai RAB)</td><td>100%</td><td>15%</td><td>15,0</td></tr>
+      <tr><td>Documentation (lengkap)</td><td>100%</td><td>10%</td><td>10,0</td></tr>
+      <tr style="background:#E8F4ED;font-weight:800"><td colspan="3">TOTAL SCORE</td><td>96,0%</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    <strong>Insight:</strong> 4% gap dari Convergence DIVERGEN — bukan karena worker salah eksekusi, tapi karena topik C butuh validasi lokal lebih lanjut (BRIN sumber Mg unique). Methodology mendorong Wakif sadar gap teori vs lokal practice.
+  </div>
+
+  <h3>Skenario B: Penyemprotan pestisida non-terdaftar (Topik R — CRITICAL)</h3>
+  <table>
+    <thead><tr><th>Dimensi</th><th>Score</th><th>Bobot</th><th>Kontribusi</th></tr></thead>
+    <tbody>
+      <tr><td>Coverage</td><td>100%</td><td>30%</td><td>30,0</td></tr>
+      <tr><td>Quality — Tier Alignment (Substituted off-SOP)</td><td>50%</td><td>15%</td><td>7,5</td></tr>
+      <tr><td>Quality — Convergence (CRITICAL)</td><td>30%</td><td>10%</td><td>3,0</td></tr>
+      <tr><td>Timing</td><td>100%</td><td>20%</td><td>20,0</td></tr>
+      <tr><td>Cost</td><td>100%</td><td>15%</td><td>15,0</td></tr>
+      <tr><td>Documentation</td><td>100%</td><td>10%</td><td>10,0</td></tr>
+      <tr style="background:#FEE2E2;font-weight:800"><td colspan="3">TOTAL SCORE</td><td>85,5%</td></tr>
+    </tbody>
+  </table>
+  <div class="callout callout-warn">
+    <strong>Alert:</strong> 14,5% gap auto-flag karena CRITICAL topik (Pestisida terlarang). Worker mungkin pakai pestisida off-Permentan tanpa sadar regulasi — methodology trigger Wakif untuk validasi via BRIN sebelum re-apply.
+  </div>
+
+  <h3>Skenario C: Phase-Aware Pre-Panen Mei 2026 (Strategy 2)</h3>
+  <table>
+    <thead><tr><th>Item Pre-Panen</th><th>Bulan</th><th>Status</th><th>In-Scope?</th></tr></thead>
+    <tbody>
+      <tr><td>Pemangkasan kanopi (Cak Yit)</td><td>Mei</td><td>✅ Sudah</td><td>YA</td></tr>
+      <tr><td>Brocap trap baseline pilot</td><td>Mei</td><td>✅ Sudah</td><td>YA</td></tr>
+      <tr><td>Babat rumput sanitasi</td><td>Mei</td><td>✅ Sudah</td><td>YA</td></tr>
+      <tr><td>Petik selektif merah test</td><td>Jun</td><td>⏳ Belum (Jun belum mulai)</td><td>TIDAK (future)</td></tr>
+      <tr style="background:#E8F4ED;font-weight:800"><td colspan="3">Phase Score Pre-Panen Mei (3 sudah / 3 in-scope)</td><td>100%</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    <strong>Insight Phase-Aware:</strong> Mei score 100% karena <em>items_due_so_far Mei</em> = 3 (semua sudah). Linear YTD akan show 50% (3 sudah / 6 total YTD Mei) — misleading karena items Jun belum due. Phase-aware = honest signal: "Mei done, lanjut Jun".
+  </div>
+</section>
+
+<section id="boundary" class="section">
+  <h2>📅 Boundary Apply</h2>
+  <table>
+    <thead><tr><th>Period</th><th>Strategy</th><th>Methodology Version</th><th>Apa yang Berlaku</th></tr></thead>
+    <tbody>
+      <tr><td>Okt 2023 – Mar 2026</td><td>📚 Strategy 1 (Lesson Learned)</td><td>v2.2 retroaktif</td><td>3 fase pra-formal (Inisiasi Nadzir 1, Nadzir Ke-2, RWI Era). Score per fase via audit dokumen.</td></tr>
+      <tr style="background:#EDE9FE;font-weight:600"><td>Mei 2026 onwards</td><td>🔍 Strategy 2 (Active Monitoring)</td><td>v2.2 phase-aware</td><td>4 fase fenologi cards. Live data dari SOP Kalender + Form Input. Phase score auto-recompute.</td></tr>
+      <tr><td>Quality Convergence sub-component</td><td>Both strategies</td><td>v2.0+ (since 16 Mei)</td><td>Convergence Status 10% apply untuk aktivitas yang punya <code>topik_v2</code> tag (19 topik A-S). Tanpa tag = N/A (Quality full 25% Tier Alignment).</td></tr>
+    </tbody>
+  </table>
+  <div class="callout">
+    <strong>Implementation:</strong> Konstanta <code>ACTIVE_MONITORING_START = { year: 2026, month: 5 }</code> + <code>SOP_V2_TRANSITION = { year: 2026, month: 10 }</code> di <code>monitor-v2.html</code>. Phase-aware (Strategy 2) start Mei; Convergence sub-component apply Oct+ (saat Trifecta v2.1 punya cukup data lokal).
+  </div>
+</section>
+
+<section id="integration" class="section">
+  <h2>🔄 Integration Living Lab</h2>
+  <p>Phase labels SOP Compliance internal <strong>1-to-1 match</strong> dengan PHASE_LABELS_LL Living Lab publik. Konsekuensi positif:</p>
+  <ul style="padding-left:36px;font-size:20px;line-height:1.65">
+    <li>Saat Wakif curate milestone publik (Tab Milestones Publik), phase dropdown sama label.</li>
+    <li>Living Lab visitor (donor, BRIN, komunitas) lihat fase yang sama dengan apa yang Wakif track internal.</li>
+    <li>Lesson Learned cards di SOP Compliance bisa di-link / dijadikan source narrative untuk Living Lab "Journey" section.</li>
+  </ul>
+
+  <div class="callout">
+    <strong>📌 Cross-system rename DONE (16-17 Mei 2026):</strong> Living Lab + Worker PWA + Form Input pakai naming "Kebun 1-4" (bukan "Bidang"). SOP Compliance internal sama. Tidak ada conflict naming.
+  </div>
+</section>
+
+<section id="documentation" class="section" style="border-left-color:var(--cherry-2)">
+  <h2 style="color:var(--cherry-1)">📷 Documentation Definition — Important Clarification</h2>
+  <p>Berdasarkan diskusi Wakif 16-17 Mei 2026: <strong>Documentation 10% bukan tentang foto/voice note umum</strong>, melainkan tentang <strong>output dokumentasi yang SOP itu sendiri mewajibkan</strong>. Distinction penting agar methodology TIDAK penalize eksekusi sempurna agronomi tapi minim "paperwork umum".</p>
+
+  <h3>✅ Termasuk Documentation Scoring (SOP-mandated):</h3>
+  <table>
+    <thead><tr><th>Aktivitas SOP</th><th>Dokumentasi Wajib</th><th>SOP Reference</th></tr></thead>
+    <tbody>
+      <tr><td>Lot tracking saat panen</td><td>Kode lot WKKN-YYYY-MM-Kebun-LOT per batch</td><td>Robusta Edisi 2 hal 280</td></tr>
+      <tr><td>Dokumentasi kerontokan bunga</td><td>Count + estimasi % per pohon</td><td>Robusta Edisi 2 hal 282</td></tr>
+      <tr><td>OPT monitoring 5-pohon-diagonal</td><td>Data observasi: intensitas serangan (%), distribusi, OPT target</td><td>Robusta Edisi 2 hal 155-161</td></tr>
+      <tr><td>Estimasi produksi formal</td><td>Sampling data 30 pohon, kalkulasi proyeksi</td><td>Robusta Edisi 2 hal 218</td></tr>
+      <tr><td>Inventarisasi pohon</td><td>Pohon ID + kondisi + estimasi umur</td><td>Notulen 1-2 Mei + Robusta Edisi 2 hal 218</td></tr>
+      <tr><td>Soil test diagonal 5 titik</td><td>Lab result certificate (pH, NPK, CEC, dll)</td><td>BRIN 5 Mei + Robusta Edisi 2 hal 155</td></tr>
+      <tr><td>Defect grading per 300g sampel</td><td>Grading sheet (defect type + count)</td><td>SNI 01-2907-2008</td></tr>
+      <tr><td>Top-graft Robusta</td><td>Klon ID + pohon target + success rate</td><td>Budidaya 2010 hal 20-21</td></tr>
+      <tr><td>Kadar air biji tracking</td><td>Moisture reading harian saat penjemuran</td><td>Robusta Edisi 2 hal 261</td></tr>
+      <tr><td>Brocap trap monitoring</td><td>Tangkapan PBKo per trap (count + tanggal cek)</td><td>Wiryadiputra & Cilas 2008</td></tr>
+    </tbody>
+  </table>
+
+  <h3>❌ TIDAK Termasuk Documentation Scoring (optional meta):</h3>
+  <div class="callout">
+    Optional metadata berikut <strong>nice-to-have</strong> untuk audit trail dan tetap di-encourage, tapi <strong>tidak masuk hitungan scoring</strong>:
+    <ul style="margin-top:12px;padding-left:30px">
+      <li>Foto umum aktivitas (selfie pekerja, foto progress)</li>
+      <li>Voice note kronologi (kecuali yg explicit SOP-required)</li>
+      <li>Catatan kualitatif free-text (kecuali yg essential context untuk SOP output)</li>
+      <li>Timestamp activities (auto-captured by system)</li>
+      <li>GPS coordinates (auto-captured)</li>
+    </ul>
+    <strong>Filosofi:</strong> Pak Kumpul yang eksekusi pemupukan 100% sesuai BRIN dosis (Topik C) tanpa foto = score 100% Quality + 100% Documentation (kalau pemupukan tidak ada dokumentasi SOP-mandated). Foto = nice but not penalty.
+  </div>
+
+  <h3>🔍 Scoring Logic Documentation Dim</h3>
+  <div class="status-grid">
+    <div class="status-row" style="background:#E8F4ED;border-left-color:#2D8466"><span class="pct" style="color:#0A3D2C">100%</span> All SOP-mandated docs delivered + readable</div>
+    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">70%</span> Docs delivered tapi incomplete (mis. partial lab result)</div>
+    <div class="status-row" style="background:#FEF3C7;border-left-color:#F59E0B"><span class="pct" style="color:#B45309">50%</span> Docs ada tapi tidak readable / hilang sebagian</div>
+    <div class="status-row" style="background:#FEE2E2;border-left-color:#C73E3E"><span class="pct" style="color:#7F1D1D">0%</span> SOP-mandated docs missing entirely</div>
+    <div class="status-row" style="background:#F3F4F6;border-left-color:#9CA3AF"><span class="pct" style="color:#374151">N/A</span> Aktivitas tidak punya SOP-mandated doc → 100% (no penalty)</div>
+  </div>
+
+  <div class="callout callout-warn">
+    <strong>Aturan operasional:</strong> Saat audit aktivitas, evaluator pertama cek "apakah SOP minta dokumentasi specific?". Kalau YA → score per kriteria di atas. Kalau TIDAK → otomatis 100% (no penalty for missing optional meta). Ini menjaga methodology tetap honest tentang execution quality vs paper trail completeness.
+  </div>
+</section>
+
+<section id="external-refs" class="section" style="border-left-color:var(--purple-2)">
+  <h2 style="color:var(--purple-1)">📚 External Reference Anchors</h2>
+  <p>Pertanyaan inti dari Adib (17 Mei 2026): <em>"Apakah timeline (kapan particular intervention should be given) menjadi indicator atau bagian dari SOP? Terlepas dari SOP yang sudah ditetapkan, cek rujukan external resources, Kementan, atau international jurnal, apakah waktu/bulan ini bisa menjadi bobot/consideration untuk SOP compliance?"</em></p>
+  <p>Jawaban literatur: <strong>YA, timing adalah bagian inseparable dari SOP compliance</strong> untuk subset signifikan items SOP Robusta.</p>
+
+  <table>
+    <thead><tr><th>Source</th><th>Insight Relevant</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Kementan SOP Robusta Edisi 2 (2019)</strong></td><td>Kalender fenologi per bulan dengan window aplikasi — bukan sugesti, tapi requirement untuk subset (pemupukan, pemangkasan berat, petik selektif).</td></tr>
+      <tr><td><strong>Wintgens, J.N. (2004)</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>. Wiley-VCH. [Tier 1]</td><td>"Fertilization timing dictates uptake efficiency. Application outside the 2-week window of soil moisture transition results in ~30% nutrient leaching and reduced yield response."</td></tr>
+      <tr><td><strong>Cilas, C., Bouharmont, P., Boccara, M. (CIRAD)</strong> [Tier 1-2]</td><td>Pemangkasan timing tied to dormancy phase. Pruning di luar window pasca-panen → stress berlebih, recovery 6-8 minggu lebih lama.</td></tr>
+      <tr><td><strong>DaMatta & Ramalho (2006)</strong> Braz. J. Plant Physiol. 18:55-81 [Tier 1]</td><td>Coffee phenology adalah "highly time-sensitive system" — buah formation, ripening, dormancy semua punya window biologis ketat.</td></tr>
+      <tr><td><strong>ICCRI Jember protocols</strong> [Tier 2 Domestik]</td><td>Protokol per-fase intervention windows dengan tolerance ±2 minggu untuk strict items.</td></tr>
+      <tr><td><strong>Cochrane Evidence Grading v6.4 (2023)</strong></td><td>Tier hierarchy untuk source reliability — basis untuk Tier Alignment scoring.</td></tr>
+      <tr><td><strong>FAO Climate-Smart Agriculture Sourcebook (2017)</strong></td><td>Climate variability (ENSO) impact on phenology — basis untuk La Niña/El Niño tolerance extension.</td></tr>
+      <tr><td><strong>SCA Quality Assurance (2022)</strong></td><td>Defect grading + post-harvest timing standards (12-jam petik-ke-proses, dll).</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="implementation" class="section">
+  <h2>📋 Implementation Detail (Untuk Audit Trail)</h2>
+
+  <h3>Files Affected (commits 16-17 Mei 2026)</h3>
+  <table>
+    <thead><tr><th>File</th><th>Change</th><th>Commit</th></tr></thead>
+    <tbody>
+      <tr><td><code>monitor-v2.html</code></td><td>Add <code>SOP_V2_TRANSITION</code> + <code>SOP_V2_TOPIK</code> + <code>KATEGORI_TOPIK_MAP</code></td><td>76bbe24</td></tr>
+      <tr><td><code>monitor-v2.html</code></td><td>Add <code>LIVING_LAB_PHASE_MAP</code> + <code>getPhaseComplianceMetrics()</code> + 4 phase cards UI</td><td>eecd9ce</td></tr>
+      <tr><td><code>monitor-v2.html</code></td><td>Replace <code>ANNUAL_COMPLIANCE</code> dengan <code>HISTORICAL_PHASES</code> (3-fase RWI era)</td><td>0010b85</td></tr>
+      <tr><td><code>monitor-v2.html</code></td><td><code>TIMING_TIER_META</code> + <code>TIMING_TIER_RULES</code> + <code>getTimingTier()</code></td><td>c2134d1</td></tr>
+      <tr><td><code>monitor-v2.html</code></td><td>ENSO state (NOAA ONI fetch + cache + manual override)</td><td>c2134d1</td></tr>
+      <tr><td><code>monitor-v2.html</code></td><td><code>computeTimingScore()</code> multi-factor engine + integrate ke <code>getPhaseComplianceMetrics()</code></td><td>58ac14a</td></tr>
+      <tr><td><code>monitor-v2.html</code></td><td>UI: ENSO banner + dual KPI Coverage+Timing + tier chips + per-item timing reason</td><td>e78ecb9</td></tr>
+      <tr><td><code>SOP/05_ASET_KNOWLEDGE/v2.0.html</code></td><td>Initial 5-dim + Quality split methodology doc</td><td>archived 16 Mei 2026</td></tr>
+      <tr><td><code>SOP/05_ASET_KNOWLEDGE/v2.1.html</code></td><td>Phase-aware addendum methodology doc</td><td>archived 17 Mei 2026</td></tr>
+      <tr><td><code>SOP/05_ASET_KNOWLEDGE/v2.2_17Mei2026.html</code></td><td>Multi-factor timing addendum methodology doc</td><td>archived 17 Mei 2026 sore</td></tr>
+      <tr><td><code>SOP/05_ASET_KNOWLEDGE/v2.2_18Mei2026.html</code></td><td><strong>This FINAL canonical merge file</strong> (single source of truth)</td><td>18 Mei 2026</td></tr>
+      <tr><td>Memory <code>feedback_documentation_sop_mandated_only.md</code></td><td>Doc 10% = SOP-mandated only (Adib 17 Mei confirmed)</td><td>locked</td></tr>
+      <tr><td>Memory <code>project_phase_aware_compliance.md</code></td><td>2-strategy framework + ACTIVE_MONITORING_START anchor</td><td>locked</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Update Path untuk Score Historikal (Strategy 1)</h3>
+  <p>Score Fase 2 & 3 saat ini <em>placeholder</em>. Untuk lengkapi dengan audit retroaktif:</p>
+  <ol style="padding-left:36px;font-size:20px;line-height:1.7">
+    <li>Wakif audit dokumen tiap fase (kontrak nadzir, notulen rapat, log T.A.)</li>
+    <li>Match dengan checklist 5-dim per aktivitas SOP</li>
+    <li>Update <code>HISTORICAL_PHASES.faseN.score</code> + <code>score_status: 'audited'</code> di <code>monitor-v2.html</code></li>
+    <li>Tambah <code>actual_records</code> dengan dokumentasi konkret (tanggal, item, output)</li>
+    <li>Tambah <code>lesson</code> insight refleksi</li>
+  </ol>
+  <p>Fase 4 (RWI era) sudah <em>partial-audited</em> via Living Lab seed data. Lengkapi Feb-Mar 2026 dari dokumen RWI saat handover MoU dibatalkan Mei 2026.</p>
+
+  <h3>🔗 Cross-References</h3>
+  <ul style="padding-left:30px;font-size:20px;line-height:1.8;color:var(--gray-2)">
+    <li><strong>Source Trifecta v2.1:</strong> <code>/SOP/00_FINAL/SOP_Synthesis_Robusta_Ngantang.html</code>, <code>SOP_BRIN_Komparasi_FULL.docx</code>, <code>SOP_Master_StepByStep_FULL.docx</code></li>
+    <li><strong>Methodology v1.0 archived:</strong> <code>Aset_Knowledge_Methodology_SOP_Compliance_15Mei2026.docx</code></li>
+    <li><strong>Methodology v2.0 archived:</strong> <code>Analisa_Compliance_Methodology_v2.0_16Mei2026.html</code> (5-dim detail + Quality split superseded by v2.2 FINAL)</li>
+    <li><strong>Methodology v2.1 archived:</strong> <code>Analisa_Compliance_Methodology_v2.1_17Mei2026.html</code> (phase-aware addendum superseded by v2.2 FINAL)</li>
+    <li><strong>Methodology v2.2 intermediate archived:</strong> <code>Analisa_Compliance_Methodology_v2.2_17Mei2026.html</code> (multi-factor timing addendum superseded by v2.2 FINAL — content merged)</li>
+    <li><strong>Standards baseline:</strong> ISO 19011:2018 + ASTM E2935 + FAO Climate-Smart Agriculture Sourcebook 2017 + SCA Quality Assurance 2022</li>
+    <li><strong>Cochrane Evidence Grading:</strong> v6.4 (2023) untuk Tier hierarchy</li>
+    <li><strong>Boundary code:</strong> <code>ACTIVE_MONITORING_START = { year: 2026, month: 5 }</code> + <code>SOP_V2_TRANSITION = { year: 2026, month: 10 }</code> di <code>monitor-v2.html</code></li>
+    <li><strong>Mapping table:</strong> <code>KATEGORI_TOPIK_MAP</code> di <code>monitor-v2.html</code> — 14/21 kategori → topik A-S</li>
+  </ul>
+</section>
+
+<section id="changes" class="changes-summary">
+  <h2>📋 What's Changed — v2.2 FINAL Canonical Merge</h2>
+  <p style="font-size:20px;color:#5f4a3a;margin-bottom:15px"><strong>v2.2 FINAL menyatukan 3 update parallel 16-17 Mei 2026 jadi single source of truth:</strong></p>
+  <ul>
+    <li><strong>Dari v2.0 (16 Mei)</strong> — 5-dimensi framework + Quality split (Tier Alignment 15% + Convergence 10%) + Documentation 10% redefined SOP-mandated only + prominent visual percentage cards.</li>
+    <li><strong>Dari v2.1 (17 Mei pagi)</strong> — 2-strategy axis (Lesson Learned historikal + Active Monitoring forward) + phase-aware scoring per fase fenologi + 4 fase fenologi Living Lab aligned.</li>
+    <li><strong>Dari v2.2 intermediate (17 Mei sore)</strong> — Multi-Factor Timing engine (computeTimingScore) + 4-tier classification (STRICT/MODERATE/FLEXIBLE/EVENT-DRIVEN) + ENSO NOAA ONI dynamic adjust + Graduated penalty curve + Dual KPI Coverage+Timing display.</li>
+    <li><strong>External Reference Anchors</strong> — Wintgens 2004, Cilas CIRAD, DaMatta & Ramalho, ICCRI Jember (jawaban literatur ke pertanyaan Adib "apakah timing menjadi bagian SOP compliance?").</li>
+    <li><strong>Daftar isi (TOC)</strong> — easier navigation untuk doc panjang dengan 16+ sections.</li>
+    <li><strong>Reader experience</strong> — tidak perlu cross-reference 3 dokumen lagi. Satu doc, satu kebenaran.</li>
+  </ul>
+</section>
+
+<div class="footer">
+  <strong>Aset Knowledge — Compliance Methodology v2.2 FINAL (Canonical)</strong><br>
+  Locked 18 Mei 2026 · Supersede v1.0, v2.0, v2.1, v2.2 intermediate (archived ke <code>99_ARCHIVE/</code> untuk audit trail evolusi metodologi)<br>
+  <strong>Wakaf Produktif Kebun Kopi Ngantang</strong> · Adib Asrori, M.Psi (Wakif & Pengelola Mandiri) + Claude (co-author)<br>
+  <strong>Trigger update v2.2 FINAL:</strong> Diskusi Adib 18 Mei 2026 — gabungkan 3 update parallel (v2.0 visual + Quality split, v2.1 phase-aware + 2-strategy, v2.2 timing multi-factor + ENSO) menjadi single canonical reference document tanpa kehilangan konten<br>
+  <strong>Live di:</strong> Monitor v2 → tab "SOP Compliance" (HERO 3 cards historikal + Active Monitoring 4 phase cards Coverage+Timing dual KPI + 5-dim breakdown + ENSO banner)
+</div>
+
+</div>
+</body>
+</html>
