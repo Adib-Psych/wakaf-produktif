@@ -10990,6 +10990,33 @@ function renderOptObsTable() {
     if (o.expert_status === 'validated') expertBadge = '<span style="background:#DCFCE7;color:#15803D;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700" title="By ' + (o.expert_name || '?') + '">🟢 Validated</span>';
     else if (o.expert_status === 'rejected') expertBadge = '<span style="background:#FEE2E2;color:#7F1D1D;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700" title="By ' + (o.expert_name || '?') + '">❌ Rejected</span>';
     else expertBadge = '<button onclick="openExpertModal(\'' + o.id + '\')" style="background:#fff3cd;color:#856404;border:1px solid #ffe69c;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Catat hasil validasi expert/ahli">👤 Validate</button>';
+    // Expanded AI row (visible inline tanpa klik — 19 Mei 2026 malam per Adib)
+    let aiExpandedRow = '';
+    if (o.ai_status === 'analyzed' && (o.ai_hypothesis || o.ai_treatment)) {
+      const confColor = o.ai_confidence === 'high' ? '#15803D' : (o.ai_confidence === 'medium' ? '#D97706' : '#DC2626');
+      const confBg = o.ai_confidence === 'high' ? '#DCFCE7' : (o.ai_confidence === 'medium' ? '#FEF3C7' : '#FEE2E2');
+      const hipShort = (o.ai_hypothesis || '').length > 220 ? (o.ai_hypothesis || '').substring(0, 220) + '…' : (o.ai_hypothesis || '');
+      const treatShort = (o.ai_treatment || '').length > 220 ? (o.ai_treatment || '').substring(0, 220) + '…' : (o.ai_treatment || '');
+      aiExpandedRow = `<tr style="background:linear-gradient(90deg,#F0F9FF 0%,#EFF6FF 100%);border-bottom:2px solid #BFDBFE">
+        <td colspan="7" style="padding:10px 14px;border-top:1px dashed #93C5FD">
+          <div style="display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap">
+            <div style="flex:1;min-width:260px;border-left:3px solid #1E40AF;padding-left:10px">
+              <div style="font-size:10px;font-weight:800;color:#1E40AF;letter-spacing:1px;margin-bottom:3px">🔬 HIPOTESIS OPT</div>
+              <div style="font-size:11px;color:var(--earth);line-height:1.55">${hipShort || '<em style="color:#bbb">—</em>'}</div>
+            </div>
+            <div style="flex:1;min-width:260px;border-left:3px solid #16A34A;padding-left:10px">
+              <div style="font-size:10px;font-weight:800;color:#15803D;letter-spacing:1px;margin-bottom:3px">💊 TREATMENT REKOMENDASI</div>
+              <div style="font-size:11px;color:var(--earth);line-height:1.55">${treatShort || '<em style="color:#bbb">—</em>'}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:100px">
+              <span style="background:${confBg};color:${confColor};padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px">⚡ ${o.ai_confidence || '?'}</span>
+              <button onclick="viewOptDetail('${o.id}')" style="background:#fff;color:#1E40AF;border:1px solid #93C5FD;padding:3px 10px;border-radius:6px;font-size:10px;cursor:pointer;font-weight:600" title="Buka modal detail lengkap (full text + foto + expert validation)">📋 Detail lengkap</button>
+            </div>
+          </div>
+          ${(o.ai_hypothesis || '').length > 220 || (o.ai_treatment || '').length > 220 ? '<div style="font-size:9.5px;color:var(--mute);font-style:italic;margin-top:6px;text-align:right">💡 Preview di-truncate. Klik <strong>📋 Detail lengkap</strong> untuk text penuh.</div>' : ''}
+        </td>
+      </tr>`;
+    }
     return `<tr>
       <td style="white-space:nowrap">${formatTglShort(o.tgl)}</td>
       <td><span style="font-size:11px;font-weight:700">${KEBUN_LBL[o.kebun] || o.kebun}</span></td>
@@ -11002,7 +11029,7 @@ function renderOptObsTable() {
         <button onclick="editOptObs('${o.id}')" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Edit">✏️</button>
         <button onclick="deleteOptObs('${o.id}')" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Hapus">🗑️</button>
       </td>
-    </tr>`;
+    </tr>${aiExpandedRow}`;
   }).join('');
 }
 
