@@ -1349,41 +1349,32 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         <div class="activity-card-title lang-en">📋 Phase Activities</div>
         <div class="act-list">
           <div class="act-item">
+            <span class="act-status s-ongoing lang-id">⟳ Berjalan</span>
+            <span class="act-status s-ongoing lang-en">⟳ Ongoing</span>
+            <div>
+              <div class="act-label lang-id">Pemangkasan Pasca-Panen — Cak Yit</div>
+              <div class="act-label lang-en">Post-Harvest Pruning — Cak Yit</div>
+              <div class="act-sub lang-id">16 Mei – ongoing · 4 Kebun</div>
+              <div class="act-sub lang-en">May 16 – ongoing · 4 Plots</div>
+            </div>
+          </div>
+          <div class="act-item">
+            <span class="act-status s-done lang-id">✓ Selesai</span>
+            <span class="act-status s-done lang-en">✓ Done</span>
+            <div>
+              <div class="act-label lang-id">Keputusan: Defer Pengadaan Pupuk Kandang</div>
+              <div class="act-label lang-en">Decision: Defer Manure Procurement</div>
+              <div class="act-sub lang-id">9 Mei 2026 · Pivot ke Pasca-Panen</div>
+              <div class="act-sub lang-en">9 May 2026 · Pivot to Post-Harvest</div>
+            </div>
+          </div>
+          <div class="act-item">
             <span class="act-status s-done lang-id">✓ Selesai</span>
             <span class="act-status s-done lang-en">✓ Done</span>
             <div>
               <div class="act-label lang-id">Kunjungan Lapangan & Assessment TDS</div>
               <div class="act-label lang-en">Field Visit & TDS Assessment</div>
               <div class="act-sub">20 Apr 2026</div>
-            </div>
-          </div>
-          <div class="act-item">
-            <span class="act-status s-ongoing lang-id">⟳ Berjalan</span>
-            <span class="act-status s-ongoing lang-en">⟳ Ongoing</span>
-            <div>
-              <div class="act-label lang-id">Pengadaan Pupuk Kandang</div>
-              <div class="act-label lang-en">Organic Fertilizer Procurement</div>
-              <div class="act-sub lang-id">Target sebelum Jun 2026</div>
-              <div class="act-sub lang-en">Target before Jun 2026</div>
-            </div>
-          </div>
-          <div class="act-item">
-            <span class="act-status s-planned lang-id">◎ Direncanakan</span>
-            <span class="act-status s-planned lang-en">◎ Planned</span>
-            <div>
-              <div class="act-label lang-id">Pruning Selektif</div>
-              <div class="act-label lang-en">Selective Pruning</div>
-              <div class="act-sub">Mei – Jun 2026</div>
-            </div>
-          </div>
-          <div class="act-item">
-            <span class="act-status s-upcoming lang-id">↗ Akan Datang</span>
-            <span class="act-status s-upcoming lang-en">↗ Upcoming</span>
-            <div>
-              <div class="act-label lang-id">Panen Perdana Post-Wakaf</div>
-              <div class="act-label lang-en">First Post-Waqf Harvest</div>
-              <div class="act-sub lang-id">Estimasi Jun–Agt 2026 (±4 ronde)</div>
-              <div class="act-sub lang-en">Estimated Jun–Aug 2026 (±4 rounds)</div>
             </div>
           </div>
         </div>
@@ -2233,6 +2224,7 @@ function setLang(lang) {
 document.addEventListener('DOMContentLoaded', function() {
   buildTheoryColumns();
   buildFenologi();
+  buildStatusBoard();
   setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
 });
 
@@ -3260,6 +3252,99 @@ function buildFenologi() {
 }
 
 function f(n) { return n.toFixed(1); }
+
+/* ══ STATUS KEBUN SEKARANG — DYNAMIC PHASE + MILESTONE ══
+ * Locked 19 Mei 2026 per Adib: section harus live, progressing berdasar bulan,
+ * align ke SOP & fenologi cycle.
+ *
+ * Updates per current month:
+ * 1. H2 section-title: "Kita sedang berada di Fase X"
+ * 2. Phase card: icon, name, period, description
+ * 3. Milestone berikutnya card: next big phenological event
+ *
+ * Activities card: hardcoded (real items dari log section), update manual
+ * saat curate. Future: bisa pull dynamic dari .act-log-item filter.
+ */
+function buildStatusBoard() {
+  const now = new Date();
+  const currentMonth = now.getMonth();  // 0=Jan
+  const Y = now.getFullYear();
+
+  // Phase info per month — sinkron dengan fenologi cycle
+  const phaseInfo = [
+    { id:'Pemulihan & Dormansi', en:'Recovery & Dormancy', icon:'🌧️', periodID:`Jan ${Y}`, periodEN:`Jan ${Y}`, descID:`Pohon beristirahat pasca-panen. Pemulihan energi sebelum siklus berikutnya.`, descEN:`Trees rest post-harvest. Energy recovery before next cycle.` },
+    { id:'Pertumbuhan Vegetatif', en:'Vegetative Growth', icon:'🌿', periodID:`Feb – Mar ${Y}`, periodEN:`Feb – Mar ${Y}`, descID:`Tunas baru tumbuh. Daun & cabang berkembang aktif — fondasi musim berbuah.`, descEN:`New buds emerge. Leaves & branches develop — foundation for fruiting.` },
+    { id:'Pertumbuhan Vegetatif', en:'Vegetative Growth', icon:'🌿', periodID:`Feb – Mar ${Y}`, periodEN:`Feb – Mar ${Y}`, descID:`Tunas baru tumbuh. Daun & cabang berkembang aktif — fondasi musim berbuah.`, descEN:`New buds emerge. Leaves & branches develop — foundation for fruiting.` },
+    { id:'Pembentukan Buah', en:'Fruit Formation', icon:'🌱', periodID:`Apr – Mei ${Y}`, periodEN:`Apr – May ${Y}`, descID:`Buah masih hijau, sedang berkembang. Masa kritis nutrisi & perlindungan. Estimasi panen mulai Jun–Jul.`, descEN:`Fruit still green, developing. Critical for nutrition & protection. Harvest est. starts Jun–Jul.` },
+    { id:'Pembentukan Buah', en:'Fruit Formation', icon:'🌱', periodID:`Apr – Mei ${Y}`, periodEN:`Apr – May ${Y}`, descID:`Buah masih hijau, sedang berkembang. Masa kritis nutrisi & perlindungan. Estimasi panen mulai Jun–Jul.`, descEN:`Fruit still green, developing. Critical for nutrition & protection. Harvest est. starts Jun–Jul.` },
+    { id:'Pematangan Buah', en:'Fruit Ripening', icon:'🌾', periodID:`Jun ${Y}`, periodEN:`Jun ${Y}`, descID:`Buah mulai menguning. Persiapan panen aktif. Pengawasan intensif dibutuhkan.`, descEN:`Fruit yellowing. Active harvest prep. Intensive monitoring needed.` },
+    { id:'Panen Utama', en:'Main Harvest', icon:'☕', periodID:`Jul – Agt ${Y}`, periodEN:`Jul – Aug ${Y}`, descID:`Panen sedang berlangsung. Pemetikan selektif 4 ronde untuk kualitas optimal.`, descEN:`Harvest in progress. 4-round selective picking for optimal quality.` },
+    { id:'Panen Utama', en:'Main Harvest', icon:'☕', periodID:`Jul – Agt ${Y}`, periodEN:`Jul – Aug ${Y}`, descID:`Panen sedang berlangsung. Pemetikan selektif 4 ronde untuk kualitas optimal.`, descEN:`Harvest in progress. 4-round selective picking for optimal quality.` },
+    { id:'Post-Panen & Intervensi', en:'Post-Harvest & Intervention', icon:'✂️', periodID:`Sep – Okt ${Y}`, periodEN:`Sep – Oct ${Y}`, descID:`Pruning total/selektif, pemulihan tanah, rehabilitasi. Fondasi musim berikutnya.`, descEN:`Total/selective pruning, soil recovery, rehabilitation. Foundation for next season.` },
+    { id:'Post-Panen & Intervensi', en:'Post-Harvest & Intervention', icon:'✂️', periodID:`Sep – Okt ${Y}`, periodEN:`Sep – Oct ${Y}`, descID:`Pruning total/selektif, pemulihan tanah, rehabilitasi. Fondasi musim berikutnya.`, descEN:`Total/selective pruning, soil recovery, rehabilitation. Foundation for next season.` },
+    { id:'Awal Musim Hujan', en:'Wet Season Start', icon:'🌧️', periodID:`Nov – Des ${Y}`, periodEN:`Nov – Dec ${Y}`, descID:`Pemupukan awal MH dosis BRIN. Build rorak. Tanam lamtoro penaung.`, descEN:`Start-of-wet-season fertilization (BRIN dosage). Rorak construction. Plant lamtoro shade trees.` },
+    { id:'Awal Musim Hujan', en:'Wet Season Start', icon:'🌧️', periodID:`Nov – Des ${Y}`, periodEN:`Nov – Dec ${Y}`, descID:`Pemupukan awal MH dosis BRIN. Build rorak. Tanam lamtoro penaung.`, descEN:`Start-of-wet-season fertilization (BRIN dosage). Rorak construction. Plant lamtoro shade trees.` }
+  ];
+
+  // Milestone berikutnya — big event berikut per bulan (anchor ke phenological highlight)
+  const milestoneNext = [
+    { id:'Pertumbuhan Vegetatif', en:'Vegetative Growth', icon:'🌿', whenID:`Feb – Mar ${Y}`, whenEN:`Feb – Mar ${Y}`, noteID:'Tunas baru pasca-dormansi. Pemupukan akhir MH.', noteEN:'New buds post-dormancy. End-of-wet-season fertilization.' },  // Jan → Feb
+    { id:'Pembentukan Buah', en:'Fruit Formation', icon:'🌱', whenID:`Apr – Mei ${Y}`, whenEN:`Apr – May ${Y}`, noteID:'Pembungaan & set buah dimulai.', noteEN:'Flowering & fruit set begins.' },  // Feb → Apr
+    { id:'Pembentukan Buah', en:'Fruit Formation', icon:'🌱', whenID:`Apr – Mei ${Y}`, whenEN:`Apr – May ${Y}`, noteID:'Pembungaan & set buah dimulai.', noteEN:'Flowering & fruit set begins.' },  // Mar → Apr
+    { id:'Panen Perdana Post-Wakaf', en:'First Post-Waqf Harvest', icon:'☕', whenID:`Jun – Agt ${Y}`, whenEN:`Jun – Aug ${Y}`, noteID:'Panen pertama era Self-Managed (post-T0 SOP adoption). Data hasil dipublikasikan terbuka.', noteEN:'First harvest in Self-Managed era (post-T0 SOP adoption). Yield data published openly.' },  // Apr → Jun
+    { id:'Panen Perdana Post-Wakaf', en:'First Post-Waqf Harvest', icon:'☕', whenID:`Jun – Agt ${Y}`, whenEN:`Jun – Aug ${Y}`, noteID:'Panen pertama era Self-Managed (post-T0 SOP adoption). Data hasil dipublikasikan terbuka.', noteEN:'First harvest in Self-Managed era (post-T0 SOP adoption). Yield data published openly.' },  // Mei → Jun
+    { id:'Panen Utama Aktif', en:'Main Harvest Active', icon:'☕', whenID:`Jul – Agt ${Y}`, whenEN:`Jul – Aug ${Y}`, noteID:'Panen 4 ronde selektif merah. Lot tracking aktif.', noteEN:'4-round red-selective harvest. Active lot tracking.' },  // Jun → Jul
+    { id:'Post-Panen: Pemangkasan + Riset BRIN', en:'Post-Harvest: Pruning + BRIN Research', icon:'✂️', whenID:`Sep – Okt ${Y}`, whenEN:`Sep – Oct ${Y}`, noteID:'Peremajaan selektif + baseline riset Fase 1 kolaborasi BRIN.', noteEN:'Selective rejuvenation + Phase 1 baseline research BRIN collaboration.' },  // Jul → Sep
+    { id:'Post-Panen: Pemangkasan + Riset BRIN', en:'Post-Harvest: Pruning + BRIN Research', icon:'✂️', whenID:`Sep – Okt ${Y}`, whenEN:`Sep – Oct ${Y}`, noteID:'Peremajaan selektif + baseline riset Fase 1 kolaborasi BRIN.', noteEN:'Selective rejuvenation + Phase 1 baseline research BRIN collaboration.' },  // Agt → Sep
+    { id:'Pemupukan Awal MH (Dosis BRIN)', en:'Start-of-Wet-Season Fertilization', icon:'🌧️', whenID:`Nov – Des ${Y}`, whenEN:`Nov – Dec ${Y}`, noteID:'Dosis penuh BRIN 5-10 thn: Urea 150g + SP-36 80g + KCl 100g + Kieserit 50g per pohon.', noteEN:'Full BRIN dosage age 5-10: Urea 150g + SP-36 80g + KCl 100g + Kieserit 50g/tree.' },  // Sep → Nov
+    { id:'Pemupukan Awal MH (Dosis BRIN)', en:'Start-of-Wet-Season Fertilization', icon:'🌧️', whenID:`Nov – Des ${Y}`, whenEN:`Nov – Dec ${Y}`, noteID:'Dosis penuh BRIN 5-10 thn: Urea 150g + SP-36 80g + KCl 100g + Kieserit 50g per pohon.', noteEN:'Full BRIN dosage age 5-10: Urea 150g + SP-36 80g + KCl 100g + Kieserit 50g/tree.' },  // Okt → Nov
+    { id:`Siklus ${Y+1}: Pertumbuhan Vegetatif`, en:`${Y+1} Cycle: Vegetative Growth`, icon:'🌿', whenID:`Feb – Mar ${Y+1}`, whenEN:`Feb – Mar ${Y+1}`, noteID:'Awal siklus berikutnya. Pemupukan akhir MH + monitoring tunas baru.', noteEN:'Next cycle begins. End-of-wet-season fertilization + new bud monitoring.' },  // Nov → Feb next year
+    { id:`Siklus ${Y+1}: Pertumbuhan Vegetatif`, en:`${Y+1} Cycle: Vegetative Growth`, icon:'🌿', whenID:`Feb – Mar ${Y+1}`, whenEN:`Feb – Mar ${Y+1}`, noteID:'Awal siklus berikutnya. Pemupukan akhir MH + monitoring tunas baru.', noteEN:'Next cycle begins. End-of-wet-season fertilization + new bud monitoring.' }  // Des → Feb next year
+  ];
+
+  const current = phaseInfo[currentMonth];
+  const next = milestoneNext[currentMonth];
+
+  // Update H2 section-title
+  const h2ID = document.querySelector('.status-section .section-title .lang-id');
+  const h2EN = document.querySelector('.status-section .section-title .lang-en');
+  if (h2ID) h2ID.innerHTML = `Kita sedang berada di <em>Fase ${current.id}</em>`;
+  if (h2EN) h2EN.innerHTML = `We are currently in the <em>${current.en} Phase</em>`;
+
+  // Update Phase Saat Ini card
+  const pIcon = document.querySelector('.phase-card .phase-icon');
+  const pNameID = document.querySelector('.phase-card .phase-name.lang-id');
+  const pNameEN = document.querySelector('.phase-card .phase-name.lang-en');
+  const pPeriod = document.querySelector('.phase-card .phase-period');
+  if (pIcon) pIcon.textContent = current.icon;
+  if (pNameID) pNameID.textContent = current.id;
+  if (pNameEN) pNameEN.textContent = current.en;
+  if (pPeriod) pPeriod.textContent = current.periodID;
+  // Description (last child in phase-card before badge)
+  const phaseDesc = document.querySelector('.phase-card > div:last-child');
+  if (phaseDesc && phaseDesc.style && phaseDesc.style.fontFamily && phaseDesc.style.fontFamily.includes('Lora')) {
+    const descIdEl = phaseDesc.querySelector('.lang-id');
+    const descEnEl = phaseDesc.querySelector('.lang-en');
+    if (descIdEl) descIdEl.textContent = current.descID;
+    if (descEnEl) descEnEl.textContent = current.descEN;
+  }
+
+  // Update Milestone Berikutnya card
+  const mIcon = document.querySelector('.milestone-card .milestone-icon');
+  const mNameID = document.querySelector('.milestone-card .milestone-name.lang-id');
+  const mNameEN = document.querySelector('.milestone-card .milestone-name.lang-en');
+  const mWhen = document.querySelector('.milestone-card .milestone-when');
+  const mNoteID = document.querySelector('.milestone-card .milestone-note.lang-id');
+  const mNoteEN = document.querySelector('.milestone-card .milestone-note.lang-en');
+  if (mIcon) mIcon.textContent = next.icon;
+  if (mNameID) mNameID.textContent = next.id;
+  if (mNameEN) mNameEN.textContent = next.en;
+  if (mWhen) mWhen.textContent = next.whenID;
+  if (mNoteID) mNoteID.textContent = next.noteID;
+  if (mNoteEN) mNoteEN.textContent = next.noteEN;
+
+  console.log('[Status Board] Updated for month=' + currentMonth + ' (' + current.id + ') → next=' + next.id);
+}
 </script>
 </body>
 </html>
