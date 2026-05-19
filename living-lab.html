@@ -954,6 +954,42 @@ span.lang-en { display: none; }
 .act-log-item.status-upcoming .act-log-progress { background: rgba(65,105,145,0.12); }
 .act-log-item.status-upcoming .act-log-theory   { background: rgba(65,105,145,0.07); }
 
+/* ══════════════════════════════════════════════════════════════════
+   TIER 3-COLOR untuk year-2026 (tahun berjalan) — locked 19 Mei 2026
+   Mockup v2 palette per Adib: Tier 1 moss · Tier 2 purple · Tier 3 amber
+   Year 2024 & 2025 tetap pakai warna existing (status-based)
+   ══════════════════════════════════════════════════════════════════ */
+#year-2026 .act-log-item .act-log-progress {
+  background: #E8F4ED !important;
+  border-top: 4px solid #2D8466 !important;
+  border-right-color: rgba(45,132,102,0.25) !important;
+}
+#year-2026 .act-log-item .act-log-theory {
+  background: #EDE9FE !important;
+  border-top: 4px solid #5B21B6 !important;
+  border-right-color: rgba(91,33,182,0.22) !important;
+}
+#year-2026 .act-log-item .act-log-eval {
+  background: #FEF3C7 !important;
+  border-top: 4px solid #B45309 !important;
+}
+/* Text colors year-2026 supaya contrast dengan tier bg */
+#year-2026 .act-log-item .theory-label { color: #5B21B6 !important; }
+#year-2026 .act-log-item .eval-label   { color: #B45309 !important; }
+#year-2026 .act-log-item .theory-body  { color: #2D3742 !important; }
+#year-2026 .act-log-item .eval-body    { color: #2D3742 !important; }
+#year-2026 .act-log-item .act-log-title { color: #1F5F47 !important; }
+#year-2026 .act-log-item .theory-tag {
+  background: rgba(91,33,182,0.1) !important;
+  border-color: rgba(91,33,182,0.25) !important;
+  color: #5B21B6 !important;
+}
+#year-2026 .act-log-item .eval-followup {
+  background: rgba(180,83,9,0.08) !important;
+  border-left-color: rgba(180,83,9,0.45) !important;
+  color: #8B4309 !important;
+}
+
 /* ── Terracotta Hangat — harmonisasi teks & aksen untuk status-done ── */
 .act-log-item.status-done .act-log-status       { background: rgba(160,50,30,0.15) !important; color: #8b2e12 !important; }
 .act-log-item.status-done .act-log-title        { color: #5c1e10; }
@@ -2655,9 +2691,32 @@ function buildTheoryColumns() {
   ['2024', '2025', '2026'].forEach(function(year) {
     var section = document.getElementById('year-' + year);
     if (!section) return;
+
+    // ═══════ REVERSE ORDER: newest first per phase (locked 19 Mei 2026 per Adib) ═══════
+    // Per phase-block .act-log-list: reverse children DOM order + permutate corresponding
+    // theoryData/evalData slice supaya mapping iterasi tetap match
+    var permTheories = [];
+    var permEvals = [];
+    var origTheories = theoryData[year] || [];
+    var origEvals = evalData[year] || [];
+    var globalIdx = 0;
+    section.querySelectorAll('.act-log-list').forEach(function(list) {
+      var phaseItems = Array.from(list.children);
+      var phaseCount = phaseItems.length;
+      // Reverse DOM items dalam phase
+      phaseItems.slice().reverse().forEach(function(item) { list.appendChild(item); });
+      // Permutate corresponding theoryData/evalData subset
+      var phaseTheories = origTheories.slice(globalIdx, globalIdx + phaseCount).reverse();
+      var phaseEvals = origEvals.slice(globalIdx, globalIdx + phaseCount).reverse();
+      permTheories = permTheories.concat(phaseTheories);
+      permEvals = permEvals.concat(phaseEvals);
+      globalIdx += phaseCount;
+    });
+    // Re-query items in new reversed DOM order
     var items = section.querySelectorAll('.act-log-item');
-    var theories = theoryData[year] || [];
-    var evals    = evalData[year]   || [];
+    var theories = permTheories;
+    var evals = permEvals;
+    // ═══════ END REVERSE LOGIC ═══════
     items.forEach(function(item, i) {
       var theory = theories[i];
       var ev     = evals[i];
