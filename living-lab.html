@@ -990,6 +990,22 @@ span.lang-en { display: none; }
   color: #8B4309 !important;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   HIDE planned/upcoming items — locked 19 Mei 2026 per Adib
+   Living Lab hanya tampilkan aktivitas yang SUDAH/SEDANG dilakukan.
+   Items status "planned" (◎ Direncanakan, ◎ Pivoted, ◎ BRIN Plan)
+   dan "upcoming" (↗ Akan Datang) di-hide via CSS.
+   Items masih di HTML untuk audit trail + future toggle.
+   ══════════════════════════════════════════════════════════════════ */
+.act-log-item.status-planned,
+.act-log-item.status-upcoming {
+  display: none !important;
+}
+/* Auto-hide phase-block jika SEMUA items dalam phase berstatus planned/upcoming */
+.phase-block:not(:has(.act-log-item:not(.status-planned):not(.status-upcoming))) {
+  display: none;
+}
+
 /* ── Terracotta Hangat — harmonisasi teks & aksen untuk status-done ── */
 .act-log-item.status-done .act-log-status       { background: rgba(160,50,30,0.15) !important; color: #8b2e12 !important; }
 .act-log-item.status-done .act-log-title        { color: #5c1e10; }
@@ -1794,21 +1810,6 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         <div class="year-sum-pill lang-en">Budget: <strong>Rp 71.29M (2 cycles)</strong></div>
       </div>
 
-      <!-- ERA STATIC MARKER · Jan – 31 Mar 2026 (Fase 4 RWI Pre-T0) -->
-      <div style="display:flex;align-items:center;gap:0.7rem;padding:0.9rem 1.1rem;background:linear-gradient(180deg,#F7F2E8 0%,#FDFAF2 70%);border-left:4px solid #D4C4A0;border-radius:0 10px 10px 0;margin:1.5rem 0 1rem">
-        <span style="font-size:1.4rem;flex-shrink:0">🔒</span>
-        <div style="flex:1">
-          <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.3;color:#4d3d20">
-            <span class="lang-id">Arsip Statis — Era T.A. RWI Pre-T0</span>
-            <span class="lang-en">Static Archive — T.A. RWI Pre-T0 Era</span>
-          </div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;color:#c4906a;margin-top:0.2rem">
-            <span class="lang-id">Jan – 31 Mar 2026 · Locked · Tidak akan berubah</span>
-            <span class="lang-en">Jan – 31 Mar 2026 · Locked · Will not change</span>
-          </div>
-        </div>
-      </div>
-
       <div class="phase-block">
         <div class="phase-block-header">
           <span class="phase-block-icon">🌱</span>
@@ -1864,23 +1865,6 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
               <div class="act-log-detail lang-en">Application of 100cc fish extract per tree + 900cc water = 1 liter/tree. Fish extract self-produced in Wonosalam (1,000 liters; ingredients: coconut water 250L, molasses 100L, sea fish waste 500 KG, bioactivator 20 KG). After this series of interventions, new buds and first flowers began emerging at branch tips — visible signs of rejuvenation underway.</div>
             </div>
             <div class="act-log-meta"><strong>15 Mar 2026</strong>T.A.</div>
-          </div>
-
-          <!-- ════════════════════════════════════════════════════════════
-               ERA LIVE MARKER · 1 Apr 2026 → forward (Self-Managed era)
-               ════════════════════════════════════════════════════════════ -->
-          <div style="display:flex;align-items:center;gap:0.7rem;padding:0.9rem 1.1rem;background:linear-gradient(180deg,#e8f4f0 0%,#f0f5f3 80%);border-left:4px solid #5a9080;border-radius:0 10px 10px 0;margin:1.5rem 0 1rem">
-            <span style="font-size:1.4rem;flex-shrink:0">🔍</span>
-            <div style="flex:1">
-              <div style="font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.3;color:#2e4040">
-                <span class="lang-id">Live Monitoring — Era Self-Managed</span>
-                <span class="lang-en">Live Monitoring — Self-Managed Era</span>
-              </div>
-              <div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;font-style:italic;color:#c4906a;margin-top:0.2rem">
-                <span class="lang-id">1 Apr 2026 → forward · Sumber data: Dashboard Internal (curated berkala)</span>
-                <span class="lang-en">1 Apr 2026 → forward · Source: Internal Dashboard (curated periodically)</span>
-              </div>
-            </div>
           </div>
 
           <div class="act-log-item">
