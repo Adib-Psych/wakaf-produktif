@@ -203,6 +203,26 @@ span.lang-en { display: none; }
   .rwi-nav-badge { display: none !important; }
 }
 
+
+/* ══ BUKU SAKU LAPANGAN — Field Pocketbook ══ */
+.bks-block { background: var(--white); border: 1px solid rgba(46,64,64,.12); border-left: 5px solid var(--medium); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.2rem 0; }
+.bks-block.bks-critical { border-left-color: var(--cherry); background: #fdf6f4; }
+.bks-block.bks-safety { border-left-color: var(--gold, #b9892f); background: #fdfaf2; }
+.bks-block.bks-recovery { border-left-color: var(--accent); background: #fbf6f1; }
+.bks-block.bks-special { border-left-color: var(--medium); background: #f4faf8; }
+.bks-head { display: flex; align-items: center; gap: .8rem; margin-bottom: .8rem; }
+.bks-num { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--dark); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; }
+.bks-num.cherry { background: var(--cherry); }
+.bks-num.accent { background: var(--accent); }
+.bks-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--dark); }
+.bks-sub { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: .92rem; color: var(--medium); margin: .9rem 0 .35rem; letter-spacing: .02em; }
+.bks-list { margin: .3rem 0 .3rem 1.4rem; padding: 0; }
+.bks-list li { margin: .35rem 0; line-height: 1.55; color: var(--text); font-size: .92rem; }
+.bks-table { width: 100%; border-collapse: collapse; margin: .5rem 0; font-size: .88rem; }
+.bks-table th { background: var(--dark); color: #fff; padding: .55rem .7rem; text-align: left; font-weight: 700; }
+.bks-table td { padding: .55rem .7rem; border-bottom: 1px solid rgba(46,64,64,.1); vertical-align: top; line-height: 1.5; color: var(--text); }
+.bks-table tr:nth-child(even) td { background: var(--bg-tint, #e8f4f0); }
+.num.gold { background: var(--gold, #b9892f); }
 </style>
 </head>
 <body>
@@ -537,6 +557,474 @@ span.lang-en { display: none; }
       </div>
     </div>
   </section>
+
+  <!-- ══ BUKU SAKU LAPANGAN — DETAIL TEKNIS ══ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">6</div>
+      <h2><span class="lang-id">Buku Saku Lapangan — Detail Teknis Per Langkah</span><span class="lang-en">Field Pocketbook — Technical Detail Per Step</span></h2>
+      <div class="label">deep field guide</div>
+    </div>
+
+    <p class="lang-id">Bagian sebelumnya (5 Langkah) adalah ringkasan untuk briefing & remind. Bagian ini adalah <strong>tuntunan eksekusi lengkap</strong> untuk seseorang yang baru pertama kali melakukan teknik parit lingkar piringan — alat, urutan sub-langkah, common mistakes, dan quality check. Cocok untuk dibaca sebelum hari pertama eksekusi atau saat lupa di tengah pekerjaan.</p>
+    <p class="lang-en">The previous section (5 Steps) is a summary for briefing and reminder. This section is a <strong>complete execution guide</strong> for anyone doing the canopy-ring trench technique for the first time — tools, sub-step order, common mistakes, and quality checks. Read before day-1 execution or when forgetting mid-task.</p>
+
+    <!-- ─── PRE-MIX PKM (Persiapan) ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">0</span>
+        <span class="bks-title lang-id">Persiapan: Pre-Mix PKM di Rumah</span>
+        <span class="bks-title lang-en">Preparation: Pre-Mix PKM at Home</span>
+      </div>
+
+      <div class="bks-sub lang-id">🔧 Alat & Bahan</div>
+      <div class="bks-sub lang-en">🔧 Tools & Materials</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Wadah pencampur</strong>: ember besar 30 L atau karung kosong yang masih bersih. Hindari wadah bekas pestisida.</li>
+        <li><strong>Sekop kecil / centong</strong> untuk mengaduk.</li>
+        <li><strong>Timbangan dapur</strong> (kapasitas ≥ 5 kg) untuk kalibrasi awal — lebih akurat dari takaran volume saja.</li>
+        <li>3 bahan: SP-36, KCl, Kieserit.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Mixing container</strong>: 30 L bucket or clean empty sack. Avoid containers previously used for pesticides.</li>
+        <li><strong>Small scoop / ladle</strong> for stirring.</li>
+        <li><strong>Kitchen scale</strong> (≥5 kg capacity) for initial calibration — more accurate than volume measure alone.</li>
+        <li>3 materials: SP-36, KCl, Kieserit.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">📋 Sub-Langkah</div>
+      <div class="bks-sub lang-en">📋 Sub-Steps</div>
+      <ol class="bks-list lang-id">
+        <li><strong>Kalibrasi takaran sekali saja</strong>: tuang SP-36 ke ember sampai timbangan dapur baca 80 g, tandai garis di ember dengan spidol permanen. Lakukan sama untuk KCl 100 g dan Kieserit 50 g. Setelah ini, takar per pohon cukup pakai sendok ukuran yang sama tanpa timbang ulang setiap kali.</li>
+        <li><strong>Hitung batch harian</strong>: target Cak Yit 100–150 pohon/hari. Untuk 150 pohon: SP-36 12 kg + KCl 15 kg + Kieserit 7,5 kg. Pre-mix sebanyak ini saja untuk 1 hari kerja — jangan stok banyak (kelembapan menggumpalkan).</li>
+        <li><strong>Urutan tuang</strong>: KCl dulu (paling kasar) → SP-36 di atasnya → Kieserit terakhir (paling halus, mudah merata).</li>
+        <li><strong>Aduk merata</strong>: kalau pakai ember, aduk dengan sekop dari bawah ke atas 20–30 kali. Kalau pakai karung, ikat ujung lalu guncang 1 menit penuh + putar 360° beberapa kali. Hasil: warna campuran homogen, tidak ada lapisan terlihat.</li>
+        <li><strong>Bagi ke kantong kecil per-pohon</strong> (opsional, untuk Cak Yit yang baru belajar): siapkan 100–150 plastik klip kecil, masing-masing isi 230 g PKM. Beri tanda dengan spidol. Cak Yit tinggal ambil 1 kantong per pohon — hilangkan margin error takaran di lapangan.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li><strong>One-time calibration</strong>: pour SP-36 into the bucket until kitchen scale reads 80 g, mark a line on the bucket with permanent marker. Do the same for KCl 100 g and Kieserit 50 g. After this, per-tree measurement uses the same scoop without re-weighing each time.</li>
+        <li><strong>Calculate daily batch</strong>: Cak Yit target 100–150 trees/day. For 150 trees: SP-36 12 kg + KCl 15 kg + Kieserit 7.5 kg. Pre-mix only this much per workday — don't stockpile (humidity causes clumping).</li>
+        <li><strong>Pour order</strong>: KCl first (coarsest) → SP-36 on top → Kieserit last (finest, mixes easily).</li>
+        <li><strong>Mix thoroughly</strong>: in a bucket, stir bottom-up with scoop 20–30 times. In a sack, tie the end and shake 1 full minute + rotate 360° several times. Result: homogeneous color, no visible layers.</li>
+        <li><strong>Pre-portion into per-tree bags</strong> (optional, for novice Cak Yit): prepare 100–150 small zip bags, each with 230 g PKM. Mark with marker. Cak Yit takes 1 bag per tree — eliminates field measurement error.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Mencampur Urea juga</strong>: JANGAN. Urea harus terpisah (lihat alasan kimia di Modul C).</li>
+        <li><strong>Pre-mix terlalu banyak / disimpan berhari-hari</strong>: kelembapan akan menggumpalkan PKM. Mix harian saja.</li>
+        <li><strong>Pakai wadah bekas pestisida</strong>: residu kimia bisa kontaminasi pupuk. Pakai wadah baru / bersihkan tuntas dengan deterjen + bilas 3×.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Including Urea in the mix</strong>: DO NOT. Urea must stay separate (see chemical reason in Module C).</li>
+        <li><strong>Pre-mixing too much / storing for days</strong>: humidity will clump PKM. Mix daily only.</li>
+        <li><strong>Using pesticide-contaminated containers</strong>: chemical residue contaminates fertilizer. Use new containers or wash thoroughly with detergent + rinse 3×.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 1 DETAIL: BUKA PARIT ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">1</span>
+        <span class="bks-title lang-id">Buka Parit Lingkar Piringan</span>
+        <span class="bks-title lang-en">Open the Canopy-Ring Trench</span>
+      </div>
+
+      <div class="bks-sub lang-id">🔧 Alat</div>
+      <div class="bks-sub lang-en">🔧 Tool</div>
+      <p class="lang-id"><strong>Cangkul cakar (3 mata)</strong> lebih efisien untuk gali tanah berakar — mata cakar menusuk antara akar tanpa memotongnya. Kalau hanya ada cangkul ginjal biasa, OK tetapi lebih lambat dan risiko luka akar lebih tinggi.</p>
+      <p class="lang-en"><strong>3-tine claw hoe</strong> is more efficient for digging root-laden soil — the tines push between roots without cutting them. A standard kidney hoe works but is slower and risks more root damage.</p>
+
+      <div class="bks-sub lang-id">📋 Sub-Langkah</div>
+      <div class="bks-sub lang-en">📋 Sub-Steps</div>
+      <ol class="bks-list lang-id">
+        <li><strong>Berdiri di samping pohon, lihat ke atas</strong>. Catat titik dedaunan terjauh — di mana bayangan tajuk berakhir saat matahari di atas (drip-line). Untuk Robusta dewasa: biasanya 75–125 cm dari pangkal batang.</li>
+        <li><strong>Mulai gali dari satu titik</strong> di drip-line. Buat tanda kaki pertama di sana.</li>
+        <li><strong>Gali melingkar searah jarum jam</strong> mengikuti drip-line. Lebar parit 15–20 cm (lebar 1 telapak tangan). Kedalaman 5–10 cm (sedalam 4 ruas jari).</li>
+        <li><strong>Tanah galian tumpuk di tepi LUAR parit</strong>, bukan ke dalam tanah pohon. Siap dipakai untuk menutup di Langkah 5.</li>
+        <li><strong>Untuk pohon di lereng curam (Bidang 3)</strong>: parit ikut kontur (horisontal melingkar di lereng). Sisi atas (uphill) dibuat sedikit lebih dalam (8–10 cm), sisi bawah (downhill) lebih dangkal (5 cm). Tujuan: pupuk tidak hanyut ke lembah.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li><strong>Stand beside the tree, look up</strong>. Note the farthest leaf reach — where the canopy shadow ends with sun overhead (drip-line). For a mature Robusta: typically 75–125 cm from the trunk.</li>
+        <li><strong>Start digging at one point</strong> on the drip-line. Mark with your first footstep there.</li>
+        <li><strong>Dig in a clockwise circle</strong> along the drip-line. Trench width 15–20 cm (one palm width). Depth 5–10 cm (4 finger-joints deep).</li>
+        <li><strong>Pile excavated soil on the OUTER edge</strong> of the trench, not back toward the tree. Ready to use for cover in Step 5.</li>
+        <li><strong>For trees on steep slopes (Block 3)</strong>: trench follows contour (horizontal circle on slope). Upslope side slightly deeper (8–10 cm), downslope shallower (5 cm). Purpose: fertilizer doesn't wash to the valley.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">✓ Quality Check</div>
+      <div class="bks-sub lang-en">✓ Quality Check</div>
+      <ul class="bks-list lang-id">
+        <li>Parit berbentuk lingkaran utuh (bukan ½ atau ¾ lingkaran). Cek dengan berjalan keliling pohon.</li>
+        <li>Tanah galian semua di sisi luar — tidak ada yang jatuh kembali ke dalam parit.</li>
+        <li>Tidak ada akar besar (>1 cm diameter) yang ter-potong. Bila kena akar besar, geser parit 5–10 cm ke luar di titik itu.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Trench is a complete circle (not ½ or ¾). Verify by walking around the tree.</li>
+        <li>All excavated soil on the outer side — none fallen back into the trench.</li>
+        <li>No large roots (>1 cm diameter) cut. If hitting a large root, shift the trench 5–10 cm outward at that spot.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Parit terlalu dalam (>10 cm)</strong>: akar serap berada di lapisan 5–20 cm. Parit terlalu dalam = melukai akar serap. Gunakan ruas jari sebagai pengukur.</li>
+        <li><strong>Parit terlalu dangkal (<5 cm)</strong>: pupuk akan tercuci air hujan permukaan.</li>
+        <li><strong>Parit terlalu dekat pangkal</strong>: di pangkal batang ada akar tunggang besar, dan tidak ada akar serap. Parit di sini = sia-sia + risiko luka batang.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Trench too deep (>10 cm)</strong>: feeder roots are in the 5–20 cm layer. Too deep = injuring feeder roots. Use finger joints as measure.</li>
+        <li><strong>Trench too shallow (<5 cm)</strong>: fertilizer washed away by surface rain.</li>
+        <li><strong>Trench too close to trunk</strong>: trunk base has large taproots, no feeder roots. Trench here = wasted + risk of trunk damage.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 2 DETAIL: TABUR UREA ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">2</span>
+        <span class="bks-title lang-id">Tabur Urea 150 g (Lapisan Pertama)</span>
+        <span class="bks-title lang-en">Spread Urea 150 g (First Layer)</span>
+      </div>
+
+      <div class="bks-sub lang-id">🥄 Cara Takar Cepat (Tanpa Timbangan di Lapangan)</div>
+      <div class="bks-sub lang-en">🥄 Quick Measure (No Field Scale Needed)</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Cup mie instan kosong</strong> (yang ukuran 60 ml): 1 cup penuh Urea granular ≈ 150 g. Verifikasi sekali pakai timbangan dapur saat persiapan, lalu pakai itu sebagai standar.</li>
+        <li>Alternatif: <strong>gelas plastik air mineral 240 ml</strong> setengah penuh ≈ 150 g.</li>
+        <li>Bawa cup takar ini di kantong celana / tas pinggang Cak Yit. Cangkul di tangan kanan, cup + Urea di tangan kiri.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Empty instant noodle cup</strong> (60 ml size): 1 full cup of granular Urea ≈ 150 g. Verify once with a kitchen scale during prep, then use as standard.</li>
+        <li>Alternative: <strong>240 ml plastic water cup</strong> half-full ≈ 150 g.</li>
+        <li>Carry this measuring cup in Cak Yit's pocket / waist bag. Hoe in right hand, cup + Urea in left.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">📋 Cara Tabur Merata</div>
+      <div class="bks-sub lang-en">📋 How to Spread Evenly</div>
+      <ol class="bks-list lang-id">
+        <li>Berjalan keliling parit perlahan sambil <strong>menggoyangkan cup</strong> mengeluarkan Urea bertahap. Bayangkan menabur biji — bukan menumpahkan.</li>
+        <li><strong>Target distribusi</strong>: tabur menyebar di SEPANJANG parit (mungkin 6–8 meter melingkar untuk pohon dewasa), bukan hanya 1–2 titik. Pikir: setiap segmen 10 cm parit harus dapat sedikit Urea.</li>
+        <li><strong>Habiskan cup hingga kosong</strong> sebelum pindah ke pohon berikutnya. Bila tersisa = takaran kurang merata untuk pohon ini.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Walk slowly around the trench while <strong>shaking the cup</strong> to release Urea gradually. Imagine sowing seeds — not pouring.</li>
+        <li><strong>Distribution target</strong>: spread ALONG the trench (perhaps 6–8 m circumference for a mature tree), not just 1–2 spots. Think: every 10 cm of trench gets some Urea.</li>
+        <li><strong>Empty the cup completely</strong> before moving to the next tree. Leftover means under-distribution for this tree.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Menumpahkan sekaligus di 1 titik</strong>: konsentrasi terlalu tinggi → akar terbakar. Distribusi merata adalah inti.</li>
+        <li><strong>Cangkul masih kena tanah, lalu cup terbuka di atasnya</strong>: Urea jatuh ke tanah luar parit, bukan ke dalam parit. Posisi tangan harus tepat di atas parit.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Dumping all at one spot</strong>: concentration too high → root burn. Even distribution is the core.</li>
+        <li><strong>Hoe still in soil while opening cup above</strong>: Urea drops outside the trench. Hand position must be directly over the trench.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 3 DETAIL: TUTUP TIPIS TANAH ─── -->
+    <div class="bks-block bks-critical">
+      <div class="bks-head">
+        <span class="bks-num cherry">3</span>
+        <span class="bks-title lang-id">Tutup Tipis Tanah ~2 cm — KRUSIAL</span>
+        <span class="bks-title lang-en">Cover with Thin Soil ~2 cm — CRITICAL</span>
+      </div>
+
+      <div class="bks-sub lang-id">📋 Cara</div>
+      <div class="bks-sub lang-en">📋 Method</div>
+      <ol class="bks-list lang-id">
+        <li>Ambil <strong>sedikit tanah</strong> dari tumpukan luar parit dengan punggung cangkul (sisi belakang yang lebar, bukan mata cakar).</li>
+        <li><strong>Dorong masuk</strong> ke parit, ratakan setipis mungkin tetapi MENUTUP SELURUH Urea — tidak ada granule Urea putih yang masih terlihat.</li>
+        <li><strong>Ketebalan target</strong>: ~2 cm = setebal kuku ibu jari saja. Bukan setebal jari.</li>
+        <li><strong>Test cukup atau tidak</strong>: lihat dari atas, sentuh dengan jari. Bila granule Urea masih terlihat warnanya = belum cukup. Bila tanah penutup setebal jari = terlalu tebal (Langkah 4 jadi terlalu dalam).</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Take <strong>a little soil</strong> from the pile outside the trench using the back of the hoe (wide flat side, not the claw tines).</li>
+        <li><strong>Push in</strong> to the trench, spread as thin as possible but COVERING ALL the Urea — no white Urea granules still visible.</li>
+        <li><strong>Target thickness</strong>: ~2 cm = thumbnail thickness. Not finger thickness.</li>
+        <li><strong>Verification</strong>: look from above, touch with finger. If Urea granules still visible color = not enough. If covering soil is finger-thick = too thick (Step 4 ends up too deep).</li>
+      </ol>
+
+      <div class="bks-sub lang-id">⚠ Mengapa KRUSIAL</div>
+      <div class="bks-sub lang-en">⚠ Why CRITICAL</div>
+      <p class="lang-id">Tanpa pemisah tanah ini, Urea akan kontak langsung dengan SP-36 (asam) di Langkah 4. Reaksi kimia: <strong>nitrogen Urea menguap sebagai amonia (NH₃)</strong> sebelum sempat diserap akar pohon. Investasi pupuk N hilang 30–50%. Pemisah tanah tipis = barrier kimia yang mencegah ini.</p>
+      <p class="lang-en">Without this soil divider, Urea contacts SP-36 (acidic) directly in Step 4. Chemical reaction: <strong>Urea's nitrogen volatilizes as ammonia (NH₃)</strong> before being absorbed by roots. 30–50% of N investment lost. Thin soil divider = chemical barrier preventing this.</p>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Skip langkah ini</strong> karena tampak "remeh": ini langkah paling penting dari ke-5 langkah. Skip = 30–50% pupuk N sia-sia. Wajib.</li>
+        <li><strong>Tanah penutup terlalu tebal (>3 cm)</strong>: Langkah 4 PKM jadi terlalu dekat permukaan = mudah tercuci hujan.</li>
+        <li><strong>Tanah penutup tidak rata, sebagian Urea masih terlihat</strong>: bagian yang terbuka tetap kontak langsung = sebagian N tetap menguap. Tutup MERATA.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Skipping this step</strong> because it seems "trivial": this is the most important of the 5 steps. Skip = 30–50% of N wasted. Mandatory.</li>
+        <li><strong>Covering soil too thick (>3 cm)</strong>: Step 4 PKM ends up too near the surface = easily washed by rain.</li>
+        <li><strong>Uneven cover, some Urea still visible</strong>: exposed parts still have direct contact = some N still volatilizes. Cover EVENLY.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 4 DETAIL: TABUR PKM ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">4</span>
+        <span class="bks-title lang-id">Tabur PKM 230 g (Lapisan Kedua)</span>
+        <span class="bks-title lang-en">Spread PKM 230 g (Second Layer)</span>
+      </div>
+
+      <div class="bks-sub lang-id">🥄 Cara Takar PKM</div>
+      <div class="bks-sub lang-en">🥄 PKM Measurement</div>
+      <p class="lang-id">230 g PKM kira-kira <strong>1,5 cup mie instan</strong> (karena PKM lebih berat dari Urea per volume). Sekali lagi: verifikasi pakai timbangan dapur sekali, lalu pakai cup standar.</p>
+      <p class="lang-en">230 g of PKM is roughly <strong>1.5 noodle cups</strong> (because PKM is denser than Urea per volume). Again: verify with kitchen scale once, then use as standard cup.</p>
+      <p class="lang-id"><strong>Lebih praktis</strong>: pakai metode kantong pre-portion (lihat Persiapan sub-langkah 5). Cak Yit tinggal ambil 1 kantong PKM per pohon, tuang seluruhnya.</p>
+      <p class="lang-en"><strong>More practical</strong>: use the pre-portioned bag method (see Preparation sub-step 5). Cak Yit just takes 1 PKM bag per tree, pours it all.</p>
+
+      <div class="bks-sub lang-id">📋 Cara Tabur</div>
+      <div class="bks-sub lang-en">📋 How to Spread</div>
+      <ol class="bks-list lang-id">
+        <li>Tabur PKM <strong>di atas tanah pemisah</strong> di parit. Sama teknik dengan Urea: berjalan keliling, goyangkan cup/kantong, distribusi merata sepanjang lingkaran.</li>
+        <li>Karena volume PKM lebih besar dari Urea (230 g vs 150 g), tampilan akhir <strong>tampak lebih tebal</strong> di parit. Itu normal.</li>
+        <li>Habiskan dosis sebelum pindah pohon.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Spread PKM <strong>on top of the soil divider</strong> in the trench. Same technique as Urea: walk around, shake cup/bag, distribute evenly along the ring.</li>
+        <li>Since PKM volume is larger than Urea (230 g vs 150 g), the final look <strong>appears thicker</strong> in the trench. That's normal.</li>
+        <li>Use up the full dose before moving to the next tree.</li>
+      </ol>
+    </div>
+
+    <!-- ─── STEP 5 DETAIL: TUTUP PENUH ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">5</span>
+        <span class="bks-title lang-id">Tutup Penuh dengan Tanah Galian</span>
+        <span class="bks-title lang-en">Fully Cover with Excavated Soil</span>
+      </div>
+
+      <div class="bks-sub lang-id">📋 Cara</div>
+      <div class="bks-sub lang-en">📋 Method</div>
+      <ol class="bks-list lang-id">
+        <li>Dorong <strong>SELURUH tanah</strong> dari tumpukan luar parit (Langkah 1) kembali ke dalam parit. Pakai punggung cangkul.</li>
+        <li>Setelah tanah masuk semua, <strong>ratakan dengan punggung cangkul</strong> agar permukaan sejajar dengan tanah sekitar. Permukaan akhir harus rata dengan tanah kebun, bukan menonjol atau cekung.</li>
+        <li><strong>Tepuk lembut</strong> 2–3 kali dengan punggung cangkul. Tujuan: kontak tanah-pupuk lebih rapat, mempercepat pelarutan saat hujan.</li>
+        <li><strong>JANGAN dipadatkan / di-injak</strong>. Tanah padat menghalangi infiltrasi air ke zona akar = pupuk tidak terlarut, akar tidak bisa serap.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Push ALL the soil from the outer pile (Step 1) back into the trench. Use the back of the hoe.</li>
+        <li>After all soil is in, <strong>level with the back of the hoe</strong> so the surface is flush with surrounding ground. Final surface must be level with the garden floor — not raised or depressed.</li>
+        <li><strong>Tap gently</strong> 2–3 times with the back of the hoe. Purpose: closer soil-fertilizer contact, speeds dissolution during rain.</li>
+        <li><strong>DO NOT compact / stomp</strong>. Dense soil blocks water infiltration to the root zone = fertilizer doesn't dissolve, roots can't absorb.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">✓ Final Quality Check Per Pohon (10 detik)</div>
+      <div class="bks-sub lang-en">✓ Final Quality Check Per Tree (10 seconds)</div>
+      <ul class="bks-list lang-id">
+        <li>Permukaan rata, tidak ada granule pupuk yang terlihat.</li>
+        <li>Lingkaran parit tertutup penuh (cek 360°).</li>
+        <li>Tanah sekitar batang pohon kering & bersih (tidak ada pupuk tumpah di pangkal).</li>
+        <li>Daun pohon tidak rusak / tidak ada pupuk menempel di daun bawah.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Surface is level, no fertilizer granules visible.</li>
+        <li>Ring trench fully closed (check 360°).</li>
+        <li>Soil around the trunk is dry & clean (no fertilizer spill at the base).</li>
+        <li>Tree leaves undamaged / no fertilizer stuck on lower leaves.</li>
+      </ul>
+    </div>
+
+    <!-- ─── HANDLING POHON ABNORMAL ─── -->
+    <div class="bks-block bks-special">
+      <div class="bks-head">
+        <span class="bks-num accent">+</span>
+        <span class="bks-title lang-id">Handling Khusus: Pohon Abnormal</span>
+        <span class="bks-title lang-en">Special Handling: Abnormal Trees</span>
+      </div>
+
+      <table class="bks-table">
+        <thead>
+          <tr>
+            <th><span class="lang-id">Kondisi Pohon</span><span class="lang-en">Tree Condition</span></th>
+            <th><span class="lang-id">Penyesuaian</span><span class="lang-en">Adjustment</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon umur &lt;5 tahun</strong> (baru tanam / re-graft sukses)</span><span class="lang-en"><strong>Tree &lt;5 years old</strong> (newly planted / successful re-graft)</span></td>
+            <td><span class="lang-id">Dosis ½ dari standar: Urea 75g · SP-36 40g · KCl 50g · Kieserit 25g. Parit lebih kecil (10–15 cm lebar, 5–8 cm dalam).</span><span class="lang-en">Dose ½ of standard: Urea 75g · SP-36 40g · KCl 50g · Kieserit 25g. Smaller trench (10–15 cm wide, 5–8 cm deep).</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon baru di-top-graft (&lt;6 bulan)</strong></span><span class="lang-en"><strong>Recently top-grafted tree (&lt;6 months)</strong></span></td>
+            <td><span class="lang-id">SKIP siklus ini. Pohon dalam fase recovery sambungan — pemupukan bisa shock. Pupuk pertama setelah tunas baru &gt;30 cm panjang.</span><span class="lang-en">SKIP this cycle. Tree is in graft recovery — fertilization can shock. First feed after new shoots are &gt;30 cm long.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon sakit / daun pucat menguning</strong></span><span class="lang-en"><strong>Sick tree / yellow-pale leaves</strong></span></td>
+            <td><span class="lang-id">Catat di Form Input. Pupuk dosis normal tetapi <strong>tambah pupuk kandang 2 kg</strong> di parit yang sama (Modul E). Bila gejala curiga nematoda → lihat Modul F.</span><span class="lang-en">Record in Form Input. Apply normal dose but <strong>add 2 kg manure</strong> in the same trench (Module E). If nematode-suspicious → see Module F.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon mati / cabang utama patah</strong></span><span class="lang-en"><strong>Dead tree / main branch broken</strong></span></td>
+            <td><span class="lang-id">SKIP. Catat di Form Input untuk pertimbangan peremajaan (Modul G) atau penghapusan.</span><span class="lang-en">SKIP. Record in Form Input for rejuvenation consideration (Module G) or removal.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon di lereng sangat curam (&gt;30°)</strong></span><span class="lang-en"><strong>Tree on very steep slope (&gt;30°)</strong></span></td>
+            <td><span class="lang-id">Parit ½ lingkaran di sisi UPHILL saja (sisi atas pohon). Pupuk akan turun secara alami ke akar saat hujan. Hindari sisi downhill (run-off).</span><span class="lang-en">Half-circle trench on the UPHILL side only. Fertilizer naturally moves down to roots during rain. Avoid downhill side (run-off).</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── APD & SANITASI ─── -->
+    <div class="bks-block bks-safety">
+      <div class="bks-head">
+        <span class="bks-num accent">⛑</span>
+        <span class="bks-title lang-id">APD &amp; Sanitasi Kerja</span>
+        <span class="bks-title lang-en">PPE &amp; Work Sanitation</span>
+      </div>
+
+      <div class="bks-sub lang-id">🧤 Wajib</div>
+      <div class="bks-sub lang-en">🧤 Mandatory</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Sarung tangan kerja</strong>: kontak langsung kulit dengan Urea/KCl jangka panjang menyebabkan iritasi kulit (kering, gatal, retak). Sarung tangan plastik / kain tebal cukup.</li>
+        <li><strong>Sepatu boot</strong>: tanah berlumpur + lereng = risiko terpeleset. Plus melindungi kaki dari granule pupuk yang tumpah.</li>
+        <li><strong>Pakaian lengan & celana panjang</strong>: cegah granule lengket di kulit + perlindungan dari serangga.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Work gloves</strong>: prolonged skin contact with Urea/KCl causes irritation (dryness, itching, cracking). Plastic gloves or thick cloth suffice.</li>
+        <li><strong>Rubber boots</strong>: muddy soil + slopes = slip risk. Also protects feet from spilled granules.</li>
+        <li><strong>Long-sleeve clothes & long pants</strong>: prevent granule sticking to skin + insect protection.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">💧 Sanitasi Pasca-Kerja</div>
+      <div class="bks-sub lang-en">💧 Post-Work Sanitation</div>
+      <ul class="bks-list lang-id">
+        <li>Cuci tangan dengan sabun setelah selesai (wajib sebelum makan/merokok/minum).</li>
+        <li>Bilas sarung tangan & cangkul dengan air bersih, jemur.</li>
+        <li>Pakaian kerja dipisah dari pakaian rumah untuk dicuci.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Wash hands with soap after work (mandatory before eating/smoking/drinking).</li>
+        <li>Rinse gloves & hoe with clean water, sun-dry.</li>
+        <li>Work clothes washed separately from home clothes.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">🚨 Bila Mata Terkena Pupuk</div>
+      <div class="bks-sub lang-en">🚨 If Fertilizer Gets in Eyes</div>
+      <p class="lang-id">Bilas mata dengan air bersih mengalir <strong>minimal 10 menit</strong> tanpa berhenti. Bila masih perih setelah itu, ke puskesmas Ngantang.</p>
+      <p class="lang-en">Rinse eyes with clean running water <strong>at least 10 minutes</strong> continuously. If still painful after that, go to Ngantang community health center (puskesmas).</p>
+    </div>
+
+    <!-- ─── RECOVERY DARI MASALAH ─── -->
+    <div class="bks-block bks-recovery">
+      <div class="bks-head">
+        <span class="bks-num accent">↺</span>
+        <span class="bks-title lang-id">Recovery dari Masalah Tak Terduga</span>
+        <span class="bks-title lang-en">Recovery from Unexpected Issues</span>
+      </div>
+
+      <table class="bks-table">
+        <thead>
+          <tr>
+            <th><span class="lang-id">Situasi</span><span class="lang-en">Situation</span></th>
+            <th><span class="lang-id">Tindakan</span><span class="lang-en">Action</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lang-id"><strong>Hujan tiba-tiba di tengah eksekusi</strong></span><span class="lang-en"><strong>Sudden rain mid-execution</strong></span></td>
+            <td><span class="lang-id">Pohon yang sudah sampai Langkah 5 (parit tertutup) = AMAN, lanjut hujan. Pohon yang di Langkah 1–4 (parit terbuka, pupuk belum tertutup): segera tutup parit dengan tanah meskipun belum semua langkah selesai. Jangan tinggalkan parit terbuka — pupuk hanyut.</span><span class="lang-en">Tree already at Step 5 (covered) = SAFE, let the rain continue. Tree at Steps 1–4 (open trench, fertilizer uncovered): immediately cover with soil even if not all steps complete. Don't leave open trench — fertilizer washes away.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pupuk tumpah / lebih dari dosis</strong></span><span class="lang-en"><strong>Spilled / over-dose fertilizer</strong></span></td>
+            <td><span class="lang-id">Bila tumpah di luar parit: tetap di tempat (tidak perlu dipungut), tetapi jangan tambah dosis baru — total tetap dihitung sebagai dosis pohon. Bila terlanjur over-dose 2× lipat: pupuk 1 pohon saja dengan dosis itu, SKIP pohon berikutnya.</span><span class="lang-en">If spilled outside trench: leave it (no need to scoop), but don't add new dose — total still counts as the tree's dose. If accidentally 2× over-dose: fertilize that 1 tree with that dose, SKIP the next tree.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Salah urutan (PKM dulu, baru Urea)</strong></span><span class="lang-en"><strong>Wrong order (PKM first, then Urea)</strong></span></td>
+            <td><span class="lang-id">Bila baru sadar segera: keruk PKM keluar, ulang dari Langkah 2. Bila sudah ditutup tanah: biarkan, catat di Form Input "salah urutan pohon X di blok Y" — efek negatif kecil tapi tidak nol.</span><span class="lang-en">If realized immediately: scoop PKM out, restart from Step 2. If already covered: leave it, record in Form Input "wrong order tree X in block Y" — negative effect is small but non-zero.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Lupa apakah sudah pupuk pohon ini</strong></span><span class="lang-en"><strong>Forgot if this tree was already done</strong></span></td>
+            <td><span class="lang-id">Cek tanda fisik: tanah di drip-line tampak gembur / baru-baru dipindah = sudah. Tidak ada tanda = belum. Atau: tandai pohon yang sudah dipupuk dengan tali rafia warna di batang (sistem warna per hari).</span><span class="lang-en">Check physical sign: soil at drip-line looks loose / recently moved = done. No sign = not done. Or: mark fertilized trees with colored raffia ribbon on trunk (color per day system).</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Stok pupuk habis di tengah hari</strong></span><span class="lang-en"><strong>Fertilizer stock runs out mid-day</strong></span></td>
+            <td><span class="lang-id">STOP, jangan lanjut dengan dosis dikurangi. Catat berapa pohon sudah selesai. Pulang, lapor Wakif, lanjut esok dengan stok baru. Setengah-dosis = setengah-efek.</span><span class="lang-en">STOP, do not continue with reduced dose. Record number of trees done. Go home, report to Waqif, resume next day with new stock. Half-dose = half-effect.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── PACING REALISTIC ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">⏱</span>
+        <span class="bks-title lang-id">Pacing Realistic — Hari Pertama vs Hari Ke-3+</span>
+        <span class="bks-title lang-en">Realistic Pacing — Day 1 vs Day 3+</span>
+      </div>
+
+      <p class="lang-id">Estimasi 4 menit/pohon adalah <strong>steady-state pace</strong> — tercapai setelah Cak Yit familiar dengan teknik. Hari pertama biasanya lebih lambat:</p>
+      <p class="lang-en">The 4 min/tree estimate is <strong>steady-state pace</strong> — achieved after Cak Yit is familiar with the technique. Day 1 is typically slower:</p>
+
+      <table class="bks-table">
+        <thead>
+          <tr>
+            <th><span class="lang-id">Hari</span><span class="lang-en">Day</span></th>
+            <th><span class="lang-id">Pace per pohon</span><span class="lang-en">Pace per tree</span></th>
+            <th><span class="lang-id">Pohon/hari (8 jam efektif)</span><span class="lang-en">Trees/day (8 effective hrs)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Hari 1</td><td>6–8 menit (learning)</td><td>60–80 pohon</td></tr>
+          <tr><td>Hari 2</td><td>5–6 menit</td><td>80–100 pohon</td></tr>
+          <tr><td>Hari 3+</td><td>4 menit (steady)</td><td>120 pohon</td></tr>
+          <tr><td>Hari 5+</td><td>3,5 menit (mastered)</td><td>130–140 pohon</td></tr>
+        </tbody>
+      </table>
+
+      <div class="bks-sub lang-id">☕ Istirahat & Hidrasi</div>
+      <div class="bks-sub lang-en">☕ Rest & Hydration</div>
+      <ul class="bks-list lang-id">
+        <li>Setiap 30 pohon: berhenti, minum air, regangkan punggung & tangan (5 menit). Kerja membungkuk membuat punggung cepat lelah.</li>
+        <li>Istirahat siang penuh 12.00–13.00 (hindari aktif saat terik — sekaligus hindari Urea aplikasi saat panas).</li>
+        <li>Bawa minimal 1,5 L air per hari kerja. Tambah elektrolit kalau ada (oralit, isotonik).</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Every 30 trees: stop, drink water, stretch back & hands (5 min). Bent-over work tires the back quickly.</li>
+        <li>Full midday rest 12.00–13.00 (avoid activity at peak heat — also aligned with avoiding Urea application in hot soil).</li>
+        <li>Bring at least 1.5 L of water per workday. Add electrolytes if available (oralit, isotonic).</li>
+      </ul>
+    </div>
+
+    <!-- ─── PENYIMPANAN PUPUK ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">📦</span>
+        <span class="bks-title lang-id">Penyimpanan Pupuk Sisa</span>
+        <span class="bks-title lang-en">Storing Surplus Fertilizer</span>
+      </div>
+
+      <ul class="bks-list lang-id">
+        <li><strong>Tempat</strong>: gudang/garasi kering, terlindung hujan dan sinar matahari langsung. JANGAN di dapur (dekat makanan) atau kamar tidur.</li>
+        <li><strong>Posisi sak</strong>: berdiri di atas palet kayu / lantai bersih. Tidak boleh kontak langsung dengan tanah/lantai semen lembap.</li>
+        <li><strong>Kemasan</strong>: bila sak sudah dibuka, ikat rapat ujungnya dan tutup dengan plastik tambahan. Idealnya pindah ke wadah tertutup.</li>
+        <li><strong>Pisah Urea dari yang lain</strong>: Urea paling sensitif kelembapan. Simpan terpisah dan tertutup paling rapat.</li>
+        <li><strong>Umur simpan</strong>: dalam kondisi baik, semua 4 jenis tahan 12–18 bulan. Tanda rusak: menggumpal keras, basah lembap, perubahan warna.</li>
+        <li><strong>Jauhkan dari anak-anak &amp; hewan ternak</strong>: pupuk bukan racun mematikan tetapi bila tertelan menyebabkan iritasi serius.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Location</strong>: dry warehouse/garage, sheltered from rain and direct sunlight. NOT in kitchen (near food) or bedroom.</li>
+        <li><strong>Sack position</strong>: stand on wood pallet / clean floor. No direct contact with soil/damp concrete.</li>
+        <li><strong>Packaging</strong>: if sack opened, tie the end tightly and cover with additional plastic. Ideally transfer to sealed container.</li>
+        <li><strong>Separate Urea</strong>: Urea is most humidity-sensitive. Store separately, tightly sealed.</li>
+        <li><strong>Shelf life</strong>: properly stored, all 4 types last 12–18 months. Damage signs: hard clumping, damp moisture, color change.</li>
+        <li><strong>Keep away from children &amp; livestock</strong>: fertilizer is not lethal poison but if ingested causes serious irritation.</li>
+      </ul>
+    </div>
+
+  </section>
+
 
   <!-- REFLECTION -->
   <section class="sec">
