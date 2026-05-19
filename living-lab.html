@@ -636,6 +636,30 @@ span.lang-en { display: none; }
   font-size: 0.78rem; line-height: 1.5; color: #4a4030;
 }
 
+/* A8 — linked_docs[] chip render (Layer post-C, audit trail source documents) */
+.ll5-linked-docs {
+  background: #e8f4f0; border-left: 3px solid #5a9080;
+  padding: 0.7rem 0.9rem; margin-top: 0.7rem;
+  border-radius: 0 8px 8px 0;
+}
+.ll5-linked-docs-label {
+  font-size: 0.7rem; font-weight: 800; letter-spacing: 0.06em;
+  color: #5a9080; text-transform: uppercase;
+  display: block; margin-bottom: 0.45rem;
+}
+.ll5-doc-chip {
+  display: inline-flex; align-items: center; gap: 0.3rem;
+  background: #fff; border: 1px solid #5a9080;
+  color: #2e4040; padding: 0.25rem 0.6rem;
+  border-radius: 14px; font-size: 0.72rem; font-weight: 500;
+  text-decoration: none; margin: 0.2rem 0.3rem 0.2rem 0;
+  transition: all 0.15s;
+  max-width: 100%; overflow: hidden;
+}
+.ll5-doc-chip:hover { background: #5a9080; color: #fff; }
+.ll5-doc-chip-internal { opacity: 0.7; cursor: default; background: #f5f5f5; }
+.ll5-doc-chip-internal:hover { background: #f5f5f5; color: #2e4040; }
+
 @media (max-width: 768px) {
   .ll5-2section-grid { grid-template-columns: 1fr; }
 }
@@ -1844,8 +1868,8 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
               <div class="act-log-title lang-en">First Field Visit & Baseline Assessment</div>
               <div class="act-log-detail lang-id">Bersama Tenaga Ahli Kebun (15+ tahun pengalaman). Sampling TDS tanah di 5 titik — hasil: tanah berpasir dengan defisiensi mineral. Evaluasi kondisi 915 pohon. Proyeksi panen ditetapkan: Juni–Juli 2026, ±4 ronde.</div>
               <div class="act-log-detail lang-en">Together with Technical Advisor (15+ years experience). Soil TDS sampling at 5 points — result: sandy soil with mineral deficiency. Assessment of 915 tree conditions. Harvest projection set: June–July 2026, ±4 rounds.</div>
-              <span class="report-link lang-id">📄 Lihat Laporan Kunjungan →</span>
-              <span class="report-link lang-en">📄 View Visit Report →</span>
+              <a href="lesson-learned.html#fase-4" target="_blank" rel="noopener" class="report-link lang-id" style="text-decoration:none;display:inline-block;margin-top:0.5rem">📄 Lihat Laporan Kunjungan (di Lesson Learned Fase 4) →</a>
+              <a href="lesson-learned.html#fase-4" target="_blank" rel="noopener" class="report-link lang-en" style="text-decoration:none;display:inline-block;margin-top:0.5rem">📄 View Visit Report (in Lesson Learned Phase 4) →</a>
             </div>
             <div class="act-log-meta"><strong>20 Apr 2026</strong>Kunjungan ke-1</div>
           </div>
@@ -2970,6 +2994,30 @@ function renderDynamicMilestones(data) {
                   <span class="lang-en">FIELD VERIFICATION <em>(Audit Trail)</em></span>
                 </div>
                 <div class="ll5-verifikasi-text">${escapeHTML(verifikasi)}</div>
+              </div>` : ''}
+
+              ${(m.linked_docs && m.linked_docs.length) ? `
+              <div class="ll5-linked-docs">
+                <div class="ll5-linked-docs-label">
+                  <span class="lang-id">🔗 Sumber Dokumen & Audit Trail</span>
+                  <span class="lang-en">🔗 Document Sources & Audit Trail</span>
+                </div>
+                ${m.linked_docs.map(d => {
+                  const fname = String(d).split('/').pop();
+                  const isPhoto = /\.(jpg|jpeg|png|webp|gif)$/i.test(d);
+                  const isHtml  = /\.html$/i.test(d) || /^https?:\/\//i.test(d);
+                  const isDocx  = /\.(docx|xlsx|pdf|csv)$/i.test(d);
+                  if (isPhoto) {
+                    return `<a href="galeri.html" target="_blank" rel="noopener" class="ll5-doc-chip"><span>📸</span><span>${escapeHTML(fname)}</span></a>`;
+                  } else if (isHtml) {
+                    const href = /^https?:\/\//i.test(d) ? d : d;
+                    return `<a href="${escapeHTML(href)}" target="_blank" rel="noopener" class="ll5-doc-chip"><span>🌐</span><span>${escapeHTML(fname)}</span></a>`;
+                  } else if (isDocx) {
+                    return `<span class="ll5-doc-chip ll5-doc-chip-internal" title="Internal document — no public link"><span>📄</span><span>${escapeHTML(fname)}</span></span>`;
+                  } else {
+                    return `<span class="ll5-doc-chip ll5-doc-chip-internal"><span>•</span><span>${escapeHTML(fname)}</span></span>`;
+                  }
+                }).join('')}
               </div>` : ''}
             </article>`;
         }).join('');
