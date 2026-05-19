@@ -959,32 +959,32 @@ span.lang-en { display: none; }
    Mockup v2 palette per Adib: Tier 1 moss · Tier 2 purple · Tier 3 amber
    Year 2024 & 2025 tetap pakai warna existing (status-based)
    ══════════════════════════════════════════════════════════════════ */
-#year-2026 .act-log-item .act-log-progress {
+#year-2026 .act-log-item:not(.era-static) .act-log-progress {
   background: #E8F4ED !important;
   border-top: 4px solid #2D8466 !important;
   border-right-color: rgba(45,132,102,0.25) !important;
 }
-#year-2026 .act-log-item .act-log-theory {
+#year-2026 .act-log-item:not(.era-static) .act-log-theory {
   background: #EDE9FE !important;
   border-top: 4px solid #5B21B6 !important;
   border-right-color: rgba(91,33,182,0.22) !important;
 }
-#year-2026 .act-log-item .act-log-eval {
+#year-2026 .act-log-item:not(.era-static) .act-log-eval {
   background: #FEF3C7 !important;
   border-top: 4px solid #B45309 !important;
 }
 /* Text colors year-2026 supaya contrast dengan tier bg */
-#year-2026 .act-log-item .theory-label { color: #5B21B6 !important; }
-#year-2026 .act-log-item .eval-label   { color: #B45309 !important; }
-#year-2026 .act-log-item .theory-body  { color: #2D3742 !important; }
-#year-2026 .act-log-item .eval-body    { color: #2D3742 !important; }
-#year-2026 .act-log-item .act-log-title { color: #1F5F47 !important; }
-#year-2026 .act-log-item .theory-tag {
+#year-2026 .act-log-item:not(.era-static) .theory-label { color: #5B21B6 !important; }
+#year-2026 .act-log-item:not(.era-static) .eval-label   { color: #B45309 !important; }
+#year-2026 .act-log-item:not(.era-static) .theory-body  { color: #2D3742 !important; }
+#year-2026 .act-log-item:not(.era-static) .eval-body    { color: #2D3742 !important; }
+#year-2026 .act-log-item:not(.era-static) .act-log-title { color: #1F5F47 !important; }
+#year-2026 .act-log-item:not(.era-static) .theory-tag {
   background: rgba(91,33,182,0.1) !important;
   border-color: rgba(91,33,182,0.25) !important;
   color: #5B21B6 !important;
 }
-#year-2026 .act-log-item .eval-followup {
+#year-2026 .act-log-item:not(.era-static) .eval-followup {
   background: rgba(180,83,9,0.08) !important;
   border-left-color: rgba(180,83,9,0.45) !important;
   color: #8B4309 !important;
@@ -1819,7 +1819,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
           <span class="phase-block-period lang-en">Apr – Jun 2026</span>
         </div>
         <div class="act-log-list">
-          <div class="act-log-item">
+          <div class="act-log-item era-static">
             <span class="act-log-status s-done lang-id">✓ Selesai</span>
             <span class="act-log-status s-done lang-en">✓ Done</span>
             <div class="act-log-body">
@@ -1831,7 +1831,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             <div class="act-log-meta"><strong>8 Jan 2026</strong>T.A.</div>
           </div>
 
-          <div class="act-log-item">
+          <div class="act-log-item era-static">
             <span class="act-log-status s-done lang-id">✓ Selesai</span>
             <span class="act-log-status s-done lang-en">✓ Done</span>
             <div class="act-log-body">
@@ -1843,7 +1843,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             <div class="act-log-meta"><strong>31 Jan–20 Feb</strong>2026</div>
           </div>
 
-          <div class="act-log-item">
+          <div class="act-log-item era-static">
             <span class="act-log-status s-done lang-id">✓ Selesai</span>
             <span class="act-log-status s-done lang-en">✓ Done</span>
             <div class="act-log-body">
@@ -1855,7 +1855,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             <div class="act-log-meta"><strong>7 Mar 2026</strong>Infrastruktur</div>
           </div>
 
-          <div class="act-log-item">
+          <div class="act-log-item era-static">
             <span class="act-log-status s-done lang-id">✓ Selesai</span>
             <span class="act-log-status s-done lang-en">✓ Done</span>
             <div class="act-log-body">
@@ -1867,7 +1867,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             <div class="act-log-meta"><strong>15 Mar 2026</strong>T.A.</div>
           </div>
 
-          <div class="act-log-item">
+          <div class="act-log-item era-static">
             <span class="act-log-status s-done lang-id">✓ Selesai</span>
             <span class="act-log-status s-done lang-en">✓ Done</span>
             <div class="act-log-body">
