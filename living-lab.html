@@ -1288,26 +1288,27 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
     <p class="page-hero-lead lang-en">
       Every intervention, every decision, every harvest — documented and open to the public. Living Lab is not an annual report; it is a living documentation that grows alongside this garden, year after year.
     </p>
-    <div class="hero-stats">
+    <!-- Hero Status Cards — LIVE per bulan (dynamic via buildHeroStatus JS) — locked 19 Mei 2026 -->
+    <div class="hero-stats" id="hero-status-cards">
       <div class="hero-stat">
-        <div class="hero-stat-num">3 Th</div>
-        <div class="hero-stat-label lang-id">Perjalanan Terdokumentasi</div>
-        <div class="hero-stat-label lang-en">Documented Journey</div>
+        <div class="hero-stat-num" id="hero-month">Mei</div>
+        <div class="hero-stat-label lang-id"><span id="hero-year-id">2026</span> · Bulan Berjalan</div>
+        <div class="hero-stat-label lang-en"><span id="hero-year-en">2026</span> · Active Month</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num">915</div>
-        <div class="hero-stat-label lang-id">Pohon Kopi Robusta</div>
-        <div class="hero-stat-label lang-en">Robusta Coffee Trees</div>
+        <div class="hero-stat-num" id="hero-phase-icon" style="font-size:2.2rem">🌱</div>
+        <div class="hero-stat-label lang-id"><strong id="hero-phase-id" style="display:block;color:var(--accent);font-size:0.92rem;letter-spacing:0;text-transform:none;font-weight:700">Pembentukan Buah</strong>Fase Fenologi</div>
+        <div class="hero-stat-label lang-en"><strong id="hero-phase-en" style="display:block;color:var(--accent);font-size:0.92rem;letter-spacing:0;text-transform:none;font-weight:700">Fruit Formation</strong>Phenological Phase</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num">281 KG</div>
-        <div class="hero-stat-label lang-id">Panen Tercatat 2025</div>
-        <div class="hero-stat-label lang-en">Recorded Harvest 2025</div>
+        <div class="hero-stat-num" id="hero-window" style="font-size:1.4rem">Apr – Mei</div>
+        <div class="hero-stat-label lang-id">Window Fase Aktif</div>
+        <div class="hero-stat-label lang-en">Active Phase Window</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num">+346%</div>
-        <div class="hero-stat-label lang-id">Kenaikan Panen 2024→2025</div>
-        <div class="hero-stat-label lang-en">Harvest Growth 2024→2025</div>
+        <div class="hero-stat-num" id="hero-next-icon" style="font-size:1.8rem">☕</div>
+        <div class="hero-stat-label lang-id"><strong id="hero-next-id" style="display:block;color:var(--accent);font-size:0.82rem;letter-spacing:0;text-transform:none;font-weight:700">Panen Perdana Post-Wakaf</strong><span id="hero-next-when-id">Jun – Agt</span> · Milestone Berikutnya</div>
+        <div class="hero-stat-label lang-en"><strong id="hero-next-en" style="display:block;color:var(--accent);font-size:0.82rem;letter-spacing:0;text-transform:none;font-weight:700">First Post-Waqf Harvest</strong><span id="hero-next-when-en">Jun – Aug</span> · Next Milestone</div>
       </div>
     </div>
   </div>
@@ -3304,6 +3305,33 @@ function buildStatusBoard() {
 
   const current = phaseInfo[currentMonth];
   const next = milestoneNext[currentMonth];
+
+  // ── Update HERO status cards (4 cards di hero, replace stats lama) ──
+  const monthShortID = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
+  const heroMonth = document.getElementById('hero-month');
+  const heroYearID = document.getElementById('hero-year-id');
+  const heroYearEN = document.getElementById('hero-year-en');
+  const heroPhaseIcon = document.getElementById('hero-phase-icon');
+  const heroPhaseID = document.getElementById('hero-phase-id');
+  const heroPhaseEN = document.getElementById('hero-phase-en');
+  const heroWindow = document.getElementById('hero-window');
+  const heroNextIcon = document.getElementById('hero-next-icon');
+  const heroNextIdEl = document.getElementById('hero-next-id');
+  const heroNextEnEl = document.getElementById('hero-next-en');
+  const heroNextWhenID = document.getElementById('hero-next-when-id');
+  const heroNextWhenEN = document.getElementById('hero-next-when-en');
+  if (heroMonth) heroMonth.textContent = monthShortID[currentMonth];
+  if (heroYearID) heroYearID.textContent = String(Y);
+  if (heroYearEN) heroYearEN.textContent = String(Y);
+  if (heroPhaseIcon) heroPhaseIcon.textContent = current.icon;
+  if (heroPhaseID) heroPhaseID.textContent = current.id;
+  if (heroPhaseEN) heroPhaseEN.textContent = current.en;
+  if (heroWindow) heroWindow.textContent = current.periodID.replace(/ 20\d\d/, ''); // strip year
+  if (heroNextIcon) heroNextIcon.textContent = next.icon;
+  if (heroNextIdEl) heroNextIdEl.textContent = next.id;
+  if (heroNextEnEl) heroNextEnEl.textContent = next.en;
+  if (heroNextWhenID) heroNextWhenID.textContent = next.whenID.replace(/ 20\d\d/, '').replace(/^[A-Z][a-z]+ 20\d\d/, '');
+  if (heroNextWhenEN) heroNextWhenEN.textContent = next.whenEN.replace(/ 20\d\d/, '').replace(/^[A-Z][a-z]+ 20\d\d/, '');
 
   // Update H2 section-title
   const h2ID = document.querySelector('.status-section .section-title .lang-id');
