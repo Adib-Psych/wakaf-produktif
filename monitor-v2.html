@@ -6224,10 +6224,11 @@ function openPATSetupDlg() {
 }
 
 // ===== SOP STATUS TRACKING (linked: Kalender ↔ Compliance) =====
-// Key format: `${bulanN}-${aktivitasIdx}` → { status, note, ts }
-// status: 'belum' | 'sudah' | 'tidak_sesuai' | 'na'
-// SOP_STATUS schema bump for production clean
-const SOP_STATUS_VERSION = '1.3';
+// Key format: `${bulanN}-${aktivitasIdx}` → { status, progress, note, ts }
+// status: 'belum' | 'sedang_berjalan' | 'sudah' | 'tidak_sesuai' | 'na'
+// progress: 0-100 (only for sedang_berjalan, default 50 — hybrid 50% + optional slider)
+// SOP_STATUS schema bump v1.4 (19 Mei 2026): added 'sedang_berjalan' state + progress field
+const SOP_STATUS_VERSION = '1.4';
 const sopStoredVer = localStorage.getItem('wkkn_sop_status_ver');
 if (sopStoredVer !== SOP_STATUS_VERSION) {
   localStorage.removeItem('wkkn_sop_status_v1');
@@ -6303,27 +6304,100 @@ function getSOPStatus(key) {
   return (SOP_STATUS[key] && SOP_STATUS[key].status) || 'belum';
 }
 
+// Cycle order (locked 19 Mei 2026 per Adib): linear progression natural untuk lapangan
+// Belum → Sedang Berjalan → Sudah → Tidak Sesuai → N/A → Belum
 function cycleSOPStatus(key) {
   const cur = getSOPStatus(key);
-  const order = {belum:'sudah', sudah:'tidak_sesuai', tidak_sesuai:'na', na:'belum'};
+  const order = {belum:'sedang_berjalan', sedang_berjalan:'sudah', sudah:'tidak_sesuai', tidak_sesuai:'na', na:'belum'};
   const next = order[cur];
   let note = '';
-  if (next === 'tidak_sesuai') {
+  let progress;
+  if (next === 'sedang_berjalan') {
+    // Default 50% (hybrid pattern per Adib 19 Mei) — Adib bisa adjust via slider modal
+    progress = 50;
+  } else if (next === 'tidak_sesuai') {
     note = prompt('Catatan deviation (opsional — alasan kenapa tidak sesuai SOP):') || '';
   } else if (cur === 'tidak_sesuai') {
     note = (SOP_STATUS[key] && SOP_STATUS[key].note) || '';
   }
-  SOP_STATUS[key] = { status: next, note, ts: new Date().toISOString() };
+  const entry = { status: next, note, ts: new Date().toISOString() };
+  if (progress !== undefined) entry.progress = progress;
+  SOP_STATUS[key] = entry;
   saveSOPStatus();
+  showBulanAktif(currentSOPMonth);
+  renderComplianceProgress();
+
+  // Auto-open progress slider modal kalau baru di-set ke sedang_berjalan
+  if (next === 'sedang_berjalan') {
+    setTimeout(() => openProgressSliderModal(key), 100);
+  }
+}
+
+// Progress slider modal — Adib bisa adjust persentase custom (default 50%)
+function openProgressSliderModal(key) {
+  const entry = SOP_STATUS[key];
+  if (!entry || entry.status !== 'sedang_berjalan') return;
+  const currentProgress = entry.progress !== undefined ? entry.progress : 50;
+  const html = `
+    <div id="progress-slider-overlay" onclick="if(event.target===this)closeProgressSliderModal()"
+      style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:14px;max-width:480px;width:100%;box-shadow:0 24px 56px rgba(0,0,0,0.3)">
+        <div style="padding:18px 22px;border-bottom:1px solid var(--bg-deep);background:linear-gradient(135deg,#F59E0B,#D97706);color:#fff;border-radius:14px 14px 0 0">
+          <div style="font-size:11px;letter-spacing:2px;font-weight:800;margin-bottom:4px">🟡 PROGRESS SEDANG BERJALAN</div>
+          <div style="font-size:14px;font-weight:600;line-height:1.4">Berapa persen aktivitas ini sudah selesai?</div>
+        </div>
+        <div style="padding:22px">
+          <div style="text-align:center;margin-bottom:20px">
+            <div id="progress-val-display" style="font-size:48px;font-weight:800;color:#D97706;line-height:1">${currentProgress}%</div>
+            <div style="font-size:11px;color:var(--mute);margin-top:4px">Default 50% — adjust bila tahu progress lebih akurat</div>
+          </div>
+          <input type="range" id="progress-slider" min="10" max="90" step="5" value="${currentProgress}"
+            oninput="document.getElementById('progress-val-display').textContent = this.value + '%'"
+            style="width:100%;height:32px">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--mute);margin-top:4px">
+            <span>10% (baru mulai)</span>
+            <span>50% (setengah)</span>
+            <span>90% (hampir selesai)</span>
+          </div>
+          <div style="background:rgba(245,158,11,0.08);border-left:3px solid #D97706;padding:10px 12px;border-radius:6px;font-size:11px;color:var(--mute);line-height:1.5;margin-top:18px">
+            💡 <strong>Tip:</strong> kalau 100% selesai, klik tombol status lagi sampai ✅ <strong>Sudah</strong>. Kalau 0% (belum dimulai), klik lagi sampai ⏳ <strong>Belum</strong>. Range 10-90% = Sedang Berjalan.
+          </div>
+        </div>
+        <div style="padding:14px 22px;border-top:1px solid var(--bg-deep);display:flex;justify-content:flex-end;gap:10px;background:#fafbfa;border-radius:0 0 14px 14px">
+          <button onclick="closeProgressSliderModal()" class="btn">Batal</button>
+          <button onclick="saveProgressSlider('${key}')" class="btn btn-primary" style="background:#D97706">💾 Simpan Progress</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProgressSliderModal() {
+  const overlay = document.getElementById('progress-slider-overlay');
+  if (overlay) overlay.remove();
+  document.body.style.overflow = '';
+}
+
+function saveProgressSlider(key) {
+  const slider = document.getElementById('progress-slider');
+  if (!slider) return;
+  const val = +slider.value;
+  if (!SOP_STATUS[key]) SOP_STATUS[key] = {};
+  SOP_STATUS[key].progress = val;
+  SOP_STATUS[key].ts = new Date().toISOString();
+  saveSOPStatus();
+  closeProgressSliderModal();
   showBulanAktif(currentSOPMonth);
   renderComplianceProgress();
 }
 
 const STATUS_VISUAL = {
-  belum:        { ico:'⏳', lbl:'Belum',         bg:'#e8e4dc', fg:'#4a4030' },
-  sudah:        { ico:'✅', lbl:'Sudah',         bg:'#d4f1e4', fg:'#1f5f47' },
-  tidak_sesuai: { ico:'⚠️', lbl:'Tidak Sesuai',  bg:'#fde2dc', fg:'#8c2519' },
-  na:           { ico:'🔒', lbl:'N/A',            bg:'#f0f0f0', fg:'#888' }
+  belum:           { ico:'⏳', lbl:'Belum',          bg:'#e8e4dc', fg:'#4a4030' },
+  sedang_berjalan: { ico:'🟡', lbl:'Sedang Berjalan', bg:'#FEF3C7', fg:'#78350F' },
+  sudah:           { ico:'✅', lbl:'Sudah',          bg:'#d4f1e4', fg:'#1f5f47' },
+  tidak_sesuai:    { ico:'⚠️', lbl:'Tidak Sesuai',   bg:'#fde2dc', fg:'#8c2519' },
+  na:              { ico:'🔒', lbl:'N/A',            bg:'#f0f0f0', fg:'#888' }
 };
 
 // 🔒 SOP Project Anchor — adopsi resmi SOP Mei 2026 (Notulen 1-2 Mei 2026)
@@ -6588,7 +6662,7 @@ const ACTIVE_MONITORING_START = { year: 2026, month: 5 };  // Mei 2026 — Strat
 // Inputs: item, status, bulanItem (month item due), currentMonth, currentYear, ensoLaNinaActive
 // Output: { score: 0-100, tier, reason, late_by_days, in_tolerance, off_window }
 // ====================================================================
-function computeTimingScore(item, status, bulanItem, currentMonth, currentYear, isLaNina) {
+function computeTimingScore(item, status, bulanItem, currentMonth, currentYear, isLaNina, itemIdx) {
   const tier = getTimingTier(item);
   const tierMeta = TIMING_TIER_META[tier];
   const isFuture = bulanItem > currentMonth;
@@ -6614,6 +6688,16 @@ function computeTimingScore(item, status, bulanItem, currentMonth, currentYear, 
     return { score: 100, tier, reason: `Sudah dieksekusi (tier ${tierMeta.label})`, late_by_days: 0, in_tolerance: true, applicable: true };
   }
   if (status === 'na') return { score: null, tier, reason: 'N/A — exclude dari scoring', late_by_days: 0, applicable: false };
+  if (status === 'sedang_berjalan') {
+    // In-progress: scale credit by progress percentage (default 50%, custom 10-90%)
+    // Hybrid pattern (Adib 19 Mei 2026): default 50%, Adib bisa adjust via slider
+    let progress = 50;
+    if (itemIdx !== undefined) {
+      const entry = SOP_STATUS[`${bulanItem}-${itemIdx}`];
+      if (entry && typeof entry.progress === 'number') progress = entry.progress;
+    }
+    return { score: progress, tier, reason: `Sedang berjalan (${progress}% progress)`, late_by_days: daysLate, in_tolerance: true, applicable: true };
+  }
   if (status === 'tidak_sesuai') {
     // Deviation — partial credit based on tier strictness
     const partial = tier === 'strict' ? 25 : (tier === 'moderate' ? 50 : 70);
@@ -6691,8 +6775,14 @@ function getPhaseComplianceMetrics() {
       const isDue = m <= currentMonth;
       if (isDue) phases[ph].dueSoFar++;
 
-      // Status count
+      // Status count (sedang_berjalan tracked separately for partial credit)
       if (status === 'sudah') phases[ph].sudah++;
+      else if (status === 'sedang_berjalan') {
+        phases[ph].sedangBerjalan = (phases[ph].sedangBerjalan || 0) + 1;
+        // Accumulate progress (default 50%) — partial credit for coverage scoring
+        const progress = (s && typeof s.progress === 'number') ? s.progress : 50;
+        phases[ph].sedangBerjalanCreditSum = (phases[ph].sedangBerjalanCreditSum || 0) + (progress / 100);
+      }
       else if (status === 'tidak_sesuai') phases[ph].tidakSesuai++;
       else if (status === 'na') phases[ph].na++;
       else phases[ph].belum++;
@@ -6703,7 +6793,7 @@ function getPhaseComplianceMetrics() {
 
       // Multi-factor timing score (only for due items)
       if (isDue) {
-        const ts = computeTimingScore(a, status, m, currentMonth, currentYear, laNina);
+        const ts = computeTimingScore(a, status, m, currentMonth, currentYear, laNina, i);
         if (ts.applicable && ts.score !== null) {
           phases[ph].timingScoreSum += ts.score;
           phases[ph].timingScoreCount++;
@@ -6719,10 +6809,13 @@ function getPhaseComplianceMetrics() {
     const maxMonthInPhase = Math.max(...p.activeMonths, 0);
     if (maxMonthInPhase > 0 && maxMonthInPhase < currentMonth) p.isPastDue = true;
 
-    // Score 1 — Simple coverage (sudah/dueExcludingNa) — for backward compat display
+    // Score 1 — Coverage with partial credit (19 Mei 2026)
+    // sudah = 100% (full), sedang_berjalan = progress% (custom default 50%), tidak_sesuai = 0% (penalty), na = excluded
     const dueExcludingNa = Math.max(0, p.dueSoFar - p.na);
-    p.score = dueExcludingNa > 0 ? Math.round((p.sudah / dueExcludingNa) * 100) : null;
-    p.overdue = Math.max(0, p.dueSoFar - p.sudah - p.tidakSesuai - p.na);
+    const sedangCreditSum = p.sedangBerjalanCreditSum || 0;  // already in fraction (0.5 per item default)
+    const totalCredit = p.sudah + sedangCreditSum;  // weighted sum
+    p.score = dueExcludingNa > 0 ? Math.round((totalCredit / dueExcludingNa) * 100) : null;
+    p.overdue = Math.max(0, p.dueSoFar - p.sudah - (p.sedangBerjalan || 0) - p.tidakSesuai - p.na);
 
     // Score 2 — Multi-factor timing score (B-Phase 2)
     p.timingScore = p.timingScoreCount > 0 ? Math.round(p.timingScoreSum / p.timingScoreCount) : null;
@@ -6733,6 +6826,7 @@ function getPhaseComplianceMetrics() {
 function getComplianceMetrics() {
   let total = 0, sudah = 0, belum = 0, tidakSesuai = 0, na = 0;
   let belumOverdue = 0, preProject = 0;
+  let sedangBerjalanCount = 0, sedangBerjalanCreditSum = 0;  // 19 Mei 2026 — partial credit tracking
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
@@ -6762,6 +6856,14 @@ function getComplianceMetrics() {
       const s = SOP_STATUS[key];
       const status = s ? s.status : 'belum';
       if (status === 'sudah') sudah++;
+      else if (status === 'sedang_berjalan') {
+        // 19 Mei 2026: partial credit for in-progress (default 50%, custom slider 10-90%)
+        if (!window._sedangBerjalanCount) window._sedangBerjalanCount = 0;
+        const progress = (typeof s.progress === 'number') ? s.progress : 50;
+        sedangBerjalanCount++;
+        sedangBerjalanCreditSum += (progress / 100);
+        if (m === currentMonth) currentMonthItems.push({bulanN: m, idx: i, aktivitas: a, progress});
+      }
       else if (status === 'tidak_sesuai') {
         tidakSesuai++;
         deviationItems.push({bulanN: m, idx: i, aktivitas: a, note: s.note || ''});
@@ -6784,7 +6886,8 @@ function getComplianceMetrics() {
       }
     });
   });
-  return { total, sudah, belum, belumOverdue, tidakSesuai, na, preProject,
+  return { total, sudah, sedangBerjalan: sedangBerjalanCount, sedangBerjalanCredit: sedangBerjalanCreditSum,
+           belum, belumOverdue, tidakSesuai, na, preProject,
            overdueItems, deviationItems, currentMonthItems, upcomingItems,
            currentMonth, currentYear };
 }
@@ -7574,10 +7677,11 @@ function showPhaseDetail(phaseKey) {
     });
   });
   const statusVisual = {
-    sudah:        { ico:'✅', lbl:'Sudah',         bg:'#d4f1e4', fg:'#1f5f47' },
-    belum:        { ico:'⏳', lbl:'Belum',         bg:'#e8e4dc', fg:'#4a4030' },
-    tidak_sesuai: { ico:'⚠️', lbl:'Tidak Sesuai',  bg:'#fde2dc', fg:'#8c2519' },
-    na:           { ico:'🔒', lbl:'N/A',            bg:'#f0f0f0', fg:'#888' }
+    sudah:           { ico:'✅', lbl:'Sudah',          bg:'#d4f1e4', fg:'#1f5f47' },
+    sedang_berjalan: { ico:'🟡', lbl:'Sedang Berjalan', bg:'#FEF3C7', fg:'#78350F' },
+    belum:           { ico:'⏳', lbl:'Belum',          bg:'#e8e4dc', fg:'#4a4030' },
+    tidak_sesuai:    { ico:'⚠️', lbl:'Tidak Sesuai',   bg:'#fde2dc', fg:'#8c2519' },
+    na:              { ico:'🔒', lbl:'N/A',            bg:'#f0f0f0', fg:'#888' }
   };
   const monthsHtml = Object.keys(itemsByMonth).sort((a,b) => +a - +b).map(m => {
     const now = new Date();
@@ -7587,7 +7691,7 @@ function showPhaseDetail(phaseKey) {
       const v = statusVisual[it.status];
       const tier = getTimingTier(it.aktivitas);
       const tm = TIMING_TIER_META[tier];
-      const ts = computeTimingScore(it.aktivitas, it.status, +m, cm, cy, laNina);
+      const ts = computeTimingScore(it.aktivitas, it.status, +m, cm, cy, laNina, it.idx);
       const tierBadge = `<span style="display:inline-flex;align-items:center;gap:2px;background:${tm.bg};color:${tm.color};padding:1px 5px;border-radius:8px;font-size:9px;font-weight:700;margin-left:6px" title="${tm.desc} · tolerance ±${tm.tolerance_days || '∞'}d">${tm.icon} ${tm.label}</span>`;
       const timingDetail = ts.score !== null
         ? `<div style="font-size:10px;color:${ts.score >= 80 ? '#2D8466' : ts.score >= 50 ? '#B45309' : '#7F1D1D'};margin-top:3px;font-weight:600">⏱️ Timing: ${ts.score}% — <span style="font-style:italic;color:var(--mute);font-weight:400">${ts.reason}</span></div>`
@@ -7630,7 +7734,11 @@ function renderComplianceProgress() {
   if (typeof renderPhaseComplianceCards === 'function') renderPhaseComplianceCards();
 
   const m = getComplianceMetrics();
-  const compliancePct = m.total ? Math.round((m.sudah / m.total) * 100) : 0;
+  // 19 Mei 2026: overall compliance includes partial credit dari sedang_berjalan
+  const sedangCredit = m.sedangBerjalanCredit || 0;  // fraction sum (0.5 per item @ 50% default)
+  const totalCredit = m.sudah + sedangCredit;
+  const compliancePct = m.total ? Math.round((totalCredit / m.total) * 100) : 0;
+  const sedangPct = m.total ? Math.round(((m.sedangBerjalan || 0) / m.total) * 100) : 0;
   const belumPct = m.total ? Math.round((m.belum / m.total) * 100) : 0;
   const deviationPct = m.total ? Math.round((m.tidakSesuai / m.total) * 100) : 0;
   const naPct = m.total ? Math.round((m.na / m.total) * 100) : 0;
@@ -7646,16 +7754,18 @@ function renderComplianceProgress() {
       </div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
         <div style="font-size:14px;font-weight:700;color:var(--earth)">Overall Compliance: <span style="color:var(--green);font-size:22px">${compliancePct}%</span></div>
-        <div style="font-size:11px;color:var(--mute)">${m.sudah} dari ${m.total} aktivitas applicable selesai sesuai SOP</div>
+        <div style="font-size:11px;color:var(--mute)">${m.sudah}✅ + ${m.sedangBerjalan || 0}🟡 (${sedangCredit.toFixed(1)} partial credit) dari ${m.total} aktivitas</div>
       </div>
       <div style="background:#eee;border-radius:8px;height:18px;overflow:hidden;display:flex;font-size:10px;font-weight:700;color:#fff;text-align:center;line-height:18px">
-        ${m.sudah ? `<div style="background:#5a9080;width:${(m.sudah/m.total*100).toFixed(1)}%" title="Sudah ${m.sudah}">${compliancePct}%</div>` : ''}
+        ${m.sudah ? `<div style="background:#5a9080;width:${(m.sudah/m.total*100).toFixed(1)}%" title="Sudah ${m.sudah}">${Math.round(m.sudah/m.total*100)}%</div>` : ''}
+        ${m.sedangBerjalan ? `<div style="background:#F59E0B;color:#fff;width:${sedangPct}%" title="Sedang Berjalan ${m.sedangBerjalan} (avg ${Math.round(sedangCredit/m.sedangBerjalan*100)}%)">${sedangPct}%</div>` : ''}
         ${m.tidakSesuai ? `<div style="background:#c14b3a;width:${(m.tidakSesuai/m.total*100).toFixed(1)}%" title="Tidak Sesuai ${m.tidakSesuai}">${deviationPct}%</div>` : ''}
         ${m.belum ? `<div style="background:#a8c8bc;color:#2e4040;width:${(m.belum/m.total*100).toFixed(1)}%" title="Belum ${m.belum}">${belumPct}%</div>` : ''}
         ${m.na ? `<div style="background:#bbb;width:${(m.na/m.total*100).toFixed(1)}%" title="N/A ${m.na}">${naPct}%</div>` : ''}
       </div>
       <div style="display:flex;gap:14px;margin-top:8px;font-size:10px;flex-wrap:wrap">
         <span><span style="display:inline-block;width:11px;height:11px;background:#5a9080;border-radius:2px;vertical-align:middle"></span> Sudah ${m.sudah}</span>
+        ${m.sedangBerjalan ? `<span><span style="display:inline-block;width:11px;height:11px;background:#F59E0B;border-radius:2px;vertical-align:middle"></span> Sedang Berjalan ${m.sedangBerjalan} <small style="color:var(--mute)">(${Math.round(sedangCredit/m.sedangBerjalan*100)}% avg)</small></span>` : ''}
         <span><span style="display:inline-block;width:11px;height:11px;background:#c14b3a;border-radius:2px;vertical-align:middle"></span> Tidak Sesuai ${m.tidakSesuai}</span>
         <span><span style="display:inline-block;width:11px;height:11px;background:#a8c8bc;border-radius:2px;vertical-align:middle"></span> Belum ${m.belum} <small style="color:var(--cherry)">(${m.belumOverdue} overdue)</small></span>
         <span><span style="display:inline-block;width:11px;height:11px;background:#bbb;border-radius:2px;vertical-align:middle"></span> N/A ${m.na}</span>
@@ -7668,6 +7778,7 @@ function renderComplianceProgress() {
   if (kpiC) {
     kpiC.innerHTML = `
       <div class="kpi"><div class="kpi-num" style="color:var(--green);font-size:24px">${m.sudah}</div><div class="kpi-lbl">✅ Sudah</div></div>
+      <div class="kpi"><div class="kpi-num" style="color:#D97706;font-size:24px">${m.sedangBerjalan || 0}</div><div class="kpi-lbl">🟡 Sedang Berjalan</div></div>
       <div class="kpi"><div class="kpi-num" style="color:var(--cherry);font-size:24px">${m.tidakSesuai}</div><div class="kpi-lbl">⚠️ Tidak Sesuai</div></div>
       <div class="kpi warn"><div class="kpi-num" style="color:var(--orange);font-size:24px">${m.belum}</div><div class="kpi-lbl">⏳ Belum (${m.belumOverdue} overdue)</div></div>
       <div class="kpi"><div class="kpi-num" style="color:var(--mute);font-size:24px">${m.na}</div><div class="kpi-lbl">🔒 N/A</div></div>
