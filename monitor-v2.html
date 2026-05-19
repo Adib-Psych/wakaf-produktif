@@ -5007,16 +5007,34 @@ async function savePICEdit() {
   closePICEditModal();
   renderDistribusi();
 
-  // Cross-tab propagation (19 Mei 2026): re-render tab lain yang baca dari DISTRIBUSI_DATA
+  // Cross-tab propagation (19 Mei 2026, expanded 19 Mei sore — bug fix per Adib):
+  // Trigger re-render SEMUA tab/section yang baca DISTRIBUSI_DATA via getPICForMonth()
   if (typeof renderSOPKalender === 'function') renderSOPKalender();
+  // BUG FIX: SOP Kalender expanded month detail tidak ter-update kalau cuma renderSOPKalender (wheel).
+  // showBulanAktif(currentSOPMonth, currentSOPYear) re-render detail item dengan PIC summary.
+  if (typeof showBulanAktif === 'function' && typeof currentSOPMonth !== 'undefined') {
+    try { showBulanAktif(currentSOPMonth, currentSOPYear || new Date().getFullYear()); }
+    catch(e) { console.warn('[Cross-tab sync] showBulanAktif failed:', e); }
+  }
+  // SOP Compliance KPI bar + 6-kotak (renderComplianceProgress → renderPhaseComplianceCards)
+  if (typeof renderComplianceProgress === 'function') {
+    try { renderComplianceProgress(); }
+    catch(e) { console.warn('[Cross-tab sync] renderComplianceProgress failed:', e); }
+  }
+  // Dashboard utama KPI compliance card
+  if (typeof renderDashboard === 'function') {
+    try { renderDashboard(); }
+    catch(e) { console.warn('[Cross-tab sync] renderDashboard failed:', e); }
+  }
+  // SOP Compliance Phase Detail (kalau sedang terbuka)
   if (typeof showPhaseComplianceDetail === 'function') {
     const existing = document.getElementById('phase-compliance-detail');
     if (existing && existing.innerHTML.trim()) {
-      // Re-render only if phase detail is currently open
       const activePhaseBtn = document.querySelector('[data-active-phase]');
       if (activePhaseBtn) showPhaseComplianceDetail(activePhaseBtn.dataset.activePhase);
     }
   }
+  console.log('[Cross-tab sync] ✓ PIC edit propagated: Distribusi + SOP Kalender (wheel+detail) + SOP Compliance + Dashboard');
 }
 
 // ====================================================================
