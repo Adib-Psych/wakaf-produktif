@@ -6519,6 +6519,59 @@ function setSOPStatusFromDropdown(key, value) {
 }
 
 // ====================================================================
+// SOP item ↔ DISTRIBUSI aktivitas MATCH (per-item PIC sync, 19 Mei 2026 malam)
+// ====================================================================
+// Adib request: teks 'siapa' per-aktivitas di SOP Kalender auto-update dari Distribusi.
+// Strategy: fuzzy match by keyword di fase yang sama (bulan match).
+
+function findDistribusiAktivitasForSOPItem(sopItem, monthN) {
+  if (typeof DISTRIBUSI_DATA === 'undefined') return null;
+  const fase = DISTRIBUSI_DATA.find(f => Array.isArray(f.months) && f.months.includes(monthN));
+  if (!fase || !Array.isArray(fase.aktivitas)) return null;
+
+  const sopText = (sopItem.t || '').toLowerCase();
+  // Extract significant words (length > 3, exclude common stopwords)
+  const STOPWORDS = new Set(['dan','atau','untuk','dari','dengan','pada','yang','ini','itu','tiap','setiap','akhir','awal','full','dosis','ringan','total']);
+  const sopWords = sopText.split(/\W+/).filter(w => w.length > 3 && !STOPWORDS.has(w));
+
+  let best = {score: 0, item: null};
+  fase.aktivitas.forEach(da => {
+    const distText = (da.act || '').toLowerCase();
+    const distWords = distText.split(/\W+/).filter(w => w.length > 3 && !STOPWORDS.has(w));
+    const common = sopWords.filter(w => distWords.includes(w)).length;
+    if (common > best.score) best = {score: common, item: da};
+  });
+  return best.score >= 2 ? best.item : null;  // min 2 word match untuk valid
+}
+
+function renderPICTextFromDistribusi(distAkt, opts = {}) {
+  if (!distAkt) return null;
+  const renderNames = (arr) => arr.map(k => {
+    const reg = PIC_REGISTRY[k];
+    if (!reg) return k;
+    // Filter inactive (Anto post-transisi) unless allowAntoForMei
+    if (!reg.active && !(opts.allowAntoForMei && k === 'ANTO')) return null;
+    return reg.short;
+  }).filter(Boolean).join(', ');
+  const execNames = renderNames(Array.isArray(distAkt.exec) ? distAkt.exec : []);
+  const verifNames = renderNames(Array.isArray(distAkt.verif) ? distAkt.verif : []);
+  const parts = [];
+  if (execNames) parts.push(`🔨 ${execNames}`);
+  if (verifNames) parts.push(`✅ ${verifNames}`);
+  return parts.length > 0 ? parts.join(' · ') : null;
+}
+
+// Combined: get PIC text untuk SOP item, era-aware (return null kalau pre-Mei)
+function getPICTextForSOPItem(sopItem, monthN, year) {
+  const era = (typeof getEraForMonth === 'function') ? getEraForMonth(monthN, year) : 'active_full';
+  if (era === 'pre_project' || era === 'pre_active') return null;  // hide per-item PIC text untuk pre-active
+  const matched = findDistribusiAktivitasForSOPItem(sopItem, monthN);
+  if (!matched) return null;
+  const allowAntoForMei = (era === 'active_full' && monthN === 5 && year === 2026);
+  return renderPICTextFromDistribusi(matched, {allowAntoForMei});
+}
+
+// ====================================================================
 // LOG HARIAN ↔ SOP KALENDER AUTO-LINK (19 Mei 2026 sore)
 // ====================================================================
 // Display-only badge: tampilkan jumlah laporan worker yang related ke item SOP.
@@ -7781,11 +7834,17 @@ function showBulanAktif(n, year) {
       ? renderLaporanBadgeForSOP(a, n, year)
       : '';
 
+    // PIC text dari Distribusi Tugas (auto-sync, fallback ke legacy a.siapa kalau no match)
+    const picTextFromDist = (typeof getPICTextForSOPItem === 'function') ? getPICTextForSOPItem(a, n, year) : null;
+    const siapaDisplay = picTextFromDist
+      ? `<span style="color:var(--moss);font-weight:600" title="Dari Distribusi Tugas (auto-sync)">${picTextFromDist}</span>`
+      : `<span title="Default SOP — Adib bisa edit via Distribusi Tugas">👤 ${a.siapa}</span>`;
+
     return `<div style="display:grid;grid-template-columns:30px 1fr 160px;gap:12px;padding:11px;border-bottom:1px solid #eee;align-items:start">
       <div style="width:24px;height:24px;background:var(--moss);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:2px">${i+1}</div>
       <div>
         <div style="font-weight:600;color:var(--earth);font-size:13px;margin-bottom:3px">${a.t}${a.phase2 ? ' <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">🌱 PHASE 2 INJECT</span>' : (a.lokal ? ' <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">📍 NGT ADJUST</span>' : '')}${topikBadge}</div>
-        <div style="font-size:10px;color:var(--mute)">📖 ${a.sop} · 👤 ${a.siapa}</div>
+        <div style="font-size:10px;color:var(--mute)">📖 ${a.sop} · ${siapaDisplay}</div>
         ${dosisRow}
         ${lokalRow}
         ${laporanBadge}
