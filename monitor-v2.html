@@ -4419,22 +4419,24 @@ const PIC_REGISTRY = {
   ANTO:   {name: 'Mas Anto',         short: 'Anto (transisi)', pool: 'transition', css: 'role-anto',   active: false, note: 'Ditarik atasannya per 17 Mei 2026 — keterlibatan dipause'},
   // Legacy backward-compat (untuk parse data lama)
   WAKIF:  {name: 'Adib (Wakif)',     short: 'Adib',            pool: 'verifikasi', css: 'bidang-1',    active: true, alias_of: 'ADIB'},
-  TOSIN:  {name: 'Pak Tosin (out)',  short: 'Tosin (out)',     pool: 'inactive',   css: 'role-tosin',  active: false, note: 'Tidak aktif sejak 10 Mei 2026'}
+  // Legacy code (kept for migratePIC backward-compat): jangan render di UI manapun.
+  __LEGACY_RWI_TA__: {name: 'T.A. RWI (out)', short: 'TA-RWI (out)', pool: 'inactive', css: '', active: false, note: 'Era T.A. RWI tidak aktif sejak Mei 2026'}
 };
 
 const EKSEKUSI_KEYS    = ['YIT', 'KUMPUL', 'TIM'];
 const VERIFIKASI_KEYS  = ['ADIB', 'HENDY', 'BRIN', 'TA'];
 
-// Migrate ANTO/WAKIF/TOSIN dari data hardcoded lama:
+// Migrate ANTO/WAKIF/legacy_TA dari data hardcoded lama:
 // — ANTO di exec → KUMPUL (closest field role for coordination/observation tasks)
 // — ANTO di verif → ADIB (Wakif handles personally during transition)
 // — WAKIF → ADIB (rename)
-// — TOSIN → drop (out of team since 10 Mei 2026)
+// — Legacy era T.A. RWI code → drop (out sejak Mei 2026, no individual attribution)
 function migratePIC(arr, slot) {
+  const LEGACY_TA_CODES = ['TOSIN'];  // historical: drop silently
   return arr.map(code => {
     if (code === 'ANTO') return slot === 'exec' ? 'KUMPUL' : 'ADIB';
     if (code === 'WAKIF') return 'ADIB';
-    if (code === 'TOSIN') return null; // drop
+    if (LEGACY_TA_CODES.includes(code)) return null; // drop legacy
     return code;
   }).filter(c => c && c !== '-' && c !== '—');
 }
@@ -4734,7 +4736,7 @@ function renderDistribusi() {
 // ===== TEAM TIMELINE (locked 19 Mei 2026) =====
 const TEAM_TIMELINE = {
   // Sebelum tanggal ini, tim self-managed (Anto/Yit/Kumpul) belum formal.
-  // Sebelumnya: Era T.A. RWI (Nov 2025 - Apr 2026) — Pak Tosin + RWI Advisor.
+  // Sebelumnya: Era T.A. RWI (Nov 2025 - Apr 2026) — pengelolaan oleh tim Trustee Account RWI.
   ACTIVE_TEAM_START: { year: 2026, month: 5 },
   // 17 Mei 2026: Mas Anto ditarik atasannya — keterlibatan dipause.
   ANTO_TRANSITION: { year: 2026, month: 5, day: 17 }
@@ -4748,7 +4750,7 @@ const ERA_LABELS = {
   },
   pre_active: {
     label: '📜 Era T.A. RWI',
-    desc: 'Era Trustee Account / Rumah Wakaf Indonesia (Nov 2025 – Apr 2026). Tim self-managed belum terbentuk — aktivitas dieksekusi Pak Tosin + RWI Technical Advisor team. Status SOP dari Living Lab seed (read-only historis).',
+    desc: 'Era Trustee Account / Rumah Wakaf Indonesia (Nov 2025 – Apr 2026). Pengelolaan saat itu di bawah tim T.A. RWI sebelum MOU dibatalkan Mei 2026. Tim self-managed (Wakif) belum terbentuk sebagai struktur formal. Status SOP dari Living Lab seed (read-only historis).',
     bg: '#FEF3C7', border: '#D97706', color: '#78350F'
   },
   active_full: {
