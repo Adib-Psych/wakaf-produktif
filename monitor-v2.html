@@ -1029,7 +1029,7 @@
       </div>
     </div>
 
-    <!-- ============ OPT OBSERVASI MODAL (Tambah/Edit + AI Analyze) — 17 Mei 2026 ============ -->
+    <!-- ============ OPT OBSERVASI MODAL (Tambah/Edit + Base Analyze AI) — 17 Mei 2026 ============ -->
     <div id="opt-obs-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9000;justify-content:center;align-items:center;padding:20px">
       <div style="background:#fff;border-radius:12px;max-width:600px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden">
         <div style="display:flex;justify-content:space-between;align-items:center;padding:20px 24px 12px;border-bottom:1px solid #eee">
@@ -1065,7 +1065,7 @@
           </div>
           <div>
             <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Pelapor</label>
-            <input type="text" id="opt-obs-pelapor" placeholder="Cth: Adib · Mas Anto · Cak Yit" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+            <input type="text" id="opt-obs-pelapor" placeholder="Cth: Adib · Cak Yit · Pak Kumpul" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
           </div>
         </div>
         <div style="display:flex;gap:10px;justify-content:flex-end;padding:14px 24px;border-top:1px solid #eee;background:#fafbfa;flex-shrink:0">
@@ -1515,12 +1515,12 @@
         <div class="table-wrap">
           <table style="font-size:11.5px;width:100%">
             <thead style="background:var(--cream)">
-              <tr><th>Tgl</th><th>Kebun</th><th>Foto</th><th>Keterangan</th><th style="text-align:center">AI Analysis</th><th style="text-align:center">Expert Validation</th><th style="text-align:center">Aksi</th></tr>
+              <tr><th>Tgl</th><th>Kebun</th><th>Foto</th><th>Keterangan</th><th style="text-align:center">Base Analysis (AI)</th><th style="text-align:center">Expert Validation</th><th style="text-align:center">Aksi</th></tr>
             </thead>
             <tbody id="opt-obs-tbody"></tbody>
           </table>
         </div>
-        <p style="font-size:10px;color:var(--mute);margin-top:8px"><strong>Status legend:</strong> 🟡 Pending · 🔵 AI Analyzed · 🟢 Expert Validated · ❌ Expert Rejected. Workflow paralel: AI & Expert independent. Tombol "🤖 Analyze AI" call Claude Sonnet 4.5 dengan foto (vision). Tombol "👤 Validate Expert" untuk catat hasil kunjungan ahli lapangan.</p>
+        <p style="font-size:10px;color:var(--mute);margin-top:8px"><strong>Status legend:</strong> 🟡 Pending · 🔵 Base Analyzed (AI) · 🟢 Expert Validated · ❌ Expert Rejected. Workflow paralel: AI provides <em>base analysis</em>, Expert provides validation final. Tombol "🤖 Base Analyze (AI)" call Claude Sonnet 4.5 dengan foto (vision) — output sebagai analisa awal/dasar untuk dikonfirmasi ahli. Tombol "👤 Validate Expert" untuk catat hasil kunjungan ahli lapangan.</p>
       </div>
 
       <!-- ============ CARD 2 — OPT REFERENCE (per SOP) ============ -->
@@ -1549,7 +1549,7 @@
       <!-- ============ CARD 3 — HEATMAP (existing, pindah ke bawah 17 Mei 2026) ============ -->
       <div class="card">
         <div class="card-title"><span class="num">3</span>📊 OPT Heatmap (Per Kebun × Minggu)</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Visualisasi pengamatan 5-pohon-diagonal mingguan dari Form Input kategori <strong>OPT Monitoring</strong> (Pak Kumpul/Cak Yit/Mas Anto scout). Alert: PBKo &gt;5% warning · &gt;10% action. <em>Berbeda dari Observasi Lapangan di atas — Heatmap = data terstruktur mingguan, Observasi = ad-hoc foto gejala.</em></p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Visualisasi pengamatan 5-pohon-diagonal mingguan dari Form Input kategori <strong>OPT Monitoring</strong> (Cak Yit/Pak Kumpul scout, Wakif verifikasi). Alert: PBKo &gt;5% warning · &gt;10% action. <em>Berbeda dari Observasi Lapangan di atas — Heatmap = data terstruktur mingguan, Observasi = ad-hoc foto gejala.</em></p>
         <div id="heatmap"></div>
       </div>
     </div>
@@ -1614,10 +1614,10 @@
       <div class="card" style="background:var(--cream);border-left:4px solid var(--gold)">
         <div class="card-title" style="color:var(--gold);margin-top:0">📋 Catatan Distribusi</div>
         <div style="font-size:12px;color:#4a4030;line-height:1.7">
-          <p style="margin-bottom:8px"><strong>Mas Anto (Sweat Equity):</strong> bukan pekerja harian — kontribusi pro-bono terdokumentasi untuk bagi hasil pasca-BEP (Fase 3). Tidak masuk timeline gaji harian, tapi tetap aktif sebagai Koordinator Lapangan + verifikator compliance.</p>
-          <p style="margin-bottom:8px"><strong>Cak Yit (Yitno):</strong> spesialis bagian atas pohon — pruning, sambung pucuk Robusta klon unggul, wiwilan. Tarif Rp 60K ½ hari · Rp 120K full day. Borongan: Rp 20K/pohon untuk panjat durian (insidental).</p>
-          <p style="margin-bottom:8px"><strong>Pak Kumpul:</strong> spesialis bagian bawah + tanaman penaung + konservasi. Tarif Rp 50K ½ hari · Rp 100K full day. Plus side project jahe self-financed di Kebun 3 (tidak dibayar dari kas kebun kopi wakaf — biaya & hasil dari panen jahe sendiri).</p>
-          <p style="margin-bottom:0"><strong>Wakif (Adib) + Hendy:</strong> keputusan strategis, anggaran, soil test, infrastruktur, audit transparansi. Tim panen ad-hoc saat Jun-Agu (extra labor + Cak Yit + Pak Kumpul).</p>
+          <p style="margin-bottom:8px"><strong>Cak Yit (Yitno):</strong> spesialis bagian atas pohon — pruning, sambung pucuk Robusta klon unggul, wiwilan. <strong>+ PIC Pupuk (sole owner, locked 19 Mei 2026)</strong>. Tarif Rp 60K ½ hari · Rp 120K full day. Borongan: Rp 20K/pohon untuk panjat durian (insidental).</p>
+          <p style="margin-bottom:8px"><strong>Pak Kumpul:</strong> spesialis bagian bawah + tanaman penaung + konservasi (babat rumput, rorak, composting, lamtoro/jahe Bidang 3). Tarif Rp 50K ½ hari · Rp 100K full day. Plus side project jahe self-financed di Kebun 3 (tidak dibayar dari kas kebun kopi wakaf — biaya & hasil dari panen jahe sendiri).</p>
+          <p style="margin-bottom:8px"><strong>Wakif (Adib) + Hendy:</strong> keputusan strategis, anggaran, soil test, infrastruktur, audit transparansi, koordinasi observasi & verifikasi compliance (peran ini sebelumnya di-share dengan Mas Anto, sekarang di Wakif sepenuhnya). Tim panen ad-hoc saat Jun-Agu (extra labor + Cak Yit + Pak Kumpul).</p>
+          <p style="margin-bottom:0;padding-top:8px;border-top:1px dashed #d4a017;font-size:11px;color:var(--mute);font-style:italic"><strong>📌 Historis — Mas Anto:</strong> sweat equity Koordinator Lapangan 1-18 Mei 2026. OUT permanen per 19 Mei 2026 (atasan utama require full-time). Kontribusi pra-19 Mei tetap tercatat untuk bagi hasil pasca-BEP. Token <code>ANTO</code> preserved untuk backfill historis entries 1-18 Mei.</p>
         </div>
       </div>
     </div>
@@ -4537,7 +4537,7 @@ function renderHeatmap() {
     c.innerHTML = `<div style="padding:40px 20px;text-align:center;color:var(--mute);background:#fafaf7;border-radius:8px;border:2px dashed #ddd">
       <div style="font-size:32px;margin-bottom:10px">🐛📊</div>
       <div style="font-size:14px;font-weight:700;color:var(--earth);margin-bottom:6px">Belum Ada Pengamatan OPT</div>
-      <div style="font-size:11px;line-height:1.5">Heatmap akan auto-populate saat Mas Anto mulai input laporan kategori <strong>"OPT Monitoring (5-pohon-diagonal)"</strong> via tab Form Input.<br>Per BRIN: pengamatan mingguan, alert PBKo &gt;5%.</div>
+      <div style="font-size:11px;line-height:1.5">Heatmap akan auto-populate saat tim lapangan (Cak Yit / Pak Kumpul / Wakif) mulai input laporan kategori <strong>"OPT Monitoring (5-pohon-diagonal)"</strong> via tab Form Input.<br>Per BRIN: pengamatan mingguan, alert PBKo &gt;5%.</div>
     </div>`;
     return;
   }
@@ -4674,7 +4674,7 @@ function renderDeviations() {
 // ====================================================================
 // Eksekusi pool: field workers (Cak Yit, Pak Kumpul, Tim Panen Ad-Hoc)
 // Verifikasi pool: supervisory (Adib/Wakif, Hendy, Tim BRIN, Tenaga Ahli)
-// Mas Anto: ditarik atasannya per 17 Mei 2026 — keterlibatan dipause (transition)
+// Mas Anto: OUT permanen per 19 Mei 2026 (status pause 17 Mei dikonversi ke OUT permanen)
 // ====================================================================
 const PIC_REGISTRY = {
   // Eksekusi (field workers)
@@ -4686,8 +4686,8 @@ const PIC_REGISTRY = {
   HENDY:  {name: 'Hendy',            short: 'Hendy',           pool: 'verifikasi', css: 'bidang-2',    active: true},
   BRIN:   {name: 'Tim BRIN',         short: 'BRIN',            pool: 'verifikasi', css: 'role-tosin',  active: true},
   TA:     {name: 'Tenaga Ahli',      short: 'TA',              pool: 'verifikasi', css: 'role-tosin',  active: true},
-  // Transition (Mas Anto — keterlibatan dipause per 17 Mei 2026)
-  ANTO:   {name: 'Mas Anto',         short: 'Anto (transisi)', pool: 'transition', css: 'role-anto',   active: false, note: 'Ditarik atasannya per 17 Mei 2026 — keterlibatan dipause'},
+  // Out permanen (Mas Anto — OUT permanen per 19 Mei 2026, preserved untuk backfill historis)
+  ANTO:   {name: 'Mas Anto',         short: 'Anto (historis)', pool: 'out',       css: 'role-anto',   active: false, note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026'},
   // Legacy backward-compat (untuk parse data lama)
   WAKIF:  {name: 'Adib (Wakif)',     short: 'Adib',            pool: 'verifikasi', css: 'bidang-1',    active: true, alias_of: 'ADIB'},
   // Legacy code (kept for migratePIC backward-compat): jangan render di UI manapun.
@@ -4877,7 +4877,7 @@ function renderDistribusi() {
       });
     });
   });
-  const antoNote = '<div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:3px">📌 Mas Anto: keterlibatan dipause per 17 Mei 2026 (ditarik atasannya)</div>';
+  const antoNote = '<div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:3px">📌 Mas Anto: OUT permanen per 19 Mei 2026 (atasan utama require full-time, sweat equity tidak bisa force comeback)</div>';
   kpiC.innerHTML = `
     <div class="kpi"><div class="kpi-num">${DISTRIBUSI_DATA.length}</div><div class="kpi-lbl">Fase Fenologi</div></div>
     <div class="kpi"><div class="kpi-num">${totalAct}</div><div class="kpi-lbl">Aktivitas Per Tahun</div></div>
@@ -5009,8 +5009,11 @@ const TEAM_TIMELINE = {
   // Sebelum tanggal ini, tim self-managed (Anto/Yit/Kumpul) belum formal.
   // Sebelumnya: Era T.A. RWI (Nov 2025 - Apr 2026) — pengelolaan oleh tim Trustee Account RWI.
   ACTIVE_TEAM_START: { year: 2026, month: 5 },
-  // 17 Mei 2026: Mas Anto ditarik atasannya — keterlibatan dipause.
-  ANTO_TRANSITION: { year: 2026, month: 5, day: 17 }
+  // 17 Mei 2026: Mas Anto ditarik atasannya — keterlibatan dipause sementara.
+  // 19 Mei 2026: Status pause dikonversi ke OUT PERMANEN. Atasan require full-time;
+  // sweat equity tidak bisa force comeback. ANTO preserved untuk backfill historis 1-18 Mei.
+  ANTO_TRANSITION: { year: 2026, month: 5, day: 17 },
+  ANTO_OUT_PERMANENT: { year: 2026, month: 5, day: 19 }
 };
 
 const ERA_LABELS = {
@@ -5212,7 +5215,7 @@ function openPICEditModal(faseIdx, aIdx) {
             <div style="display:grid;grid-template-columns:1fr;gap:6px">${renderOpts(VERIFIKASI_KEYS, _picEditState.verif, 'verif')}</div>
           </div>
           <div style="background:rgba(212,175,55,0.08);border-left:3px solid var(--gold);padding:10px 12px;border-radius:6px;font-size:11px;color:var(--mute);line-height:1.5;margin-top:14px">
-            💡 <strong>Mas Anto status:</strong> ditarik atasannya per 17 Mei 2026, keterlibatan dipause. Tidak muncul di dropdown sampai status aktif kembali. Bila berubah, edit <code>PIC_REGISTRY.ANTO.active = true</code>.
+            💡 <strong>Mas Anto status:</strong> OUT permanen per 19 Mei 2026 (atasan utama require full-time). Tidak muncul di dropdown PIC aktif. Token <code>ANTO</code> preserved untuk backfill historis entries 1-18 Mei 2026.
           </div>
         </div>
         <div style="padding:14px 22px;border-top:1px solid var(--bg-deep);display:flex;justify-content:flex-end;gap:10px;background:#fafbfa;border-radius:0 0 14px 14px">
@@ -10130,12 +10133,12 @@ function autoCreateUpahFromEntry(entry) {
 // MANAGE WORKERS TAB (Phase 1B — locked 18 Mei 2026)
 // ====================================================================
 // WORKER_DEFS — active workers shown by default
-// Mas Anto removed dari pre-fill per Adib 19 Mei (transisi sejak 17 Mei 2026).
-// Re-add via "Aktifkan kembali" button di Manage Workers tab saat dia kembali.
+// Mas Anto OUT permanen per 19 Mei 2026 (status pause 17 Mei dikonversi ke OUT permanen).
+// active:false permanent. Token preserved untuk backfill historis entries 1-18 Mei 2026.
 const WORKER_DEFS = [
   { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: true },
-  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: true },
-  { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan (transisi)', icon: '👷', color: '#9CA3AF', tarif_label: 'Sweat Equity (dipause)', active: false, transition_note: 'Ditarik atasannya per 17 Mei 2026 — keterlibatan dipause' }
+  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon + PIC Pupuk', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: true },
+  { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan (OUT permanen)', icon: '👷', color: '#9CA3AF', tarif_label: 'Sweat Equity (OUT 19 Mei 2026)', active: false, transition_note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026' }
 ];
 
 // LS key untuk persistensi reactivation state (Adib bisa toggle Anto via UI)
@@ -10949,7 +10952,7 @@ async function saveOptObs() {
   saveOptObsStorage();
   closeOptObsModal();
   renderOptObsTable();
-  if (typeof showToast === 'function') showToast(OPT_OBS_EDIT_ID ? '✏️ Observasi di-update' : '✅ Observasi tersimpan — klik 🤖 Analyze AI atau 👤 Validate Expert');
+  if (typeof showToast === 'function') showToast(OPT_OBS_EDIT_ID ? '✏️ Observasi di-update' : '✅ Observasi tersimpan — klik 🤖 Base Analyze (AI) atau 👤 Validate Expert');
 }
 
 function deleteOptObs(id) {
@@ -10982,9 +10985,9 @@ function renderOptObsTable() {
     // AI status badge
     let aiBadge = '';
     if (o.ai_status === 'analyzing') aiBadge = '<span style="background:#FEF3C7;color:#92400E;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700">⏳ Analyzing</span>';
-    else if (o.ai_status === 'analyzed') aiBadge = '<span style="background:#DBEAFE;color:#1e40af;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700">🔵 AI Done</span>';
+    else if (o.ai_status === 'analyzed') aiBadge = '<span style="background:#DBEAFE;color:#1e40af;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700" title="Analisa awal AI selesai — perlu validasi ahli">🔵 Base Done</span>';
     else if (o.ai_status === 'failed') aiBadge = '<span style="background:#FEE2E2;color:#7F1D1D;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700" title="' + (o.ai_error || '').replace(/"/g,'&quot;') + '">❌ Failed</span>';
-    else aiBadge = '<button onclick="aiAnalyzeOpt(\'' + o.id + '\')" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Analyze pakai Claude AI">🤖 Analyze</button>';
+    else aiBadge = '<button onclick="aiAnalyzeOpt(\'' + o.id + '\')" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Base analysis by AI (Claude) — analisa awal untuk divalidasi ahli">🤖 Base Analyze</button>';
     // Expert status badge
     let expertBadge = '';
     if (o.expert_status === 'validated') expertBadge = '<span style="background:#DCFCE7;color:#15803D;padding:3px 7px;border-radius:4px;font-size:10px;font-weight:700" title="By ' + (o.expert_name || '?') + '">🟢 Validated</span>';
@@ -11051,7 +11054,7 @@ async function viewOptDetail(id) {
       photoUrls.filter(p => p).map(p => `<button onclick="viewNota('${p.id}')" style="background:none;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;padding:0;overflow:hidden;aspect-ratio:1"><img src="${p.url}" style="width:100%;height:100%;object-fit:cover;display:block"></button>`).join('') + '</div>';
   }
   // AI section
-  let aiHtml = '<div style="color:var(--mute);font-style:italic">Belum di-analyze AI. Klik "🤖 Analyze" di tabel.</div>';
+  let aiHtml = '<div style="color:var(--mute);font-style:italic">Belum ada base analysis (AI). Klik "🤖 Base Analyze" di tabel.</div>';
   if (o.ai_status === 'analyzed') {
     const confColor = o.ai_confidence === 'high' ? 'var(--green)' : (o.ai_confidence === 'medium' ? 'var(--gold)' : 'var(--cherry)');
     aiHtml = `<div style="background:#DBEAFE;border-left:3px solid #1e40af;padding:12px;border-radius:6px;font-size:12px;line-height:1.6">
@@ -11061,7 +11064,7 @@ async function viewOptDetail(id) {
     </div>`;
   } else if (o.ai_status === 'failed') {
     aiHtml = `<div style="background:#FEE2E2;border-left:3px solid var(--red);padding:12px;border-radius:6px;font-size:12px;color:#7F1D1D">
-      <strong>❌ AI Analyze gagal:</strong> ${o.ai_error || 'Unknown error'}<br>
+      <strong>❌ Base Analyze (AI) gagal:</strong> ${o.ai_error || 'Unknown error'}<br>
       <button onclick="aiAnalyzeOpt('${o.id}')" style="margin-top:8px;background:#fff;color:#7F1D1D;border:1px solid #ef4444;padding:5px 10px;border-radius:4px;font-size:11px;cursor:pointer;font-weight:600">🔁 Retry</button>
     </div>`;
   }
@@ -11092,7 +11095,7 @@ async function viewOptDetail(id) {
         ${photoHtml}
       </div>
       <div>
-        <div style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">🤖 AI Analysis (Claude Sonnet 4.5 · open source data)</div>
+        <div style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">🤖 Base Analysis by AI (Claude Sonnet 4.5 · open source data) — analisa awal, perlu validasi ahli</div>
         ${aiHtml}
       </div>
       <div>
@@ -11274,7 +11277,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     o.last_modified_at = new Date().toISOString();
     saveOptObsStorage();
     renderOptObsTable();
-    if (typeof showToast === 'function') showToast(`🤖 AI analysis selesai · confidence: ${o.ai_confidence}`);
+    if (typeof showToast === 'function') showToast(`🤖 Base analysis (AI) selesai · confidence: ${o.ai_confidence}`);
   } catch (err) {
     console.error('[aiAnalyzeOpt]', err);
     o.ai_status = 'failed';
@@ -11282,7 +11285,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     o.last_modified_at = new Date().toISOString();
     saveOptObsStorage();
     renderOptObsTable();
-    alert(`❌ AI Analyze gagal: ${err.message}\n\nCek API key valid + balance. Atau retry nanti.`);
+    alert(`❌ Base Analyze (AI) gagal: ${err.message}\n\nCek API key valid + balance. Atau retry nanti.`);
   }
 }
 
