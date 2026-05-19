@@ -302,11 +302,11 @@
       <!-- 🌳 Implementasi Lapangan — eksekusi harian + observasi -->
       <div style="font-size:10px;letter-spacing:1.5px;color:var(--moss);padding:4px 14px 6px;font-weight:800">🌳 IMPLEMENTASI LAPANGAN</div>
       <div class="sb-tab" data-panel="log"><span class="ico">📋</span><span class="lbl">Log Harian</span></div>
-      <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Distribusi Tugas</span></div>
+      <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Tim & Distribusi Tugas</span></div>
       <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
       <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
       <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
-      <div class="sb-tab" data-panel="workers"><span class="ico">🎫</span><span class="lbl">Manage Workers</span></div>
+      <!-- Manage Workers (🎫) merged into Distribusi Tugas panel 19 Mei 2026 — reduce sidebar clutter -->
 
       <div style="height:14px"></div>
 
@@ -416,41 +416,7 @@
       </div>
     </div>
 
-    <!-- ============ MANAGE WORKERS (Phase 1B — 18 Mei 2026) ============ -->
-    <div class="panel" id="panel-workers">
-
-      <div class="card" style="background:linear-gradient(135deg,#2D8466,#1F5F47);color:#fff;border:0">
-        <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800;margin-bottom:8px">🎫 WORKER URL MANAGEMENT</div>
-        <div style="font-size:18px;font-weight:800;margin-bottom:6px">Manage Worker Tokens & Activity</div>
-        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit · Mas Anto. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian.</div>
-      </div>
-
-      <div class="card">
-        <div class="card-title"><span class="num">1</span>Worker URLs</div>
-        <p style="font-size:12px;color:var(--mute);margin-bottom:14px">Setiap worker punya URL unik dengan token. Klik <strong>Copy URL</strong> untuk share via WhatsApp.</p>
-
-        <div id="worker-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px">
-          <!-- Cards rendered by JS -->
-        </div>
-
-        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn btn-primary" onclick="renderWorkersTab()" style="background:var(--moss)">🔄 Refresh Last Active</button>
-        </div>
-
-        <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = simple worker code (KUMPUL/YIT/ANTO) — no revoke yet.</p>
-      </div>
-
-      <div class="card" style="background:rgba(168,200,188,.15);border-left:3px solid var(--moss)">
-        <div style="font-size:12px;font-weight:700;color:var(--earth);margin-bottom:6px">📱 Cara Worker Pakai</div>
-        <ol style="margin-left:18px;font-size:11.5px;color:var(--mute);line-height:1.7">
-          <li>Adib copy URL dari kartu di atas</li>
-          <li>Share via WhatsApp ke worker (e.g., Pak Kumpul)</li>
-          <li>Worker tap link di HP → buka lapor.html</li>
-          <li>Worker isi form (tanggal, kebun, kategori, durasi, catatan, foto) → submit</li>
-          <li>Entry langsung muncul di dashboard &lt;10 detik via Firestore real-time sync</li>
-        </ol>
-      </div>
-    </div>
+    <!-- ============ MANAGE WORKERS — merged into Distribusi Tugas panel (19 Mei 2026) ============ -->
 
     <!-- ============ FORM INPUT ============ -->
     <div class="panel" id="panel-form">
@@ -1320,16 +1286,58 @@
       </div>
     </div>
 
-    <!-- ============ DISTRIBUSI TUGAS ============ -->
+    <!-- ============ TIM & DISTRIBUSI TUGAS (Manage Workers + Distribusi merged 19 Mei 2026) ============ -->
     <div class="panel" id="panel-distribusi">
+
+      <!-- ─── SECTION A: MANAGE WORKERS (Phase 1B — placed on top per Adib 19 Mei) ─── -->
+      <div class="card" style="background:linear-gradient(135deg,#2D8466,#1F5F47);color:#fff;border:0">
+        <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800;margin-bottom:8px">🎫 SECTION A · WORKER URL MANAGEMENT</div>
+        <div style="font-size:18px;font-weight:800;margin-bottom:6px">Manage Worker Tokens & Activity</div>
+        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit · Mas Anto. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian.</div>
+      </div>
+
       <div class="card">
-        <div class="card-title"><span class="num">1</span>Distribusi Tugas Tahunan — Sesuai SOP &amp; Notulen 1-2 Mei</div>
+        <div class="card-title"><span class="num">A1</span>Worker URLs</div>
+        <p style="font-size:12px;color:var(--mute);margin-bottom:14px">Setiap worker punya URL unik dengan token. Klik <strong>Copy URL</strong> untuk share via WhatsApp.</p>
+
+        <div id="worker-cards-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px">
+          <!-- Cards rendered by JS -->
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="renderWorkersTab()" style="background:var(--moss)">🔄 Refresh Last Active</button>
+        </div>
+
+        <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = simple worker code (KUMPUL/YIT/ANTO) — no revoke yet.</p>
+      </div>
+
+      <div class="card" style="background:rgba(168,200,188,.15);border-left:3px solid var(--moss)">
+        <div style="font-size:12px;font-weight:700;color:var(--earth);margin-bottom:6px">📱 Cara Worker Pakai</div>
+        <ol style="margin-left:18px;font-size:11.5px;color:var(--mute);line-height:1.7">
+          <li>Adib copy URL dari kartu di atas</li>
+          <li>Share via WhatsApp ke worker (e.g., Pak Kumpul)</li>
+          <li>Worker tap link di HP → buka lapor.html</li>
+          <li>Worker isi form (tanggal, kebun, kategori, durasi, catatan, foto) → submit</li>
+          <li>Entry langsung muncul di dashboard &lt;10 detik via Firestore real-time sync</li>
+        </ol>
+      </div>
+
+      <!-- ─── Visual divider antara Section A & Section B ─── -->
+      <div style="margin:26px 0 18px;display:flex;align-items:center;gap:14px">
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--moss),transparent)"></div>
+        <div style="font-size:11px;letter-spacing:2px;color:var(--moss);font-weight:800;white-space:nowrap">📋 SECTION B · DISTRIBUSI TUGAS</div>
+        <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--moss),transparent)"></div>
+      </div>
+
+      <!-- ─── SECTION B: DISTRIBUSI TUGAS TAHUNAN ─── -->
+      <div class="card">
+        <div class="card-title"><span class="num">B1</span>Distribusi Tugas Tahunan — Sesuai SOP &amp; Notulen 1-2 Mei</div>
         <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pembagian PIC <strong>Eksekusi</strong> dan <strong>Verifikasi</strong> per fase fenologi, dipetakan dari SOP Robusta Edisi 2 + Notulen Rapat 1-2 Mei 2026 + Klarifikasi Wakif 8 Mei.</p>
         <div class="kpi-grid" id="distribusi-kpi"></div>
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">2</span>Beban Per Pekerja — Distribusi Aktivitas Tahunan</div>
+        <div class="card-title"><span class="num">B2</span>Beban Per Pekerja — Distribusi Aktivitas Tahunan</div>
         <div class="chart-wrap"><canvas id="chart-distribusi"></canvas></div>
       </div>
 
@@ -9038,11 +9046,12 @@ function copyWorkerUrl(url, btn) {
   }).catch(e => alert('Failed to copy: ' + e.message));
 }
 
-// Trigger render saat tab Workers di-klik
+// Trigger render Workers section + Distribusi pas tab "Tim & Distribusi Tugas" dibuka
+// (Manage Workers di-merge ke panel distribusi 19 Mei 2026 — reduce sidebar clutter)
 document.addEventListener('DOMContentLoaded', () => {
-  const workerTab = document.querySelector('.sb-tab[data-panel="workers"]');
-  if (workerTab) {
-    workerTab.addEventListener('click', () => setTimeout(renderWorkersTab, 100));
+  const distribusiTab = document.querySelector('.sb-tab[data-panel="distribusi"]');
+  if (distribusiTab) {
+    distribusiTab.addEventListener('click', () => setTimeout(renderWorkersTab, 100));
   }
   const complianceTab = document.querySelector('.sb-tab[data-panel="compliance"]');
   if (complianceTab) {
