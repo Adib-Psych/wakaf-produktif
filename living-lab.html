@@ -3108,10 +3108,17 @@ function renderDynamicMilestones(data) {
   const onFarmCandidates = data.milestones.filter(m => LIVING_LAB_VISIBLE_PHASES.includes(m.phase));
 
   // ──────────────────────────────────────────────────────────────────────
-  // SMART DEDUPLIKASI HYBRID (per Adib decision 19 Mei malam) — 2-tier preserve backward compat:
-  //   Tier 1 (NEW): ID match — kalau hardcoded act-log-item punya attribute data-milestone-id
-  //                  yang exact match dengan milestone.id JSON → skip render (no false positive)
-  //   Tier 2 (LOCKED — preserve memory CLAUDE.md): substring match per c0efa10
+  // SMART DEDUPLIKASI HYBRID (per Adib decision 19 Mei malam) — 2 Pengecekan berurutan:
+  //
+  // ⚠️ CATATAN ISTILAH: "Pengecekan" di sini = level filter logic internal.
+  // BERBEDA dari Tier 1/2/3 Living Lab (yang merujuk ke 3 kolom presentasi:
+  // Kolom 1 Aktivitas · Kolom 2 Kajian Teori · Kolom 3 Validasi SOP).
+  // Dedup logic ini TIDAK menyentuh 3 kolom presentasi sama sekali.
+  //
+  //   Pengecekan 1 (NEW): ID match — kalau hardcoded act-log-item punya attribute
+  //                       data-milestone-id yang exact match dengan milestone.id
+  //                       JSON → skip render (no false positive)
+  //   Pengecekan 2 (LOCKED — preserve memory CLAUDE.md): substring match per c0efa10
   //                  - Normalize: lowercase + replace non-alphanumeric → spasi → trim
   //                  - Min length 6 char setelah normalize
   //                  - BOTH-ways substring: dynTitle.includes(hcTitle) || hcTitle.includes(dynTitle)
@@ -3144,13 +3151,13 @@ function renderDynamicMilestones(data) {
   const onFarmMilestones = onFarmCandidates.filter(function(m){
     const yearData = hardcodedByYear[String(m.year)] || { ids: [], titles: [] };
 
-    // Tier 1: ID exact match (NEW opt-in — kalau hardcoded item punya data-milestone-id attribute)
+    // Pengecekan 1: ID exact match (NEW opt-in — kalau hardcoded item punya data-milestone-id attribute)
     if (m.id && yearData.ids.includes(m.id)) {
       console.log('[Living Lab] Dedup skip (ID match):', m.id);
       return false;
     }
 
-    // Tier 2: substring match (LOCKED per memory CLAUDE.md, commit c0efa10)
+    // Pengecekan 2: substring match (LOCKED per memory CLAUDE.md, commit c0efa10)
     const dynTitle = norm(m.title && m.title.id);
     if (dynTitle) {
       const hcTitles = yearData.titles;
