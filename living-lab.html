@@ -417,15 +417,17 @@ span.lang-en { display: none; }
   pointer-events: none;
 }
 .fenologi-layout {
-  display: grid; grid-template-columns: 2fr 1fr;  /* wheel 2x lebih besar dari legend kanan */
-  gap: 3rem; align-items: center;
+  display: grid;
+  /* Wheel column dominan (2x), legend kanan minimal 280px — locked 19 Mei 2026 */
+  grid-template-columns: minmax(400px, 2fr) minmax(280px, 1fr);
+  gap: 3rem; align-items: start;
   margin-top: 2.5rem;
 }
-@media (max-width: 1024px) {
+@media (max-width: 880px) {
   .fenologi-layout { grid-template-columns: 1fr; gap: 2rem; }
 }
 .fenologi-wheel-wrap { display: flex; justify-content: center; position: relative; }
-.fenologi-svg { width: 100%; max-width: 640px; height: auto; aspect-ratio: 1; }
+.fenologi-svg { width: 100%; max-width: 640px; height: auto; }
 /* .fenologi-center-label defined in botanical decoration section below */
 .center-month {
   font-family: 'Playfair Display', serif;
@@ -1136,7 +1138,7 @@ span.lang-en { display: none; }
    RESPONSIVE
 ══════════════════════════════════ */
 @media (max-width: 960px) {
-  .fenologi-layout { grid-template-columns: 1fr; gap: 2rem; }
+  /* .fenologi-layout collapse handled di @media 880px di atas — DUPLICATE REMOVED 19 Mei 2026 */
   .fenologi-wheel-wrap { justify-content: center; }
   .status-board { grid-template-columns: 1fr; }
   .harvest-track { grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; gap: 0.4rem; }
@@ -1598,12 +1600,13 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
           </div>
         </div>
-        <div class="fenologi-note lang-id">
-          Siklus ini berulang setiap tahun — dan Living Lab akan terus mendokumentasikan apa yang terjadi di setiap fasenya. Dalam 5–10 tahun ke depan, halaman ini menjadi rekaman lengkap perjalanan kebun dari nol hingga menjadi aset wakaf yang produktif.
-        </div>
-        <div class="fenologi-note lang-en">
-          This cycle repeats every year — and Living Lab will continue to document what happens at each phase. Over the next 5–10 years, this page becomes a complete record of the garden's journey from zero to a productive waqf asset.
-        </div>
+      </div>
+      <!-- NOTE — moved OUT of col 2 wrapper supaya full width bawah layout (locked 19 Mei 2026) -->
+      <div class="fenologi-note lang-id">
+        Siklus ini berulang setiap tahun — dan Living Lab akan terus mendokumentasikan apa yang terjadi di setiap fasenya. Dalam 5–10 tahun ke depan, halaman ini menjadi rekaman lengkap perjalanan kebun dari nol hingga menjadi aset wakaf yang produktif.
+      </div>
+      <div class="fenologi-note lang-en">
+        This cycle repeats every year — and Living Lab will continue to document what happens at each phase. Over the next 5–10 years, this page becomes a complete record of the garden's journey from zero to a productive waqf asset.
       </div>
     </div>
   </div>
