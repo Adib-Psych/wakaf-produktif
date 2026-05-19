@@ -1206,28 +1206,259 @@
     </div>
 
     <!-- ============ INVENTARISASI ============ -->
+    <!-- INFOGRAFIS LAYOUT (19 Mei 2026): hero + timeline + per-kebun cards + tali rafia inovasi + lineage -->
     <div class="panel" id="panel-inventaris">
-      <div class="card">
-        <div class="card-title"><span class="num">1</span>Snapshot Pohon per Kebun</div>
-        <div class="kpi-grid" id="inv-kpi-grid">
-          <div class="kpi"><div class="kpi-num">~915</div><div class="kpi-lbl">Total (Estimasi Pre-Selection)</div><div class="kpi-trend">📍 Target ideal post-selection: 750 phn (3×2,5 m)</div></div>
-          <div class="kpi"><div class="kpi-num" id="inv-dipetakan">0</div><div class="kpi-lbl">Sudah Dipetakan</div><div class="kpi-trend" id="inv-dipetakan-pct">— complete</div></div>
-          <div class="kpi"><div class="kpi-num" id="inv-produktif">0</div><div class="kpi-lbl">Produktif</div></div>
-          <div class="kpi warn"><div class="kpi-num" id="inv-sulam">0</div><div class="kpi-lbl">Perlu Sulam</div></div>
+
+      <!-- ─── HERO BANNER — Estimasi Total + Pending Cak Yit ─── -->
+      <div class="card" style="background:linear-gradient(135deg,#1F3A2E,#2e4040);color:#fff;border:0;padding:24px 28px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px">
+          <div style="flex:1;min-width:280px">
+            <div style="font-size:11px;letter-spacing:2.5px;color:#D4AF37;font-weight:800;margin-bottom:6px">🌳 INVENTARISASI POHON · ESTIMASI 19 MEI 2026</div>
+            <div style="font-size:14px;color:#a8c8bc;line-height:1.5">Census akurat <strong style="color:#fff">sedang dilakukan</strong> Cak Yit menggunakan sistem tali rafia 2-warna (mulai 16 Mei). Angka di bawah adalah proyeksi dari assessment baseline 2023 + decay model konservatif sambil menunggu final count.</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:56px;font-weight:900;color:#fff;line-height:1">~915</div>
+            <div style="font-size:11px;color:#D4AF37;letter-spacing:1px;font-weight:700">POHON ESTIMASI · MEI 2026</div>
+            <div style="font-size:10px;color:#a8c8bc;margin-top:4px;font-style:italic">Range: 932 – 1.000 (validasi Mas Anto observasi)</div>
+          </div>
         </div>
-        <p style="font-size:11px;color:var(--mute)">Mas Anto bertugas inventarisasi pohon via tab Form Input → kategori "Inventarisasi Pohon" → otomatis terhitung di sini. Density target ideal: 750 phn (3×2,5 m, post-selection pasca-panen 2026).</p>
       </div>
 
-      <div class="card">
-        <div class="card-title"><span class="num">2</span>Distribusi Pohon per Kebun × Status</div>
-        <div class="chart-wrap"><canvas id="chart-inventory"></canvas></div>
+      <!-- ─── PROGRESS CENSUS (status realtime) ─── -->
+      <div class="card" style="border-left:5px solid #F59E0B;background:#FFFBEB">
+        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="font-size:32px">⏳</div>
+          <div style="flex:1;min-width:220px">
+            <div style="font-size:12px;font-weight:800;color:#78350F;letter-spacing:1px;margin-bottom:2px">CENSUS FINAL — PENDING CAK YIT</div>
+            <div style="font-size:13px;color:var(--earth);line-height:1.5">Pemangkasan post-panen Cak Yit menggunakan sistem <strong style="color:#78350F">tali rafia 2-warna</strong> sebagai census trigger: <span style="background:#fee2e2;color:#991B1B;padding:1px 6px;border-radius:4px;font-weight:700">🔴 merah</span> = mati/perlu tebang, <span style="background:#FEF3C7;color:#78350F;padding:1px 6px;border-radius:4px;font-weight:700">🟡 kuning</span> = sakit/perlu observasi ahli. Estimasi selesai 4 kebun: <strong>akhir Mei 2026</strong>.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;background:#fff;padding:10px 18px;border-radius:10px;border:2px solid #F59E0B">
+            <div style="font-size:24px;font-weight:900;color:#D97706">2/4</div>
+            <div style="font-size:10px;color:#78350F;font-weight:700;letter-spacing:1px">KEBUN DONE</div>
+          </div>
+        </div>
       </div>
 
+      <!-- ─── TIMELINE 2023 → 2026 → 2027 ─── -->
       <div class="card">
-        <div class="card-title"><span class="num">3</span>Lineage Genetik Pohon (per Q1 — Klon TBD)</div>
-        <div style="background:var(--goldlt);border-left:3px solid var(--gold);padding:10px;border-radius:6px;font-size:12px;color:var(--gold)">
-          ⚠️ <strong>Status klon Robusta: <code>unknown</code></strong> — Mas Adib pilih Opsi C (tunda DNA fingerprinting Puslit Koka, observasi 1 siklus dulu). Default lineage di schema: <strong>batang bawah Excelsa → batang atas Robusta (klon TBD)</strong>. Re-evaluasi Q3 2027.
+        <div class="card-title"><span class="num">1</span>Timeline Populasi Pohon — Decay 2023 → Target 2027</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:14px">Asumsi: compound decay <strong>~12% per tahun</strong> (tanpa replantasi aktif) dari baseline assessment 2023, validated dengan observasi lapangan Mei 2026.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+          <div style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);padding:16px;border-radius:10px;border:1px solid #F59E0B;text-align:center">
+            <div style="font-size:10px;letter-spacing:1.5px;color:#78350F;font-weight:800;margin-bottom:4px">📍 BASELINE</div>
+            <div style="font-size:30px;font-weight:900;color:#78350F">1.367</div>
+            <div style="font-size:11px;color:#78350F;font-weight:700">Assessment 2023</div>
+            <div style="font-size:9px;color:#78350F;margin-top:4px;font-style:italic;opacity:0.8">Adib personal survey · pre-program</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#FED7AA,#FDBA74);padding:16px;border-radius:10px;border:1px solid #EA580C;text-align:center;position:relative">
+            <div style="font-size:10px;letter-spacing:1.5px;color:#7C2D12;font-weight:800;margin-bottom:4px">⬇ DECAY 12%/yr</div>
+            <div style="font-size:30px;font-weight:900;color:#7C2D12">~932</div>
+            <div style="font-size:11px;color:#7C2D12;font-weight:700">Proyeksi awal 2026</div>
+            <div style="font-size:9px;color:#7C2D12;margin-top:4px;font-style:italic;opacity:0.8">1.367 × 0,88³ ≈ 932</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);padding:16px;border-radius:10px;border:2px solid #2563EB;text-align:center;position:relative">
+            <div style="position:absolute;top:-10px;right:8px;background:#2563EB;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:800;letter-spacing:.5px">🔥 KINI</div>
+            <div style="font-size:10px;letter-spacing:1.5px;color:#1E3A8A;font-weight:800;margin-bottom:4px">📊 ESTIMASI</div>
+            <div style="font-size:30px;font-weight:900;color:#1E3A8A">~915</div>
+            <div style="font-size:11px;color:#1E3A8A;font-weight:700">Mei 2026 (current)</div>
+            <div style="font-size:9px;color:#1E3A8A;margin-top:4px;font-style:italic;opacity:0.8">Mas Anto field observation</div>
+          </div>
+          <div style="background:linear-gradient(135deg,#D1FAE5,#A7F3D0);padding:16px;border-radius:10px;border:1px solid #059669;text-align:center">
+            <div style="font-size:10px;letter-spacing:1.5px;color:#064E3B;font-weight:800;margin-bottom:4px">🎯 TARGET</div>
+            <div style="font-size:30px;font-weight:900;color:#064E3B">750</div>
+            <div style="font-size:11px;color:#064E3B;font-weight:700">Post-Selection 2027</div>
+            <div style="font-size:9px;color:#064E3B;margin-top:4px;font-style:italic;opacity:0.8">Density 3×2,5 m ideal</div>
+          </div>
         </div>
+        <div style="margin-top:14px;padding:10px 14px;background:#F0FDF4;border-left:3px solid #16A34A;border-radius:6px;font-size:11px;color:#14532D;line-height:1.6">
+          💡 <strong>Mengapa decay 12%/tahun?</strong> Tanpa replantasi aktif, kopi Robusta umur produktif 25-30 thn mengalami attrition akibat (1) kematian alami pohon tua, (2) tanaman mati kena hama/penyakit, (3) pohon roboh angin, (4) seleksi tebang manual. Validasi: 1.367 × 0,88³ = 932 → observasi Mas Anto ~915 (gap 1,8% — within model tolerance).
+        </div>
+      </div>
+
+      <!-- ─── PER-KEBUN BREAKDOWN ─── -->
+      <div class="card">
+        <div class="card-title"><span class="num">2</span>Proyeksi per Kebun — 2023 vs 2026 vs Target Post-Selection</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+          <!-- Kebun 1 -->
+          <div style="border:2px solid var(--moss);border-radius:10px;padding:14px 16px;background:#fff;position:relative">
+            <div style="position:absolute;top:-12px;left:14px;background:var(--moss);color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 1</div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Paling kecil, pinggir jalan setapak</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#78350F;font-weight:700">2023</span>
+              <span style="font-size:18px;font-weight:800;color:#78350F">150</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#1E3A8A;font-weight:700">📊 Mei 2026</span>
+              <span style="font-size:18px;font-weight:800;color:#1E3A8A">~102</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--bg-deep)">
+              <span style="font-size:10px;color:#064E3B;font-weight:700">🎯 Target 2027</span>
+              <span style="font-size:14px;font-weight:800;color:#064E3B">~85</span>
+            </div>
+            <div style="margin-top:8px;padding:6px 8px;background:#F0FDF4;border-radius:4px;font-size:9.5px;color:#14532D">
+              ✅ Pemangkasan SELESAI (16 Mei) · Tali rafia awal
+            </div>
+          </div>
+          <!-- Kebun 2 -->
+          <div style="border:2px solid var(--moss);border-radius:10px;padding:14px 16px;background:#fff;position:relative">
+            <div style="position:absolute;top:-12px;left:14px;background:var(--moss);color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 2</div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Paling luas, pinggir jalan utama</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#78350F;font-weight:700">2023</span>
+              <span style="font-size:18px;font-weight:800;color:#78350F">620</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#1E3A8A;font-weight:700">📊 Mei 2026</span>
+              <span style="font-size:18px;font-weight:800;color:#1E3A8A">~422</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--bg-deep)">
+              <span style="font-size:10px;color:#064E3B;font-weight:700">🎯 Target 2027</span>
+              <span style="font-size:14px;font-weight:800;color:#064E3B">~340</span>
+            </div>
+            <div style="margin-top:8px;padding:6px 8px;background:#F0FDF4;border-radius:4px;font-size:9.5px;color:#14532D">
+              ✅ Pemangkasan SELESAI (16 Mei) · Tali rafia awal
+            </div>
+          </div>
+          <!-- Kebun 3 -->
+          <div style="border:2px solid #F59E0B;border-radius:10px;padding:14px 16px;background:#FFFBEB;position:relative">
+            <div style="position:absolute;top:-12px;left:14px;background:#F59E0B;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 3 🔥</div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Paling bawah, lereng curam</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#78350F;font-weight:700">2023</span>
+              <span style="font-size:18px;font-weight:800;color:#78350F">397</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#1E3A8A;font-weight:700">📊 Mei 2026</span>
+              <span style="font-size:18px;font-weight:800;color:#1E3A8A">~270</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--bg-deep)">
+              <span style="font-size:10px;color:#064E3B;font-weight:700">🎯 Target 2027</span>
+              <span style="font-size:14px;font-weight:800;color:#064E3B">~220</span>
+            </div>
+            <div style="margin-top:8px;padding:6px 8px;background:#FEF3C7;border-radius:4px;font-size:9.5px;color:#78350F">
+              🟡 IN-PROGRESS · Pemangkasan mulai 16 Mei · 3-4 hari
+            </div>
+          </div>
+          <!-- Kebun 4 -->
+          <div style="border:2px solid #94A3B8;border-radius:10px;padding:14px 16px;background:#F8FAFC;position:relative">
+            <div style="position:absolute;top:-12px;left:14px;background:#475569;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 4 🏠</div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Belakang Rumah Wakif · pilot Brocap</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#78350F;font-weight:700">2023</span>
+              <span style="font-size:18px;font-weight:800;color:#78350F">200</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+              <span style="font-size:10px;color:#1E3A8A;font-weight:700">📊 Mei 2026</span>
+              <span style="font-size:18px;font-weight:800;color:#1E3A8A">~136</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid var(--bg-deep)">
+              <span style="font-size:10px;color:#064E3B;font-weight:700">🎯 Target 2027</span>
+              <span style="font-size:14px;font-weight:800;color:#064E3B">~110</span>
+            </div>
+            <div style="margin-top:8px;padding:6px 8px;background:#E2E8F0;border-radius:4px;font-size:9.5px;color:#334155">
+              ⏳ ANTRIAN · Pasca Kebun 3 selesai · target 23 Mei
+            </div>
+          </div>
+        </div>
+        <div class="chart-wrap" style="margin-top:18px"><canvas id="chart-inventory"></canvas></div>
+      </div>
+
+      <!-- ─── TALI RAFIA 2-WARNA INOVASI ─── -->
+      <div class="card" style="background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-left:5px solid #D97706">
+        <div class="card-title"><span class="num">3</span>🎀 Sistem Tali Rafia 2-Warna (Inovasi Wakif · 16 Mei 2026)</div>
+        <p style="font-size:12px;color:var(--earth);line-height:1.6;margin-bottom:12px">Cara cepat & murah untuk census pohon saat pemangkasan, no extra labor. Cak Yit nge-tag pohon yang dia identifikasi, Wakif foto + GPS via lapor.html, data masuk dashboard otomatis.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+          <div style="background:#fff;padding:14px;border-radius:8px;border-left:4px solid #DC2626">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="display:inline-block;width:14px;height:14px;background:#DC2626;border-radius:50%"></span>
+              <strong style="color:#7F1D1D;font-size:13px">Tali Merah · Tebang</strong>
+            </div>
+            <p style="font-size:11px;color:#7F1D1D;line-height:1.55;margin-bottom:6px">Pohon mati / produktivitas nol / batang busuk. <strong>Tidak dipupuk</strong> (waste). Feed langsung ke RAB Siklus 2027 sebagai data jumlah final pasca-seleksi.</p>
+            <div style="font-size:10px;color:#7F1D1D;font-style:italic;opacity:0.85">Estimasi 18-22% dari total pre-selection</div>
+          </div>
+          <div style="background:#fff;padding:14px;border-radius:8px;border-left:4px solid #F59E0B">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="display:inline-block;width:14px;height:14px;background:#F59E0B;border-radius:50%"></span>
+              <strong style="color:#78350F;font-size:13px">Tali Kuning · Observasi</strong>
+            </div>
+            <p style="font-size:11px;color:#78350F;line-height:1.55;margin-bottom:6px">Kurang sehat, mungkin masih bisa diobati. <strong>Trigger observasi ahli</strong> (BRIN penjajakan) + potensi top-graft klon unggul BP 358/SA 237.</p>
+            <div style="font-size:10px;color:#78350F;font-style:italic;opacity:0.85">Estimasi 8-12% — kandidat peremajaan selektif</div>
+          </div>
+          <div style="background:#fff;padding:14px;border-radius:8px;border-left:4px solid #16A34A">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+              <span style="display:inline-block;width:14px;height:14px;background:#16A34A;border-radius:50%"></span>
+              <strong style="color:#14532D;font-size:13px">Tanpa Tali · Produktif</strong>
+            </div>
+            <p style="font-size:11px;color:#14532D;line-height:1.55;margin-bottom:6px">Pohon sehat, produksi normal. <strong>Dipupuk full BRIN dosis</strong> 5-10 thn, pemangkasan rutin wiwilan. Default baseline.</p>
+            <div style="font-size:10px;color:#14532D;font-style:italic;opacity:0.85">Estimasi 70-75% — ini yang jadi 750 phn target post-selection</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:#fff;border-radius:6px;font-size:11px;color:var(--earth);line-height:1.6;border:1px dashed #D97706">
+          ⚠️ <strong>Mitigasi:</strong> tali rafia rentan rusak cuaca. WAJIB foto + GPS upload ke lapor.html dalam 48 jam (Form Input → kategori "Inventarisasi Pohon" → kondisi_pohon enum). Backup data ke localStorage + Firestore.
+        </div>
+      </div>
+
+      <!-- ─── DENSITY ANALYSIS ─── -->
+      <div class="card">
+        <div class="card-title"><span class="num">4</span>Density Analysis — Ideal vs Realita</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+          <div style="background:#F0F9FF;padding:14px;border-radius:8px;border-left:3px solid #0EA5E9">
+            <div style="font-size:11px;color:#0C4A6E;font-weight:800;letter-spacing:1px;margin-bottom:4px">📐 LUAS LAHAN</div>
+            <div style="font-size:26px;font-weight:900;color:#075985">4.918 m²</div>
+            <div style="font-size:11px;color:#075985;font-style:italic;margin-top:2px">= 0,49 ha</div>
+          </div>
+          <div style="background:#FEF3C7;padding:14px;border-radius:8px;border-left:3px solid #D97706">
+            <div style="font-size:11px;color:#78350F;font-weight:800;letter-spacing:1px;margin-bottom:4px">📊 DENSITY KINI</div>
+            <div style="font-size:26px;font-weight:900;color:#78350F">~1.867 phn/ha</div>
+            <div style="font-size:11px;color:#78350F;font-style:italic;margin-top:2px">Over-dense (+40% dari ideal)</div>
+          </div>
+          <div style="background:#D1FAE5;padding:14px;border-radius:8px;border-left:3px solid #16A34A">
+            <div style="font-size:11px;color:#064E3B;font-weight:800;letter-spacing:1px;margin-bottom:4px">🎯 DENSITY IDEAL</div>
+            <div style="font-size:26px;font-weight:900;color:#064E3B">1.333 phn/ha</div>
+            <div style="font-size:11px;color:#064E3B;font-style:italic;margin-top:2px">Jarak 3 × 2,5 m (BRIN SOP)</div>
+          </div>
+          <div style="background:#EDE9FE;padding:14px;border-radius:8px;border-left:3px solid #7C3AED">
+            <div style="font-size:11px;color:#4C1D95;font-weight:800;letter-spacing:1px;margin-bottom:4px">🌱 GAP UNTUK SELEKSI</div>
+            <div style="font-size:26px;font-weight:900;color:#4C1D95">~165 phn</div>
+            <div style="font-size:11px;color:#4C1D95;font-style:italic;margin-top:2px">Yang perlu tebang/peremaja</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:#FFF7ED;border-left:3px solid #EA580C;border-radius:6px;font-size:11px;color:#7C2D12;line-height:1.6">
+          📍 <strong>Kenapa over-dense?</strong> Kebun warisan dengan jarak tanam tidak teratur (1,5-2 m antar pohon di area padat). Konsekuensi: kompetisi cahaya + nutrisi → produktivitas per-pohon di bawah optimal. Seleksi 750 phn target = density 1.530 phn/ha (sedikit di atas ideal SOP, kompromise konservatif).
+        </div>
+      </div>
+
+      <!-- ─── LINEAGE GENETIK (preserve, repositioned) ─── -->
+      <div class="card">
+        <div class="card-title"><span class="num">5</span>Lineage Genetik Pohon</div>
+        <div style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-left:4px solid #D97706;padding:14px 16px;border-radius:8px">
+          <div style="display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap">
+            <div style="font-size:32px">🌿</div>
+            <div style="flex:1;min-width:240px">
+              <div style="font-size:12px;font-weight:800;color:#78350F;letter-spacing:0.5px;margin-bottom:4px">EXCELSA ROOTSTOCK + ROBUSTA TOP-GRAFT</div>
+              <p style="font-size:11.5px;color:#78350F;line-height:1.6;margin-bottom:8px">Konfigurasi yang ditemukan saat pertemuan BRIN Purwodadi 5 Mei 2026: batang bawah <strong>Excelsa</strong> (toleransi nematoda + tahan kondisi suboptimal di S3 marginal-atas 648 mdpl) yang di-<strong>top-graft</strong> dengan klon Robusta legacy.</p>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+                <span style="background:#fff;color:#78350F;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;border:1px solid #D97706">📍 Excelsa rootstock = optimization legacy</span>
+                <span style="background:#fff;color:#78350F;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;border:1px solid #D97706">⚠️ Klon Robusta atas: <code style="background:#FEF3C7;padding:1px 4px">unknown</code></span>
+                <span style="background:#fff;color:#78350F;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:700;border:1px solid #D97706">🕒 DNA fingerprinting: tunda ke Q3 2027</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p style="font-size:10px;color:var(--mute);margin-top:10px;font-style:italic">Strategy top-graft baru pakai klon unggul <strong>BP 358 / SA 237</strong> untuk pohon tali kuning (potensi peremajaan). Default lineage di schema: <code style="background:#f5f0e6;padding:1px 5px;border-radius:3px">excelsa_root → robusta_top (klon TBD)</code>. Re-evaluasi setelah 1 siklus observasi.</p>
+      </div>
+
+      <!-- ─── NEXT STEPS ─── -->
+      <div class="card" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);border-left:5px solid #16A34A">
+        <div class="card-title" style="color:#14532D"><span class="num" style="background:#16A34A">6</span>📋 Next Steps — Update Real-time saat Cak Yit Selesai</div>
+        <ol style="margin-left:18px;font-size:12px;color:#14532D;line-height:1.8;padding-left:6px">
+          <li><strong>Cak Yit selesai Kebun 3</strong> (target 19-20 Mei) → census count 🔴+🟡+sehat per kebun</li>
+          <li><strong>Cak Yit mulai Kebun 4</strong> (target 21-23 Mei) → final 4-kebun count</li>
+          <li><strong>Wakif update KPI angka final</strong> di section atas + per-kebun cards (replace projeksi dengan actual)</li>
+          <li><strong>RAB Siklus 2027 recompute</strong> dengan jumlah pohon final × dosis BRIN 5-10 thn (Urea/SP-36/KCl/Kieserit/Dolomit)</li>
+          <li><strong>Observasi ahli untuk tali kuning</strong> (BRIN penjajakan): apakah feasible peremajaan via top-graft klon unggul atau tebang?</li>
+          <li><strong>Soil test diagonal 5 titik</strong> (Lab UB Brawijaya) post-pemangkasan untuk baseline nutrient profile per kebun</li>
+        </ol>
       </div>
     </div>
 
