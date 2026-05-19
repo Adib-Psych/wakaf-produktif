@@ -417,39 +417,35 @@ span.lang-en { display: none; }
   pointer-events: none;
 }
 .fenologi-layout {
-  display: grid; grid-template-columns: 360px 1fr;
-  gap: 4rem; align-items: center;
+  display: grid; grid-template-columns: 2fr 1fr;  /* wheel 2x lebih besar dari legend kanan */
+  gap: 3rem; align-items: center;
   margin-top: 2.5rem;
 }
-@media (max-width: 880px) {
+@media (max-width: 1024px) {
   .fenologi-layout { grid-template-columns: 1fr; gap: 2rem; }
 }
 .fenologi-wheel-wrap { display: flex; justify-content: center; position: relative; }
-.fenologi-svg { width: 320px; height: 320px; }
+.fenologi-svg { width: 100%; max-width: 640px; height: auto; aspect-ratio: 1; }
 /* .fenologi-center-label defined in botanical decoration section below */
 .center-month {
   font-family: 'Playfair Display', serif;
-  font-size: 1.3rem; font-weight: 700;
+  font-size: 2.4rem; font-weight: 700;
   color: var(--accent); display: block; line-height: 1;
 }
 .center-year {
-  font-size: 0.7rem; color: rgba(168,200,188,0.6);
+  font-size: 1rem; color: rgba(168,200,188,0.6);
   font-weight: 500; letter-spacing: 0.08em;
   text-transform: uppercase; display: block;
-  margin-top: 0.15rem;
+  margin-top: 0.25rem;
 }
 .center-phase-text {
   font-family: 'Lora', serif; font-style: italic;
-  font-size: 0.72rem; color: var(--light);
-  display: block; margin-top: 0.4rem;
-  max-width: 90px;
+  font-size: 1rem; color: var(--light);
+  display: block; margin-top: 0.7rem;
+  max-width: 180px;
 }
 .fenologi-legend {
-  display: grid; grid-template-columns: 1fr 1fr;
-  gap: 1.2rem 1.6rem;
-}
-@media (max-width: 880px) {
-  .fenologi-legend { grid-template-columns: 1fr; gap: 0.9rem; }
+  display: flex; flex-direction: column; gap: 1rem;  /* single column stack — semua dropdown list di kanan */
 }
 .legend-item {
   display: flex; align-items: flex-start; gap: 0.9rem;
@@ -1258,53 +1254,6 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
   </div>
 </section>
 
-<!-- ══ NARASI ══ -->
-<section class="narasi-section">
-  <div class="section-inner">
-    <div class="section-label lang-id">Tentang Halaman Ini</div>
-    <div class="section-label lang-en">About This Page</div>
-    <h2 class="section-title">
-      <span class="lang-id">Apa itu Living Lab — dan apa yang bisa kamu <em>ikuti di sini</em>?</span>
-      <span class="lang-en">What is Living Lab — and what can you <em>follow here</em>?</span>
-    </h2>
-    <div class="narasi-grid">
-      <div class="narasi-card">
-        <div class="narasi-icon">🔬</div>
-        <div class="narasi-card-title lang-id">Apa itu Living Lab</div>
-        <div class="narasi-card-title lang-en">What is Living Lab</div>
-        <p class="narasi-card-desc lang-id">Living Lab adalah komitmen kami untuk mendokumentasikan perjalanan kebun ini secara transparan dan terbuka. Bukan sekadar laporan formal — melainkan rekaman nyata dari setiap langkah yang diambil: apa yang direncanakan, apa yang dikerjakan, dan apa yang bisa dipelajari.</p>
-        <p class="narasi-card-desc lang-en">Living Lab is our commitment to documenting this garden's journey transparently and openly. Not just a formal report — but a real record of every step taken: what was planned, what was done, and what can be learned.</p>
-      </div>
-      <div class="narasi-card">
-        <div class="narasi-icon">🎯</div>
-        <div class="narasi-card-title lang-id">Mengapa Ini Penting</div>
-        <div class="narasi-card-title lang-en">Why This Matters</div>
-        <p class="narasi-card-desc lang-id">Wakaf yang baik bukan hanya yang sah secara hukum — tapi yang bisa dipertanggungjawabkan kepada siapa saja yang peduli. Living Lab adalah cara kami menjaga amanah itu secara nyata: bukan dengan retorika, tapi dengan data.</p>
-        <p class="narasi-card-desc lang-en">A good waqf is not just legally valid — it must be accountable to anyone who cares. Living Lab is how we maintain that trust concretely: not with rhetoric, but with data.</p>
-      </div>
-      <div class="narasi-card">
-        <div class="narasi-icon">📖</div>
-        <div class="narasi-card-title lang-id">Yang Bisa Kamu Ikuti</div>
-        <div class="narasi-card-title lang-en">What You Can Follow</div>
-        <ul class="narasi-list lang-id">
-          <li>Status dan fase kebun saat ini</li>
-          <li>Siklus fenologi kopi tahunan</li>
-          <li>Log aktivitas per fase (Pre-Panen, Panen, Post-Panen)</li>
-          <li>Data historis hasil panen dari tahun ke tahun</li>
-          <li>Proyeksi dan rencana ke depan</li>
-        </ul>
-        <ul class="narasi-list lang-en">
-          <li>Current garden status and phase</li>
-          <li>Annual coffee phenological cycle</li>
-          <li>Activity log by phase (Pre-Harvest, Harvest, Post-Harvest)</li>
-          <li>Historical harvest data year by year</li>
-          <li>Forward projections and plans</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ══ STATUS TERKINI ══ -->
 <section class="status-section">
   <div class="section-inner">
@@ -1611,8 +1560,8 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
           <div class="legend-item">
             <div class="legend-swatch" style="background:#7db848;"></div>
             <div class="legend-content">
-              <div class="legend-phase lang-id">Pembentukan Buah ← Sekarang</div>
-              <div class="legend-phase lang-en">Fruit Formation ← Now</div>
+              <div class="legend-phase lang-id">Pembentukan Buah</div>
+              <div class="legend-phase lang-en">Fruit Formation</div>
               <div class="legend-months">Apr – Mei</div>
               <div class="legend-desc lang-id">Buah kopi terbentuk dan mulai berkembang. Masa kritis untuk nutrisi dan perlindungan tanaman.</div>
               <div class="legend-desc lang-en">Coffee fruit forms and begins developing. A critical time for plant nutrition and protection.</div>
@@ -3163,7 +3112,52 @@ function buildFenologi() {
   if (!svg) return;
 
   const CX = 160, CY = 160, R1 = 78, R2 = 126, R_LABEL = 144;
-  const currentMonth = 3; // April = index 3 (0=Jan)
+
+  // ───────────── REALTIME MONTH DETECTION ─────────────
+  // (locked 19 Mei 2026 per Adib feedback — lingkaran fenologi follow tanggal browser real-time)
+  const now = new Date();
+  const currentMonth = now.getMonth();  // 0=Jan ... 11=Des
+  const currentYear = now.getFullYear();
+
+  // Phase mapping per bulan (1-to-1 dengan months array)
+  const phaseMap = [
+    { id: 'Pemulihan & Dormansi',     en: 'Recovery & Dormancy' },        // 0 Jan
+    { id: 'Pertumbuhan Vegetatif',    en: 'Vegetative Growth' },          // 1 Feb
+    { id: 'Pertumbuhan Vegetatif',    en: 'Vegetative Growth' },          // 2 Mar
+    { id: 'Pembentukan Buah',         en: 'Fruit Formation' },            // 3 Apr
+    { id: 'Pembentukan Buah',         en: 'Fruit Formation' },            // 4 Mei
+    { id: 'Pematangan Buah',          en: 'Fruit Ripening' },             // 5 Jun
+    { id: 'Panen Utama',              en: 'Main Harvest' },               // 6 Jul
+    { id: 'Panen Utama',              en: 'Main Harvest' },               // 7 Agt
+    { id: 'Post-Panen & Intervensi',  en: 'Post-Harvest & Intervention' },// 8 Sep
+    { id: 'Post-Panen & Intervensi',  en: 'Post-Harvest & Intervention' },// 9 Okt
+    { id: 'Pemulihan & Dormansi',     en: 'Recovery & Dormancy' },        // 10 Nov
+    { id: 'Pemulihan & Dormansi',     en: 'Recovery & Dormancy' }         // 11 Des
+  ];
+
+  // Update center label realtime
+  const monthLongID = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+  const monthLongEN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const centerMonthEl = document.querySelector('.center-month');
+  if (centerMonthEl) centerMonthEl.textContent = monthLongID[currentMonth];
+  const centerYearEl = document.querySelector('.center-year');
+  if (centerYearEl) centerYearEl.textContent = String(currentYear);
+  document.querySelectorAll('.center-phase-text.lang-id').forEach(el => { el.textContent = phaseMap[currentMonth].id; });
+  document.querySelectorAll('.center-phase-text.lang-en').forEach(el => { el.textContent = phaseMap[currentMonth].en; });
+
+  // Update legend "← Sekarang" marker — clean stale + add to current phase legend item
+  document.querySelectorAll('.legend-phase').forEach(el => {
+    el.textContent = el.textContent.replace(/\s*←\s*(Sekarang|Now)\s*$/, '');
+  });
+  const currentPhaseID = phaseMap[currentMonth].id;
+  const currentPhaseEN = phaseMap[currentMonth].en;
+  document.querySelectorAll('.legend-phase.lang-id').forEach(el => {
+    if (el.textContent.trim() === currentPhaseID) el.textContent = currentPhaseID + ' ← Sekarang';
+  });
+  document.querySelectorAll('.legend-phase.lang-en').forEach(el => {
+    if (el.textContent.trim() === currentPhaseEN) el.textContent = currentPhaseEN + ' ← Now';
+  });
+  // ────────────────────────────────────────────────────
 
   const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
   const phaseColors = [
