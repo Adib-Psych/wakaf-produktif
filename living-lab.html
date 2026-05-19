@@ -52,7 +52,7 @@ span.lang-en { display: none; }
 .navbar-inner {
   display: flex; align-items: center; justify-content: space-between;
   height: 68px; padding: 0 2rem;
-  max-width: 1200px; margin: 0 auto;
+  max-width: 1600px; margin: 0 auto;
 }
 .navbar-logo {
   display: flex; align-items: center;
@@ -139,7 +139,7 @@ span.lang-en { display: none; }
     radial-gradient(ellipse 30% 40% at 5% 85%, rgba(196,144,106,0.09) 0%, transparent 55%);
   pointer-events: none;
 }
-.page-hero-inner { max-width: 1200px; margin: 0 auto; position: relative; }
+.page-hero-inner { max-width: 1600px; margin: 0 auto; position: relative; }
 .page-hero-eyebrow {
   display: inline-flex; align-items: center; gap: 0.4rem;
   background: rgba(90,144,128,0.18);
@@ -192,7 +192,7 @@ span.lang-en { display: none; }
 /* ══════════════════════════════════
    SECTION COMMONS
 ══════════════════════════════════ */
-.section-inner { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+.section-inner { max-width: 1600px; margin: 0 auto; padding: 0 2rem; }
 .section-label {
   font-size: 0.65rem; font-weight: 800; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--medium);
@@ -396,9 +396,12 @@ span.lang-en { display: none; }
   pointer-events: none;
 }
 .fenologi-layout {
-  display: grid; grid-template-columns: 1fr 1fr;
+  display: grid; grid-template-columns: 360px 1fr;
   gap: 4rem; align-items: center;
   margin-top: 2.5rem;
+}
+@media (max-width: 880px) {
+  .fenologi-layout { grid-template-columns: 1fr; gap: 2rem; }
 }
 .fenologi-wheel-wrap { display: flex; justify-content: center; position: relative; }
 .fenologi-svg { width: 320px; height: 320px; }
@@ -420,7 +423,13 @@ span.lang-en { display: none; }
   display: block; margin-top: 0.4rem;
   max-width: 90px;
 }
-.fenologi-legend { display: flex; flex-direction: column; gap: 0.9rem; }
+.fenologi-legend {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1.2rem 1.6rem;
+}
+@media (max-width: 880px) {
+  .fenologi-legend { grid-template-columns: 1fr; gap: 0.9rem; }
+}
 .legend-item {
   display: flex; align-items: flex-start; gap: 0.9rem;
 }
@@ -1093,7 +1102,7 @@ span.lang-en { display: none; }
 ══════════════════════════════════ */
 .footer { background: #1a2e2e; padding: 1.8rem 2rem; }
 .footer-inner {
-  max-width: 1200px; margin: 0 auto;
+  max-width: 1600px; margin: 0 auto;
   display: flex; align-items: center; justify-content: space-between;
   gap: 1.5rem; flex-wrap: wrap;
 }
