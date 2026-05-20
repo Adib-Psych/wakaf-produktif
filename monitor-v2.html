@@ -1055,7 +1055,7 @@
             </div>
           </div>
           <div>
-            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Foto Gejala (max 5 foto, masing-masing &lt;5MB) <span style="color:var(--cherry)">*</span></label>
+            <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Foto Gejala (max 8 foto, masing-masing &lt;5MB) <span style="color:var(--cherry)">*</span></label>
             <input type="file" id="opt-obs-photos" accept="image/*" multiple style="width:100%;padding:8px;border:1.5px dashed #ccc;border-radius:6px;font-size:12px;margin-top:4px">
             <div id="opt-obs-photo-preview" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px"></div>
             <div style="font-size:10px;color:var(--mute);margin-top:4px">Foto akan auto-resize ke max 1200px width. Vision AI Claude butuh foto jelas untuk analyze.</div>
@@ -12023,8 +12023,8 @@ document.addEventListener('change', async (e) => {
   if (e.target && e.target.id === 'opt-obs-photos') {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
-    if (OPT_OBS_PENDING_PHOTOS.length + files.length > 5) {
-      alert(`Max 5 foto per observasi. Sekarang ada ${OPT_OBS_PENDING_PHOTOS.length} foto + ${files.length} baru = exceed.`);
+    if (OPT_OBS_PENDING_PHOTOS.length + files.length > 8) {
+      alert(`Max 8 foto per observasi. Sekarang ada ${OPT_OBS_PENDING_PHOTOS.length} foto + ${files.length} baru = exceed.`);
       e.target.value = '';
       return;
     }
