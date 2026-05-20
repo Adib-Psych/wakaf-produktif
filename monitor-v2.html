@@ -8295,8 +8295,9 @@ function getTimingTier(item) {
 // El Niño / La Niña / Neutral classification. Affects timing tolerance.
 // ====================================================================
 let ENSO_STATE = {
-  phase: 'la-nina',         // Default: 'la-nina' per memory observation (prolonged 2025-2026)
-  source: 'default',        // 'noaa' | 'manual' | 'default'
+  phase: 'neutral',         // Default: 'neutral' (per NOAA Mar 2026 — transitioning from La Niña 2025).
+                            // Auto-updated weekly via .github/workflows/update-enso.yml → data/enso-state.json
+  source: 'default',        // 'github-action' | 'noaa-direct' | 'manual' | 'default'
   fetched_at: null,
   oni_value: null,
   expires_at: null
@@ -8323,22 +8324,68 @@ function saveEnsoToCache() {
 }
 
 async function fetchEnsoFromNOAA() {
-  // NOAA ONI (Oceanic Niño Index) — public domain, no auth needed
-  // Source: https://psl.noaa.gov/data/correlation/oni.data (text format)
+  // Primary: fetch same-origin /data/enso-state.json (auto-updated weekly via GitHub Action).
+  // Fallback: direct NOAA ONI (often blocked by CORS — kept for legacy/offline scenarios).
+  // Source NOAA: https://psl.noaa.gov/data/correlation/oni.data
   // ONI > +0.5 (3 mo consecutive) = El Niño; < -0.5 = La Niña
+
+  // ─── Strategy 1: same-origin JSON (no CORS, auto-updated by .github/workflows/update-enso.yml) ───
+  try {
+    const resp = await fetch('/wakaf-produktif/data/enso-state.json', { cache: 'no-cache' });
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data && data.phase && ['el-nino','la-nina','neutral'].includes(data.phase)) {
+        ENSO_STATE = {
+          phase: data.phase,
+          source: 'github-action',
+          fetched_at: data.fetched_at || new Date().toISOString(),
+          oni_value: data.oni_avg_3m,
+          intensity: data.intensity,
+          year_ref: data.last_month_year,
+          expires_at: Date.now() + ENSO_CACHE_HOURS * 3600 * 1000
+        };
+        saveEnsoToCache();
+        console.log('[ENSO] ✓ Loaded from /data/enso-state.json:', data.phase, '(ONI 3m avg:', data.oni_avg_3m + ')');
+        return ENSO_STATE;
+      }
+    }
+  } catch (e) {
+    console.warn('[ENSO] Same-origin JSON fetch failed, trying NOAA direct:', e.message);
+  }
+
+  // ─── Strategy 2: try fallback path (file:// or relative) ───
+  try {
+    const resp = await fetch('data/enso-state.json', { cache: 'no-cache' });
+    if (resp.ok) {
+      const data = await resp.json();
+      if (data && data.phase && ['el-nino','la-nina','neutral'].includes(data.phase)) {
+        ENSO_STATE = {
+          phase: data.phase,
+          source: 'github-action',
+          fetched_at: data.fetched_at || new Date().toISOString(),
+          oni_value: data.oni_avg_3m,
+          intensity: data.intensity,
+          year_ref: data.last_month_year,
+          expires_at: Date.now() + ENSO_CACHE_HOURS * 3600 * 1000
+        };
+        saveEnsoToCache();
+        console.log('[ENSO] ✓ Loaded from data/enso-state.json (relative):', data.phase);
+        return ENSO_STATE;
+      }
+    }
+  } catch (e) { /* swallow */ }
+
+  // ─── Strategy 3: direct NOAA (will fail CORS in browser, but kept for offline tools/scripts) ───
   try {
     const resp = await fetch('https://psl.noaa.gov/data/correlation/oni.data');
     if (!resp.ok) throw new Error('NOAA fetch HTTP ' + resp.status);
     const text = await resp.text();
-    // Parse ONI text format: each line "YYYY VAL01 VAL02 ... VAL12"
     const lines = text.trim().split('\n').filter(l => /^\s*\d{4}/.test(l));
     if (lines.length === 0) throw new Error('NOAA ONI parse: no data lines');
-    // Get last 3 months ONI
     const lastLine = lines[lines.length - 1].trim().split(/\s+/);
     const year = +lastLine[0];
     const monthlyVals = lastLine.slice(1).map(parseFloat).filter(v => !isNaN(v) && v > -90);
     if (monthlyVals.length < 3) {
-      // Try previous year line too if current incomplete
       const prevLine = lines[lines.length - 2]?.trim().split(/\s+/);
       const prevVals = prevLine ? prevLine.slice(1).map(parseFloat).filter(v => !isNaN(v) && v > -90) : [];
       monthlyVals.unshift(...prevVals.slice(-3));
@@ -8351,7 +8398,7 @@ async function fetchEnsoFromNOAA() {
     else phase = 'neutral';
     ENSO_STATE = {
       phase,
-      source: 'noaa',
+      source: 'noaa-direct',
       fetched_at: new Date().toISOString(),
       oni_value: +avgOni.toFixed(2),
       year_ref: year,
@@ -8360,7 +8407,7 @@ async function fetchEnsoFromNOAA() {
     saveEnsoToCache();
     return ENSO_STATE;
   } catch (e) {
-    console.warn('[ENSO] NOAA fetch failed, fallback to default:', e.message);
+    console.warn('[ENSO] All fetch strategies failed, fallback to default:', e.message);
     return null;
   }
 }
