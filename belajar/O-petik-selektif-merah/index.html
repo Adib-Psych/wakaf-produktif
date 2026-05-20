@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul O — Petik Selektif Merah · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Petik selektif merah — kriteria mutu panen, teknik per buah, dan analogi klinis clinical triage / selective attention.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+
+/* ══ BUKU SAKU LAPANGAN — Field Pocketbook ══ */
+.bks-block { background: var(--white); border: 1px solid rgba(46,64,64,.12); border-left: 5px solid var(--medium); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.2rem 0; }
+.bks-block.bks-critical { border-left-color: var(--cherry); background: #fdf6f4; }
+.bks-block.bks-safety { border-left-color: var(--gold, #b9892f); background: #fdfaf2; }
+.bks-block.bks-recovery { border-left-color: var(--accent); background: #fbf6f1; }
+.bks-block.bks-special { border-left-color: var(--medium); background: #f4faf8; }
+.bks-head { display: flex; align-items: center; gap: .8rem; margin-bottom: .8rem; }
+.bks-num { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--dark); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; }
+.bks-num.cherry { background: var(--cherry); }
+.bks-num.accent { background: var(--accent); }
+.bks-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--dark); }
+.bks-sub { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: .92rem; color: var(--medium); margin: .9rem 0 .35rem; letter-spacing: .02em; }
+.bks-list { margin: .3rem 0 .3rem 1.4rem; padding: 0; }
+.bks-list li { margin: .35rem 0; line-height: 1.55; color: var(--text); font-size: .92rem; }
+.bks-table { width: 100%; border-collapse: collapse; margin: .5rem 0; font-size: .88rem; }
+.bks-table th { background: var(--dark); color: #fff; padding: .55rem .7rem; text-align: left; font-weight: 700; }
+.bks-table td { padding: .55rem .7rem; border-bottom: 1px solid rgba(46,64,64,.1); vertical-align: top; line-height: 1.5; color: var(--text); }
+.bks-table tr:nth-child(even) td { background: var(--bg-tint, #e8f4f0); }
+.num.gold { background: var(--gold, #b9892f); }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul O</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module O</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="O">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul O · Panen & Pasca-Panen · 15 dari 19</span>
+      <span class="lang-en">Module O · Harvest & Post-Harvest · 15 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Petik <em>Selektif Merah</em></span>
+      <span class="lang-en"><em>Selective</em> Red Picking</span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Mengapa hanya ceri merah penuh yang dipetik — analogi <em>clinical triage</em> & <em>selective attention</em> dari psikologi klinis</span>
+      <span class="lang-en">Why only fully-red cherries are picked — a <em>clinical triage</em> & <em>selective attention</em> analogy from clinical psychology</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Mengapa petik selektif merah memberikan mutu cup yang jauh berbeda dari petik strip — perbedaan tidak hanya kuantitatif tetapi kategorik</span>
+          <span class="lang-en">Why selective red picking yields cup quality categorically different from strip picking — the difference is not just quantitative</span>
+        </li>
+        <li>
+          <span class="lang-id">Kriteria visual ceri matang: warna merah penuh ≥95% · kekerasan kupasan · aroma · perbedaan dari ceri hijau/orange/ungu</span>
+          <span class="lang-en">Visual ripeness criteria: fully red ≥95% · skin firmness · aroma · differentiation from green/orange/over-ripe purple</span>
+        </li>
+        <li>
+          <span class="lang-id">Tiga kesalahan umum yang menggagalkan panen: petik kuning/orange terbawa · wadah tertutup panas akumulasi · panen pas terik tengah hari</span>
+          <span class="lang-en">Three common mistakes that derail harvest: green/orange picked along · closed container heat buildup · picking in midday sun</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa <em>selective attention</em> dalam petik = inti dari spesialty coffee — analogi atensi klinisi memilih sinyal dari noise</span>
+          <span class="lang-en">Why <em>selective attention</em> in picking = the core of specialty coffee — analogy of clinician filtering signal from noise</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Picking.jpg?width=1280" alt="Hand picking fully ripe red coffee cherries" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Tangan memetik ceri kopi merah penuh — keputusan visual per buah yang menentukan mutu cup · </span><span class="lang-en">Photo: Hand picking fully ripe red coffee cherries — a per-fruit visual decision that determines cup quality · </span><a href="https://commons.wikimedia.org/wiki/File:Coffee_Picking.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Pukul tujuh pagi di Kebun 2. Pohon kopi penuh ceri di hadapan Cak Yit. Sebagian merah penuh, sebagian masih kuning-orange, beberapa terlalu ungu (kelewat matang), satu-dua terlihat hitam sakit. Pertanyaannya: bagaimana cara memilih?</p>
+    <p class="lang-en">Seven in the morning at Block 2. A coffee tree full of cherries before Cak Yit. Some are fully red, some still yellow-orange, a few over-ripe purple, one or two black-diseased. The question: how to choose?</p>
+
+    <p class="lang-id">Pendekatan "rampas semua, sortir nanti" (strip picking) terlihat efisien — selesai cepat per pohon, semua ceri terbawa. Tetapi hasilnya: ceri merah dan kuning bercampur, gula belum optimal di 30-40% buah, dan saat sortasi pasca-panen banyak ceri terbuang. Spesialti coffee tidak mungkin dari strip picking. Pendekatan <strong>petik selektif merah</strong> — hanya buah dengan ≥95% warna merah penuh yang dipetik per buah — memerlukan disiplin atensi tetapi menghasilkan biji yang fundamentally berbeda kualitasnya.</p>
+    <p class="lang-en">The "strip-and-sort-later" approach (strip picking) looks efficient — fast per tree, every cherry comes off. But the result: red and yellow cherries mix, sugar is not optimized in 30-40% of fruits, and much of the harvest is discarded in post-harvest sorting. Specialty coffee is not possible from strip picking. The <strong>selective red picking</strong> approach — only fruits with ≥95% full red color are picked one-by-one — requires attention discipline but yields beans fundamentally different in quality.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi kopi dari awal. Pendekatannya: meminjam konsep <em>clinical triage</em> dan <em>selective attention</em> dari psikologi klinis. Klinisi UGD harus memilih cepat: pasien mana yang gawat darurat, mana yang stabil. Petik selektif merah meminta disiplin atensi yang serupa: per buah, per detik — mata membedakan ceri yang siap dari yang belum, dengan presisi konsisten dari pagi ke sore selama berhari-hari.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning coffee agronomy from scratch. The approach: borrow <em>clinical triage</em> and <em>selective attention</em> concepts from clinical psychology. ER clinicians must choose fast: which patient is critical, which is stable. Selective red picking demands a similar attention discipline: per fruit, per second — eyes distinguishing ready cherries from not-yet, with consistent precision from morning to afternoon across days.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Untuk kebun kopi wakaf Ngantang, panen utama berlangsung <strong>Juli–September 2026</strong>. Klarifikasi Wakif: target panen siklus ini adalah <strong>petik selektif merah default</strong>, dengan tunda 1–2 hari saat hujan deras (avoid sugar dilution). Mitra primer: <strong>Bonsari Coffee + Nomad Coffee</strong> untuk specialty lot — keduanya memerlukan input fully-ripe red cherry, bukan campuran.</p>
+    <p class="lang-en">For the Ngantang waqf garden, the main harvest runs <strong>July–September 2026</strong>. Waqif clarification: this cycle's harvest target is <strong>selective red picking by default</strong>, with 1–2 day delay during heavy rain (avoid sugar dilution). Primary partners: <strong>Bonsari Coffee + Nomad Coffee</strong> for specialty lots — both require fully-ripe red cherry input, not mixed.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Eksekusi lapangan dilakukan oleh tim panen — biasanya kombinasi Cak Yit (Atas) + Pak Kumpul (Bawah) + tambahan tenaga harian saat puncak panen. Estimasi 1.000 pohon × ~2 kg ceri merah per pohon per siklus = total ~2.000 kg cherry. Petik selektif rate: 1 pekerja dapat petik 30–50 kg cherry per hari (vs strip picking 80–120 kg) — trade-off kecepatan vs mutu. Total estimasi kerja: 20–40 hari kerja-orang sepanjang Juli–September, dengan multiple visit per pohon (3–5× per pohon dalam satu siklus karena maturasi tidak serempak).</p>
+      <p class="lang-en">Field execution is by the harvest team — typically Cak Yit (upper) + Pak Kumpul (lower) + extra day-labor at peak. Estimate: 1,000 trees × ~2 kg red cherries per tree per cycle = ~2,000 kg total cherry. Selective picking rate: 1 worker picks 30–50 kg cherry per day (vs strip picking 80–120 kg) — speed vs quality trade-off. Total work estimate: 20–40 person-days across July–September, with multiple visits per tree (3–5× per tree in one cycle because maturation is not synchronous).</p>
+    </div>
+
+    <p class="lang-en">Implikasinya untuk Modul ini: petik selektif merah adalah <strong>investasi tenaga dan disiplin</strong> yang multiplier-nya jauh lebih besar dari fertilizer atau pruning. Mitra Bonsari/Nomad membayar premium 30–50% untuk specialty lot vs commodity grade. Untuk 2.000 kg cherry → ~330 kg green bean (yield 16,5%). Selisih harga commodity (Rp 35K/kg) vs specialty (Rp 50–60K/kg) = Rp 15–25K × 330 kg = <strong>Rp 5–8 juta tambahan revenue</strong> dari petik selektif vs strip picking. Cost tambahan tenaga: ~Rp 1,5–2 jt (extra-day labor di puncak panen). ROI: 2,5–4×. Modul ini wajib di-brief tuntas ke seluruh tim panen sebelum hari pertama panen.</p>
+    <p class="lang-en">The implication for this Module: selective red picking is a <strong>labor and discipline investment</strong> whose multiplier is far greater than fertilizer or pruning. Bonsari/Nomad partners pay 30–50% premium for specialty lots vs commodity grade. For 2,000 kg cherry → ~330 kg green bean (16.5% yield). Price gap commodity (IDR 35K/kg) vs specialty (IDR 50–60K/kg) = IDR 15–25K × 330 kg = <strong>IDR 5–8 million extra revenue</strong> from selective picking vs strip picking. Extra labor cost: ~IDR 1.5–2 million (extra-day labor at peak). ROI: 2.5–4×. This module must be thoroughly briefed to the entire harvest team before day-1 of harvest.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Anatomi Ceri Matang & Sinyal Visual</span><span class="lang-en">Theory: Anatomy of Ripe Cherry & Visual Signals</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Mengapa hanya ceri merah penuh? Karena <strong>konsentrasi gula (Brix), aroma prekursor, dan kompleksitas asam</strong> dalam biji mencapai puncaknya tepat saat ceri matang penuh — bukan setengah matang, bukan kelewat matang. Sinyal visual paling reliable adalah <em>warna kulit ceri</em>, didukung 3 sinyal sekunder.</p>
+    <p class="lang-id">Empat sinyal visual ceri yang siap dipetik:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Warna</strong> — merah penuh ≥95% (tidak ada bercak hijau/kuning di sisi mana pun). Untuk Robusta: merah-marun dalam. Untuk Arabika: merah cherry terang. Beberapa klon (BP 358, SA 237) cenderung lebih oranye-merah.</li>
+      <li><strong>Kekerasan</strong> — saat dipencet ringan dengan jari, kulit memberi sedikit (tidak keras seperti biji hijau, tidak benyek seperti yang kelewat matang).</li>
+      <li><strong>Tangkai</strong> — ceri matang penuh lepas dengan tarikan ringan. Kalau perlu tarikan kuat = belum matang. Kalau jatuh sendiri saat disentuh = sudah lewat matang.</li>
+      <li><strong>Aroma</strong> — ceri matang memancarkan aroma manis-fruity samar. Bila ada aroma fermentasi (cuka) = sudah mulai pra-fermentasi di pohon (sering pada cuaca lembap berhari-hari).</li>
+    </ul>
+    <p class="lang-en">Why only fully red cherries? Because <strong>sugar concentration (Brix), aroma precursors, and acid complexity</strong> in the bean peak exactly at full ripeness — not half-ripe, not over-ripe. The most reliable visual signal is <em>cherry skin color</em>, backed by 3 secondary signals.</p>
+    <p class="lang-en">Four visual signals of harvest-ready cherry:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Color</strong> — fully red ≥95% (no green/yellow patches anywhere). For Robusta: deep red-maroon. For Arabica: bright cherry red. Some clones (BP 358, SA 237) tend toward orange-red.</li>
+      <li><strong>Firmness</strong> — when lightly squeezed between fingers, skin gives slightly (not hard like green bean, not mushy like over-ripe).</li>
+      <li><strong>Stem</strong> — fully ripe cherry detaches with a light tug. Need strong pull = not ripe. Falls on touch = over-ripe.</li>
+      <li><strong>Aroma</strong> — ripe cherry emits faint sweet-fruity aroma. Vinegar-like fermentation aroma = already pre-fermenting on tree (common in days of high humidity).</li>
+    </ul>
+
+    <p class="lang-id">Kenapa keempat sinyal harus dipakai bersama, bukan hanya warna? Karena variabilitas alami: pohon di pinggir kebun (terpapar lebih banyak matahari) bisa terlihat lebih merah tetapi gulanya belum optimal. Pohon di tengah (lebih teduh) bisa terlihat oranye-merah meski sebenarnya matang sempurna. Triangulasi 4 sinyal mengurangi kesalahan visual saja. Disiplin lapangan: bila ragu pada satu sinyal, cross-check dengan sinyal lain. Bila masih ragu, tinggalkan ceri itu — ada visit berikutnya 5–7 hari lagi.</p>
+    <p class="lang-en">Why use all four signals together, not just color? Because of natural variability: trees at the garden edge (more sun exposure) may look redder but sugars are not yet optimized. Trees in the middle (shadier) may look orange-red despite being fully ripe. Triangulating 4 signals reduces visual-only error. Field discipline: if uncertain on one signal, cross-check with another. Still uncertain, leave that cherry — there will be another visit in 5–7 days.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Clinical Triage & Selective Attention</span><span class="lang-en">An Analogy from Clinical Psychology — Clinical Triage & Selective Attention</span></div>
+      <p class="lang-id">Di Unit Gawat Darurat, klinisi melakukan <strong>triage</strong> — keputusan cepat per pasien: gawat darurat, urgen, atau bisa menunggu. Tidak setiap pasien diperlakukan sama. Atensi klinisi adalah resource terbatas yang harus dialokasikan ke yang paling kritis. Salah triage = pasien gawat tidak dapat perhatian tepat waktu, atau resource terbuang ke kasus yang sebenarnya stabil. Triage memerlukan disiplin atensi yang konsisten dari shift ke shift, dari pagi ke malam, dari hari ke hari — bukan hanya kemampuan satu saat.</p>
+      <p class="lang-en">In Emergency Departments, clinicians perform <strong>triage</strong> — fast per-patient decisions: critical, urgent, or can wait. Not every patient receives the same response. Clinician attention is a finite resource to be allocated to the most critical. Wrong triage = critical patient not getting timely attention, or resources wasted on actually-stable cases. Triage demands consistent attention discipline shift to shift, morning to night, day to day — not just one-moment capability.</p>
+    </div>
+
+    <p class="lang-id">Petik selektif merah mengikuti logika triage yang sama persis. Di setiap pohon, ribuan ceri menunggu. Pekerja tidak bisa "treat" semua sama. Yang merah penuh = <em>kritis-siap</em> (harus dipetik sekarang). Yang masih kuning/orange = <em>urgen tapi belum</em> (visit ulang 5–7 hari lagi). Yang kelewat matang ungu = <em>too late</em> (jatuhkan, jangan masuk lot specialty). Yang sakit/hitam = <em>cull</em> (buang dari kebun, jangan tinggalkan di tanah karena jadi reservoir penyakit).</p>
+    <p class="lang-en">Selective red picking follows the same triage logic precisely. At every tree, thousands of cherries wait. A picker cannot "treat" them all the same. Fully red = <em>critical-ready</em> (must be picked now). Still yellow/orange = <em>urgent but not yet</em> (revisit in 5–7 days). Over-ripe purple = <em>too late</em> (drop, do not include in specialty lot). Sick/black = <em>cull</em> (remove from garden, do not leave on ground as disease reservoir).</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Tahap Kematangan, Teknik Petik, dan Wadah Lapangan</span><span class="lang-en">Visual Tour: Ripeness Stages, Picking Technique, and Field Containers</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Petik selektif paling baik dipahami melalui visual karena diskriminasi warna/tekstur ceri adalah inti tekniknya. Enam foto berikut menjelaskan: ceri merah matang vs gradient kematangan vs sakit, teknik petik dengan tangan, wadah lapangan yang benar (ventilated, bukan plastik tertutup), dan konteks lapangan dari panen kopi Indonesia.</p>
+    <p class="lang-en">Selective picking is best understood visually because color/texture discrimination is the technique's core. The six photos below explain: fully ripe vs gradient vs diseased cherries, hand-picking technique, correct field containers (ventilated, not closed plastic), and Indonesian coffee harvest field context.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Hands-that-are-picking-coffee-beans-from-coffee-tree.jpg?width=640" alt="Hand picking ripe coffee cherries" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Teknik petik per buah dengan tangan</strong> — pegang ceri merah penuh dengan ibu jari + telunjuk, tarik ringan. Bila lepas mudah = matang, ambil. Bila perlu tarikan kuat = belum matang, tinggalkan.</span>
+          <span class="lang-en"><strong>Per-cherry hand picking technique</strong> — hold a fully red cherry with thumb + forefinger, tug lightly. Detaches easily = ripe, take it. Needs strong pull = not ripe, leave it.</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Hands-that-are-picking-coffee-beans-from-coffee-tree.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_cherries_of_varying_ripeness,_on_a_tree_in_Colombia_(by_Brian_Smith).jpg?width=640" alt="Coffee cherries at varying stages of ripeness" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Gradien kematangan pada satu cabang</strong> — hijau (belum) → kuning → orange → merah penuh (siap!) → ungu (kelewat). Per buah keputusan: HANYA merah penuh yang dipetik. Sisa: visit ulang 5–7 hari.</span>
+          <span class="lang-en"><strong>Ripeness gradient on one branch</strong> — green (not yet) → yellow → orange → fully red (ready!) → purple (over-ripe). Per-cherry decision: ONLY fully red picked. Rest: revisit in 5–7 days.</span>
+          <div class="credit">Brian Smith · <a href="https://commons.wikimedia.org/wiki/File:Coffee_cherries_of_varying_ripeness,_on_a_tree_in_Colombia_(by_Brian_Smith).jpg" target="_blank" rel="noopener">Wikimedia · CC BY</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Ripe_Seeds_Coffee_Robusta_Coorg_Karnataka_India_Feb24_D72_25688.jpg?width=640" alt="Fully ripe red Robusta coffee cherries" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Standar target petik Robusta</strong> — ceri merah-marun dalam, kulit firm tetapi memberi sedikit saat dipencet, tangkai lepas dengan tarikan ringan. Ini "kritis-siap" dalam analogi triage.</span>
+          <span class="lang-en"><strong>Robusta picking target standard</strong> — deep red-maroon cherries, skin firm but yielding slightly when squeezed, stem detaches with light tug. This is "critical-ready" in the triage analogy.</span>
+          <div class="credit">Coorg, Karnataka · <a href="https://commons.wikimedia.org/wiki/File:Ripe_Seeds_Coffee_Robusta_Coorg_Karnataka_India_Feb24_D72_25688.jpg" target="_blank" rel="noopener">Wikimedia · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Man_and_children_picking_coffee_berries,_Hawaii.jpg?width=640" alt="Pickers using shoulder baskets in coffee harvest" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Wadah lapangan yang benar</strong> — keranjang anyaman atau tas pundak yang berventilasi. HINDARI ember plastik tertutup — panas terakumulasi → pra-fermentasi di pohon sebelum sempat masuk pulper.</span>
+          <span class="lang-en"><strong>Correct field container</strong> — woven basket or ventilated shoulder bag. AVOID closed plastic buckets — heat builds up → pre-fermentation before reaching the pulper.</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Man_and_children_picking_coffee_berries,_Hawaii.jpg" target="_blank" rel="noopener">Wikimedia Commons · Public Domain</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Beans_Ready_for_Harvest.jpg?width=640" alt="Coffee branch with mostly ripe red cherries ready for harvest" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Kondisi pohon ideal saat panen</strong> — sebagian besar ceri sudah merah penuh, beberapa masih kuning. Inilah kondisi yang menghasilkan picking rate optimal (~50 kg/hari per pekerja) dengan kualitas konsisten.</span>
+          <span class="lang-en"><strong>Ideal tree condition during harvest</strong> — most cherries fully red, a few still yellow. This is the condition for optimal picking rate (~50 kg/day per worker) with consistent quality.</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Beans_Ready_for_Harvest.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/COLLECTIE_TROPENMUSEUM_De_koffiebessen_worden_gesorteerd_voordat_de_dagoogst_van_elke_plukster_individueel_gewogen_en_betaald_wordt_Dampar_Oost-Java_TMnr_10012151.jpg?width=640" alt="Coffee sorting and weighing, East Java, colonial era" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Sortasi & timbang pasca-panen</strong> — foto historis Tropenmuseum: Dampar, Jawa Timur. Setiap pemetik menyerahkan hasil panen harian, disortir ulang (cull yang tidak memenuhi standar), lalu ditimbang. Pencatatan per pemetik = audit trail mutu.</span>
+          <span class="lang-en"><strong>Post-harvest sorting & weighing</strong> — Tropenmuseum historical photo: Dampar, East Java. Each picker submits daily harvest, re-sorted (culls non-conforming), then weighed. Per-picker recording = quality audit trail.</span>
+          <div class="credit">Dampar, Oost-Java · <a href="https://commons.wikimedia.org/wiki/File:COLLECTIE_TROPENMUSEUM_De_koffiebessen_worden_gesorteerd_voordat_de_dagoogst_van_elke_plukster_individueel_gewogen_en_betaald_wordt_Dampar_Oost-Java_TMnr_10012151.jpg" target="_blank" rel="noopener">Tropenmuseum · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Petik Selektif</span><span class="lang-en">The Science: 4-Source Comparison on Selective Picking</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber yang membahas teknik petik selektif vs strip picking pada Robusta:</p>
+    <p class="lang-en">Let us examine four sources discussing selective vs strip picking techniques on Robusta:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Anjuran Teknik Panen</span><span class="lang-en">Harvest Technique Recommendation</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id"><strong>Petik selektif merah</strong> sebagai standar — hanya ceri merah penuh per buah. Multiple visit (3–5×/pohon dalam 1 siklus). Strip picking hanya untuk panen terakhir (rampas/strip akhir saat sudah semua kuning-merah). Hal 102.</span><span class="lang-en"><strong>Selective red picking</strong> as standard — only fully red cherries per fruit. Multiple visits (3–5×/tree per cycle). Strip picking only for final harvest (when all cherries yellow-red). p 102.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 14</strong> — <em>Coffee Quality</em></td>
+          <td><span class="lang-id">Pemetik berpengalaman ≥95% ceri merah → cup quality SCA score ≥80 (specialty grade). Strip picking → SCA score &lt;75 (commodity). Differential bukan kuantitatif — fundamentally kategorik mutu.</span><span class="lang-en">Experienced picker ≥95% red → SCA cup score ≥80 (specialty grade). Strip picking → SCA score &lt;75 (commodity). Differential is not quantitative but fundamentally categorical quality.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Puslitbang Perkebunan Bogor (2010)</strong></td>
+          <td><span class="lang-id">Konvergen dengan SOP Kementan. Tambahan: rate petik realistis pekerja terlatih = 40–60 kg cherry/hari, novice = 20–30 kg/hari. Trade-off speed-quality eksplisit (hal 49).</span><span class="lang-en">Converges with Kementan SOP. Adds: realistic pick rate for trained worker = 40–60 kg cherry/day, novice = 20–30 kg/day. Speed-quality trade-off explicit (p 49).</span></td>
+        </tr>
+        <tr>
+          <td><strong>Klarifikasi Wakif 8 Mei 2026 (Q6)</strong></td>
+          <td><span class="lang-id">Lock: <strong>petik selektif merah default</strong> + tunda 1–2 hari saat hujan deras (avoid sugar dilution). Mitra: Bonsari + Nomad untuk specialty lot. Multiple visit per pohon dianggarkan di RAB sebagai labor-intensive.</span><span class="lang-en">Lock: <strong>selective red picking default</strong> + 1–2 day delay during heavy rain (avoid sugar dilution). Partners: Bonsari + Nomad for specialty lots. Multiple visits per tree budgeted in RAB as labor-intensive.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: empat sumber konvergen — teknik panen Robusta untuk mutu adalah petik selektif merah, dengan multiple visit per pohon.</strong> Strip picking diakui hanya sebagai panen terakhir (residu) atau untuk commodity grade — bukan default untuk kebun yang menargetkan specialty market. Differential mutu bukan kuantitatif (sedikit lebih bagus) tetapi <em>fundamentally kategorik</em> — beda kelas pasar.</p>
+    <p class="lang-en"><strong>The emerging pattern: all four sources converge — Robusta harvest technique for quality is selective red picking, with multiple visits per tree.</strong> Strip picking is recognized only as final pick (residue) or for commodity grade — not the default for gardens targeting specialty markets. The quality differential is not quantitative (a bit better) but <em>fundamentally categorical</em> — a different market class.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Tiga Kesalahan Umum yang Menggagalkan Panen</span><span class="lang-en">✓ Three Common Mistakes that Derail Harvest</span></div>
+      <p class="lang-id"><strong>(1) Petik kuning/orange terbawa</strong> — Pekerja terburu-buru, kurang fokus pada warna. Solusi: brief detail kriteria visual + spot-check Wakif/koordinator setiap 30 pohon. <strong>(2) Wadah tertutup panas akumulasi</strong> — Ember plastik tertutup di lapangan = pra-fermentasi mulai di lapangan, mutu rusak sebelum sampai pulper. Solusi: keranjang anyaman atau tas berventilasi, transfer ke wadah pulping ≤2 jam. <strong>(3) Panen pas terik tengah hari</strong> — Pekerja capek + ceri terpapar panas akumulasi. Solusi: jadwal 06.00–10.00 + 15.00–17.30, istirahat tengah hari.</p>
+      <p class="lang-en"><strong>(1) Yellow/orange picked along</strong> — Worker rushes, less focus on color. Solution: thorough criteria brief + Waqif/coordinator spot-check every 30 trees. <strong>(2) Closed container heat buildup</strong> — Closed plastic buckets in field = pre-fermentation starts in field, quality damaged before reaching pulper. Solution: woven basket or ventilated bag, transfer to pulping container ≤2 hours. <strong>(3) Picking at midday heat</strong> — Workers tired + cherries exposed to heat. Solution: 06.00–10.00 + 15.00–17.30 schedule, midday rest.</p>
+    </div>
+
+    <p class="lang-id">Implikasi strategis: petik selektif merah adalah <strong>differentiator pasar</strong> kebun kopi wakaf Ngantang. Tanpa disiplin ini, ROI lebih rendah karena commodity pricing. Dengan disiplin ini + mitra specialty Bonsari/Nomad, premium 30–50% tercapai. Modul ini tidak boleh di-skip atau di-shortcut di hari panen — setiap brief tim harian wajib refresh kriteria visual & target hari itu.</p>
+    <p class="lang-en">Strategic implication: selective red picking is the Ngantang waqf garden's <strong>market differentiator</strong>. Without this discipline, ROI is lower due to commodity pricing. With this discipline + Bonsari/Nomad specialty partners, 30–50% premium is reached. This module cannot be skipped or shortcut on harvest day — every daily team brief must refresh visual criteria & that day's target.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Eksekusi Petik Selektif</span><span class="lang-en">Practice: Five Steps to Execute Selective Picking</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Berikut lima langkah operasional eksekusi petik selektif merah di kebun kopi wakaf Ngantang. Diterapkan oleh tim panen (Cak Yit + Pak Kumpul + day-labor) selama Juli–September 2026. Pembaca dapat memakai langkah ini sebagai checklist untuk hari panen — atau sebagai materi briefing tim setiap pagi sebelum mulai. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Here are five operational steps to execute selective red picking at the Ngantang waqf coffee garden. Applied by the harvest team (Cak Yit + Pak Kumpul + day-labor) during July–September 2026. Readers may use these as a harvest-day checklist — or as a team brief each morning before starting. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Brief Tim Pagi Sebelum Mulai (15 menit)</span><span class="lang-en">Step 1 · Morning Team Brief Before Starting (15 min)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Wakif/koordinator brief tim panen: (a) review kriteria visual 4-sinyal (warna/kekerasan/tangkai/aroma), (b) target hari itu (kebun mana, blok mana), (c) wadah lapangan & rotasi transfer ke pulper, (d) jadwal istirahat. 15 menit pagi mencegah jam berbuang nanti.</span>
+            <span class="lang-en">Waqif/coordinator briefs harvest team: (a) review 4-signal visual criteria (color/firmness/stem/aroma), (b) day's target (which block, which row), (c) field containers & rotation to pulper, (d) break schedule. 15 morning minutes prevents wasted hours later.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Petik Per Buah, Per Pohon, Keliling 360° (~5–8 menit/pohon)</span><span class="lang-en">Step 2 · Per-Cherry, Per-Tree, 360° Loop (~5–8 min/tree)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Mulai dari cabang bawah ke atas. Keliling pohon penuh 360° (jangan satu sisi saja — sisi yang menghadap matahari biasanya lebih cepat matang). Per ceri: pencet ringan + cek warna + tarik ringan. Bila lepas mudah = ambil. Bila ragu = tinggalkan (visit ulang 5–7 hari). Ceri sakit/hitam: jatuhkan ke tanah ATAU bawa terpisah untuk dimusnahkan (jangan masuk lot panen).</span>
+            <span class="lang-en">Start lower branches, move up. Walk 360° around the tree (not one side — sun-facing side ripens faster). Per cherry: light squeeze + color check + light tug. Detaches easily = take. Uncertain = leave (revisit in 5–7 days). Sick/black cherries: drop OR carry separately for disposal (do not mix into harvest lot).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-en">Step 3 · Transfer to Pulper Every 1–2 Hours (avoid pre-fermentation)</span><span class="lang-id">Langkah 3 · Transfer ke Pulper Setiap 1–2 Jam (cegah pra-fermentasi)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Setiap keranjang/tas pundak penuh atau setiap 1–2 jam (whichever first): turun ke wadah utama / titik kumpul di pinggir kebun. JANGAN biarkan ceri terkumpul di lapangan &gt;3 jam — panas matahari + akumulasi → pra-fermentasi. Window 12 jam petik→proses dimulai dari saat ceri pertama dipetik (lihat Modul P).</span>
+            <span class="lang-en">Every full basket/shoulder bag or every 1–2 hours (whichever first): transfer to main container / collection point at garden edge. DO NOT let cherries accumulate in field &gt;3 hours — sun heat + buildup → pre-fermentation. The 12-hour pick-to-process window starts when the first cherry is picked (see Module P).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Pencatatan Per Pemetik (timbang + Form Input)</span><span class="lang-en">Step 4 · Per-Picker Recording (weigh + Form Input)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Akhir hari atau setiap shift: hasil panen per pemetik ditimbang. Pemetik tahu output mereka (motivasi konsistensi). Wakif/koordinator input ke Form monitor-v2: tanggal, blok, pemetik, kg cherry, gejala kualitas, cuaca. Akumulasi 1 siklus = data untuk benchmarking siklus berikut.</span>
+            <span class="lang-en">End of day or each shift: each picker's harvest weighed. Picker knows their output (consistency motivation). Waqif/coordinator inputs to monitor-v2 Form: date, block, picker, kg cherry, quality issues, weather. Accumulated over 1 cycle = benchmark data for next cycle.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Visit Ulang Kebun 5–7 Hari Kemudian (multiple passes)</span><span class="lang-en">Step 5 · Revisit Garden in 5–7 Days (multiple passes)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Satu visit per pohon tidak cukup — maturasi ceri tidak serempak. Pohon yang sama akan kembali punya ceri merah baru 5–7 hari setelah visit pertama. Total visit per pohon dalam 1 siklus: 3–5×. Strip picking di visit terakhir (Sep akhir) untuk ceri sisa kuning yang sudah pasti tidak akan merah → masuk lot commodity terpisah.</span>
+            <span class="lang-en">One visit per tree is insufficient — cherry maturation is not synchronous. The same tree will have new red cherries 5–7 days after the first visit. Total visits per tree in 1 cycle: 3–5×. Strip picking on final visit (late Sep) for remaining yellow cherries that definitely won't turn red → goes into a separate commodity lot.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ BUKU SAKU LAPANGAN — DETAIL TEKNIS ══ -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">6</div>
+      <h2><span class="lang-id">Buku Saku Lapangan — Detail Teknis Per Langkah</span><span class="lang-en">Field Pocketbook — Technical Detail Per Step</span></h2>
+      <div class="label">deep field guide</div>
+    </div>
+
+    <p class="lang-id">Bagian sebelumnya (5 Langkah) adalah ringkasan untuk briefing & remind. Bagian ini adalah <strong>tuntunan eksekusi lengkap</strong> untuk seseorang yang baru pertama kali melakukan teknik parit lingkar piringan — alat, urutan sub-langkah, common mistakes, dan quality check. Cocok untuk dibaca sebelum hari pertama eksekusi atau saat lupa di tengah pekerjaan.</p>
+    <p class="lang-en">The previous section (5 Steps) is a summary for briefing and reminder. This section is a <strong>complete execution guide</strong> for anyone doing the canopy-ring trench technique for the first time — tools, sub-step order, common mistakes, and quality checks. Read before day-1 execution or when forgetting mid-task.</p>
+
+    <!-- ─── PRE-MIX PKM (Persiapan) ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">0</span>
+        <span class="bks-title lang-id">Persiapan: Pre-Mix PKM di Rumah</span>
+        <span class="bks-title lang-en">Preparation: Pre-Mix PKM at Home</span>
+      </div>
+
+      <div class="bks-sub lang-id">🔧 Alat & Bahan</div>
+      <div class="bks-sub lang-en">🔧 Tools & Materials</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Wadah pencampur</strong>: ember besar 30 L atau karung kosong yang masih bersih. Hindari wadah bekas pestisida.</li>
+        <li><strong>Sekop kecil / centong</strong> untuk mengaduk.</li>
+        <li><strong>Timbangan dapur</strong> (kapasitas ≥ 5 kg) untuk kalibrasi awal — lebih akurat dari takaran volume saja.</li>
+        <li>3 bahan: SP-36, KCl, Kieserit.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Mixing container</strong>: 30 L bucket or clean empty sack. Avoid containers previously used for pesticides.</li>
+        <li><strong>Small scoop / ladle</strong> for stirring.</li>
+        <li><strong>Kitchen scale</strong> (≥5 kg capacity) for initial calibration — more accurate than volume measure alone.</li>
+        <li>3 materials: SP-36, KCl, Kieserit.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">📋 Sub-Langkah</div>
+      <div class="bks-sub lang-en">📋 Sub-Steps</div>
+      <ol class="bks-list lang-id">
+        <li><strong>Kalibrasi takaran sekali saja</strong>: tuang SP-36 ke ember sampai timbangan dapur baca 80 g, tandai garis di ember dengan spidol permanen. Lakukan sama untuk KCl 100 g dan Kieserit 50 g. Setelah ini, takar per pohon cukup pakai sendok ukuran yang sama tanpa timbang ulang setiap kali.</li>
+        <li><strong>Hitung batch harian</strong>: target Cak Yit 100–150 pohon/hari. Untuk 150 pohon: SP-36 12 kg + KCl 15 kg + Kieserit 7,5 kg. Pre-mix sebanyak ini saja untuk 1 hari kerja — jangan stok banyak (kelembapan menggumpalkan).</li>
+        <li><strong>Urutan tuang</strong>: KCl dulu (paling kasar) → SP-36 di atasnya → Kieserit terakhir (paling halus, mudah merata).</li>
+        <li><strong>Aduk merata</strong>: kalau pakai ember, aduk dengan sekop dari bawah ke atas 20–30 kali. Kalau pakai karung, ikat ujung lalu guncang 1 menit penuh + putar 360° beberapa kali. Hasil: warna campuran homogen, tidak ada lapisan terlihat.</li>
+        <li><strong>Bagi ke kantong kecil per-pohon</strong> (opsional, untuk Cak Yit yang baru belajar): siapkan 100–150 plastik klip kecil, masing-masing isi 230 g PKM. Beri tanda dengan spidol. Cak Yit tinggal ambil 1 kantong per pohon — hilangkan margin error takaran di lapangan.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li><strong>One-time calibration</strong>: pour SP-36 into the bucket until kitchen scale reads 80 g, mark a line on the bucket with permanent marker. Do the same for KCl 100 g and Kieserit 50 g. After this, per-tree measurement uses the same scoop without re-weighing each time.</li>
+        <li><strong>Calculate daily batch</strong>: Cak Yit target 100–150 trees/day. For 150 trees: SP-36 12 kg + KCl 15 kg + Kieserit 7.5 kg. Pre-mix only this much per workday — don't stockpile (humidity causes clumping).</li>
+        <li><strong>Pour order</strong>: KCl first (coarsest) → SP-36 on top → Kieserit last (finest, mixes easily).</li>
+        <li><strong>Mix thoroughly</strong>: in a bucket, stir bottom-up with scoop 20–30 times. In a sack, tie the end and shake 1 full minute + rotate 360° several times. Result: homogeneous color, no visible layers.</li>
+        <li><strong>Pre-portion into per-tree bags</strong> (optional, for novice Cak Yit): prepare 100–150 small zip bags, each with 230 g PKM. Mark with marker. Cak Yit takes 1 bag per tree — eliminates field measurement error.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Mencampur Urea juga</strong>: JANGAN. Urea harus terpisah (lihat alasan kimia di Modul C).</li>
+        <li><strong>Pre-mix terlalu banyak / disimpan berhari-hari</strong>: kelembapan akan menggumpalkan PKM. Mix harian saja.</li>
+        <li><strong>Pakai wadah bekas pestisida</strong>: residu kimia bisa kontaminasi pupuk. Pakai wadah baru / bersihkan tuntas dengan deterjen + bilas 3×.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Including Urea in the mix</strong>: DO NOT. Urea must stay separate (see chemical reason in Module C).</li>
+        <li><strong>Pre-mixing too much / storing for days</strong>: humidity will clump PKM. Mix daily only.</li>
+        <li><strong>Using pesticide-contaminated containers</strong>: chemical residue contaminates fertilizer. Use new containers or wash thoroughly with detergent + rinse 3×.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 1 DETAIL: BUKA PARIT ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">1</span>
+        <span class="bks-title lang-id">Buka Parit Lingkar Piringan</span>
+        <span class="bks-title lang-en">Open the Canopy-Ring Trench</span>
+      </div>
+
+      <div class="bks-sub lang-id">🔧 Alat</div>
+      <div class="bks-sub lang-en">🔧 Tool</div>
+      <p class="lang-id"><strong>Cangkul cakar (3 mata)</strong> lebih efisien untuk gali tanah berakar — mata cakar menusuk antara akar tanpa memotongnya. Kalau hanya ada cangkul ginjal biasa, OK tetapi lebih lambat dan risiko luka akar lebih tinggi.</p>
+      <p class="lang-en"><strong>3-tine claw hoe</strong> is more efficient for digging root-laden soil — the tines push between roots without cutting them. A standard kidney hoe works but is slower and risks more root damage.</p>
+
+      <div class="bks-sub lang-id">📋 Sub-Langkah</div>
+      <div class="bks-sub lang-en">📋 Sub-Steps</div>
+      <ol class="bks-list lang-id">
+        <li><strong>Berdiri di samping pohon, lihat ke atas</strong>. Catat titik dedaunan terjauh — di mana bayangan tajuk berakhir saat matahari di atas (drip-line). Untuk Robusta dewasa: biasanya 75–125 cm dari pangkal batang.</li>
+        <li><strong>Mulai gali dari satu titik</strong> di drip-line. Buat tanda kaki pertama di sana.</li>
+        <li><strong>Gali melingkar searah jarum jam</strong> mengikuti drip-line (selebar tajuk pohon). Lebar parit 20–30 cm (1,5–2 telapak tangan). Kedalaman 5–10 cm (sedalam 4 ruas jari). <strong>MIN 50 cm dari pangkal batang</strong> — akar serap tidak di pangkal.</li>
+        <li><strong>Tanah galian tumpuk di tepi LUAR parit</strong>, bukan ke dalam tanah pohon. Siap dipakai untuk menutup di Langkah 5.</li>
+        <li><strong>Untuk pohon di lereng curam (Bidang 3)</strong>: parit ikut kontur (horisontal melingkar di lereng). Sisi atas (uphill) dibuat sedikit lebih dalam (8–10 cm), sisi bawah (downhill) lebih dangkal (5 cm). Tujuan: pupuk tidak hanyut ke lembah.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li><strong>Stand beside the tree, look up</strong>. Note the farthest leaf reach — where the canopy shadow ends with sun overhead (drip-line). For a mature Robusta: typically 75–125 cm from the trunk.</li>
+        <li><strong>Start digging at one point</strong> on the drip-line. Mark with your first footstep there.</li>
+        <li><strong>Dig in a clockwise circle</strong> along the drip-line (canopy-width). Trench width 20–30 cm (1.5–2 palm widths). Depth 5–10 cm (4 finger-joints deep). <strong>MIN 50 cm from the trunk</strong> — feeder roots are not at the trunk base.</li>
+        <li><strong>Pile excavated soil on the OUTER edge</strong> of the trench, not back toward the tree. Ready to use for cover in Step 5.</li>
+        <li><strong>For trees on steep slopes (Block 3)</strong>: trench follows contour (horizontal circle on slope). Upslope side slightly deeper (8–10 cm), downslope shallower (5 cm). Purpose: fertilizer doesn't wash to the valley.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">✓ Quality Check</div>
+      <div class="bks-sub lang-en">✓ Quality Check</div>
+      <ul class="bks-list lang-id">
+        <li>Parit berbentuk lingkaran utuh (bukan ½ atau ¾ lingkaran). Cek dengan berjalan keliling pohon.</li>
+        <li>Tanah galian semua di sisi luar — tidak ada yang jatuh kembali ke dalam parit.</li>
+        <li>Tidak ada akar besar (>1 cm diameter) yang ter-potong. Bila kena akar besar, geser parit 5–10 cm ke luar di titik itu.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Trench is a complete circle (not ½ or ¾). Verify by walking around the tree.</li>
+        <li>All excavated soil on the outer side — none fallen back into the trench.</li>
+        <li>No large roots (>1 cm diameter) cut. If hitting a large root, shift the trench 5–10 cm outward at that spot.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Parit terlalu dalam (>10 cm)</strong>: akar serap berada di lapisan 5–20 cm. Parit terlalu dalam = melukai akar serap. Gunakan ruas jari sebagai pengukur.</li>
+        <li><strong>Parit terlalu dangkal (<5 cm)</strong>: pupuk akan tercuci air hujan permukaan.</li>
+        <li><strong>Parit terlalu dekat pangkal</strong>: di pangkal batang ada akar tunggang besar, dan tidak ada akar serap. Parit di sini = sia-sia + risiko luka batang.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Trench too deep (>10 cm)</strong>: feeder roots are in the 5–20 cm layer. Too deep = injuring feeder roots. Use finger joints as measure.</li>
+        <li><strong>Trench too shallow (<5 cm)</strong>: fertilizer washed away by surface rain.</li>
+        <li><strong>Trench too close to trunk</strong>: trunk base has large taproots, no feeder roots. Trench here = wasted + risk of trunk damage.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 2 DETAIL: TABUR UREA ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">2</span>
+        <span class="bks-title lang-id">Tabur Urea 150 g (Lapisan Pertama)</span>
+        <span class="bks-title lang-en">Spread Urea 150 g (First Layer)</span>
+      </div>
+
+      <div class="bks-sub lang-id">🥄 Cara Takar Cepat (Tanpa Timbangan di Lapangan)</div>
+      <div class="bks-sub lang-en">🥄 Quick Measure (No Field Scale Needed)</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Cup mie instan kosong</strong> (yang ukuran 60 ml): 1 cup penuh Urea granular ≈ 150 g. Verifikasi sekali pakai timbangan dapur saat persiapan, lalu pakai itu sebagai standar.</li>
+        <li>Alternatif: <strong>gelas plastik air mineral 240 ml</strong> setengah penuh ≈ 150 g.</li>
+        <li>Bawa cup takar ini di kantong celana / tas pinggang Cak Yit. Cangkul di tangan kanan, cup + Urea di tangan kiri.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Empty instant noodle cup</strong> (60 ml size): 1 full cup of granular Urea ≈ 150 g. Verify once with a kitchen scale during prep, then use as standard.</li>
+        <li>Alternative: <strong>240 ml plastic water cup</strong> half-full ≈ 150 g.</li>
+        <li>Carry this measuring cup in Cak Yit's pocket / waist bag. Hoe in right hand, cup + Urea in left.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">📋 Cara Tabur Merata</div>
+      <div class="bks-sub lang-en">📋 How to Spread Evenly</div>
+      <ol class="bks-list lang-id">
+        <li>Berjalan keliling parit perlahan sambil <strong>menggoyangkan cup</strong> mengeluarkan Urea bertahap. Bayangkan menabur biji — bukan menumpahkan.</li>
+        <li><strong>Target distribusi</strong>: tabur menyebar di SEPANJANG parit (mungkin 6–8 meter melingkar untuk pohon dewasa), bukan hanya 1–2 titik. Pikir: setiap segmen 10 cm parit harus dapat sedikit Urea.</li>
+        <li><strong>Habiskan cup hingga kosong</strong> sebelum pindah ke pohon berikutnya. Bila tersisa = takaran kurang merata untuk pohon ini.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Walk slowly around the trench while <strong>shaking the cup</strong> to release Urea gradually. Imagine sowing seeds — not pouring.</li>
+        <li><strong>Distribution target</strong>: spread ALONG the trench (perhaps 6–8 m circumference for a mature tree), not just 1–2 spots. Think: every 10 cm of trench gets some Urea.</li>
+        <li><strong>Empty the cup completely</strong> before moving to the next tree. Leftover means under-distribution for this tree.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Menumpahkan sekaligus di 1 titik</strong>: konsentrasi terlalu tinggi → akar terbakar. Distribusi merata adalah inti.</li>
+        <li><strong>Cangkul masih kena tanah, lalu cup terbuka di atasnya</strong>: Urea jatuh ke tanah luar parit, bukan ke dalam parit. Posisi tangan harus tepat di atas parit.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Dumping all at one spot</strong>: concentration too high → root burn. Even distribution is the core.</li>
+        <li><strong>Hoe still in soil while opening cup above</strong>: Urea drops outside the trench. Hand position must be directly over the trench.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 3 DETAIL: TUTUP TIPIS TANAH ─── -->
+    <div class="bks-block bks-critical">
+      <div class="bks-head">
+        <span class="bks-num cherry">3</span>
+        <span class="bks-title lang-id">Tutup Tipis Tanah ~2 cm — KRUSIAL</span>
+        <span class="bks-title lang-en">Cover with Thin Soil ~2 cm — CRITICAL</span>
+      </div>
+
+      <div class="bks-sub lang-id">📋 Cara</div>
+      <div class="bks-sub lang-en">📋 Method</div>
+      <ol class="bks-list lang-id">
+        <li>Ambil <strong>sedikit tanah</strong> dari tumpukan luar parit dengan punggung cangkul (sisi belakang yang lebar, bukan mata cakar).</li>
+        <li><strong>Dorong masuk</strong> ke parit, ratakan setipis mungkin tetapi MENUTUP SELURUH Urea — tidak ada granule Urea putih yang masih terlihat.</li>
+        <li><strong>Ketebalan target</strong>: ~2 cm = setebal kuku ibu jari saja. Bukan setebal jari.</li>
+        <li><strong>Test cukup atau tidak</strong>: lihat dari atas, sentuh dengan jari. Bila granule Urea masih terlihat warnanya = belum cukup. Bila tanah penutup setebal jari = terlalu tebal (Langkah 4 jadi terlalu dalam).</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Take <strong>a little soil</strong> from the pile outside the trench using the back of the hoe (wide flat side, not the claw tines).</li>
+        <li><strong>Push in</strong> to the trench, spread as thin as possible but COVERING ALL the Urea — no white Urea granules still visible.</li>
+        <li><strong>Target thickness</strong>: ~2 cm = thumbnail thickness. Not finger thickness.</li>
+        <li><strong>Verification</strong>: look from above, touch with finger. If Urea granules still visible color = not enough. If covering soil is finger-thick = too thick (Step 4 ends up too deep).</li>
+      </ol>
+
+      <div class="bks-sub lang-id">⚠ Mengapa KRUSIAL</div>
+      <div class="bks-sub lang-en">⚠ Why CRITICAL</div>
+      <p class="lang-id">Tanpa pemisah tanah ini, Urea akan kontak langsung dengan SP-36 (asam) di Langkah 4. Reaksi kimia: <strong>nitrogen Urea menguap sebagai amonia (NH₃)</strong> sebelum sempat diserap akar pohon. Investasi pupuk N hilang 30–50%. Pemisah tanah tipis = barrier kimia yang mencegah ini.</p>
+      <p class="lang-en">Without this soil divider, Urea contacts SP-36 (acidic) directly in Step 4. Chemical reaction: <strong>Urea's nitrogen volatilizes as ammonia (NH₃)</strong> before being absorbed by roots. 30–50% of N investment lost. Thin soil divider = chemical barrier preventing this.</p>
+
+      <div class="bks-sub lang-id">⚠ Common Mistakes</div>
+      <div class="bks-sub lang-en">⚠ Common Mistakes</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Skip langkah ini</strong> karena tampak "remeh": ini langkah paling penting dari ke-5 langkah. Skip = 30–50% pupuk N sia-sia. Wajib.</li>
+        <li><strong>Tanah penutup terlalu tebal (>3 cm)</strong>: Langkah 4 PKM jadi terlalu dekat permukaan = mudah tercuci hujan.</li>
+        <li><strong>Tanah penutup tidak rata, sebagian Urea masih terlihat</strong>: bagian yang terbuka tetap kontak langsung = sebagian N tetap menguap. Tutup MERATA.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Skipping this step</strong> because it seems "trivial": this is the most important of the 5 steps. Skip = 30–50% of N wasted. Mandatory.</li>
+        <li><strong>Covering soil too thick (>3 cm)</strong>: Step 4 PKM ends up too near the surface = easily washed by rain.</li>
+        <li><strong>Uneven cover, some Urea still visible</strong>: exposed parts still have direct contact = some N still volatilizes. Cover EVENLY.</li>
+      </ul>
+    </div>
+
+    <!-- ─── STEP 4 DETAIL: TABUR PKM ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">4</span>
+        <span class="bks-title lang-id">Tabur PKM 230 g (Lapisan Kedua)</span>
+        <span class="bks-title lang-en">Spread PKM 230 g (Second Layer)</span>
+      </div>
+
+      <div class="bks-sub lang-id">🥄 Cara Takar PKM</div>
+      <div class="bks-sub lang-en">🥄 PKM Measurement</div>
+      <p class="lang-id">230 g PKM kira-kira <strong>1,5 cup mie instan</strong> (karena PKM lebih berat dari Urea per volume). Sekali lagi: verifikasi pakai timbangan dapur sekali, lalu pakai cup standar.</p>
+      <p class="lang-en">230 g of PKM is roughly <strong>1.5 noodle cups</strong> (because PKM is denser than Urea per volume). Again: verify with kitchen scale once, then use as standard cup.</p>
+      <p class="lang-id"><strong>Lebih praktis</strong>: pakai metode kantong pre-portion (lihat Persiapan sub-langkah 5). Cak Yit tinggal ambil 1 kantong PKM per pohon, tuang seluruhnya.</p>
+      <p class="lang-en"><strong>More practical</strong>: use the pre-portioned bag method (see Preparation sub-step 5). Cak Yit just takes 1 PKM bag per tree, pours it all.</p>
+
+      <div class="bks-sub lang-id">📋 Cara Tabur</div>
+      <div class="bks-sub lang-en">📋 How to Spread</div>
+      <ol class="bks-list lang-id">
+        <li>Tabur PKM <strong>di atas tanah pemisah</strong> di parit. Sama teknik dengan Urea: berjalan keliling, goyangkan cup/kantong, distribusi merata sepanjang lingkaran.</li>
+        <li>Karena volume PKM lebih besar dari Urea (230 g vs 150 g), tampilan akhir <strong>tampak lebih tebal</strong> di parit. Itu normal.</li>
+        <li>Habiskan dosis sebelum pindah pohon.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Spread PKM <strong>on top of the soil divider</strong> in the trench. Same technique as Urea: walk around, shake cup/bag, distribute evenly along the ring.</li>
+        <li>Since PKM volume is larger than Urea (230 g vs 150 g), the final look <strong>appears thicker</strong> in the trench. That's normal.</li>
+        <li>Use up the full dose before moving to the next tree.</li>
+      </ol>
+    </div>
+
+    <!-- ─── STEP 5 DETAIL: TUTUP PENUH ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">5</span>
+        <span class="bks-title lang-id">Tutup Penuh dengan Tanah Galian</span>
+        <span class="bks-title lang-en">Fully Cover with Excavated Soil</span>
+      </div>
+
+      <div class="bks-sub lang-id">📋 Cara</div>
+      <div class="bks-sub lang-en">📋 Method</div>
+      <ol class="bks-list lang-id">
+        <li>Dorong <strong>SELURUH tanah</strong> dari tumpukan luar parit (Langkah 1) kembali ke dalam parit. Pakai punggung cangkul.</li>
+        <li>Setelah tanah masuk semua, <strong>ratakan dengan punggung cangkul</strong> agar permukaan sejajar dengan tanah sekitar. Permukaan akhir harus rata dengan tanah kebun, bukan menonjol atau cekung.</li>
+        <li><strong>Tepuk lembut</strong> 2–3 kali dengan punggung cangkul. Tujuan: kontak tanah-pupuk lebih rapat, mempercepat pelarutan saat hujan.</li>
+        <li><strong>JANGAN dipadatkan / di-injak</strong>. Tanah padat menghalangi infiltrasi air ke zona akar = pupuk tidak terlarut, akar tidak bisa serap.</li>
+      </ol>
+      <ol class="bks-list lang-en">
+        <li>Push ALL the soil from the outer pile (Step 1) back into the trench. Use the back of the hoe.</li>
+        <li>After all soil is in, <strong>level with the back of the hoe</strong> so the surface is flush with surrounding ground. Final surface must be level with the garden floor — not raised or depressed.</li>
+        <li><strong>Tap gently</strong> 2–3 times with the back of the hoe. Purpose: closer soil-fertilizer contact, speeds dissolution during rain.</li>
+        <li><strong>DO NOT compact / stomp</strong>. Dense soil blocks water infiltration to the root zone = fertilizer doesn't dissolve, roots can't absorb.</li>
+      </ol>
+
+      <div class="bks-sub lang-id">✓ Final Quality Check Per Pohon (10 detik)</div>
+      <div class="bks-sub lang-en">✓ Final Quality Check Per Tree (10 seconds)</div>
+      <ul class="bks-list lang-id">
+        <li>Permukaan rata, tidak ada granule pupuk yang terlihat.</li>
+        <li>Lingkaran parit tertutup penuh (cek 360°).</li>
+        <li>Tanah sekitar batang pohon kering & bersih (tidak ada pupuk tumpah di pangkal).</li>
+        <li>Daun pohon tidak rusak / tidak ada pupuk menempel di daun bawah.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Surface is level, no fertilizer granules visible.</li>
+        <li>Ring trench fully closed (check 360°).</li>
+        <li>Soil around the trunk is dry & clean (no fertilizer spill at the base).</li>
+        <li>Tree leaves undamaged / no fertilizer stuck on lower leaves.</li>
+      </ul>
+    </div>
+
+    <!-- ─── HANDLING POHON ABNORMAL ─── -->
+    <div class="bks-block bks-special">
+      <div class="bks-head">
+        <span class="bks-num accent">+</span>
+        <span class="bks-title lang-id">Handling Khusus: Pohon Abnormal</span>
+        <span class="bks-title lang-en">Special Handling: Abnormal Trees</span>
+      </div>
+
+      <table class="bks-table">
+        <thead>
+          <tr>
+            <th><span class="lang-id">Kondisi Pohon</span><span class="lang-en">Tree Condition</span></th>
+            <th><span class="lang-id">Penyesuaian</span><span class="lang-en">Adjustment</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon umur &lt;5 tahun</strong> (baru tanam / re-graft sukses)</span><span class="lang-en"><strong>Tree &lt;5 years old</strong> (newly planted / successful re-graft)</span></td>
+            <td><span class="lang-id">Dosis ½ dari standar: Urea 75g · SP-36 40g · KCl 50g · Kieserit 25g. Parit lebih kecil (10–15 cm lebar, 5–8 cm dalam).</span><span class="lang-en">Dose ½ of standard: Urea 75g · SP-36 40g · KCl 50g · Kieserit 25g. Smaller trench (10–15 cm wide, 5–8 cm deep).</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon baru di-top-graft (&lt;6 bulan)</strong></span><span class="lang-en"><strong>Recently top-grafted tree (&lt;6 months)</strong></span></td>
+            <td><span class="lang-id">SKIP siklus ini. Pohon dalam fase recovery sambungan — pemupukan bisa shock. Pupuk pertama setelah tunas baru &gt;30 cm panjang.</span><span class="lang-en">SKIP this cycle. Tree is in graft recovery — fertilization can shock. First feed after new shoots are &gt;30 cm long.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon sakit / daun pucat menguning</strong></span><span class="lang-en"><strong>Sick tree / yellow-pale leaves</strong></span></td>
+            <td><span class="lang-id">Catat di Form Input. Pupuk dosis normal tetapi <strong>tambah pupuk kandang 2 kg</strong> di parit yang sama (Modul E). Bila gejala curiga nematoda → lihat Modul F.</span><span class="lang-en">Record in Form Input. Apply normal dose but <strong>add 2 kg manure</strong> in the same trench (Module E). If nematode-suspicious → see Module F.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon mati / cabang utama patah</strong></span><span class="lang-en"><strong>Dead tree / main branch broken</strong></span></td>
+            <td><span class="lang-id">SKIP. Catat di Form Input untuk pertimbangan peremajaan (Modul G) atau penghapusan.</span><span class="lang-en">SKIP. Record in Form Input for rejuvenation consideration (Module G) or removal.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pohon di lereng sangat curam (&gt;30°)</strong></span><span class="lang-en"><strong>Tree on very steep slope (&gt;30°)</strong></span></td>
+            <td><span class="lang-id">Parit ½ lingkaran di sisi UPHILL saja (sisi atas pohon). Pupuk akan turun secara alami ke akar saat hujan. Hindari sisi downhill (run-off).</span><span class="lang-en">Half-circle trench on the UPHILL side only. Fertilizer naturally moves down to roots during rain. Avoid downhill side (run-off).</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── APD & SANITASI ─── -->
+    <div class="bks-block bks-safety">
+      <div class="bks-head">
+        <span class="bks-num accent">⛑</span>
+        <span class="bks-title lang-id">APD &amp; Sanitasi Kerja</span>
+        <span class="bks-title lang-en">PPE &amp; Work Sanitation</span>
+      </div>
+
+      <div class="bks-sub lang-id">🧤 Wajib</div>
+      <div class="bks-sub lang-en">🧤 Mandatory</div>
+      <ul class="bks-list lang-id">
+        <li><strong>Sarung tangan kerja</strong>: kontak langsung kulit dengan Urea/KCl jangka panjang menyebabkan iritasi kulit (kering, gatal, retak). Sarung tangan plastik / kain tebal cukup.</li>
+        <li><strong>Sepatu boot</strong>: tanah berlumpur + lereng = risiko terpeleset. Plus melindungi kaki dari granule pupuk yang tumpah.</li>
+        <li><strong>Pakaian lengan & celana panjang</strong>: cegah granule lengket di kulit + perlindungan dari serangga.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Work gloves</strong>: prolonged skin contact with Urea/KCl causes irritation (dryness, itching, cracking). Plastic gloves or thick cloth suffice.</li>
+        <li><strong>Rubber boots</strong>: muddy soil + slopes = slip risk. Also protects feet from spilled granules.</li>
+        <li><strong>Long-sleeve clothes & long pants</strong>: prevent granule sticking to skin + insect protection.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">💧 Sanitasi Pasca-Kerja</div>
+      <div class="bks-sub lang-en">💧 Post-Work Sanitation</div>
+      <ul class="bks-list lang-id">
+        <li>Cuci tangan dengan sabun setelah selesai (wajib sebelum makan/merokok/minum).</li>
+        <li>Bilas sarung tangan & cangkul dengan air bersih, jemur.</li>
+        <li>Pakaian kerja dipisah dari pakaian rumah untuk dicuci.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Wash hands with soap after work (mandatory before eating/smoking/drinking).</li>
+        <li>Rinse gloves & hoe with clean water, sun-dry.</li>
+        <li>Work clothes washed separately from home clothes.</li>
+      </ul>
+
+      <div class="bks-sub lang-id">🚨 Bila Mata Terkena Pupuk</div>
+      <div class="bks-sub lang-en">🚨 If Fertilizer Gets in Eyes</div>
+      <p class="lang-id">Bilas mata dengan air bersih mengalir <strong>minimal 10 menit</strong> tanpa berhenti. Bila masih perih setelah itu, ke puskesmas Ngantang.</p>
+      <p class="lang-en">Rinse eyes with clean running water <strong>at least 10 minutes</strong> continuously. If still painful after that, go to Ngantang community health center (puskesmas).</p>
+    </div>
+
+    <!-- ─── RECOVERY DARI MASALAH ─── -->
+    <div class="bks-block bks-recovery">
+      <div class="bks-head">
+        <span class="bks-num accent">↺</span>
+        <span class="bks-title lang-id">Recovery dari Masalah Tak Terduga</span>
+        <span class="bks-title lang-en">Recovery from Unexpected Issues</span>
+      </div>
+
+      <table class="bks-table">
+        <thead>
+          <tr>
+            <th><span class="lang-id">Situasi</span><span class="lang-en">Situation</span></th>
+            <th><span class="lang-id">Tindakan</span><span class="lang-en">Action</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lang-id"><strong>Hujan tiba-tiba di tengah eksekusi</strong></span><span class="lang-en"><strong>Sudden rain mid-execution</strong></span></td>
+            <td><span class="lang-id">Pohon yang sudah sampai Langkah 5 (parit tertutup) = AMAN, lanjut hujan. Pohon yang di Langkah 1–4 (parit terbuka, pupuk belum tertutup): segera tutup parit dengan tanah meskipun belum semua langkah selesai. Jangan tinggalkan parit terbuka — pupuk hanyut.</span><span class="lang-en">Tree already at Step 5 (covered) = SAFE, let the rain continue. Tree at Steps 1–4 (open trench, fertilizer uncovered): immediately cover with soil even if not all steps complete. Don't leave open trench — fertilizer washes away.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Pupuk tumpah / lebih dari dosis</strong></span><span class="lang-en"><strong>Spilled / over-dose fertilizer</strong></span></td>
+            <td><span class="lang-id">Bila tumpah di luar parit: tetap di tempat (tidak perlu dipungut), tetapi jangan tambah dosis baru — total tetap dihitung sebagai dosis pohon. Bila terlanjur over-dose 2× lipat: pupuk 1 pohon saja dengan dosis itu, SKIP pohon berikutnya.</span><span class="lang-en">If spilled outside trench: leave it (no need to scoop), but don't add new dose — total still counts as the tree's dose. If accidentally 2× over-dose: fertilize that 1 tree with that dose, SKIP the next tree.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Salah urutan (PKM dulu, baru Urea)</strong></span><span class="lang-en"><strong>Wrong order (PKM first, then Urea)</strong></span></td>
+            <td><span class="lang-id">Bila baru sadar segera: keruk PKM keluar, ulang dari Langkah 2. Bila sudah ditutup tanah: biarkan, catat di Form Input "salah urutan pohon X di blok Y" — efek negatif kecil tapi tidak nol.</span><span class="lang-en">If realized immediately: scoop PKM out, restart from Step 2. If already covered: leave it, record in Form Input "wrong order tree X in block Y" — negative effect is small but non-zero.</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Lupa apakah sudah pupuk pohon ini</strong></span><span class="lang-en"><strong>Forgot if this tree was already done</strong></span></td>
+            <td><span class="lang-id">Cek tanda fisik: tanah di drip-line tampak gembur / baru-baru dipindah = sudah. Tidak ada tanda = belum. Atau: tandai pohon yang sudah dipupuk dengan tali rafia warna di batang (sistem warna per hari).</span><span class="lang-en">Check physical sign: soil at drip-line looks loose / recently moved = done. No sign = not done. Or: mark fertilized trees with colored raffia ribbon on trunk (color per day system).</span></td>
+          </tr>
+          <tr>
+            <td><span class="lang-id"><strong>Stok pupuk habis di tengah hari</strong></span><span class="lang-en"><strong>Fertilizer stock runs out mid-day</strong></span></td>
+            <td><span class="lang-id">STOP, jangan lanjut dengan dosis dikurangi. Catat berapa pohon sudah selesai. Pulang, lapor Wakif, lanjut esok dengan stok baru. Setengah-dosis = setengah-efek.</span><span class="lang-en">STOP, do not continue with reduced dose. Record number of trees done. Go home, report to Waqif, resume next day with new stock. Half-dose = half-effect.</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── PACING REALISTIC ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">⏱</span>
+        <span class="bks-title lang-id">Pacing Realistic — Hari Pertama vs Hari Ke-3+</span>
+        <span class="bks-title lang-en">Realistic Pacing — Day 1 vs Day 3+</span>
+      </div>
+
+      <p class="lang-id">Estimasi 4 menit/pohon adalah <strong>steady-state pace</strong> — tercapai setelah Cak Yit familiar dengan teknik. Hari pertama biasanya lebih lambat:</p>
+      <p class="lang-en">The 4 min/tree estimate is <strong>steady-state pace</strong> — achieved after Cak Yit is familiar with the technique. Day 1 is typically slower:</p>
+
+      <table class="bks-table">
+        <thead>
+          <tr>
+            <th><span class="lang-id">Hari</span><span class="lang-en">Day</span></th>
+            <th><span class="lang-id">Pace per pohon</span><span class="lang-en">Pace per tree</span></th>
+            <th><span class="lang-id">Pohon/hari (8 jam efektif)</span><span class="lang-en">Trees/day (8 effective hrs)</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Hari 1</td><td>6–8 menit (learning)</td><td>60–80 pohon</td></tr>
+          <tr><td>Hari 2</td><td>5–6 menit</td><td>80–100 pohon</td></tr>
+          <tr><td>Hari 3+</td><td>4 menit (steady)</td><td>120 pohon</td></tr>
+          <tr><td>Hari 5+</td><td>3,5 menit (mastered)</td><td>130–140 pohon</td></tr>
+        </tbody>
+      </table>
+
+      <div class="bks-sub lang-id">☕ Istirahat & Hidrasi</div>
+      <div class="bks-sub lang-en">☕ Rest & Hydration</div>
+      <ul class="bks-list lang-id">
+        <li>Setiap 30 pohon: berhenti, minum air, regangkan punggung & tangan (5 menit). Kerja membungkuk membuat punggung cepat lelah.</li>
+        <li>Istirahat siang penuh 12.00–13.00 (hindari aktif saat terik — sekaligus hindari Urea aplikasi saat panas).</li>
+        <li>Bawa minimal 1,5 L air per hari kerja. Tambah elektrolit kalau ada (oralit, isotonik).</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li>Every 30 trees: stop, drink water, stretch back & hands (5 min). Bent-over work tires the back quickly.</li>
+        <li>Full midday rest 12.00–13.00 (avoid activity at peak heat — also aligned with avoiding Urea application in hot soil).</li>
+        <li>Bring at least 1.5 L of water per workday. Add electrolytes if available (oralit, isotonic).</li>
+      </ul>
+    </div>
+
+    <!-- ─── PENYIMPANAN PUPUK ─── -->
+    <div class="bks-block">
+      <div class="bks-head">
+        <span class="bks-num">📦</span>
+        <span class="bks-title lang-id">Penyimpanan Pupuk Sisa</span>
+        <span class="bks-title lang-en">Storing Surplus Fertilizer</span>
+      </div>
+
+      <ul class="bks-list lang-id">
+        <li><strong>Tempat</strong>: gudang/garasi kering, terlindung hujan dan sinar matahari langsung. JANGAN di dapur (dekat makanan) atau kamar tidur.</li>
+        <li><strong>Posisi sak</strong>: berdiri di atas palet kayu / lantai bersih. Tidak boleh kontak langsung dengan tanah/lantai semen lembap.</li>
+        <li><strong>Kemasan</strong>: bila sak sudah dibuka, ikat rapat ujungnya dan tutup dengan plastik tambahan. Idealnya pindah ke wadah tertutup.</li>
+        <li><strong>Pisah Urea dari yang lain</strong>: Urea paling sensitif kelembapan. Simpan terpisah dan tertutup paling rapat.</li>
+        <li><strong>Umur simpan</strong>: dalam kondisi baik, semua 4 jenis tahan 12–18 bulan. Tanda rusak: menggumpal keras, basah lembap, perubahan warna.</li>
+        <li><strong>Jauhkan dari anak-anak &amp; hewan ternak</strong>: pupuk bukan racun mematikan tetapi bila tertelan menyebabkan iritasi serius.</li>
+      </ul>
+      <ul class="bks-list lang-en">
+        <li><strong>Location</strong>: dry warehouse/garage, sheltered from rain and direct sunlight. NOT in kitchen (near food) or bedroom.</li>
+        <li><strong>Sack position</strong>: stand on wood pallet / clean floor. No direct contact with soil/damp concrete.</li>
+        <li><strong>Packaging</strong>: if sack opened, tie the end tightly and cover with additional plastic. Ideally transfer to sealed container.</li>
+        <li><strong>Separate Urea</strong>: Urea is most humidity-sensitive. Store separately, tightly sealed.</li>
+        <li><strong>Shelf life</strong>: properly stored, all 4 types last 12–18 months. Damage signs: hard clumping, damp moisture, color change.</li>
+        <li><strong>Keep away from children &amp; livestock</strong>: fertilizer is not lethal poison but if ingested causes serious irritation.</li>
+      </ul>
+    </div>
+
+  </section>
+
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Anda klinisi UGD shift malam. Di akhir shift, atensi melemah — tetapi pasien tetap datang. Bagaimana Anda menjaga disiplin triage konsisten saat capek? Mekanisme apa yang Anda pakai di klinik? Adakah pelajaran yang dapat dipindahkan ke konteks pemetik kopi yang harus jaga atensi 8 jam/hari selama 20–40 hari panen?</p>
+      <p class="prompt lang-en">1. You are an ER clinician on night shift. By shift's end, attention wanes — but patients keep coming. How do you maintain consistent triage discipline when tired? What mechanisms do you use in clinic? Are there lessons transferable to a coffee picker who must hold attention 8 hours/day across 20–40 harvest days?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Petik selektif merah memberikan kualitas <em>kategorik berbeda</em> dari strip picking — bukan hanya gradasi. Konsep "kategorik vs gradual" ini penting dalam banyak konteks klinis. Dapatkah Anda memberi contoh lain di klinik di mana intervensi yang "sedikit lebih baik" sebenarnya menghasilkan outcome kategorik berbeda? (Mis. timing thrombolysis stroke, dosis minimum efektif obat, dll.)</p>
+      <p class="prompt lang-en">2. Selective red picking yields <em>categorically different</em> quality from strip picking — not just gradation. The "categorical vs gradual" concept is important in many clinical contexts. Can you give another clinical example where a "slightly better" intervention actually produces categorically different outcomes? (E.g. stroke thrombolysis timing, minimum effective drug dose, etc.)</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Multiple visit per pohon (3–5×) terlihat tidak efisien dibanding strip picking (1×). Tetapi disiplin ini menghasilkan premium specialty. Dalam praktik klinis Anda, di mana "lebih banyak visit/pertemuan tetap pada interval lebih jauh" menghasilkan outcome lebih baik daripada "sekali besar"? (Mis. supportive therapy, behavioral activation, gradual exposure, dll.)</p>
+      <p class="prompt lang-en">3. Multiple visits per tree (3–5×) seems inefficient compared to strip picking (1×). But this discipline yields specialty premium. In your clinical practice, where do "more visits/sessions at longer intervals" produce better outcomes than "one big session"? (e.g. supportive therapy, behavioral activation, gradual exposure, etc.)</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 71–72 — Teknik aplikasi pupuk parit lingkar piringan)</em> ⭐ Acuan utama Modul ini.</li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.12 — Coffee Fertilization, nutrient placement & fertilizer use efficiency (FUE). <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 19 — Aplikasi dalam alur melingkar pada proyeksi tajuk)</em></li>
+      <li><strong>BRIN (2024).</strong> Tabel Dosis Pupuk per Umur Tanaman untuk Robusta Indonesia. <em>Sumber dosis yang dieksekusi via teknik aplikasi modul ini.</em></li>
+      <li><strong>Modul C — Pemupukan Kimia 5–10 Tahun (Mei 2026).</strong> <a href="../C-pemupukan-kimia/index.html">Cross-reference</a> — modul ini menjawab "bagaimana" untuk dosis yang dijelaskan di Modul C ("berapa banyak dan kapan").</li>
+      <li><strong>RAB Final Wakaf Produktif (9 Mei 2026).</strong> Implikasi ekonomis: nilai pupuk Rp 27 jt/tahun yang diaplikasi salah dapat kehilangan Rp 13,5–18,9 jt. <em>(Internal · /SOP/RAB_FINAL_9Mei2026.docx)</em></li>
+      <li><strong>SOP Awal Pra-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../../belajar.html"><span class="lang-id">← Hub Belajar (Modul N belum tersedia)</span><span class="lang-en">← Learning Hub (Module N pending)</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="../P-window-12-jam/index.html" class="next"><span class="lang-id">Modul P: Window 12 Jam →</span><span class="lang-en">Module P: 12-Hour Window →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'A';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>

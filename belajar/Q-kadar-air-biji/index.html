@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul Q — Pasca-Panen Primer: Pulping, Fermentation, Washing, Drying · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Pasca-panen primer lengkap — pulping, fermentation 12-36 jam, washing, drying ke 12-12,5% kadar air, dengan analogi klinis phase-based treatment protocol.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+
+/* ══ BUKU SAKU LAPANGAN — Field Pocketbook ══ */
+.bks-block { background: var(--white); border: 1px solid rgba(46,64,64,.12); border-left: 5px solid var(--medium); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.2rem 0; }
+.bks-block.bks-critical { border-left-color: var(--cherry); background: #fdf6f4; }
+.bks-block.bks-safety { border-left-color: var(--gold, #b9892f); background: #fdfaf2; }
+.bks-block.bks-recovery { border-left-color: var(--accent); background: #fbf6f1; }
+.bks-block.bks-special { border-left-color: var(--medium); background: #f4faf8; }
+.bks-head { display: flex; align-items: center; gap: .8rem; margin-bottom: .8rem; }
+.bks-num { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--dark); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; }
+.bks-num.cherry { background: var(--cherry); }
+.bks-num.accent { background: var(--accent); }
+.bks-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--dark); }
+.bks-sub { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: .92rem; color: var(--medium); margin: .9rem 0 .35rem; letter-spacing: .02em; }
+.bks-list { margin: .3rem 0 .3rem 1.4rem; padding: 0; }
+.bks-list li { margin: .35rem 0; line-height: 1.55; color: var(--text); font-size: .92rem; }
+.bks-table { width: 100%; border-collapse: collapse; margin: .5rem 0; font-size: .88rem; }
+.bks-table th { background: var(--dark); color: #fff; padding: .55rem .7rem; text-align: left; font-weight: 700; }
+.bks-table td { padding: .55rem .7rem; border-bottom: 1px solid rgba(46,64,64,.1); vertical-align: top; line-height: 1.5; color: var(--text); }
+.bks-table tr:nth-child(even) td { background: var(--bg-tint, #e8f4f0); }
+.num.gold { background: var(--gold, #b9892f); }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul D</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module D</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="Q">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul Q · Pasca-Panen Primer · 17 dari 19</span>
+      <span class="lang-en">Module Q · Primary Post-Harvest · 17 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Pasca-Panen Primer: <em>Pulping → Fermentation → Washing → Drying</em></span>
+      <span class="lang-en">Primary Post-Harvest: <em>Pulping → Fermentation → Washing → Drying</em></span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Empat fase berurutan dari ceri ke green bean — analogi <em>phase-based treatment protocol</em> dari psikologi klinis: tidak ada fase yang bisa dilompati</span>
+      <span class="lang-en">Four sequential phases from cherry to green bean — a <em>phase-based treatment protocol</em> analogy from clinical psychology: no phase can be skipped</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Mengapa pasca-panen kopi dipandang sebagai empat fase berurutan (pulping → fermentation → washing → drying), bukan satu langkah tunggal</span>
+          <span class="lang-en">Why coffee post-harvest is viewed as four sequential phases (pulping → fermentation → washing → drying), not a single step</span>
+        </li>
+        <li>
+          <span class="lang-id">Endpoint mutu per fase: pulping (kulit hilang, biji+mucilage utuh) · fermentation (slip test positive 12-36 jam) · washing (mucilage hilang) · drying (MC 12-12,5%, water activity &lt;0.65)</span>
+          <span class="lang-en">Quality endpoint per phase: pulping (skin removed, bean+mucilage intact) · fermentation (slip test positive 12-36h) · washing (mucilage gone) · drying (MC 12-12.5%, water activity &lt;0.65)</span>
+        </li>
+        <li>
+          <span class="lang-id">Tiga kesalahan umum yang menggagalkan pasca-panen: fermentation over-shoot (>48 jam, profil acetic) · drying terlalu cepat / kepanasan (cracking) · drying tidak tuntas (MC &gt;13%, jamur ochratoxin</span>
+          <span class="lang-en">Three common mistakes that derail post-harvest: fermentation over-shoot (>48h, acetic profile) · drying too fast / overheated (cracking) · incomplete drying (MC &gt;13%, ochratoxin mould)</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa <em>phase-based treatment</em> dalam pasca-panen = inti dari konsistensi specialty — analogi terapi trauma-focused yang punya fase berurutan (stabilization → processing → integration) yang tidak bisa dilompati</span>
+          <span class="lang-en">Why <em>phase-based treatment</em> in post-harvest = the core of specialty consistency — analogy of trauma-focused therapy with sequential phases (stabilization → processing → integration) that cannot be skipped</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_drying_in_Brazil.jpg?width=1280" alt="Coffee parchment drying on raised beds — the final phase of primary post-harvest" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Kopi parchment dijemur di raised bed — fase final dari pasca-panen primer (Drying ke 12-12,5% MC) · </span><span class="lang-en">Photo: Coffee parchment drying on raised beds — the final phase of primary post-harvest (drying to 12-12.5% MC) · </span><a href="https://commons.wikimedia.org/wiki/File:Coffee_drying_in_Brazil.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Dua karung ceri merah penuh dari Kebun 2, dipetik di hari yang sama, di-pulp di pulper yang sama, dengan air yang sama. Tetapi setelah dua minggu drying: karung A menghasilkan green bean bersih, biru-hijau seragam, profil cup floral-citrus. Karung B menghasilkan green bean dengan bercak putih (silver skin lengket), profil cup fermenty-vinegar dengan defect 8%. Apa yang berbeda? Bukan ceri-nya, bukan pulpernya. Yang berbeda adalah <em>fase fermentasi dan drying-nya</em> — durasi, suhu, dan handling-nya.</p>
+    <p class="lang-en">Two sacks of fully-red cherries from Block 2, picked the same day, pulped at the same pulper, with the same water. But after two weeks of drying: sack A produces clean green beans, uniform blue-green, with a floral-citrus cup profile. Sack B produces green beans with white patches (sticky silver skin), a fermenty-vinegar cup profile, and 8% defect. What is different? Not the cherries, not the pulper. The difference lies in <em>the fermentation and drying phases</em> — duration, temperature, and handling.</p>
+
+    <p class="lang-id">Setelah Modul O mengunci <em>buah mana yang dipetik</em> dan Modul P mengunci <em>kapan harus diproses</em>, modul ini menjawab pertanyaan terakhir di pasca-panen primer: <em>bagaimana mengubah ceri jadi green bean</em>. Jawabannya adalah <strong>empat fase berurutan</strong>: Pulping (kupas kulit) → Fermentation (urai mucilage 12-36 jam) → Washing (bersih) → Drying (turunkan kadar air ke 12-12,5%). Tidak ada fase yang bisa dilompati. Tidak ada short-cut yang menjaga mutu. Setiap fase punya endpoint yang dapat diukur, dan endpoint itulah yang menentukan apakah fase berikutnya bisa dimulai.</p>
+    <p class="lang-en">After Module O locked in <em>which fruit to pick</em> and Module P locked in <em>when to process</em>, this module answers the final question of primary post-harvest: <em>how to turn cherries into green beans</em>. The answer is <strong>four sequential phases</strong>: Pulping (skin removal) → Fermentation (12-36h mucilage breakdown) → Washing (clean) → Drying (lower moisture to 12-12.5%). No phase can be skipped. No shortcut preserves quality. Each phase has a measurable endpoint, and that endpoint determines whether the next phase can begin.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi kopi dari awal. Pendekatannya: meminjam konsep <em>phase-based treatment protocol</em> dari psikoterapi trauma-focused. Terapi PTSD klasik (Herman 1992 + Cloitre et al 2002) terdiri dari tiga fase yang ketat berurutan: <strong>(1) Stabilization</strong> — bangun keamanan dan regulasi emosi. <strong>(2) Processing</strong> — kerja terapeutik pada memori traumatis. <strong>(3) Integration</strong> — reklamasi koneksi sosial dan makna. Tidak ada fase yang bisa dilompati — pasien yang langsung masuk processing tanpa stabilization sering decompensate. Pasca-panen kopi mengikuti logika yang identik.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning coffee agronomy from scratch. The approach: borrow <em>phase-based treatment protocol</em> from trauma-focused psychotherapy. Classical PTSD treatment (Herman 1992 + Cloitre et al 2002) consists of three strictly sequential phases: <strong>(1) Stabilization</strong> — build safety and emotion regulation. <strong>(2) Processing</strong> — therapeutic work on traumatic memories. <strong>(3) Integration</strong> — reclaiming social connection and meaning. No phase can be skipped — patients who jump straight to processing without stabilization often decompensate. Coffee post-harvest follows identical logic.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Kebun kopi wakaf Ngantang berada di elevasi 648 mdpl dengan iklim tropis lembab — curah hujan tahunan 1.800-2.500 mm dan kelembapan udara 75-85% sepanjang tahun. Untuk pasca-panen, dua faktor lokasi ini punya implikasi spesifik: <strong>(1) Drying lebih lambat</strong> dari kebun dataran rendah — udara lembab artinya gradien tekanan uap kecil, jadi waktu drying 12-16 hari (vs 7-10 hari di Sumatra/Lampung). <strong>(2) Risiko jamur tinggi</strong> kalau drying tidak tuntas — <em>Aspergillus ochraceus</em> dan <em>Penicillium</em> tumbuh subur di kondisi MC residu 13-15% dengan kelembapan udara &gt;80%, menghasilkan toksin ochratoxin A (regulasi EU max 5 ppb di green bean).</p>
+    <p class="lang-en">The Ngantang waqf coffee garden sits at 648 m elevation with a humid tropical climate — 1,800-2,500 mm annual rainfall and 75-85% air humidity year-round. For post-harvest, two location factors have specific implications: <strong>(1) Drying is slower</strong> than in lowland gardens — humid air means a small vapor pressure gradient, so drying takes 12-16 days (vs 7-10 days in Sumatra/Lampung). <strong>(2) High mould risk</strong> if drying is incomplete — <em>Aspergillus ochraceus</em> and <em>Penicillium</em> thrive at residual MC 13-15% with &gt;80% air humidity, producing ochratoxin A (EU regulatory max 5 ppb in green bean).</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Di Ngantang, strategi pasca-panen primer Siklus 2026-2027 adalah <strong>hybrid offtaker</strong>: ceri grade-specialty (≥70% merah penuh, sortasi cepat di kebun) dikirim ke <strong>Bonsari Coffee</strong> untuk full processing (pulping → fermentation → washing → drying) di pulper mereka. Specialty lot kedua bisa dikirim ke <strong>Nomad Coffee</strong>. Ceri commodity grade (mixed, dari trip terlambat di luar window 12 jam) sebagian besar diproses sendiri/dikirim ke tengkulak lokal. Window panen 2026 sekitar Juli-September, dengan estimasi 750 kg green bean (skenario konservatif).</p>
+      <p class="lang-en">In Ngantang, the primary post-harvest strategy for Cycle 2026-2027 is a <strong>hybrid offtaker</strong> approach: specialty-grade cherries (≥70% fully red, quick-sorted at the garden) go to <strong>Bonsari Coffee</strong> for full processing (pulping → fermentation → washing → drying) at their pulper. A second specialty lot may go to <strong>Nomad Coffee</strong>. Commodity-grade cherries (mixed, from late trips outside the 12-hour window) are mostly processed in-house or sold to local middlemen. The 2026 harvest window is around July-September, with an estimated 750 kg green bean (conservative scenario).</p>
+    </div>
+
+    <p class="lang-id">Implikasinya: pasca-panen bukan langkah "ditambahkan" setelah panen, melainkan <strong>50% dari nilai biji</strong>. Petik ceri merah penuh terbaik dunia (Modul O) yang dirusak fermentasi over-shoot atau drying tidak tuntas hanya menghasilkan commodity-grade. Sebaliknya, ceri rata-rata yang diproses dengan 4 fase disiplin endpoint dapat naik ke specialty-grade ringan. Modul ini sangat penting untuk dikuasai oleh Wakif &amp; tim sebelum musim panen 2026 — supaya keputusan handoff ke Bonsari, atau processing parsial di rumah Wakif, dapat dibuat berdasarkan pemahaman teknis solid, bukan hanya intuisi.</p>
+    <p class="lang-en">The implication: post-harvest is not a step "added" after harvest, but <strong>50% of the bean's value</strong>. The world's best fully-red cherries (Module O) ruined by fermentation over-shoot or incomplete drying yield only commodity grade. Conversely, average cherries processed with disciplined four-phase endpoints can rise to light-specialty grade. This Module deserves mastery by the Waqif and team before the 2026 harvest season — so handoff decisions to Bonsari, or partial in-house processing at the Waqif's home, can be made on solid technical understanding, not just intuition.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Empat Fase Pasca-Panen Primer</span><span class="lang-en">Theory: The Four Phases of Primary Post-Harvest</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Mengapa empat fase, bukan satu langkah tunggal "olah biji"? Karena setiap fase punya <em>tujuan biokimia berbeda</em> dan endpoint yang spesifik. Mencampurnya jadi satu langkah (misalnya "rendam ceri sehari, jemur") menghasilkan profil cup yang tidak terkontrol dan sering cacat. Empat fase yang dipisahkan dengan jelas membuat setiap variabel dapat dikontrol — dan kalau ada cacat, dapat diidentifikasi fase mana yang menjadi sumber masalah.</p>
+    <p class="lang-id">Empat fase pasca-panen primer untuk metode <em>fully washed</em> (yang dipilih kebun kopi wakaf Ngantang sebagai default specialty):</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Fase 1 · Pulping</strong> — kupas kulit ceri (exocarp) dengan pulper mekanik. Tujuan: pisahkan biji+mucilage (lapisan lendir manis) dari kulit. <em>Endpoint</em>: kulit hilang, biji utuh dengan mucilage masih melekat, broken bean &lt;3%. Durasi: instant. Dilakukan di pulper mitra (Bonsari Coffee) untuk batch specialty.</li>
+      <li><strong>Fase 2 · Fermentation</strong> — biji ber-mucilage di-tampung dalam tank/karung berlubang 12-36 jam (suhu lokal Ngantang 24-28°C). Tujuan: enzim pektinase alami + mikroflora memecah pektin di mucilage. <em>Endpoint</em>: <strong>slip test positive</strong> — saat digenggam, biji terasa "kesat" tidak lagi licin. Durasi rule-of-thumb: 18-24 jam untuk Robusta NGT (suhu sedang). Over-shoot (&gt;48 jam) → profil acetic/vinegar.</li>
+      <li><strong>Fase 3 · Washing</strong> — biji slip-test-positive dicuci dengan air bersih untuk menghilangkan sisa mucilage. Tujuan: hentikan fermentasi + bersihkan permukaan biji. <em>Endpoint</em>: air bilasan jernih, biji tidak lagi licin saat digenggam. Durasi: 5-15 menit + 2-3 kali ganti air.</li>
+      <li><strong>Fase 4 · Drying</strong> — biji ber-parchment dijemur di raised bed (atau lantai semen) di bawah sinar matahari dengan reversal teratur. Tujuan: turunkan kadar air (MC) dari ~55% (post-wash) ke <strong>12-12,5%</strong> (target shelf-stable). <em>Endpoint</em>: MC reading di moisture meter = 12-12,5% (toleransi ±0,5%) dan water activity &lt;0,65. Durasi NGT (humid climate): 12-16 hari sun-dry, atau 36-48 jam mechanical dryer.</li>
+    </ul>
+    <p class="lang-en">Why four phases, not a single "process the bean" step? Because each phase has a <em>distinct biochemical purpose</em> and a specific endpoint. Collapsing them into one (e.g. "soak cherries a day, then dry") produces uncontrolled cup profiles and frequent defects. Four cleanly separated phases make each variable controllable — and if a defect arises, it can be traced to the phase that caused it.</p>
+    <p class="lang-en">Four phases of primary post-harvest using the <em>fully washed</em> method (chosen as default specialty at the Ngantang waqf coffee garden):</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Phase 1 · Pulping</strong> — strip the cherry skin (exocarp) with a mechanical pulper. Purpose: separate bean+mucilage (sweet sticky layer) from skin. <em>Endpoint</em>: skin removed, bean intact with mucilage still attached, broken beans &lt;3%. Duration: instant. Done at the partner pulper (Bonsari Coffee) for specialty batches.</li>
+      <li><strong>Phase 2 · Fermentation</strong> — mucilage-coated beans held in tanks/ventilated sacks for 12-36 hours (Ngantang ambient temp 24-28°C). Purpose: natural pectinase + microflora break down pectin in the mucilage. <em>Endpoint</em>: <strong>slip test positive</strong> — when grasped, the bean feels "raspy" no longer slick. Rule-of-thumb: 18-24 hours for NGT Robusta (mild temp). Over-shoot (&gt;48h) → acetic/vinegar profile.</li>
+      <li><strong>Phase 3 · Washing</strong> — slip-positive beans are washed with clean water to remove mucilage residue. Purpose: halt fermentation + clean bean surface. <em>Endpoint</em>: rinse water clear, beans no longer slick when grasped. Duration: 5-15 minutes + 2-3 water changes.</li>
+      <li><strong>Phase 4 · Drying</strong> — parchment beans dried on raised beds (or concrete floor) under sun with regular turning. Purpose: lower moisture content (MC) from ~55% (post-wash) to <strong>12-12.5%</strong> (shelf-stable target). <em>Endpoint</em>: moisture meter reading = 12-12.5% (tolerance ±0.5%) and water activity &lt;0.65. NGT duration (humid climate): 12-16 days sun-dry, or 36-48 hours mechanical dryer.</li>
+    </ul>
+
+    <p class="lang-id">Kenapa <strong>endpoint per fase</strong> begitu penting? Karena pasca-panen tidak bisa di-"timeline by clock" semata — tergantung temperatur ambient, populasi mikroba awal, dan ketebalan mucilage. Yang konsisten adalah <em>kondisi akhir biji</em>, bukan jam-nya. Fermentasi yang "selesai" di Sumatra 14 jam mungkin baru "selesai" di Ngantang 22 jam karena suhu lokal lebih rendah. Drying yang "selesai" di musim kering Lampung 8 hari bisa butuh 16 hari di Ngantang musim hujan. Yang membuat profil cup konsisten antar batch adalah <strong>endpoint criterion</strong>: slip test positive, MC 12-12,5%, water activity &lt;0,65 — bukan durasi jam. Tim lapangan dilatih membaca endpoint, bukan menghitung jam.</p>
+    <p class="lang-en">Why are <strong>per-phase endpoints</strong> so important? Because post-harvest cannot be "timed by the clock" alone — it depends on ambient temperature, initial microbe load, and mucilage thickness. What stays consistent is the <em>end-state of the bean</em>, not the hours. Fermentation that "completes" in 14 hours in Sumatra may only complete at 22 hours in Ngantang due to lower local temperature. Drying that "finishes" in 8 days during Lampung's dry season can take 16 days in Ngantang's rainy season. What makes the cup profile consistent across batches is the <strong>endpoint criterion</strong>: slip test positive, MC 12-12.5%, water activity &lt;0.65 — not hour count. Field teams are trained to read the endpoint, not count hours.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Psikologi Klinis — Phase-Based Treatment Protocol (Herman 1992, Cloitre et al 2002)</span><span class="lang-en">An Analogy from Clinical Psychology — Phase-Based Treatment Protocol (Herman 1992, Cloitre et al 2002)</span></div>
+      <p class="lang-id">Dalam terapi trauma kompleks, ada konsensus klinis sejak Judith Herman (Trauma &amp; Recovery, 1992) bahwa pemulihan trauma <em>tidak bisa langsung ke pemrosesan memori</em> tanpa terlebih dahulu membangun keamanan. Tiga fase wajib berurutan: <strong>(1) Stabilization</strong> — keamanan, regulasi emosi, koneksi dasar (rule-of-thumb durasi: bulan ke-bulan, bukan minggu). <strong>(2) Processing</strong> — kerja terapeutik pada memori traumatis (sering pakai EMDR / TF-CBT / Prolonged Exposure). <strong>(3) Integration</strong> — reklamasi koneksi sosial, makna, dan identitas pasca-trauma. <em>Endpoint per fase</em>: pasien yang masih disregulasi emosi tidak boleh masuk fase 2 — risikonya re-traumatisasi.</p>
+      <p class="lang-en">In complex trauma therapy, clinical consensus since Judith Herman (Trauma &amp; Recovery, 1992) holds that trauma recovery <em>cannot jump straight to memory processing</em> without first establishing safety. Three mandatory sequential phases: <strong>(1) Stabilization</strong> — safety, emotion regulation, basic connection (rule-of-thumb duration: months not weeks). <strong>(2) Processing</strong> — therapeutic work on traumatic memories (often EMDR / TF-CBT / Prolonged Exposure). <strong>(3) Integration</strong> — reclaiming social connection, meaning, post-trauma identity. <em>Per-phase endpoint</em>: a patient still emotion-dysregulated should not enter phase 2 — the risk is re-traumatization.</p>
+    </div>
+
+    <p class="lang-id">Pasca-panen kopi mengikuti logika yang persis identik. Empat fase berurutan dengan endpoint per fase — tidak ada fase yang bisa dilompati: <strong>(1) Pulping</strong> setara <em>stabilization</em> — pemisahan dasar biji dari kulit (foundation). <strong>(2) Fermentation</strong> setara <em>processing</em> — kerja biokimia di mucilage yang membentuk profil cup (memerlukan kontrol dan tidak boleh over-shoot, sama seperti processing trauma yang harus dosed). <strong>(3) Washing</strong> setara fase transisi <em>processing→integration</em> — menghentikan kerja aktif, membersihkan. <strong>(4) Drying</strong> setara <em>integration</em> — biji yang shelf-stable, siap masuk rantai distribusi (analog pasien yang siap kembali ke masyarakat dengan integrasi makna). Setiap fase punya endpoint sendiri — petik yang baik (Modul O) saja tidak cukup; window timing (Modul P) saja tidak cukup; harus empat fase ini lewat dengan benar.</p>
+    <p class="lang-en">Coffee post-harvest follows precisely identical logic. Four sequential phases with per-phase endpoints — no phase can be skipped: <strong>(1) Pulping</strong> parallels <em>stabilization</em> — basic separation of bean from skin (foundation). <strong>(2) Fermentation</strong> parallels <em>processing</em> — biochemical work in the mucilage that shapes cup profile (requires control and must not over-shoot, like trauma processing that must be dosed). <strong>(3) Washing</strong> parallels the <em>processing→integration</em> transition — halting active work, cleaning. <strong>(4) Drying</strong> parallels <em>integration</em> — shelf-stable beans ready to enter distribution (analog of a patient ready to re-enter society with integrated meaning). Each phase has its own endpoint — good picking (Module O) alone is not enough; timing window (Module P) alone is not enough; all four phases must pass correctly.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Empat Fase Pasca-Panen dari Ceri ke Green Bean</span><span class="lang-en">Visual Tour: Four Phases from Cherry to Green Bean</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Pasca-panen primer paling baik dipahami visual karena setiap fase punya output fisik yang berbeda. Enam gambar berikut menelusuri perjalanan dari ceri merah utuh, lewat empat fase, hingga green bean kering siap simpan/kirim. Perhatikan perubahan warna + bentuk + tekstur biji di setiap titik.</p>
+    <p class="lang-en">Primary post-harvest is best understood visually because each phase has a distinctly different physical output. The six images below trace the journey from whole red cherry, through four phases, to dried green bean ready for storage/shipping. Note the color + shape + texture change of the bean at each point.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Tree-dripline.png?width=640" alt="Diagram showing tree canopy, drip-line, and feeder root zone" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Diagram drip-line</strong> — garis bayangan tajuk pohon. Akar serap (feeder roots) terkonsentrasi tepat di bawah ujung dedaunan terjauh ini, bukan di pangkal batang. Inilah lokasi parit lingkar piringan</span>
+          <span class="lang-en"><strong>Drip-line diagram</strong> — the projected canopy edge on the ground. Feeder roots concentrate directly beneath this outermost canopy reach, not at the trunk base. This is the canopy-ring trench location</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Tree-dripline.png" target="_blank" rel="noopener">Wikimedia Commons · Public Domain</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Detail_of_Coffea_canephora_branch_and_leaves.jpg?width=640" alt="Coffea canephora branch and canopy structure" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Tajuk pohon Robusta</strong> — diameter tajuk pohon dewasa biasanya 1,5–2,5 meter. Radius parit lingkar piringan adalah <strong>setengah diameter tajuk</strong> dari pangkal batang. Pohon kecil = parit kecil; pohon dewasa = parit lebih lebar</span>
+          <span class="lang-en"><strong>Robusta canopy</strong> — a mature tree's canopy diameter is typically 1.5–2.5 m. The trench radius is <strong>half the canopy diameter</strong> from the trunk. Small tree = small trench; mature tree = wider trench</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Detail_of_Coffea_canephora_branch_and_leaves.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Men_digging_(1).jpg?width=640" alt="Men digging soil with hand tools" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Alat manual untuk parit</strong> — cangkul atau garpu tanah. Untuk 750 pohon × 2 aplikasi/tahun = 1.500 kali buka-tutup parit. Pak Kumpul biasanya menyelesaikan 100–150 pohon per hari kerja, jadi total ~10 hari kerja per aplikasi</span>
+          <span class="lang-en"><strong>Manual trench tools</strong> — hoe or garden fork. For 750 trees × 2 applications/year = 1,500 trench open-close cycles. Pak Kumpul typically finishes 100–150 trees per workday, totalling ~10 workdays per application</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Men_digging_(1).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg?width=640" alt="Granular Urea application — surface broadcast (incorrect method for coffee)" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>⚠ Cara yang SALAH</strong> — tabur-tebar pupuk langsung di permukaan (broadcast) yang umum di sawah/ladang besar. Untuk kopi di lereng berhujan, cara ini memboroskan 50–70% nilai pupuk: Urea menguap sebagai NH₃, KCl tercuci, SP-36 terkunci oleh sinar UV pada permukaan tanah</span>
+          <span class="lang-en"><strong>⚠ The WRONG way</strong> — surface broadcast of fertilizer, common in rice paddies or large fields. For coffee on rainy slopes, this wastes 50–70% of the fertilizer value: Urea volatilizes as NH₃, KCl is leached, SP-36 is locked by UV on the soil surface</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Andisol_profile.jpg?width=640" alt="Andisol soil profile showing organic topsoil and mineral subsoil" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Profil tanah Andisol</strong> — zona akar serap kopi (5–20 cm dari permukaan) berada di lapisan top-soil organik gelap. Parit kedalaman 5–10 cm menempatkan pupuk persis di zona aktif ini, bukan terlalu dangkal (tercuci) atau terlalu dalam (di luar jangkauan akar serap)</span>
+          <span class="lang-en"><strong>Andisol soil profile</strong> — the coffee feeder-root zone (5–20 cm from surface) lies in the dark organic topsoil layer. A 5–10 cm trench depth places fertilizer precisely in this active zone, not too shallow (washes off) or too deep (beyond feeder-root reach)</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Andisol_profile.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Plantation_in_Coorg.jpg?width=640" alt="Coffee plantation rows on hillside with visible tree spacing" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Geometri kebun</strong> — pohon kopi ditanam pada jarak 3×2,5 m (~1.333 phn/ha). Parit lingkar piringan tiap pohon berdiameter ~1,5–2 m, sehingga tidak tumpang-tindih dengan parit pohon tetangga. Setiap pohon mendapat "wilayah pemupukan" yang jelas</span>
+          <span class="lang-en"><strong>Garden geometry</strong> — coffee trees are planted at 3×2.5 m spacing (~1,333 trees/ha). Each tree's canopy-ring trench is ~1.5–2 m in diameter, so it does not overlap with the neighbouring tree's trench. Each tree gets its own clear "fertilization zone"</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation_in_Coorg.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Pasca-Panen Primer</span><span class="lang-en">The Science: 4-Source Comparison on Primary Post-Harvest</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber yang membahas pasca-panen primer Robusta:</p>
+    <p class="lang-en">Let us examine four sources that discuss Robusta primary post-harvest:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Posisi tentang Cara Aplikasi</span><span class="lang-en">Position on Application Method</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id">Eksplisit menetapkan empat fase <em>fully washed</em>: pulping → fermentation 12-36 jam → washing → drying ke MC 12-12,5% (hal 102-118). Inilah acuan utama Modul ini.</span><span class="lang-en">Explicitly defines four <em>fully washed</em> phases: pulping → fermentation 12-36h → washing → drying to MC 12-12.5% (p 102-118). This is the primary reference for this Module.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Membahas <strong>slip test</strong> sebagai indikator endpoint fermentasi (hal 42-44) dan kriteria visual cracking bean saat drying. Konvergen secara prinsip dengan SOP Edisi 2, lebih praktis di sisi tip lapangan.</span><span class="lang-en">Discusses the <strong>slip test</strong> as fermentation endpoint indicator (p 42-44) and visual cracking-bean criterion during drying. Convergent with SOP Edition 2 in principle, more practical on field tips.</span></td>
+        </tr>
+        <tr>
+          <td><strong>BRIN (2024)</strong></td>
+          <td><span class="lang-id">Riset BRIN pasca-panen Robusta Jatim (Sjafrina et al 2023, Adnan Albahry 2024) menunjukkan korelasi MC 12-12,5% × water activity &lt;0,65 dengan shelf life 18-24 bulan. Memberi basis empiris untuk endpoint drying.</span><span class="lang-en">BRIN East Java Robusta post-harvest research (Sjafrina et al 2023, Adnan Albahry 2024) shows correlation of MC 12-12.5% × water activity &lt;0.65 with 18-24 month shelf life. Provides empirical basis for the drying endpoint.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 22-24</strong></td>
+          <td><span class="lang-id">Ch. 22-24 (Post-Harvest Processing): teori <em>controlled fermentation</em> oleh pektinase + microflora, faktor pH/temp/oxygen yang menentukan profil cup. Memberi justifikasi teoritis terhadap angka endpoint SOP.</span><span class="lang-en">Ch. 22-24 (Post-Harvest Processing): <em>controlled fermentation</em> theory via pectinase + microflora, with pH/temp/oxygen factors shaping cup profile. Provides theoretical justification for the SOP endpoint figures.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: empat sumber konvergen — pasca-panen Robusta specialty = fully washed dengan empat fase berurutan, dipandu endpoint per fase, bukan jam.</strong> Kementan 2019 memberikan SOP paling presisi (slip test + MC 12-12,5%), Wintgens memberi justifikasi teoritis (controlled fermentation theory), Puslitbang melengkapi dengan tips lapangan (slip test, cracking bean visual), BRIN melengkapi dengan basis empiris shelf life. Tidak ada sumber yang kontradiktif — yang ada hanya tingkat presisi yang berbeda.</p>
+    <p class="lang-en"><strong>The emerging pattern: all four sources converge — Robusta specialty post-harvest = fully washed with four sequential phases, guided by per-phase endpoints, not by clock.</strong> Kementan 2019 provides the most precise SOP (slip test + MC 12-12.5%), Wintgens supplies theoretical justification (controlled fermentation theory), Puslitbang adds field tips (slip test, visual cracking), BRIN supplies empirical basis for shelf life. No source is contradictory — only different levels of precision.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Tiga Kesalahan Umum yang Menggagalkan Pasca-Panen</span><span class="lang-en">✓ Three Common Mistakes that Derail Post-Harvest</span></div>
+      <p class="lang-id"><strong>(1) Fermentation over-shoot (&gt;48 jam)</strong> — Biji ditinggal di tank sampai keesokan harinya "supaya aman tuntas". Yang terjadi: bakteri acetic-acid mengubah mucilage jadi cuka, profil cup bergeser ke vinegar/fermenty. Solusi: cek slip test setiap 4-6 jam mulai jam-12, segera washing saat positive. <strong>(2) Drying terlalu cepat / kepanasan</strong> — Dijemur di lantai semen panas tanpa naungan, MC turun terlalu cepat dari luar. Kulit luar biji kering sementara dalamnya masih basah → cracking + retak yang akan jadi defect green bean. Solusi: raised bed dengan sirkulasi udara, suhu tidak &gt;40°C, reversal setiap 1-2 jam. <strong>(3) Drying tidak tuntas (MC residu 13-15%)</strong> — Karena warna sudah "terlihat kering" lalu dikemas. Yang terjadi: jamur Aspergillus + Penicillium tumbuh dalam 2-4 minggu di karung tertutup, menghasilkan ochratoxin A (regulasi EU max 5 ppb). Solusi: WAJIB pakai moisture meter, target 12-12,5% (toleransi ±0,5%).</p>
+      <p class="lang-en"><strong>(1) Fermentation over-shoot (&gt;48h)</strong> — Beans left in tank overnight "to make sure it's done". What happens: acetic-acid bacteria convert mucilage to vinegar, cup profile shifts to vinegar/fermenty. Solution: slip test every 4-6 hours from hour-12 onwards, wash immediately when positive. <strong>(2) Drying too fast / overheated</strong> — Spread on hot concrete floor with no shade, MC drops too fast from the outside. Outer skin dries while interior still wet → cracking + cracked green bean defects. Solution: raised beds with air circulation, temp not &gt;40°C, turn every 1-2 hours. <strong>(3) Incomplete drying (residual MC 13-15%)</strong> — Packaged because the color "looks dry". What happens: Aspergillus + Penicillium mould grows within 2-4 weeks in closed sacks, producing ochratoxin A (EU regulatory max 5 ppb). Solution: MANDATORY moisture meter, target 12-12.5% (tolerance ±0.5%).</p>
+    </div>
+
+    <p class="lang-id">Implikasi mutu &amp; finansial: panen NGT proyeksi 750 kg green bean Siklus 2027. Specialty grade (4 fase dilakukan benar dengan endpoint terkontrol) → offtaker Bonsari/Nomad Rp 95-130rb/kg. Commodity grade (cacat fermentasi atau jamur dari drying tidak tuntas) → Rp 45-60rb/kg ke tengkulak lokal. Worst case: batch dengan ochratoxin A &gt;5 ppb → reject untuk ekspor EU, harus diproses ulang atau dijual sebagai pakan ternak (Rp 5-10rb/kg). Selisih nilai per batch bisa <strong>Rp 30-75 juta</strong> untuk 750 kg. Inilah mengapa Modul Q tidak bisa di-shortcut — keempat fase wajib lewat dengan disiplin endpoint.</p>
+    <p class="lang-en">Quality &amp; financial implication: NGT projected Cycle 2027 harvest is 750 kg green bean. Specialty grade (4 phases done right with controlled endpoints) → Bonsari/Nomad offtake IDR 95-130k/kg. Commodity grade (fermentation defect or mould from incomplete drying) → IDR 45-60k/kg to local middlemen. Worst case: batch with ochratoxin A &gt;5 ppb → reject for EU export, must be reprocessed or sold as animal feed (IDR 5-10k/kg). Per-batch value swing can reach <strong>IDR 30-75 million</strong> for 750 kg. This is why Module Q cannot be shortcut — all four phases must be executed with endpoint discipline.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Empat Fase Eksekusi dengan Endpoint Disiplin</span><span class="lang-en">Practice: Four-Phase Execution with Endpoint Discipline</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Berikut langkah operasional pasca-panen primer di kebun kopi wakaf Ngantang. Eksekusi inti (pulping + fermentation + washing + drying) di-handoff ke <strong>Bonsari Coffee</strong> sebagai mitra specialty processing untuk batch utama Siklus 2026-2027. Wakif memegang peran <em>quality officer</em> — memastikan handoff dilakukan dalam window 12 jam (Modul P), dan mengaudit endpoint per fase saat kunjungan ke pulper Bonsari. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Operational steps for primary post-harvest at the Ngantang waqf coffee garden. Core execution (pulping + fermentation + washing + drying) is handed off to <strong>Bonsari Coffee</strong> as the specialty processing partner for main Cycle 2026-2027 batches. The Waqif acts as <em>quality officer</em> — ensuring handoff happens within the 12-hour window (Module P), and auditing per-phase endpoints during visits to the Bonsari pulper. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Fase 1 — Pulping (Endpoint: Kulit Hilang, Biji Utuh)</span><span class="lang-en">Step 1 · Phase 1 — Pulping (Endpoint: Skin Removed, Bean Intact)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Pulper mekanik di Bonsari (atau pulper manual cadangan untuk batch kecil rumah Wakif) mengupas kulit ceri (exocarp) dan memisahkan biji+mucilage. <strong>Endpoint visual</strong>: ambil sampel 10-20 biji acak — kulit hilang sempurna, biji utuh dengan mucilage lengket transparan-kuning, broken bean &lt;3%. <strong>Audit Wakif</strong>: foto sample 50 biji, hitung manual broken bean count, catat di Form Input dashboard. Buang kulit pulping = bahan baku biochar (cross-ref Modul Inj-1) atau kompos.</span>
+            <span class="lang-en">The mechanical pulper at Bonsari (or backup manual pulper for small Waqif-home batches) strips the cherry skin (exocarp) and separates bean+mucilage. <strong>Visual endpoint</strong>: take a random 10-20 bean sample — skin completely removed, bean intact with sticky transparent-yellow mucilage, broken beans &lt;3%. <strong>Waqif audit</strong>: photograph the 50-bean sample, manually count broken beans, record in dashboard Form Input. Discarded pulp skin = biochar feedstock (cross-ref Module Inj-1) or compost.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Fase 2 — Fermentation (Endpoint: Slip Test Positive 18-24 Jam)</span><span class="lang-en">Step 2 · Phase 2 — Fermentation (Endpoint: Slip Test Positive 18-24h)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Biji ber-mucilage di-tampung di tank fermentation Bonsari atau karung berlubang. Suhu Ngantang 24-28°C → estimasi 18-24 jam. <strong>Endpoint = slip test positive</strong>: ambil segenggam biji, gosok-gosok di telapak. Jika "kesat" tidak licin lagi → fermentasi selesai. JANGAN tunggu sampai bau acetic muncul (sudah over-shoot). <strong>Frekuensi cek</strong>: mulai jam 12, cek setiap 4 jam. <strong>Audit Wakif</strong>: kunjungi pulper jam 18-24 pasca-pulping, lakukan slip test sendiri, foto biji, catat hasil. Over-shoot &gt;48 jam = profil acetic permanen, downgrade ke commodity.</span>
+            <span class="lang-en">Mucilage-coated beans held in Bonsari fermentation tanks or ventilated sacks. Ngantang ambient 24-28°C → 18-24h estimate. <strong>Endpoint = slip test positive</strong>: grab a handful, rub on palm. If "raspy" no longer slick → fermentation done. DO NOT wait for acetic smell to appear (already over-shoot). <strong>Check frequency</strong>: start hour 12, check every 4 hours. <strong>Waqif audit</strong>: visit pulper at hour 18-24 post-pulping, do slip test yourself, photo bean, record result. Over-shoot &gt;48h = permanent acetic profile, downgrade to commodity.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Fase 3 — Washing (Endpoint: Air Bilasan Jernih)</span><span class="lang-en">Step 3 · Phase 3 — Washing (Endpoint: Rinse Water Clear)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Biji slip-positive dicuci dengan air bersih di channel washing Bonsari. Tujuan: stop fermentasi + bersihkan sisa mucilage. <strong>Endpoint visual</strong>: 2-3 kali ganti air, sampai air bilasan jernih + biji tidak licin saat digenggam. Density-sortasi optional di sini: biji floater = berisi udara/cacat → ke commodity lot. Biji sinker = bagus → ke specialty lot. <strong>Audit Wakif</strong>: foto channel washing, catat jumlah floater (% terhadap total) — ini indikator kesehatan batch upstream (proxy untuk PBKo + cacat petik).</span>
+            <span class="lang-en">Slip-positive beans washed with clean water in the Bonsari washing channel. Purpose: stop fermentation + remove mucilage residue. <strong>Visual endpoint</strong>: 2-3 water changes until rinse runs clear + beans no longer slick when grasped. Density sorting optional here: floater beans = air-filled/defect → commodity lot. Sinker beans = good → specialty lot. <strong>Waqif audit</strong>: photo washing channel, record floater count (% of total) — this is an upstream batch-health indicator (proxy for PBKo + harvest defects).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Fase 4 — Drying (Endpoint: MC 12-12,5% via Moisture Meter)</span><span class="lang-en">Step 4 · Phase 4 — Drying (Endpoint: MC 12-12.5% via Moisture Meter)</span></div>
+          <div class="step-text">
+            <span class="lang-id">Biji ber-parchment dijemur di raised bed Bonsari (sirkulasi udara, suhu &lt;40°C). Reversal teratur setiap 1-2 jam di hari-hari awal, 2-3 kali sehari di hari-hari akhir. <strong>Endpoint = MC 12-12,5%</strong> (toleransi ±0,5%), diukur dengan moisture meter green bean kalibrasi (Sinar AP-6060 atau setara). Durasi Ngantang humid: 12-16 hari sun-dry. JANGAN andalkan visual "sudah terlihat kering" — risiko jamur ochratoxin. <strong>Audit Wakif</strong>: kunjungan minimal 2x — hari ke-5 (MC ~30%) dan hari ke-12 (MC ~14%, dekat endpoint). Bawa moisture meter kalau perlu cross-check Bonsari.</span>
+            <span class="lang-en">Parchment beans dried on Bonsari raised beds (air circulation, temp &lt;40°C). Regular turning every 1-2 hours in early days, 2-3 times per day in late days. <strong>Endpoint = MC 12-12.5%</strong> (tolerance ±0.5%), measured with a calibrated green bean moisture meter (Sinar AP-6060 or equivalent). Ngantang humid duration: 12-16 days sun-dry. DO NOT rely on visual "looks dry" — ochratoxin mould risk. <strong>Waqif audit</strong>: minimum 2 visits — day 5 (MC ~30%) and day 12 (MC ~14%, near endpoint). Bring own moisture meter to cross-check Bonsari if needed.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Catat 4 Endpoint per Batch + Cupping Feedback Loop</span><span class="lang-en">Step 5 · Record 4 Endpoints per Batch + Cupping Feedback Loop</span></div>
+          <div class="step-text">
+            <span class="lang-id">Setiap batch lot harian dapat 1 baris record di Form Input dashboard monitor-v2: tanggal pulping, jam slip test positive, tanggal washing done, tanggal MC 12-12,5% achieved, total durasi. Setelah resting period 30 hari (post-drying), <strong>cupping</strong> bersama Bonsari/Nomad untuk evaluasi profil cup batch tersebut. Tag profil ke record batch — ini menjadi feedback loop untuk siklus berikutnya: batch mana yang baik, kondisi apa yang menghasilkan profil terbaik.</span>
+            <span class="lang-en">Each daily lot batch gets 1 record line in monitor-v2 dashboard Form Input: pulping date, slip-positive time, washing-done date, MC 12-12.5% achieved date, total duration. After 30-day resting period (post-drying), <strong>cupping</strong> with Bonsari/Nomad to evaluate that batch's cup profile. Tag the profile to the batch record — this becomes the feedback loop for next cycle: which batches were good, what conditions yielded the best profile.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Anda mengaudit batch di Bonsari pasca-fermentation. Pulper kebanggaan Bonsari menunjukkan timer "20 jam fermentasi sesuai SOP standar mereka". Anda lakukan slip test sendiri — hasil masih SLIPPERY, BELUM positive. Bonsari menyebut "ah, 20 jam itu sudah cukup di pengalaman kami, lanjut washing saja". Bagaimana Anda mengelola ini: (a) trust Bonsari karena ini bisnis core mereka; (b) minta tunda 4-6 jam lagi karena endpoint (slip positive) belum tercapai; (c) negosiasi mid-ground (cek kembali 2 jam lagi); atau (d) accept tapi flag batch ini sebagai possibly under-fermented saat cupping nanti?</p>
+      <p class="prompt lang-en">1. You audit a batch at Bonsari post-fermentation. Bonsari's proud pulper shows the timer "20 hours fermentation per our standard SOP". You do the slip test yourself — still SLIPPERY, NOT positive yet. Bonsari says "20 hours is enough in our experience, let's proceed to washing". How do you handle this: (a) trust Bonsari since processing is their core business; (b) ask for 4-6 more hours because the endpoint (slip positive) is not yet reached; (c) negotiate mid-ground (check again in 2 hours); or (d) accept but flag this batch as possibly under-fermented at the upcoming cupping?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Penulis modul ini memakai analogi <em>phase-based treatment protocol</em> dari psikologi klinis — stabilization → processing → integration. Andai Anda harus menjelaskan empat fase pasca-panen kopi kepada Cak Yit atau Pak Kumpul yang tidak akrab dengan istilah psikologi, analogi apa yang lebih dekat dengan keseharian mereka di Ngantang? (Misalnya: proses tempe — kedelai → rendam → kukus → inokulasi → fermentasi 2 hari → tempe siap; atau proses tape singkong, atau bahkan proses menyembelih hewan kurban yang punya tahapan sequential dengan endpoint per tahap?)</p>
+      <p class="prompt lang-en">2. The author of this module uses the <em>phase-based treatment protocol</em> analogy from clinical psychology — stabilization → processing → integration. If you had to explain the four post-harvest phases to Cak Yit or Pak Kumpul who are unfamiliar with psychology terms, what closer analogy from their Ngantang daily life works? (For example: tempeh making — soybeans → soak → steam → inoculate → ferment 2 days → tempeh ready; or tapai cassava; or even the sequential steps of qurban slaughtering with per-step endpoints?)</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Modul ini fokus ke metode <em>fully washed</em> sebagai default specialty NGT. Tetapi ada dua metode lain: <strong>natural process</strong> (jemur ceri utuh tanpa pulping, fermentasi terkontrol di dalam ceri 14-25 hari) yang menghasilkan profil fruity-funky dicari roaster premium, dan <strong>honey process</strong> (pulping tapi mucilage tidak dicuci, langsung jemur) yang menghasilkan profil sweetness-medium body. Andai panen NGT 2026 terlalu kecil untuk lot specialty bagi 3 metode, dan Anda harus pilih SATU sebagai default — fully washed (clean, dapat diandalkan), natural (high-risk high-reward), atau honey (mid-risk mid-reward)? Apa pertimbangan untuk konteks NGT (humid climate, mitra Bonsari, target Mutu 3 dulu)?</p>
+      <p class="prompt lang-en">3. This module focuses on the <em>fully washed</em> method as NGT's default specialty. But two other methods exist: <strong>natural process</strong> (drying whole cherries unpulped, fermentation controlled inside cherry 14-25 days) yielding fruity-funky profiles sought by premium roasters, and <strong>honey process</strong> (pulping but mucilage uncleaned, dried directly) yielding sweetness-medium-body. If NGT 2026 harvest is too small for 3-method specialty lots and you must pick ONE as default — fully washed (clean, reliable), natural (high-risk high-reward), or honey (mid-risk mid-reward)? What are the considerations for NGT context (humid climate, Bonsari partner, Grade 3 target initially)?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 71–72 — Teknik aplikasi pupuk parit lingkar piringan)</em> ⭐ Acuan utama Modul ini.</li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.12 — Coffee Fertilization, nutrient placement & fertilizer use efficiency (FUE). <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 19 — Aplikasi dalam alur melingkar pada proyeksi tajuk)</em></li>
+      <li><strong>BRIN (2024).</strong> Tabel Dosis Pupuk per Umur Tanaman untuk Robusta Indonesia. <em>Sumber dosis yang dieksekusi via teknik aplikasi modul ini.</em></li>
+      <li><strong>Modul C — Pemupukan Kimia 5–10 Tahun (Mei 2026).</strong> <a href="../P-window-12-jam/index.html">Cross-reference</a> — modul ini menjawab "bagaimana" untuk dosis yang dijelaskan di Modul C ("berapa banyak dan kapan").</li>
+      <li><strong>RAB Final Wakaf Produktif (9 Mei 2026).</strong> Implikasi ekonomis: nilai pupuk Rp 27 jt/tahun yang diaplikasi salah dapat kehilangan Rp 13,5–18,9 jt. <em>(Internal · /SOP/RAB_FINAL_9Mei2026.docx)</em></li>
+      <li><strong>SOP Pasca-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../P-window-12-jam/index.html"><span class="lang-id">← Modul P: Window 12 Jam</span><span class="lang-en">← Module P: 12-Hour Window</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="../../belajar.html" class="next"><span class="lang-id">Hub Belajar (Modul R-S coming soon) →</span><span class="lang-en">Learning Hub (Modules R-S coming soon) →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'Q';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>

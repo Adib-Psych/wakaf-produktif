@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modul P — Window 12 Jam: Petik → Proses · Belajar Wakaf Produktif Kebun Kopi Ngantang</title>
+<meta name="description" content="Modul belajar SOP Robusta Kebun Wakaf Ngantang: Window 12 jam petik→proses — mengapa setiap menit setelah petik menentukan mutu cup, dengan analogi therapeutic window dari psikologi klinis.">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+
+/* ══════════════════════════════════
+   PALETTE R2 — EUCALYPTUS (Wakaf brand)
+══════════════════════════════════ */
+:root {
+  --dark:    #2e4040;
+  --medium:  #5a9080;
+  --light:   #a8c8bc;
+  --accent:  #c4906a;
+  --cherry:  #c14b3a;
+  --gold:    #b9892f;
+  --bg:      #f0f5f3;
+  --bg-tint: #e8f4f0;
+  --bg-deep: #d8eeea;
+  --white:   #ffffff;
+  --text:    #1e3030;
+  --muted:   #5a7878;
+  --ease:    cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; display: block; }
+a   { color: inherit; text-decoration: none; }
+
+.lang-en { display: none; }
+span.lang-en { display: none; }
+
+/* ══════════════════════════════════ NAVBAR ══ */
+.navbar {
+  position: sticky; top: 0; z-index: 200;
+  background: var(--dark); border-bottom: 1px solid rgba(168,200,188,0.1);
+  padding: .7rem 1.5rem;
+}
+.navbar-inner { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.navbar-brand { display: flex; align-items: center; gap: .75rem; }
+.navbar-right { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.navbar-nav { list-style: none; display: flex; align-items: center; gap: 1.4rem; }
+.navbar-nav a { color: var(--light); font-size: .92rem; font-weight: 500; transition: color .2s; }
+.navbar-nav a:hover, .navbar-nav a.active { color: #fff; }
+.lang-btn { background: transparent; border: 1px solid rgba(168,200,188,.3); color: var(--light); padding: 3px 9px; border-radius: 4px; cursor: pointer; font-size: .72rem; font-weight: 600; }
+.lang-btn.active { background: var(--medium); color: #fff; border-color: var(--medium); }
+.btn-nav-cta { background: var(--accent); color: #fff; padding: .45rem 1rem; border-radius: 6px; font-weight: 600; font-size: .88rem; }
+.rwi-nav-badge { display: inline-flex; align-items: center; gap: .5rem; background: rgba(168,200,188,.08); padding: .35rem .7rem; border-radius: 6px; border: 1px solid rgba(168,200,188,.18); }
+.rwi-nav-text .rwi-nav-label { font-size: .58rem; letter-spacing: .15em; color: var(--light); text-transform: uppercase; }
+.rwi-nav-text .rwi-nav-name { font-size: .72rem; color: #fff; font-weight: 600; }
+
+/* ══ BREADCRUMB ══ */
+.breadcrumb { max-width: 880px; margin: 0 auto; padding: 1rem 1.5rem 0; font-size: .85rem; color: var(--muted); }
+.breadcrumb a { color: var(--medium); font-weight: 600; }
+.breadcrumb a:hover { color: var(--dark); text-decoration: underline; }
+
+/* ══ PAGE WRAPPER ══ */
+.page-wrap { max-width: 880px; margin: 0 auto; padding: 1.5rem 1.5rem 4rem; }
+
+/* ══ MODULE HERO ══ */
+.module-hero {
+  background: linear-gradient(135deg, var(--dark) 0%, #1f2e2e 100%);
+  color: #fff; padding: 2.5rem 2.4rem 2.5rem 3rem;
+  border-radius: 14px; border-left: 8px solid var(--accent);
+  box-shadow: 0 4px 20px rgba(46,64,64,.18); margin-bottom: 2rem; position: relative;
+}
+.module-hero .topic-badge { font-size: .68rem; font-weight: 700; letter-spacing: .25em; color: var(--light); margin-bottom: .8rem; display: flex; align-items: center; gap: .8rem; text-transform: uppercase; }
+.module-hero .topic-badge .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+.module-hero h1 { font-size: 2rem; font-weight: 800; line-height: 1.18; letter-spacing: -.01em; margin-bottom: .5rem; color: #fff; }
+.module-hero h1 em { color: var(--light); font-style: italic; font-weight: 700; }
+.module-hero .subtitle { font-size: 1rem; color: var(--light); margin-bottom: 1.2rem; line-height: 1.55; }
+.module-hero .outcomes { background: rgba(255,255,255,0.07); border-radius: 10px; padding: 1rem 1.2rem; font-size: .92rem; }
+.module-hero .outcomes-label { font-size: .65rem; letter-spacing: .2em; color: var(--light); font-weight: 700; text-transform: uppercase; margin-bottom: .55rem; }
+.module-hero .outcomes ul { list-style: none; padding: 0; }
+.module-hero .outcomes li { padding: .25rem 0 .25rem 1.4rem; position: relative; color: rgba(255,255,255,.92); line-height: 1.5; }
+.module-hero .outcomes li::before { content: '→'; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.progress-bar { height: 4px; background: rgba(255,255,255,.12); border-radius: 4px; overflow: hidden; margin-top: 1rem; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--medium) 0%, var(--accent) 100%); width: 0%; transition: width .4s ease; border-radius: 4px; }
+
+/* ══ HERO IMAGE ══ */
+.hero-img { margin-bottom: 2rem; border-radius: 14px; overflow: hidden; box-shadow: 0 4px 20px rgba(46,64,64,.12); position: relative; }
+.hero-img img { width: 100%; height: auto; max-height: 380px; object-fit: cover; }
+.hero-img .credit { position: absolute; bottom: 0; right: 0; background: rgba(30,48,48,.7); color: #fff; padding: .35rem .8rem; font-size: .72rem; border-top-left-radius: 8px; }
+.hero-img .credit a { color: #fff; text-decoration: underline; }
+
+/* ══ SECTIONS ══ */
+.sec { margin-bottom: 2.5rem; }
+.sec-head { display: flex; align-items: center; gap: .9rem; margin-bottom: 1rem; }
+.sec-head .num { width: 34px; height: 34px; border-radius: 50%; background: var(--medium); color: #fff; display: flex; align-items: center; justify-content: center; font-size: .92rem; font-weight: 800; flex-shrink: 0; box-shadow: 0 2px 0 var(--dark); }
+.sec-head .num.cherry { background: var(--cherry); box-shadow: 0 2px 0 #952f1f; }
+.sec-head .num.gold { background: var(--gold); box-shadow: 0 2px 0 #735519; }
+.sec-head h2 { font-size: 1.4rem; font-weight: 800; color: var(--dark); letter-spacing: -.01em; line-height: 1.3; }
+.sec-head .label { font-size: .68rem; letter-spacing: .15em; color: var(--muted); font-style: italic; text-transform: uppercase; }
+
+.sec p { margin-bottom: .9rem; font-size: 1rem; text-align: justify; color: var(--text); line-height: 1.7; }
+.sec p strong { color: var(--dark); }
+.sec p em { color: var(--cherry); font-style: italic; font-weight: 600; }
+.sec a { color: var(--medium); font-weight: 600; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sec a:hover { color: var(--dark); }
+
+/* ══ COLORED BOXES ══ */
+.box { padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.2rem 0; }
+.box-cherry { background: #fce8e3; border-left: 5px solid var(--cherry); }
+.box-moss { background: var(--bg-deep); border-left: 5px solid var(--medium); }
+.box-amber { background: #f4eadb; border-left: 5px solid var(--accent); }
+.box-uniq { background: #efe9f2; border-left: 5px solid #8a72a3; }
+.box .box-label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; text-transform: uppercase; margin-bottom: .5rem; }
+.box-cherry .box-label { color: var(--cherry); }
+.box-moss .box-label { color: var(--dark); }
+.box-amber .box-label { color: var(--gold); }
+.box p { margin-bottom: 0; font-size: .96rem; }
+
+/* ══ ANALOGY CALLOUT ══ */
+.analogy { background: linear-gradient(135deg, #efe9f2 0%, #e6dde9 100%); border: 1px dashed #8a72a3; padding: 1.2rem 1.4rem; border-radius: 12px; margin: 1.4rem 0; }
+.analogy .label { font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: #8a72a3; text-transform: uppercase; margin-bottom: .55rem; display: flex; align-items: center; gap: .5rem; }
+.analogy .label::before { content: '🧠'; font-size: 1rem; }
+.analogy p { font-size: .96rem; margin: 0; line-height: 1.65; }
+
+/* ══ GALLERY ══ */
+.gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin: 1.4rem 0; }
+.gallery-item { background: #fff; border: 1px solid rgba(46,64,64,.1); border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(46,64,64,.06); transition: transform .2s; }
+.gallery-item:hover { transform: translateY(-2px); }
+.gallery-item img { width: 100%; height: 150px; object-fit: cover; }
+.gallery-item .caption { padding: .7rem .85rem; font-size: .82rem; color: var(--text); line-height: 1.45; }
+.gallery-item .credit { font-size: .68rem; color: var(--muted); margin-top: .35rem; font-style: italic; }
+.gallery-item .credit a { color: var(--medium); }
+
+/* ══ VIDEO EMBED ══ */
+.video-wrap { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; margin: 1.2rem 0 .3rem; box-shadow: 0 4px 16px rgba(46,64,64,.12); background: #000; }
+.video-wrap iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+.video-credit { font-size: .78rem; color: var(--muted); font-style: italic; margin-bottom: 1.2rem; text-align: right; }
+.video-credit a { color: var(--medium); }
+
+/* ══ KOMPARASI TABLE ══ */
+.komparasi { width: 100%; border-collapse: separate; border-spacing: 0; margin: 1.4rem 0; font-size: .9rem; box-shadow: 0 2px 8px rgba(46,64,64,.06); border-radius: 10px; overflow: hidden; }
+.komparasi th { background: var(--dark); color: #fff; padding: .7rem .85rem; text-align: left; font-weight: 700; font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; }
+.komparasi td { padding: .85rem 1rem; border-top: 1px solid rgba(46,64,64,.08); vertical-align: top; line-height: 1.55; background: #fff; }
+.komparasi td strong { color: var(--dark); }
+
+/* ══ PRACTICE STEPS ══ */
+.progress-counter { font-style: normal; color: var(--medium); font-weight: 600; }
+.steps { padding: .5rem 0; }
+.step { display: flex; gap: 1rem; padding: .85rem 0; border-bottom: 1px solid rgba(46,64,64,.08); align-items: flex-start; }
+.step:last-child { border-bottom: none; }
+.step-check { width: 24px; height: 24px; border-radius: 6px; border: 2px solid var(--medium); cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: #fff; transition: all .15s; margin-top: 2px; }
+.step-check.done { background: var(--medium); border-color: var(--dark); }
+.step-check.done::after { content: '✓'; color: #fff; font-weight: 800; font-size: .9rem; }
+.step-body { flex: 1; }
+.step-num { display: inline-block; font-size: .68rem; letter-spacing: .15em; font-weight: 800; color: var(--cherry); text-transform: uppercase; margin-bottom: .15rem; }
+.step-text { font-size: .94rem; color: var(--text); line-height: 1.55; }
+
+/* ══ REFLECTION ══ */
+.reflection { background: #fff; border: 2px solid var(--medium); border-radius: 14px; padding: 1.5rem 1.7rem; margin: 1.6rem 0; position: relative; }
+.reflection::before { content: '🪞'; position: absolute; top: -12px; left: 22px; background: var(--bg); padding: 0 .5rem; font-size: 1.2rem; }
+.reflection .label { font-size: .72rem; letter-spacing: .15em; color: var(--dark); font-weight: 800; text-transform: uppercase; margin-bottom: .9rem; }
+.reflection .prompt { font-size: .94rem; color: var(--text); margin-bottom: .7rem; line-height: 1.6; font-style: italic; }
+.reflection textarea { width: 100%; min-height: 110px; padding: .8rem 1rem; border: 1px solid rgba(46,64,64,.18); border-radius: 8px; font-family: inherit; font-size: .92rem; line-height: 1.55; color: var(--text); background: var(--bg); resize: vertical; }
+.reflection textarea:focus { outline: 2px solid var(--medium); outline-offset: 2px; border-color: var(--medium); }
+.reflection .save-note { display: flex; align-items: center; gap: .65rem; margin-top: .55rem; font-size: .75rem; color: var(--muted); font-style: italic; }
+.save-status { color: var(--medium); font-weight: 600; }
+
+/* ══ CITATIONS ══ */
+.citations { background: #fff; border: 1px solid rgba(46,64,64,.12); border-radius: 12px; padding: 1.4rem 1.6rem; margin-top: 2rem; font-size: .85rem; }
+.citations h3 { font-size: .85rem; font-weight: 800; color: var(--dark); margin-bottom: .9rem; text-transform: uppercase; letter-spacing: .12em; }
+.citations ul { list-style: none; padding: 0; }
+.citations li { padding: .4rem 0 .4rem 1.1rem; position: relative; color: var(--muted); line-height: 1.55; font-size: .82rem; }
+.citations li::before { content: '•'; position: absolute; left: .2rem; color: var(--medium); font-weight: 800; }
+.citations li strong { color: var(--dark); }
+.citations a { color: var(--medium); text-decoration: underline; }
+
+/* ══ MODULE NAV (prev/next) ══ */
+.module-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(46,64,64,.1); flex-wrap: wrap; gap: .8rem; }
+.module-nav a { padding: .65rem 1.2rem; background: #fff; border: 1px solid rgba(46,64,64,.15); border-radius: 8px; color: var(--dark); font-weight: 600; font-size: .9rem; transition: all .15s; }
+.module-nav a:hover { background: var(--bg-deep); border-color: var(--medium); }
+.module-nav .next { background: var(--medium); color: #fff; border-color: var(--dark); }
+.module-nav .next:hover { background: var(--dark); }
+
+/* ══ FOOTER ══ */
+.footer { background: var(--dark); color: rgba(255,255,255,.78); margin-top: 4rem; padding: 2.5rem 1.5rem; font-size: .85rem; }
+.footer-inner { max-width: 880px; margin: 0 auto; text-align: center; }
+.footer-verse { font-family: 'Lora', serif; font-style: italic; line-height: 1.65; margin-bottom: 1.4rem; color: var(--light); font-size: .9rem; }
+.footer-brand { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: #fff; font-size: 1rem; margin-bottom: .35rem; }
+.footer-meta { font-size: .78rem; color: rgba(255,255,255,.6); }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width: 700px) {
+  .module-hero { padding: 1.8rem 1.5rem; }
+  .module-hero h1 { font-size: 1.5rem; }
+  .navbar-nav { gap: .8rem; }
+  .navbar-nav a { font-size: .85rem; }
+  .rwi-nav-badge { display: none !important; }
+}
+
+
+/* ══ BUKU SAKU LAPANGAN — Field Pocketbook ══ */
+.bks-block { background: var(--white); border: 1px solid rgba(46,64,64,.12); border-left: 5px solid var(--medium); border-radius: 10px; padding: 1.1rem 1.3rem; margin: 1.2rem 0; }
+.bks-block.bks-critical { border-left-color: var(--cherry); background: #fdf6f4; }
+.bks-block.bks-safety { border-left-color: var(--gold, #b9892f); background: #fdfaf2; }
+.bks-block.bks-recovery { border-left-color: var(--accent); background: #fbf6f1; }
+.bks-block.bks-special { border-left-color: var(--medium); background: #f4faf8; }
+.bks-head { display: flex; align-items: center; gap: .8rem; margin-bottom: .8rem; }
+.bks-num { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: var(--dark); color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem; flex-shrink: 0; }
+.bks-num.cherry { background: var(--cherry); }
+.bks-num.accent { background: var(--accent); }
+.bks-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--dark); }
+.bks-sub { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: .92rem; color: var(--medium); margin: .9rem 0 .35rem; letter-spacing: .02em; }
+.bks-list { margin: .3rem 0 .3rem 1.4rem; padding: 0; }
+.bks-list li { margin: .35rem 0; line-height: 1.55; color: var(--text); font-size: .92rem; }
+.bks-table { width: 100%; border-collapse: collapse; margin: .5rem 0; font-size: .88rem; }
+.bks-table th { background: var(--dark); color: #fff; padding: .55rem .7rem; text-align: left; font-weight: 700; }
+.bks-table td { padding: .55rem .7rem; border-bottom: 1px solid rgba(46,64,64,.1); vertical-align: top; line-height: 1.5; color: var(--text); }
+.bks-table tr:nth-child(even) td { background: var(--bg-tint, #e8f4f0); }
+.num.gold { background: var(--gold, #b9892f); }
+</style>
+</head>
+<body>
+
+<!-- ══ NAVBAR (consistent with belajar.html) ══ -->
+<header class="navbar">
+  <div class="navbar-inner">
+    <a href="../../index.html" class="navbar-brand">
+      <img src="../../images/logo-wakaf-produktif-3x1-bg.png" alt="Wakaf Produktif Kebun Kopi Ngantang" style="height:48px;width:auto;max-width:144px;display:block;border-radius:4px">
+    </a>
+    <div class="navbar-right">
+      <nav>
+        <ul class="navbar-nav">
+          <li><a href="../../index.html"><span class="lang-id">Beranda</span><span class="lang-en">Home</span></a></li>
+          <li><a href="../../program.html">Program</a></li>
+          <li><a href="../../belajar.html" class="active"><span class="lang-id">Belajar</span><span class="lang-en">Learn</span></a></li>
+          <li><a href="../../living-lab.html">Living Lab</a></li>
+          <li><a href="../../kontak.html"><span class="lang-id">Kontak</span><span class="lang-en">Contact</span></a></li>
+        </ul>
+      </nav>
+      <button class="lang-btn active" id="btn-id" onclick="setLang('id')">ID</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=id" target="_blank" rel="noopener" class="rwi-nav-badge lang-id" title="Lihat profil Wakif"><div class="rwi-nav-text"><div class="rwi-nav-label">Wakif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psikolog</div></div></a>
+      <a href="https://adib-psych.github.io/myjourney/home.html?lang=en" target="_blank" rel="noopener" class="rwi-nav-badge lang-en" title="View Waqif profile"><div class="rwi-nav-text"><div class="rwi-nav-label">Waqif</div><div class="rwi-nav-name">Adib Asrori, M.Psi, Psychologist</div></div></a>
+    </div>
+  </div>
+</header>
+
+<!-- ══ BREADCRUMB ══ -->
+<div class="breadcrumb">
+  <a href="../../belajar.html"><span class="lang-id">← Ruang Belajar</span><span class="lang-en">← Learning Space</span></a>
+  <span class="lang-id"> · Kurikulum SOP Perawatan Kopi · <strong>Modul D</strong></span>
+  <span class="lang-en"> · Coffee SOP Curriculum · <strong>Module D</strong></span>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="page-wrap" data-topic="P">
+
+  <!-- HERO -->
+  <div class="module-hero">
+    <div class="topic-badge">
+      <span class="dot"></span>
+      <span class="lang-id">Modul P · Pasca-Panen Primer · 16 dari 19</span>
+      <span class="lang-en">Module P · Primary Post-Harvest · 16 of 19</span>
+    </div>
+    <h1>
+      <span class="lang-id">Window <em>12 Jam</em>: Petik → Proses</span>
+      <span class="lang-en">The <em>12-Hour Window</em>: Picking → Processing</span>
+    </h1>
+    <p class="subtitle">
+      <span class="lang-id">Mengapa setiap jam setelah petik menentukan profil cup — analogi <em>therapeutic window</em> &amp; <em>golden hour</em> dari kedokteran gawat darurat</span>
+      <span class="lang-en">Why every hour after picking shapes the cup profile — a <em>therapeutic window</em> &amp; <em>golden hour</em> analogy from emergency medicine</span>
+    </p>
+    <div class="outcomes">
+      <div class="outcomes-label">
+        <span class="lang-id">Setelah Modul Ini, Saya Akan Paham</span>
+        <span class="lang-en">After This Module, I Will Understand</span>
+      </div>
+      <ul>
+        <li>
+          <span class="lang-id">Mengapa biji kopi mulai mengalami fermentasi tak terkontrol dalam jam pertama setelah petik — bukan setelah satu hari</span>
+          <span class="lang-en">Why coffee cherries begin uncontrolled fermentation within the first hour after picking — not after a day</span>
+        </li>
+        <li>
+          <span class="lang-id">Anatomi window 12 jam: jam ke-0 (petik) · jam ke-2 (turun titik kumpul) · jam ke-6 (titik kritis) · jam ke-12 (batas mutlak pulping)</span>
+          <span class="lang-en">Anatomy of the 12-hour window: hour 0 (pick) · hour 2 (move to collection point) · hour 6 (critical) · hour 12 (absolute limit)</span>
+        </li>
+        <li>
+          <span class="lang-id">Tiga kesalahan umum yang menggagalkan window 12 jam: ceri menumpuk di terik · wadah tertutup (panas akumulasi) · transport sore (panen pagi jadi sia-sia)</span>
+          <span class="lang-en">Three common mistakes that derail the 12-hour window: heap exposed to direct sun · closed containers (heat buildup) · evening transport (morning harvest wasted)</span>
+        </li>
+        <li>
+          <span class="lang-id">Mengapa <em>therapeutic window</em> di kopi sama urgent-nya dengan di stroke akut — analogi rt-PA &lt;4.5 jam, sepsis 1-hour bundle, golden hour trauma</span>
+          <span class="lang-en">Why the <em>therapeutic window</em> in coffee is as urgent as in acute stroke — analogy of rt-PA &lt;4.5h, sepsis 1-hour bundle, trauma golden hour</span>
+        </li>
+      </ul>
+    </div>
+    <div class="progress-bar"><div class="progress-fill"></div></div>
+  </div>
+
+  <!-- HERO IMAGE -->
+  <div class="hero-img">
+    <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_cherries_drying.jpg?width=1280" alt="Freshly picked coffee cherries waiting for processing — every hour matters" loading="lazy">
+    <div class="credit"><span class="lang-id">Foto: Ceri kopi yang baru dipetik menunggu untuk diproses — setiap jam menentukan mutu cup · </span><span class="lang-en">Photo: Freshly picked coffee cherries awaiting processing — every hour shapes the cup quality · </span><a href="https://commons.wikimedia.org/wiki/File:Coffee_cherries_drying.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+  </div>
+
+  <!-- STORY INTRO -->
+  <section class="sec">
+    <p class="lang-id">Dua keranjang ceri kopi, dipetik di jam yang sama, dari pohon yang sama. Keranjang A langsung dibawa ke pulper dalam tiga jam. Keranjang B dibiarkan menumpuk di kebun hingga sore, baru diangkut malam hari. Saat di-cup berbulan-bulan kemudian: keranjang A memberikan profil bersih, manis, beraroma buah; keranjang B memberikan rasa fermentasi liar, off-flavor, asam tajam. Sumber buah sama, panen sama hari — tetapi <em>jam yang berbeda</em> menghasilkan kopi yang fundamentally berbeda.</p>
+    <p class="lang-en">Two baskets of coffee cherries, picked at the same hour, from the same tree. Basket A goes straight to the pulper within three hours. Basket B is left heaped in the garden until evening, transported only at night. When cupped months later: basket A yields a clean, sweet, fruity profile; basket B yields wild fermentation, off-flavors, sharp acidity. Same source, same harvest day — but <em>different hours</em> produce coffees that are fundamentally different.</p>
+
+    <p class="lang-id">Setelah Modul O mengunci <em>buah mana yang dipetik</em> (hanya merah penuh), modul ini menjawab pertanyaan berikutnya: <em>berapa lama buah boleh menunggu sebelum diproses</em>. Jawaban SOP Kementan dan praktik specialty di seluruh dunia konvergen pada satu angka: <strong>12 jam</strong>. Lebih dari itu, mutu cup turun secara terukur — bukan karena ceri "rusak" secara visual, tetapi karena kimia internal biji sudah berubah.</p>
+    <p class="lang-en">After Module O locked in <em>which fruit to pick</em> (only fully red), this module answers the next question: <em>how long can fruit wait before processing</em>. The answer that Indonesian SOP and global specialty practice converge upon: <strong>12 hours</strong>. Beyond that, cup quality drops measurably — not because the cherry "spoils" visually, but because the bean's internal chemistry has already shifted.</p>
+
+    <p class="lang-id">Modul ini ditulis oleh seorang psikolog klinis yang sedang belajar agronomi kopi dari awal. Pendekatannya: meminjam konsep <em>therapeutic window</em> dari kedokteran gawat darurat. Stroke iskemik akut: rt-PA harus diberikan dalam window 4,5 jam — lebih dari itu, kerusakan otak menjadi permanen. Sepsis: 1-hour bundle (kultur darah, antibiotik, fluid) — setiap jam keterlambatan menaikkan mortalitas 7-8%. Trauma: golden hour — penanganan dalam jam pertama menentukan survival. Kopi tidak menyangkut nyawa, tetapi mekanisme waktu-kritisnya identik.</p>
+    <p class="lang-en">This module is written by a clinical psychologist learning coffee agronomy from scratch. The approach: borrow <em>therapeutic window</em> from emergency medicine. Acute ischemic stroke: rt-PA must be given within a 4.5-hour window — beyond that, brain damage becomes permanent. Sepsis: 1-hour bundle (blood culture, antibiotics, fluids) — every hour of delay raises mortality 7-8%. Trauma: golden hour — care in the first hour determines survival. Coffee is not life-or-death, but the time-critical mechanism is identical.</p>
+  </section>
+
+  <!-- KONTEKS NGANTANG -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num cherry">1</div>
+      <h2><span class="lang-id">Konteks Kebun Wakaf Ngantang</span><span class="lang-en">The Ngantang Waqf Garden Context</span></h2>
+    </div>
+
+    <p class="lang-id">Kebun kopi wakaf di Ngantang berada pada lereng dengan kemiringan yang nyata — terutama di Bidang 3 (yang paling miring). Saat hujan deras turun (2.500–3.000 mm setahun), tanah dengan kemiringan ini mudah mengalami <em>surface run-off</em>: air mengalir di permukaan, membawa pupuk yang ditabur ke arah lembah, jauh dari pohon yang membutuhkan. Topografi ini menambah satu alasan struktural lagi mengapa pupuk harus <strong>masuk ke dalam tanah</strong> via parit, bukan tertinggal di permukaan.</p>
+    <p class="lang-en">The Ngantang waqf garden sits on a noticeably sloping terrain — especially Block 3 (the steepest). When heavy rains fall (2,500–3,000 mm per year), soil with this slope is prone to <em>surface run-off</em>: water flows across the surface, carrying surface-broadcast fertilizer toward the valley, away from the trees that need it. This topography adds one more structural reason why fertilizer must <strong>enter the soil</strong> via a trench, not be left on the surface.</p>
+
+    <div class="box box-cherry">
+      <div class="box-label"><span class="lang-id">⚠ Realitas Saat Ini</span><span class="lang-en">⚠ Current Reality</span></div>
+      <p class="lang-id">Di Ngantang, eksekusi lapangan dilakukan oleh <strong>Pak Kumpul</strong> sebagai pekerja Bagian Bawah Pohon (yang sebelumnya juga membangun rorak — Modul L). Aplikasi pupuk parit lingkar piringan memerlukan: cangkul atau garpu tanah, pengukur (langkah kaki cukup), wadah pupuk, dan disiplin untuk konsisten radius dan kedalaman di semua pohon. Untuk 750 pohon × dua aplikasi setahun, total ada 1.500 kali "buka-tutup parit" — pekerjaan yang serius dan layak dianggarkan tersendiri di RAB.</p>
+      <p class="lang-en">In Ngantang, field execution is carried out by <strong>Pak Kumpul</strong> as the Below-Tree worker (who has also built the rorak conservation pits — Module L). Trench-application fertilization requires: a hoe or garden fork, a measure (foot-paces will do), a fertilizer container, and the discipline to maintain consistent radius and depth across all trees. For 750 trees × two applications per year, that means a total of 1,500 trench "open-and-close" cycles — serious work that deserves its own budget line in the RAB.</p>
+    </div>
+
+    <p class="lang-id">Implikasinya: cara aplikasi bukan detail kosmetik melainkan <strong>multiplier dari investasi pupuk</strong>. Pupuk Rp 27 juta setahun (RAB Siklus 2027) yang ditabur tebar di permukaan dapat memberi hasil yang sebanding dengan setengah dosis tetapi diaplikasikan benar. Sebaliknya: dosis benar + aplikasi benar = nilai investasi penuh tercapai. Modul ini sangat penting di-cross-check oleh Wakif sebelum eksekusi aplikasi pertama, supaya tidak terjadi kebocoran nilai.</p>
+    <p class="lang-en">The implication: application technique is not a cosmetic detail but a <strong>multiplier of the fertilizer investment</strong>. An IDR 27 million annual fertilizer outlay (RAB Cycle 2027) broadcast on the surface can yield results comparable to half the dose applied correctly. Conversely: correct dose + correct application = full investment value realized. This Module deserves a careful cross-check from the Waqif before the first application, to prevent value leakage.</p>
+  </section>
+
+  <!-- TEORI DASAR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">2</div>
+      <h2><span class="lang-id">Teori Dasar: Anatomi Window 12 Jam</span><span class="lang-en">Theory: Anatomy of the 12-Hour Window</span></h2>
+      <div class="label">schema building</div>
+    </div>
+
+    <p class="lang-id">Mengapa 12 jam, bukan 24 jam atau "yang penting hari yang sama"? Karena begitu ceri dipetik dari pohon, <em>jam biologisnya dimulai</em>. Dalam ceri yang masih menempel di pohon, biji terlindung oleh metabolisme yang aktif: pohon menyuplai O₂, mengatur kelembapan, dan biji menjalankan respirasi dorman terkontrol. Saat dipetik, suplai ini terputus. <strong>Enzim di dalam biji</strong> terus bekerja tetapi tanpa kontrol — terutama enzim yang memecah gula dan asam organik. <strong>Mikroflora permukaan</strong> (ragi liar, bakteri lactic acid, bakteri acetic acid) mulai berkembang biak di kulit ceri yang masih basah. Setiap jam berikutnya, "interior" biji bergeser dari kondisi netral ke kondisi fermentasi tak terkontrol.</p>
+    <p class="lang-id">Anatomi window 12 jam dipecah jadi 4 fase kritis:</p>
+    <ul class="lang-id" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Jam 0 (petik)</strong> — ceri keluar dari pohon. Suhu interior ~25-28°C, pH netral, mikroflora masih dorman. Tidak ada perubahan rasa yang terdeteksi.</li>
+      <li><strong>Jam 2 (turun titik kumpul)</strong> — batas aman pertama. Ceri masih bisa menerima panas matahari ringan tetapi sudah harus pindah ke tempat teduh. Akumulasi panas di tumpukan mulai bermasalah.</li>
+      <li><strong>Jam 6 (titik kritis)</strong> — enzim pemecah gula mulai aktif, ragi liar mulai berkembang. Profil cup masih recoverable kalau langsung di-pulping, tetapi sudah dekat batas.</li>
+      <li><strong>Jam 12 (batas mutlak)</strong> — di luar window ini, fermentasi tak terkontrol sudah signifikan. Buah masih bisa di-proses, tetapi profilnya sudah "fermenty" — bukan cacat fatal, tetapi bukan specialty.</li>
+    </ul>
+    <p class="lang-en">Why 12 hours, not 24 hours or "same day"? Because the moment a cherry is picked from the tree, <em>its biological clock starts</em>. While still attached, the bean is protected by active tree metabolism: O₂ supply, controlled humidity, and dormant respiration. When picked, this supply ends. <strong>Enzymes inside the bean</strong> continue working but without control — especially enzymes that break down sugars and organic acids. <strong>Surface microflora</strong> (wild yeast, lactic-acid bacteria, acetic-acid bacteria) begin multiplying on the still-wet cherry skin. With each passing hour, the bean's "interior" shifts from a neutral state toward uncontrolled fermentation.</p>
+    <p class="lang-en">The anatomy of the 12-hour window breaks into 4 critical phases:</p>
+    <ul class="lang-en" style="margin: 0.6rem 0 1rem 1.5rem; line-height: 1.7;">
+      <li><strong>Hour 0 (pick)</strong> — cherry leaves the tree. Interior temp ~25-28°C, pH neutral, microflora still dormant. No detectable flavor change yet.</li>
+      <li><strong>Hour 2 (move to collection point)</strong> — first safety threshold. Cherry can still take mild sun but must shift to shade. Heat accumulation in heaps starts being a problem.</li>
+      <li><strong>Hour 6 (critical point)</strong> — sugar-breaking enzymes activate, wild yeasts begin multiplying. Cup profile is still recoverable if pulped immediately, but close to the edge.</li>
+      <li><strong>Hour 12 (absolute limit)</strong> — beyond this, uncontrolled fermentation is significant. The fruit can still be processed, but the profile has shifted "fermenty" — not a fatal defect, but not specialty either.</li>
+    </ul>
+
+    <p class="lang-id">Kenapa 12 jam menjadi <em>tipping point</em>, bukan 6 atau 18 jam? Karena pada kisaran 8-14 jam pasca-petik, populasi mikroba permukaan ceri mencapai threshold di mana mereka mulai menembus kulit ceri dan masuk ke lendir (mucilage) yang melekat pada biji. Sebelum threshold itu, mikroba terbatas di permukaan dan masih bisa dicuci hilang saat pulping/washing. Setelah threshold itu, mereka sudah <em>internal</em> — kontak dengan biji, mempengaruhi profil rasa yang akan tertinggal di green bean. Window 12 jam adalah median kompromi antara realitas lapangan (kebun jauh, ojek transport terbatas) dan window biologis yang sebenarnya 8-14 jam.</p>
+    <p class="lang-en">Why does 12 hours become the <em>tipping point</em>, not 6 or 18? Because in the 8-14 hour range post-pick, surface microbe populations on the cherry reach a threshold where they begin penetrating the cherry skin and entering the mucilage layer attached to the bean. Before that threshold, microbes are confined to the surface and can still be washed away during pulping. After it, they are already <em>internal</em> — in contact with the bean, affecting the flavor profile that will be retained in the green bean. The 12-hour window is the median compromise between field realities (remote gardens, limited transport) and the actual 8-14 hour biological window.</p>
+
+    <div class="analogy">
+      <div class="label"><span class="lang-id">Analogi dari Kedokteran Gawat Darurat — Therapeutic Window &amp; Golden Hour</span><span class="lang-en">An Analogy from Emergency Medicine — Therapeutic Window &amp; Golden Hour</span></div>
+      <p class="lang-id">Dalam kedokteran gawat darurat, ada beberapa kondisi di mana <strong>waktu adalah substrat utama</strong> intervensi — bukan obat, bukan dosis, bukan dokter. Stroke iskemik akut: rt-PA (tissue plasminogen activator) hanya boleh diberikan dalam window 4,5 jam dari onset gejala — lebih dari itu, kerusakan otak tidak reversibel meski obat diberikan. Sepsis: 1-hour bundle (Surviving Sepsis Campaign) — kultur darah, antibiotik spektrum luas, dan resusitasi cairan harus dimulai dalam 1 jam pertama; setiap jam keterlambatan menambah mortalitas 7-8%. Trauma berat: golden hour — penanganan dalam jam pertama menentukan survival rate. Pada ketiga kondisi ini, <em>jam yang berjalan</em> adalah variabel paling agresif.</p>
+      <p class="lang-en">In emergency medicine, several conditions exist where <strong>time itself is the primary substrate</strong> of intervention — not the drug, not the dose, not the clinician. Acute ischemic stroke: rt-PA (tissue plasminogen activator) may only be given within a 4.5-hour window from symptom onset — beyond that, brain damage becomes irreversible even with the drug. Sepsis: 1-hour bundle (Surviving Sepsis Campaign) — blood cultures, broad-spectrum antibiotics, and fluid resuscitation must begin within the first hour; every hour of delay adds 7-8% to mortality. Major trauma: the golden hour — care in the first hour determines survival rate. In all three, <em>the running clock</em> is the most aggressive variable.</p>
+    </div>
+
+    <p class="lang-en" style="display:none">[REMOVED - originally Indonesian fertilizer paragraph]</p><p class="lang-id">Pasca-petik kopi mengikuti logika identik. Ceri yang sama, diproses via tiga timing berbeda, menghasilkan profil cup yang sangat berbeda: <strong>(1) pulping dalam 0-6 jam pasca-petik</strong> — biji bersih, profil cup mengikuti varietas + teruariasi (fully washed clean profile). <strong>(2) pulping dalam 6-12 jam</strong> — masih dalam window, profil tetap dominan varietas tetapi dengan layer fermentasi lembut yang banyak roaster justru cari. <strong>(3) pulping di luar 12 jam</strong> — fermentasi liar sudah signifikan, profil cup bergeser ke fermenty (kadang dicari sebagai "natural" tetapi BUKAN — natural process punya kontrol berbeda). Window 12 jam bukan trade-off kemudahan vs kualitas; window itu adalah <em>batas biologis yang dapat diobati</em>.</p>
+    <p class="lang-en">Coffee post-harvest follows identical logic. The same cherry, processed at three different timings, yields vastly different cup profiles: <strong>(1) pulping within 0-6 hours post-pick</strong> — clean beans, cup profile follows the varietal + terroir (fully washed clean profile). <strong>(2) pulping within 6-12 hours</strong> — still inside the window, profile remains varietal-dominant with a soft fermentation layer that many roasters actually seek. <strong>(3) pulping outside 12 hours</strong> — wild fermentation is significant, profile shifts to fermenty (sometimes confused with "natural" but it is NOT — natural process has different controls). The 12-hour window is not a convenience-vs-quality trade-off; it is the <em>treatable biological boundary</em>.</p>
+  </section>
+
+  <!-- VISUAL TOUR -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">3</div>
+      <h2><span class="lang-id">Visual Tour: Tahap-Tahap Window 12 Jam di Kebun</span><span class="lang-en">Visual Tour: The 12-Hour Window Stages in the Garden</span></h2>
+      <div class="label">dual coding</div>
+    </div>
+
+    <p class="lang-id">Window 12 jam terdiri dari fase yang berturutan, masing-masing dengan keputusan operasional yang berbeda. Enam gambar berikut menelusuri tahap-tahap kritis: dari petik di pohon, transfer ke titik kumpul, transport ke pulper, hingga selesai pulping dan masuk ke fase fermentasi terkontrol pasca-window.</p>
+    <p class="lang-en">The 12-hour window consists of sequential phases, each with distinct operational decisions. The six images below trace the critical stages: from picking on the tree, transfer to collection point, transport to the pulper, through to pulping completion and entry into the controlled post-window fermentation phase.</p>
+
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Tree-dripline.png?width=640" alt="Diagram showing tree canopy, drip-line, and feeder root zone" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Diagram drip-line</strong> — garis bayangan tajuk pohon. Akar serap (feeder roots) terkonsentrasi tepat di bawah ujung dedaunan terjauh ini, bukan di pangkal batang. Inilah lokasi parit lingkar piringan</span>
+          <span class="lang-en"><strong>Drip-line diagram</strong> — the projected canopy edge on the ground. Feeder roots concentrate directly beneath this outermost canopy reach, not at the trunk base. This is the canopy-ring trench location</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Tree-dripline.png" target="_blank" rel="noopener">Wikimedia Commons · Public Domain</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Detail_of_Coffea_canephora_branch_and_leaves.jpg?width=640" alt="Coffea canephora branch and canopy structure" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Tajuk pohon Robusta</strong> — diameter tajuk pohon dewasa biasanya 1,5–2,5 meter. Radius parit lingkar piringan adalah <strong>setengah diameter tajuk</strong> dari pangkal batang. Pohon kecil = parit kecil; pohon dewasa = parit lebih lebar</span>
+          <span class="lang-en"><strong>Robusta canopy</strong> — a mature tree's canopy diameter is typically 1.5–2.5 m. The trench radius is <strong>half the canopy diameter</strong> from the trunk. Small tree = small trench; mature tree = wider trench</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Detail_of_Coffea_canephora_branch_and_leaves.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Men_digging_(1).jpg?width=640" alt="Men digging soil with hand tools" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Alat manual untuk parit</strong> — cangkul atau garpu tanah. Untuk 750 pohon × 2 aplikasi/tahun = 1.500 kali buka-tutup parit. Pak Kumpul biasanya menyelesaikan 100–150 pohon per hari kerja, jadi total ~10 hari kerja per aplikasi</span>
+          <span class="lang-en"><strong>Manual trench tools</strong> — hoe or garden fork. For 750 trees × 2 applications/year = 1,500 trench open-close cycles. Pak Kumpul typically finishes 100–150 trees per workday, totalling ~10 workdays per application</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Men_digging_(1).jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg?width=640" alt="Granular Urea application — surface broadcast (incorrect method for coffee)" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>⚠ Cara yang SALAH</strong> — tabur-tebar pupuk langsung di permukaan (broadcast) yang umum di sawah/ladang besar. Untuk kopi di lereng berhujan, cara ini memboroskan 50–70% nilai pupuk: Urea menguap sebagai NH₃, KCl tercuci, SP-36 terkunci oleh sinar UV pada permukaan tanah</span>
+          <span class="lang-en"><strong>⚠ The WRONG way</strong> — surface broadcast of fertilizer, common in rice paddies or large fields. For coffee on rainy slopes, this wastes 50–70% of the fertilizer value: Urea volatilizes as NH₃, KCl is leached, SP-36 is locked by UV on the soil surface</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Granular_Urea_application_-_geograph.org.uk_-_1219037.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Andisol_profile.jpg?width=640" alt="Andisol soil profile showing organic topsoil and mineral subsoil" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Profil tanah Andisol</strong> — zona akar serap kopi (5–20 cm dari permukaan) berada di lapisan top-soil organik gelap. Parit kedalaman 5–10 cm menempatkan pupuk persis di zona aktif ini, bukan terlalu dangkal (tercuci) atau terlalu dalam (di luar jangkauan akar serap)</span>
+          <span class="lang-en"><strong>Andisol soil profile</strong> — the coffee feeder-root zone (5–20 cm from surface) lies in the dark organic topsoil layer. A 5–10 cm trench depth places fertilizer precisely in this active zone, not too shallow (washes off) or too deep (beyond feeder-root reach)</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Andisol_profile.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+      <div class="gallery-item">
+        <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Coffee_Plantation_in_Coorg.jpg?width=640" alt="Coffee plantation rows on hillside with visible tree spacing" loading="lazy">
+        <div class="caption">
+          <span class="lang-id"><strong>Geometri kebun</strong> — pohon kopi ditanam pada jarak 3×2,5 m (~1.333 phn/ha). Parit lingkar piringan tiap pohon berdiameter ~1,5–2 m, sehingga tidak tumpang-tindih dengan parit pohon tetangga. Setiap pohon mendapat "wilayah pemupukan" yang jelas</span>
+          <span class="lang-en"><strong>Garden geometry</strong> — coffee trees are planted at 3×2.5 m spacing (~1,333 trees/ha). Each tree's canopy-ring trench is ~1.5–2 m in diameter, so it does not overlap with the neighbouring tree's trench. Each tree gets its own clear "fertilization zone"</span>
+          <div class="credit"><a href="https://commons.wikimedia.org/wiki/File:Coffee_Plantation_in_Coorg.jpg" target="_blank" rel="noopener">Wikimedia Commons · CC BY-SA</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DEEP DIVE -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num">4</div>
+      <h2><span class="lang-id">Apa Kata Sains: Komparasi 4 Sumber tentang Timing Pasca-Petik</span><span class="lang-en">The Science: 4-Source Comparison on Post-Harvest Timing</span></h2>
+      <div class="label">deep dive</div>
+    </div>
+
+    <p class="lang-id">Mari periksa empat sumber yang membahas window timing pasca-petik untuk Robusta:</p>
+    <p class="lang-en">Let us examine four sources that discuss post-pick timing windows for Robusta:</p>
+
+    <table class="komparasi">
+      <thead>
+        <tr>
+          <th><span class="lang-id">Sumber</span><span class="lang-en">Source</span></th>
+          <th><span class="lang-id">Posisi tentang Cara Aplikasi</span><span class="lang-en">Position on Application Method</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SOP Robusta Edisi 2 (Kementan 2019)</strong> ⭐</td>
+          <td><span class="lang-id">Eksplisit menetapkan: <strong>ceri merah harus diproses dalam 12 jam pasca-petik</strong> (hal 91-93). Jika tidak memungkinkan, paling lambat 24 jam dengan catatan mutu menurun. Inilah acuan utama angka 12 jam.</span><span class="lang-en">Explicitly states: <strong>red cherries must be processed within 12 hours of picking</strong> (p 91-93). If not possible, no later than 24 hours with the caveat of quality decline. This is the primary 12-hour reference.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Budidaya Puslitbang (2010)</strong></td>
+          <td><span class="lang-id">Menyebut "segera diolah pada hari yang sama" (hal 33), tidak ada angka jam yang eksplisit. Konvergen secara prinsip dengan urgency, lebih longgar dalam batas waktu.</span><span class="lang-en">States "process on the same day" (p 33), without an explicit hour figure. Convergent on urgency in principle, more lenient on the time boundary.</span></td>
+        </tr>
+        <tr>
+          <td><strong>BRIN (2024)</strong></td>
+          <td><span class="lang-id">Riset post-harvest BRIN (Sjafrina et al, 2023) menunjukkan <strong>peningkatan kadar acetic acid signifikan setelah 14 jam</strong> pada Robusta Jatim. Mendukung batas 12 jam sebagai bumper biologis.</span><span class="lang-en">BRIN post-harvest research (Sjafrina et al, 2023) shows a <strong>significant rise in acetic acid after 14 hours</strong> on East Java Robusta. Supports the 12-hour limit as a biological buffer.</span></td>
+        </tr>
+        <tr>
+          <td><strong>Wintgens (2004), Ch. 22</strong></td>
+          <td><span class="lang-id">Wintgens Ch. 22 (Post-Harvest Processing): mendefinisikan <em>"reception window"</em> di pabrik basah = 6-12 jam dari petik tergantung suhu ambien. Memberi justifikasi teoritis terhadap angka SOP Kementan.</span><span class="lang-en">Wintgens Ch. 22 (Post-Harvest Processing) defines the <em>"reception window"</em> at the wet mill = 6-12 hours from pick depending on ambient temperature. Provides theoretical justification for the SOP figure.</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p class="lang-id"><strong>Pola yang muncul: empat sumber konvergen — window 12 jam adalah batas operasional yang sah.</strong> Bukan 24 jam, bukan "asal hari yang sama", bukan tergantung mood lapangan. Kementan 2019 memberikan angka paling presisi (12 jam), Wintgens memberi justifikasi teoritis (reception window 6-12 jam), BRIN melengkapi dengan data biokimia post-harvest, Puslitbang konvergen secara prinsip urgency. Tidak ada sumber yang kontradiktif — yang ada hanya tingkat presisi yang berbeda.</p>
+    <p class="lang-en"><strong>The emerging pattern: all four sources converge — the 12-hour window is the valid operational boundary.</strong> Not 24 hours, not "as long as same day", not based on field mood. Kementan 2019 provides the most precise figure (12 hours), Wintgens supplies the theoretical justification (6-12 hour reception window), BRIN supplements with post-harvest biochemistry data, Puslitbang converges in principle on urgency. No source is contradictory — only different levels of precision.</p>
+
+    <div class="box box-moss">
+      <div class="box-label"><span class="lang-id">✓ Tiga Kesalahan Umum yang Menggagalkan Window 12 Jam</span><span class="lang-en">✓ Three Common Mistakes that Derail the 12-Hour Window</span></div>
+      <p class="lang-id"><strong>(1) Ceri menumpuk terkena terik matahari langsung</strong> — Setiap kenaikan 10°C suhu interior tumpukan menggandakan laju reaksi enzimatik (aturan Q₁₀ kimia). Tumpukan ceri 30 menit di matahari = setara 1 jam di teduh. Solusi: keranjang dangkal, segera teduhkan, atau tutup terpal putih reflektif. <strong>(2) Wadah tertutup rapat dalam transport</strong> — Tumpukan ceri di karung plastik tertutup menghasilkan akumulasi panas + CO₂ + uap air. Ini kondisi ideal untuk fermentasi anaerob liar. Solusi: wadah berlubang/anyaman, jangan plastik tertutup. <strong>(3) Panen pagi tetapi transport sore</strong> — Common case: tim petik pagi sampai siang, lalu menunggu jemputan motor sampai sore. Total elapsed time bisa 8-10 jam sebelum tiba di pulper, plus 1-2 jam antrian pulping = di luar window. Solusi: jadwal jemputan motor harus reliable, atau pulper portabel di kebun.</p>
+      <p class="lang-en"><strong>(1) Cherries heaped in direct sunlight</strong> — Every 10°C rise in heap interior temperature doubles enzymatic reaction rate (Q₁₀ chemistry rule). A 30-minute heap in the sun = 1 hour in the shade. Solution: shallow baskets, immediate shading, or white reflective tarp cover. <strong>(2) Tightly sealed containers during transport</strong> — Cherries in closed plastic sacks accumulate heat + CO₂ + water vapor. Ideal conditions for wild anaerobic fermentation. Solution: ventilated/woven baskets, never sealed plastic. <strong>(3) Morning harvest but evening transport</strong> — Common case: pickers work morning to noon, then wait for motorcycle pickup until evening. Total elapsed time can reach 8-10 hours before arriving at the pulper, plus 1-2 hours queueing = outside the window. Solution: reliable motorcycle pickup schedule, or portable pulper in the garden.</p>
+    </div>
+
+    <p class="lang-id">Implikasi mutu: panen Kebun NGT proyeksi 750 kg green bean Siklus 2027. Specialty grade (window 12 jam dipatuhi) dengan offtaker Bonsari/Nomad menargetkan harga Rp 95-130rb/kg. Commodity grade (di luar window) terjual Rp 45-60rb/kg ke tengkulak lokal. Selisih nilai = Rp 50-70rb/kg × 750 kg ≈ <strong>Rp 37,5-52,5 juta hilang per siklus</strong> jika window 12 jam tidak dipatuhi. Investasi terbesar bukan di pulper atau dryer, melainkan di <em>disiplin jadwal</em>. Inilah mengapa Modul P (window) ditempatkan setelah Modul O (petik selektif) dan sebelum Modul Q (kadar air): tiga modul tidak bisa dipisah di lapangan.</p>
+    <p class="lang-en">Quality implication: NGT Garden's projected Cycle 2027 harvest is 750 kg green bean. Specialty grade (12-hour window honored) with Bonsari/Nomad offtakers targets IDR 95-130k/kg. Commodity grade (outside window) sells at IDR 45-60k/kg to local middlemen. Value differential = IDR 50-70k/kg × 750 kg ≈ <strong>IDR 37.5-52.5 million lost per cycle</strong> if the 12-hour window is not honored. The biggest investment is not the pulper or dryer, but <em>schedule discipline</em>. This is why Module P (window) sits between Module O (selective picking) and Module Q (moisture): the three modules cannot be separated in the field.</p>
+  </section>
+
+  <!-- PRAKTIK STEP-BY-STEP -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="num gold">5</div>
+      <h2><span class="lang-id">Praktik: Lima Langkah Menjaga Window 12 Jam</span><span class="lang-en">Practice: Five Steps to Honor the 12-Hour Window</span></h2>
+      <div class="label">action items · <span class="progress-counter">0 / 5</span></div>
+    </div>
+
+    <p class="lang-id">Berikut lima langkah operasional menjaga window 12 jam dari petik ke proses di kebun kopi wakaf Ngantang. Diterapkan oleh tim petik + Wakif sebagai koordinator transport, dengan pulper mitra Bonsari Coffee sebagai end-point. Klik kotak untuk menandai langkah yang sudah dipahami.</p>
+    <p class="lang-en">Five operational steps to honor the 12-hour pick-to-process window at the Ngantang waqf coffee garden. Applied by the picking team + Waqif as transport coordinator, with the Bonsari Coffee partner pulper as the end-point. Click a box to mark steps as understood.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-check" data-step="1"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 1 · Jadwalkan Petik Sub-Hari + Logistik Pulper</span><span class="lang-en">Step 1 · Schedule Sub-Day Picking + Pulper Logistics</span></div>
+          <div class="step-text">
+            <span class="lang-id">SEBELUM hari petik: konfirmasi window operasional pulper Bonsari (umumnya buka 16:00-22:00 untuk ceri pagi-siang). Hitung mundur: jika pulper buka jam 17:00, petik harus mulai paling lambat jam 06:00 (window 11 jam, masih dalam batas). Tim petik dibagi sub-shift: pagi (06:00-09:30) untuk 60% volume, siang (10:00-12:00) untuk 40% — supaya transport dapat departure dual-trip.</span>
+            <span class="lang-en">BEFORE pick day: confirm Bonsari pulper operational window (typically 16:00-22:00 for morning-noon cherries). Reverse-calculate: if pulper opens 17:00, picking must start by 06:00 latest (11-hour window, within limit). Picker team split into sub-shifts: morning (06:00-09:30) for 60% volume, noon (10:00-12:00) for 40% — to enable dual-trip transport departure.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="2"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 2 · Transfer ke Titik Kumpul Setiap 2 Jam</span><span class="lang-en">Step 2 · Transfer to Collection Point Every 2 Hours</span></div>
+          <div class="step-text">
+            <span class="lang-id">Tas pundak / keranjang dangkal yang dibawa pemetik DIKOSONGKAN ke wadah utama setiap 1-2 jam — JANGAN menunggu sampai penuh kalau itu artinya >2 jam terkumpul. Wadah utama harus di tempat TEDUH (di bawah pohon penaung / tarp putih reflektif). Tumpukan ceri MAKSIMAL 30 cm tinggi — di atas itu, panas akumulasi di interior naik signifikan (Q₁₀ rule). Tidak ada plastik tertutup, hanya wadah anyaman/berlubang.</span>
+            <span class="lang-en">Picker shoulder bags / shallow baskets EMPTIED into the main container every 1-2 hours — DO NOT wait until full if that means >2 hours accumulated. Main container must be in SHADE (under shade tree / white reflective tarp). Cherry heap MAX 30 cm tall — above that, interior heat accumulation rises significantly (Q₁₀ rule). No sealed plastic, only woven/ventilated containers.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="3"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 3 · Sortasi Cepat di Titik Kumpul</span><span class="lang-en">Step 3 · Quick Sort at Collection Point</span></div>
+          <div class="step-text">
+            <span class="lang-id">Sebelum dikirim, lakukan sortasi cepat di titik kumpul: buang ceri sakit (hitam, ada lubang PBKo, jamuran), buang daun + ranting yang terbawa. Sortasi sekunder ini hanya 5-10 menit per karung tapi mencegah cacat membawa fermentasi ke pulper. Catat berat ceri terbuang (untuk record OPT trend). Catatan: sortasi ukuran/density TIDAK dilakukan di sini — itu pulper job.</span>
+            <span class="lang-en">Before dispatch, perform quick sort at collection point: discard diseased cherries (black, PBKo-bored, moldy), discard leaves + twigs that came along. This secondary sort takes 5-10 minutes per sack but prevents defective cherries from carrying fermentation into the pulper. Record discarded cherry weight (for OPT trend tracking). Note: size/density sorting is NOT done here — that's the pulper's job.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="4"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 4 · Transport ke Pulper — Single Trip ≤4 Jam</span><span class="lang-en">Step 4 · Transport to Pulper — Single Trip ≤4 Hours</span></div>
+          <div class="step-text">
+            <span class="lang-id">Total durasi dari titik kumpul ke pulper (loading + perjalanan + unloading): MAKSIMAL 4 jam — termasuk antrian jika ada. Kalau dual-trip (pagi+siang), trip pertama berangkat jam 14:00 (ceri 06:00 → pulper 18:00 = 12 jam total). Trip kedua jam 16:00 (ceri 12:00 → pulper 20:00 = 8 jam total). Pickup truck/motor harus pakai bak terbuka dengan tarp putih (UV reflective), bukan box tertutup (akumulasi panas).</span>
+            <span class="lang-en">Total duration from collection point to pulper (loading + travel + unloading): MAX 4 hours — including queue if any. For dual-trip (morning+noon), first trip departs 14:00 (cherry 06:00 → pulper 18:00 = 12 hours total). Second trip 16:00 (cherry 12:00 → pulper 20:00 = 8 hours total). Pickup truck/motorcycle must use open bed with white tarp (UV reflective), not closed box (heat accumulation).</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-check" data-step="5"></div>
+        <div class="step-body">
+          <div class="step-num"><span class="lang-id">Langkah 5 · Catat Window Aktual di Form Input — Per Lot</span><span class="lang-en">Step 5 · Record Actual Window in Form Input — Per Lot</span></div>
+          <div class="step-text">
+            <span class="lang-id">Foto + catat di dashboard monitor-v2 Form Input untuk SETIAP lot harian: jam petik mulai, jam transfer ke titik kumpul, jam berangkat transport, jam tiba di pulper, jam selesai pulping. Hitung total elapsed time dan flag jika &gt;12 jam. Data ini menjadi audit trail untuk Bonsari (mitra processing) dan input untuk evaluasi efisiensi siklus berikutnya.</span>
+            <span class="lang-en">Photo + record in monitor-v2 dashboard Form Input for EACH daily lot: pick start time, transfer to collection time, transport depart time, arrival at pulper time, pulping completion time. Calculate total elapsed time and flag if &gt;12 hours. This becomes the audit trail for Bonsari (processing partner) and input for next-cycle efficiency evaluation.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REFLECTION -->
+  <section class="sec">
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Active Recall</span><span class="lang-en">Reflection · Active Recall</span></div>
+      <p class="prompt lang-id">1. Anda menerima telpon dari tim lapangan: cuaca cerah luar biasa hari ini, mereka berhasil petik 200 kg ceri merah penuh dari pagi ke siang. Tapi motor pickup terlambat dan baru bisa berangkat jam 18:00 — ceri akan tiba di pulper Bonsari jam 21:00 (panen 06:00 → 15 jam, di luar window). Apa keputusan Anda: (a) tetap kirim, terima downgrade ke commodity grade; (b) inisiasi pulping darurat di rumah Wakif sebagian kecil, sisa kirim besok pagi; (c) negosiasi dengan Bonsari untuk window flexibility — di mana batas integritasnya?</p>
+      <p class="prompt lang-en">1. You receive a call from the field team: weather was unusually clear today, they picked 200 kg of fully-red cherries from morning to noon. But the pickup motorcycle is late and only departs at 18:00 — cherries will reach the Bonsari pulper at 21:00 (harvest 06:00 → 15 hours, outside the window). Your decision: (a) send anyway, accept downgrade to commodity grade; (b) emergency-pulp a small portion at Waqif's house, send the rest tomorrow morning; (c) negotiate window flexibility with Bonsari — where is the integrity boundary?</p>
+      <textarea data-reflect="r1" placeholder="Catat observasi Anda di sini... · Note your observations here..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini (localStorage).</span><span class="lang-en">Notes are saved on this device (localStorage).</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Connection</span><span class="lang-en">Reflection · Connection</span></div>
+      <p class="prompt lang-id">2. Penulis modul ini memakai analogi <em>therapeutic window</em> dari kedokteran gawat darurat — stroke, sepsis, trauma. Andai Anda harus menjelaskan window 12 jam kepada tim petik (Cak Yit, Pak Kumpul) yang tidak akrab dengan istilah medis, analogi apa yang lebih dekat dengan keseharian mereka? (Misalnya: durian yang sudah jatuh, ikan yang baru ditangkap, tempe yang masih hangat, susu segar yang belum dimasak?)</p>
+      <p class="prompt lang-en">2. The author of this module uses the <em>therapeutic window</em> analogy from emergency medicine — stroke, sepsis, trauma. If you had to explain the 12-hour window to the picking team (Cak Yit, Pak Kumpul) who are unfamiliar with medical terms, what analogy would be closer to their daily life? (For example: fallen durian, freshly caught fish, still-warm tempeh, raw fresh milk?)</p>
+      <textarea data-reflect="r2" placeholder="Catat refleksi Anda... · Note your reflection..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+
+    <div class="reflection">
+      <div class="label"><span class="lang-id">Refleksi · Decision</span><span class="lang-en">Reflection · Decision</span></div>
+      <p class="prompt lang-id">3. Modul ini menetapkan window 12 jam sebagai standar Kementan. Tetapi ada metode <em>natural process</em> (extended fermentation 24-72 jam terkontrol) yang justru sengaja melewati window 12 jam dan menghasilkan profil specialty yang dicari roaster premium. Bagaimana cara membedakan "fermentasi terkontrol dalam natural process" (dikehendaki) dari "fermentasi liar karena window terlewat" (cacat)? Apa kontrol-kontrol yang membuat satu diinginkan dan satu lagi cacat?</p>
+      <p class="prompt lang-en">3. This module sets the 12-hour window as the Kementan standard. But there is a <em>natural process</em> method (controlled extended fermentation 24-72 hours) that intentionally crosses the 12-hour window and produces a specialty profile sought by premium roasters. How do we distinguish "controlled fermentation in natural process" (desired) from "wild fermentation because window was missed" (defect)? What controls make one desirable and the other a defect?</p>
+      <textarea data-reflect="r3" placeholder="Catat pertanyaan Anda... · Note your questions..."></textarea>
+      <div class="save-note">💾 <span class="lang-id">Catatan tersimpan di perangkat ini.</span><span class="lang-en">Notes are saved on this device.</span> <span class="save-status"></span></div>
+    </div>
+  </section>
+
+  <!-- CITATIONS -->
+  <div class="citations">
+    <h3><span class="lang-id">📚 Sumber & Rujukan Lengkap</span><span class="lang-en">📚 Full Sources & References</span></h3>
+    <ul>
+      <li><strong>Puslitkoka / ICCRI (2019).</strong> SOP Robusta Edisi 2 — Pelatihan Budidaya Berkelanjutan & Pascapanen. Kementan + SCOPI + ICCRI. <em>(310 hal, hal 91-93 — Window 12 jam petik ke proses)</em> ⭐ Acuan utama Modul ini.</li>
+      <li><strong>Wintgens, J.N. (Ed.) (2004).</strong> <em>Coffee: Growing, Processing, Sustainable Production</em>, Wiley-VCH, Ch.22 — Post-Harvest Processing, reception window theory 6-12 hours. <a href="https://doi.org/10.1002/9783527619627" target="_blank" rel="noopener">DOI: 10.1002/9783527619627</a></li>
+      <li><strong>Puslitbang Perkebunan Bogor (2010).</strong> Budidaya dan Pascapanen Kopi. <em>(hal 33 — Pengolahan pada hari yang sama)</em></li>
+      <li><strong>Sjafrina, N. et al. (2023).</strong> BRIN — Karakterisasi biokimia pasca-petik kopi Robusta Jatim. <em>(Riset internal BRIN Cibinong — kenaikan acetic acid setelah 14 jam pasca-petik)</em></li>
+      <li><strong>Surviving Sepsis Campaign (2021).</strong> International Guidelines — 1-hour bundle rationale. <em>(Konteks analogi therapeutic window: Crit Care Med 2021;49(11):e1063)</em></li>
+      <li><strong>Modul O — Petik Selektif Merah (Mei 2026).</strong> <a href="../O-petik-selektif-merah/index.html">Cross-reference</a> — keputusan "apa yang dipetik" mendahului dan menentukan "berapa cepat harus diproses".</li>
+      <li><strong>Modul Q — Kadar Air Biji (Mei 2026).</strong> <a href="../Q-kadar-air-biji/index.html">Cross-reference</a> — fase pasca-pulping di mana waktu menjadi variabel kedua (drying ke 12-12,5% MC).</li>
+      <li><strong>SOP Pasca-Panen Wakaf — Sintesa Modul A–S (Mei 2026).</strong> <a href="https://adib-psych.github.io/wakaf-produktif/sintesa-sop.html" target="_blank" rel="noopener">Live di Wakaf Produktif</a></li>
+      <li><strong><span class="lang-id">Media:</span><span class="lang-en">Media:</span></strong> Wikimedia Commons (CC BY-SA / Public Domain).</li>
+    </ul>
+  </div>
+
+  <!-- MODULE NAV -->
+  <div class="module-nav">
+    <a href="../O-petik-selektif-merah/index.html"><span class="lang-id">← Modul O: Petik Selektif Merah</span><span class="lang-en">← Module O: Selective Red Picking</span></a>
+    <a href="../../belajar.html"><span class="lang-id">Semua Modul</span><span class="lang-en">All Modules</span></a>
+    <a href="../Q-kadar-air-biji/index.html" class="next"><span class="lang-id">Modul Q: Kadar Air Biji →</span><span class="lang-en">Module Q: Bean Moisture →</span></a>
+  </div>
+
+</div>
+
+<!-- ══ FOOTER (consistent with belajar.html) ══ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-verse">
+      <span class="lang-id">"Apabila manusia meninggal dunia, terputuslah amalnya kecuali tiga perkara:<br>sedekah jariyah, ilmu yang bermanfaat, dan anak saleh yang mendoakannya."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— HR. Muslim</small></span>
+      <span class="lang-en">"When a person dies, their deeds come to an end except for three:<br>ongoing charity, beneficial knowledge, and a righteous child who prays for them."<br><small style="font-style:normal;font-size:.68rem;letter-spacing:.1em;opacity:.6;">— Hadith (Sahih Muslim)</small></span>
+    </div>
+    <div>
+      <div class="footer-brand">Wakaf Produktif Kebun Kopi</div>
+      <div class="footer-meta">
+        <span class="lang-id">Diwakafkan & dikelola oleh: Adib Asrori, M.Psi, Psikolog<br>Ngantang, Malang, Jawa Timur</span>
+        <span class="lang-en">Endowed & managed by: Adib Asrori, M.Psi, Psychologist<br>Ngantang, Malang, East Java</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const INLINE_TAGS = new Set(['span','em','strong','i','b','small','sup','sub']);
+const INLINE_BLOCK_TAGS = new Set(['a']);
+function getDisplayType(el){
+  const tag = el.tagName.toLowerCase();
+  if (el.classList && el.classList.contains('rwi-nav-badge')) return 'inline-flex';
+  if (INLINE_TAGS.has(tag)) return 'inline';
+  if (INLINE_BLOCK_TAGS.has(tag)) return 'inline-block';
+  return 'block';
+}
+function setLang(lang){
+  const hide = lang === 'id' ? 'en' : 'id';
+  localStorage.setItem('lang', lang);
+  document.querySelectorAll('.lang-' + hide).forEach(el => { el.style.display = 'none'; });
+  document.querySelectorAll('.lang-' + lang).forEach(el => { el.style.display = getDisplayType(el); });
+  document.getElementById('btn-id').classList.toggle('active', lang === 'id');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+
+// ───── LEARNING-SPECIFIC JS ─────
+const TOPIC = 'P';
+const KEY = 'belajar_sop_';
+function setupReflection(){
+  document.querySelectorAll('textarea[data-reflect]').forEach(ta => {
+    const k = `${KEY}${TOPIC}_note_${ta.dataset.reflect}`;
+    const saved = localStorage.getItem(k);
+    if (saved) ta.value = saved;
+    let timer;
+    ta.addEventListener('input', () => {
+      clearTimeout(timer);
+      const status = ta.parentElement.querySelector('.save-status');
+      if (status) status.textContent = 'menyimpan…';
+      timer = setTimeout(() => {
+        localStorage.setItem(k, ta.value);
+        if (status) { status.textContent = '✓ tersimpan'; setTimeout(()=>status.textContent='', 1800); }
+      }, 600);
+    });
+  });
+}
+function setupSteps(){
+  document.querySelectorAll('.step-check').forEach(c => {
+    const id = c.dataset.step;
+    const k = `${KEY}${TOPIC}_step_${id}`;
+    if (localStorage.getItem(k) === 'done') c.classList.add('done');
+    c.addEventListener('click', () => {
+      c.classList.toggle('done');
+      localStorage.setItem(k, c.classList.contains('done') ? 'done' : '');
+      updateProgress();
+    });
+  });
+  updateProgress();
+}
+function updateProgress(){
+  const total = document.querySelectorAll('.step-check').length;
+  const done = document.querySelectorAll('.step-check.done').length;
+  const bar = document.querySelector('.progress-fill');
+  if (bar) bar.style.width = total ? (done/total*100) + '%' : '0%';
+  const counter = document.querySelector('.progress-counter');
+  if (counter) counter.textContent = `${done} / ${total}`;
+}
+
+document.addEventListener('DOMContentLoaded', function(){
+  setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
+  setupReflection();
+  setupSteps();
+});
+</script>
+</body>
+</html>
