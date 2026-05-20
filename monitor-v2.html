@@ -8375,13 +8375,19 @@ async function fetchEnsoFromNOAA() {
     }
   } catch (e) { /* swallow */ }
 
-  // ─── Strategy 3: direct NOAA (will fail CORS in browser, but kept for offline tools/scripts) ───
-  try {
-    const resp = await fetch('https://psl.noaa.gov/data/correlation/oni.data');
-    if (!resp.ok) throw new Error('NOAA fetch HTTP ' + resp.status);
-    const text = await resp.text();
+  // ─── Strategy 3: via CORS proxy (Opsi A — locked 21 Mei 2026) ───
+  // Replace direct NOAA fetch (always fails CORS in browser) dengan chain 2 proxy.
+  // Pro: no CORS error di console, otomatis kalau Strategy 1/2 fail (e.g. testing local file://).
+  // Con: tergantung proxy uptime — kalau dua-duanya down, fallback ke default.
+  const NOAA_URL = 'https://psl.noaa.gov/data/correlation/oni.data';
+  const PROXIES = [
+    { name: 'corsproxy.io', url: `https://corsproxy.io/?url=${encodeURIComponent(NOAA_URL)}` },
+    { name: 'allorigins',   url: `https://api.allorigins.win/raw?url=${encodeURIComponent(NOAA_URL)}` }
+  ];
+
+  function parseOniText(text) {
     const lines = text.trim().split('\n').filter(l => /^\s*\d{4}/.test(l));
-    if (lines.length === 0) throw new Error('NOAA ONI parse: no data lines');
+    if (lines.length === 0) throw new Error('ONI parse: no data lines');
     const lastLine = lines[lines.length - 1].trim().split(/\s+/);
     const year = +lastLine[0];
     const monthlyVals = lastLine.slice(1).map(parseFloat).filter(v => !isNaN(v) && v > -90);
@@ -8396,20 +8402,33 @@ async function fetchEnsoFromNOAA() {
     if (avgOni >= 0.5) phase = 'el-nino';
     else if (avgOni <= -0.5) phase = 'la-nina';
     else phase = 'neutral';
-    ENSO_STATE = {
-      phase,
-      source: 'noaa-direct',
-      fetched_at: new Date().toISOString(),
-      oni_value: +avgOni.toFixed(2),
-      year_ref: year,
-      expires_at: Date.now() + ENSO_CACHE_HOURS * 3600 * 1000
-    };
-    saveEnsoToCache();
-    return ENSO_STATE;
-  } catch (e) {
-    console.warn('[ENSO] All fetch strategies failed, fallback to default:', e.message);
-    return null;
+    return { phase, avgOni: +avgOni.toFixed(2), year };
   }
+
+  for (const p of PROXIES) {
+    try {
+      const resp = await fetch(p.url);
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const text = await resp.text();
+      const { phase, avgOni, year } = parseOniText(text);
+      ENSO_STATE = {
+        phase,
+        source: `noaa-proxy-${p.name}`,
+        fetched_at: new Date().toISOString(),
+        oni_value: avgOni,
+        year_ref: year,
+        expires_at: Date.now() + ENSO_CACHE_HOURS * 3600 * 1000
+      };
+      saveEnsoToCache();
+      console.log(`[ENSO] ✓ Loaded via proxy ${p.name}: ${phase} (ONI 3m avg: ${avgOni})`);
+      return ENSO_STATE;
+    } catch (e) {
+      console.warn(`[ENSO] Proxy ${p.name} failed: ${e.message} — trying next...`);
+    }
+  }
+
+  console.warn('[ENSO] All fetch strategies (same-origin + 2 proxies) failed — using cached default (La Niña). UI banner shows "default" source.');
+  return null;
 }
 
 async function initEnsoState() {
