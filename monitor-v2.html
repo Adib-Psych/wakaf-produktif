@@ -303,6 +303,7 @@
       <div style="font-size:10px;letter-spacing:1.5px;color:var(--moss);padding:4px 14px 6px;font-weight:800">🌳 IMPLEMENTASI LAPANGAN</div>
       <div class="sb-tab" data-panel="log"><span class="ico">📋</span><span class="lbl">Log Harian</span></div>
       <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Tim & Distribusi Tugas</span></div>
+      <div class="sb-tab" data-panel="panen"><span class="ico">☕</span><span class="lbl">Panen Harvest 2026</span></div>
       <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
       <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
       <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
@@ -1201,6 +1202,151 @@
             <button class="btn btn-secondary" onclick="closeRecoverDlg()">Batal</button>
             <button class="btn btn-primary" onclick="confirmRecover()" style="background:var(--moss);color:#fff">✅ Buat Entry Upah</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PANEN HARVEST 2026 ============ -->
+    <!-- Locked 20 Mei 2026 — Daily Panen Tracker setelah Adib panen 28 kg incidental hari ke-2 -->
+    <div class="panel" id="panel-panen">
+
+      <!-- Hero Banner -->
+      <div class="card" style="background:linear-gradient(135deg,#c14b3a 0%,#8c2519 100%);color:#fff;border:0;padding:24px 28px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px">
+          <div style="flex:1;min-width:280px">
+            <div style="font-size:11px;letter-spacing:2.5px;color:#FBBF24;font-weight:800;margin-bottom:6px">☕ PANEN HARVEST 2026 · DAILY TRACKER</div>
+            <div style="font-size:14px;color:#FDE2DC;line-height:1.5">Panen dimulai <strong style="color:#fff">~6 minggu lebih awal</strong> dari estimasi (Juni). Target konservatif Adib: 366 kg/thn (0,4 kg/pohon × 915). Track cherry harian → sortasi → green bean → lot ready.</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:#FBBF24;letter-spacing:1px;font-weight:700">CUMULATIVE SEASON</div>
+            <div id="panen-cumulative-kg" style="font-size:56px;font-weight:900;color:#fff;line-height:1">0</div>
+            <div style="font-size:11px;color:#FDE2DC;font-style:italic">kg cherry · <span id="panen-target-pct">0</span>% dari target 366 kg</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KPI Grid -->
+      <div class="card">
+        <div class="kpi-grid" id="panen-kpi-grid">
+          <div class="kpi"><div class="kpi-num" id="panen-kpi-today">0</div><div class="kpi-lbl">🍒 Hari ini (kg)</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-kpi-days">0</div><div class="kpi-lbl">📅 Hari Panen</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-kpi-avg-yield">—</div><div class="kpi-lbl">⚖️ Avg Yield/Pohon (kg)</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-kpi-merah-pct">—</div><div class="kpi-lbl">🟥 Avg % Merah</div></div>
+          <div class="kpi warn"><div class="kpi-num" id="panen-kpi-green-bean">0</div><div class="kpi-lbl">🌰 Green Bean Ready (kg)</div></div>
+        </div>
+      </div>
+
+      <!-- Submit Form (Inline Card) -->
+      <div class="card" style="background:#FAFCFB;border:2px dashed var(--moss)">
+        <div class="card-title"><span class="num">+</span>Submit Panen Hari Ini</div>
+        <div class="form-grid">
+          <div class="field">
+            <label class="field-lbl">Tanggal Panen <span class="req">*</span></label>
+            <input type="date" id="panen-tgl">
+          </div>
+          <div class="field">
+            <label class="field-lbl">Kebun (multi-select) <span class="req">*</span></label>
+            <div class="radio-row" id="panen-kebun">
+              <div class="radio-pill" data-val="1" onclick="togglePanenKebun(this)">Kebun 1</div>
+              <div class="radio-pill" data-val="2" onclick="togglePanenKebun(this)">Kebun 2</div>
+              <div class="radio-pill" data-val="3" onclick="togglePanenKebun(this)">Kebun 3</div>
+              <div class="radio-pill" data-val="4" onclick="togglePanenKebun(this)">Kebun 4</div>
+              <div class="radio-pill" data-val="mixed" onclick="togglePanenKebun(this)" style="background:rgba(212,175,55,.12);border-color:var(--gold)">🔀 Campuran (tidak spesifik)</div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-lbl">Cherry Mentah (kg) <span class="req">*</span></label>
+            <input type="number" id="panen-cherry-kg" placeholder="cth: 28" step="0.1" min="0">
+          </div>
+          <div class="field">
+            <label class="field-lbl">Pohon Dipetik (estimate)</label>
+            <input type="number" id="panen-pohon" placeholder="cth: 30" min="0">
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label class="field-lbl">Komposisi Maturasi (% perkiraan — total harus 100%)</label>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
+              <div><span style="color:#c14b3a;font-weight:700;font-size:11px">🟥 Merah</span><input type="number" id="panen-pct-merah" placeholder="55" min="0" max="100" value="55" style="margin-top:3px"></div>
+              <div><span style="color:#d4a017;font-weight:700;font-size:11px">🟨 Kuning</span><input type="number" id="panen-pct-kuning" placeholder="25" min="0" max="100" value="25" style="margin-top:3px"></div>
+              <div><span style="color:#16a34a;font-weight:700;font-size:11px">🟩 Hijau</span><input type="number" id="panen-pct-hijau" placeholder="12" min="0" max="100" value="12" style="margin-top:3px"></div>
+              <div><span style="color:#1c1917;font-weight:700;font-size:11px">⬛ Hitam/Overripe</span><input type="number" id="panen-pct-hitam" placeholder="8" min="0" max="100" value="8" style="margin-top:3px"></div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-lbl">Context Panen <span class="req">*</span></label>
+            <div class="radio-row" id="panen-context">
+              <div class="radio-pill" data-val="terjadwal" onclick="setRadio('panen-context',this)">📅 Terjadwal</div>
+              <div class="radio-pill" data-val="incidental" onclick="setRadio('panen-context',this)">🎯 Incidental</div>
+              <div class="radio-pill" data-val="sortir_terlambat" onclick="setRadio('panen-context',this)">⏰ Sortir Terlambat</div>
+            </div>
+          </div>
+          <div class="field">
+            <label class="field-lbl">Cuaca saat Panen</label>
+            <div class="radio-row" id="panen-cuaca">
+              <div class="radio-pill" data-val="cerah" onclick="setRadio('panen-cuaca',this)">☀️ Cerah</div>
+              <div class="radio-pill" data-val="mendung" onclick="setRadio('panen-cuaca',this)">⛅ Mendung</div>
+              <div class="radio-pill" data-val="gerimis" onclick="setRadio('panen-cuaca',this)">🌦️ Gerimis</div>
+              <div class="radio-pill" data-val="hujan" onclick="setRadio('panen-cuaca',this)">🌧️ Hujan</div>
+            </div>
+          </div>
+          <div class="field" style="grid-column:1/-1">
+            <label class="field-lbl">Catatan</label>
+            <textarea id="panen-catatan" rows="2" placeholder="cth: Saat babat + pruning, banyak yang sudah merah jadi dipetik. Sebagian terlambat (hitam kering)." maxlength="500"></textarea>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="submitPanenEntry()" style="background:var(--cherry);color:#fff">💾 Submit Panen</button>
+          <button class="btn btn-secondary" onclick="resetPanenForm()">Reset</button>
+        </div>
+      </div>
+
+      <!-- Daily Timeline + Cumulative Chart -->
+      <div class="card">
+        <div class="card-title"><span class="num">1</span>Daily Timeline & Cumulative vs Target</div>
+        <div class="chart-wrap"><canvas id="chart-panen-daily"></canvas></div>
+        <p style="font-size:11px;color:var(--mute);margin-top:8px;font-style:italic">Bar = cherry harian · Line = cumulative · Garis merah putus = target 366 kg/thn</p>
+      </div>
+
+      <!-- Composition & Per-Kebun -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px">
+        <div class="card">
+          <div class="card-title"><span class="num">2</span>Komposisi Maturasi per Hari</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-composition"></canvas></div>
+          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Stacked: 🟥 merah · 🟨 kuning · 🟩 hijau · ⬛ overripe. Target Adib: % merah ≥ 70 untuk specialty Bonsari.</p>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="num">3</span>Cherry per Kebun (cumulative)</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-kebun"></canvas></div>
+          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Distribusi kg cherry per kebun · "Campuran" untuk panen tidak tag spesifik</p>
+        </div>
+      </div>
+
+      <!-- Processing Pipeline Funnel -->
+      <div class="card">
+        <div class="card-title"><span class="num">4</span>🏭 Processing Pipeline — Cherry → Green Bean</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Track setiap batch dari cherry mentah sampai green bean siap jual. Conversion ratio cherry→green bean typical Robusta: 16-20% (semi-washed) atau 18-22% (fully washed). Klik panah untuk advance stage.</p>
+        <div id="panen-pipeline-funnel" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"></div>
+      </div>
+
+      <!-- Batch Tracker Table -->
+      <div class="card">
+        <div class="card-title"><span class="num">5</span>📋 Batch Tracker (semua panen)</div>
+        <div class="table-wrap">
+          <table style="font-size:11.5px;width:100%">
+            <thead style="background:var(--cream)">
+              <tr>
+                <th>Tgl</th>
+                <th>Kebun</th>
+                <th style="text-align:right">Cherry (kg)</th>
+                <th style="text-align:right">Komposisi</th>
+                <th style="text-align:right">Pohon</th>
+                <th>Context</th>
+                <th>Stage</th>
+                <th style="text-align:right">Green Bean</th>
+                <th style="text-align:center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="panen-batch-tbody"></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -4454,6 +4600,366 @@ function renderInventoryKPI() {
   const e3 = document.getElementById('inv-produktif'); if (e3) e3.textContent = produktif;
   const e4 = document.getElementById('inv-sulam'); if (e4) e4.textContent = sulam;
 }
+
+// ============================================================
+// PANEN HARVEST 2026 — Daily Tracker (locked 20 Mei 2026)
+// ============================================================
+const PANEN_SCHEMA_VERSION = '1.0';
+const PANEN_LS_KEY = 'wkkn_v2_panen_2026';
+const PANEN_TARGET_KG = 366;  // Target konservatif Adib 2026 (0.4 kg × 915 phn)
+const PANEN_PIPELINE_STAGES = [
+  { key: 'cherry_mentah',   label: '🍒 Cherry Mentah',     ratio: 1.00 },
+  { key: 'sortasi_air',     label: '🚿 Sortasi Air',       ratio: 0.92 },  // ~8% pengapung dibuang
+  { key: 'sortir_hijau',    label: '🧹 Sortir Hijau',      ratio: 0.85 },  // ~7% hijau muda dibuang
+  { key: 'jemur',           label: '☀️ Penjemuran',         ratio: 0.45 },  // ~50% kadar air hilang
+  { key: 'kupas',           label: '🌰 Pengupasan',         ratio: 0.22 },  // kulit + parchment hilang
+  { key: 'green_bean',      label: '📦 Green Bean',         ratio: 0.20 },  // siap jual (typical Robusta 18-22%)
+  { key: 'lot_ready',       label: '🏷️ Lot Ready',         ratio: 0.20 }   // tagged WKKN-YYYY-MM-LOT
+];
+const PANEN_STAGE_LBL = Object.fromEntries(PANEN_PIPELINE_STAGES.map(s => [s.key, s.label]));
+
+let PANEN_DATA = [];
+(function loadPanenFromLS(){
+  try {
+    const raw = localStorage.getItem(PANEN_LS_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed.version === PANEN_SCHEMA_VERSION && Array.isArray(parsed.data)) {
+      PANEN_DATA = parsed.data;
+    }
+  } catch(e) { console.warn('[Panen] LS load fail:', e); }
+})();
+
+function savePanenToLS() {
+  try {
+    localStorage.setItem(PANEN_LS_KEY, JSON.stringify({
+      version: PANEN_SCHEMA_VERSION,
+      updated_at: new Date().toISOString(),
+      data: PANEN_DATA
+    }));
+  } catch(e) { console.warn('[Panen] LS save fail:', e); }
+}
+
+function togglePanenKebun(el) {
+  // Multi-select except "mixed" which is exclusive
+  const val = el.dataset.val;
+  const container = document.getElementById('panen-kebun');
+  if (val === 'mixed') {
+    container.querySelectorAll('.radio-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  } else {
+    container.querySelector('[data-val="mixed"]').classList.remove('active');
+    el.classList.toggle('active');
+  }
+}
+
+function resetPanenForm() {
+  document.getElementById('panen-tgl').value = todayIso();
+  document.getElementById('panen-cherry-kg').value = '';
+  document.getElementById('panen-pohon').value = '';
+  document.getElementById('panen-pct-merah').value = 55;
+  document.getElementById('panen-pct-kuning').value = 25;
+  document.getElementById('panen-pct-hijau').value = 12;
+  document.getElementById('panen-pct-hitam').value = 8;
+  document.getElementById('panen-catatan').value = '';
+  ['panen-kebun', 'panen-context', 'panen-cuaca'].forEach(id => {
+    document.getElementById(id).querySelectorAll('.radio-pill.active').forEach(p => p.classList.remove('active'));
+  });
+}
+
+function submitPanenEntry() {
+  const tgl = document.getElementById('panen-tgl').value;
+  const cherry_kg = parseFloat(document.getElementById('panen-cherry-kg').value);
+  const pohon = parseInt(document.getElementById('panen-pohon').value) || null;
+  const context = document.querySelector('#panen-context .active')?.dataset.val;
+  const cuaca = document.querySelector('#panen-cuaca .active')?.dataset.val || null;
+  const catatan = document.getElementById('panen-catatan').value.trim();
+  const kebunPills = document.querySelectorAll('#panen-kebun .active');
+  const kebun = [...kebunPills].map(p => p.dataset.val);
+
+  const errors = [];
+  if (!tgl) errors.push('Tanggal');
+  if (!cherry_kg || cherry_kg <= 0) errors.push('Cherry kg');
+  if (kebun.length === 0) errors.push('Kebun (minimal 1)');
+  if (!context) errors.push('Context');
+  if (errors.length > 0) {
+    alert('Mohon lengkapi: ' + errors.join(', '));
+    return;
+  }
+
+  const k_merah = parseFloat(document.getElementById('panen-pct-merah').value) || 0;
+  const k_kuning = parseFloat(document.getElementById('panen-pct-kuning').value) || 0;
+  const k_hijau = parseFloat(document.getElementById('panen-pct-hijau').value) || 0;
+  const k_hitam = parseFloat(document.getElementById('panen-pct-hitam').value) || 0;
+  const total_pct = k_merah + k_kuning + k_hijau + k_hitam;
+  if (Math.abs(total_pct - 100) > 5) {
+    if (!confirm(`Komposisi total ${total_pct}% (bukan 100%). Tetap submit?`)) return;
+  }
+
+  const id = 'panen_' + tgl.replace(/-/g, '') + '_' + String(PANEN_DATA.length + 1).padStart(3, '0');
+  const entry = {
+    id,
+    tgl,
+    kebun,
+    cherry_kg,
+    pohon,
+    komposisi: { merah: k_merah, kuning: k_kuning, hijau: k_hijau, hitam: k_hitam },
+    context,
+    cuaca,
+    catatan,
+    processing_stage: 'cherry_mentah',
+    green_bean_kg: null,
+    lot_id: null,
+    created_at: new Date().toISOString(),
+    last_modified_at: new Date().toISOString()
+  };
+  PANEN_DATA.push(entry);
+  savePanenToLS();
+  if (typeof showToast === 'function') showToast(`✅ Panen ${cherry_kg} kg cherry tersimpan (batch ${id})`, 'success');
+  resetPanenForm();
+  renderPanen();
+}
+
+function advancePanenStage(id) {
+  const entry = PANEN_DATA.find(e => e.id === id);
+  if (!entry) return;
+  const currentIdx = PANEN_PIPELINE_STAGES.findIndex(s => s.key === entry.processing_stage);
+  if (currentIdx < 0 || currentIdx >= PANEN_PIPELINE_STAGES.length - 1) return;
+  const nextStage = PANEN_PIPELINE_STAGES[currentIdx + 1];
+  entry.processing_stage = nextStage.key;
+  // Auto-compute green_bean_kg saat masuk green_bean stage
+  if (nextStage.key === 'green_bean' || nextStage.key === 'lot_ready') {
+    if (!entry.green_bean_kg) {
+      entry.green_bean_kg = parseFloat((entry.cherry_kg * nextStage.ratio).toFixed(2));
+    }
+  }
+  // Auto-assign lot_id saat masuk lot_ready
+  if (nextStage.key === 'lot_ready' && !entry.lot_id) {
+    const [year, month] = entry.tgl.split('-');
+    const kebunStr = entry.kebun.includes('mixed') ? 'MIX' : entry.kebun.map(k => 'K'+k).join('');
+    const lotNum = String(PANEN_DATA.filter(e => e.lot_id).length + 1).padStart(3, '0');
+    entry.lot_id = `WKKN-${year}-${month}-${kebunStr}-${lotNum}`;
+  }
+  entry.last_modified_at = new Date().toISOString();
+  savePanenToLS();
+  if (typeof showToast === 'function') showToast(`📦 Batch ${id} advanced ke ${PANEN_STAGE_LBL[nextStage.key]}`, 'info');
+  renderPanen();
+}
+
+function deletePanenEntry(id) {
+  if (!confirm('Hapus batch ini? Tidak bisa di-undo.')) return;
+  PANEN_DATA = PANEN_DATA.filter(e => e.id !== id);
+  savePanenToLS();
+  renderPanen();
+}
+
+function renderPanen() {
+  if (!document.getElementById('panel-panen')) return;
+  renderPanenKPI();
+  renderPanenDailyChart();
+  renderPanenCompositionChart();
+  renderPanenKebunChart();
+  renderPanenPipelineFunnel();
+  renderPanenBatchTable();
+}
+
+function renderPanenKPI() {
+  const today = todayIso();
+  const todayKg = PANEN_DATA.filter(e => e.tgl === today).reduce((s, e) => s + e.cherry_kg, 0);
+  const cumulative = PANEN_DATA.reduce((s, e) => s + e.cherry_kg, 0);
+  const days = new Set(PANEN_DATA.map(e => e.tgl)).size;
+  const totalPohon = PANEN_DATA.reduce((s, e) => s + (e.pohon || 0), 0);
+  const avgYield = totalPohon > 0 ? (cumulative / totalPohon).toFixed(2) : '—';
+  // Weighted avg % merah
+  const totalCherryWithKomp = PANEN_DATA.reduce((s, e) => s + e.cherry_kg, 0);
+  const weightedMerah = PANEN_DATA.reduce((s, e) => s + (e.cherry_kg * (e.komposisi?.merah || 0)), 0);
+  const avgMerah = totalCherryWithKomp > 0 ? Math.round(weightedMerah / totalCherryWithKomp) + '%' : '—';
+  const greenBeanReady = PANEN_DATA
+    .filter(e => e.processing_stage === 'green_bean' || e.processing_stage === 'lot_ready')
+    .reduce((s, e) => s + (e.green_bean_kg || 0), 0);
+
+  const el = (id) => document.getElementById(id);
+  if (el('panen-cumulative-kg')) el('panen-cumulative-kg').textContent = cumulative.toFixed(1);
+  if (el('panen-target-pct')) el('panen-target-pct').textContent = Math.round((cumulative / PANEN_TARGET_KG) * 100);
+  if (el('panen-kpi-today')) el('panen-kpi-today').textContent = todayKg.toFixed(1);
+  if (el('panen-kpi-days')) el('panen-kpi-days').textContent = days;
+  if (el('panen-kpi-avg-yield')) el('panen-kpi-avg-yield').textContent = avgYield;
+  if (el('panen-kpi-merah-pct')) el('panen-kpi-merah-pct').textContent = avgMerah;
+  if (el('panen-kpi-green-bean')) el('panen-kpi-green-bean').textContent = greenBeanReady.toFixed(2);
+}
+
+function renderPanenDailyChart() {
+  const ctx = document.getElementById('chart-panen-daily');
+  if (!ctx) return;
+  if (window._panenDailyChart) { try { window._panenDailyChart.destroy(); } catch(e){} }
+
+  // Aggregate per day
+  const byDate = {};
+  PANEN_DATA.forEach(e => {
+    byDate[e.tgl] = (byDate[e.tgl] || 0) + e.cherry_kg;
+  });
+  const dates = Object.keys(byDate).sort();
+  const dailyValues = dates.map(d => byDate[d]);
+  // Cumulative
+  let cum = 0;
+  const cumulative = dailyValues.map(v => (cum += v));
+  // Target line (horizontal, full length)
+  const targetLine = dates.map(() => PANEN_TARGET_KG);
+
+  window._panenDailyChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dates.map(d => formatTglShort ? formatTglShort(d) : d),
+      datasets: [
+        { type: 'bar', label: '🍒 Cherry harian (kg)', data: dailyValues, backgroundColor: '#c14b3a', yAxisID: 'y' },
+        { type: 'line', label: '📈 Cumulative (kg)', data: cumulative, borderColor: '#1f5f47', backgroundColor: 'rgba(31,95,71,.1)', fill: true, tension: 0.3, yAxisID: 'y', borderWidth: 2 },
+        { type: 'line', label: 'Target 366 kg', data: targetLine, borderColor: '#dc2626', borderDash: [6, 4], borderWidth: 2, fill: false, pointRadius: 0, yAxisID: 'y' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true, title: { display: true, text: 'Kilogram (kg)' } } },
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+}
+
+function renderPanenCompositionChart() {
+  const ctx = document.getElementById('chart-panen-composition');
+  if (!ctx) return;
+  if (window._panenCompChart) { try { window._panenCompChart.destroy(); } catch(e){} }
+  const byDate = {};
+  PANEN_DATA.forEach(e => {
+    if (!byDate[e.tgl]) byDate[e.tgl] = { merah:0, kuning:0, hijau:0, hitam:0, total:0 };
+    const k = e.komposisi || {};
+    byDate[e.tgl].merah += e.cherry_kg * (k.merah || 0) / 100;
+    byDate[e.tgl].kuning += e.cherry_kg * (k.kuning || 0) / 100;
+    byDate[e.tgl].hijau += e.cherry_kg * (k.hijau || 0) / 100;
+    byDate[e.tgl].hitam += e.cherry_kg * (k.hitam || 0) / 100;
+    byDate[e.tgl].total += e.cherry_kg;
+  });
+  const dates = Object.keys(byDate).sort();
+  window._panenCompChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: dates.map(d => formatTglShort ? formatTglShort(d) : d),
+      datasets: [
+        { label: '🟥 Merah', data: dates.map(d => byDate[d].merah.toFixed(1)), backgroundColor: '#c14b3a' },
+        { label: '🟨 Kuning', data: dates.map(d => byDate[d].kuning.toFixed(1)), backgroundColor: '#d4a017' },
+        { label: '🟩 Hijau', data: dates.map(d => byDate[d].hijau.toFixed(1)), backgroundColor: '#16a34a' },
+        { label: '⬛ Overripe', data: dates.map(d => byDate[d].hitam.toFixed(1)), backgroundColor: '#1c1917' }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, title: { display: true, text: 'kg' } } },
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+}
+
+function renderPanenKebunChart() {
+  const ctx = document.getElementById('chart-panen-kebun');
+  if (!ctx) return;
+  if (window._panenKebunChart) { try { window._panenKebunChart.destroy(); } catch(e){} }
+  const totals = { '1':0, '2':0, '3':0, '4':0, 'mixed':0 };
+  PANEN_DATA.forEach(e => {
+    if (e.kebun.includes('mixed')) {
+      totals.mixed += e.cherry_kg;
+    } else {
+      const split = e.cherry_kg / e.kebun.length;
+      e.kebun.forEach(k => { if (totals[k] !== undefined) totals[k] += split; });
+    }
+  });
+  window._panenKebunChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Kebun 1', 'Kebun 2', 'Kebun 3', 'Kebun 4', '🔀 Campuran'],
+      datasets: [{ data: [totals['1'], totals['2'], totals['3'], totals['4'], totals.mixed], backgroundColor: ['#a8c8bc','#5a9080','#c4906a','#d4a017','#94A3B8'] }]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+  });
+}
+
+function renderPanenPipelineFunnel() {
+  const c = document.getElementById('panen-pipeline-funnel');
+  if (!c) return;
+  // Sum kg at each stage
+  const stageKg = {};
+  PANEN_PIPELINE_STAGES.forEach(s => stageKg[s.key] = 0);
+  PANEN_DATA.forEach(e => {
+    const currentIdx = PANEN_PIPELINE_STAGES.findIndex(s => s.key === e.processing_stage);
+    if (currentIdx < 0) return;
+    // Each entry contributes to all stages it has reached
+    for (let i = 0; i <= currentIdx; i++) {
+      const stage = PANEN_PIPELINE_STAGES[i];
+      const calcKg = i === 0 ? e.cherry_kg : (e.cherry_kg * stage.ratio);
+      stageKg[stage.key] += calcKg;
+    }
+  });
+  const maxKg = Math.max(...Object.values(stageKg), 1);
+  c.innerHTML = PANEN_PIPELINE_STAGES.map((s, idx) => {
+    const kg = stageKg[s.key];
+    const pct = Math.round((kg / maxKg) * 100);
+    const heightPx = Math.max(40, Math.round(pct * 1.4));
+    const isLast = idx === PANEN_PIPELINE_STAGES.length - 1;
+    return `<div style="display:flex;flex-direction:column;align-items:center;padding:8px 4px;background:linear-gradient(180deg,#fafaf6,#fff);border:1px solid #e0e0d0;border-radius:8px">
+      <div style="font-size:10px;font-weight:800;color:var(--earth);text-align:center;letter-spacing:0.3px;min-height:30px;display:flex;align-items:center;justify-content:center">${s.label}</div>
+      <div style="width:80%;height:${heightPx}px;background:linear-gradient(180deg,#c14b3a,#8c2519);border-radius:6px;display:flex;align-items:center;justify-content:center;margin:6px 0;transition:.3s">
+        <div style="font-size:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3)">${kg.toFixed(1)}</div>
+      </div>
+      <div style="font-size:9px;color:var(--mute);text-align:center">kg · ratio ${(s.ratio*100).toFixed(0)}%</div>
+    </div>`;
+  }).join('');
+}
+
+function renderPanenBatchTable() {
+  const tbody = document.getElementById('panen-batch-tbody');
+  if (!tbody) return;
+  if (PANEN_DATA.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--mute)">
+      <div style="font-size:24px;margin-bottom:6px">☕</div>
+      <div style="font-weight:700;color:var(--earth)">Belum ada panen ter-catat</div>
+      <div style="font-size:11px;margin-top:4px">Submit panen pertama via form di atas</div>
+    </td></tr>`;
+    return;
+  }
+  const sorted = [...PANEN_DATA].sort((a,b) => b.tgl.localeCompare(a.tgl));
+  tbody.innerHTML = sorted.map(e => {
+    const kebunDisplay = e.kebun.includes('mixed') ? '🔀 Campuran' : e.kebun.map(k => 'K'+k).join(' · ');
+    const komp = e.komposisi || {};
+    const kompDisplay = `<span style="color:#c14b3a">${komp.merah || 0}%</span> · <span style="color:#d4a017">${komp.kuning || 0}%</span> · <span style="color:#16a34a">${komp.hijau || 0}%</span> · <span style="color:#1c1917">${komp.hitam || 0}%</span>`;
+    const stageLabel = PANEN_STAGE_LBL[e.processing_stage] || e.processing_stage;
+    const currentIdx = PANEN_PIPELINE_STAGES.findIndex(s => s.key === e.processing_stage);
+    const isLast = currentIdx >= PANEN_PIPELINE_STAGES.length - 1;
+    const advanceBtn = isLast
+      ? `<span style="font-size:10px;color:var(--mute);font-style:italic">Lot ready: ${e.lot_id || '—'}</span>`
+      : `<button onclick="advancePanenStage('${e.id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 8px" title="Advance ke ${PANEN_PIPELINE_STAGES[currentIdx+1]?.label}">▶ Advance</button>`;
+    const ctxLabel = { terjadwal: '📅 Terjadwal', incidental: '🎯 Incidental', sortir_terlambat: '⏰ Sortir Terlambat' }[e.context] || e.context;
+    return `<tr>
+      <td style="white-space:nowrap">${formatTglShort ? formatTglShort(e.tgl) : e.tgl}</td>
+      <td style="font-size:10.5px">${kebunDisplay}</td>
+      <td style="text-align:right;font-weight:700">${e.cherry_kg.toFixed(1)}</td>
+      <td style="text-align:right;font-size:10px">${kompDisplay}</td>
+      <td style="text-align:right">${e.pohon || '—'}</td>
+      <td style="font-size:10px">${ctxLabel}</td>
+      <td style="font-size:10.5px">${stageLabel}</td>
+      <td style="text-align:right;font-size:10.5px">${e.green_bean_kg !== null ? e.green_bean_kg.toFixed(2) + ' kg' : '—'}</td>
+      <td style="text-align:center;white-space:nowrap">
+        ${advanceBtn}
+        <button onclick="deletePanenEntry('${e.id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 6px;color:var(--cherry);border-color:var(--cherry)" title="Hapus">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// Auto-init form defaults + trigger render saat tab dibuka
+document.addEventListener('DOMContentLoaded', () => {
+  const tglEl = document.getElementById('panen-tgl');
+  if (tglEl && typeof todayIso === 'function') tglEl.value = todayIso();
+  const panenTab = document.querySelector('.sb-tab[data-panel="panen"]');
+  if (panenTab) panenTab.addEventListener('click', () => setTimeout(renderPanen, 100));
+});
 
 function renderInventoryChart() {
   renderInventoryKPI();
