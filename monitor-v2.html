@@ -4916,6 +4916,11 @@ function renderInventoryKPI() {
 // PANEN 2026 — Daily Tracker (locked 20 Mei 2026)
 // v1.1 (21 Mei 2026): + pengapung_kg + has_split + multi-bucket grading refactor
 // ============================================================
+// Helper missing (BUGFIX 21 Mei sore — ReferenceError di production):
+// `todayIso` dipanggil di 8 tempat tapi tidak pernah didefine. Define di sini sekali.
+function todayIso() {
+  return new Date().toISOString().slice(0, 10);  // YYYY-MM-DD
+}
 const PANEN_SCHEMA_VERSION = '1.1';
 const PANEN_ADDITIVE_VERSIONS = ['1.0', '1.1'];  // backward-compat preserve LS
 const PANEN_LS_KEY = 'wkkn_v2_panen_2026';
