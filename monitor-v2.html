@@ -808,7 +808,7 @@
       <!-- ============ SECTION 1 — UANG MASUK ============ -->
       <div class="card" style="border-left:4px solid var(--moss)">
         <div class="card-title" style="color:var(--moss)"><span class="num">1</span>💰 Laporan Uang Masuk</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pemasukan ke Kas Wakif: hasil panen kopi, donasi, hibah, atau transfer ke kebun. <strong style="color:var(--moss)">Saldo awal 2026 sudah ter-seed dari backfill Panen 2025 (penjualan 210 KG GB ke Bonsari Coffee)</strong> — lihat row tabel + catatan justifikasi. Pemasukan baru akan muncul saat panen 2026 atau ada donor.</p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pemasukan ke Kas Wakif: hasil panen kopi, donasi, hibah, atau transfer ke kebun. <strong style="color:var(--moss)">Saldo awal 2026 di-backfill dari Panen 2025 dengan skema MUSYARAKAH PROPORSIONAL</strong> (revenue penjualan ke Bonsari + haq saham wakaf 12,59% × margin pool). Justifikasi lengkap di field catatan tiap row. Pemasukan baru muncul saat panen 2026 / donasi.</p>
         <div style="display:flex;justify-content:space-between;align-items:center;background:#f5fbf7;padding:14px 18px;border-radius:8px;margin-bottom:12px;gap:14px;flex-wrap:wrap">
           <div>
             <div style="font-size:11px;color:var(--mute);letter-spacing:.5px;font-weight:700">TOTAL UANG MASUK</div>
@@ -10633,29 +10633,42 @@ function saveCashbook() { localStorage.setItem('wkkn_v2_cashbook', JSON.stringif
 
 // ============================================================================
 // SEED — SALDO KAS AWAL PENGELOLAAN KEBUN 2026 (dari Panen 2025)
+// v2.0 — MUSYARAKAH PROPORSIONAL framework (locked 21 Mei 2026)
 // ============================================================================
-// Dibuat 21 Mei 2026 berdasarkan diskusi Adib × Claude — bridging Bonsari Coffee
-// (offtaker) ke Kas Wakif. Lihat justifikasi nominal lengkap di field `ket` per
-// entry, plus memory ref `project_bonsari_coffee_modal_awal.md` (LOCKED 4 Mei 2026)
-// untuk angka authoritative Bonsari side.
+// Skema fikih muamalah: Wakaf + Adib pribadi sama-sama setor modal ke pool
+// processing Bonsari Coffee. Return ke Kas Wakif proporsional ke kontribusi
+// modal (haq), bukan flat 40%. Sesuai prinsip antaradin (mutual consent) dan
+// musyarakah (equity sharing) tanpa riba/ghoror.
 //
-// Idempotent: hanya inject sekali per browser. Adib bebas edit / hapus via UI
-// "Tambah Pengeluaran/Pemasukan" → klik row → ✏️ Edit.
+// Migration v1 → v2: entries lama (voluntary attribution 140 KG basis) di-replace
+// dengan musyarakah proporsional + tambah entry Adib personal hak yang sebelumnya
+// implicit. Idempotent via version flag.
+//
+// Cross-ref: project_kas_wakif_panen2025_backfill.md memory.
 // ============================================================================
+const PANEN_2025_BACKFILL_VERSION = '2.0';
 const PANEN_2025_SEED_IDS = [
   'cb_seed_panen2025_revenue_bonsari',
   'cb_seed_panen2025_dm_distribusi',
+  'cb_seed_panen2025_adib_personal_hak',
+  'cb_seed_panen2025_musyarakah_return',
+  // v1 legacy ID — included for cleanup migration
   'cb_seed_panen2025_voluntary_bonsari'
 ];
-const hasPanen2025Seed = CASHBOOK.some(t => PANEN_2025_SEED_IDS.includes(t.id));
-if (!hasPanen2025Seed) {
+const storedBackfillVer = localStorage.getItem('wkkn_v2_panen2025_backfill_ver');
+
+if (storedBackfillVer !== PANEN_2025_BACKFILL_VERSION) {
+  // Cleanup: remove old v1 + v2 entries (if any) to prevent duplication
+  CASHBOOK = CASHBOOK.filter(t => !PANEN_2025_SEED_IDS.includes(t.id));
+
+  // Inject v2.0 Musyarakah Proporsional entries
   CASHBOOK.push(
     {
       id: 'cb_seed_panen2025_revenue_bonsari',
       tgl: '2025-11-30',
       tipe: 'masuk',
       kat: '',
-      ket: '[BACKFILL Panen 2025] Penjualan GB Panen 2025 ke Bonsari Coffee — 210 KG × Rp 53.000/KG = Rp 11.130.000. Bonsari = offtaker/processor brand Adib. JUSTIFIKASI: locked di Bonsari Modal Awal 4 Mei 2026 (memory ref: project_bonsari_coffee_modal_awal.md). Cross-check: dokumentasi Rekonsiliasi GB 26 Apr 2026 + Sales Rebuild 4 Mei 2026. Status transfer: ke account bisnis personal Adib (struktur Yayasan Mawrid belum berdiri). Tgl 2025-11-30 = representative end-of-harvest 2025; sebenarnya cash flow bertahap Okt-Nov 2025.',
+      ket: '[BACKFILL Panen 2025 · v2 Musyarakah] Penjualan GB Panen 2025 ke Bonsari Coffee — 210 KG × Rp 53.000/KG = Rp 11.130.000. Bonsari = brand Adib selaku offtaker/processor. JUSTIFIKASI HAQ: revenue penjualan langsung kebun wakaf ke Bonsari (akad bay\'). Sumber: Bonsari Modal Awal locked 4 Mei 2026 (memory: project_bonsari_coffee_modal_awal.md). Cross-check: Rekonsiliasi GB 26 Apr 2026. Status: 100% milik Kas Wakif sebagai hasil penjualan; selanjutnya dibagi per skema 30/30/40 (haq DM Mauquf Alaih / haq Wakif personal / saham Wakif di Bonsari sebagai modal kerja).',
       masuk: 11130000,
       keluar: 0,
       src: 'auto_backfill',
@@ -10667,28 +10680,42 @@ if (!hasPanen2025Seed) {
       tgl: '2025-12-15',
       tipe: 'keluar_langsung',
       kat: 'Distribusi Mauquf Alaih',
-      ket: '[BACKFILL Panen 2025] Distribusi Hak Mauquf Alaih TPQ Darul Mujtaba — "1/3 + even more" dari hasil Panen 2025 (Rp 11,13 jt). Placeholder Rp 3.710.000 = 1/3 strict; angka aktual likely sedikit lebih tinggi (per klarifikasi Adib 21 Mei 2026 "even more"). JUSTIFIKASI: distribusi voluntary pre-BEP selaras filosofi wakaf produktif amanah — Ust. Fauzan & TPQ DM = mauquf alaih utama. Skema MoU 30/10/30/30 formalnya pasca-BEP, tapi Adib voluntary alokasikan duluan sebagai gesture amanah. ⚠️ Tanggal placeholder (mid-Des 2025) — minta Adib koreksi ke tanggal transfer aktual jika diingat persis.',
+      ket: '[BACKFILL Panen 2025 · v2 Musyarakah] Distribusi Haq Mauquf Alaih TPQ Darul Mujtaba — Rp 5.000.000 (aktual per Adib 21 Mei 2026). Hitungan: strict 30% dari Rp 11.130.000 = Rp 3.339.000; selisih +Rp 1.661.000 = "even more" gesture amanah — Adib (Wakif) relakan sebagian haq personal-nya untuk DM (prinsip ANTARADIN / kerelaan dalam akad wakaf produktif). Ust. Fauzan & TPQ DM = mauquf alaih utama. Status distribusi: pre-BEP voluntary, selaras filosofi wakaf — pre-pendirian Yayasan Mawrid Foundation. ⚠️ Tanggal placeholder mid-Des 2025; Adib koreksi ke tanggal transfer aktual jika diingat persis.',
       masuk: 0,
-      keluar: 3710000,
+      keluar: 5000000,
       src: 'auto_backfill',
       nota: null,
       ref: 'panen2025_dm_distribusi'
     },
     {
-      id: 'cb_seed_panen2025_voluntary_bonsari',
+      id: 'cb_seed_panen2025_adib_personal_hak',
+      tgl: '2025-12-15',
+      tipe: 'keluar_langsung',
+      kat: 'Haq Wakif Personal',
+      ket: '[BACKFILL Panen 2025 · v2 Musyarakah] Haq Wakif Personal (Adib) — Rp 1.680.000 (residual setelah relakan ke DM). Hitungan: 30% strict × Rp 11.130.000 = Rp 3.339.000 formal hak; namun Adib relakan Rp 1.661.000 untuk distribusi DM "even more" (lihat row Distribusi DM). Sisa yang ditarik ke account personal = Rp 3.339.000 − Rp 1.661.000 = Rp 1.680.000. Status: ditarik ke account personal Adib (struktur Yayasan Mawrid belum berdiri, manual reclassification). PRINSIP ANTARADIN: Adib sebagai Wakif berhak ambil bagian, voluntary relakan sebagian untuk DM = sesuai prinsip kerelaan dalam akad wakaf produktif.',
+      masuk: 0,
+      keluar: 1680000,
+      src: 'auto_backfill',
+      nota: null,
+      ref: 'panen2025_adib_personal_hak'
+    },
+    {
+      id: 'cb_seed_panen2025_musyarakah_return',
       tgl: '2026-05-21',
       tipe: 'masuk',
       kat: '',
-      ket: '[BACKFILL — HYBRID TREATMENT] Bagi Hasil Bonsari Voluntary atas Panen 2025. Estimasi Rp 2.650.000 = profit attributable to 140 KG (net pasca-DM) × avg margin Bonsari Rp 18.926/KG. JUSTIFIKASI FILOSOFIS: Bonsari = brand processing Adib yang sourcing dari kebun wakaf — margin sortasi/marketing/customer dari supply wakaf di-share balik ke Kas Wakif sebagai transparansi & konsistensi filosofi wakaf produktif (semua flow bisa ditelusuri umat). Treatment alternatif STRICT = hapus entry ini, Wakif hanya record revenue penjualan (Rp 11,13 jt) tanpa margin Bonsari. ⚠️ Adib decide: keep (HYBRID) atau hapus (STRICT) via Edit ✏️ pada row ini. Angka estimasi — exact butuh query Bonsari Apps Script API filter entries label "2025 A/B/O".',
-      masuk: 2650000,
+      ket: '[BACKFILL Panen 2025 · v2 MUSYARAKAH PROPORSIONAL] Haq Wakaf — Return Saham di Bonsari Coffee atas processing Panen 2025. Rp 1.855.000. HITUNGAN: Saham Wakaf Rp 4.452.000 (40% × Rp 11.130.000) ditahan di Bonsari sebagai modal kerja; modal pool gabungan = Rp 35.350.000 untuk processing 667 KG Panen 2025-tagged (210 KG asal kebun wakaf + 457 KG beli tambahan pakai modal Adib pribadi Rp 30.898.000). Wakaf share pool = 4.452.000 / 35.350.000 = 12,59%. Total margin pool: Rp 14.733.268 (data Bonsari Sales Rebuild Excel, filter HPP Panen 2025 profile). Haq Wakaf proporsional = 12,59% × Rp 14.733.268 = Rp 1.855.000. PRINSIP MUSYARAKAH: dua pihak setor modal ke pool, return dibagi sesuai % kontribusi modal — tidak ada riba, tidak ada ghoror, pure equity share. JUSTIFIKASI ANTARADIN: Wakaf TIDAK claim 40% atas modal Adib pribadi yang lebih besar; haqnya 12,59% sesuai kontribusi modal aktual. ⚠️ DATA QUALITY FLAG: 667 KG tagged Panen 2025 HPP vs 210 KG initial wakaf supply — selisih +457 KG = Adib personal purchases di-tag HPP Panen 2025. Audit Bonsari side pending: re-verify tagging untuk batch Lycheum repeat orders apakah cost basis benar.',
+      masuk: 1855000,
       keluar: 0,
       src: 'auto_backfill',
       nota: null,
-      ref: 'panen2025_voluntary_bonsari'
+      ref: 'panen2025_musyarakah_return'
     }
   );
+
   saveCashbook();
-  console.log('[Seed] Panen 2025 backfill injected to CASHBOOK — 3 entries (2 masuk, 1 keluar). Total: +Rp 11,13 jt + Rp 2,65 jt voluntary - Rp 3,71 jt DM = Rp 10,07 jt net contribution to opening balance 2026.');
+  localStorage.setItem('wkkn_v2_panen2025_backfill_ver', PANEN_2025_BACKFILL_VERSION);
+  console.log('[Seed v2.0 Musyarakah] Panen 2025 backfill applied — 4 entries (2 masuk + 2 keluar). Pemasukan Rp 12,985 jt − Pengeluaran Rp 6,68 jt = Net contribution Rp 6,305 jt ke saldo awal 2026 (sebelum ops 2026 Rp 3,9 jt → saldo akhir ~Rp 2,4 jt).');
 }
 
 // ---------- COMPUTE SALDO ----------
