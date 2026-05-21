@@ -1394,12 +1394,35 @@
               <input type="number" id="panen-aktual-green-bean-kg" placeholder="cth: 5.8" step="0.1" min="0">
             </div>
             <div class="field" style="grid-column:1/-1">
-              <label class="field-lbl">% Merah Aktual (recheck visual saat sortir, % yang lolos = matang)</label>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
-                <div><span style="color:#c14b3a;font-weight:700;font-size:11px">🟥 Merah aktual</span><input type="number" id="panen-aktual-merah-pct" placeholder="cth: 62" min="0" max="100" style="margin-top:3px"></div>
-                <div><span style="color:#d4a017;font-weight:700;font-size:11px">🟨 Kuning aktual</span><input type="number" id="panen-aktual-kuning-pct" placeholder="cth: 20" min="0" max="100" style="margin-top:3px"></div>
-                <div><span style="color:#16a34a;font-weight:700;font-size:11px">🟩 Hijau aktual</span><input type="number" id="panen-aktual-hijau-pct" placeholder="cth: 10" min="0" max="100" style="margin-top:3px"></div>
-                <div><span style="color:#1c1917;font-weight:700;font-size:11px">⬛ Overripe aktual</span><input type="number" id="panen-aktual-hitam-pct" placeholder="cth: 8" min="0" max="100" style="margin-top:3px"></div>
+              <label class="field-lbl">% Grading Aktual (recheck visual saat sortir, % yang lolos = matang)</label>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+                <div>
+                  <span style="color:#ef4444;font-weight:700;font-size:11px">🟥 Merah aktual (%)</span>
+                  <input type="number" id="panen-aktual-merah-pct" placeholder="cth: 62" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-merah-kg-hint" style="font-size:10px;color:#ef4444;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+                <div>
+                  <span style="color:#facc15;font-weight:700;font-size:11px">🟨 Kuning aktual (%)</span>
+                  <input type="number" id="panen-aktual-kuning-pct" placeholder="cth: 20" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-kuning-kg-hint" style="font-size:10px;color:#ca8a04;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+                <div>
+                  <span style="color:#22c55e;font-weight:700;font-size:11px">🟩 Hijau aktual (%)</span>
+                  <input type="number" id="panen-aktual-hijau-pct" placeholder="cth: 10" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-hijau-kg-hint" style="font-size:10px;color:#22c55e;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+                <div>
+                  <span style="color:#78716c;font-weight:700;font-size:11px">⬛ Overripe aktual (%)</span>
+                  <input type="number" id="panen-aktual-hitam-pct" placeholder="cth: 8" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-hitam-kg-hint" style="font-size:10px;color:#78716c;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+              </div>
+              <!-- Live total + validation banner -->
+              <div id="panen-aktual-grading-total" style="margin-top:10px;padding:10px 14px;background:#FAFCFB;border:1px dashed var(--moss);border-radius:6px;font-size:12px;color:var(--ink);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
+                <div>Total %: <strong id="panen-aktual-pct-total" style="color:var(--moss);font-size:13px">0</strong>% (target: 100%)</div>
+                <div>Total kg derived: <strong id="panen-aktual-kg-total">0</strong> kg</div>
+                <div>Reference lolos: <strong id="panen-aktual-kg-ref">—</strong> kg</div>
+                <div id="panen-aktual-validation-msg" style="font-weight:700"></div>
               </div>
             </div>
             <div class="field" style="grid-column:1/-1">
@@ -4949,11 +4972,12 @@ const PANEN_LOT_STAGES = [
 ];
 const PANEN_LOT_STAGE_LBL = Object.fromEntries(PANEN_LOT_STAGES.map(s => [s.key, s.label]));
 
+// v1.1 UX (21 Mei sore) — palette segar bright + warm
 const PANEN_GRADES = {
-  merah:  { label: '🟥 Merah',    color: '#c14b3a', default_price: 62500, target_buyer: 'Bonsari / Nomad (specialty)', range: '55-70K' },
-  kuning: { label: '🟨 Kuning',   color: '#d4a017', default_price: 47500, target_buyer: 'Commercial / blend',          range: '40-55K' },
-  hijau:  { label: '🟩 Hijau',    color: '#16a34a', default_price: 30000, target_buyer: 'Pengepul (grade C)',          range: '25-35K' },
-  hitam:  { label: '⬛ Hitam',     color: '#1c1917', default_price: 37500, target_buyer: 'Natural process / grade C',   range: '30-45K' }
+  merah:  { label: '🟥 Merah',    color: '#ef4444', default_price: 62500, target_buyer: 'Bonsari / Nomad (specialty)', range: '55-70K' },
+  kuning: { label: '🟨 Kuning',   color: '#facc15', default_price: 47500, target_buyer: 'Commercial / blend',          range: '40-55K' },
+  hijau:  { label: '🟩 Hijau',    color: '#22c55e', default_price: 30000, target_buyer: 'Pengepul (grade C)',          range: '25-35K' },
+  hitam:  { label: '⬛ Hitam',     color: '#78716c', default_price: 37500, target_buyer: 'Natural process / grade C',   range: '30-45K' }
 };
 
 let PANEN_DATA = [];
@@ -5437,20 +5461,23 @@ function renderPanenCompositionChart() {
     byDate[e.tgl].total += e.cherry_kg;
   });
   const dates = Object.keys(byDate).sort();
+  // v1.1 UX (21 Mei sore) — stacked → grouped (per Adib request: bar masing2 vertikal terpisah)
+  // Palette segar: bright + warm, bukan dark/muted. Cherry red, sunny gold, mint green, warm gray
   window._panenCompChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: dates.map(d => formatTglShort ? formatTglShort(d) : d),
       datasets: [
-        { label: '🟥 Merah', data: dates.map(d => byDate[d].merah.toFixed(1)), backgroundColor: '#c14b3a' },
-        { label: '🟨 Kuning', data: dates.map(d => byDate[d].kuning.toFixed(1)), backgroundColor: '#d4a017' },
-        { label: '🟩 Hijau', data: dates.map(d => byDate[d].hijau.toFixed(1)), backgroundColor: '#16a34a' },
-        { label: '⬛ Overripe', data: dates.map(d => byDate[d].hitam.toFixed(1)), backgroundColor: '#1c1917' }
+        { label: '🟥 Merah', data: dates.map(d => byDate[d].merah.toFixed(1)), backgroundColor: '#ef4444', borderColor: '#dc2626', borderWidth: 1, borderRadius: 4 },
+        { label: '🟨 Kuning', data: dates.map(d => byDate[d].kuning.toFixed(1)), backgroundColor: '#facc15', borderColor: '#ca8a04', borderWidth: 1, borderRadius: 4 },
+        { label: '🟩 Hijau', data: dates.map(d => byDate[d].hijau.toFixed(1)), backgroundColor: '#22c55e', borderColor: '#16a34a', borderWidth: 1, borderRadius: 4 },
+        { label: '⬛ Overripe', data: dates.map(d => byDate[d].hitam.toFixed(1)), backgroundColor: '#78716c', borderColor: '#57534e', borderWidth: 1, borderRadius: 4 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true, title: { display: true, text: 'kg' } } },
+      // GROUPED (bukan stacked) — 4 bar terpisah side-by-side per hari
+      scales: { x: { stacked: false }, y: { stacked: false, beginAtZero: true, title: { display: true, text: 'kg cherry' } } },
       plugins: { legend: { position: 'bottom' } }
     }
   });
@@ -5469,11 +5496,16 @@ function renderPanenKebunChart() {
       e.kebun.forEach(k => { if (totals[k] !== undefined) totals[k] += split; });
     }
   });
+  // v1.1 UX (21 Mei sore) — palette segar: ocean teal, fresh mint, coral peach, sunny gold, soft gray
   window._panenKebunChart = new Chart(ctx, {
     type: 'doughnut',
     data: {
       labels: ['Kebun 1', 'Kebun 2', 'Kebun 3', 'Kebun 4', '🔀 Campuran'],
-      datasets: [{ data: [totals['1'], totals['2'], totals['3'], totals['4'], totals.mixed], backgroundColor: ['#a8c8bc','#5a9080','#c4906a','#d4a017','#94A3B8'] }]
+      datasets: [{
+        data: [totals['1'], totals['2'], totals['3'], totals['4'], totals.mixed],
+        backgroundColor: ['#06b6d4', '#10b981', '#fb923c', '#facc15', '#a8a29e'],
+        borderColor: '#fff', borderWidth: 2
+      }]
     },
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
   });
@@ -5645,6 +5677,7 @@ function loadAktualForBatch(batchId) {
   if (el('panen-aktual-hitam-pct')) el('panen-aktual-hitam-pct').value = a.hitam_pct ?? '';
   if (el('panen-aktual-catatan')) el('panen-aktual-catatan').value = a.catatan || '';
   recomputeCherryLolos();
+  updateGradingLiveValidation();  // v1.1 UX — trigger live kg display + validation
 }
 
 function recomputeCherryLolos() {
@@ -5699,8 +5732,22 @@ function submitPanenAktual() {
   // Sync ke green_bean_kg utama supaya KPI ikut update
   if (greenBean > 0) entry.green_bean_kg = greenBean;
   savePanenToLS();
-  if (typeof showToast === 'function') showToast(`✅ Aktual tersimpan untuk batch ${batchId}`, 'success');
+  if (typeof showToast === 'function') showToast(`✅ Aktual tersimpan untuk batch ${batchId}. Lihat hasil komparasi di tabel di bawah ↓`, 'success');
   renderPanen();
+  // v1.1 UX (21 Mei sore) — Auto-scroll ke tabel komparasi setelah submit, biar Adib tahu hasil tampil di mana
+  setTimeout(() => {
+    const tbody = document.getElementById('panen-komparasi-tbody');
+    if (tbody) {
+      tbody.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Flash highlight row yang baru di-input
+      const row = tbody.querySelector(`tr`);
+      if (row) {
+        row.style.transition = 'background-color 0.5s';
+        row.style.backgroundColor = '#FEF3C7';
+        setTimeout(() => { row.style.backgroundColor = ''; }, 2000);
+      }
+    }
+  }, 300);
 }
 
 function renderPanenKomparasi() {
@@ -5779,9 +5826,63 @@ function renderPanenKomparasi() {
 document.addEventListener('DOMContentLoaded', () => {
   ['panen-aktual-pengapung-kg','panen-aktual-defect-hijau-kg'].forEach(id => {
     const el = document.getElementById(id);
-    if (el) el.addEventListener('input', recomputeCherryLolos);
+    if (el) el.addEventListener('input', () => { recomputeCherryLolos(); updateGradingLiveValidation(); });
   });
 });
+
+// v1.1 UX (21 Mei sore) — Live grading validation di Section 6
+// Adib request: ketika input % per warna, kg per warna langsung tampil, total kg klop dengan kg cherry lolos
+function updateGradingLiveValidation() {
+  const cherryLolos = parseFloat(document.getElementById('panen-aktual-cherry-lolos-kg')?.value) || 0;
+  const m = parseFloat(document.getElementById('panen-aktual-merah-pct')?.value) || 0;
+  const k = parseFloat(document.getElementById('panen-aktual-kuning-pct')?.value) || 0;
+  const h = parseFloat(document.getElementById('panen-aktual-hijau-pct')?.value) || 0;
+  const b = parseFloat(document.getElementById('panen-aktual-hitam-pct')?.value) || 0;
+  const totalPct = m + k + h + b;
+
+  // Auto-derive kg per warna
+  const mKg = (m / 100) * cherryLolos;
+  const kKg = (k / 100) * cherryLolos;
+  const hKg = (h / 100) * cherryLolos;
+  const bKg = (b / 100) * cherryLolos;
+  const totalKg = mKg + kKg + hKg + bKg;
+
+  // Update hints per warna
+  const setHint = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val > 0 ? `≈ ${val.toFixed(2)} kg` : '— kg';
+  };
+  setHint('panen-aktual-merah-kg-hint', mKg);
+  setHint('panen-aktual-kuning-kg-hint', kKg);
+  setHint('panen-aktual-hijau-kg-hint', hKg);
+  setHint('panen-aktual-hitam-kg-hint', bKg);
+
+  // Update total + validation banner
+  const totalPctEl = document.getElementById('panen-aktual-pct-total');
+  const totalKgEl = document.getElementById('panen-aktual-kg-total');
+  const refEl = document.getElementById('panen-aktual-kg-ref');
+  const msgEl = document.getElementById('panen-aktual-validation-msg');
+  const containerEl = document.getElementById('panen-aktual-grading-total');
+  if (totalPctEl) totalPctEl.textContent = totalPct.toFixed(0);
+  if (totalKgEl) totalKgEl.textContent = totalKg.toFixed(2);
+  if (refEl) refEl.textContent = cherryLolos > 0 ? cherryLolos.toFixed(2) : '—';
+  if (msgEl && containerEl) {
+    if (totalPct === 0) {
+      msgEl.innerHTML = '';
+      containerEl.style.borderColor = 'var(--moss)';
+      containerEl.style.background = '#FAFCFB';
+    } else if (Math.abs(totalPct - 100) <= 5) {
+      msgEl.innerHTML = '<span style="color:#16a34a">✓ Klop! (total% ≈ 100%)</span>';
+      containerEl.style.borderColor = '#16a34a';
+      containerEl.style.background = '#F0FDF4';
+    } else {
+      const diff = totalPct - 100;
+      msgEl.innerHTML = `<span style="color:#dc2626">⚠ Total ${totalPct.toFixed(0)}% (${diff >= 0 ? '+' : ''}${diff.toFixed(0)}% off dari 100%)</span>`;
+      containerEl.style.borderColor = '#dc2626';
+      containerEl.style.background = '#FEF2F2';
+    }
+  }
+}
 
 // ============================================================
 // SECTION 7: SAMPLING PANEN PER POHON (SOP)
