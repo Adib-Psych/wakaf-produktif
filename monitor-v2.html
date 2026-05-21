@@ -1543,6 +1543,119 @@
           </table>
         </div>
       </div>
+
+      <!-- ─────────────────────────────────────────────────────────────── -->
+      <!-- SECTION 8: LOT TRACKER per GRADE (Multi-Bucket Pipeline)        -->
+      <!-- Added 21 Mei 2026 — Schema v1.1: setelah sortir 4-warna, batch  -->
+      <!-- panen split jadi 4 lot child (merah/kuning/hijau/hitam) yang    -->
+      <!-- masing-masing punya pipeline terpisah sampai SOLD.              -->
+      <!-- ─────────────────────────────────────────────────────────────── -->
+      <div class="card">
+        <div class="card-title"><span class="num">8</span>📦 Lot Tracker per Grade — Multi-Bucket Pipeline</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Setelah Stage 3 sortir 4-warna selesai, batch panen split jadi <strong>4 lot child</strong> (atau lebih sedikit kalau bucket kosong). Setiap lot punya pipeline terpisah: <strong>jemur → kupas → green bean → sold</strong>. Lot ID format: <code style="font-size:10.5px">WKKN-YYYY-MM-KX-WARNA-NNN</code> (tag tetap, walaupun pasca-jemur warna fisik tidak terlihat lagi).</p>
+
+        <!-- Lot KPI -->
+        <div class="kpi-grid" id="panen-lot-kpi" style="margin-bottom:14px">
+          <div class="kpi"><div class="kpi-num" id="panen-lot-total">0</div><div class="kpi-lbl">📦 Total Lot</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-lot-merah-kg">—</div><div class="kpi-lbl">🟥 Merah (kg sortir)</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-lot-sold-count">0</div><div class="kpi-lbl">💰 Lot Sold</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-lot-revenue">Rp 0</div><div class="kpi-lbl">💵 Total Revenue Aktual</div></div>
+        </div>
+
+        <!-- Filter pills -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
+          <span style="font-size:11px;color:var(--mute);font-weight:700">FILTER:</span>
+          <div class="radio-row" id="panen-lot-filter-grade" style="margin:0">
+            <div class="radio-pill on" data-val="all" onclick="setRadio('panen-lot-filter-grade',this);renderPanenLotsTable()">Semua</div>
+            <div class="radio-pill" data-val="merah" onclick="setRadio('panen-lot-filter-grade',this);renderPanenLotsTable()" style="background:rgba(193,75,58,.12);border-color:#c14b3a">🟥 Merah</div>
+            <div class="radio-pill" data-val="kuning" onclick="setRadio('panen-lot-filter-grade',this);renderPanenLotsTable()" style="background:rgba(212,160,23,.12);border-color:#d4a017">🟨 Kuning</div>
+            <div class="radio-pill" data-val="hijau" onclick="setRadio('panen-lot-filter-grade',this);renderPanenLotsTable()" style="background:rgba(22,163,74,.12);border-color:#16a34a">🟩 Hijau</div>
+            <div class="radio-pill" data-val="hitam" onclick="setRadio('panen-lot-filter-grade',this);renderPanenLotsTable()" style="background:rgba(28,25,23,.12);border-color:#1c1917">⬛ Hitam</div>
+          </div>
+          <span style="font-size:11px;color:var(--mute);margin-left:10px">STAGE:</span>
+          <div class="radio-row" id="panen-lot-filter-stage" style="margin:0">
+            <div class="radio-pill on" data-val="all" onclick="setRadio('panen-lot-filter-stage',this);renderPanenLotsTable()">Semua</div>
+            <div class="radio-pill" data-val="active" onclick="setRadio('panen-lot-filter-stage',this);renderPanenLotsTable()">🟢 Active (belum sold)</div>
+            <div class="radio-pill" data-val="sold" onclick="setRadio('panen-lot-filter-stage',this);renderPanenLotsTable()">💰 Sold</div>
+          </div>
+        </div>
+
+        <!-- Lot Table -->
+        <div class="table-wrap">
+          <table style="font-size:11px;width:100%">
+            <thead style="background:var(--cream)">
+              <tr>
+                <th>Lot ID</th>
+                <th>Grade</th>
+                <th>Parent</th>
+                <th style="text-align:right">Sortir (kg)</th>
+                <th style="text-align:right">Green Bean (kg)</th>
+                <th>Stage</th>
+                <th style="text-align:right">Target Price</th>
+                <th style="text-align:right">Actual Price</th>
+                <th>Buyer</th>
+                <th style="text-align:right">Revenue</th>
+                <th style="text-align:center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="panen-lot-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Per-grade summary chart -->
+        <div style="margin-top:18px">
+          <div style="font-size:12px;font-weight:800;color:var(--earth);margin-bottom:8px">📊 Per-Grade Summary (kg sortir vs kg green bean)</div>
+          <div class="chart-wrap" style="height:240px"><canvas id="chart-panen-lots-grade"></canvas></div>
+        </div>
+
+        <p style="font-size:10.5px;color:var(--mute);margin-top:12px;font-style:italic;line-height:1.55">💡 <strong>Cara kerja:</strong> Saat batch panen advance ke "🎨 Sortir 4-Warna", muncul modal input kg per bucket. Sistem auto-create lot child di tabel ini. Lot kemudian advance pipeline-nya sendiri (jemur → kupas → green bean → sold). Klik 💰 untuk catat sale dengan harga aktual.</p>
+      </div>
+    </div>
+
+    <!-- ───────── Modal: Stage 3 Sortir 4-Warna ───────── -->
+    <div id="dlg-panen-sortir4-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9000;justify-content:center;align-items:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;padding:0;max-width:640px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 50px rgba(0,0,0,.3)">
+        <div style="padding:18px 22px;background:linear-gradient(135deg,#1f5f47,#2d8466);color:#fff;border-radius:12px 12px 0 0">
+          <div style="font-size:18px;font-weight:800">🎨 Sortir 4-Warna — Multi-Bucket Grading</div>
+          <div style="font-size:11.5px;color:#d9ebe3;margin-top:4px;line-height:1.5">Pisahkan biji tenggelam jadi 4 bucket: 🟥 Merah · 🟨 Kuning · 🟩 Hijau · ⬛ Hitam. Sistem akan auto-create lot child terpisah.</div>
+        </div>
+        <div style="padding:20px 22px">
+          <input type="hidden" id="dlg-sortir4-batch-id">
+          <div id="dlg-sortir4-batch-info" style="padding:10px 14px;background:var(--cream);border-left:3px solid var(--moss);border-radius:6px;font-size:12px;color:var(--earth);margin-bottom:16px;line-height:1.5">Loading batch info…</div>
+
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
+            <div class="field">
+              <label class="field-lbl" style="color:#c14b3a">🟥 Merah (kg) — premium Bonsari</label>
+              <input type="number" id="dlg-sortir4-merah" step="0.1" min="0" oninput="updateSortir4Total()" style="border:2px solid #c14b3a">
+            </div>
+            <div class="field">
+              <label class="field-lbl" style="color:#d4a017">🟨 Kuning (kg) — commercial</label>
+              <input type="number" id="dlg-sortir4-kuning" step="0.1" min="0" oninput="updateSortir4Total()" style="border:2px solid #d4a017">
+            </div>
+            <div class="field">
+              <label class="field-lbl" style="color:#16a34a">🟩 Hijau (kg) — grade C / pengepul</label>
+              <input type="number" id="dlg-sortir4-hijau" step="0.1" min="0" oninput="updateSortir4Total()" style="border:2px solid #16a34a">
+            </div>
+            <div class="field">
+              <label class="field-lbl" style="color:#1c1917">⬛ Hitam (kg) — natural / grade C</label>
+              <input type="number" id="dlg-sortir4-hitam" step="0.1" min="0" oninput="updateSortir4Total()" style="border:2px solid #1c1917">
+            </div>
+          </div>
+
+          <div style="margin-top:14px;padding:10px 14px;background:#FAFCFB;border:1px dashed var(--moss);border-radius:6px;font-size:12px;color:var(--ink);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
+            <div>Total 4-bucket: <strong id="dlg-sortir4-total" style="color:var(--moss);font-size:13px">0.00</strong> kg</div>
+            <div>Target (kg tenggelam): <strong id="dlg-sortir4-target-tenggelam">0.00</strong> kg</div>
+            <div id="dlg-sortir4-diff" style="font-weight:700"></div>
+          </div>
+
+          <p style="font-size:10.5px;color:var(--mute);margin-top:10px;font-style:italic;line-height:1.55">⚠️ Tolerance ±5%. Bucket dengan kg = 0 akan di-skip (tidak create lot). Lot ID auto-generate dengan format <code>WKKN-YYYY-MM-KX-WARNA-NNN</code>.</p>
+
+          <div style="margin-top:18px;display:flex;gap:10px;justify-content:flex-end">
+            <button class="btn btn-secondary" onclick="closePanenSortir4Dialog()">Batal</button>
+            <button class="btn btn-primary" onclick="submitPanenSortir4()" style="background:var(--moss);color:#fff">🎨 Submit Sortir + Create Lots</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ============ INVENTARISASI ============ -->
@@ -2670,6 +2783,7 @@
           <option value="bongkar_pisang:50000">🍌 Bongkar rumpun pisang + tunas (Rp 50.000/rumpun)</option>
           <option value="topgraft_pohon:30000">✂️ Top-graft pucuk Robusta (Rp 30.000/pohon · TBD)</option>
           <option value="petik_merah:5000">🍒 Petik merah cherry (Rp 5.000/kg · TBD)</option>
+          <option value="sortasi_cherry:2000">🎨 Sortasi cherry pasca-panen (Rp 2.000/kg sorted · TBD)</option>
           <option value="custom:0">— Custom (input manual) —</option>
         </select>
         <div style="font-size:10px;color:var(--mute);margin-top:4px;line-height:1.4">
@@ -4091,7 +4205,8 @@ const BORONGAN_PRESETS = {
   tanam_lamtoro: 5000,
   bongkar_pisang: 50000,
   topgraft_pohon: 30000,   // skill-based, TBD final rate
-  petik_merah: 5000        // TBD — trade-off kualitas vs volume
+  petik_merah: 5000,       // TBD — trade-off kualitas vs volume
+  sortasi_cherry: 2000     // v1.1 (21 Mei) — Sortasi 4-bucket pasca-panen, Rp 2.000/kg sorted (TBD final)
 };
 const NAMA_PEKERJA = { YIT:'Cak Yit', KUMPUL:'Pak Kumpul' };
 
@@ -4719,7 +4834,8 @@ function loadBoronganPreset() {
   } else {
     const labels = {
       panjat_durian: 'pohon durian', topgraft_pohon: 'pohon', build_rorak: 'unit rorak',
-      tanam_lamtoro: 'lubang', bongkar_pisang: 'rumpun', petik_merah: 'kg'
+      tanam_lamtoro: 'lubang', bongkar_pisang: 'rumpun', petik_merah: 'kg',
+      sortasi_cherry: 'kg sorted'  // v1.1 (21 Mei) — Sortasi 4-bucket
     };
     document.getElementById('dlg-borongan-satuan').value = labels[satuan] || satuan;
     document.getElementById('dlg-borongan-tarif').value = tarif;
@@ -4796,21 +4912,43 @@ function renderInventoryKPI() {
 }
 
 // ============================================================
-// PANEN HARVEST 2026 — Daily Tracker (locked 20 Mei 2026)
+// PANEN 2026 — Daily Tracker (locked 20 Mei 2026)
+// v1.1 (21 Mei 2026): + pengapung_kg + has_split + multi-bucket grading refactor
 // ============================================================
-const PANEN_SCHEMA_VERSION = '1.0';
+const PANEN_SCHEMA_VERSION = '1.1';
+const PANEN_ADDITIVE_VERSIONS = ['1.0', '1.1'];  // backward-compat preserve LS
 const PANEN_LS_KEY = 'wkkn_v2_panen_2026';
 const PANEN_TARGET_KG = 366;  // Target konservatif Adib 2026 (0.4 kg × 915 phn)
 const PANEN_PIPELINE_STAGES = [
-  { key: 'cherry_mentah',   label: '🍒 Cherry Mentah',     ratio: 1.00 },
-  { key: 'sortasi_air',     label: '🚿 Sortasi Air',       ratio: 0.92 },  // ~8% pengapung dibuang
-  { key: 'sortir_hijau',    label: '🧹 Sortir Hijau',      ratio: 0.85 },  // ~7% hijau muda dibuang
-  { key: 'jemur',           label: '☀️ Penjemuran',         ratio: 0.45 },  // ~50% kadar air hilang
-  { key: 'kupas',           label: '🌰 Pengupasan',         ratio: 0.22 },  // kulit + parchment hilang
-  { key: 'green_bean',      label: '📦 Green Bean',         ratio: 0.20 },  // siap jual (typical Robusta 18-22%)
-  { key: 'lot_ready',       label: '🏷️ Lot Ready',         ratio: 0.20 }   // tagged WKKN-YYYY-MM-LOT
+  { key: 'cherry_mentah',   label: '🍒 Cherry Mentah',         ratio: 1.00 },
+  { key: 'sortasi_air',     label: '🚿 Sortasi Air',           ratio: 0.92 },  // input pengapung_kg, sisa biji tenggelam
+  { key: 'sortir_4warna',   label: '🎨 Sortir 4-Warna',        ratio: 0.85 },  // split → 4 lot child (merah/kuning/hijau/hitam)
+  // Stage 4+ adalah PER-LOT (jemur, kupas, green_bean, sold). Parent batch stop di sortir_4warna.
 ];
 const PANEN_STAGE_LBL = Object.fromEntries(PANEN_PIPELINE_STAGES.map(s => [s.key, s.label]));
+
+// ─────────────────────────────────────────────────────────────
+// PANEN_LOTS — multi-bucket grading per batch panen (v1.0, 21 Mei 2026)
+// Setiap batch panen yang masuk Stage 3 sortir_4warna → split jadi up to 4 lot child
+// Lot ID format: WKKN-YYYY-MM-KX-WARNA-NNN
+// ─────────────────────────────────────────────────────────────
+const PANEN_LOTS_SCHEMA_VERSION = '1.0';
+const PANEN_LOTS_LS_KEY = 'wkkn_v2_panen_lots_2026';
+const PANEN_LOT_STAGES = [
+  { key: 'sortir_done',  label: '✅ Sortir Done',         ratio: 1.00 },  // start di sini setelah split parent
+  { key: 'jemur',        label: '☀️ Penjemuran',          ratio: 0.45 },  // ~50% kadar air hilang
+  { key: 'kupas',        label: '🌰 Pengupasan',          ratio: 0.22 },  // kulit + parchment hilang
+  { key: 'green_bean',   label: '📦 Green Bean',          ratio: 0.20 },  // siap jual
+  { key: 'sold',         label: '💰 Sold',                ratio: 0.20 }   // sudah terjual, ada revenue
+];
+const PANEN_LOT_STAGE_LBL = Object.fromEntries(PANEN_LOT_STAGES.map(s => [s.key, s.label]));
+
+const PANEN_GRADES = {
+  merah:  { label: '🟥 Merah',    color: '#c14b3a', default_price: 62500, target_buyer: 'Bonsari / Nomad (specialty)', range: '55-70K' },
+  kuning: { label: '🟨 Kuning',   color: '#d4a017', default_price: 47500, target_buyer: 'Commercial / blend',          range: '40-55K' },
+  hijau:  { label: '🟩 Hijau',    color: '#16a34a', default_price: 30000, target_buyer: 'Pengepul (grade C)',          range: '25-35K' },
+  hitam:  { label: '⬛ Hitam',     color: '#1c1917', default_price: 37500, target_buyer: 'Natural process / grade C',   range: '30-45K' }
+};
 
 let PANEN_DATA = [];
 (function loadPanenFromLS(){
@@ -4818,8 +4956,17 @@ let PANEN_DATA = [];
     const raw = localStorage.getItem(PANEN_LS_KEY);
     if (!raw) return;
     const parsed = JSON.parse(raw);
-    if (parsed.version === PANEN_SCHEMA_VERSION && Array.isArray(parsed.data)) {
-      PANEN_DATA = parsed.data;
+    // Additive version preservation: accept any version in PANEN_ADDITIVE_VERSIONS
+    if (parsed.version && PANEN_ADDITIVE_VERSIONS.includes(parsed.version) && Array.isArray(parsed.data)) {
+      PANEN_DATA = parsed.data.map(e => ({
+        // Backfill new fields for entries created in v1.0 (additive migration)
+        pengapung_kg: null,
+        has_split: false,
+        ...e
+      }));
+      if (parsed.version !== PANEN_SCHEMA_VERSION) {
+        console.log(`[Panen] Migrated ${PANEN_DATA.length} entries from v${parsed.version} → v${PANEN_SCHEMA_VERSION} (additive)`);
+      }
     }
   } catch(e) { console.warn('[Panen] LS load fail:', e); }
 })();
@@ -4832,6 +4979,28 @@ function savePanenToLS() {
       data: PANEN_DATA
     }));
   } catch(e) { console.warn('[Panen] LS save fail:', e); }
+}
+
+let PANEN_LOTS_DATA = [];
+(function loadPanenLotsFromLS(){
+  try {
+    const raw = localStorage.getItem(PANEN_LOTS_LS_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed.version === PANEN_LOTS_SCHEMA_VERSION && Array.isArray(parsed.data)) {
+      PANEN_LOTS_DATA = parsed.data;
+    }
+  } catch(e) { console.warn('[PanenLots] LS load fail:', e); }
+})();
+
+function savePanenLotsToLS() {
+  try {
+    localStorage.setItem(PANEN_LOTS_LS_KEY, JSON.stringify({
+      version: PANEN_LOTS_SCHEMA_VERSION,
+      updated_at: new Date().toISOString(),
+      data: PANEN_LOTS_DATA
+    }));
+  } catch(e) { console.warn('[PanenLots] LS save fail:', e); }
 }
 
 function togglePanenKebun(el) {
@@ -4903,8 +5072,11 @@ function submitPanenEntry() {
     cuaca,
     catatan,
     processing_stage: 'cherry_mentah',
-    green_bean_kg: null,
-    lot_id: null,
+    // v1.1 (21 Mei): mass-balance tracking + multi-bucket grading
+    pengapung_kg: null,    // Stage 2 input — kg mengambang dibuang saat sortasi air
+    has_split: false,      // Stage 3 marker — true setelah sortir 4-warna selesai (lot child di PANEN_LOTS_DATA)
+    green_bean_kg: null,   // LEGACY (pre-v1.1) — sekarang dihitung dari sum lot child green_bean_kg
+    lot_id: null,          // LEGACY — sekarang multi-lot di PANEN_LOTS_DATA
     created_at: new Date().toISOString(),
     last_modified_at: new Date().toISOString()
   };
@@ -4916,28 +5088,248 @@ function submitPanenEntry() {
 }
 
 function advancePanenStage(id) {
+  // v1.1 (21 Mei 2026): Multi-bucket grading refactor
+  // - Advance ke sortasi_air: prompt kg pengapung
+  // - Advance ke sortir_4warna: prompt 4-bucket kg + auto-create lot child di PANEN_LOTS_DATA
+  // - Stage 4+ (jemur, kupas, green_bean, sold) sekarang PER-LOT, di-handle advancePanenLotStage()
   const entry = PANEN_DATA.find(e => e.id === id);
   if (!entry) return;
   const currentIdx = PANEN_PIPELINE_STAGES.findIndex(s => s.key === entry.processing_stage);
   if (currentIdx < 0 || currentIdx >= PANEN_PIPELINE_STAGES.length - 1) return;
   const nextStage = PANEN_PIPELINE_STAGES[currentIdx + 1];
+
+  if (nextStage.key === 'sortasi_air') {
+    openPanenPengapungDialog(entry);
+    return;  // submit dialog akan complete advance
+  }
+  if (nextStage.key === 'sortir_4warna') {
+    openPanenSortir4Dialog(entry);
+    return;  // submit dialog akan complete advance + create lots
+  }
+  // Default advance (untuk stage future kalau ada)
   entry.processing_stage = nextStage.key;
-  // Auto-compute green_bean_kg saat masuk green_bean stage
-  if (nextStage.key === 'green_bean' || nextStage.key === 'lot_ready') {
-    if (!entry.green_bean_kg) {
-      entry.green_bean_kg = parseFloat((entry.cherry_kg * nextStage.ratio).toFixed(2));
-    }
-  }
-  // Auto-assign lot_id saat masuk lot_ready
-  if (nextStage.key === 'lot_ready' && !entry.lot_id) {
-    const [year, month] = entry.tgl.split('-');
-    const kebunStr = entry.kebun.includes('mixed') ? 'MIX' : entry.kebun.map(k => 'K'+k).join('');
-    const lotNum = String(PANEN_DATA.filter(e => e.lot_id).length + 1).padStart(3, '0');
-    entry.lot_id = `WKKN-${year}-${month}-${kebunStr}-${lotNum}`;
-  }
   entry.last_modified_at = new Date().toISOString();
   savePanenToLS();
   if (typeof showToast === 'function') showToast(`📦 Batch ${id} advanced ke ${PANEN_STAGE_LBL[nextStage.key]}`, 'info');
+  renderPanen();
+}
+
+// ─── Stage 2 modal: input kg pengapung ─────────────────────────
+function openPanenPengapungDialog(entry) {
+  const cherryKg = entry.cherry_kg;
+  const existingPengapung = entry.pengapung_kg;
+  const input = prompt(
+    `🚿 SORTASI AIR — Batch ${entry.id}\n\n` +
+    `Cherry mentah: ${cherryKg} kg\n\n` +
+    `Berapa kg yang MENGAMBANG (pengapung) saat sortasi air?\n` +
+    `(Pengapung = defect / busuk dalam / kulit kosong yang dibuang)\n\n` +
+    `Estimasi typical: ~8% × ${cherryKg} = ${(cherryKg * 0.08).toFixed(1)} kg`,
+    existingPengapung !== null ? String(existingPengapung) : ''
+  );
+  if (input === null) return;  // user cancel
+  const pengapung = parseFloat(input);
+  if (isNaN(pengapung) || pengapung < 0 || pengapung > cherryKg) {
+    alert(`Pengapung harus angka 0 - ${cherryKg} kg. Cancel.`);
+    return;
+  }
+  entry.pengapung_kg = pengapung;
+  entry.processing_stage = 'sortasi_air';
+  entry.last_modified_at = new Date().toISOString();
+  savePanenToLS();
+  const tenggelam = (cherryKg - pengapung).toFixed(2);
+  if (typeof showToast === 'function') {
+    showToast(`✅ Sortasi air: ${pengapung} kg pengapung dibuang, ${tenggelam} kg tenggelam lanjut ke sortir 4-warna`, 'success');
+  }
+  renderPanen();
+}
+
+// ─── Stage 3 modal: sortir 4-warna → split ke 4 lot child ─────
+function openPanenSortir4Dialog(entry) {
+  const cherryKg = entry.cherry_kg;
+  const pengapung = entry.pengapung_kg || 0;
+  const tenggelam = cherryKg - pengapung;
+  const overlay = document.getElementById('dlg-panen-sortir4-overlay');
+  if (!overlay) {
+    alert('Modal sortir 4-warna belum ter-load. Refresh halaman.');
+    return;
+  }
+  // Pre-fill dengan komposisi % × tenggelam kg sebagai default estimasi
+  const k = entry.komposisi || {};
+  const total_pct = (k.merah || 0) + (k.kuning || 0) + (k.hijau || 0) + (k.hitam || 0);
+  const factor = total_pct > 0 ? tenggelam / total_pct : 0;
+  document.getElementById('dlg-sortir4-batch-id').value = entry.id;
+  document.getElementById('dlg-sortir4-batch-info').innerHTML =
+    `<strong>Batch ${entry.id}</strong> · ${cherryKg} kg cherry mentah · ${pengapung} kg pengapung dibuang · <span style="color:var(--moss);font-weight:700">${tenggelam.toFixed(2)} kg tenggelam</span> untuk dipisah`;
+  document.getElementById('dlg-sortir4-merah').value = ((k.merah || 0) * factor).toFixed(2);
+  document.getElementById('dlg-sortir4-kuning').value = ((k.kuning || 0) * factor).toFixed(2);
+  document.getElementById('dlg-sortir4-hijau').value = ((k.hijau || 0) * factor).toFixed(2);
+  document.getElementById('dlg-sortir4-hitam').value = ((k.hitam || 0) * factor).toFixed(2);
+  document.getElementById('dlg-sortir4-target-tenggelam').textContent = tenggelam.toFixed(2);
+  updateSortir4Total();
+  overlay.style.display = 'flex';
+}
+
+function closePanenSortir4Dialog() {
+  document.getElementById('dlg-panen-sortir4-overlay').style.display = 'none';
+}
+
+function updateSortir4Total() {
+  const m = parseFloat(document.getElementById('dlg-sortir4-merah').value) || 0;
+  const k = parseFloat(document.getElementById('dlg-sortir4-kuning').value) || 0;
+  const h = parseFloat(document.getElementById('dlg-sortir4-hijau').value) || 0;
+  const b = parseFloat(document.getElementById('dlg-sortir4-hitam').value) || 0;
+  const total = m + k + h + b;
+  const target = parseFloat(document.getElementById('dlg-sortir4-target-tenggelam').textContent) || 0;
+  const diff = total - target;
+  const totalEl = document.getElementById('dlg-sortir4-total');
+  const diffEl = document.getElementById('dlg-sortir4-diff');
+  if (totalEl) totalEl.textContent = total.toFixed(2);
+  if (diffEl) {
+    if (target === 0) { diffEl.textContent = ''; return; }
+    const pctDiff = (diff / target) * 100;
+    if (Math.abs(pctDiff) <= 5) {
+      diffEl.innerHTML = `<span style="color:#16a34a">✓ Match (Δ ${diff >= 0 ? '+' : ''}${diff.toFixed(2)} kg)</span>`;
+    } else {
+      diffEl.innerHTML = `<span style="color:#dc2626">⚠ Δ ${diff >= 0 ? '+' : ''}${diff.toFixed(2)} kg (${pctDiff.toFixed(1)}% off)</span>`;
+    }
+  }
+}
+
+function submitPanenSortir4() {
+  const batchId = document.getElementById('dlg-sortir4-batch-id').value;
+  const entry = PANEN_DATA.find(e => e.id === batchId);
+  if (!entry) { alert('Batch tidak ditemukan'); return; }
+  const m = parseFloat(document.getElementById('dlg-sortir4-merah').value) || 0;
+  const k = parseFloat(document.getElementById('dlg-sortir4-kuning').value) || 0;
+  const h = parseFloat(document.getElementById('dlg-sortir4-hijau').value) || 0;
+  const b = parseFloat(document.getElementById('dlg-sortir4-hitam').value) || 0;
+  const total = m + k + h + b;
+  const target = entry.cherry_kg - (entry.pengapung_kg || 0);
+  const pctDiff = target > 0 ? Math.abs((total - target) / target) * 100 : 0;
+  if (pctDiff > 5) {
+    if (!confirm(`Total 4-bucket (${total.toFixed(2)} kg) berbeda > 5% dari kg tenggelam (${target.toFixed(2)} kg). Tetap submit?`)) return;
+  }
+
+  // Create lot child entries — skip bucket kalau kg = 0
+  const buckets = [
+    { grade: 'merah',  kg: m },
+    { grade: 'kuning', kg: k },
+    { grade: 'hijau',  kg: h },
+    { grade: 'hitam',  kg: b }
+  ].filter(b => b.kg > 0);
+
+  const [year, month] = entry.tgl.split('-');
+  const kebunStr = entry.kebun.includes('mixed') ? 'MIX' : entry.kebun.map(kb => 'K' + kb).join('');
+  const createdLots = [];
+  buckets.forEach((bk, idx) => {
+    const gradeUpper = bk.grade.toUpperCase();
+    // Lot number = total lot dengan warna ini + 1 (running global per warna)
+    const lotNum = String(PANEN_LOTS_DATA.filter(l => l.grade === bk.grade).length + 1).padStart(3, '0');
+    const lotId = `WKKN-${year}-${month}-${kebunStr}-${gradeUpper}-${lotNum}`;
+    const grade = PANEN_GRADES[bk.grade];
+    const newLot = {
+      lot_id: lotId,
+      parent_batch_id: entry.id,
+      tgl_sortir: todayIso(),
+      grade: bk.grade,
+      kg_sortir_awal: bk.kg,
+      kg_jemur_done: null,
+      kg_green_bean_aktual: null,
+      stage: 'sortir_done',
+      price_per_kg_target: grade.default_price,
+      price_per_kg_actual: null,
+      buyer: null,
+      revenue_actual: null,
+      tgl_sold: null,
+      notes: '',
+      created_at: new Date().toISOString(),
+      last_modified_at: new Date().toISOString()
+    };
+    PANEN_LOTS_DATA.push(newLot);
+    createdLots.push(lotId);
+  });
+
+  entry.has_split = true;
+  entry.processing_stage = 'sortir_4warna';
+  entry.last_modified_at = new Date().toISOString();
+  savePanenToLS();
+  savePanenLotsToLS();
+  closePanenSortir4Dialog();
+  if (typeof showToast === 'function') {
+    showToast(`✅ Batch ${entry.id} split jadi ${createdLots.length} lot: ${createdLots.join(' · ')}`, 'success');
+  }
+  renderPanen();
+}
+
+// ─── Per-LOT advance (Stage 4+ jemur/kupas/green_bean) ───────
+function advancePanenLotStage(lotId) {
+  const lot = PANEN_LOTS_DATA.find(l => l.lot_id === lotId);
+  if (!lot) return;
+  const currentIdx = PANEN_LOT_STAGES.findIndex(s => s.key === lot.stage);
+  if (currentIdx < 0 || currentIdx >= PANEN_LOT_STAGES.length - 1) return;
+  const nextStage = PANEN_LOT_STAGES[currentIdx + 1];
+
+  if (nextStage.key === 'sold') {
+    openPanenLotSoldDialog(lot);
+    return;
+  }
+  // Default advance with auto-compute kg
+  lot.stage = nextStage.key;
+  // Auto-compute kg downstream
+  const baseKg = lot.kg_sortir_awal;
+  if (nextStage.key === 'jemur') {
+    lot.kg_jemur_done = parseFloat((baseKg * 0.45).toFixed(2));  // ~50% air hilang
+  } else if (nextStage.key === 'kupas') {
+    // Asumsi base kupas dari kg_jemur_done dengan ratio ke kupas
+    // kupas/sortir = 0.22, jemur/sortir = 0.45 → kupas/jemur = 0.49
+    if (lot.kg_jemur_done) {
+      lot.kg_green_bean_aktual = parseFloat((lot.kg_jemur_done * 0.49).toFixed(2));
+    }
+  } else if (nextStage.key === 'green_bean') {
+    if (!lot.kg_green_bean_aktual) {
+      lot.kg_green_bean_aktual = parseFloat((baseKg * 0.22).toFixed(2));
+    }
+  }
+  lot.last_modified_at = new Date().toISOString();
+  savePanenLotsToLS();
+  if (typeof showToast === 'function') showToast(`📦 Lot ${lotId} advanced ke ${PANEN_LOT_STAGE_LBL[nextStage.key]}`, 'info');
+  renderPanen();
+}
+
+// ─── Lot Sold dialog ─────────────────────────────────────────
+function openPanenLotSoldDialog(lot) {
+  const grade = PANEN_GRADES[lot.grade];
+  const kgGreen = lot.kg_green_bean_aktual || (lot.kg_sortir_awal * 0.22).toFixed(2);
+  const priceInput = prompt(
+    `💰 SOLD — Lot ${lot.lot_id}\n` +
+    `Grade: ${grade.label} · ${kgGreen} kg green bean\n` +
+    `Target buyer: ${grade.target_buyer}\n` +
+    `Indicative price: Rp ${grade.range}/kg\n\n` +
+    `Input harga AKTUAL per kg (Rupiah):`,
+    String(lot.price_per_kg_target || grade.default_price)
+  );
+  if (priceInput === null) return;
+  const price = parseFloat(priceInput.replace(/[^\d.]/g, ''));
+  if (isNaN(price) || price <= 0) { alert('Harga tidak valid'); return; }
+  const buyer = prompt(`Buyer (mis. Bonsari · Nomad · Pak Hadi pengepul):`, lot.buyer || grade.target_buyer.split(' /')[0]);
+  if (buyer === null) return;
+  lot.price_per_kg_actual = price;
+  lot.buyer = buyer.trim();
+  lot.revenue_actual = parseFloat((parseFloat(kgGreen) * price).toFixed(0));
+  lot.tgl_sold = todayIso();
+  lot.stage = 'sold';
+  lot.last_modified_at = new Date().toISOString();
+  savePanenLotsToLS();
+  if (typeof showToast === 'function') {
+    showToast(`💰 Lot ${lot.lot_id} sold to ${buyer.trim()} — Rp ${lot.revenue_actual.toLocaleString('id-ID')}`, 'success');
+  }
+  renderPanen();
+}
+
+function deletePanenLot(lotId) {
+  if (!confirm(`Hapus lot ${lotId}? Tidak bisa di-undo. Parent batch tidak berubah.`)) return;
+  PANEN_LOTS_DATA = PANEN_LOTS_DATA.filter(l => l.lot_id !== lotId);
+  savePanenLotsToLS();
   renderPanen();
 }
 
@@ -4969,9 +5361,14 @@ function renderPanenKPI() {
   const totalCherryWithKomp = PANEN_DATA.reduce((s, e) => s + e.cherry_kg, 0);
   const weightedMerah = PANEN_DATA.reduce((s, e) => s + (e.cherry_kg * (e.komposisi?.merah || 0)), 0);
   const avgMerah = totalCherryWithKomp > 0 ? Math.round(weightedMerah / totalCherryWithKomp) + '%' : '—';
-  const greenBeanReady = PANEN_DATA
-    .filter(e => e.processing_stage === 'green_bean' || e.processing_stage === 'lot_ready')
+  // Green Bean Ready: sum dari lot child stage 'green_bean' atau 'sold' + legacy entry green_bean_kg
+  const greenBeanFromLots = PANEN_LOTS_DATA
+    .filter(l => l.stage === 'green_bean' || l.stage === 'sold')
+    .reduce((s, l) => s + (l.kg_green_bean_aktual || 0), 0);
+  const greenBeanFromLegacy = PANEN_DATA
+    .filter(e => !e.has_split && (e.processing_stage === 'green_bean' || e.processing_stage === 'lot_ready'))
     .reduce((s, e) => s + (e.green_bean_kg || 0), 0);
+  const greenBeanReady = greenBeanFromLots + greenBeanFromLegacy;
 
   const el = (id) => document.getElementById(id);
   if (el('panen-cumulative-kg')) el('panen-cumulative-kg').textContent = cumulative.toFixed(1);
@@ -5124,13 +5521,33 @@ function renderPanenBatchTable() {
     const kebunDisplay = e.kebun.includes('mixed') ? '🔀 Campuran' : e.kebun.map(k => 'K'+k).join(' · ');
     const komp = e.komposisi || {};
     const kompDisplay = `<span style="color:#c14b3a">${komp.merah || 0}%</span> · <span style="color:#d4a017">${komp.kuning || 0}%</span> · <span style="color:#16a34a">${komp.hijau || 0}%</span> · <span style="color:#1c1917">${komp.hitam || 0}%</span>`;
+    // v1.1 (21 Mei): support legacy stages (sortir_hijau, jemur, kupas, green_bean, lot_ready) untuk entry pre-refactor
     const stageLabel = PANEN_STAGE_LBL[e.processing_stage] || e.processing_stage;
     const currentIdx = PANEN_PIPELINE_STAGES.findIndex(s => s.key === e.processing_stage);
-    const isLast = currentIdx >= PANEN_PIPELINE_STAGES.length - 1;
-    const advanceBtn = isLast
-      ? `<span style="font-size:10px;color:var(--mute);font-style:italic">Lot ready: ${e.lot_id || '—'}</span>`
-      : `<button onclick="advancePanenStage('${e.id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 8px" title="Advance ke ${PANEN_PIPELINE_STAGES[currentIdx+1]?.label}">▶ Advance</button>`;
+    const isLast = currentIdx >= PANEN_PIPELINE_STAGES.length - 1 || e.has_split;
+    // Legacy stages dari v1.0 entry → tampil read-only sebagai "Pre-refactor"
+    const isLegacyStage = ['sortir_hijau','jemur','kupas','green_bean','lot_ready'].includes(e.processing_stage);
+    let advanceBtn;
+    if (isLegacyStage) {
+      advanceBtn = `<span style="font-size:10px;color:var(--mute);font-style:italic" title="Entry pre-v1.1, no upgrade path">📜 Pre-refactor: ${stageLabel}</span>`;
+    } else if (e.has_split) {
+      const childLots = PANEN_LOTS_DATA.filter(l => l.parent_batch_id === e.id);
+      advanceBtn = `<span style="font-size:10px;color:var(--moss);font-weight:700" title="${childLots.length} lot child — lihat Card 8">✓ Split → ${childLots.length} lot</span>`;
+    } else if (isLast) {
+      advanceBtn = `<span style="font-size:10px;color:var(--mute);font-style:italic">Stage akhir</span>`;
+    } else {
+      advanceBtn = `<button onclick="advancePanenStage('${e.id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 8px" title="Advance ke ${PANEN_PIPELINE_STAGES[currentIdx+1]?.label}">▶ Advance</button>`;
+    }
     const ctxLabel = { terjadwal: '📅 Terjadwal', incidental: '🎯 Incidental', sortir_terlambat: '⏰ Sortir Terlambat' }[e.context] || e.context;
+    // Green bean total: sum dari lot child (kalau has_split) atau legacy field e.green_bean_kg
+    let gbDisplay = '—';
+    if (e.has_split) {
+      const childLots = PANEN_LOTS_DATA.filter(l => l.parent_batch_id === e.id);
+      const sumGB = childLots.reduce((s, l) => s + (l.kg_green_bean_aktual || 0), 0);
+      gbDisplay = sumGB > 0 ? sumGB.toFixed(2) + ' kg<sup style="color:var(--mute);font-size:8px">(sum lot)</sup>' : '<span style="color:var(--mute);font-size:10px">pending</span>';
+    } else if (e.green_bean_kg !== null) {
+      gbDisplay = e.green_bean_kg.toFixed(2) + ' kg';
+    }
     return `<tr>
       <td style="white-space:nowrap">${formatTglShort ? formatTglShort(e.tgl) : e.tgl}</td>
       <td style="font-size:10.5px">${kebunDisplay}</td>
@@ -5139,7 +5556,7 @@ function renderPanenBatchTable() {
       <td style="text-align:right">${e.pohon || '—'}</td>
       <td style="font-size:10px">${ctxLabel}</td>
       <td style="font-size:10.5px">${stageLabel}</td>
-      <td style="text-align:right;font-size:10.5px">${e.green_bean_kg !== null ? e.green_bean_kg.toFixed(2) + ' kg' : '—'}</td>
+      <td style="text-align:right;font-size:10.5px">${gbDisplay}</td>
       <td style="text-align:center;white-space:nowrap">
         ${advanceBtn}
         <button onclick="deletePanenEntry('${e.id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 6px;color:var(--cherry);border-color:var(--cherry)" title="Hapus">🗑️</button>
@@ -5506,7 +5923,106 @@ renderPanen = function() {
   _origRenderPanen();
   renderPanenKomparasi();
   renderPanenSampling();
+  renderPanenLots();  // v1.1 (21 Mei) — Card 8 Lot Tracker
 };
+
+// ============================================================
+// CARD 8 · Lot Tracker per Grade (v1.1, 21 Mei 2026)
+// ============================================================
+function renderPanenLots() {
+  renderPanenLotsKPI();
+  renderPanenLotsTable();
+  renderPanenLotsGradeChart();
+}
+
+function renderPanenLotsKPI() {
+  const el = (id) => document.getElementById(id);
+  const total = PANEN_LOTS_DATA.length;
+  const merahKg = PANEN_LOTS_DATA.filter(l => l.grade === 'merah').reduce((s, l) => s + l.kg_sortir_awal, 0);
+  const soldLots = PANEN_LOTS_DATA.filter(l => l.stage === 'sold');
+  const totalRevenue = soldLots.reduce((s, l) => s + (l.revenue_actual || 0), 0);
+  if (el('panen-lot-total')) el('panen-lot-total').textContent = total;
+  if (el('panen-lot-merah-kg')) el('panen-lot-merah-kg').textContent = merahKg > 0 ? merahKg.toFixed(1) + ' kg' : '—';
+  if (el('panen-lot-sold-count')) el('panen-lot-sold-count').textContent = soldLots.length;
+  if (el('panen-lot-revenue')) el('panen-lot-revenue').textContent = 'Rp ' + totalRevenue.toLocaleString('id-ID');
+}
+
+function renderPanenLotsTable() {
+  const tbody = document.getElementById('panen-lot-tbody');
+  if (!tbody) return;
+  // Apply filters
+  const gradeFilter = document.querySelector('#panen-lot-filter-grade .on')?.dataset.val || 'all';
+  const stageFilter = document.querySelector('#panen-lot-filter-stage .on')?.dataset.val || 'all';
+  let lots = [...PANEN_LOTS_DATA];
+  if (gradeFilter !== 'all') lots = lots.filter(l => l.grade === gradeFilter);
+  if (stageFilter === 'active') lots = lots.filter(l => l.stage !== 'sold');
+  else if (stageFilter === 'sold') lots = lots.filter(l => l.stage === 'sold');
+
+  if (lots.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:20px;color:var(--mute)">
+      <div style="font-size:22px;margin-bottom:4px">📦</div>
+      <div style="font-weight:700;color:var(--earth)">Belum ada lot</div>
+      <div style="font-size:11px;margin-top:4px">Lot otomatis ter-create saat batch panen advance ke "🎨 Sortir 4-Warna" di Card 5 Batch Tracker.</div>
+    </td></tr>`;
+    return;
+  }
+  const sorted = [...lots].sort((a, b) => b.tgl_sortir.localeCompare(a.tgl_sortir));
+  tbody.innerHTML = sorted.map(l => {
+    const grade = PANEN_GRADES[l.grade] || { label: l.grade, color: '#888' };
+    const stageLbl = PANEN_LOT_STAGE_LBL[l.stage] || l.stage;
+    const currentIdx = PANEN_LOT_STAGES.findIndex(s => s.key === l.stage);
+    const isSold = l.stage === 'sold';
+    const advanceBtn = isSold
+      ? '<span style="font-size:10px;color:#15803D;font-style:italic">✓ Sold</span>'
+      : `<button onclick="advancePanenLotStage('${l.lot_id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 8px" title="Advance ke ${PANEN_LOT_STAGES[currentIdx+1]?.label}">▶ Advance</button>`;
+    const gbKg = l.kg_green_bean_aktual !== null ? l.kg_green_bean_aktual.toFixed(2) : '—';
+    const targetPrice = l.price_per_kg_target ? 'Rp ' + l.price_per_kg_target.toLocaleString('id-ID') : '—';
+    const actualPrice = l.price_per_kg_actual ? 'Rp ' + l.price_per_kg_actual.toLocaleString('id-ID') : '—';
+    const revenue = l.revenue_actual ? 'Rp ' + l.revenue_actual.toLocaleString('id-ID') : '—';
+    return `<tr>
+      <td style="font-size:10px;font-family:monospace">${l.lot_id}</td>
+      <td><span style="background:${grade.color};color:#fff;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:800">${grade.label}</span></td>
+      <td style="font-size:9.5px;color:var(--mute)">${l.parent_batch_id}</td>
+      <td style="text-align:right;font-weight:700">${l.kg_sortir_awal.toFixed(2)}</td>
+      <td style="text-align:right">${gbKg}</td>
+      <td style="font-size:10px">${stageLbl}</td>
+      <td style="text-align:right;font-size:10px;color:var(--mute)">${targetPrice}</td>
+      <td style="text-align:right;font-size:10px;font-weight:${isSold ? '700' : '400'};color:${isSold ? 'var(--moss)' : 'var(--mute)'}">${actualPrice}</td>
+      <td style="font-size:10px">${l.buyer || '—'}</td>
+      <td style="text-align:right;font-weight:${isSold ? '700' : '400'};color:${isSold ? 'var(--moss)' : 'var(--mute)'};font-size:10.5px">${revenue}</td>
+      <td style="text-align:center;white-space:nowrap">
+        ${advanceBtn}
+        <button onclick="deletePanenLot('${l.lot_id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 6px;color:var(--cherry);border-color:var(--cherry);margin-left:3px" title="Hapus lot">🗑️</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function renderPanenLotsGradeChart() {
+  const ctx = document.getElementById('chart-panen-lots-grade');
+  if (!ctx || typeof Chart === 'undefined') return;
+  if (window._panenLotsGradeChart) { try { window._panenLotsGradeChart.destroy(); } catch(e){} }
+  const grades = ['merah', 'kuning', 'hijau', 'hitam'];
+  const labels = grades.map(g => PANEN_GRADES[g].label);
+  const sortirKg = grades.map(g => PANEN_LOTS_DATA.filter(l => l.grade === g).reduce((s, l) => s + (l.kg_sortir_awal || 0), 0));
+  const gbKg = grades.map(g => PANEN_LOTS_DATA.filter(l => l.grade === g).reduce((s, l) => s + (l.kg_green_bean_aktual || 0), 0));
+  const colors = grades.map(g => PANEN_GRADES[g].color);
+  window._panenLotsGradeChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label: 'Kg Sortir Awal', data: sortirKg.map(v => v.toFixed(2)), backgroundColor: colors.map(c => c + '99') },
+        { label: 'Kg Green Bean Aktual', data: gbKg.map(v => v.toFixed(2)), backgroundColor: colors }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true, title: { display: true, text: 'kg' } } },
+      plugins: { legend: { position: 'bottom' } }
+    }
+  });
+}
 
 // Auto-init form defaults + trigger render saat tab dibuka
 document.addEventListener('DOMContentLoaded', () => {
