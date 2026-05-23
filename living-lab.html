@@ -3463,18 +3463,54 @@ function escapeHTML(str) {
   return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-// Auto-fetch on load with defensive fallback
-(function loadAktivitasPublikJSON() {
-  fetch('data/aktivitas-publik.json?t=' + Date.now())
-    .then(r => r.ok ? r.json() : Promise.reject('HTTP ' + r.status))
-    .then(data => {
-      const ok = renderDynamicMilestones(data);
-      if (ok) console.log('[Living Lab] Dynamic milestones loaded:', data.milestones.length);
-    })
-    .catch(err => {
-      console.warn('[Living Lab] Failed to load dynamic milestones, using hardcoded fallback:', err);
-      // Hardcoded HTML in #year-2026 stays — defensive fallback works
-    });
+// Auto-fetch on load with 2-tier defensive fallback (Strategy B locked 23 Mei 2026)
+// PRIMARY: Firestore milestones/active (real-time, cross-browser sync)
+// FALLBACK 1: data/aktivitas-publik.json (committed snapshot, GitHub Pages)
+// FALLBACK 2: Hardcoded HTML in #year-2026 (always present, never fails)
+(async function loadMilestonesWithFallback() {
+
+  // ─── TIER 1: Firestore (PRIMARY) ───
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+    const { firebaseConfig } = await import('./firebase-config.js');
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const docSnap = await getDoc(doc(db, 'milestones', 'active'));
+    if (docSnap.exists()) {
+      const cloud = docSnap.data();
+      const milestones = cloud.data || [];
+      const data = {
+        schema_version: cloud.version || '3.0',
+        generated_at: (cloud.updated_at && cloud.updated_at.toDate) ? cloud.updated_at.toDate().toISOString() : new Date().toISOString(),
+        generated_by: cloud.updated_by || 'wakif_dashboard',
+        total_published: milestones.filter(m => m.published).length,
+        milestones: milestones,
+        source: 'firestore'
+      };
+      if (renderDynamicMilestones(data)) {
+        console.log(`[Living Lab] ✅ Milestones from Firestore (real-time): ${milestones.length} entries — origin: ${data.generated_by}`);
+        return;
+      }
+    }
+    console.warn('[Living Lab] Firestore doc empty, fallback to JSON file');
+  } catch (firestoreErr) {
+    console.warn('[Living Lab] Firestore fetch failed, fallback to JSON file:', firestoreErr.message || firestoreErr);
+  }
+
+  // ─── TIER 2: JSON file (FALLBACK) ───
+  try {
+    const r = await fetch('data/aktivitas-publik.json?t=' + Date.now());
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const data = await r.json();
+    data.source = 'json_file';
+    if (renderDynamicMilestones(data)) {
+      console.log(`[Living Lab] ✓ Milestones from JSON file fallback: ${data.milestones.length} entries`);
+    }
+  } catch (jsonErr) {
+    console.warn('[Living Lab] JSON fallback failed too, hardcoded HTML stays:', jsonErr.message || jsonErr);
+    // ─── TIER 3: Hardcoded HTML in #year-2026 — always present, no action needed ───
+  }
 })();
 
 /* ══ FENOLOGI WHEEL ══ */
