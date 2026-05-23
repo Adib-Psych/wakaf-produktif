@@ -86,6 +86,32 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ===== milestones collection (singleton pattern, locked 23 Mei 2026) =====
+    // Curated milestones by Wakif via Tab Milestones Publik di monitor-v2.html.
+    // Pattern #10 Firestore Sync Global Variable (sync `MILESTONES` array <-> Firestore).
+    //
+    // Migration trigger: localStorage MILESTONES per-browser tidak cross-sync —
+    // Wakif publish di Safari hilang dari Chrome dashboard. Fix: cloud source of truth.
+    //
+    // Living Lab strategy B (locked 23 Mei): fetch langsung dari Firestore (real-time),
+    // fallback ke data/aktivitas-publik.json kalau Firestore offline.
+    match /milestones/{milestoneDocId} {
+
+      // READ open: Living Lab public fetch + Wakif dashboard onSnapshot listener
+      allow read: if true;
+
+      // CREATE/UPDATE: open di Phase 1 (konsisten dengan pattern distribusi_pic + sop_master)
+      // Phase 2 (post-Firebase-Auth): tighten ke Wakif role-only via custom claims.
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.data.data is list
+        && request.resource.data.updated_at != null
+        && request.resource.size() < 1000000;  // 1MB soft limit per Firestore doc
+
+      // DELETE: locked — hanya via Firebase Console (preserve audit history)
+      allow delete: if false;
+    }
+
     // ===== Default deny =====
     // Collection lain yang belum di-define → deny semuanya
     match /{document=**} {

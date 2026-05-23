@@ -7062,7 +7062,15 @@ if (msStoredVer !== MILESTONE_SCHEMA_VERSION) {
 let MILESTONES = JSON.parse(localStorage.getItem('wkkn_v2_milestones') || '[]');
 
 function saveMilestones() {
+  // Local persistence (offline safety net)
   localStorage.setItem('wkkn_v2_milestones', JSON.stringify(MILESTONES));
+  // Cloud sync (cross-browser/device, locked 23 Mei 2026 — Pattern #10)
+  // Fire-and-forget: tidak block UI flow, error sudah di-handle di sync function
+  if (typeof window.syncMilestonesToFirestore === 'function') {
+    window.syncMilestonesToFirestore().catch(e => {
+      console.warn('[Milestones] saveMilestones cloud sync failed (local saved):', e);
+    });
+  }
 }
 
 let CURRENT_EDIT_MS_ID = null;
@@ -13326,6 +13334,100 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         window.loadDistribusiPicFromFirestore();
       }
     }, 2000);
+
+    // ===== MILESTONES — Cross-browser/cross-device sync (locked 23 Mei 2026) =====
+    // Pattern #10 Firestore Sync Global Variable.
+    // Casus belli: localStorage MILESTONES per-browser tidak sync — Wakif publish di Safari
+    // tidak terlihat dari Chrome dashboard, plus risk "hilang" saat clear browser data.
+    // Fix: cloud source of truth via Firestore milestones/active singleton.
+    // Living Lab strategy B (locked 23 Mei): fetch langsung Firestore real-time, fallback JSON.
+
+    window.syncMilestonesToFirestore = async () => {
+      if (typeof MILESTONES === 'undefined') {
+        console.warn('[Milestones] MILESTONES global tidak ditemukan');
+        return false;
+      }
+      try {
+        const payload = {
+          version: typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0',
+          data: MILESTONES,
+          updated_at: serverTimestamp(),
+          updated_by: 'wakif_dashboard'
+        };
+        await setDoc(doc(db, 'milestones', 'active'), payload);
+        console.log(`[Milestones] ✓ Pushed to Firestore (${MILESTONES.length} entries)`);
+        if (typeof showToast === 'function') showToast('☁ Milestones tersimpan ke cloud (sync ke device lain)', 'success');
+        return true;
+      } catch (e) {
+        console.error('[Milestones] Firestore push failed:', e);
+        if (typeof showToast === 'function') showToast('⚠ Sync milestones ke cloud gagal — tetap tersimpan lokal', 'warning');
+        return false;
+      }
+    };
+
+    window.loadMilestonesFromFirestore = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'milestones', 'active'));
+        if (!docSnap.exists()) {
+          console.log('[Milestones] No cloud version yet — bootstrap di first publish (lihat seed step)');
+          return null;
+        }
+        const cloud = docSnap.data();
+        const localVersion = typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0';
+        if (cloud.version !== localVersion) {
+          console.warn(`[Milestones] Schema mismatch — cloud=${cloud.version} vs local=${localVersion}, skip override`);
+          return null;
+        }
+        if (cloud.data && Array.isArray(cloud.data) && typeof MILESTONES !== 'undefined') {
+          // Replace MILESTONES in-place (preserve let binding)
+          MILESTONES.length = 0;
+          cloud.data.forEach(m => MILESTONES.push(m));
+          // Persist to localStorage (backup + offline support)
+          localStorage.setItem('wkkn_v2_milestones', JSON.stringify(MILESTONES));
+          console.log(`[Milestones] ✓ Loaded ${MILESTONES.length} entries from Firestore`);
+          // Re-render UI kalau function tersedia
+          if (typeof renderMilestonesTable === 'function') renderMilestonesTable();
+          if (typeof renderMilestonesSummary === 'function') renderMilestonesSummary();
+        }
+        return cloud;
+      } catch (e) {
+        console.error('[Milestones] Firestore load failed:', e);
+        return null;
+      }
+    };
+
+    // Auto-load saat page ready (after Distribusi PIC, before normalize functions)
+    setTimeout(() => {
+      if (typeof window.loadMilestonesFromFirestore === 'function') {
+        window.loadMilestonesFromFirestore();
+      }
+    }, 2500);
+
+    // onSnapshot listener — auto-refresh saat ada perubahan dari device/browser lain (cross-device real-time sync)
+    try {
+      onSnapshot(doc(db, 'milestones', 'active'), (docSnap) => {
+        if (!docSnap.exists()) return;
+        const cloud = docSnap.data();
+        const localVersion = typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0';
+        if (cloud.version !== localVersion) return;
+        if (cloud.data && Array.isArray(cloud.data) && typeof MILESTONES !== 'undefined') {
+          // Skip update kalau data identik (avoid render loop dari own write)
+          const localJson = JSON.stringify(MILESTONES);
+          const cloudJson = JSON.stringify(cloud.data);
+          if (localJson === cloudJson) return;
+          MILESTONES.length = 0;
+          cloud.data.forEach(m => MILESTONES.push(m));
+          localStorage.setItem('wkkn_v2_milestones', JSON.stringify(MILESTONES));
+          console.log(`[Milestones] 🔄 Auto-refreshed from cloud (${MILESTONES.length} entries) — origin: ${cloud.updated_by || 'unknown'}`);
+          if (typeof renderMilestonesTable === 'function') renderMilestonesTable();
+          if (typeof renderMilestonesSummary === 'function') renderMilestonesSummary();
+        }
+      }, (err) => {
+        console.warn('[Milestones] onSnapshot listener error (will retry):', err);
+      });
+    } catch (e) {
+      console.warn('[Milestones] onSnapshot setup failed:', e);
+    }
 
     // Normalize incoming Firestore data — bridge field naming between lapor.html (worker PWA) ↔ monitor-v2 (dashboard)
     function normalizeWorkerEntry(data) {
