@@ -3361,9 +3361,10 @@ async function deleteLaporan(id) {
   if (!confirm(msg)) return;
 
   // === FIRESTORE DELETE FIRST (locked 17 Mei 2026 — fix duplikasi-after-delete bug) ===
-  // Entry yang berasal dari Firestore (src 'lapor_pwa') HARUS dihapus dari Firestore juga,
+  // Entry yang berasal dari Firestore HARUS dihapus dari Firestore juga,
   // kalau hanya dihapus lokal, listener fires lagi → re-add → muncul lagi.
-  const isFromFirestore = lap.src === 'lapor_pwa' || lap.src === 'auto_firestore';
+  // ⭐ v3.4 (23 Mei 2026): tambah 'wakif_form' karena sekarang Wakif Form Input juga push Firestore (Pattern #10).
+  const isFromFirestore = lap.src === 'lapor_pwa' || lap.src === 'auto_firestore' || lap.src === 'wakif_form';
   if (isFromFirestore && typeof window.firestoreDelete === 'function') {
     try {
       await window.firestoreDelete(id);
@@ -4018,9 +4019,20 @@ function submitForm() {
         detail_form: harvestDetailForm() || oldEntry.detail_form,
         rainfall_24h: r24, rainfall_7d: r7d,
         compliance, alerts: alertMsgs,
-        last_edited_at: new Date().toISOString()
+        last_edited_at: new Date().toISOString(),
+        // ⭐ v3.4 (23 Mei 2026): Pattern #10 Firestore sync fields
+        tanggal: tgl,  // mirror tgl untuk Firestore Rules compat
+        schema_version: oldEntry.schema_version || '3.4',
+        src: oldEntry.src || 'wakif_form'
       };
       localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+
+      // ⭐ Pattern #10 Firestore push edit (locked 23 Mei 2026) — fire-and-forget
+      if (typeof window.syncLaporanEntryToFirestore === 'function') {
+        window.syncLaporanEntryToFirestore(STATE.laporan[idx]).catch(e => {
+          console.warn('[Edit] Firestore sync failed (local saved):', e);
+        });
+      }
       // Note: linked UPAH entry tidak auto-update — Adib bisa manual delete + re-create kalau pelapor/durasi berubah
       const linkedUpah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.find(u =>
         u.tgl === oldEntry.tgl && u.pelapor === oldEntry.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill')
@@ -4047,10 +4059,21 @@ function submitForm() {
     detail_form: harvestDetailForm(),  // ⭐ v3.3 (16 Mei 2026): capture all sub-fields per kategori
     rainfall_24h: r24, rainfall_7d: r7d,
     compliance, alerts: alertMsgs,
-    created_at: new Date().toISOString()
+    created_at: new Date().toISOString(),
+    // ⭐ v3.4 (23 Mei 2026): Pattern #10 Firestore Sync — fields untuk Rules compat + cross-browser sync
+    tanggal: tgl,                  // mirror tgl untuk Firestore Rules compat
+    schema_version: '3.4',
+    src: 'wakif_form'              // distinguish dari lapor_pwa (worker PWA)
   };
   STATE.laporan.unshift(newEntry);
   localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+
+  // ⭐ Pattern #10 Firestore push (locked 23 Mei 2026) — fire-and-forget, no block UI
+  if (typeof window.syncLaporanEntryToFirestore === 'function') {
+    window.syncLaporanEntryToFirestore(newEntry).catch(e => {
+      console.warn('[submitForm] Firestore sync failed (local saved):', e);
+    });
+  }
 
   // ===== AUTO-LINK ke UPAH_ITEMS (Yit/Kumpul saja, ANTO = sweat equity) =====
   let upahMsg = '';
@@ -13402,6 +13425,42 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         window.loadMilestonesFromFirestore();
       }
     }, 2500);
+
+    // ===== LAPORAN — Wakif Form Input cross-browser sync (locked 23 Mei 2026) =====
+    // Pattern #10 Firestore Sync — same as MILESTONES.
+    // Casus belli: Form Input via Safari tidak sync ke Chrome dashboard atau Firestore.
+    // Cak Yit gap 9-14 Mei investigation (23 Mei 2026) reveal architectural risk:
+    // submitForm() cuma localStorage, tidak push Firestore → Wakif input lost cross-device.
+    // Worker PWA lapor.html SUDAH safe (Pattern #9 online-first sync). Yang vulnerable
+    // adalah Wakif Form Input + Edit di monitor-v2.html. Fix: extend Pattern #10 ke laporan.
+
+    window.syncLaporanEntryToFirestore = async (entry) => {
+      if (!entry || !entry.id) {
+        console.warn('[Laporan] Entry tidak valid untuk sync (missing id)');
+        return false;
+      }
+      try {
+        // Build payload dengan compat Firestore Rules (require tanggal + schema_version + created_at)
+        const payload = { ...entry };
+        if (!payload.tanggal) payload.tanggal = payload.tgl;
+        if (!payload.schema_version) payload.schema_version = '3.3';
+        if (!payload.created_at) payload.created_at = new Date().toISOString();
+        payload.src = payload.src || 'wakif_form';
+        payload.last_synced_at = new Date().toISOString();
+
+        await setDoc(doc(db, 'laporan', payload.id), payload);
+        console.log(`[Laporan] ✓ Pushed entry ${payload.id} to Firestore (${payload.tanggal} · ${payload.pelapor} · ${payload.kategori})`);
+        return true;
+      } catch (e) {
+        console.error('[Laporan] Firestore push failed:', e);
+        if (typeof showToast === 'function') showToast('⚠ Sync laporan ke cloud gagal — tetap tersimpan lokal', 'warning');
+        return false;
+      }
+    };
+
+    // Note: deleteLaporan() sudah pakai window.firestoreDelete() existing.
+    // Yang perlu adjust: isFromFirestore check di deleteLaporan harus include src='wakif_form'.
+    // Handled di code Step 4 di bawah ini.
 
     // onSnapshot listener — auto-refresh saat ada perubahan dari device/browser lain (cross-device real-time sync)
     try {

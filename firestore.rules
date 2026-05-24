@@ -47,13 +47,19 @@ service cloud.firestore {
         // Size limit — max ~1 MB per entry (Firestore hard limit) — soft limit untuk warning di app
         && request.resource.size() < 900000;
 
-      // UPDATE: locked — hanya via Firebase Console (Wakif manual).
-      // Phase 2: open untuk Wakif role saja.
-      allow update: if false;
+      // UPDATE: open di Phase 1 (locked 23 Mei 2026 untuk support Wakif Form Edit cross-browser sync).
+      // Casus: Wakif edit entry di monitor-v2 → harus push Firestore supaya sync ke device lain.
+      // Validation: pelapor tetap di allowed list + tanggal masih string.
+      // Phase 2 (post-Firebase-Auth): tighten ke Wakif role-only via custom claims.
+      allow update: if
+        request.resource.data.pelapor in ['KUMPUL', 'YIT', 'ANTO', 'WAKIF', 'ADIB']
+        && request.resource.data.tanggal is string
+        && request.resource.size() < 900000;
 
-      // DELETE: locked — hanya via Firebase Console.
-      // Phase 2: open untuk Wakif role saja.
-      allow delete: if false;
+      // DELETE: open di Phase 1 (locked 23 Mei 2026 untuk support Wakif Form Delete + cross-browser propagation).
+      // Casus: Wakif delete entry di monitor-v2 → harus deleteDoc dari Firestore supaya tidak re-emerge via listener.
+      // Phase 2: tighten ke Wakif role-only.
+      allow delete: if true;
     }
 
     // ===== workers collection (last_active tracking) =====
