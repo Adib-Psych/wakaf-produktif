@@ -13997,6 +13997,84 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       setTimeout(loadFn, 4200);
     }
 
+    // ===========================================================================
+    // LAYER 2 GUARD RAILS (added 24 Mei 2026) — runtime audit Firestore coverage.
+    // Casus: future developer/Claude session add state baru di localStorage tanpa
+    // hook Firestore sync → regression silent. Audit ini detect + console.warn.
+    // ===========================================================================
+    const LS_TO_SYNC_FN_MAP = {
+      'wkkn_v2_milestones':              'syncMilestonesToFirestore',
+      'wkkn_v2_upah':                    'syncUpahToFirestore',
+      'wkkn_v2_cashbook':                'syncCashbookToFirestore',
+      'wkkn_v2_opt_obs':                 'syncOPTToFirestore',
+      'wkkn_v2_panen_2026':              'syncPanenDataToFirestore',
+      'wkkn_v2_panen_lots':              'syncPanenLotsToFirestore',
+      'wkkn_v2_panen_sampling_2026':     'syncPanenSamplingToFirestore',
+      'wkkn_sop_status_v1':              'syncSOPStatusToFirestore',
+      'wkkn_v2_distribusi_pic':          'syncDistribusiPicToFirestore',
+      'wkkn_sop_master_v1':              'syncSOPMasterToFirestore',
+      // NOTE: 'wkkn_v2_laporan' (STATE.laporan) pakai per-entry sync via
+      // syncLaporanEntryToFirestore (bukan singleton bulk push), jadi tidak
+      // masuk audit list ini. Coverage verified via submitForm + Edit + Delete hooks.
+    };
+    // Per-device only / sensitive (intentional NOT synced) — exclude dari audit:
+    const LS_PER_DEVICE_ONLY = new Set([
+      'anthropic_api_key', 'wkkn_v2_github_pat',           // sensitive credentials
+      'wkkn_v2_enso_state',                                 // read-only cache from NOAA
+      'wkkn_form_hero_closed', 'wkkn_late_entry_reviewed', // UI state per-device
+      'wkkn_workers_active_v1',                             // display cache
+      // schema version flags (trivial)
+      'wkkn_v2_upah_ver','wkkn_v2_cashbook_ver','wkkn_v2_ms_ver',
+      'wkkn_v2_opt_obs_version','wkkn_v2_panen2025_backfill_ver',
+      'wkkn_sop_status_ver',
+    ]);
+
+    window.auditFirestoreCoverage = () => {
+      const allKeys = Object.keys(localStorage).filter(k => k.startsWith('wkkn_') || k.startsWith('bonsari_') || k === 'anthropic_api_key');
+      const issues = [];
+      const coverageStatus = {};
+
+      allKeys.forEach(key => {
+        if (LS_PER_DEVICE_ONLY.has(key)) {
+          coverageStatus[key] = '⚪ per-device (skip)';
+          return;
+        }
+        const expectedSyncFn = LS_TO_SYNC_FN_MAP[key];
+        if (!expectedSyncFn) {
+          coverageStatus[key] = '⚠️ UNKNOWN — not in registry';
+          issues.push(`[Audit] Key '${key}' tidak terdaftar di LS_TO_SYNC_FN_MAP — kemungkinan tidak ter-sync ke Firestore (regression risk).`);
+          return;
+        }
+        if (typeof window[expectedSyncFn] !== 'function') {
+          coverageStatus[key] = `🔴 MISSING SYNC FUNCTION '${expectedSyncFn}'`;
+          issues.push(`[Audit] Key '${key}' expects window.${expectedSyncFn}() but function not defined — sync broken.`);
+          return;
+        }
+        coverageStatus[key] = `✅ ${expectedSyncFn}()`;
+      });
+
+      console.log('╔══════════════════════════════════════════════════════════════════');
+      console.log('║ 🛡️  FIRESTORE COVERAGE AUDIT (Layer 2 guard rails, 24 Mei 2026)');
+      console.log('╠══════════════════════════════════════════════════════════════════');
+      Object.keys(coverageStatus).sort().forEach(k => {
+        console.log(`║ ${coverageStatus[k].padEnd(40)} ${k}`);
+      });
+      console.log('╠══════════════════════════════════════════════════════════════════');
+      if (issues.length === 0) {
+        console.log('║ ✅ ALL CLEAR — 100% Firestore coverage untuk Wakif state');
+      } else {
+        console.warn(`║ ⚠️  ${issues.length} ISSUE(S) FOUND:`);
+        issues.forEach(msg => console.warn(`║   ${msg}`));
+      }
+      console.log('╚══════════════════════════════════════════════════════════════════');
+      return { total_keys: allKeys.length, issues: issues.length, status: coverageStatus };
+    };
+
+    // Auto-run audit pada page load (delayed 5s — setelah semua sync functions registered)
+    setTimeout(() => {
+      if (typeof window.auditFirestoreCoverage === 'function') window.auditFirestoreCoverage();
+    }, 5000);
+
     window.syncLaporanEntryToFirestore = async (entry) => {
       if (!entry || !entry.id) {
         console.warn('[Laporan] Entry tidak valid untuk sync (missing id)');
