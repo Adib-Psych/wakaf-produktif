@@ -2391,6 +2391,11 @@
             <option value="true">✅ Published</option>
             <option value="false">📝 Draft</option>
           </select>
+          <select id="filter-ms-archive" onchange="renderMilestonesTable()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px" title="Default: Active only — Archived items disembunyikan">
+            <option value="active">📂 Active Only (default)</option>
+            <option value="archived">📦 Archived Only</option>
+            <option value="all">🔀 Semua (Active + Archived)</option>
+          </select>
         </div>
       </div>
 
@@ -2774,16 +2779,30 @@
             <input type="text" id="ms-linked-docs" placeholder="cth: SOP/RAB_FINAL_9Mei2026.docx, Meeting Minutes Wakaf/Notulen_5Mei2026.docx" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
           </div>
 
+          <!-- ARCHIVE Section (Locked 25 Mei 2026 Track A3) -->
+          <div style="background:#f4f4f0;border:1.5px dashed #8B8579;padding:12px 14px;border-radius:8px;margin-bottom:14px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:700;color:#4a4030">
+              <input type="checkbox" id="ms-archive-toggle" onchange="document.getElementById('ms-archive-reason-wrap').style.display = this.checked ? 'block' : 'none'">
+              <span>📦 Arsipkan milestone ini</span>
+            </label>
+            <div style="margin-top:4px;font-size:10.5px;color:#6b6b6b;font-style:italic">Disembunyikan dari list Dashboard (default view). Living Lab tetap menampilkan kalau status Publish ON.</div>
+            <div id="ms-archive-reason-wrap" style="display:none;margin-top:10px">
+              <label style="font-size:10px;font-weight:700;color:var(--mute);text-transform:uppercase">Alasan archive (optional)</label>
+              <input type="text" id="ms-archive-reason" placeholder="cth: Sudah ter-cover oleh milestone aggregate Mei 18-25" style="width:100%;padding:7px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;margin-top:3px">
+            </div>
+          </div>
+
           <div style="background:#fff8e5;padding:10px 12px;border-radius:6px;font-size:11px;color:#8B6914" id="ms-audit-info" style="display:none">
             🕐 <span id="ms-audit-text"></span>
           </div>
         </div>
-        <div style="padding:14px 24px;border-top:1px solid #eee;background:#fafbfa;display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <div style="padding:14px 24px;border-top:1px solid #eee;background:#fafbfa;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
           <div style="font-size:12px;color:var(--earth)">
             <label style="display:flex;align-items:center;gap:6px;cursor:pointer"><input type="checkbox" id="ms-publish-toggle"> <span>📢 Publish ke Living Lab</span></label>
           </div>
-          <div style="display:flex;gap:8px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
             <button class="btn btn-secondary" onclick="closeMilestoneDlg()">Batal</button>
+            <button class="btn" onclick="openPreviewMilestoneDlg()" style="background:#E8DEC8;color:#4a4030;border:1.5px solid #D4AF37" title="Preview 3-tier rendering sebelum save & publish">👁 Preview 3-Tier</button>
             <button class="btn btn-primary" onclick="saveMilestone()" style="background:var(--moss);color:#fff">💾 Simpan</button>
           </div>
         </div>
@@ -2803,6 +2822,32 @@
         <div style="flex:1;overflow-y:auto;padding:14px 24px" id="suggest-list"></div>
         <div style="padding:14px 24px;border-top:1px solid #eee;background:#fafbfa;display:flex;justify-content:flex-end">
           <button class="btn btn-secondary" onclick="closeSuggestDlg()">Tutup</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ PREVIEW-BEFORE-PUBLISH MODAL (B2 layout, locked 25 Mei 2026) ============ -->
+    <div id="ms-preview-modal-overlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.65);z-index:9100;justify-content:center;align-items:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;max-width:1200px;width:100%;max-height:92vh;display:flex;flex-direction:column">
+        <div style="padding:14px 20px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(90deg,#E8DEC8,#FAFBFA)">
+          <div>
+            <div style="font-size:17px;font-weight:800;color:#4a4030">👁 PREVIEW — Sebelum Publish ke Living Lab</div>
+            <div style="font-size:11px;color:var(--mute);margin-top:2px">Tampilan persis seperti akan render di halaman publik Living Lab</div>
+          </div>
+          <button onclick="closePreviewMilestoneDlg()" style="background:none;border:none;font-size:22px;color:var(--mute);cursor:pointer">✕</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:20px 24px;background:#f5f5f0" id="ms-preview-content">
+          <!-- buildPreviewMilestoneCard() output here -->
+        </div>
+        <div style="padding:14px 20px;border-top:1px solid #eee;background:#fafbfa;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="font-size:11px;color:var(--mute);flex:1">
+            💡 Klik <strong>✏️ Edit Tier X</strong> di card untuk kembali ke form (auto-scroll ke section yang relevan + highlight).
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-secondary" onclick="closePreviewMilestoneDlg()">← Kembali ke Form</button>
+            <button class="btn" onclick="saveMilestoneAsDraft()" style="background:#fff;color:#4a4030;border:1.5px solid #8B8579">💾 Save sebagai Draft</button>
+            <button class="btn btn-primary" onclick="saveMilestoneAndPublish()" style="background:var(--moss);color:#fff">🚀 Save &amp; Publish ke Living Lab</button>
+          </div>
         </div>
       </div>
     </div>
@@ -7464,7 +7509,35 @@ async function savePICEdit() {
 // ===========================================================================
 // MILESTONES PUBLIK — Curated Public Layer (jembatan Dashboard ↔ Living Lab)
 // ===========================================================================
-const MILESTONE_SCHEMA_VERSION = '3.0';  // v3.0 (11 Mei): 2-Layer Architecture — implementasi (TOR internal) + benchmark_evaluation (international standard + alignment_pct + gap + roadmap) + verifikasi_diperlukan
+const MILESTONE_SCHEMA_VERSION = '3.1';  // v3.1 (25 Mei): + archive fields (archived, archived_at, archived_reason) + dismissed_suggestions storage
+const MILESTONE_ADDITIVE_VERSIONS = ['3.0', '3.1'];  // additive upgrade — preserve LS (per memory schema-migration-additive-vs-breaking)
+// v3.0 (11 Mei): 2-Layer Architecture — implementasi (TOR internal) + benchmark_evaluation (international standard + alignment_pct + gap + roadmap) + verifikasi_diperlukan
+
+// ───────── DISMISSED SUGGESTIONS storage (per-device, not synced) ─────────
+// Locked 25 Mei 2026 (Track A3): Adib bisa dismiss suggested candidates dari Suggested Panel
+// supaya tidak re-suggest. Signature: `${type}:${suggestedTitle}:${source.tgl}` stable enough.
+function getDismissedSignatures() {
+  try { return JSON.parse(localStorage.getItem('wkkn_v2_dismissed_suggest') || '[]'); }
+  catch(e) { return []; }
+}
+function getSuggestSignature(c) {
+  return (c.type || '?') + ':' + (c.suggestedTitle || '?') + ':' + (c.source?.tgl || '?');
+}
+function addDismissedSignature(sig, reason) {
+  const list = getDismissedSignatures();
+  if (list.find(d => d.sig === sig)) return;
+  list.push({ sig: sig, reason: reason || '', dismissed_at: new Date().toISOString() });
+  localStorage.setItem('wkkn_v2_dismissed_suggest', JSON.stringify(list));
+}
+function removeDismissedSignature(sig) {
+  const list = getDismissedSignatures().filter(d => d.sig !== sig);
+  localStorage.setItem('wkkn_v2_dismissed_suggest', JSON.stringify(list));
+}
+function isDismissedSuggestion(c) {
+  const sig = getSuggestSignature(c);
+  return getDismissedSignatures().some(d => d.sig === sig);
+}
+
 const MS_PHASE_LABELS = {
   'pre-panen': { id:'Pre-Panen', en:'Pre-Harvest', icon:'🌱' },
   'panen': { id:'Panen', en:'Harvest', icon:'☕' },
@@ -7481,13 +7554,22 @@ const MS_STATUS_LABELS = {
   'upcoming': { id:'↗ Akan Datang', en:'↗ Upcoming', cls:'na' }
 };
 
-// localStorage init dengan schema versioning
+// localStorage init dengan schema versioning (additive-aware per memory schema-migration-additive-vs-breaking)
 const msStoredVer = localStorage.getItem('wkkn_v2_ms_ver');
-if (msStoredVer !== MILESTONE_SCHEMA_VERSION) {
+const msIsAdditiveUpgrade = msStoredVer && MILESTONE_ADDITIVE_VERSIONS.includes(msStoredVer);
+if (msStoredVer !== MILESTONE_SCHEMA_VERSION && !msIsAdditiveUpgrade) {
+  // Breaking change → destructive reset
   localStorage.removeItem('wkkn_v2_milestones');
+}
+if (msStoredVer !== MILESTONE_SCHEMA_VERSION) {
   localStorage.setItem('wkkn_v2_ms_ver', MILESTONE_SCHEMA_VERSION);
+  if (msIsAdditiveUpgrade) console.log('[Milestones] ✓ Additive schema upgrade ' + msStoredVer + ' → ' + MILESTONE_SCHEMA_VERSION + ' (data preserved)');
 }
 let MILESTONES = JSON.parse(localStorage.getItem('wkkn_v2_milestones') || '[]');
+// Auto-backfill archive fields for existing entries (v3.0 → v3.1 additive migration)
+MILESTONES.forEach(m => {
+  if (m.archived === undefined) m.archived = false;
+});
 
 // ⭐ 24 Mei 2026: Race condition debounce. Track timestamp last local write
 // untuk skip onSnapshot listener fires within 3 detik (avoid Firestore listener
@@ -8092,15 +8174,23 @@ function renderMilestonesTable() {
   const fPhase = document.getElementById('filter-ms-phase').value;
   const fStatus = document.getElementById('filter-ms-status').value;
   const fPub = document.getElementById('filter-ms-publish').value;
+  const fArch = document.getElementById('filter-ms-archive')?.value || 'active';
   let filtered = MILESTONES.slice();
   if (fYear) filtered = filtered.filter(m => String(m.year) === fYear);
   if (fPhase) filtered = filtered.filter(m => m.phase === fPhase);
   if (fStatus) filtered = filtered.filter(m => m.status === fStatus);
   if (fPub) filtered = filtered.filter(m => String(m.published) === fPub);
+  // Archive filter (default: active only — hide archived)
+  if (fArch === 'active') filtered = filtered.filter(m => !m.archived);
+  else if (fArch === 'archived') filtered = filtered.filter(m => !!m.archived);
+  // 'all' → no filter
   // Sort by date desc
   filtered.sort((a,b) => (b.date||'').localeCompare(a.date||''));
   if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada milestone yang match filter. Klik "+ Tambah Milestone" untuk mulai.</td></tr>';
+    const archCount = MILESTONES.filter(m => m.archived).length;
+    const hint = fArch === 'active' && archCount > 0
+      ? `<br><span style="font-size:10.5px;color:#8B8579">Ada ${archCount} milestone di-archive. Switch filter ke "📦 Archived Only" atau "🔀 Semua" untuk lihat.</span>` : '';
+    tbody.innerHTML = `<tr><td colspan="7" style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada milestone yang match filter. Klik "+ Tambah Milestone" untuk mulai.${hint}</td></tr>`;
     renderMilestonesSummary();
     refreshSuggestCount();
     return;
@@ -8112,23 +8202,54 @@ function renderMilestonesTable() {
     const pubBadge = m.published
       ? '<span style="background:#5a9080;color:#fff;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">📢 LIVE</span>'
       : '<span style="background:#eee;color:#888;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">📝 DRAFT</span>';
+    const archBadge = m.archived
+      ? '<div style="margin-top:3px"><span style="background:#8B8579;color:#fff;padding:2px 7px;border-radius:9px;font-size:9.5px;font-weight:700" title="Archived ' + (m.archived_at ? formatTglShort(m.archived_at.slice(0,10)) : '') + (m.archived_reason ? ' — ' + m.archived_reason : '') + '">📦 ARSIP</span></div>'
+      : '';
     const auditTxt = m.last_modified_at ? `<div style="font-size:9px;color:var(--mute);margin-top:2px">Edit: ${formatTglShort(m.last_modified_at.slice(0,10))}</div>` : '';
-    return `<tr>
+    const rowStyle = m.archived ? 'opacity:0.65;background:#fafaf7' : '';
+    return `<tr style="${rowStyle}">
       <td style="font-size:11px;white-space:nowrap"><b>${formatTgl(m.date)}</b>${auditTxt}</td>
       <td style="font-size:11px"><span style="font-size:14px">${phaseLbl.icon}</span> ${phaseLbl.id}</td>
       <td><span class="pill ${statusLbl.cls}" style="font-size:10px">${statusLbl.id}</span></td>
       <td style="font-size:12px;line-height:1.4"><b>${m.title.id || '—'}</b><div style="font-size:10px;color:var(--mute);margin-top:2px">${(m.detail.id || '').substring(0,80)}${(m.detail.id||'').length>80?'…':''}</div></td>
       <td style="text-align:center;font-size:11px">${enExists ? '✅' : '<span style="color:var(--mute)">—</span>'}</td>
-      <td style="text-align:center">${pubBadge}</td>
+      <td style="text-align:center">${pubBadge}${archBadge}</td>
       <td style="font-size:11px;white-space:nowrap">
         <button onclick="editMilestone('${m.id}')" style="background:var(--moss);color:#fff;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px">✏️ Edit</button>
         <button onclick="togglePublishMilestone('${m.id}')" style="background:${m.published?'#eee':'#FFF4D6'};color:${m.published?'#666':'#8B6914'};border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="${m.published?'Unpublish':'Publish'}">${m.published?'📝':'📢'}</button>
+        <button onclick="toggleArchiveMilestone('${m.id}')" style="background:${m.archived?'#DDE9E3':'#f4f4f0'};color:${m.archived?'#1F5F47':'#4a4030'};border:1px solid ${m.archived?'#5a9080':'#8B8579'};border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="${m.archived?'Restore (un-archive)':'Archive'}">${m.archived?'↩️':'📦'}</button>
         <button onclick="deleteMilestone('${m.id}')" style="background:#fde2dc;color:#8c2519;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer" title="Delete">🗑️</button>
       </td>
     </tr>`;
   }).join('');
   renderMilestonesSummary();
   refreshSuggestCount();
+}
+
+// Locked 25 Mei 2026 (Track A3): toggle archive without opening modal
+function toggleArchiveMilestone(id) {
+  const idx = MILESTONES.findIndex(m => m.id === id);
+  if (idx < 0) return;
+  const m = MILESTONES[idx];
+  const willArchive = !m.archived;
+  let reason = '';
+  if (willArchive) {
+    reason = prompt('Alasan archive (optional):', '') || '';
+  } else {
+    if (!confirm('Restore milestone "' + (m.title?.id || '?').slice(0, 60) + '" dari archive?')) return;
+  }
+  const now = new Date().toISOString();
+  m.archived = willArchive;
+  m.archived_at = willArchive ? now : null;
+  m.archived_reason = willArchive ? (reason || null) : null;
+  m.last_modified_at = now;
+  m.change_log = m.change_log || [];
+  m.change_log.push({ date: now.slice(0,10), summary: willArchive ? `archived${reason ? ' ('+reason+')' : ''}` : 'restored' });
+  saveMilestones();
+  if (typeof window.syncMilestonesToFirestore === 'function') {
+    window.syncMilestonesToFirestore().catch(e => console.warn('[Archive] Firestore sync failed:', e.message));
+  }
+  renderMilestonesTable();
 }
 
 // ===== CRUD =====
@@ -8159,6 +8280,13 @@ function openMilestoneDlg(prefill) {
   document.getElementById('ms-verifikasi').value = prefill?.verifikasi_diperlukan || '';
   document.getElementById('ms-linked-docs').value = '';
   document.getElementById('ms-publish-toggle').checked = false;
+  // Archive fields (v3.1 — locked 25 Mei 2026)
+  const archEl = document.getElementById('ms-archive-toggle');
+  const archReasonWrap = document.getElementById('ms-archive-reason-wrap');
+  const archReasonInput = document.getElementById('ms-archive-reason');
+  if (archEl) archEl.checked = false;
+  if (archReasonWrap) archReasonWrap.style.display = 'none';
+  if (archReasonInput) archReasonInput.value = '';
   const audit = document.getElementById('ms-audit-info');
   if (audit) audit.style.display = 'none';
   document.getElementById('ms-modal-overlay').style.display = 'flex';
@@ -8193,6 +8321,13 @@ function editMilestone(id) {
   document.getElementById('ms-verifikasi').value = m.verifikasi_diperlukan || '';
   document.getElementById('ms-linked-docs').value = (m.linked_docs || []).join(', ');
   document.getElementById('ms-publish-toggle').checked = !!m.published;
+  // Archive fields (v3.1 — locked 25 Mei 2026)
+  const archEl = document.getElementById('ms-archive-toggle');
+  const archReasonWrap = document.getElementById('ms-archive-reason-wrap');
+  const archReasonInput = document.getElementById('ms-archive-reason');
+  if (archEl) archEl.checked = !!m.archived;
+  if (archReasonWrap) archReasonWrap.style.display = m.archived ? 'block' : 'none';
+  if (archReasonInput) archReasonInput.value = m.archived_reason || '';
   // Show audit info
   const audit = document.getElementById('ms-audit-info');
   const auditTxt = document.getElementById('ms-audit-text');
@@ -8440,9 +8575,19 @@ function saveMilestone() {
     verifikasi_diperlukan: document.getElementById('ms-verifikasi').value.trim() || null,
     linked_docs: linkedDocs,
     published: document.getElementById('ms-publish-toggle').checked,
+    // Archive fields (v3.1 — locked 25 Mei 2026)
+    archived: !!(document.getElementById('ms-archive-toggle')?.checked),
+    archived_reason: (document.getElementById('ms-archive-reason')?.value || '').trim() || null,
     last_modified_at: now,
     last_modified_by: 'wakif'
   };
+  // Set archived_at only when transitioning to archived=true
+  if (data.archived) {
+    const existingMs = CURRENT_EDIT_MS_ID ? MILESTONES.find(m => m.id === CURRENT_EDIT_MS_ID) : null;
+    data.archived_at = (existingMs?.archived && existingMs.archived_at) ? existingMs.archived_at : now;
+  } else {
+    data.archived_at = null;
+  }
 
   if (CURRENT_EDIT_MS_ID) {
     // Update existing
@@ -8454,11 +8599,13 @@ function saveMilestone() {
       const titleChanged = old.title?.id !== titleId;
       const statusChanged = old.status !== data.status;
       const publishChanged = old.published !== data.published;
-      if (titleChanged || statusChanged || publishChanged) {
+      const archiveChanged = (!!old.archived) !== (!!data.archived);
+      if (titleChanged || statusChanged || publishChanged || archiveChanged) {
         const summary = [];
         if (titleChanged) summary.push('title updated');
         if (statusChanged) summary.push(`status: ${old.status} → ${data.status}`);
         if (publishChanged) summary.push(data.published ? 'published' : 'unpublished');
+        if (archiveChanged) summary.push(data.archived ? `archived${data.archived_reason ? ' ('+data.archived_reason+')' : ''}` : 'restored');
         changeLog.push({ date: now.slice(0,10), summary: summary.join(', ') });
       }
       MILESTONES[idx] = {
@@ -8483,6 +8630,192 @@ function saveMilestone() {
   closeMilestoneDlg();
   renderMilestonesTable();
   showToast(CURRENT_EDIT_MS_ID ? '✅ Milestone updated' : '✅ Milestone created');
+}
+
+// ─────────────────────────────────────────────────────────────────────────
+// PREVIEW-BEFORE-PUBLISH MODAL (B2 layout, locked 25 Mei 2026 Track B)
+// ─────────────────────────────────────────────────────────────────────────
+// Adib clarification: form fields exist untuk Tier 2 + Tier 3 tapi tidak ada PREVIEW
+// step yang nampilin 3-tier render seperti akan muncul di Living Lab. Preview modal
+// membaca FORM STATE (bukan saved milestone) supaya Adib bisa review SEBELUM commit.
+// Layout: 3-kolom grid (sama dengan Living Lab .act-log-split):
+//   Kolom 1: Tier 1 Aktual Works  | Kolom 2: Tier 2 Panduan Teoritis | Kolom 3: Tier 3 Kesesuaian Grand Design
+// Setiap kolom punya "✏️ Edit Tier X" button → close modal + scroll form ke section relevan.
+// ─────────────────────────────────────────────────────────────────────────
+function openPreviewMilestoneDlg() {
+  // Read CURRENT form state (Adib's in-progress edit)
+  const formData = _readMilestoneFormState();
+  const previewHTML = buildPreviewMilestoneCard(formData);
+  document.getElementById('ms-preview-content').innerHTML = previewHTML;
+  document.getElementById('ms-preview-modal-overlay').style.display = 'flex';
+}
+
+function closePreviewMilestoneDlg() {
+  document.getElementById('ms-preview-modal-overlay').style.display = 'none';
+}
+
+function _readMilestoneFormState() {
+  // Mirror saveMilestone() data construction, BUT return without committing
+  const date = document.getElementById('ms-date').value;
+  return {
+    date,
+    year: parseInt(document.getElementById('ms-year').value, 10),
+    phase: document.getElementById('ms-phase').value,
+    status: document.getElementById('ms-status').value,
+    title: {
+      id: document.getElementById('ms-title-id').value.trim(),
+      en: document.getElementById('ms-title-en').value.trim() || null
+    },
+    detail: {
+      id: document.getElementById('ms-detail-id').value.trim(),
+      en: document.getElementById('ms-detail-en').value.trim() || null
+    },
+    meta: { tag: document.getElementById('ms-meta-tag').value.trim() || null, date_short: formatTglShort(date) },
+    tag: document.getElementById('ms-tag').value,
+    implementasi: {
+      aktivitas_lapangan: document.getElementById('ms-impl-aktivitas').value.trim() || null,
+      tor_sumber: document.getElementById('ms-impl-tor').value.trim() || null,
+      dosis_aktual: document.getElementById('ms-impl-dosis').value.trim() || null,
+      deviasi_internal: document.getElementById('ms-impl-deviasi').value.trim() || null
+    },
+    benchmark_evaluation: {
+      kajian_internasional: document.getElementById('ms-bench-kajian').value.trim() || null,
+      sumber_benchmark: document.getElementById('ms-bench-sumber').value.split(',').map(s => s.trim()).filter(Boolean),
+      alignment_pct: parseInt(document.getElementById('ms-bench-pct').value, 10) || null,
+      verdict: document.getElementById('ms-bench-verdict').value || null,
+      gap_analysis: document.getElementById('ms-bench-gap').value.trim() || null,
+      roadmap: document.getElementById('ms-bench-roadmap').value.trim() || null
+    },
+    verifikasi_diperlukan: document.getElementById('ms-verifikasi').value.trim() || null,
+    published: document.getElementById('ms-publish-toggle').checked,
+    archived: !!(document.getElementById('ms-archive-toggle')?.checked)
+  };
+}
+
+function _escapeHTML(s) {
+  if (s == null) return '';
+  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Mirror dari buildDynamicActLogItem() di living-lab.html — KEEP IN SYNC manually.
+// Output: 3-tier card (Tier 1 Aktual Works | Tier 2 Panduan Teoritis | Tier 3 Kesesuaian Grand Design)
+// dengan tambahan ✏️ Edit Tier X button per kolom untuk jump-back ke form.
+function buildPreviewMilestoneCard(m) {
+  if (!m.title.id) {
+    return '<div style="padding:24px;text-align:center;color:#8B8579;font-style:italic;background:#fff;border-radius:8px">📝 Isi <strong>Title ID</strong> dan <strong>Detail ID</strong> dulu di form sebelum preview.</div>';
+  }
+  const statusLbl = MS_STATUS_LABELS[m.status] || MS_STATUS_LABELS['planned'];
+  const statusCls = 'status-' + (statusLbl.cls === 'compliant' ? 'done' : statusLbl.cls === 'pending' ? 'ongoing' : 'planned');
+  const impl = m.implementasi || {};
+  const bench = m.benchmark_evaluation || {};
+  const sumberList = bench.sumber_benchmark || [];
+  const align = bench.alignment_pct;
+  const verdict = bench.verdict || 'unknown';
+
+  // Tier 1 — Aktual Works
+  let enrichID = '';
+  if (impl.aktivitas_lapangan) enrichID += `<div style="margin-top:8px;font-size:0.93em;color:#5a5a5a"><strong>Aktivitas:</strong> ${_escapeHTML(impl.aktivitas_lapangan)}</div>`;
+  if (impl.dosis_aktual) enrichID += `<div style="margin-top:6px;font-size:0.93em;color:#5a5a5a"><strong>⚖️ Dosis:</strong> ${_escapeHTML(impl.dosis_aktual)}</div>`;
+  if (impl.tor_sumber) enrichID += `<div style="margin-top:6px;font-size:0.88em;color:#8b8579;font-style:italic"><strong>📋 TOR:</strong> ${_escapeHTML(impl.tor_sumber)}</div>`;
+  if (impl.deviasi_internal) enrichID += `<div style="margin-top:8px;padding:6px 10px;background:rgba(217,119,6,0.08);border-left:3px solid #D97706;font-size:0.92em;color:#7a4a08"><strong>⚠️ Deviasi:</strong> ${_escapeHTML(impl.deviasi_internal)}</div>`;
+
+  const tier1HTML = `<div style="background:#fff;border-radius:8px;padding:14px 16px;border-top:4px solid ${statusLbl.cls === 'compliant' ? '#5a9080' : statusLbl.cls === 'pending' ? '#D4AF37' : '#8B8579'}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="background:rgba(60,160,80,0.15);color:#1f6b30;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700">${_escapeHTML(statusLbl.id)}</span>
+      <button onclick="_editPreviewTier(1)" style="background:#fff;border:1px solid #5a9080;color:#1F5F47;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer" title="Edit Tier 1 di form">✏️ Edit T1</button>
+    </div>
+    <div style="font-weight:800;font-size:14px;color:#2D3742;line-height:1.4;margin-bottom:6px">${_escapeHTML(m.title.id)}</div>
+    <div style="font-size:12px;color:#5a5a5a;line-height:1.55">${_escapeHTML(m.detail.id || '(detail belum diisi)')}${enrichID}</div>
+    <div style="margin-top:10px;padding-top:8px;border-top:1px dashed #ddd;font-size:11px;color:#888"><strong>${_escapeHTML(formatTgl(m.date))}</strong>${m.meta?.tag ? ' · ' + _escapeHTML(m.meta.tag) : ''}</div>
+  </div>`;
+
+  // Tier 2 — Panduan Teoritis
+  const tagsHTML = sumberList.map(s => `<span style="display:inline-block;background:rgba(140,100,200,0.1);border:1px solid rgba(140,100,200,0.25);color:#5B21B6;padding:2px 8px;border-radius:10px;font-size:10px;margin:2px 4px 2px 0">${_escapeHTML(s)}</span>`).join('');
+  const tier2HTML = `<div style="background:#fff;border-radius:8px;padding:14px 16px;border-top:4px solid #5B21B6">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:12px;font-weight:700;color:#5B21B6">🔬 PANDUAN TEORITIS</span>
+      <button onclick="_editPreviewTier(2)" style="background:#fff;border:1px solid #5B21B6;color:#5B21B6;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer" title="Edit Tier 2 di form">✏️ Edit T2</button>
+    </div>
+    <div style="font-size:12px;color:#2D3742;line-height:1.6">${_escapeHTML(bench.kajian_internasional || '(kajian teoritis belum diisi — klik Edit T2)')}</div>
+    ${tagsHTML ? `<div style="margin-top:10px">${tagsHTML}</div>` : ''}
+  </div>`;
+
+  // Tier 3 — Kesesuaian Grand Design
+  const verdictMap = {
+    sesuai: { id: '✅ Sesuai — Lanjutkan', bg: 'rgba(60,160,80,0.15)', color: '#1f6b30', border: 'rgba(60,160,80,0.3)' },
+    perhatian: { id: '⚠️ Perlu Diperhatikan', bg: 'rgba(200,150,20,0.15)', color: '#7a5a00', border: 'rgba(200,150,20,0.3)' },
+    eskalasi: { id: '🔴 Eskalasi — Konsultasi Ahli', bg: 'rgba(200,50,50,0.15)', color: '#8b1c1c', border: 'rgba(200,50,50,0.3)' }
+  };
+  const verdictLbl = verdictMap[verdict] || { id: '— Belum dievaluasi', bg: '#f5f5f5', color: '#888', border: '#ccc' };
+  const grandSummary = align !== null && align !== undefined
+    ? `Alignment ke standar internasional: <strong>${align}%</strong>. ${align >= 85 ? 'Sesuai full — practice lanjutkan as-is.' : align >= 60 ? 'Perhatian — ada gap moderate yang perlu di-address.' : 'Eskalasi — gap signifikan, perlu konsultasi ahli.'}`
+    : 'Alignment percentage belum di-set.';
+  const tier3HTML = `<div style="background:#fff;border-radius:8px;padding:14px 16px;border-top:4px solid #D4AF37">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:12px;font-weight:700;color:#8B6914">① KESESUAIAN GRAND DESIGN</span>
+      <button onclick="_editPreviewTier(3)" style="background:#fff;border:1px solid #D4AF37;color:#8B6914;border-radius:5px;padding:3px 8px;font-size:10px;cursor:pointer" title="Edit Tier 3 di form">✏️ Edit T3</button>
+    </div>
+    <div style="font-size:12px;color:#2D3742;line-height:1.55;margin-bottom:10px">${grandSummary}</div>
+    <div style="font-size:11px;font-weight:700;color:#8B6914;margin-bottom:4px">② PENILAIAN EKSEKUSI</div>
+    <div style="font-size:11.5px;color:#2D3742;line-height:1.55;margin-bottom:10px">${_escapeHTML(bench.gap_analysis || '(gap analysis belum diisi)')}</div>
+    <span style="display:inline-block;background:${verdictLbl.bg};color:${verdictLbl.color};border:1px solid ${verdictLbl.border};padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;margin-bottom:10px">${_escapeHTML(verdictLbl.id)}</span>
+    <div style="font-size:11px;font-weight:700;color:#8B6914;margin-bottom:4px;margin-top:6px">④ REKOMENDASI TINDAK LANJUT</div>
+    <div style="font-size:11.5px;color:#2D3742;line-height:1.55;padding:6px 10px;background:#FFFBEB;border-radius:5px;margin-bottom:10px">${_escapeHTML(bench.roadmap || '(roadmap belum disusun)')}</div>
+    ${m.verifikasi_diperlukan ? `<div style="font-size:11px;font-weight:700;color:#8B6914;margin-bottom:4px">⑤ VERIFIKASI LAPANGAN DIPERLUKAN</div>
+    <div style="font-size:11.5px;color:#2D3742;line-height:1.55;padding:6px 10px;background:#f5f5f0;border-radius:5px">${_escapeHTML(m.verifikasi_diperlukan)}</div>` : ''}
+  </div>`;
+
+  // Status banner top
+  const statusBanner = `<div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+    <div style="font-size:13px;color:#4a4030">
+      📜 <strong>${_escapeHTML(m.title.id)}</strong>
+      <span style="color:#8B8579;font-size:11px;margin-left:8px">${_escapeHTML(formatTgl(m.date))} · ${_escapeHTML(MS_PHASE_LABELS[m.phase]?.id || m.phase)}</span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${m.published ? '<span style="background:#5a9080;color:#fff;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">📢 WILL PUBLISH</span>' : '<span style="background:#eee;color:#888;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">📝 DRAFT</span>'}
+      ${m.archived ? '<span style="background:#8B8579;color:#fff;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">📦 ARCHIVED</span>' : ''}
+    </div>
+  </div>`;
+
+  // 3-column grid layout
+  return statusBanner + `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px">${tier1HTML}${tier2HTML}${tier3HTML}</div>
+  <div style="margin-top:14px;padding:10px 14px;background:#FFFBEB;border-left:3px solid #D4AF37;border-radius:6px;font-size:11px;color:#78350F">
+    💡 Ini adalah preview LANGSUNG dari form. Setelah klik <strong>Save</strong>, milestone akan tersimpan + (kalau Publish ON) langsung muncul di Living Lab dengan render 3-tier identik di setiap visitor browser.
+  </div>`;
+}
+
+// Jump from Preview modal back to Edit Form, scroll to specific tier section + highlight
+function _editPreviewTier(tierNum) {
+  closePreviewMilestoneDlg();
+  // Map tier to section element ID
+  const targetId = {
+    1: 'ms-impl-aktivitas',           // Tier 1: Aktivitas Lapangan (Implementasi A section)
+    2: 'ms-bench-kajian',              // Tier 2: Kajian Internasional (Benchmark B section)
+    3: 'ms-bench-pct'                  // Tier 3: Alignment % (Benchmark B section)
+  }[tierNum];
+  if (!targetId) return;
+  setTimeout(() => {
+    const el = document.getElementById(targetId);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Highlight effect (yellow flash 2s)
+    const originalBg = el.style.background;
+    el.style.transition = 'background 0.3s ease';
+    el.style.background = '#FEF3C7';
+    setTimeout(() => { el.style.background = originalBg || ''; el.focus(); }, 1500);
+  }, 200);
+}
+
+// Save buttons from preview modal — wire to existing saveMilestone with publish override
+function saveMilestoneAsDraft() {
+  document.getElementById('ms-publish-toggle').checked = false;
+  closePreviewMilestoneDlg();
+  saveMilestone();
+}
+function saveMilestoneAndPublish() {
+  document.getElementById('ms-publish-toggle').checked = true;
+  closePreviewMilestoneDlg();
+  saveMilestone();
 }
 
 function deleteMilestone(id) {
@@ -8578,7 +8911,23 @@ function findSuggestCandidates() {
       });
     }
   });
-  return candidates.slice(0, 30); // Cap at 30 to avoid overwhelming
+  // Filter dismissed signatures (locked 25 Mei 2026 Track A3 — 3a)
+  const dismissed = getDismissedSignatures();
+  const dismissedSet = new Set(dismissed.map(d => d.sig));
+  const filtered = candidates.filter(c => !dismissedSet.has(getSuggestSignature(c)));
+  return filtered.slice(0, 30); // Cap at 30 to avoid overwhelming
+}
+
+// Locked 25 Mei 2026: get ALL candidates including dismissed (for "Show dismissed" toggle)
+function findSuggestCandidatesAll() {
+  // Same logic as findSuggestCandidates but skip dismissed filter
+  // Trick: temporarily clear dismissed, run, restore
+  const lsBackup = localStorage.getItem('wkkn_v2_dismissed_suggest');
+  localStorage.setItem('wkkn_v2_dismissed_suggest', '[]');
+  const all = findSuggestCandidates();
+  if (lsBackup !== null) localStorage.setItem('wkkn_v2_dismissed_suggest', lsBackup);
+  else localStorage.removeItem('wkkn_v2_dismissed_suggest');
+  return all;
 }
 
 function refreshSuggestCount() {
@@ -8587,17 +8936,41 @@ function refreshSuggestCount() {
   if (el) el.textContent = count;
 }
 
-function openSuggestDlg() {
-  const candidates = findSuggestCandidates();
+function openSuggestDlg(showDismissed) {
+  const candidates = showDismissed ? findSuggestCandidatesAll() : findSuggestCandidates();
+  const dismissedSet = new Set(getDismissedSignatures().map(d => d.sig));
+  const dismissedCount = getDismissedSignatures().length;
   const list = document.getElementById('suggest-list');
   const info = document.getElementById('suggest-info');
+
+  // Header with toggle + dismissed count
+  const headerHTML = `<div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;background:#fafaf7;border-radius:6px;margin-bottom:10px;font-size:11px">
+    <div>
+      ${showDismissed
+        ? `🔀 <strong>Showing all</strong> (${candidates.length}) — including dismissed`
+        : `📋 <strong>Active</strong> (${candidates.length})${dismissedCount > 0 ? ` · 📦 ${dismissedCount} dismissed` : ''}`
+      }
+    </div>
+    ${dismissedCount > 0 || showDismissed ? `<button onclick="openSuggestDlg(${!showDismissed})" style="background:#fff;border:1px solid #ddd;border-radius:4px;padding:4px 10px;font-size:10.5px;cursor:pointer">${showDismissed ? '📋 Active Only' : '🔀 Show Dismissed'}</button>` : ''}
+  </div>`;
+
   if (candidates.length === 0) {
-    list.innerHTML = '<div style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada suggested milestones saat ini. Mungkin semua sudah ter-curate, atau STATE.laporan masih kosong.</div>';
+    list.innerHTML = headerHTML + '<div style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada suggested milestones saat ini. Mungkin semua sudah ter-curate, atau STATE.laporan masih kosong.</div>';
     info.textContent = 'No candidates';
   } else {
     info.textContent = `${candidates.length} candidates ditemukan`;
-    list.innerHTML = candidates.map((c, i) => `
-      <div style="background:#FAFBFA;border-left:4px solid ${c.type==='strategic'?'#D4AF37':c.type==='cluster'?'#5a9080':'#6B8FA8'};padding:12px 16px;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:start;gap:12px">
+    list.innerHTML = headerHTML + candidates.map((c, i) => {
+      const sig = getSuggestSignature(c);
+      const isDismissed = dismissedSet.has(sig);
+      const rowOpacity = isDismissed ? 'opacity:0.55' : '';
+      const dismissedBadge = isDismissed
+        ? '<div style="font-size:10px;color:#8B8579;margin-top:3px;font-weight:700">📦 DISMISSED · <a href="javascript:void(0)" onclick="restoreSuggestion(' + i + ')" style="color:#1F5F47">↩ Restore</a></div>'
+        : '';
+      const actionBtns = isDismissed
+        ? `<button class="btn" onclick='restoreSuggestion(${i})' style="background:#DDE9E3;color:#1F5F47;border:1px solid #5a9080;flex-shrink:0;font-size:11px;padding:6px 10px">↩ Restore</button>`
+        : `<button class="btn btn-primary" onclick='convertSuggestToMilestone(${i})' style="background:var(--moss);color:#fff;flex-shrink:0;font-size:11px;padding:6px 10px;margin-bottom:4px">Convert →</button>
+           <button class="btn" onclick='dismissSuggestion(${i})' style="background:#f4f4f0;color:#4a4030;border:1px solid #8B8579;flex-shrink:0;font-size:10.5px;padding:5px 10px" title="Dismiss — bukan milestone worthy, jangan suggest lagi">📦 Dismiss</button>`;
+      return `<div style="background:#FAFBFA;border-left:4px solid ${c.type==='strategic'?'#D4AF37':c.type==='cluster'?'#5a9080':'#6B8FA8'};padding:12px 16px;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:start;gap:12px;${rowOpacity}">
         <div style="flex:1">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
             <span style="font-size:18px">${c.icon}</span>
@@ -8607,14 +8980,37 @@ function openSuggestDlg() {
           <div style="font-weight:700;color:var(--earth);font-size:13px">${c.suggestedTitle}</div>
           <div style="font-size:11px;color:var(--mute);margin-top:3px;font-style:italic">${c.reason}</div>
           <div style="font-size:10px;color:#888;margin-top:4px">Source: Kebun ${c.source.bidang || '?'} · ${getDetailText(c.source).substring(0,60) || '(no detail)'}${getDetailText(c.source).length>60?'…':''}</div>
+          ${dismissedBadge}
         </div>
-        <button class="btn btn-primary" onclick='convertSuggestToMilestone(${i})' style="background:var(--moss);color:#fff;flex-shrink:0;font-size:11px;padding:6px 10px">Convert →</button>
-      </div>
-    `).join('');
-    // Store candidates for convert reference
+        <div style="display:flex;flex-direction:column;gap:4px;flex-shrink:0">${actionBtns}</div>
+      </div>`;
+    }).join('');
+    // Store candidates for convert/dismiss reference
     window.__SUGGEST_CACHE = candidates;
+    window.__SUGGEST_SHOW_DISMISSED = !!showDismissed;
   }
   document.getElementById('suggest-modal-overlay').style.display = 'flex';
+}
+
+// Locked 25 Mei 2026 (Track A3 — 3a): Dismiss suggestion supaya tidak re-suggest lagi
+function dismissSuggestion(idx) {
+  const c = window.__SUGGEST_CACHE?.[idx];
+  if (!c) return;
+  const sig = getSuggestSignature(c);
+  const reason = prompt('Alasan dismiss (optional — supaya audit-able kalau Adib lihat lagi):', '') || '';
+  addDismissedSignature(sig, reason);
+  // Re-render panel with updated state
+  openSuggestDlg(window.__SUGGEST_SHOW_DISMISSED);
+  refreshSuggestCount();
+}
+
+function restoreSuggestion(idx) {
+  const c = window.__SUGGEST_CACHE?.[idx];
+  if (!c) return;
+  const sig = getSuggestSignature(c);
+  removeDismissedSignature(sig);
+  openSuggestDlg(window.__SUGGEST_SHOW_DISMISSED);
+  refreshSuggestCount();
 }
 
 function closeSuggestDlg() {

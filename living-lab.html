@@ -3688,17 +3688,23 @@ function escapeHTML(str) {
     const docSnap = await getDoc(doc(db, 'milestones', 'active'));
     if (docSnap.exists()) {
       const cloud = docSnap.data();
-      const milestones = cloud.data || [];
+      const allMilestones = cloud.data || [];
+      // Filter: only published (locked 25 Mei 2026 Track A3 per Adib decision 2b)
+      // Archive flag does NOT affect Living Lab visibility — only Dashboard view.
+      // Archived milestone yang masih published TETAP tampil di Living Lab.
+      const milestones = allMilestones.filter(m => m.published === true);
+      const archivedPublishedCount = allMilestones.filter(m => m.archived === true && m.published === true).length;
+      const draftCount = allMilestones.filter(m => m.published !== true).length;
       const data = {
-        schema_version: cloud.version || '3.0',
+        schema_version: cloud.version || '3.1',
         generated_at: (cloud.updated_at && cloud.updated_at.toDate) ? cloud.updated_at.toDate().toISOString() : new Date().toISOString(),
         generated_by: cloud.updated_by || 'wakif_dashboard',
-        total_published: milestones.filter(m => m.published).length,
+        total_published: milestones.length,
         milestones: milestones,
         source: 'firestore'
       };
       if (renderDynamicMilestones(data)) {
-        console.log(`[Living Lab] ✅ Milestones from Firestore (real-time): ${milestones.length} entries — origin: ${data.generated_by}`);
+        console.log(`[Living Lab] ✅ Milestones from Firestore: ${milestones.length} published (incl ${archivedPublishedCount} archived-but-still-published) · filtered ${draftCount} drafts — origin: ${data.generated_by}`);
         return;
       }
     }
