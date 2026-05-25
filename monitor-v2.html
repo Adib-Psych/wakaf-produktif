@@ -1263,15 +1263,15 @@
             <label class="field-lbl">Pohon Dipetik (estimate)</label>
             <input type="number" id="panen-pohon" placeholder="cth: 30" min="0">
           </div>
-          <div class="field" style="grid-column:1/-1">
-            <label class="field-lbl">Komposisi Maturasi (% perkiraan — total harus 100%)</label>
-            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">
-              <div><span style="color:#c14b3a;font-weight:700;font-size:11px">🟥 Merah</span><input type="number" id="panen-pct-merah" placeholder="55" min="0" max="100" value="55" style="margin-top:3px"></div>
-              <div><span style="color:#d4a017;font-weight:700;font-size:11px">🟨 Kuning</span><input type="number" id="panen-pct-kuning" placeholder="25" min="0" max="100" value="25" style="margin-top:3px"></div>
-              <div><span style="color:#16a34a;font-weight:700;font-size:11px">🟩 Hijau</span><input type="number" id="panen-pct-hijau" placeholder="12" min="0" max="100" value="12" style="margin-top:3px"></div>
-              <div><span style="color:#1c1917;font-weight:700;font-size:11px">⬛ Hitam/Overripe</span><input type="number" id="panen-pct-hitam" placeholder="8" min="0" max="100" value="8" style="margin-top:3px"></div>
-            </div>
-          </div>
+          <!-- Komposisi maturasi (% perkiraan) DIHAPUS 24 Mei 2026 per request Wakif.
+               Reason: estimasi ngga reliable, jadi noise. Actual % per varian akan muncul
+               di Section "Processing Pipeline" hasil sortir 4-warna real (Stage 3).
+               Hidden inputs preserved untuk avoid JS break (default 0 → submitPanenEntry
+               skip persist kalau semua 0). -->
+          <input type="hidden" id="panen-pct-merah" value="0">
+          <input type="hidden" id="panen-pct-kuning" value="0">
+          <input type="hidden" id="panen-pct-hijau" value="0">
+          <input type="hidden" id="panen-pct-hitam" value="0">
           <div class="field">
             <label class="field-lbl">Context Panen <span class="req">*</span></label>
             <div class="radio-row" id="panen-context">
@@ -1477,94 +1477,81 @@
       <!-- sampling 30 pohon (10/Kebun). Tracking longitudinal untuk      -->
       <!-- validate yield assumption target 0.4 kg/pohon.                 -->
       <!-- ─────────────────────────────────────────────────────────────── -->
+      <!-- ──────────────────────────────────────────────────────────────────────── -->
+      <!-- SECTION 7 REFACTOR (24 Mei 2026): TABEL PREFILLED 40 POHON BRIN          -->
+      <!-- Per instruksi Adib: "Sampling perpohon bbrp info bs prefilled,            -->
+      <!-- lgsg dibuat tabel saja (cek folder R&D/BRIN Research)".                  -->
+      <!-- Source: Form_Sampling_BRIN + JPG_Individual_Cards/Pohon/ naming pattern.  -->
+      <!-- ──────────────────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">7</span>🌳 Sampling Panen per Pohon (SOP Kementan)</div>
-        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Per SOP Robusta Edisi 2 Kementan: <em>"Estimasi produksi formal — sampling 30 pohon (10/Kebun) untuk validate yield."</em> Target konservatif Adib: <strong style="color:var(--moss)">0,4 kg/pohon</strong>. Data ini akan reveal: apakah asumsi yield realistis? Variance antar-kebun? Outlier pohon high-yielder yang bisa dijadikan parent stock klon unggul?</p>
+        <div class="card-title"><span class="num">7</span>🌳 Sampling Panen 40 Pohon (BRIN Research Baseline)</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:10px">40 pohon BRIN sampling sudah prefilled (10/Kebun, stratified 4 sehat + 3 sedang + 3 lemah). Tag fisik di pohon: <code style="font-size:10.5px">K1-P01</code> sampai <code style="font-size:10.5px">K4-P10</code>. Saat panen: input <strong>kg cherry per pohon</strong>, validate yield assumption (target Adib <strong style="color:var(--moss)">0,4 kg/pohon</strong>). Target ≥30 pohon tersampling per SOP Kementan.</p>
 
-        <!-- Submit Sampling Form -->
-        <div style="background:#FAFCFB;border:2px dashed var(--moss);border-radius:10px;padding:14px 16px;margin-bottom:14px">
-          <div style="font-size:12px;font-weight:800;color:var(--moss);letter-spacing:1px;margin-bottom:10px">📝 Input Sampling Pohon</div>
-          <div class="form-grid">
-            <div class="field">
-              <label class="field-lbl">Tanggal Sampling <span class="req">*</span></label>
-              <input type="date" id="panen-sampling-tgl">
-            </div>
-            <div class="field">
-              <label class="field-lbl">Kebun <span class="req">*</span></label>
-              <div class="radio-row" id="panen-sampling-kebun">
-                <div class="radio-pill" data-val="1" onclick="setRadio('panen-sampling-kebun',this)">Kebun 1</div>
-                <div class="radio-pill" data-val="2" onclick="setRadio('panen-sampling-kebun',this)">Kebun 2</div>
-                <div class="radio-pill" data-val="3" onclick="setRadio('panen-sampling-kebun',this)">Kebun 3</div>
-                <div class="radio-pill" data-val="4" onclick="setRadio('panen-sampling-kebun',this)">Kebun 4</div>
-              </div>
-            </div>
-            <div class="field">
-              <label class="field-lbl">Label/ID Pohon <span class="req">*</span></label>
-              <input type="text" id="panen-sampling-pohon-id" placeholder="cth: K2-P012 atau Pohon Tengah Petak Atas">
-              <p style="font-size:10px;color:var(--mute);margin-top:4px;font-style:italic">Format bebas — yang penting consistent untuk track longitudinal. Idealnya 30 pohon tetap (10/Kebun) yang sama setiap siklus.</p>
-            </div>
-            <div class="field">
-              <label class="field-lbl">Kg Cherry Pohon Ini <span class="req">*</span></label>
-              <input type="number" id="panen-sampling-kg" placeholder="cth: 0.42" step="0.01" min="0">
-            </div>
-            <div class="field">
-              <label class="field-lbl">Estimasi Umur Pohon</label>
-              <div class="radio-row" id="panen-sampling-umur">
-                <div class="radio-pill" data-val="muda" onclick="setRadio('panen-sampling-umur',this)">🌱 Muda (&lt;5 thn)</div>
-                <div class="radio-pill" data-val="produktif" onclick="setRadio('panen-sampling-umur',this)">🌳 Produktif (5-15 thn)</div>
-                <div class="radio-pill" data-val="tua" onclick="setRadio('panen-sampling-umur',this)">🍂 Tua (&gt;15 thn)</div>
-                <div class="radio-pill" data-val="tidak_tahu" onclick="setRadio('panen-sampling-umur',this)">❓ Tidak tahu</div>
-              </div>
-            </div>
-            <div class="field">
-              <label class="field-lbl">Kondisi Kesehatan Visual</label>
-              <div class="radio-row" id="panen-sampling-kondisi">
-                <div class="radio-pill" data-val="prima" onclick="setRadio('panen-sampling-kondisi',this)">💚 Prima</div>
-                <div class="radio-pill" data-val="sehat" onclick="setRadio('panen-sampling-kondisi',this)">🌿 Sehat</div>
-                <div class="radio-pill" data-val="kurang" onclick="setRadio('panen-sampling-kondisi',this)">🟡 Kurang sehat</div>
-                <div class="radio-pill" data-val="sakit" onclick="setRadio('panen-sampling-kondisi',this)">🔴 Sakit/perlu intervensi</div>
-              </div>
-            </div>
-            <div class="field" style="grid-column:1/-1">
-              <label class="field-lbl">Catatan (opsional)</label>
-              <textarea id="panen-sampling-catatan" rows="2" placeholder="cth: Pohon tunggal di sudut petak atas, kanopi padat, buah banyak terkonsentrasi di cabang bawah. Indikasi tinggi top-graft success." maxlength="300"></textarea>
-            </div>
-          </div>
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="submitPanenSampling()" style="background:var(--moss);color:#fff">💾 Simpan Sampling</button>
-            <button class="btn btn-secondary" onclick="resetPanenSamplingForm()">Reset</button>
+        <!-- Compact KPI -->
+        <div style="display:flex;gap:14px;flex-wrap:wrap;padding:10px 14px;background:#F0F5F3;border-radius:8px;margin-bottom:12px;font-size:12px">
+          <div>🌳 Tersampling: <strong id="panen-samp-total" style="color:var(--moss)">0</strong>/40</div>
+          <div>⚖️ Avg: <strong id="panen-samp-avg-kg" style="color:var(--cherry)">—</strong></div>
+          <div>📊 Median: <strong id="panen-samp-median-kg">—</strong></div>
+          <div>⭐ Top: <strong id="panen-samp-top">—</strong></div>
+          <div style="margin-left:auto">
+            <button class="btn btn-secondary" onclick="toggleSamplingChart()" style="font-size:10.5px;padding:4px 10px">📈 Toggle Chart per Kebun</button>
           </div>
         </div>
 
-        <!-- Sampling KPI Grid -->
-        <div class="kpi-grid" id="panen-sampling-kpi" style="margin-bottom:14px">
-          <div class="kpi"><div class="kpi-num" id="panen-samp-total">0</div><div class="kpi-lbl">🌳 Pohon ter-sampling</div><div style="font-size:9px;color:var(--mute);margin-top:2px">target SOP: 30</div></div>
-          <div class="kpi"><div class="kpi-num" id="panen-samp-avg-kg">—</div><div class="kpi-lbl">⚖️ Avg kg/pohon</div><div style="font-size:9px;color:var(--mute);margin-top:2px">target: 0,4 kg</div></div>
-          <div class="kpi"><div class="kpi-num" id="panen-samp-median-kg">—</div><div class="kpi-lbl">📊 Median kg/pohon</div></div>
-          <div class="kpi"><div class="kpi-num" id="panen-samp-top">—</div><div class="kpi-lbl">⭐ Top yielder (kg)</div></div>
+        <!-- Chart collapsible (default hidden) -->
+        <div id="panen-sampling-chart-wrap" style="display:none;margin-bottom:12px">
+          <div class="chart-wrap" style="height:240px"><canvas id="chart-panen-sampling-kebun"></canvas></div>
+          <p style="font-size:10.5px;color:var(--mute);margin-top:6px;font-style:italic">Avg per kebun · Garis merah putus = target 0,4 kg. Outlier high-yielder = parent stock candidate.</p>
         </div>
 
-        <!-- Per-Kebun Comparison Chart -->
-        <div class="chart-wrap" style="height:300px"><canvas id="chart-panen-sampling-kebun"></canvas></div>
-        <p style="font-size:10.5px;color:var(--mute);margin-top:8px;font-style:italic">Box-style avg + range per kebun · Garis merah putus = target 0,4 kg. Outlier high-yielder = kandidat parent stock untuk klon unggul.</p>
+        <!-- Filter dropdown sederhana -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;align-items:center;font-size:11.5px">
+          <span style="color:var(--mute)">Filter:</span>
+          <select id="filter-sampling-kebun" onchange="renderPanenSamplingTable()" style="padding:5px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:11.5px">
+            <option value="">Semua Kebun</option>
+            <option value="1">Kebun 1</option><option value="2">Kebun 2</option><option value="3">Kebun 3</option><option value="4">Kebun 4</option>
+          </select>
+          <select id="filter-sampling-kondisi" onchange="renderPanenSamplingTable()" style="padding:5px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:11.5px">
+            <option value="">Semua Kondisi</option>
+            <option value="sehat">🟢 Sehat</option><option value="sedang">🟡 Sedang</option><option value="lemah">🔴 Lemah</option>
+          </select>
+          <select id="filter-sampling-status" onchange="renderPanenSamplingTable()" style="padding:5px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:11.5px">
+            <option value="">Semua Status</option>
+            <option value="done">✓ Sudah diukur</option><option value="pending">⏳ Belum diukur</option>
+          </select>
+        </div>
 
-        <!-- Sampling Detail Table -->
-        <div class="table-wrap" style="margin-top:14px">
+        <!-- Sampling Tabel Prefilled 40 Pohon -->
+        <div class="table-wrap">
           <table style="font-size:11.5px;width:100%">
             <thead style="background:var(--cream)">
               <tr>
-                <th>Tgl</th>
+                <th style="text-align:left">ID Pohon</th>
                 <th>Kebun</th>
-                <th>Label Pohon</th>
-                <th style="text-align:right">Kg Cherry</th>
-                <th>Umur</th>
-                <th>Kondisi</th>
+                <th>Kondisi Baseline</th>
+                <th style="text-align:right">Cherry Basah (kg)</th>
+                <th style="text-align:right">Cherry Kering (kg)</th>
+                <th style="text-align:right">Green Bean (kg)</th>
+                <th style="text-align:right">Rendemen (%)</th>
+                <th>Tgl Ukur</th>
                 <th>Catatan</th>
-                <th style="text-align:center">Aksi</th>
+                <th style="text-align:center">Status</th>
               </tr>
             </thead>
             <tbody id="panen-sampling-tbody"></tbody>
           </table>
+        </div>
+        <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Klik <strong>Status</strong> column atau row "Belum diukur" untuk input data per pohon (modal popup). Render dari 40-pohon baseline + merge dengan PANEN_SAMPLING_DATA actual. Hidden form fields preserved untuk compat existing submitPanenSampling() function.</p>
+
+        <!-- Hidden form fields untuk preserve compatibility submitPanenSampling() -->
+        <div style="display:none">
+          <input type="date" id="panen-sampling-tgl">
+          <div id="panen-sampling-kebun"></div>
+          <input type="text" id="panen-sampling-pohon-id">
+          <input type="number" id="panen-sampling-kg">
+          <div id="panen-sampling-umur"></div>
+          <div id="panen-sampling-kondisi"></div>
+          <textarea id="panen-sampling-catatan"></textarea>
         </div>
       </div>
 
@@ -5912,9 +5899,38 @@ function updateGradingLiveValidation() {
 // Added 20 Mei sore — SOP item: sampling 30 pohon (10/Kebun)
 // Validate yield assumption: target 0.4 kg/pohon
 // ============================================================
-const PANEN_SAMPLING_SCHEMA_VERSION = '1.0';
+const PANEN_SAMPLING_SCHEMA_VERSION = '1.1';  // v1.1 (24 Mei 2026): add SAMPLING_POHON_BASELINE prefilled 40 pohon
 const PANEN_SAMPLING_LS_KEY = 'wkkn_v2_panen_sampling_2026';
 const PANEN_SAMPLING_TARGET_KG = 0.4;  // Target Adib konservatif per pohon
+
+// ⭐ 40 Pohon BRIN Research Sampling Baseline (prefilled dari folder R&D/BRIN Research/Hanging Tag Pohon & Cherry)
+// Pattern locked 22 Mei 2026: 10 pohon per kebun × 4 kebun = 40 pohon total
+// Stratified: 4 sehat + 3 sedang + 3 lemah (sakit) per kebun
+// ID format: K{kebun}-P{nomor pohon 01-10}
+// Cross-reference: Form_Sampling_BRIN_Kebun_Wakaf_Ngantang.docx + JPG_Individual_Cards/Pohon/
+const SAMPLING_POHON_BASELINE = [
+  // Kebun 1 (P01-P04 sehat · P05-P07 sedang · P08-P10 lemah)
+  {id:'K1-P01',kebun:'1',kondisi:'sehat'},{id:'K1-P02',kebun:'1',kondisi:'sehat'},{id:'K1-P03',kebun:'1',kondisi:'sehat'},{id:'K1-P04',kebun:'1',kondisi:'sehat'},
+  {id:'K1-P05',kebun:'1',kondisi:'sedang'},{id:'K1-P06',kebun:'1',kondisi:'sedang'},{id:'K1-P07',kebun:'1',kondisi:'sedang'},
+  {id:'K1-P08',kebun:'1',kondisi:'lemah'},{id:'K1-P09',kebun:'1',kondisi:'lemah'},{id:'K1-P10',kebun:'1',kondisi:'lemah'},
+  // Kebun 2
+  {id:'K2-P01',kebun:'2',kondisi:'sehat'},{id:'K2-P02',kebun:'2',kondisi:'sehat'},{id:'K2-P03',kebun:'2',kondisi:'sehat'},{id:'K2-P04',kebun:'2',kondisi:'sehat'},
+  {id:'K2-P05',kebun:'2',kondisi:'sedang'},{id:'K2-P06',kebun:'2',kondisi:'sedang'},{id:'K2-P07',kebun:'2',kondisi:'sedang'},
+  {id:'K2-P08',kebun:'2',kondisi:'lemah'},{id:'K2-P09',kebun:'2',kondisi:'lemah'},{id:'K2-P10',kebun:'2',kondisi:'lemah'},
+  // Kebun 3
+  {id:'K3-P01',kebun:'3',kondisi:'sehat'},{id:'K3-P02',kebun:'3',kondisi:'sehat'},{id:'K3-P03',kebun:'3',kondisi:'sehat'},{id:'K3-P04',kebun:'3',kondisi:'sehat'},
+  {id:'K3-P05',kebun:'3',kondisi:'sedang'},{id:'K3-P06',kebun:'3',kondisi:'sedang'},{id:'K3-P07',kebun:'3',kondisi:'sedang'},
+  {id:'K3-P08',kebun:'3',kondisi:'lemah'},{id:'K3-P09',kebun:'3',kondisi:'lemah'},{id:'K3-P10',kebun:'3',kondisi:'lemah'},
+  // Kebun 4
+  {id:'K4-P01',kebun:'4',kondisi:'sehat'},{id:'K4-P02',kebun:'4',kondisi:'sehat'},{id:'K4-P03',kebun:'4',kondisi:'sehat'},{id:'K4-P04',kebun:'4',kondisi:'sehat'},
+  {id:'K4-P05',kebun:'4',kondisi:'sedang'},{id:'K4-P06',kebun:'4',kondisi:'sedang'},{id:'K4-P07',kebun:'4',kondisi:'sedang'},
+  {id:'K4-P08',kebun:'4',kondisi:'lemah'},{id:'K4-P09',kebun:'4',kondisi:'lemah'},{id:'K4-P10',kebun:'4',kondisi:'lemah'}
+];
+const SAMPLING_KONDISI_LABEL = {
+  'sehat':  { id:'🟢 Sehat',  en:'Healthy',  color:'#16a34a', bg:'#F0FDF4' },
+  'sedang': { id:'🟡 Sedang', en:'Moderate', color:'#d4a017', bg:'#FFFBEB' },
+  'lemah':  { id:'🔴 Lemah',  en:'Weak',     color:'#dc2626', bg:'#FEF2F2' }
+};
 
 let PANEN_SAMPLING_DATA = [];
 (function loadPanenSamplingFromLS(){
@@ -6051,34 +6067,138 @@ function renderPanenSamplingChart() {
   });
 }
 
+// REFACTORED 24 Mei 2026: render 40-pohon prefilled (merge BASELINE + actual data)
 function renderPanenSamplingTable() {
   const tbody = document.getElementById('panen-sampling-tbody');
   if (!tbody) return;
-  if (PANEN_SAMPLING_DATA.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--mute)">
-      <div style="font-size:22px;margin-bottom:4px">🌳</div>
-      <div style="font-weight:700;color:var(--earth)">Belum ada sampling</div>
-      <div style="font-size:11px;margin-top:4px">Per SOP: target 30 pohon (10/Kebun). Submit form di atas.</div>
-    </td></tr>`;
+
+  // Filter values (compatibility: filter UI may not exist in legacy view)
+  const fKebun = document.getElementById('filter-sampling-kebun')?.value || '';
+  const fKondisi = document.getElementById('filter-sampling-kondisi')?.value || '';
+  const fStatus = document.getElementById('filter-sampling-status')?.value || '';
+
+  // Merge BASELINE 40 pohon + actual data (PANEN_SAMPLING_DATA via pohon_id match)
+  const rows = SAMPLING_POHON_BASELINE.map(baseline => {
+    const actual = PANEN_SAMPLING_DATA.find(e => e.pohon_id === baseline.id);
+    return {
+      ...baseline,
+      // Actual fields
+      cherry_basah_kg: actual?.kg || actual?.cherry_basah_kg || null,
+      cherry_kering_kg: actual?.cherry_kering_kg || null,
+      green_bean_kg: actual?.green_bean_kg || null,
+      rendemen_pct: (actual?.cherry_basah_kg && actual?.green_bean_kg)
+        ? ((actual.green_bean_kg / actual.cherry_basah_kg) * 100)
+        : (actual?.kg && actual?.green_bean_kg ? ((actual.green_bean_kg / actual.kg) * 100) : null),
+      tgl_ukur: actual?.tgl || null,
+      catatan: actual?.catatan || '',
+      status: actual ? 'done' : 'pending',
+      _actual_id: actual?.id
+    };
+  });
+
+  // Apply filters
+  let filtered = rows;
+  if (fKebun) filtered = filtered.filter(r => r.kebun === fKebun);
+  if (fKondisi) filtered = filtered.filter(r => r.kondisi === fKondisi);
+  if (fStatus) filtered = filtered.filter(r => r.status === fStatus);
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:18px;color:var(--mute);font-size:11px">Tidak ada pohon match filter.</td></tr>`;
     return;
   }
-  const sorted = [...PANEN_SAMPLING_DATA].sort((a,b) => b.tgl.localeCompare(a.tgl));
-  const umurLbl = { muda: '🌱 Muda', produktif: '🌳 Produktif', tua: '🍂 Tua', tidak_tahu: '❓' };
-  const kondisiLbl = { prima: '💚 Prima', sehat: '🌿 Sehat', kurang: '🟡 Kurang', sakit: '🔴 Sakit' };
-  tbody.innerHTML = sorted.map(e => `
-    <tr>
-      <td style="white-space:nowrap">${formatTglShort ? formatTglShort(e.tgl) : e.tgl}</td>
-      <td>K${e.kebun}</td>
-      <td style="font-size:10.5px;font-weight:700">${e.pohon_id}</td>
-      <td style="text-align:right;font-weight:700;color:${e.kg >= PANEN_SAMPLING_TARGET_KG ? '#16a34a' : '#dc2626'}">${e.kg.toFixed(2)}</td>
-      <td style="font-size:10px">${umurLbl[e.umur] || '—'}</td>
-      <td style="font-size:10px">${kondisiLbl[e.kondisi] || '—'}</td>
-      <td style="font-size:10px;color:var(--mute);max-width:200px">${(e.catatan||'').slice(0, 60)}${(e.catatan||'').length > 60 ? '…' : ''}</td>
-      <td style="text-align:center">
-        <button onclick="deletePanenSamplingEntry('${e.id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 6px;color:var(--cherry);border-color:var(--cherry)" title="Hapus">🗑️</button>
-      </td>
-    </tr>
-  `).join('');
+
+  tbody.innerHTML = filtered.map(r => {
+    const kondisi = SAMPLING_KONDISI_LABEL[r.kondisi] || {id: r.kondisi, color:'#888', bg:'#f5f5f5'};
+    const isDone = r.status === 'done';
+    const cherryBasahCell = r.cherry_basah_kg != null ? `<strong style="color:${r.cherry_basah_kg >= PANEN_SAMPLING_TARGET_KG ? '#16a34a' : '#dc2626'}">${r.cherry_basah_kg.toFixed(2)}</strong>` : '<span style="color:#bbb">—</span>';
+    const cherryKeringCell = r.cherry_kering_kg != null ? r.cherry_kering_kg.toFixed(2) : '<span style="color:#bbb">—</span>';
+    const greenBeanCell = r.green_bean_kg != null ? `<strong>${r.green_bean_kg.toFixed(2)}</strong>` : '<span style="color:#bbb">—</span>';
+    const rendemenCell = r.rendemen_pct != null ? `<span style="color:${r.rendemen_pct >= 18 ? '#16a34a' : (r.rendemen_pct >= 15 ? '#d4a017' : '#dc2626')};font-weight:700">${r.rendemen_pct.toFixed(1)}%</span>` : '<span style="color:#bbb">—</span>';
+    const tglUkurCell = r.tgl_ukur ? `<span style="font-size:10px">${formatTglShort ? formatTglShort(r.tgl_ukur) : r.tgl_ukur}</span>` : '<span style="color:#bbb">—</span>';
+    const catatanCell = r.catatan ? `<span style="font-size:10px;color:var(--mute)" title="${r.catatan.replace(/"/g,'&quot;')}">${r.catatan.slice(0,40)}${r.catatan.length>40?'…':''}</span>` : '<span style="color:#bbb">—</span>';
+    const statusCell = isDone
+      ? `<button onclick="openSamplingInput('${r.id}')" style="background:#F0FDF4;color:#15803D;border:1px solid #16a34a;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">✓ Done</button>`
+      : `<button onclick="openSamplingInput('${r.id}')" style="background:#FFFBEB;color:#78350F;border:1px solid #d4a017;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">⏳ Input</button>`;
+
+    return `<tr style="background:${isDone ? '#FAFCFB' : '#fff'}">
+      <td style="font-family:monospace;font-weight:700;font-size:10.5px">${r.id}</td>
+      <td style="text-align:center;font-weight:600">K${r.kebun}</td>
+      <td><span style="background:${kondisi.bg};color:${kondisi.color};padding:2px 6px;border-radius:8px;font-size:10px;font-weight:700">${kondisi.id}</span></td>
+      <td style="text-align:right">${cherryBasahCell}</td>
+      <td style="text-align:right">${cherryKeringCell}</td>
+      <td style="text-align:right">${greenBeanCell}</td>
+      <td style="text-align:right">${rendemenCell}</td>
+      <td>${tglUkurCell}</td>
+      <td>${catatanCell}</td>
+      <td style="text-align:center">${statusCell}</td>
+    </tr>`;
+  }).join('');
+}
+
+// Modal popup untuk input data sampling per pohon (replace inline form)
+function openSamplingInput(pohonId) {
+  const baseline = SAMPLING_POHON_BASELINE.find(b => b.id === pohonId);
+  if (!baseline) return alert('Pohon ID tidak ditemukan: ' + pohonId);
+  const existing = PANEN_SAMPLING_DATA.find(e => e.pohon_id === pohonId);
+  const kondisi = SAMPLING_KONDISI_LABEL[baseline.kondisi] || {id: baseline.kondisi};
+
+  // Pre-populate hidden form fields
+  document.getElementById('panen-sampling-tgl').value = existing?.tgl || todayIso();
+  document.getElementById('panen-sampling-pohon-id').value = pohonId;
+  document.getElementById('panen-sampling-kg').value = existing?.kg || existing?.cherry_basah_kg || '';
+  document.getElementById('panen-sampling-catatan').value = existing?.catatan || '';
+
+  // Simple prompt-based input (fast iteration — could upgrade to proper modal later)
+  const tglInput = prompt(`📅 Tanggal ukur untuk pohon ${pohonId} (${kondisi.id}, Kebun ${baseline.kebun}):\n\nFormat: YYYY-MM-DD\nDefault: hari ini`, existing?.tgl || todayIso());
+  if (tglInput === null) return;
+  const cherryBasahInput = prompt(`🍒 Cherry basah (kg) — pohon ${pohonId}:`, existing?.cherry_basah_kg || existing?.kg || '');
+  if (cherryBasahInput === null) return;
+  const cherryBasah = parseFloat(cherryBasahInput);
+  if (!cherryBasah || cherryBasah < 0) return alert('Cherry basah harus angka > 0');
+  const cherryKeringInput = prompt(`🌾 Cherry kering (kg) — opsional (kosongkan kalau belum jemur):`, existing?.cherry_kering_kg || '');
+  if (cherryKeringInput === null) return;
+  const cherryKering = cherryKeringInput ? parseFloat(cherryKeringInput) : null;
+  const greenBeanInput = prompt(`🌰 Green bean (kg) — opsional (kosongkan kalau belum kupas):`, existing?.green_bean_kg || '');
+  if (greenBeanInput === null) return;
+  const greenBean = greenBeanInput ? parseFloat(greenBeanInput) : null;
+  const catatanInput = prompt(`📝 Catatan (opsional):`, existing?.catatan || '');
+  if (catatanInput === null) return;
+
+  // Save/update entry
+  if (existing) {
+    existing.tgl = tglInput;
+    existing.cherry_basah_kg = cherryBasah;
+    existing.kg = cherryBasah;  // backward compat
+    if (cherryKering) existing.cherry_kering_kg = cherryKering;
+    if (greenBean) existing.green_bean_kg = greenBean;
+    existing.catatan = catatanInput;
+    existing.last_edited_at = new Date().toISOString();
+  } else {
+    const id = 'sampling_' + tglInput.replace(/-/g, '') + '_' + pohonId;
+    PANEN_SAMPLING_DATA.push({
+      id, tgl: tglInput, kebun: baseline.kebun, pohon_id: pohonId,
+      kg: cherryBasah,                  // backward compat (existing reports)
+      cherry_basah_kg: cherryBasah,
+      cherry_kering_kg: cherryKering,
+      green_bean_kg: greenBean,
+      kondisi: baseline.kondisi,        // dari baseline (sehat/sedang/lemah)
+      catatan: catatanInput,
+      created_at: new Date().toISOString()
+    });
+  }
+  savePanenSamplingToLS();
+  if (typeof showToast === 'function') showToast(`✓ Sampling ${pohonId} tersimpan (${cherryBasah} kg)`, 'success');
+  renderPanenSampling();
+}
+
+// Toggle chart visibility (default collapsed per Adib UI minimalism)
+function toggleSamplingChart() {
+  const wrap = document.getElementById('panen-sampling-chart-wrap');
+  if (!wrap) return;
+  wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
+  if (wrap.style.display === 'block' && typeof renderPanenSamplingChart === 'function') {
+    setTimeout(renderPanenSamplingChart, 100);
+  }
 }
 
 // Patch renderPanen to also render the new sections
