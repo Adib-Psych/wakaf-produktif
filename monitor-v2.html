@@ -7489,7 +7489,15 @@ if (msStoredVer !== MILESTONE_SCHEMA_VERSION) {
 }
 let MILESTONES = JSON.parse(localStorage.getItem('wkkn_v2_milestones') || '[]');
 
+// ⭐ 24 Mei 2026: Race condition debounce. Track timestamp last local write
+// untuk skip onSnapshot listener fires within 3 detik (avoid Firestore listener
+// fire dengan cloud data lama → overwrite local milestone yang baru di-create
+// via Batch Curation saveMilestones).
+window._milestonesLastLocalWrite = 0;
+
 function saveMilestones() {
+  // Track local write timestamp untuk debounce listener (locked 24 Mei 2026)
+  window._milestonesLastLocalWrite = Date.now();
   // Local persistence (offline safety net)
   localStorage.setItem('wkkn_v2_milestones', JSON.stringify(MILESTONES));
   // Cloud sync (cross-browser/device, locked 23 Mei 2026 — Pattern #10)
@@ -14117,6 +14125,18 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         const cloud = docSnap.data();
         const localVersion = typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0';
         if (cloud.version !== localVersion) return;
+
+        // ⭐ 24 Mei 2026 — Race condition debounce (fix bug Batch Curation milestone hilang):
+        // Skip listener fires dalam 3 detik setelah local saveMilestones() — krn cloud data
+        // bisa masih stale (push belum complete) → listener overwrite MILESTONES baru dengan
+        // state lama → milestone yang baru di-create via Batch Curation HILANG.
+        const lastWrite = window._milestonesLastLocalWrite || 0;
+        const sinceLastWrite = Date.now() - lastWrite;
+        if (sinceLastWrite < 3000) {
+          console.log(`[Milestones] ⏭ Skip listener — within ${sinceLastWrite}ms of own local write (race debounce)`);
+          return;
+        }
+
         if (cloud.data && Array.isArray(cloud.data) && typeof MILESTONES !== 'undefined') {
           // Skip update kalau data identik (avoid render loop dari own write)
           const localJson = JSON.stringify(MILESTONES);
