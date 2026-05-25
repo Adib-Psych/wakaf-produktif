@@ -1300,37 +1300,23 @@
         </div>
       </div>
 
-      <!-- Daily Timeline + Cumulative Chart -->
+      <!-- ────────────────────────────────────────────────────────── -->
+      <!-- CHAPTER 2: Processing Pipeline (actual % per varian)       -->
+      <!-- Reordered 24 Mei 2026 per request Wakif — naik ke atas    -->
+      <!-- supaya langsung setelah Submit. Actual % per varian dari   -->
+      <!-- Stage 3 sortir 4-warna real (bukan estimasi).              -->
+      <!-- ────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">1</span>Daily Timeline & Cumulative vs Target</div>
-        <div class="chart-wrap"><canvas id="chart-panen-daily"></canvas></div>
-        <p style="font-size:11px;color:var(--mute);margin-top:8px;font-style:italic">Bar = cherry harian · Line = cumulative · Garis merah putus = target 366 kg/thn</p>
-      </div>
-
-      <!-- Composition & Per-Kebun -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px">
-        <div class="card">
-          <div class="card-title"><span class="num">2</span>Komposisi Maturasi per Hari</div>
-          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-composition"></canvas></div>
-          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Stacked: 🟥 merah · 🟨 kuning · 🟩 hijau · ⬛ overripe. Target Adib: % merah ≥ 70 untuk specialty Bonsari.</p>
-        </div>
-        <div class="card">
-          <div class="card-title"><span class="num">3</span>Cherry per Kebun (cumulative)</div>
-          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-kebun"></canvas></div>
-          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Distribusi kg cherry per kebun · "Campuran" untuk panen tidak tag spesifik</p>
-        </div>
-      </div>
-
-      <!-- Processing Pipeline Funnel -->
-      <div class="card">
-        <div class="card-title"><span class="num">4</span>🏭 Processing Pipeline — Cherry → Green Bean</div>
-        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Track setiap batch dari cherry mentah sampai green bean siap jual. Conversion ratio cherry→green bean typical Robusta: 16-20% (semi-washed) atau 18-22% (fully washed). Klik panah untuk advance stage.</p>
+        <div class="card-title"><span class="num">2</span>🏭 Processing Pipeline — Cherry → Green Bean</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Track setiap batch dari cherry mentah sampai green bean siap jual. <strong>Persentase per varian (🟥 merah · 🟨 kuning · 🟩 hijau · ⬛ hitam) = ACTUAL hasil sortir Stage 3</strong> (bukan estimasi). Conversion ratio cherry→green bean typical Robusta: 16-20% (semi-washed) atau 18-22% (fully washed). Klik panah untuk advance stage.</p>
         <div id="panen-pipeline-funnel" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"></div>
       </div>
 
-      <!-- Batch Tracker Table -->
+      <!-- ────────────────────────────────────────────────────────── -->
+      <!-- CHAPTER 3: Batch Tracker Tabel                             -->
+      <!-- ────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">5</span>📋 Batch Tracker (semua panen)</div>
+        <div class="card-title"><span class="num">3</span>📋 Batch Tracker — Riwayat Panen</div>
         <div class="table-wrap">
           <table style="font-size:11.5px;width:100%">
             <thead style="background:var(--cream)">
@@ -1352,13 +1338,20 @@
       </div>
 
       <!-- ─────────────────────────────────────────────────────────────── -->
-      <!-- SECTION 6: KOMPARASI ESTIMASI vs AKTUAL POST-PROCESSING        -->
-      <!-- Added 20 Mei sore — per Adib request: tracking aktual setelah  -->
-      <!-- sortasi+timbang untuk komparasi vs estimasi awal. Analytics    -->
-      <!-- pattern learning untuk improve estimation accuracy.            -->
+      <!-- ANALITIK DEEP-DIVE — Komparasi + Charts (collapsed default)     -->
+      <!-- Reordered 24 Mei 2026 per request Wakif: "smua analisa,         -->
+      <!-- comparasi dll yg bikin form tampak penuh lgsg dibuat jadi hero  -->
+      <!-- saja" → collapse di bottom, expand on demand.                   -->
       <!-- ─────────────────────────────────────────────────────────────── -->
+      <details style="margin-top:14px">
+        <summary style="cursor:pointer;padding:14px 18px;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #d4a017;border-radius:10px;font-weight:800;color:#78350F;font-size:13px;list-style:none">
+          📊 Analitik Deep-Dive — Komparasi Est-vs-Aktual + Charts (klik untuk expand)
+          <span style="font-size:10.5px;font-weight:400;color:var(--mute);margin-left:8px">· Conversion ratio · Bias % merah · Loss sortasi · Daily timeline · Composition · Per-Kebun</span>
+        </summary>
+        <div style="margin-top:12px">
+
       <div class="card">
-        <div class="card-title"><span class="num">6</span>📊 Komparasi Estimasi vs Aktual Post-Processing</div>
+        <div class="card-title"><span class="num">A</span>📊 Komparasi Estimasi vs Aktual Post-Processing</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Setelah batch melalui sortasi air + sortir hijau + jemur + kupas, input data aktual hasil timbang untuk komparasi dengan estimasi awal. Kumpulan data akan mengungkap pola: <em>"Apakah estimasi % merah saya tend over-/under-estimate? Berapa actual conversion ratio cherry→green bean di kebun NGT?"</em></p>
 
         <!-- Submit Actual Form (compact) -->
@@ -1471,6 +1464,30 @@
         <p style="font-size:10.5px;color:var(--mute);margin-top:10px;font-style:italic;line-height:1.55">💡 <strong>Cara baca:</strong> Bias % Merah positif → over-estimate dosis matang (estimasi terlalu pesimis). Conv. ratio &lt; 18% → processing loss tinggi (perlu evaluasi penjemuran/pengupasan). Setelah 5+ batch, pola akan terlihat → kalibrasi estimasi awal.</p>
       </div>
 
+      <!-- Daily Timeline + Cumulative Chart (restored in Analitik 24 Mei 2026) -->
+      <div class="card">
+        <div class="card-title"><span class="num">B</span>📈 Daily Timeline & Cumulative vs Target</div>
+        <div class="chart-wrap"><canvas id="chart-panen-daily"></canvas></div>
+        <p style="font-size:11px;color:var(--mute);margin-top:8px;font-style:italic">Bar = cherry harian · Line = cumulative · Garis merah putus = target 366 kg/thn</p>
+      </div>
+
+      <!-- Composition & Per-Kebun (restored in Analitik 24 Mei 2026) -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px">
+        <div class="card">
+          <div class="card-title"><span class="num">C</span>📊 Komposisi Maturasi per Hari</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-composition"></canvas></div>
+          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Stacked: 🟥 merah · 🟨 kuning · 🟩 hijau · ⬛ overripe. Target Adib: % merah ≥ 70 untuk specialty Bonsari.</p>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="num">D</span>📍 Cherry per Kebun (cumulative)</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-kebun"></canvas></div>
+          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Distribusi kg cherry per kebun · "Campuran" untuk panen tidak tag spesifik</p>
+        </div>
+      </div>
+
+        </div>
+      </details><!-- end Analitik Deep-Dive -->
+
       <!-- ─────────────────────────────────────────────────────────────── -->
       <!-- SECTION 7: SAMPLING JUMLAH PANEN PER POHON (SOP)               -->
       <!-- Added 20 Mei sore — per SOP Robusta: estimasi produksi formal  -->
@@ -1478,13 +1495,13 @@
       <!-- validate yield assumption target 0.4 kg/pohon.                 -->
       <!-- ─────────────────────────────────────────────────────────────── -->
       <!-- ──────────────────────────────────────────────────────────────────────── -->
-      <!-- SECTION 7 REFACTOR (24 Mei 2026): TABEL PREFILLED 40 POHON BRIN          -->
+      <!-- CHAPTER 4: SAMPLING 40 POHON BRIN (refactored 24 Mei 2026)               -->
       <!-- Per instruksi Adib: "Sampling perpohon bbrp info bs prefilled,            -->
       <!-- lgsg dibuat tabel saja (cek folder R&D/BRIN Research)".                  -->
       <!-- Source: Form_Sampling_BRIN + JPG_Individual_Cards/Pohon/ naming pattern.  -->
       <!-- ──────────────────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">7</span>🌳 Sampling Panen 40 Pohon (BRIN Research Baseline)</div>
+        <div class="card-title"><span class="num">4</span>🌳 Sampling 40 Pohon BRIN Research Baseline</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:10px">40 pohon BRIN sampling sudah prefilled (10/Kebun, stratified 4 sehat + 3 sedang + 3 lemah). Tag fisik di pohon: <code style="font-size:10.5px">K1-P01</code> sampai <code style="font-size:10.5px">K4-P10</code>. Saat panen: input <strong>kg cherry per pohon</strong>, validate yield assumption (target Adib <strong style="color:var(--moss)">0,4 kg/pohon</strong>). Target ≥30 pohon tersampling per SOP Kementan.</p>
 
         <!-- Compact KPI -->
@@ -1561,8 +1578,11 @@
       <!-- panen split jadi 4 lot child (merah/kuning/hijau/hitam) yang    -->
       <!-- masing-masing punya pipeline terpisah sampai SOLD.              -->
       <!-- ─────────────────────────────────────────────────────────────── -->
+      <!-- ────────────────────────────────────────────────────────── -->
+      <!-- CHAPTER 5: LOT TRACKER per GRADE (Multi-Bucket Pipeline)   -->
+      <!-- ────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">8</span>📦 Lot Tracker per Grade — Multi-Bucket Pipeline</div>
+        <div class="card-title"><span class="num">5</span>📦 Lot Tracker per Grade — Multi-Bucket Pipeline</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Setelah Stage 3 sortir 4-warna selesai, batch panen split jadi <strong>4 lot child</strong> (atau lebih sedikit kalau bucket kosong). Setiap lot punya pipeline terpisah: <strong>jemur → kupas → green bean → sold</strong>. Lot ID format: <code style="font-size:10.5px">WKKN-YYYY-MM-KX-WARNA-NNN</code> (tag tetap, walaupun pasca-jemur warna fisik tidak terlihat lagi).</p>
 
         <!-- Lot KPI -->
