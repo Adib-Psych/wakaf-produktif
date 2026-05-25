@@ -11715,6 +11715,9 @@ function deleteTrx(id) {
 function populateKategoriDropdown() {
   const sel = document.getElementById('trx-kat');
   let opt = '<option value="">— Pilih kategori —</option>';
+  // ⭐ 24 Mei 2026 per request Wakif: option "Lain-lain (insidental)" untuk
+  // pengeluaran kecil non-RAB (transport, konsumsi, fee tukang, dll).
+  opt += '<option value="LAIN">🔖 LAIN-LAIN — Insidental / non-RAB (transport, konsumsi, fee kecil, dll)</option>';
   RAB_DATA[CURRENT_CYCLE].kategori.forEach(k => {
     opt += `<optgroup label="${k.id}. ${k.nama}">`;
     k.items.forEach(it => {
@@ -11733,7 +11736,7 @@ function onTrxTipeChange() {
 async function saveTrx() {
   const tgl = document.getElementById('trx-tgl').value;
   const tipe = document.getElementById('trx-tipe').value;
-  const kat = document.getElementById('trx-kat').value || null;
+  let kat = document.getElementById('trx-kat').value || null;  // ⭐ 24 Mei: let (was const) untuk soft fallback ke 'LAIN'
   const ket = document.getElementById('trx-ket').value.trim();
   const jml = parseInt(document.getElementById('trx-jml').value) || 0;
   const notaFile = document.getElementById('trx-nota').files[0];
@@ -11741,9 +11744,13 @@ async function saveTrx() {
     alert('Tanggal, keterangan, dan jumlah wajib diisi.');
     return;
   }
+  // ⭐ 24 Mei 2026: soft validation — kalau Adib lupa pilih kategori untuk
+  // pengeluaran, auto-fallback ke 'LAIN' (insidental/non-RAB). Tidak block flow.
   if ((tipe === 'keluar_langsung' || tipe === 'keluar_anto') && !kat) {
-    alert('Kategori RAB wajib untuk pengeluaran.');
-    return;
+    kat = 'LAIN';  // default fallback untuk pengeluaran insidental
+    if (typeof showToast === 'function') {
+      showToast('💡 Kategori RAB kosong → auto-set ke "LAIN-LAIN" (insidental). Edit kalau perlu adjust.', 'info');
+    }
   }
   // Handle nota: if new file uploaded, save; else preserve existing (edit mode) or null (create)
   let notaId = null;
