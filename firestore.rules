@@ -92,6 +92,68 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // ===== LAYER 1 SYSTEMATIC SYNC (24 Mei 2026) — 7 collections singleton =====
+    // Apply Pattern #10 ke semua Wakif state. Public READ + open WRITE Phase 1,
+    // DELETE locked (preserve audit history). Phase 2 (post-Auth): tighten role-based.
+    // Collections: upah, cashbook, opt_observations, panen_data, panen_lots,
+    //              panen_sampling, sop_status.
+
+    match /upah/{docId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /cashbook/{docId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /opt_observations/{docId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /panen_data/{docId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /panen_lots/{docId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /panen_sampling/{docId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /sop_status/{docId} {
+      allow read: if true;
+      allow create, update: if
+        request.resource.data.version is string
+        && request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
     // ===== milestones collection (singleton pattern, locked 23 Mei 2026) =====
     // Curated milestones by Wakif via Tab Milestones Publik di monitor-v2.html.
     // Pattern #10 Firestore Sync Global Variable (sync `MILESTONES` array <-> Firestore).

@@ -4345,6 +4345,10 @@ UPAH_ITEMS = UPAH_ITEMS.filter(it => it.pelapor !== 'ANTO');
 
 function saveUpah() {
   localStorage.setItem('wkkn_v2_upah', JSON.stringify(UPAH_ITEMS));
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
+  if (typeof window.syncUpahToFirestore === 'function') {
+    window.syncUpahToFirestore().catch(e => console.warn('[saveUpah] Firestore push fail (local saved):', e));
+  }
 }
 
 function calcTotal(item) {
@@ -5107,6 +5111,10 @@ function savePanenToLS() {
       data: PANEN_DATA
     }));
   } catch(e) { console.warn('[Panen] LS save fail:', e); }
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
+  if (typeof window.syncPanenDataToFirestore === 'function') {
+    window.syncPanenDataToFirestore().catch(e => console.warn('[savePanen] Firestore push fail (local saved):', e));
+  }
 }
 
 let PANEN_LOTS_DATA = [];
@@ -5129,6 +5137,10 @@ function savePanenLotsToLS() {
       data: PANEN_LOTS_DATA
     }));
   } catch(e) { console.warn('[PanenLots] LS save fail:', e); }
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
+  if (typeof window.syncPanenLotsToFirestore === 'function') {
+    window.syncPanenLotsToFirestore().catch(e => console.warn('[savePanenLots] Firestore push fail (local saved):', e));
+  }
 }
 
 function togglePanenKebun(el) {
@@ -6221,6 +6233,10 @@ function savePanenSamplingToLS() {
       data: PANEN_SAMPLING_DATA
     }));
   } catch(e) { console.warn('[Sampling] LS save fail:', e); }
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
+  if (typeof window.syncPanenSamplingToFirestore === 'function') {
+    window.syncPanenSamplingToFirestore().catch(e => console.warn('[savePanenSampling] Firestore push fail (local saved):', e));
+  }
 }
 
 function resetPanenSamplingForm() {
@@ -8880,6 +8896,10 @@ const SOP_PROJECT_START_MONTH = 1;
 
 function saveSOPStatus() {
   localStorage.setItem('wkkn_sop_status_v1', JSON.stringify(SOP_STATUS));
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
+  if (typeof window.syncSOPStatusToFirestore === 'function') {
+    window.syncSOPStatusToFirestore().catch(e => console.warn('[saveSOPStatus] Firestore push fail (local saved):', e));
+  }
 }
 
 function getSOPStatus(key) {
@@ -11049,7 +11069,13 @@ if (cbStoredVer !== CASHBOOK_SCHEMA_VERSION) {
 }
 let CASHBOOK = JSON.parse(localStorage.getItem('wkkn_v2_cashbook') || '[]');
 // PRODUCTION: empty default — diisi via Form Input + Tambah Transaksi di tab Laporan Keuangan
-function saveCashbook() { localStorage.setItem('wkkn_v2_cashbook', JSON.stringify(CASHBOOK)); }
+function saveCashbook() {
+  localStorage.setItem('wkkn_v2_cashbook', JSON.stringify(CASHBOOK));
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
+  if (typeof window.syncCashbookToFirestore === 'function') {
+    window.syncCashbookToFirestore().catch(e => console.warn('[saveCashbook] Firestore push fail (local saved):', e));
+  }
+}
 
 // ============================================================================
 // SEED — SALDO AWAL KAS WAKIF KEBUN 2026 (dari Panen 2025)
@@ -13091,6 +13117,10 @@ function saveOptObsStorage() {
       alert('⚠️ localStorage penuh — observasi tidak tersimpan. Hapus observasi lama atau ekspor data dulu.');
     } else throw e;
   }
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
+  if (typeof window.syncOPTToFirestore === 'function') {
+    window.syncOPTToFirestore().catch(e => console.warn('[saveOptObs] Firestore push fail (local saved):', e));
+  }
 }
 
 function openOptObsModal() {
@@ -13822,6 +13852,150 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     // submitForm() cuma localStorage, tidak push Firestore → Wakif input lost cross-device.
     // Worker PWA lapor.html SUDAH safe (Pattern #9 online-first sync). Yang vulnerable
     // adalah Wakif Form Input + Edit di monitor-v2.html. Fix: extend Pattern #10 ke laporan.
+
+    // ===========================================================================
+    // LAYER 1 SYSTEMATIC SYNC (added 24 Mei 2026 per request Wakif accountability)
+    // Apply Pattern #10 ke 7 state lain yang masih localStorage-only:
+    // UPAH · CASHBOOK · OPT_OBSERVATIONS · PANEN_DATA · PANEN_LOTS · PANEN_SAMPLING · SOP_STATUS
+    // Mirror exactly milestones pattern. Each: sync (push) + load (pull) + auto-load.
+    // saveX() hooks ditambah di function definition (bukan disini) untuk fire-and-forget.
+    // ===========================================================================
+
+    function _makeStateSync(varName, lsKey, collection, getGlobal, setGlobal, getVer, renderFn) {
+      // Generic helper untuk DRY sync pattern across 7 states
+      const syncFn = async () => {
+        const data = getGlobal();
+        if (data === undefined || data === null) {
+          console.warn(`[${varName}] global tidak ditemukan`);
+          return false;
+        }
+        try {
+          await setDoc(doc(db, collection, 'active'), {
+            version: getVer ? getVer() : '1.0',
+            data: data,
+            updated_at: serverTimestamp(),
+            updated_by: 'wakif_dashboard'
+          });
+          const sizeInfo = Array.isArray(data) ? `${data.length} entries` : 'object';
+          console.log(`[${varName}] ✓ Pushed to Firestore (${sizeInfo})`);
+          return true;
+        } catch (e) {
+          console.error(`[${varName}] Firestore push failed:`, e);
+          return false;
+        }
+      };
+      const loadFn = async () => {
+        try {
+          const snap = await getDoc(doc(db, collection, 'active'));
+          if (!snap.exists()) {
+            console.log(`[${varName}] No cloud version yet, using local`);
+            return null;
+          }
+          const cloud = snap.data();
+          const localVer = getVer ? getVer() : '1.0';
+          if (cloud.version !== localVer) {
+            console.warn(`[${varName}] Schema mismatch — cloud=${cloud.version} vs local=${localVer}, skip override`);
+            return null;
+          }
+          if (cloud.data !== undefined) {
+            setGlobal(cloud.data);
+            try { localStorage.setItem(lsKey, JSON.stringify(cloud.data)); } catch(e) {}
+            const sizeInfo = Array.isArray(cloud.data) ? `${cloud.data.length} entries` : 'object';
+            console.log(`[${varName}] ✓ Loaded from Firestore (${sizeInfo})`);
+            if (renderFn && typeof window[renderFn] === 'function') window[renderFn]();
+          }
+          return cloud;
+        } catch (e) {
+          console.error(`[${varName}] Firestore load failed:`, e);
+          return null;
+        }
+      };
+      return { syncFn, loadFn };
+    }
+
+    // === UPAH ===
+    {
+      const { syncFn, loadFn } = _makeStateSync('Upah', 'wkkn_v2_upah', 'upah',
+        () => typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : null,
+        (d) => { if (typeof UPAH_ITEMS !== 'undefined' && Array.isArray(d)) { UPAH_ITEMS.length = 0; d.forEach(x => UPAH_ITEMS.push(x)); } },
+        () => typeof UPAH_SCHEMA_VERSION !== 'undefined' ? UPAH_SCHEMA_VERSION : '3.0',
+        'renderUpahTable');
+      window.syncUpahToFirestore = syncFn;
+      window.loadUpahFromFirestore = loadFn;
+      setTimeout(loadFn, 3000);
+    }
+
+    // === CASHBOOK ===
+    {
+      const { syncFn, loadFn } = _makeStateSync('Cashbook', 'wkkn_v2_cashbook', 'cashbook',
+        () => typeof CASHBOOK !== 'undefined' ? CASHBOOK : null,
+        (d) => { if (typeof CASHBOOK !== 'undefined' && Array.isArray(d)) { CASHBOOK.length = 0; d.forEach(x => CASHBOOK.push(x)); } },
+        () => typeof CASHBOOK_SCHEMA_VERSION !== 'undefined' ? CASHBOOK_SCHEMA_VERSION : '1.1',
+        'renderCashbookTab');
+      window.syncCashbookToFirestore = syncFn;
+      window.loadCashbookFromFirestore = loadFn;
+      setTimeout(loadFn, 3200);
+    }
+
+    // === OPT_OBSERVATIONS ===
+    {
+      const { syncFn, loadFn } = _makeStateSync('OPT', 'wkkn_v2_opt_obs', 'opt_observations',
+        () => typeof OPT_OBSERVATIONS !== 'undefined' ? OPT_OBSERVATIONS : null,
+        (d) => { if (typeof OPT_OBSERVATIONS !== 'undefined' && Array.isArray(d)) { OPT_OBSERVATIONS.length = 0; d.forEach(x => OPT_OBSERVATIONS.push(x)); } },
+        () => typeof OPT_OBS_SCHEMA_VERSION !== 'undefined' ? OPT_OBS_SCHEMA_VERSION : '1.0',
+        'renderOPT');
+      window.syncOPTToFirestore = syncFn;
+      window.loadOPTFromFirestore = loadFn;
+      setTimeout(loadFn, 3400);
+    }
+
+    // === PANEN_DATA ===
+    {
+      const { syncFn, loadFn } = _makeStateSync('PanenData', 'wkkn_v2_panen_2026', 'panen_data',
+        () => typeof PANEN_DATA !== 'undefined' ? PANEN_DATA : null,
+        (d) => { if (typeof PANEN_DATA !== 'undefined' && Array.isArray(d)) { PANEN_DATA.length = 0; d.forEach(x => PANEN_DATA.push(x)); } },
+        () => typeof PANEN_SCHEMA_VERSION !== 'undefined' ? PANEN_SCHEMA_VERSION : '1.1',
+        'renderPanen');
+      window.syncPanenDataToFirestore = syncFn;
+      window.loadPanenDataFromFirestore = loadFn;
+      setTimeout(loadFn, 3600);
+    }
+
+    // === PANEN_LOTS_DATA ===
+    {
+      const { syncFn, loadFn } = _makeStateSync('PanenLots', 'wkkn_v2_panen_lots', 'panen_lots',
+        () => typeof PANEN_LOTS_DATA !== 'undefined' ? PANEN_LOTS_DATA : null,
+        (d) => { if (typeof PANEN_LOTS_DATA !== 'undefined' && Array.isArray(d)) { PANEN_LOTS_DATA.length = 0; d.forEach(x => PANEN_LOTS_DATA.push(x)); } },
+        () => typeof PANEN_LOTS_SCHEMA_VERSION !== 'undefined' ? PANEN_LOTS_SCHEMA_VERSION : '1.0',
+        'renderPanenLots');
+      window.syncPanenLotsToFirestore = syncFn;
+      window.loadPanenLotsFromFirestore = loadFn;
+      setTimeout(loadFn, 3800);
+    }
+
+    // === PANEN_SAMPLING_DATA ===
+    {
+      const { syncFn, loadFn } = _makeStateSync('PanenSampling', 'wkkn_v2_panen_sampling_2026', 'panen_sampling',
+        () => typeof PANEN_SAMPLING_DATA !== 'undefined' ? PANEN_SAMPLING_DATA : null,
+        (d) => { if (typeof PANEN_SAMPLING_DATA !== 'undefined' && Array.isArray(d)) { PANEN_SAMPLING_DATA.length = 0; d.forEach(x => PANEN_SAMPLING_DATA.push(x)); } },
+        () => typeof PANEN_SAMPLING_SCHEMA_VERSION !== 'undefined' ? PANEN_SAMPLING_SCHEMA_VERSION : '1.1',
+        'renderPanenSampling');
+      window.syncPanenSamplingToFirestore = syncFn;
+      window.loadPanenSamplingFromFirestore = loadFn;
+      setTimeout(loadFn, 4000);
+    }
+
+    // === SOP_STATUS (object, not array) ===
+    {
+      const { syncFn, loadFn } = _makeStateSync('SOPStatus', 'wkkn_sop_status_v1', 'sop_status',
+        () => typeof SOP_STATUS !== 'undefined' ? SOP_STATUS : null,
+        (d) => { if (typeof SOP_STATUS !== 'undefined' && d && typeof d === 'object') { Object.keys(SOP_STATUS).forEach(k => delete SOP_STATUS[k]); Object.assign(SOP_STATUS, d); } },
+        () => typeof SOP_STATUS_VERSION !== 'undefined' ? SOP_STATUS_VERSION : '1.5',
+        'renderSOPKalender');
+      window.syncSOPStatusToFirestore = syncFn;
+      window.loadSOPStatusFromFirestore = loadFn;
+      setTimeout(loadFn, 4200);
+    }
 
     window.syncLaporanEntryToFirestore = async (entry) => {
       if (!entry || !entry.id) {
