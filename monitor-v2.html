@@ -1337,156 +1337,6 @@
         </div>
       </div>
 
-      <!-- ─────────────────────────────────────────────────────────────── -->
-      <!-- ANALITIK DEEP-DIVE — Komparasi + Charts (collapsed default)     -->
-      <!-- Reordered 24 Mei 2026 per request Wakif: "smua analisa,         -->
-      <!-- comparasi dll yg bikin form tampak penuh lgsg dibuat jadi hero  -->
-      <!-- saja" → collapse di bottom, expand on demand.                   -->
-      <!-- ─────────────────────────────────────────────────────────────── -->
-      <details style="margin-top:14px">
-        <summary style="cursor:pointer;padding:14px 18px;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #d4a017;border-radius:10px;font-weight:800;color:#78350F;font-size:13px;list-style:none">
-          📊 Analitik Deep-Dive — Komparasi Est-vs-Aktual + Charts (klik untuk expand)
-          <span style="font-size:10.5px;font-weight:400;color:var(--mute);margin-left:8px">· Conversion ratio · Bias % merah · Loss sortasi · Daily timeline · Composition · Per-Kebun</span>
-        </summary>
-        <div style="margin-top:12px">
-
-      <div class="card">
-        <div class="card-title"><span class="num">A</span>📊 Komparasi Estimasi vs Aktual Post-Processing</div>
-        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Setelah batch melalui sortasi air + sortir hijau + jemur + kupas, input data aktual hasil timbang untuk komparasi dengan estimasi awal. Kumpulan data akan mengungkap pola: <em>"Apakah estimasi % merah saya tend over-/under-estimate? Berapa actual conversion ratio cherry→green bean di kebun NGT?"</em></p>
-
-        <!-- Submit Actual Form (compact) -->
-        <div style="background:#FAFCFB;border:2px dashed #d4a017;border-radius:10px;padding:14px 16px;margin-bottom:14px">
-          <div style="font-size:12px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:10px">📝 Input Hasil Aktual</div>
-          <div class="form-grid">
-            <div class="field">
-              <label class="field-lbl">Pilih Batch <span class="req">*</span></label>
-              <select id="panen-aktual-batch" onchange="loadAktualForBatch(this.value)">
-                <option value="">— Pilih batch dari Batch Tracker —</option>
-              </select>
-              <p style="font-size:10px;color:var(--mute);margin-top:4px;font-style:italic">Hanya batch dengan stage ≥ sortasi_air yang muncul. Advance dulu via tombol "▶ Advance" di tabel atas (Card 5 Batch Tracker).</p>
-              <div id="panen-aktual-hint" style="display:none"></div>
-            </div>
-            <div class="field">
-              <label class="field-lbl">Tanggal Proses</label>
-              <input type="date" id="panen-aktual-tgl-proses">
-            </div>
-            <div class="field">
-              <label class="field-lbl">🚿 Kg Pengapung (sortasi air, defect dibuang)</label>
-              <input type="number" id="panen-aktual-pengapung-kg" placeholder="cth: 2.3" step="0.1" min="0">
-            </div>
-            <div class="field">
-              <label class="field-lbl">🧹 Kg Defect Hijau (sortir manual dibuang)</label>
-              <input type="number" id="panen-aktual-defect-hijau-kg" placeholder="cth: 1.8" step="0.1" min="0">
-            </div>
-            <div class="field">
-              <label class="field-lbl">🍒 Kg Cherry Lolos Sortasi (= mentah − pengapung − defect)</label>
-              <input type="number" id="panen-aktual-cherry-lolos-kg" placeholder="auto" step="0.1" min="0" readonly style="background:#f0f0e8">
-            </div>
-            <div class="field">
-              <label class="field-lbl">🌰 Kg Green Bean Aktual (post-jemur+kupas, timbang)</label>
-              <input type="number" id="panen-aktual-green-bean-kg" placeholder="cth: 5.8" step="0.1" min="0">
-            </div>
-            <div class="field" style="grid-column:1/-1">
-              <label class="field-lbl">% Grading Aktual (recheck visual saat sortir, % yang lolos = matang)</label>
-              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
-                <div>
-                  <span style="color:#ef4444;font-weight:700;font-size:11px">🟥 Merah aktual (%)</span>
-                  <input type="number" id="panen-aktual-merah-pct" placeholder="cth: 62" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
-                  <div id="panen-aktual-merah-kg-hint" style="font-size:10px;color:#ef4444;margin-top:2px;font-style:italic">— kg</div>
-                </div>
-                <div>
-                  <span style="color:#facc15;font-weight:700;font-size:11px">🟨 Kuning aktual (%)</span>
-                  <input type="number" id="panen-aktual-kuning-pct" placeholder="cth: 20" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
-                  <div id="panen-aktual-kuning-kg-hint" style="font-size:10px;color:#ca8a04;margin-top:2px;font-style:italic">— kg</div>
-                </div>
-                <div>
-                  <span style="color:#22c55e;font-weight:700;font-size:11px">🟩 Hijau aktual (%)</span>
-                  <input type="number" id="panen-aktual-hijau-pct" placeholder="cth: 10" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
-                  <div id="panen-aktual-hijau-kg-hint" style="font-size:10px;color:#22c55e;margin-top:2px;font-style:italic">— kg</div>
-                </div>
-                <div>
-                  <span style="color:#78716c;font-weight:700;font-size:11px">⬛ Overripe aktual (%)</span>
-                  <input type="number" id="panen-aktual-hitam-pct" placeholder="cth: 8" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
-                  <div id="panen-aktual-hitam-kg-hint" style="font-size:10px;color:#78716c;margin-top:2px;font-style:italic">— kg</div>
-                </div>
-              </div>
-              <!-- Live total + validation banner -->
-              <div id="panen-aktual-grading-total" style="margin-top:10px;padding:10px 14px;background:#FAFCFB;border:1px dashed var(--moss);border-radius:6px;font-size:12px;color:var(--ink);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
-                <div>Total %: <strong id="panen-aktual-pct-total" style="color:var(--moss);font-size:13px">0</strong>% (target: 100%)</div>
-                <div>Total kg derived: <strong id="panen-aktual-kg-total">0</strong> kg</div>
-                <div>Reference lolos: <strong id="panen-aktual-kg-ref">—</strong> kg</div>
-                <div id="panen-aktual-validation-msg" style="font-weight:700"></div>
-              </div>
-            </div>
-            <div class="field" style="grid-column:1/-1">
-              <label class="field-lbl">Catatan proses (opsional)</label>
-              <textarea id="panen-aktual-catatan" rows="2" placeholder="cth: Penjemuran 8 hari MK menyala, kadar air saat kupas ~12%. Defect hijau lebih banyak dari estimasi (humid kemarin)." maxlength="500"></textarea>
-            </div>
-          </div>
-          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn btn-primary" onclick="submitPanenAktual()" style="background:var(--gold);color:#fff">💾 Simpan Aktual</button>
-            <button class="btn btn-secondary" onclick="resetPanenAktualForm()">Reset</button>
-          </div>
-        </div>
-
-        <!-- Komparasi Table -->
-        <div class="table-wrap">
-          <table style="font-size:11px;width:100%">
-            <thead style="background:var(--cream)">
-              <tr>
-                <th rowspan="2">Tgl Panen</th>
-                <th rowspan="2">Kebun</th>
-                <th colspan="2" style="text-align:center;border-bottom:1px solid #ddd">🍒 Cherry Mentah (kg)</th>
-                <th colspan="2" style="text-align:center;border-bottom:1px solid #ddd">🟥 % Merah</th>
-                <th colspan="2" style="text-align:center;border-bottom:1px solid #ddd">🌰 Green Bean (kg)</th>
-                <th rowspan="2" style="text-align:right">Conv. Ratio<br/>aktual</th>
-              </tr>
-              <tr style="font-size:10px">
-                <th style="text-align:right;color:var(--mute)">Estimasi</th>
-                <th style="text-align:right;color:var(--gold)">Aktual</th>
-                <th style="text-align:right;color:var(--mute)">Estimasi</th>
-                <th style="text-align:right;color:var(--gold)">Aktual</th>
-                <th style="text-align:right;color:var(--mute)">Theory (20%)</th>
-                <th style="text-align:right;color:var(--gold)">Aktual</th>
-              </tr>
-            </thead>
-            <tbody id="panen-komparasi-tbody"></tbody>
-          </table>
-        </div>
-
-        <!-- Komparasi Summary KPI -->
-        <div class="kpi-grid" id="panen-komparasi-kpi" style="margin-top:14px">
-          <div class="kpi"><div class="kpi-num" id="panen-komp-batches">0</div><div class="kpi-lbl">📦 Batch ter-komparasi</div></div>
-          <div class="kpi"><div class="kpi-num" id="panen-komp-merah-bias">—</div><div class="kpi-lbl">🟥 Bias % Merah (akt − est)</div></div>
-          <div class="kpi"><div class="kpi-num" id="panen-komp-conv-ratio">—</div><div class="kpi-lbl">⚖️ Avg Conv. Ratio aktual</div></div>
-          <div class="kpi"><div class="kpi-num" id="panen-komp-loss-pct">—</div><div class="kpi-lbl">🗑️ Avg Loss Sortasi (%)</div></div>
-        </div>
-        <p style="font-size:10.5px;color:var(--mute);margin-top:10px;font-style:italic;line-height:1.55">💡 <strong>Cara baca:</strong> Bias % Merah positif → over-estimate dosis matang (estimasi terlalu pesimis). Conv. ratio &lt; 18% → processing loss tinggi (perlu evaluasi penjemuran/pengupasan). Setelah 5+ batch, pola akan terlihat → kalibrasi estimasi awal.</p>
-      </div>
-
-      <!-- Daily Timeline + Cumulative Chart (restored in Analitik 24 Mei 2026) -->
-      <div class="card">
-        <div class="card-title"><span class="num">B</span>📈 Daily Timeline & Cumulative vs Target</div>
-        <div class="chart-wrap"><canvas id="chart-panen-daily"></canvas></div>
-        <p style="font-size:11px;color:var(--mute);margin-top:8px;font-style:italic">Bar = cherry harian · Line = cumulative · Garis merah putus = target 366 kg/thn</p>
-      </div>
-
-      <!-- Composition & Per-Kebun (restored in Analitik 24 Mei 2026) -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px">
-        <div class="card">
-          <div class="card-title"><span class="num">C</span>📊 Komposisi Maturasi per Hari</div>
-          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-composition"></canvas></div>
-          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Stacked: 🟥 merah · 🟨 kuning · 🟩 hijau · ⬛ overripe. Target Adib: % merah ≥ 70 untuk specialty Bonsari.</p>
-        </div>
-        <div class="card">
-          <div class="card-title"><span class="num">D</span>📍 Cherry per Kebun (cumulative)</div>
-          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-kebun"></canvas></div>
-          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Distribusi kg cherry per kebun · "Campuran" untuk panen tidak tag spesifik</p>
-        </div>
-      </div>
-
-        </div>
-      </details><!-- end Analitik Deep-Dive -->
 
       <!-- ─────────────────────────────────────────────────────────────── -->
       <!-- SECTION 7: SAMPLING JUMLAH PANEN PER POHON (SOP)               -->
@@ -1641,6 +1491,156 @@
 
         <p style="font-size:10.5px;color:var(--mute);margin-top:12px;font-style:italic;line-height:1.55">💡 <strong>Cara kerja:</strong> Saat batch panen advance ke "🎨 Sortir 4-Warna", muncul modal input kg per bucket. Sistem auto-create lot child di tabel ini. Lot kemudian advance pipeline-nya sendiri (jemur → kupas → green bean → sold). Klik 💰 untuk catat sale dengan harga aktual.</p>
       </div>
+      <!-- ─────────────────────────────────────────────────────────────── -->
+      <!-- ANALITIK DEEP-DIVE — Komparasi + Charts (collapsed default)     -->
+      <!-- Reordered 24 Mei 2026 per request Wakif: "smua analisa,         -->
+      <!-- comparasi dll yg bikin form tampak penuh lgsg dibuat jadi hero  -->
+      <!-- saja" → collapse di bottom, expand on demand.                   -->
+      <!-- ─────────────────────────────────────────────────────────────── -->
+      <details style="margin-top:14px">
+        <summary style="cursor:pointer;padding:14px 18px;background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border:1px solid #d4a017;border-radius:10px;font-weight:800;color:#78350F;font-size:13px;list-style:none">
+          📊 Analitik Deep-Dive — Komparasi Est-vs-Aktual + Charts (klik untuk expand)
+          <span style="font-size:10.5px;font-weight:400;color:var(--mute);margin-left:8px">· Conversion ratio · Bias % merah · Loss sortasi · Daily timeline · Composition · Per-Kebun</span>
+        </summary>
+        <div style="margin-top:12px">
+
+      <div class="card">
+        <div class="card-title"><span class="num">A</span>📊 Komparasi Estimasi vs Aktual Post-Processing</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Setelah batch melalui sortasi air + sortir hijau + jemur + kupas, input data aktual hasil timbang untuk komparasi dengan estimasi awal. Kumpulan data akan mengungkap pola: <em>"Apakah estimasi % merah saya tend over-/under-estimate? Berapa actual conversion ratio cherry→green bean di kebun NGT?"</em></p>
+
+        <!-- Submit Actual Form (compact) -->
+        <div style="background:#FAFCFB;border:2px dashed #d4a017;border-radius:10px;padding:14px 16px;margin-bottom:14px">
+          <div style="font-size:12px;font-weight:800;color:var(--gold);letter-spacing:1px;margin-bottom:10px">📝 Input Hasil Aktual</div>
+          <div class="form-grid">
+            <div class="field">
+              <label class="field-lbl">Pilih Batch <span class="req">*</span></label>
+              <select id="panen-aktual-batch" onchange="loadAktualForBatch(this.value)">
+                <option value="">— Pilih batch dari Batch Tracker —</option>
+              </select>
+              <p style="font-size:10px;color:var(--mute);margin-top:4px;font-style:italic">Hanya batch dengan stage ≥ sortasi_air yang muncul. Advance dulu via tombol "▶ Advance" di tabel atas (Card 5 Batch Tracker).</p>
+              <div id="panen-aktual-hint" style="display:none"></div>
+            </div>
+            <div class="field">
+              <label class="field-lbl">Tanggal Proses</label>
+              <input type="date" id="panen-aktual-tgl-proses">
+            </div>
+            <div class="field">
+              <label class="field-lbl">🚿 Kg Pengapung (sortasi air, defect dibuang)</label>
+              <input type="number" id="panen-aktual-pengapung-kg" placeholder="cth: 2.3" step="0.1" min="0">
+            </div>
+            <div class="field">
+              <label class="field-lbl">🧹 Kg Defect Hijau (sortir manual dibuang)</label>
+              <input type="number" id="panen-aktual-defect-hijau-kg" placeholder="cth: 1.8" step="0.1" min="0">
+            </div>
+            <div class="field">
+              <label class="field-lbl">🍒 Kg Cherry Lolos Sortasi (= mentah − pengapung − defect)</label>
+              <input type="number" id="panen-aktual-cherry-lolos-kg" placeholder="auto" step="0.1" min="0" readonly style="background:#f0f0e8">
+            </div>
+            <div class="field">
+              <label class="field-lbl">🌰 Kg Green Bean Aktual (post-jemur+kupas, timbang)</label>
+              <input type="number" id="panen-aktual-green-bean-kg" placeholder="cth: 5.8" step="0.1" min="0">
+            </div>
+            <div class="field" style="grid-column:1/-1">
+              <label class="field-lbl">% Grading Aktual (recheck visual saat sortir, % yang lolos = matang)</label>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px">
+                <div>
+                  <span style="color:#ef4444;font-weight:700;font-size:11px">🟥 Merah aktual (%)</span>
+                  <input type="number" id="panen-aktual-merah-pct" placeholder="cth: 62" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-merah-kg-hint" style="font-size:10px;color:#ef4444;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+                <div>
+                  <span style="color:#facc15;font-weight:700;font-size:11px">🟨 Kuning aktual (%)</span>
+                  <input type="number" id="panen-aktual-kuning-pct" placeholder="cth: 20" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-kuning-kg-hint" style="font-size:10px;color:#ca8a04;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+                <div>
+                  <span style="color:#22c55e;font-weight:700;font-size:11px">🟩 Hijau aktual (%)</span>
+                  <input type="number" id="panen-aktual-hijau-pct" placeholder="cth: 10" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-hijau-kg-hint" style="font-size:10px;color:#22c55e;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+                <div>
+                  <span style="color:#78716c;font-weight:700;font-size:11px">⬛ Overripe aktual (%)</span>
+                  <input type="number" id="panen-aktual-hitam-pct" placeholder="cth: 8" min="0" max="100" style="margin-top:3px" oninput="updateGradingLiveValidation()">
+                  <div id="panen-aktual-hitam-kg-hint" style="font-size:10px;color:#78716c;margin-top:2px;font-style:italic">— kg</div>
+                </div>
+              </div>
+              <!-- Live total + validation banner -->
+              <div id="panen-aktual-grading-total" style="margin-top:10px;padding:10px 14px;background:#FAFCFB;border:1px dashed var(--moss);border-radius:6px;font-size:12px;color:var(--ink);display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px">
+                <div>Total %: <strong id="panen-aktual-pct-total" style="color:var(--moss);font-size:13px">0</strong>% (target: 100%)</div>
+                <div>Total kg derived: <strong id="panen-aktual-kg-total">0</strong> kg</div>
+                <div>Reference lolos: <strong id="panen-aktual-kg-ref">—</strong> kg</div>
+                <div id="panen-aktual-validation-msg" style="font-weight:700"></div>
+              </div>
+            </div>
+            <div class="field" style="grid-column:1/-1">
+              <label class="field-lbl">Catatan proses (opsional)</label>
+              <textarea id="panen-aktual-catatan" rows="2" placeholder="cth: Penjemuran 8 hari MK menyala, kadar air saat kupas ~12%. Defect hijau lebih banyak dari estimasi (humid kemarin)." maxlength="500"></textarea>
+            </div>
+          </div>
+          <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary" onclick="submitPanenAktual()" style="background:var(--gold);color:#fff">💾 Simpan Aktual</button>
+            <button class="btn btn-secondary" onclick="resetPanenAktualForm()">Reset</button>
+          </div>
+        </div>
+
+        <!-- Komparasi Table -->
+        <div class="table-wrap">
+          <table style="font-size:11px;width:100%">
+            <thead style="background:var(--cream)">
+              <tr>
+                <th rowspan="2">Tgl Panen</th>
+                <th rowspan="2">Kebun</th>
+                <th colspan="2" style="text-align:center;border-bottom:1px solid #ddd">🍒 Cherry Mentah (kg)</th>
+                <th colspan="2" style="text-align:center;border-bottom:1px solid #ddd">🟥 % Merah</th>
+                <th colspan="2" style="text-align:center;border-bottom:1px solid #ddd">🌰 Green Bean (kg)</th>
+                <th rowspan="2" style="text-align:right">Conv. Ratio<br/>aktual</th>
+              </tr>
+              <tr style="font-size:10px">
+                <th style="text-align:right;color:var(--mute)">Estimasi</th>
+                <th style="text-align:right;color:var(--gold)">Aktual</th>
+                <th style="text-align:right;color:var(--mute)">Estimasi</th>
+                <th style="text-align:right;color:var(--gold)">Aktual</th>
+                <th style="text-align:right;color:var(--mute)">Theory (20%)</th>
+                <th style="text-align:right;color:var(--gold)">Aktual</th>
+              </tr>
+            </thead>
+            <tbody id="panen-komparasi-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Komparasi Summary KPI -->
+        <div class="kpi-grid" id="panen-komparasi-kpi" style="margin-top:14px">
+          <div class="kpi"><div class="kpi-num" id="panen-komp-batches">0</div><div class="kpi-lbl">📦 Batch ter-komparasi</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-komp-merah-bias">—</div><div class="kpi-lbl">🟥 Bias % Merah (akt − est)</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-komp-conv-ratio">—</div><div class="kpi-lbl">⚖️ Avg Conv. Ratio aktual</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-komp-loss-pct">—</div><div class="kpi-lbl">🗑️ Avg Loss Sortasi (%)</div></div>
+        </div>
+        <p style="font-size:10.5px;color:var(--mute);margin-top:10px;font-style:italic;line-height:1.55">💡 <strong>Cara baca:</strong> Bias % Merah positif → over-estimate dosis matang (estimasi terlalu pesimis). Conv. ratio &lt; 18% → processing loss tinggi (perlu evaluasi penjemuran/pengupasan). Setelah 5+ batch, pola akan terlihat → kalibrasi estimasi awal.</p>
+      </div>
+
+      <!-- Daily Timeline + Cumulative Chart (restored in Analitik 24 Mei 2026) -->
+      <div class="card">
+        <div class="card-title"><span class="num">B</span>📈 Daily Timeline & Cumulative vs Target</div>
+        <div class="chart-wrap"><canvas id="chart-panen-daily"></canvas></div>
+        <p style="font-size:11px;color:var(--mute);margin-top:8px;font-style:italic">Bar = cherry harian · Line = cumulative · Garis merah putus = target 366 kg/thn</p>
+      </div>
+
+      <!-- Composition & Per-Kebun (restored in Analitik 24 Mei 2026) -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px">
+        <div class="card">
+          <div class="card-title"><span class="num">C</span>📊 Komposisi Maturasi per Hari</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-composition"></canvas></div>
+          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Stacked: 🟥 merah · 🟨 kuning · 🟩 hijau · ⬛ overripe. Target Adib: % merah ≥ 70 untuk specialty Bonsari.</p>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="num">D</span>📍 Cherry per Kebun (cumulative)</div>
+          <div class="chart-wrap" style="height:280px"><canvas id="chart-panen-kebun"></canvas></div>
+          <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Distribusi kg cherry per kebun · "Campuran" untuk panen tidak tag spesifik</p>
+        </div>
+      </div>
+
+        </div>
+      </details><!-- end Analitik Deep-Dive -->
     </div>
 
     <!-- ───────── Modal: Stage 3 Sortir 4-Warna ───────── -->
