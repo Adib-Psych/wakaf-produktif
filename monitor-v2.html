@@ -399,6 +399,11 @@
             <option value="pisang_management">Pisang Management</option>
             <option value="inventarisasi_pohon">Inventarisasi</option>
           </select>
+          <select id="filter-log-archive" onchange="renderLog()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px" title="Default: Active only — Archived laporan disembunyikan">
+            <option value="active">📂 Active Only (default)</option>
+            <option value="archived">📦 Archived Only</option>
+            <option value="all">🔀 Semua (Active + Archived)</option>
+          </select>
           <button class="btn btn-secondary" onclick="exportCSV()">📥 Export CSV</button>
         </div>
 
@@ -643,8 +648,14 @@
             <option value="harian">📅 Harian</option>
             <option value="borongan">📦 Borongan</option>
           </select>
+          <select id="filter-bayar-archive" onchange="renderUpahTable()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px" title="Default: Active only — Archived upah disembunyikan. Hanya upah LUNAS yang bisa di-archive.">
+            <option value="active">📂 Active Only (default)</option>
+            <option value="archived">📦 Archived Only</option>
+            <option value="all">🔀 Semua</option>
+          </select>
           <button class="btn btn-primary" onclick="batchPay()">💸 Bayar Tercentang (batch)</button>
           <button class="btn" onclick="generateBuktiBayar()" style="background:linear-gradient(135deg,#1F5F47,#5a9080);color:#fff;font-weight:700" title="Pilih item lunas via checkbox → generate Bukti Bayar PNG (download + share WA)">📄 Bukti Bayar (dari Pilihan)</button>
+          <button class="btn" onclick="upahArchiveSelected()" style="background:#f4f4f0;color:#4a4030;border:1.5px solid #8B8579;font-size:11px" title="Arsipkan upah LUNAS tercentang — disembunyikan dari Tab Upah. Cashbook + audit trail tidak terpengaruh.">📦 Archive Lunas Tercentang</button>
           <button class="btn btn-secondary" onclick="openDlg()">+ Tambah Item</button>
           <button class="btn" onclick="openRecoverDlg()" style="background:#FFF4D6;color:#8B6914;border:1.5px solid #D4AF37">🔄 Recover Entry Lama</button>
         </div>
@@ -2434,6 +2445,11 @@
             <option value="drafted">🟡 Drafted</option>
             <option value="published">🟢 In Living Lab</option>
           </select>
+          <select id="bc-filter-archive" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px" title="Default: Active only — Archived laporan disembunyikan dari BC">
+            <option value="active">📂 Active Only (default)</option>
+            <option value="archived">📦 Archived Only</option>
+            <option value="all">🔀 Semua</option>
+          </select>
           <button class="btn btn-secondary" onclick="bcResetFilters()" style="font-size:11px;padding:6px 10px">↺ Reset Filter</button>
         </div>
 
@@ -2447,6 +2463,7 @@
           </div>
           <button class="btn" onclick="bcSelectAll()" style="background:#fff;color:#8B6914;border:1.5px solid #D4AF37;font-size:11px">☑ Select All Filtered</button>
           <button class="btn" onclick="bcClearSelection()" style="background:#fff;color:#666;border:1.5px solid #ccc;font-size:11px">✕ Clear</button>
+          <button class="btn" onclick="bcArchiveSelected()" style="background:#f4f4f0;color:#4a4030;border:1.5px solid #8B8579;font-size:11px" title="Arsipkan laporan tercentang — disembunyikan dari Batch Curation + Log Harian. Pembayaran/UPAH tidak terpengaruh.">📦 Archive Tercentang</button>
           <button class="btn btn-primary" onclick="openBatchDraftModal()" style="background:linear-gradient(135deg,#D4AF37,#8B6914);color:#fff;font-weight:700;padding:8px 16px">🤖 Generate Milestone Draft via Claude</button>
         </div>
 
@@ -2462,6 +2479,7 @@
               <th style="width:55px">Pohon</th>
               <th style="width:80px">Durasi</th>
               <th style="width:90px">Status LL</th>
+              <th style="width:60px">Aksi</th>
             </tr></thead>
             <tbody id="bc-tbody"></tbody>
           </table>
@@ -3322,6 +3340,7 @@ function renderLog() {
   const fp = document.getElementById('filter-pelapor').value;
   const fb = document.getElementById('filter-bidang').value;
   const fk = document.getElementById('filter-kategori').value;
+  const fArch = document.getElementById('filter-log-archive')?.value || 'active';
   // Multi-kebun filter: match if any of kebun_list contains the filter value
   const matchKebun = (d) => {
     if (!fb) return true;
@@ -3331,8 +3350,13 @@ function renderLog() {
     }
     return false;
   };
+  const matchArchive = (d) => {
+    if (fArch === 'active') return !d.archived;
+    if (fArch === 'archived') return !!d.archived;
+    return true;  // 'all'
+  };
   const data = STATE.laporan.filter(d =>
-    (!fp || d.pelapor===fp) && matchKebun(d) && (!fk || d.kategori===fk)
+    (!fp || d.pelapor===fp) && matchKebun(d) && (!fk || d.kategori===fk) && matchArchive(d)
   ).sort((a,b)=>b.tgl.localeCompare(a.tgl));
 
   const roleMap = {ANTO:['Mas Anto','role-anto'], YIT:['Cak Yit','role-yit'], KUMPUL:['Pak Kumpul','role-kumpul']};
@@ -3354,8 +3378,16 @@ function renderLog() {
         pohonTitle = `${sub[0]}: ${sub[1]} (dari detail aktivitas)`;
       }
     }
-    return `<tr>
-      <td style="white-space:nowrap">${formatTgl(d.tgl)}</td>
+    const isArchived = d.archived === true;
+    const rowStyle = isArchived ? 'opacity:0.6;background:#fafaf7' : '';
+    const archBadge = isArchived
+      ? ' <span style="background:#8B8579;color:#fff;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700" title="' + (d.archived_at ? formatTglShort(d.archived_at.slice(0,10)) : '') + (d.archived_reason ? ' — ' + d.archived_reason : '') + '">📦 ARSIP</span>'
+      : '';
+    const archBtn = isArchived
+      ? `<button onclick="toggleLaporanArchive('${d.id}')" style="background:#DDE9E3;color:#1F5F47;border:1px solid #5a9080;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="Restore (un-archive)">↩️</button>`
+      : `<button onclick="toggleLaporanArchive('${d.id}')" style="background:#f4f4f0;color:#4a4030;border:1px solid #8B8579;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="Archive laporan ini (UPAH tetap, hanya sembunyi dari Log)">📦</button>`;
+    return `<tr style="${rowStyle}">
+      <td style="white-space:nowrap">${formatTgl(d.tgl)}${archBadge}</td>
       <td><span class="pill ${cls}">${name}</span></td>
       <td>${Array.isArray(d.kebun_list) && d.kebun_list.length > 1
             ? d.kebun_list.map(k => {
@@ -3371,6 +3403,7 @@ function renderLog() {
       <td>${(d.alerts||[]).map(a=>'<span class="pill alert">'+a+'</span>').join('')||'<span style="color:#aaa">none</span>'}</td>
       <td style="white-space:nowrap">
         <button onclick="editLaporan('${d.id}')" style="background:var(--moss);color:#fff;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="Edit entry">✏️ Edit</button>
+        ${archBtn}
         <button onclick="deleteLaporan('${d.id}')" style="background:#fde2dc;color:#8c2519;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer" title="Delete entry">🗑️</button>
       </td>
     </tr>`;
@@ -4476,29 +4509,55 @@ function renderUpahTable() {
   const fp = document.getElementById('filter-bayar-pelapor').value;
   const fs = document.getElementById('filter-bayar-status').value;
   const fm = document.getElementById('filter-bayar-model') ? document.getElementById('filter-bayar-model').value : '';
-  const data = UPAH_ITEMS.filter(it => (!fp||it.pelapor===fp) && (!fs||it.status===fs) && (!fm||it.model===fm))
-    .sort((a,b)=>b.tgl.localeCompare(a.tgl));
+  const fArch = document.getElementById('filter-bayar-archive')?.value || 'active';
+  const data = UPAH_ITEMS.filter(it => {
+    if (fp && it.pelapor !== fp) return false;
+    if (fs && it.status !== fs) return false;
+    if (fm && it.model !== fm) return false;
+    // Archive filter (locked 25 Mei 2026 — Track U per Adib bonus request)
+    // Only LUNAS upah can be archived (constraint: jangan lupa bayar via archive)
+    if (fArch === 'active' && it.archived === true) return false;
+    if (fArch === 'archived' && it.archived !== true) return false;
+    return true;
+  }).sort((a,b)=>b.tgl.localeCompare(a.tgl));
   const tbody = document.getElementById('upah-tbody');
   if (!tbody) return;
   if (data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="11" style="text-align:center;color:#aaa;padding:20px">Tidak ada item sesuai filter.</td></tr>';
+    const archCount = UPAH_ITEMS.filter(it => it.archived).length;
+    const hint = fArch === 'active' && archCount > 0
+      ? `<br><span style="font-size:10.5px;color:#8B8579">Ada ${archCount} upah di-archive. Switch filter ke "📦 Archived Only" atau "🔀 Semua" untuk lihat.</span>` : '';
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;color:#aaa;padding:20px">Tidak ada item sesuai filter.${hint}</td></tr>`;
     return;
   }
   tbody.innerHTML = data.map(it => {
     const total = calcTotal(it);
     const cls = it.pelapor === 'YIT' ? 'role-yit' : 'role-kumpul';
+    const isArchived = it.archived === true;
+    const isLunas = it.status === 'lunas';
     const modelBadge = it.model === 'harian'
       ? '<span class="pill" style="background:#dde9e3;color:#1f5f47">📅 Harian</span>'
       : '<span class="pill" style="background:#fde2dc;color:#8c2519">📦 Borongan</span>';
-    const statusBadge = it.status === 'lunas'
-      ? `<span class="pill compliant">✅ Lunas</span><div style="font-size:9px;color:var(--mute);margin-top:2px">${it.bayar_tgl?formatTgl(it.bayar_tgl):''}</div>`
+    const archBadge = isArchived
+      ? ` <span style="background:#8B8579;color:#fff;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700" title="${it.archived_at ? formatTglShort(it.archived_at.slice(0,10)) : ''}${it.archived_reason ? ' — ' + it.archived_reason : ''}">📦 ARSIP</span>`
+      : '';
+    const statusBadge = isLunas
+      ? `<span class="pill compliant">✅ Lunas</span>${archBadge}<div style="font-size:9px;color:var(--mute);margin-top:2px">${it.bayar_tgl?formatTgl(it.bayar_tgl):''}</div>`
       : `<span class="pill alert">⏳ Belum</span>`;
+    const rowStyle = isArchived ? 'opacity:0.6;background:#fafaf7' : '';
     // Checkbox available for ALL items: belum (batch pay) + lunas (bukti bayar generation)
-    const checkbox = `<input type="checkbox" class="upah-check" data-id="${it.id}" data-status="${it.status}" title="${it.status === 'lunas' ? 'Centang untuk include di Bukti Bayar' : 'Centang untuk batch pay'}">`;
-    const action = it.status === 'belum'
-      ? `<button class="btn btn-primary" style="padding:4px 8px;font-size:11px" onclick="openPaidModalById(${it.id})">💸 Bayar</button>`
-      : `<button class="btn btn-secondary" style="padding:4px 8px;font-size:11px" onclick="markUnpaid(${it.id})">↺ Batal</button>`;
-    return `<tr>
+    const checkbox = `<input type="checkbox" class="upah-check" data-id="${it.id}" data-status="${it.status}" title="${isLunas ? (isArchived ? 'Centang untuk restore archive' : 'Centang untuk include di Bukti Bayar atau Archive') : 'Centang untuk batch pay'}">`;
+    // Action: pakai inline group (Bayar/Batal/Archive)
+    let actionBtns = '';
+    if (!isLunas) {
+      actionBtns = `<button class="btn btn-primary" style="padding:4px 8px;font-size:11px" onclick="openPaidModalById(${it.id})">💸 Bayar</button>`;
+    } else {
+      actionBtns = `<button class="btn btn-secondary" style="padding:4px 8px;font-size:11px;margin-right:3px" onclick="markUnpaid(${it.id})">↺ Batal</button>`;
+      // Archive button hanya untuk lunas (constraint Adib: archive untuk yang sudah dibayar saja)
+      actionBtns += isArchived
+        ? `<button style="padding:4px 8px;font-size:11px;background:#DDE9E3;color:#1F5F47;border:1px solid #5a9080;border-radius:4px;cursor:pointer" onclick="toggleUpahArchive(${it.id})" title="Restore">↩️</button>`
+        : `<button style="padding:4px 8px;font-size:11px;background:#f4f4f0;color:#4a4030;border:1px solid #8B8579;border-radius:4px;cursor:pointer" onclick="toggleUpahArchive(${it.id})" title="Archive — sembunyikan dari Tab Upah (cashbook + audit trail tidak terpengaruh)">📦</button>`;
+    }
+    return `<tr style="${rowStyle}">
       <td>${checkbox}</td>
       <td style="font-size:11px;white-space:nowrap">${formatTgl(it.tgl)}</td>
       <td><span class="pill ${cls}">${NAMA_PEKERJA[it.pelapor]}</span></td>
@@ -4509,9 +4568,85 @@ function renderUpahTable() {
       <td>${fmtRpShort(it.tarif)}</td>
       <td><strong>${fmtRpShort(total)}</strong></td>
       <td>${statusBadge}</td>
-      <td>${action}</td>
+      <td>${actionBtns}</td>
     </tr>`;
   }).join('');
+}
+
+// ───────── UPAH ARCHIVE (locked 25 Mei 2026 — Track U per Adib bonus request) ─────────
+// Constraint: HANYA upah dengan status='lunas' yang bisa di-archive (safety — jangan
+// lupa bayar via archive). Cashbook auto-link via ref='upah_X' TIDAK terpengaruh —
+// archived upah tetap punya cashbook entry untuk audit trail.
+function toggleUpahArchive(id) {
+  const it = UPAH_ITEMS.find(x => x.id === id);
+  if (!it) { console.warn('[Archive UPAH] not found id=', id); return; }
+  if (!it.archived && it.status !== 'lunas') {
+    alert('⚠️ Hanya UPAH dengan status LUNAS yang bisa di-archive.\n\nUntuk archive item ini, klik "💸 Bayar" dulu supaya status jadi lunas.');
+    return;
+  }
+  const willArchive = !it.archived;
+  let reason = '';
+  if (willArchive) {
+    reason = prompt('Alasan archive (optional):', 'Sudah dibayar & rekap final') || '';
+  } else {
+    if (!confirm(`Restore upah "${(NAMA_PEKERJA[it.pelapor]||it.pelapor)} — ${(it.aktivitas||'').slice(0,40)}" dari archive?`)) return;
+  }
+  const now = new Date().toISOString();
+  it.archived = willArchive;
+  it.archived_at = willArchive ? now : null;
+  it.archived_reason = willArchive ? (reason || null) : null;
+  it.last_modified_at = now;
+  saveUpah();
+  if (typeof window.syncUpahToFirestore === 'function') {
+    window.syncUpahToFirestore().catch(e => console.warn('[Archive UPAH] sync fail:', e.message));
+  }
+  renderUpahSummary();
+  renderUpahTable();
+  showToast(willArchive ? '📦 Upah diarsipkan (cashbook tetap)' : '↩️ Upah dipulihkan');
+}
+
+// Bulk archive selected LUNAS upah
+function upahArchiveSelected() {
+  const checked = Array.from(document.querySelectorAll('.upah-check:checked'));
+  if (checked.length === 0) {
+    alert('Pilih dulu minimal 1 upah dari tabel (centang checkbox).');
+    return;
+  }
+  // Filter: hanya yang lunas + belum archived
+  const targets = [];
+  const skipped = { belum: 0, already_archived: 0 };
+  checked.forEach(cb => {
+    const id = parseInt(cb.dataset.id, 10);
+    const it = UPAH_ITEMS.find(x => x.id === id);
+    if (!it) return;
+    if (it.status !== 'lunas') { skipped.belum++; return; }
+    if (it.archived) { skipped.already_archived++; return; }
+    targets.push(it);
+  });
+  if (targets.length === 0) {
+    alert(`Tidak ada upah eligible untuk archive.\n\nDilewati:\n• ${skipped.belum} upah status BELUM (bayar dulu)\n• ${skipped.already_archived} sudah archived`);
+    return;
+  }
+  const msg = `Arsipkan ${targets.length} upah LUNAS tercentang?\n\n` +
+    (skipped.belum > 0 ? `⚠️ ${skipped.belum} upah BELUM dibayar akan di-skip (bayar dulu).\n` : '') +
+    (skipped.already_archived > 0 ? `⚠️ ${skipped.already_archived} upah sudah archived akan di-skip.\n` : '') +
+    `\nCashbook + audit trail TIDAK terpengaruh.\n\nLanjut?`;
+  if (!confirm(msg)) return;
+  const reason = prompt('Alasan archive (optional, applied ke semua):', 'Bulk archive — sudah dibayar & rekap final') || '';
+  const now = new Date().toISOString();
+  targets.forEach(it => {
+    it.archived = true;
+    it.archived_at = now;
+    it.archived_reason = reason || null;
+    it.last_modified_at = now;
+  });
+  saveUpah();
+  if (typeof window.syncUpahToFirestore === 'function') {
+    window.syncUpahToFirestore().catch(e => console.warn('[Archive Bulk UPAH] sync fail:', e.message));
+  }
+  renderUpahSummary();
+  renderUpahTable();
+  showToast(`📦 ${targets.length} upah diarsipkan`);
 }
 
 // DEPRECATED — markPaid tanpa source picker + cashbook auto-link akan create orphan.
@@ -7631,6 +7766,7 @@ function bcResetFilters() {
   document.getElementById('bc-filter-pelapor').value = '';
   document.getElementById('bc-filter-kebun').value = '';
   document.getElementById('bc-filter-status').value = '';
+  // Don't reset bc-filter-archive — Adib's archive preference should sticky
   renderBatchCuration();
 }
 
@@ -7640,6 +7776,7 @@ function bcGetFilteredEntries() {
   const fPel = document.getElementById('bc-filter-pelapor')?.value || '';
   const fKeb = document.getElementById('bc-filter-kebun')?.value || '';
   const fStatus = document.getElementById('bc-filter-status')?.value || '';
+  const fArch = document.getElementById('bc-filter-archive')?.value || 'active';
   return (STATE.laporan || []).filter(d => {
     if (dFrom && d.tgl < dFrom) return false;
     if (dTo && d.tgl > dTo) return false;
@@ -7651,6 +7788,11 @@ function bcGetFilteredEntries() {
       if (!matchesPrimary && !matchesList) return false;
     }
     if (fStatus && getEntryLLStatus(d.id) !== fStatus) return false;
+    // Archive filter (locked 25 Mei 2026 — Track L per Adib decision Q1b)
+    // Archive flag pada laporan TIDAK affect UPAH derivation (Adib constraint: jangan affect pembayaran)
+    if (fArch === 'active' && d.archived === true) return false;
+    if (fArch === 'archived' && d.archived !== true) return false;
+    // 'all' → no filter
     return true;
   }).sort((a,b) => (b.tgl || '').localeCompare(a.tgl || ''));
 }
@@ -7660,7 +7802,11 @@ function renderBatchCuration() {
   if (!tbody) return;
   const entries = bcGetFilteredEntries();
   if (entries.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--mute);font-style:italic">Tidak ada laporan dalam filter ini.</td></tr>';
+    const archCount = (STATE.laporan || []).filter(d => d.archived).length;
+    const fArch = document.getElementById('bc-filter-archive')?.value || 'active';
+    const hint = fArch === 'active' && archCount > 0
+      ? `<br><span style="font-size:10.5px;color:#8B8579">Ada ${archCount} laporan di-archive. Switch filter ke "📦 Archived Only" atau "🔀 Semua" untuk lihat.</span>` : '';
+    tbody.innerHTML = `<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--mute);font-style:italic">Tidak ada laporan dalam filter ini.${hint}</td></tr>`;
     bcUpdateSelectionBar();
     return;
   }
@@ -7668,14 +7814,19 @@ function renderBatchCuration() {
     const llStatus = getEntryLLStatus(d.id);
     const llStyle = LL_STATUS_STYLE[llStatus];
     const isLocked = llStatus === 'published';
+    const isArchived = d.archived === true;
     const isChecked = BC_SELECTED.has(d.id);
     const pelaporName = PELAPOR_NAMES_BC[d.pelapor] || d.pelapor;
     const kategoriLbl = (d.kategori || '').replace(/_/g, ' ');
     const _dText = getDetailText(d);
     const detail = _dText.substring(0, 60) + (_dText.length > 60 ? '…' : '');
     const durasiLbl = d.durasi === 'full_day' ? '1 hari' : (d.durasi === 'setengah_hari' ? '½ hari' : (d.durasi || '—'));
-    const lockedStyle = isLocked ? 'opacity:0.5;background:#FAFAFA' : '';
-    return `<tr style="${lockedStyle}">
+    const rowStyle = isLocked ? 'opacity:0.5;background:#FAFAFA' : (isArchived ? 'opacity:0.6;background:#fafaf7' : '');
+    const archBadge = isArchived ? '<div style="margin-top:2px"><span style="background:#8B8579;color:#fff;padding:1px 6px;border-radius:8px;font-size:9px;font-weight:700" title="' + (d.archived_at ? formatTglShort(d.archived_at.slice(0,10)) : '') + (d.archived_reason ? ' — ' + d.archived_reason : '') + '">📦 ARSIP</span></div>' : '';
+    const archBtn = isArchived
+      ? `<button onclick="toggleLaporanArchive('${d.id}')" style="background:#DDE9E3;color:#1F5F47;border:1px solid #5a9080;border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer" title="Restore (un-archive)">↩️</button>`
+      : `<button onclick="toggleLaporanArchive('${d.id}')" style="background:#f4f4f0;color:#4a4030;border:1px solid #8B8579;border-radius:4px;padding:3px 7px;font-size:10px;cursor:pointer" title="Archive laporan ini">📦</button>`;
+    return `<tr style="${rowStyle}">
       <td style="text-align:center"><input type="checkbox" data-eid="${d.id}" ${isChecked ? 'checked' : ''} ${isLocked ? 'disabled' : ''} onchange="bcToggleEntry('${d.id}')"></td>
       <td style="white-space:nowrap"><b>${formatTglShort(d.tgl)}</b></td>
       <td>${pelaporName}</td>
@@ -7689,10 +7840,70 @@ function renderBatchCuration() {
       <td><b>${kategoriLbl}</b>${detail ? `<br><span style="font-size:10px;color:var(--mute)">${detail}</span>` : ''}</td>
       <td style="text-align:center">${d.pohon || '—'}</td>
       <td>${durasiLbl}</td>
-      <td><span style="background:${llStyle.bg};color:${llStyle.color};padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">${llStyle.icon} ${llStyle.label}</span></td>
+      <td><span style="background:${llStyle.bg};color:${llStyle.color};padding:3px 8px;border-radius:10px;font-size:10px;font-weight:700">${llStyle.icon} ${llStyle.label}</span>${archBadge}</td>
+      <td style="text-align:center">${archBtn}</td>
     </tr>`;
   }).join('');
   bcUpdateSelectionBar();
+}
+
+// ───────── LAPORAN ARCHIVE (locked 25 Mei 2026 — Track L per Adib Q1b) ─────────
+// Constraint: archive flag pada laporan TIDAK affect UPAH derivation (Adib explicit).
+// Archived laporan hide dari Batch Curation + Log Harian default view, tapi UPAH
+// yang sudah di-derive via autoCreateUpahFromEntry tetap visible di Tab Upah.
+function toggleLaporanArchive(laporanId) {
+  const lap = (STATE.laporan || []).find(l => l.id === laporanId);
+  if (!lap) { console.warn('[Archive Laporan] not found:', laporanId); return; }
+  const willArchive = !lap.archived;
+  let reason = '';
+  if (willArchive) {
+    reason = prompt('Alasan archive (optional):', '') || '';
+  } else {
+    if (!confirm('Restore laporan "' + (lap.kategori || '?') + ' ' + formatTglShort(lap.tgl) + '" dari archive?')) return;
+  }
+  const now = new Date().toISOString();
+  lap.archived = willArchive;
+  lap.archived_at = willArchive ? now : null;
+  lap.archived_reason = willArchive ? (reason || null) : null;
+  lap.last_modified_at = now;
+  // Persist + Firestore sync via existing syncLaporanEntry helper
+  if (typeof saveState === 'function') saveState();
+  if (typeof window.syncLaporanEntry === 'function') {
+    window.syncLaporanEntry(lap).catch(e => console.warn('[Archive Laporan] Firestore sync failed:', e.message));
+  }
+  renderBatchCuration();
+  if (typeof renderLog === 'function') renderLog();
+  showToast(willArchive ? '📦 Laporan diarsipkan (UPAH tidak terpengaruh)' : '↩️ Laporan dipulihkan');
+}
+
+// Bulk archive selected entries
+function bcArchiveSelected() {
+  if (BC_SELECTED.size === 0) {
+    alert('Pilih dulu minimal 1 laporan dari tabel di bawah.');
+    return;
+  }
+  const ids = Array.from(BC_SELECTED);
+  if (!confirm(`Arsipkan ${ids.length} laporan tercentang?\n\nMereka akan disembunyikan dari Batch Curation + Log Harian.\nPembayaran UPAH yang sudah ter-derive TIDAK terpengaruh.\n\nLanjut?`)) return;
+  const reason = prompt('Alasan archive (optional, applied ke semua):', '') || '';
+  const now = new Date().toISOString();
+  let archivedCount = 0;
+  ids.forEach(id => {
+    const lap = (STATE.laporan || []).find(l => l.id === id);
+    if (!lap || lap.archived) return;
+    lap.archived = true;
+    lap.archived_at = now;
+    lap.archived_reason = reason || null;
+    lap.last_modified_at = now;
+    archivedCount++;
+    if (typeof window.syncLaporanEntry === 'function') {
+      window.syncLaporanEntry(lap).catch(e => console.warn('[Archive Bulk] sync fail ' + id + ':', e.message));
+    }
+  });
+  if (typeof saveState === 'function') saveState();
+  BC_SELECTED.clear();
+  renderBatchCuration();
+  if (typeof renderLog === 'function') renderLog();
+  showToast(`📦 ${archivedCount} laporan diarsipkan`);
 }
 
 function bcToggleEntry(entryId) {
