@@ -1301,22 +1301,90 @@
       </div>
 
       <!-- ────────────────────────────────────────────────────────── -->
-      <!-- CHAPTER 2: Processing Pipeline (actual % per varian)       -->
-      <!-- Reordered 24 Mei 2026 per request Wakif — naik ke atas    -->
-      <!-- supaya langsung setelah Submit. Actual % per varian dari   -->
-      <!-- Stage 3 sortir 4-warna real (bukan estimasi).              -->
+      <!-- CHAPTER 2: Input Hasil Sortir Cherry (5-varian sejajar)    -->
+      <!-- Added 24 Mei 2026 per request Wakif — inline form right    -->
+      <!-- setelah Submit Panen. Mengambang + 4-warna sejajar.        -->
+      <!-- ────────────────────────────────────────────────────────── -->
+      <div class="card" style="background:#FAFCFB;border:2px dashed var(--moss)">
+        <div class="card-title"><span class="num">2</span>📥 Input Hasil Sortir Cherry (5-Varian)</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Pilih batch panen yang akan disortir, lalu input kg per varian. <strong>Pengapung/Mengambang</strong> = defect (tidak jadi lot child, tracked sebagai loss di parent batch). <strong>Merah/Kuning/Hijau/Hitam</strong> = create lot child per grade dengan Lot ID auto-generated.</p>
+
+        <div class="form-grid">
+          <div class="field" style="grid-column:1/-1">
+            <label class="field-lbl">Pilih Batch Panen yang Akan Disortir <span class="req">*</span></label>
+            <select id="sortir5-batch-select" onchange="loadBatchForSortir5(this.value)" style="font-size:13px;padding:8px;width:100%;border:1.5px solid var(--moss);border-radius:6px">
+              <option value="">— Pilih batch dari Batch Tracker —</option>
+            </select>
+            <p style="font-size:10.5px;color:var(--mute);margin-top:4px;font-style:italic">Hanya batch yang belum disortir 4-warna yang muncul. Setelah submit, batch advance ke stage 'Sortir 4-Warna Done' + auto-create 4 lot child.</p>
+            <div id="sortir5-batch-info" style="display:none;margin-top:8px;padding:10px 14px;background:#F0F5F3;border-left:3px solid var(--moss);border-radius:6px;font-size:12px;color:var(--earth);line-height:1.5"></div>
+          </div>
+
+          <div class="field" style="grid-column:1/-1">
+            <label class="field-lbl">Hasil Sortir (kg per varian)</label>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:6px">
+              <div style="padding:10px 12px;background:#ECFEFF;border:2px solid #06b6d4;border-radius:8px">
+                <div style="font-weight:800;color:#0e7490;font-size:11.5px;margin-bottom:4px">🌀 Mengambang (kg)</div>
+                <input type="number" id="sortir5-mengambang" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #06b6d4;border-radius:5px;background:#fff">
+                <div style="font-size:9.5px;color:#0e7490;font-style:italic;margin-top:3px">Defect/pengapung (kompos)</div>
+              </div>
+              <div style="padding:10px 12px;background:#FEF2F2;border:2px solid #ef4444;border-radius:8px">
+                <div style="font-weight:800;color:#b91c1c;font-size:11.5px;margin-bottom:4px">🟥 Merah (kg)</div>
+                <input type="number" id="sortir5-merah" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #ef4444;border-radius:5px;background:#fff">
+                <div style="font-size:9.5px;color:#b91c1c;font-style:italic;margin-top:3px">Ripe → Bonsari/Nomad</div>
+              </div>
+              <div style="padding:10px 12px;background:#FFFBEB;border:2px solid #d4a017;border-radius:8px">
+                <div style="font-weight:800;color:#a16207;font-size:11.5px;margin-bottom:4px">🟨 Kuning (kg)</div>
+                <input type="number" id="sortir5-kuning" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #d4a017;border-radius:5px;background:#fff">
+                <div style="font-size:9.5px;color:#a16207;font-style:italic;margin-top:3px">Transisi → commercial</div>
+              </div>
+              <div style="padding:10px 12px;background:#F0FDF4;border:2px solid #22c55e;border-radius:8px">
+                <div style="font-weight:800;color:#15803d;font-size:11.5px;margin-bottom:4px">🟩 Hijau (kg)</div>
+                <input type="number" id="sortir5-hijau" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #22c55e;border-radius:5px;background:#fff">
+                <div style="font-size:9.5px;color:#15803d;font-style:italic;margin-top:3px">Unripe → pengepul C</div>
+              </div>
+              <div style="padding:10px 12px;background:#F4F4F5;border:2px solid #78716c;border-radius:8px">
+                <div style="font-weight:800;color:#3f3f46;font-size:11.5px;margin-bottom:4px">⬛ Hitam (kg)</div>
+                <input type="number" id="sortir5-hitam" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #78716c;border-radius:5px;background:#fff">
+                <div style="font-size:9.5px;color:#3f3f46;font-style:italic;margin-top:3px">Overripe → natural/C</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="field" style="grid-column:1/-1">
+            <div id="sortir5-mass-balance" style="padding:12px 16px;background:#FAFCFB;border:2px dashed var(--moss);border-radius:8px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:12px">
+              <div>📊 Total 5-varian: <strong id="sortir5-total" style="color:var(--moss);font-size:15px">0.00</strong> kg</div>
+              <div>🍒 Cherry Mentah (parent): <strong id="sortir5-target-mentah">—</strong> kg</div>
+              <div>📈 Diff: <strong id="sortir5-diff">—</strong></div>
+              <div id="sortir5-validation-msg" style="font-weight:700"></div>
+            </div>
+          </div>
+
+          <div class="field" style="grid-column:1/-1">
+            <label class="field-lbl">Catatan Sortir (opsional)</label>
+            <textarea id="sortir5-catatan" rows="2" placeholder="cth: Sortir di teras hari ini. Banyak mengambang krn hujan kemarin (defect basah). Merah dominan = quality bagus untuk Bonsari." maxlength="400" style="width:100%"></textarea>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary" onclick="submitSortir5Warna()" style="background:var(--moss);color:#fff">💾 Submit Sortir → Create Lots</button>
+          <button class="btn btn-secondary" onclick="resetSortir5Form()">Reset</button>
+        </div>
+      </div>
+
+      <!-- ────────────────────────────────────────────────────────── -->
+      <!-- CHAPTER 3: Processing Pipeline (visual flow)               -->
       <!-- ────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">2</span>🏭 Processing Pipeline — Cherry → Green Bean</div>
-        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Track setiap batch dari cherry mentah sampai green bean siap jual. <strong>Persentase per varian (🟥 merah · 🟨 kuning · 🟩 hijau · ⬛ hitam) = ACTUAL hasil sortir Stage 3</strong> (bukan estimasi). Conversion ratio cherry→green bean typical Robusta: 16-20% (semi-washed) atau 18-22% (fully washed). Klik panah untuk advance stage.</p>
+        <div class="card-title"><span class="num">3</span>🏭 Processing Pipeline — Cherry → Green Bean</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Visual flow setiap batch dari cherry mentah sampai green bean siap jual. <strong>Persentase per varian = ACTUAL hasil sortir Stage 3</strong> (auto-computed dari Section 2 di atas). Conversion ratio cherry→green bean typical Robusta: 16-20% (semi-washed) atau 18-22% (fully washed). Klik panah untuk advance stage.</p>
         <div id="panen-pipeline-funnel" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"></div>
       </div>
 
       <!-- ────────────────────────────────────────────────────────── -->
-      <!-- CHAPTER 3: Batch Tracker Tabel                             -->
+      <!-- CHAPTER 4: Batch Tracker Tabel                             -->
       <!-- ────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">3</span>📋 Batch Tracker — Riwayat Panen</div>
+        <div class="card-title"><span class="num">4</span>📋 Batch Tracker — Riwayat Panen</div>
         <div class="table-wrap">
           <table style="font-size:11.5px;width:100%">
             <thead style="background:var(--cream)">
@@ -1345,13 +1413,13 @@
       <!-- validate yield assumption target 0.4 kg/pohon.                 -->
       <!-- ─────────────────────────────────────────────────────────────── -->
       <!-- ──────────────────────────────────────────────────────────────────────── -->
-      <!-- CHAPTER 4: SAMPLING 40 POHON BRIN (refactored 24 Mei 2026)               -->
+      <!-- CHAPTER 5: SAMPLING 40 POHON BRIN (refactored 24 Mei 2026)               -->
       <!-- Per instruksi Adib: "Sampling perpohon bbrp info bs prefilled,            -->
       <!-- lgsg dibuat tabel saja (cek folder R&D/BRIN Research)".                  -->
       <!-- Source: Form_Sampling_BRIN + JPG_Individual_Cards/Pohon/ naming pattern.  -->
       <!-- ──────────────────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">4</span>🌳 Sampling 40 Pohon BRIN Research Baseline</div>
+        <div class="card-title"><span class="num">5</span>🌳 Sampling 40 Pohon BRIN Research Baseline</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:10px">40 pohon BRIN sampling sudah prefilled (10/Kebun, stratified 4 sehat + 3 sedang + 3 lemah). Tag fisik di pohon: <code style="font-size:10.5px">K1-P01</code> sampai <code style="font-size:10.5px">K4-P10</code>. Saat panen: input <strong>kg cherry per pohon</strong>, validate yield assumption (target Adib <strong style="color:var(--moss)">0,4 kg/pohon</strong>). Target ≥30 pohon tersampling per SOP Kementan.</p>
 
         <!-- Compact KPI -->
@@ -1429,10 +1497,10 @@
       <!-- masing-masing punya pipeline terpisah sampai SOLD.              -->
       <!-- ─────────────────────────────────────────────────────────────── -->
       <!-- ────────────────────────────────────────────────────────── -->
-      <!-- CHAPTER 5: LOT TRACKER per GRADE (Multi-Bucket Pipeline)   -->
+      <!-- CHAPTER 6: LOT TRACKER per GRADE (Multi-Bucket Pipeline)   -->
       <!-- ────────────────────────────────────────────────────────── -->
       <div class="card">
-        <div class="card-title"><span class="num">5</span>📦 Lot Tracker per Grade — Multi-Bucket Pipeline</div>
+        <div class="card-title"><span class="num">6</span>📦 Lot Tracker per Grade — Multi-Bucket Pipeline</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Setelah Stage 3 sortir 4-warna selesai, batch panen split jadi <strong>4 lot child</strong> (atau lebih sedikit kalau bucket kosong). Setiap lot punya pipeline terpisah: <strong>jemur → kupas → green bean → sold</strong>. Lot ID format: <code style="font-size:10.5px">WKKN-YYYY-MM-KX-WARNA-NNN</code> (tag tetap, walaupun pasca-jemur warna fisik tidak terlihat lagi).</p>
 
         <!-- Lot KPI -->
@@ -5321,6 +5389,185 @@ function submitPanenSortir4() {
   renderPanen();
 }
 
+// ===========================================================================
+// INLINE SORTIR 5-VARIAN HANDLERS (added 24 Mei 2026 per request Wakif)
+// Section 2 "Input Hasil Sortir Cherry" — inline form right after Submit Panen.
+// Mirror logic submitPanenSortir4 modal, plus add mengambang field sejajar.
+// ===========================================================================
+
+function populateSortir5BatchDropdown() {
+  const sel = document.getElementById('sortir5-batch-select');
+  if (!sel) return;
+  // Batch yang belum sortir 4-warna = stage in [cherry_mentah, sortasi_air] + !has_split
+  const eligibleBatches = PANEN_DATA.filter(e =>
+    (e.processing_stage === 'cherry_mentah' || e.processing_stage === 'sortasi_air' || !e.processing_stage) && !e.has_split
+  ).sort((a,b) => b.tgl.localeCompare(a.tgl));
+
+  const currentVal = sel.value;
+  sel.innerHTML = '<option value="">— Pilih batch dari Batch Tracker —</option>' +
+    eligibleBatches.map(e => {
+      const kebunStr = Array.isArray(e.kebun) ? e.kebun.join('+') : e.kebun;
+      return `<option value="${e.id}">${formatTglShort ? formatTglShort(e.tgl) : e.tgl} · Kebun ${kebunStr} · ${e.cherry_kg} kg cherry · ${e.context || ''}</option>`;
+    }).join('');
+  if (currentVal) sel.value = currentVal;
+  if (eligibleBatches.length === 0) {
+    sel.innerHTML = '<option value="">— Tidak ada batch yang belum disortir —</option>';
+  }
+}
+
+function loadBatchForSortir5(batchId) {
+  const infoEl = document.getElementById('sortir5-batch-info');
+  if (!batchId) {
+    if (infoEl) { infoEl.style.display = 'none'; infoEl.innerHTML = ''; }
+    document.getElementById('sortir5-target-mentah').textContent = '—';
+    updateSortir5Total();
+    return;
+  }
+  const batch = PANEN_DATA.find(e => e.id === batchId);
+  if (!batch) return;
+  const kebunStr = Array.isArray(batch.kebun) ? batch.kebun.join('+') : batch.kebun;
+  if (infoEl) {
+    infoEl.style.display = 'block';
+    infoEl.innerHTML = `<strong>Batch ${batch.id.substring(0,18)}…</strong> · Tanggal panen: <strong>${formatTglShort ? formatTglShort(batch.tgl) : batch.tgl}</strong> · Kebun: <strong>${kebunStr}</strong> · Cherry mentah: <strong>${batch.cherry_kg} kg</strong> · Pohon dipetik: <strong>${batch.pohon || '—'}</strong>` +
+      (batch.catatan ? `<br/><span style="font-style:italic;color:var(--mute);font-size:11px">📝 ${batch.catatan}</span>` : '');
+  }
+  document.getElementById('sortir5-target-mentah').textContent = batch.cherry_kg.toFixed(2);
+  updateSortir5Total();
+}
+
+function updateSortir5Total() {
+  const meng = parseFloat(document.getElementById('sortir5-mengambang')?.value) || 0;
+  const m = parseFloat(document.getElementById('sortir5-merah')?.value) || 0;
+  const k = parseFloat(document.getElementById('sortir5-kuning')?.value) || 0;
+  const h = parseFloat(document.getElementById('sortir5-hijau')?.value) || 0;
+  const b = parseFloat(document.getElementById('sortir5-hitam')?.value) || 0;
+  const total = meng + m + k + h + b;
+  const targetText = document.getElementById('sortir5-target-mentah')?.textContent || '—';
+  const target = parseFloat(targetText) || 0;
+  const totalEl = document.getElementById('sortir5-total');
+  const diffEl = document.getElementById('sortir5-diff');
+  const msgEl = document.getElementById('sortir5-validation-msg');
+  const containerEl = document.getElementById('sortir5-mass-balance');
+  if (totalEl) totalEl.textContent = total.toFixed(2);
+  if (!target || target === 0) {
+    if (diffEl) diffEl.textContent = '—';
+    if (msgEl) msgEl.innerHTML = '';
+    if (containerEl) { containerEl.style.borderColor = 'var(--moss)'; containerEl.style.background = '#FAFCFB'; }
+    return;
+  }
+  const diff = total - target;
+  const pctDiff = (diff / target) * 100;
+  if (diffEl) diffEl.innerHTML = `${diff >= 0 ? '+' : ''}${diff.toFixed(2)} kg (${pctDiff >= 0 ? '+' : ''}${pctDiff.toFixed(1)}%)`;
+  if (msgEl && containerEl) {
+    if (total === 0) {
+      msgEl.innerHTML = '';
+      containerEl.style.borderColor = 'var(--moss)';
+      containerEl.style.background = '#FAFCFB';
+    } else if (Math.abs(pctDiff) <= 5) {
+      msgEl.innerHTML = '<span style="color:#15803d">✓ Match!</span>';
+      containerEl.style.borderColor = '#16a34a';
+      containerEl.style.background = '#F0FDF4';
+    } else if (Math.abs(pctDiff) <= 15) {
+      msgEl.innerHTML = '<span style="color:#a16207">⚠ Off > 5%</span>';
+      containerEl.style.borderColor = '#d4a017';
+      containerEl.style.background = '#FFFBEB';
+    } else {
+      msgEl.innerHTML = '<span style="color:#dc2626">⚠ Off > 15% — recheck timbangan</span>';
+      containerEl.style.borderColor = '#dc2626';
+      containerEl.style.background = '#FEF2F2';
+    }
+  }
+}
+
+function resetSortir5Form() {
+  document.getElementById('sortir5-batch-select').value = '';
+  ['sortir5-mengambang','sortir5-merah','sortir5-kuning','sortir5-hijau','sortir5-hitam'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('sortir5-catatan').value = '';
+  document.getElementById('sortir5-target-mentah').textContent = '—';
+  const infoEl = document.getElementById('sortir5-batch-info');
+  if (infoEl) { infoEl.style.display = 'none'; infoEl.innerHTML = ''; }
+  updateSortir5Total();
+}
+
+function submitSortir5Warna() {
+  const batchId = document.getElementById('sortir5-batch-select').value;
+  if (!batchId) { alert('Pilih batch panen yang akan disortir.'); return; }
+  const batch = PANEN_DATA.find(e => e.id === batchId);
+  if (!batch) { alert('Batch tidak ditemukan: ' + batchId); return; }
+
+  const meng = parseFloat(document.getElementById('sortir5-mengambang').value) || 0;
+  const m = parseFloat(document.getElementById('sortir5-merah').value) || 0;
+  const k = parseFloat(document.getElementById('sortir5-kuning').value) || 0;
+  const h = parseFloat(document.getElementById('sortir5-hijau').value) || 0;
+  const b = parseFloat(document.getElementById('sortir5-hitam').value) || 0;
+  const total = meng + m + k + h + b;
+  const target = batch.cherry_kg;
+  const pctDiff = target > 0 ? Math.abs((total - target) / target) * 100 : 0;
+
+  if (total === 0) { alert('Input minimal 1 varian (kg > 0).'); return; }
+  if (pctDiff > 15) {
+    if (!confirm(`Total 5-varian (${total.toFixed(2)} kg) berbeda > 15% dari cherry mentah (${target.toFixed(2)} kg).\n\nDiff: ${(total - target).toFixed(2)} kg (${pctDiff.toFixed(1)}% off)\n\nTetap submit?`)) return;
+  }
+
+  // Update parent batch
+  batch.pengapung_kg = meng;
+  batch.processing_stage = 'sortir_4warna';
+  batch.has_split = true;
+  batch.last_modified_at = new Date().toISOString();
+  batch.sortir_catatan = document.getElementById('sortir5-catatan').value.trim();
+
+  // Create lot child per warna (skip mengambang — itu defect di parent batch)
+  const [year, month] = batch.tgl.split('-');
+  const kebunArr = Array.isArray(batch.kebun) ? batch.kebun : [batch.kebun];
+  const kebunStr = kebunArr.includes('mixed') ? 'MIX' : kebunArr.map(kb => 'K' + kb).join('');
+  const buckets = [
+    { grade: 'merah',  kg: m },
+    { grade: 'kuning', kg: k },
+    { grade: 'hijau',  kg: h },
+    { grade: 'hitam',  kg: b }
+  ].filter(bk => bk.kg > 0);
+
+  const createdLots = [];
+  buckets.forEach((bk) => {
+    const gradeUpper = bk.grade.toUpperCase();
+    const lotNum = String(PANEN_LOTS_DATA.filter(l => l.grade === bk.grade).length + 1).padStart(3, '0');
+    const lotId = `WKKN-${year}-${month}-${kebunStr}-${gradeUpper}-${lotNum}`;
+    const grade = PANEN_GRADES[bk.grade];
+    PANEN_LOTS_DATA.push({
+      lot_id: lotId,
+      parent_batch_id: batch.id,
+      tgl_sortir: todayIso(),
+      grade: bk.grade,
+      kg_sortir_awal: bk.kg,
+      kg_jemur_done: null,
+      kg_green_bean_aktual: null,
+      stage: 'sortir_done',
+      price_per_kg_target: grade.default_price,
+      price_per_kg_actual: null,
+      buyer: null,
+      revenue_actual: null,
+      tgl_sold: null,
+      notes: '',
+      created_at: new Date().toISOString(),
+      last_modified_at: new Date().toISOString()
+    });
+    createdLots.push(lotId);
+  });
+
+  savePanenToLS();
+  savePanenLotsToLS();
+  if (typeof showToast === 'function') {
+    const msg = `✅ Batch ${batch.id.substring(0,18)}… split: ${createdLots.length} lot child` +
+      (meng > 0 ? ` + ${meng.toFixed(2)} kg mengambang (parent batch)` : '');
+    showToast(msg, 'success');
+  }
+  resetSortir5Form();
+  renderPanen();
+  populateSortir5BatchDropdown();
+}
+
 // ─── Per-LOT advance (Stage 4+ jemur/kupas/green_bean) ───────
 function advancePanenLotStage(lotId) {
   const lot = PANEN_LOTS_DATA.find(l => l.lot_id === lotId);
@@ -5408,6 +5655,8 @@ function renderPanen() {
   renderPanenKebunChart();
   renderPanenPipelineFunnel();
   renderPanenBatchTable();
+  // ⭐ 24 Mei 2026: populate dropdown Section 2 Input Sortir
+  if (typeof populateSortir5BatchDropdown === 'function') populateSortir5BatchDropdown();
 }
 
 function renderPanenKPI() {
