@@ -1002,8 +1002,11 @@ span.lang-en { display: none; }
 .act-log-item.status-upcoming {
   display: none !important;
 }
-/* Auto-hide phase-block jika SEMUA items dalam phase berstatus planned/upcoming */
-.phase-block:not(:has(.act-log-item:not(.status-planned):not(.status-upcoming))) {
+/* Auto-hide phase-block jika SEMUA items dalam phase berstatus planned/upcoming
+   AND tidak ada dynamic milestone card (.ll5-card dari Firestore via renderDynamicMilestones).
+   Fix 25 Mei 2026: sebelumnya rule ini hanya cek .act-log-item, jadi phase-block
+   yang berisi HANYA dynamic .ll5-card juga ke-hide (regression dari migrasi ke ll5-card design). */
+.phase-block:not(:has(.act-log-item:not(.status-planned):not(.status-upcoming))):not(:has(.ll5-card)) {
   display: none;
 }
 
