@@ -3192,10 +3192,235 @@ function renderDynamicMilestones(data) {
     byYear[m.year][m.phase].push(m);
   });
 
+  // ──────────────────────────────────────────────────────────────────────
+  // HELPER: buildDynamicActLogItem(m) — Generate full 3-tier .act-log-item HTML
+  // ──────────────────────────────────────────────────────────────────────
+  // Per Adib clarification 25 Mei 2026 sore: dynamic milestone dari Firestore HARUS
+  // render dalam 3-tier struktur YANG SAMA dengan hardcoded items (Aktual Works |
+  // Panduan Teoritis | Kesesuaian Grand Design) — BUKAN 2-section ll5-card.
+  //
+  // Output structure (mimicking post-buildTheoryColumns format, baked inline):
+  //   <div class="act-log-item status-X firestore-dynamic" data-milestone-id data-date>
+  //     <div class="act-log-split">
+  //       <div class="act-log-progress">       — Tier 1: Aktual Works
+  //         <div class="act-log-progress-header">[status]</div>
+  //         <div class="act-log-progress-body">[title + detail]</div>
+  //         <div class="act-log-progress-footer">[meta]</div>
+  //       </div>
+  //       <div class="act-log-theory">         — Tier 2: Panduan Teoritis
+  //         [theory-label + theory-body + theory-tag×N]
+  //       </div>
+  //       <div class="act-log-eval">           — Tier 3: Kesesuaian Grand Design
+  //         [① grandDesign + ② penilaian + badge + ④ tindakLanjut + ⑤ verifikasi?]
+  //       </div>
+  //     </div>
+  //   </div>
+  //
+  // Memory: [[living-lab-3tier-architecture]]
+  // ──────────────────────────────────────────────────────────────────────
+  function buildDynamicActLogItem(m) {
+    const status = STATUS_LABELS_LL[m.status] || STATUS_LABELS_LL['planned'];
+    const impl = m.implementasi || {};
+    const bench = m.benchmark_evaluation || {};
+    const verifikasi = m.verifikasi_diperlukan || '';
+    const dateLbl = m.date_label?.id || m.meta?.date_short || m.date;
+    const tagMeta = m.meta?.tag || m.tag || '';
+    const titleID = m.title?.id || '';
+    const titleEN = m.title?.en || titleID;
+    const detailID = m.detail?.id || '';
+    const detailEN = m.detail?.en || detailID;
+    const sumberBenchList = (bench.sumber_benchmark || []);
+    const alignmentPct = (typeof bench.alignment_pct === 'number') ? bench.alignment_pct : null;
+    const verdict = bench.verdict || 'unknown';
+
+    // Status class mapping (per buildTheoryColumns convention)
+    let statusCls = 'status-planned';
+    if (status.cls === 's-done') statusCls = 'status-done';
+    else if (status.cls === 's-ongoing') statusCls = 'status-ongoing';
+    else if (status.cls === 's-upcoming') statusCls = 'status-upcoming';
+    else if (status.cls === 's-norecord') statusCls = 'status-norecord';
+
+    // Detail enrichment (append technical Tier-1 detail from implementasi)
+    let detailEnrichID = '';
+    let detailEnrichEN = '';
+    if (impl.aktivitas_lapangan) {
+      detailEnrichID += '<div class="act-log-detail-sub lang-id" style="margin-top:8px;font-size:0.94em;color:#5a5a5a"><strong>Aktivitas:</strong> ' + escapeHTML(impl.aktivitas_lapangan) + '</div>';
+      detailEnrichEN += '<div class="act-log-detail-sub lang-en" style="margin-top:8px;font-size:0.94em;color:#5a5a5a"><strong>Activities:</strong> ' + escapeHTML(impl.aktivitas_lapangan) + '</div>';
+    }
+    if (impl.dosis_aktual) {
+      detailEnrichID += '<div class="act-log-detail-sub lang-id" style="margin-top:6px;font-size:0.94em;color:#5a5a5a"><strong>⚖️ Dosis:</strong> ' + escapeHTML(impl.dosis_aktual) + '</div>';
+      detailEnrichEN += '<div class="act-log-detail-sub lang-en" style="margin-top:6px;font-size:0.94em;color:#5a5a5a"><strong>⚖️ Dose:</strong> ' + escapeHTML(impl.dosis_aktual) + '</div>';
+    }
+    if (impl.tor_sumber) {
+      detailEnrichID += '<div class="act-log-detail-sub lang-id" style="margin-top:6px;font-size:0.88em;color:#8b8579;font-style:italic"><strong>📋 TOR:</strong> ' + escapeHTML(impl.tor_sumber) + '</div>';
+      detailEnrichEN += '<div class="act-log-detail-sub lang-en" style="margin-top:6px;font-size:0.88em;color:#8b8579;font-style:italic"><strong>📋 TOR:</strong> ' + escapeHTML(impl.tor_sumber) + '</div>';
+    }
+    if (impl.deviasi_internal) {
+      detailEnrichID += '<div class="act-log-detail-sub lang-id" style="margin-top:8px;padding:6px 10px;background:rgba(217,119,6,0.08);border-left:3px solid #D97706;font-size:0.93em;color:#7a4a08"><strong>⚠️ Deviasi:</strong> ' + escapeHTML(impl.deviasi_internal) + '</div>';
+      detailEnrichEN += '<div class="act-log-detail-sub lang-en" style="margin-top:8px;padding:6px 10px;background:rgba(217,119,6,0.08);border-left:3px solid #D97706;font-size:0.93em;color:#7a4a08"><strong>⚠️ Deviation:</strong> ' + escapeHTML(impl.deviasi_internal) + '</div>';
+    }
+
+    // Tier 1: Progress (Aktual Works)
+    const progressHTML =
+      '<div class="act-log-progress">' +
+        '<div class="act-log-progress-header">' +
+          '<span class="act-log-status ' + status.cls + ' lang-id">' + status.id + '</span>' +
+          '<span class="act-log-status ' + status.cls + ' lang-en">' + status.en + '</span>' +
+        '</div>' +
+        '<div class="act-log-progress-body">' +
+          '<div class="act-log-title lang-id">' + escapeHTML(titleID) + '</div>' +
+          '<div class="act-log-title lang-en">' + escapeHTML(titleEN) + '</div>' +
+          '<div class="act-log-detail lang-id">' + escapeHTML(detailID) + detailEnrichID + '</div>' +
+          '<div class="act-log-detail lang-en">' + escapeHTML(detailEN) + detailEnrichEN + '</div>' +
+        '</div>' +
+        '<div class="act-log-progress-footer">' +
+          '<div class="act-log-meta"><strong>' + escapeHTML(dateLbl) + '</strong>' + escapeHTML(tagMeta) + '</div>' +
+        '</div>' +
+      '</div>';
+
+    // Tier 2: Panduan Teoritis (kajian + sumber benchmark sebagai tags)
+    const theoryBody = bench.kajian_internasional || '<em>Kajian teoritis belum diisi di Tab Milestones Publik.</em>';
+    const tagsHTML = sumberBenchList.map(s => '<span class="theory-tag">' + escapeHTML(s) + '</span>').join('');
+    const theoryHTML =
+      '<div class="act-log-theory">' +
+        '<div class="theory-label lang-id">🔬 Panduan Teoritis</div>' +
+        '<div class="theory-label lang-en">🔬 Theoretical Context</div>' +
+        '<p class="theory-body lang-id">' + escapeHTML(theoryBody) + '</p>' +
+        '<p class="theory-body lang-en">' + escapeHTML(theoryBody) + '</p>' +
+        (tagsHTML ? '<div style="margin-top:10px">' + tagsHTML + '</div>' : '') +
+      '</div>';
+
+    // Tier 3: Kesesuaian Grand Design (alignment + gap + badge + roadmap + verifikasi)
+    const verdictBadgeLabel = {
+      sesuai:    { id: '✅ Sesuai — Lanjutkan',          en: '✅ Aligned — Continue' },
+      perhatian: { id: '⚠️ Perlu Diperhatikan',          en: '⚠️ Needs Attention' },
+      eskalasi:  { id: '🔴 Eskalasi — Konsultasi Ahli',  en: '🔴 Escalate — Consult Expert' }
+    }[verdict] || { id: '— Belum dievaluasi', en: '— Not yet evaluated' };
+    const grandDesignSummary = alignmentPct !== null
+      ? 'Alignment ke standar internasional: <strong>' + alignmentPct + '%</strong>. '
+        + (alignmentPct >= 85 ? 'Sesuai full — practice lanjutkan as-is.'
+           : alignmentPct >= 60 ? 'Perhatian — ada gap moderate yang perlu di-address.'
+           : 'Eskalasi — gap signifikan, perlu konsultasi ahli.')
+      : 'Alignment percentage belum di-set di Milestones Publik.';
+    const grandDesignSummaryEN = alignmentPct !== null
+      ? 'Alignment to international standard: <strong>' + alignmentPct + '%</strong>. '
+        + (alignmentPct >= 85 ? 'Fully aligned — continue practice as-is.'
+           : alignmentPct >= 60 ? 'Attention — moderate gap to address.'
+           : 'Escalate — significant gap, requires expert consultation.')
+      : 'Alignment percentage not set in Milestones Publik.';
+    const gapHTML = bench.gap_analysis || '<em>Gap analysis belum diisi.</em>';
+    const roadmapHTML = bench.roadmap || '<em>Tindak lanjut belum disusun.</em>';
+    const evalHTML =
+      '<div class="act-log-eval">' +
+        '<div class="eval-label lang-id">① Kesesuaian Grand Design</div>' +
+        '<div class="eval-label lang-en">① Grand Design Alignment</div>' +
+        '<p class="eval-body lang-id">' + grandDesignSummary + '</p>' +
+        '<p class="eval-body lang-en">' + grandDesignSummaryEN + '</p>' +
+
+        '<div class="eval-label lang-id">② Penilaian Eksekusi</div>' +
+        '<div class="eval-label lang-en">② Execution Assessment</div>' +
+        '<p class="eval-body lang-id">' + escapeHTML(gapHTML) + '</p>' +
+        '<p class="eval-body lang-en">' + escapeHTML(gapHTML) + '</p>' +
+
+        '<span class="eval-badge b-' + verdict + ' lang-id">' + verdictBadgeLabel.id + '</span>' +
+        '<span class="eval-badge b-' + verdict + ' lang-en">' + verdictBadgeLabel.en + '</span>' +
+
+        '<div class="eval-label lang-id">④ Rekomendasi Tindak Lanjut</div>' +
+        '<div class="eval-label lang-en">④ Follow-up Recommendation</div>' +
+        '<div class="eval-followup lang-id">' + escapeHTML(roadmapHTML) + '</div>' +
+        '<div class="eval-followup lang-en">' + escapeHTML(roadmapHTML) + '</div>' +
+
+        (verifikasi ? (
+          '<div class="eval-verify-label lang-id">⑤ Verifikasi Lapangan Diperlukan</div>' +
+          '<div class="eval-verify-label lang-en">⑤ Field Verification Required</div>' +
+          '<div class="eval-verify lang-id">' + escapeHTML(verifikasi) + '</div>' +
+          '<div class="eval-verify lang-en">' + escapeHTML(verifikasi) + '</div>'
+        ) : '') +
+      '</div>';
+
+    // Wrap in act-log-item + act-log-split (3-column container)
+    return '<div class="act-log-item ' + statusCls + ' firestore-dynamic" '
+      + 'data-milestone-id="' + escapeHTML(m.id || '') + '" '
+      + 'data-date="' + escapeHTML(m.date || '') + '">'
+      + '<div class="act-log-split">'
+      + progressHTML
+      + theoryHTML
+      + evalHTML
+      + '</div>'
+      + '</div>';
+  }
+
   // Render per year
   Object.entries(byYear).forEach(([year, phases]) => {
     const yearEl = document.getElementById('year-' + year);
     if (!yearEl) return;
+
+    // ────────────────────────────────────────────────────────────────────
+    // YEAR 2026 — INLINE INSERT mode (locked 25 Mei 2026 per Adib)
+    // - Render dynamic milestone sebagai 3-tier .act-log-item (sama dengan hardcoded)
+    // - PREPEND ke existing phase-block .act-log-list — TIDAK pakai separate container
+    // - Idempotent: clear .firestore-dynamic items dulu sebelum re-insert
+    // - Hapus old #live-dynamic-container + banner "📡 Milestones Live" (legacy cleanup)
+    // ────────────────────────────────────────────────────────────────────
+    if (parseInt(year, 10) === 2026) {
+      // Idempotent clear: remove any previously-inserted dynamic items
+      yearEl.querySelectorAll('.act-log-item.firestore-dynamic').forEach(el => el.remove());
+
+      // Legacy cleanup: remove old dynamic container + banner if exists from previous design
+      const oldContainer = yearEl.querySelector('#live-dynamic-container');
+      if (oldContainer) {
+        // Remove the section header banner sibling (announces "📡 Milestones Live")
+        const prev = oldContainer.previousElementSibling;
+        if (prev && (prev.textContent || '').includes('Milestones Live')) prev.remove();
+        oldContainer.remove();
+      }
+
+      // Sort phases by PHASE_ORDER_LL
+      const sortedPhases = PHASE_ORDER_LL.filter(p => phases[p]);
+      sortedPhases.forEach(phaseKey => {
+        // Sort milestones newest-first within phase
+        const milestones = phases[phaseKey].sort((a,b) => (b.date||'').localeCompare(a.date||''));
+        const phaseLbl = PHASE_LABELS_LL[phaseKey];
+        if (!phaseLbl) return;
+
+        // Find target phase-block by matching phase title (.lang-id)
+        let targetList = null;
+        yearEl.querySelectorAll('.phase-block').forEach(pb => {
+          const titleEl = pb.querySelector('.phase-block-title.lang-id');
+          if (titleEl && titleEl.textContent.trim() === phaseLbl.id) {
+            targetList = pb.querySelector('.act-log-list');
+          }
+        });
+        if (!targetList) {
+          console.warn('[Living Lab] Phase-block "' + phaseLbl.id + '" tidak ditemukan di year-2026 — skip ' + milestones.length + ' dynamic items');
+          return;
+        }
+
+        // Capture insertion point (firstChild) BEFORE any inserts
+        const insertionPoint = targetList.firstElementChild;
+
+        // Insert milestones in original (newest-first) order using insertBefore(insertionPoint)
+        // → each insert goes BEFORE the original firstHardcoded, preserving newest→oldest order
+        milestones.forEach(m => {
+          const itemHTML = buildDynamicActLogItem(m);
+          const wrap = document.createElement('div');
+          wrap.innerHTML = itemHTML.trim();
+          const item = wrap.firstElementChild;
+          if (!item) return;
+          if (insertionPoint) {
+            targetList.insertBefore(item, insertionPoint);
+          } else {
+            targetList.appendChild(item);
+          }
+        });
+      });
+      return;  // skip year 2024/2025 REPLACE branch
+    }
+
+    // ────────────────────────────────────────────────────────────────────
+    // YEAR 2024/2025 — REPLACE mode (legacy simple cards, no 3-tier)
+    // Preserve year-summary banner + active-year-banner; replace phase content.
+    // ────────────────────────────────────────────────────────────────────
 
     // Build phase blocks HTML
     let phaseBlocks = '';
@@ -3212,8 +3437,8 @@ function renderDynamicMilestones(data) {
       activeBannerHTML = existingBanner.outerHTML;
     }
 
-    // Decide format: Year 2026+ = 3-column SOP compliance table; Year 2024-2025 = cards
-    const useTableFormat = parseInt(year, 10) >= 2026;
+    // Year 2024/2025 always uses simple cards
+    const useTableFormat = false;
 
     // Sort phases by PHASE_ORDER_LL
     const sortedPhases = PHASE_ORDER_LL.filter(p => phases[p]);
@@ -3413,32 +3638,13 @@ function renderDynamicMilestones(data) {
     });
 
     // ──────────────────────────────────────────────────────────────────────
-    // RENDER STRATEGY (locked 18 Mei 2026):
-    // - year-2026: APPEND dynamic content (preserve hardcoded era-static + static items
-    //   Jan-Mar + hardcoded live fallback Apr-Mei). Dynamic Apr+ items dari JSON tampil
-    //   di bawah era-live-marker hardcoded sebagai "Live Milestones (curated)".
-    // - year-2024, year-2025: REPLACE innerHTML (original behavior — those years tidak
-    //   ada di JSON typically).
+    // RENDER STRATEGY (locked 25 Mei 2026 — REVISED per Adib feedback):
+    // - year-2026: handled separately ABOVE via INLINE INSERT (3-tier .act-log-item
+    //   prepended to existing phase-block .act-log-list, no separate container/banner).
+    //   That branch has `return` so we never reach here for year 2026.
+    // - year-2024, year-2025: REPLACE innerHTML (legacy simple cards — no 3-tier).
     // ──────────────────────────────────────────────────────────────────────
-    if (parseInt(year, 10) === 2026) {
-      // APPEND: preserve hardcoded static + hardcoded live fallback, tambah dynamic curated below
-      let dynamicContainer = yearEl.querySelector('#live-dynamic-container');
-      if (!dynamicContainer) {
-        // First render — buat section header + container
-        const sectionHeader = document.createElement('div');
-        sectionHeader.style.cssText = 'margin-top:2.5rem;padding:0.9rem 1.1rem;background:linear-gradient(90deg,rgba(90,144,128,0.18) 0%,rgba(168,200,188,0.08) 100%);border:1.5px dashed #5a9080;border-radius:10px;text-align:center;font-size:0.85rem;font-weight:700;color:#1e7035';
-        sectionHeader.innerHTML = '<span class="lang-id">📡 Milestones Live — Curated dari Dashboard Internal (update berkala)</span><span class="lang-en">📡 Live Milestones — Curated from Internal Dashboard (periodic updates)</span>';
-        dynamicContainer = document.createElement('div');
-        dynamicContainer.id = 'live-dynamic-container';
-        yearEl.appendChild(sectionHeader);
-        yearEl.appendChild(dynamicContainer);
-      }
-      // Re-render dynamic content (idempotent saat fetch ulang)
-      dynamicContainer.innerHTML = phaseBlocks;
-    } else {
-      // year-2024 + year-2025: original REPLACE behavior (preserve banner + summary)
-      yearEl.innerHTML = activeBannerHTML + yearSummaryHTML + phaseBlocks;
-    }
+    yearEl.innerHTML = activeBannerHTML + yearSummaryHTML + phaseBlocks;
   });
 
   // Show curated badge somewhere visible
