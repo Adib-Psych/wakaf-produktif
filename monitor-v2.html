@@ -4884,8 +4884,11 @@ async function generateBuktiBayar() {
   }).join('');
 
   // Full receipt HTML (off-screen render target)
+  // Locked 25 Mei 2026: Adib request — add print-ready frame border (sebelumnya tidak ada outer border)
+  // Double-frame design via box-shadow: outer 3px dark green ring + inner 1px gold inset ring
+  // (pakai box-shadow bukan border supaya tidak mempengaruhi internal section width)
   const receiptHTML = `
-    <div id="bukti-bayar-render" style="position:fixed;top:0;left:-9999px;width:800px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;box-shadow:0 4px 12px rgba(0,0,0,.1)">
+    <div id="bukti-bayar-render" style="position:fixed;top:0;left:-9999px;width:800px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;border:3px solid #1F5F47;box-shadow:inset 0 0 0 1px #ffffff, inset 0 0 0 2px #D4AF37, 0 4px 12px rgba(0,0,0,.1);box-sizing:content-box">
       <!-- HEADER — Professional letterhead style -->
       <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47;position:relative">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
