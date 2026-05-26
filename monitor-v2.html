@@ -914,9 +914,14 @@
             <div style="font-size:10px;color:var(--mute);margin-top:2px" id="anto-sisa-note">—</div>
           </div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
-          <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:var(--moss);font-size:11px" title="Top-up saldo: Adib transfer uang ke Anto untuk modal belanja lapangan">+ Tambah Transfer ke Anto</button>
-          <button class="btn btn-primary" onclick="openTrxModal('keluar_anto')" style="background:var(--cherry);font-size:11px" title="Catat pengeluaran yang sudah Anto bayar pakai petty cash (settle nota)">+ Tambah Pengeluaran Anto</button>
+        <!-- Mas Anto OUT permanen 19 Mei 2026 — tombol entry baru disembunyikan.
+             Tabel historis di bawah tetap visible untuk audit trail era pre-19 Mei. -->
+        <div style="display:none">
+          <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:var(--moss);font-size:11px">+ Tambah Transfer ke Anto (DEPRECATED)</button>
+          <button class="btn btn-primary" onclick="openTrxModal('keluar_anto')" style="background:var(--cherry);font-size:11px">+ Tambah Pengeluaran Anto (DEPRECATED)</button>
+        </div>
+        <div style="margin-bottom:12px;padding:8px 12px;background:#f4f4f0;border-left:3px solid #8B8579;border-radius:6px;font-size:10.5px;color:#6b6b6b;font-style:italic">
+          📜 Mas Anto OUT permanen sejak 19 Mei 2026. Tabel di bawah = audit trail historis (Transfer + Pengeluaran via Anto era T.A.). Pembayaran baru langsung via "Pengeluaran Kas Wakif" di atas.
         </div>
         <div class="table-wrap">
           <table style="font-size:11.5px">
@@ -1011,8 +1016,11 @@
             <select id="trx-tipe" onchange="onTrxTipeChange()" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
               <option value="masuk">💰 Pemasukan (donasi/transfer wakif)</option>
               <option value="keluar_langsung">💸 Pengeluaran langsung kas wakif</option>
-              <option value="transfer_anto">🏦 Transfer ke Petty Cash Anto</option>
-              <option value="keluar_anto">🛒 Pengeluaran via Anto (settle nota)</option>
+              <!-- Mas Anto OUT permanen 19 Mei 2026 — 2 opsi via Anto disembunyikan dari user.
+                   Tetap di DOM untuk backward-compat dengan openTrxModal('transfer_anto'/'keluar_anto')
+                   yang masih bisa di-trigger programatically untuk historical entry import/recovery. -->
+              <option value="transfer_anto" disabled hidden>🏦 Transfer ke Petty Cash Anto (DEPRECATED — Anto OUT 19 Mei)</option>
+              <option value="keluar_anto" disabled hidden>🛒 Pengeluaran via Anto (DEPRECATED — Anto OUT 19 Mei)</option>
             </select>
           </div>
           <div id="trx-kat-row">
@@ -1157,12 +1165,11 @@
           </div>
           <div>
             <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Sumber Dana</label>
+            <!-- Mas Anto OUT permanen 19 Mei 2026 — Petty Cash Anto option removed.
+                 Radio dipertahankan (hidden) untuk backward-compat dengan confirmPaid() yang baca value. -->
             <div style="display:flex;gap:8px;margin-top:6px">
-              <label style="flex:1;padding:10px;border:1.5px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px">
-                <input type="radio" name="paid-source" value="wakif" checked> 💼 Kas Wakif Langsung
-              </label>
-              <label style="flex:1;padding:10px;border:1.5px solid #ddd;border-radius:6px;cursor:pointer;font-size:12px">
-                <input type="radio" name="paid-source" value="anto"> 🏦 Via Petty Cash Anto
+              <label style="flex:1;padding:10px;border:1.5px solid #5a9080;background:#DDE9E3;border-radius:6px;font-size:12px;color:#1F5F47;font-weight:700">
+                <input type="radio" name="paid-source" value="wakif" checked style="margin-right:6px"> 💼 Kas Wakif Langsung
               </label>
             </div>
           </div>
@@ -4722,9 +4729,10 @@ function batchPay() {
       ids.push(id);
     }
   });
-  const sourceConfirm = confirm(`Bayar ${ids.length} item, total ${fmtRpShort(total)}?\n\nOK = bayar dari KAS WAKIF langsung\nCancel = bayar via PETTY CASH ANTO`);
-  // Both flows continue; we just use confirm result as source picker
-  const source = sourceConfirm ? 'wakif' : 'anto';
+  if (!confirm(`Bayar ${ids.length} item, total ${fmtRpShort(total)}?\n\nDari Kas Wakif langsung.`)) return;
+  // Mas Anto OUT permanen 19 Mei 2026 — petty cash Anto option removed dari new payment flow.
+  // Historical bayar_source='anto' di entries lama tetap intact untuk audit trail.
+  const source = 'wakif';
   const today = new Date().toISOString().slice(0,10);
   ids.forEach(id => {
     const it = UPAH_ITEMS.find(x => x.id === id);
