@@ -14751,11 +14751,20 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       'wkkn_v2_enso_state',                                 // read-only cache from NOAA
       'wkkn_form_hero_closed', 'wkkn_late_entry_reviewed', // UI state per-device
       'wkkn_workers_active_v1',                             // display cache
+      'wkkn_v2_dismissed_suggest',                          // 25 Mei 2026: Suggested Panel dismiss list (local preference)
+      // Per-entry Firestore sync (NOT singleton bulk) — verified via submitForm + Edit + Delete hooks
+      'wkkn_v2_laporan',                                    // 25 Mei 2026: synced via syncLaporanEntry per-entry
       // schema version flags (trivial)
       'wkkn_v2_upah_ver','wkkn_v2_cashbook_ver','wkkn_v2_ms_ver',
       'wkkn_v2_opt_obs_version','wkkn_v2_panen2025_backfill_ver',
       'wkkn_sop_status_ver',
+      // Orphan/legacy localStorage keys (preserved untuk backward-compat, no sync needed)
+      'wkkn_v2_panen_lots_2026',                            // 25 Mei: legacy variant key (real Firestore key: wkkn_v2_panen_lots)
     ]);
+
+    // Cross-app prefixes — keys yang BUKAN milik monitor-v2 (Bonsari Coffee Dashboard dll)
+    // Audit skip — domain shared (adib-psych.github.io) tapi state milik app berbeda.
+    const LS_CROSS_APP_PREFIXES = ['bonsari_'];
 
     window.auditFirestoreCoverage = () => {
       const allKeys = Object.keys(localStorage).filter(k => k.startsWith('wkkn_') || k.startsWith('bonsari_') || k === 'anthropic_api_key');
@@ -14763,6 +14772,11 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       const coverageStatus = {};
 
       allKeys.forEach(key => {
+        // Cross-app keys (Bonsari Coffee Dashboard, etc) — not our concern
+        if (LS_CROSS_APP_PREFIXES.some(p => key.startsWith(p))) {
+          coverageStatus[key] = '🔵 cross-app (skip)';
+          return;
+        }
         if (LS_PER_DEVICE_ONLY.has(key)) {
           coverageStatus[key] = '⚪ per-device (skip)';
           return;
