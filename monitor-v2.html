@@ -12201,8 +12201,11 @@ function renderCashbook() {
     const m = (ket || '').match(/^Upah\s+([^—]+?)\s+—/);
     return m ? m[1].trim() : null;
   }
+  // 26 Mei 2026 fix: include BOTH batch [lgs·batch] dan single-pay [lgs] tags.
+  // Single-pay via confirmPaid() create entries dengan [lgs] (no ·batch suffix).
+  // Tetap di-group kalau same tgl+pelapor+kat+source — visual cleanliness.
   function _isBatchAutolink(t) {
-    return t.src === 'autolink' && /\[(lgs|via Anto)·batch\]/.test(t.ket || '');
+    return t.src === 'autolink' && /\[(lgs|via Anto)(?:·batch)?\]/.test(t.ket || '');
   }
 
   const groups = [];
@@ -12217,7 +12220,8 @@ function renderCashbook() {
       groups.push({ type: 'single', entries: [t] });
       return;
     }
-    const batchTag = /\[via Anto·batch\]/.test(t.ket) ? 'anto' : 'lgs';
+    // 26 Mei: detect [via Anto] OR [via Anto·batch] (both = anto source)
+    const batchTag = /\[via Anto(?:·batch)?\]/.test(t.ket) ? 'anto' : 'lgs';
     const key = `${t.tgl}|${t.tipe}|${t.kat || '?'}|${pelapor}|${batchTag}`;
     if (!groupIndex[key]) {
       const group = { type: 'batch', key, pelapor, tag: batchTag, entries: [] };
@@ -12251,7 +12255,11 @@ function renderCashbook() {
 
   function _renderBatchParent(g) {
     const total = g.entries.reduce((s, e) => s + (e.keluar || 0), 0);
-    const tagBadge = g.tag === 'anto' ? '🏦 via Anto·batch' : '💼 lgs·batch';
+    // Detect mixed: kalau ada entries dengan AND tanpa ·batch suffix → tampilkan "mixed"
+    const hasBatchTag = g.entries.some(e => /·batch\]/.test(e.ket || ''));
+    const hasSingleTag = g.entries.some(e => /\[(lgs|via Anto)\]/.test(e.ket || ''));
+    const tagSuffix = (hasBatchTag && hasSingleTag) ? ' (batch + single)' : (hasBatchTag ? '·batch' : '');
+    const tagBadge = g.tag === 'anto' ? `🏦 via Anto${tagSuffix}` : `💼 lgs${tagSuffix}`;
     const dateRange = (() => {
       const dates = g.entries
         .map(e => { const m = (e.ket || '').match(/\((\w+, \d+ \w+)\)/); return m ? m[1] : null; })
