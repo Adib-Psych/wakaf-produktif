@@ -12190,25 +12190,120 @@ function renderCashbook() {
   // Tidak mutate stored data — preserve audit trail
   const renameKebun = (text) => (text || '').replace(/Bidang\s+(\d)/g, 'Kebun $1').replace(/Bidang\s+(\w+)/g, 'Kebun $1');
 
-  document.getElementById('cashbook-tbody').innerHTML = filtered.map(t => {
+  // ──────────────────────────────────────────────────────────────────────
+  // DISPLAY-ONLY GROUPING (locked 25 Mei 2026 per Adib feedback)
+  // Batch upah payments create 1 cashbook entry PER UPAH item (preserve 1:1 ref
+  // untuk markUnpaid rollback). Tapi display jadi redundant — 15 baris untuk
+  // 1 batch payment Cak Yit Rp 900K. Group display by signature, preserve data.
+  // ──────────────────────────────────────────────────────────────────────
+  // Signature: tgl + tipe + kat + pelapor_name + batch_tag (from ket pattern)
+  function _extractBatchPelapor(ket) {
+    const m = (ket || '').match(/^Upah\s+([^—]+?)\s+—/);
+    return m ? m[1].trim() : null;
+  }
+  function _isBatchAutolink(t) {
+    return t.src === 'autolink' && /\[(lgs|via Anto)·batch\]/.test(t.ket || '');
+  }
+
+  const groups = [];
+  const groupIndex = {};
+  filtered.forEach(t => {
+    if (!_isBatchAutolink(t)) {
+      groups.push({ type: 'single', entries: [t] });
+      return;
+    }
+    const pelapor = _extractBatchPelapor(t.ket);
+    if (!pelapor) {
+      groups.push({ type: 'single', entries: [t] });
+      return;
+    }
+    const batchTag = /\[via Anto·batch\]/.test(t.ket) ? 'anto' : 'lgs';
+    const key = `${t.tgl}|${t.tipe}|${t.kat || '?'}|${pelapor}|${batchTag}`;
+    if (!groupIndex[key]) {
+      const group = { type: 'batch', key, pelapor, tag: batchTag, entries: [] };
+      groups.push(group);
+      groupIndex[key] = group;
+    }
+    groupIndex[key].entries.push(t);
+  });
+
+  function _renderSingleRow(t, opts) {
+    opts = opts || {};
     const srcInfo = srcLabel[t.src] || { icon: '?', desc: 'Unknown source' };
-    // Edit/Delete button — manual only. Autolink = locked supaya tidak break UPAH-Cashbook sync.
     const isManual = t.src === 'manual';
     const actionBtns = isManual
       ? `<button onclick="editTrx('${t.id}')" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Edit transaksi">✏️ Edit</button><button onclick="deleteTrx('${t.id}')" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Hapus transaksi">🗑️</button>`
       : `<span style="font-size:10px;color:#bbb;cursor:help" title="Auto-link dari UPAH Pekerja — untuk edit/batal, gunakan tombol di tab Upah Pekerja (↺ Batal). Mencegah sync break antara UPAH dan Cashbook.">🔒 locked</span>`;
-    return `
-    <tr>
-      <td>${formatTglShort(t.tgl)}</td>
-      <td>${tipeLabel[t.tipe] || t.tipe}</td>
-      <td>${renameKebun(t.ket)}</td>
+    const rowStyle = opts.isChild ? 'background:#fafaf7' : '';
+    const indent = opts.isChild ? 'padding-left:24px;font-size:11px;color:#6b7878' : '';
+    const childClass = opts.isChild ? `class="cb-batch-child" data-group-key="${opts.groupKey}" style="display:none;${rowStyle}"` : `style="${rowStyle}"`;
+    return `<tr ${childClass}>
+      <td style="${indent}">${opts.isChild ? '↳ ' : ''}${formatTglShort(t.tgl)}</td>
+      <td style="${opts.isChild ? 'font-size:11px' : ''}">${tipeLabel[t.tipe] || t.tipe}</td>
+      <td style="${opts.isChild ? 'font-size:11px;color:#5a5a5a' : ''}">${renameKebun(t.ket)}</td>
       <td>${t.kat ? `<code style="font-size:10px;background:var(--cream);padding:2px 5px;border-radius:3px">${t.kat}</code>` : '<span style="color:#bbb">—</span>'}</td>
-      <td style="text-align:right;color:${t.keluar>0?'var(--cherry)':'#bbb'};font-weight:600">${t.keluar > 0 ? fmtRp(t.keluar) : '—'}</td>
+      <td style="text-align:right;color:${t.keluar>0?'var(--cherry)':'#bbb'};font-weight:600;${opts.isChild ? 'font-size:11px' : ''}">${t.keluar > 0 ? fmtRp(t.keluar) : '—'}</td>
       <td style="text-align:center">${t.nota ? `<button onclick="viewNota('${t.nota}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="Lihat nota">📎</button>` : '<span style="color:#ddd">—</span>'}</td>
       <td style="text-align:center" title="${srcInfo.desc}"><span style="cursor:help;font-size:13px">${srcInfo.icon}</span></td>
       <td style="text-align:center;white-space:nowrap">${actionBtns}</td>
     </tr>`;
-  }).join('') || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada pengeluaran sesuai filter.</td></tr>';
+  }
+
+  function _renderBatchParent(g) {
+    const total = g.entries.reduce((s, e) => s + (e.keluar || 0), 0);
+    const tagBadge = g.tag === 'anto' ? '🏦 via Anto·batch' : '💼 lgs·batch';
+    const dateRange = (() => {
+      const dates = g.entries
+        .map(e => { const m = (e.ket || '').match(/\((\w+, \d+ \w+)\)/); return m ? m[1] : null; })
+        .filter(Boolean);
+      if (dates.length === 0) return '';
+      if (dates.length === 1) return ` — 1 hari (${dates[0]})`;
+      return ` — ${dates.length} hari (${dates[0].split(',')[1].trim()} … ${dates[dates.length-1].split(',')[1].trim()})`;
+    })();
+    const groupKey = g.key.replace(/[^a-zA-Z0-9]/g, '_');
+    const firstKat = g.entries[0].kat || '';
+    return `<tr style="background:#FFFBEB;border-top:2px solid #D4AF37;cursor:pointer" onclick="_toggleBatchGroup('${groupKey}', this)">
+      <td style="font-weight:700">${formatTglShort(g.entries[0].tgl)}</td>
+      <td style="font-weight:700">💵 Bayar Upah</td>
+      <td style="font-weight:700;color:#8B6914">
+        <span class="cb-batch-toggle" style="display:inline-block;width:14px">▶</span>
+        Upah ${g.pelapor} — <strong>${g.entries.length} item</strong> batch${dateRange}
+        <span style="display:inline-block;margin-left:8px;background:#FEF3C7;color:#78350F;padding:1px 7px;border-radius:8px;font-size:10px;font-weight:700">${tagBadge}</span>
+      </td>
+      <td>${firstKat ? `<code style="font-size:10px;background:var(--cream);padding:2px 5px;border-radius:3px">${firstKat}</code>` : '<span style="color:#bbb">—</span>'}</td>
+      <td style="text-align:right;color:var(--cherry);font-weight:800;font-size:13px">${fmtRp(total)}</td>
+      <td style="text-align:center"><span style="color:#bbb;font-size:10px">${g.entries.filter(e => e.nota).length} / ${g.entries.length} nota</span></td>
+      <td style="text-align:center" title="Auto-linked batch dari UPAH Pekerja"><span style="font-size:13px">🔗</span></td>
+      <td style="text-align:center;white-space:nowrap"><span style="font-size:10px;color:#bbb;cursor:help" title="Klik baris untuk expand/collapse rincian. Untuk batal individual item, gunakan tab Upah Pekerja → ↺ Batal.">🔒 group</span></td>
+    </tr>`;
+  }
+
+  // Render: parent rows + hidden children for batch groups
+  const rowsHTML = groups.map(g => {
+    if (g.type === 'single') {
+      return _renderSingleRow(g.entries[0]);
+    }
+    if (g.entries.length === 1) {
+      // Single batch entry → render as normal row (no need for collapse)
+      return _renderSingleRow(g.entries[0]);
+    }
+    // Multi-entry batch: parent + children
+    const groupKey = g.key.replace(/[^a-zA-Z0-9]/g, '_');
+    const parent = _renderBatchParent(g);
+    const children = g.entries.map(t => _renderSingleRow(t, { isChild: true, groupKey })).join('');
+    return parent + children;
+  }).join('');
+
+  document.getElementById('cashbook-tbody').innerHTML = rowsHTML || '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--mute)">Tidak ada pengeluaran sesuai filter.</td></tr>';
+}
+
+// Locked 25 Mei 2026: toggle batch group expand/collapse di Laporan Keuangan
+function _toggleBatchGroup(groupKey, parentRow) {
+  const children = document.querySelectorAll('tr.cb-batch-child[data-group-key="' + groupKey + '"]');
+  const isExpanded = children.length > 0 && children[0].style.display !== 'none';
+  const toggleIcon = parentRow.querySelector('.cb-batch-toggle');
+  children.forEach(c => c.style.display = isExpanded ? 'none' : 'table-row');
+  if (toggleIcon) toggleIcon.textContent = isExpanded ? '▶' : '▼';
 }
 
 function renderAntoLedger() {
