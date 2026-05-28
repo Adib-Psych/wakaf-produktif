@@ -157,6 +157,8 @@
   .role-anto{background:#dde9e3;color:#1f5f47}
   .role-yit{background:#fde9d6;color:#8c4a18}
   .role-kumpul{background:#e6e2f3;color:#5b4690}
+  .role-wakif{background:#fef3c7;color:#78350f;font-weight:700}  /* 26 Mei: gold accent untuk Adib entries */
+  .role-hendy{background:#dbeafe;color:#1e3a8a;font-weight:700}  /* 26 Mei: blue accent untuk Hendy entries */
   .bidang-pill{padding:1px 6px;border-radius:4px;font-size:10px;font-weight:700;background:#eef;color:#446}
   .bidang-1{background:#dde9e3;color:#1f5f47}
   .bidang-2{background:#e8e0d2;color:#6e560f}
@@ -3420,10 +3422,19 @@ function renderLog() {
     (!fp || d.pelapor===fp) && matchKebun(d) && (!fk || d.kategori===fk) && matchArchive(d)
   ).sort((a,b)=>b.tgl.localeCompare(a.tgl));
 
-  const roleMap = {ANTO:['Mas Anto','role-anto'], YIT:['Cak Yit','role-yit'], KUMPUL:['Pak Kumpul','role-kumpul']};
+  // 26 Mei 2026: tambah WAKIF + HENDY supaya entries Adib/Hendy via Form Input render dengan nama yang benar
+  // (sebelumnya undefined → crash row). Plus safe fallback untuk pelapor unknown.
+  const roleMap = {
+    ANTO:   ['Mas Anto', 'role-anto'],
+    YIT:    ['Cak Yit', 'role-yit'],
+    KUMPUL: ['Pak Kumpul', 'role-kumpul'],
+    WAKIF:  ['📋 Adib (Wakif)', 'role-wakif'],
+    ADIB:   ['📋 Adib (Wakif)', 'role-wakif'],
+    HENDY:  ['🎯 Hendy (Strategic)', 'role-hendy']
+  };
   const tbody = document.getElementById('log-tbody');
   tbody.innerHTML = data.map(d => {
-    const [name,cls] = roleMap[d.pelapor];
+    const [name,cls] = roleMap[d.pelapor] || [d.pelapor || '?', 'role-yit'];  // safe fallback untuk pelapor unknown
     // Pohon display: prefer top-level d.pohon, fallback ke detail_form sub-field kalau ada (jumlah pohon, qty pohon, dll)
     let pohonDisp = '<span style="color:#bbb">-</span>';
     let pohonTitle = '';
@@ -4414,7 +4425,10 @@ function submitForm() {
     upahMsg = `\n\n📝 Mas Anto = sweat equity (pro-bono per Notulen 1-2 Mei) — tidak masuk timeline upah harian. Kontribusi tetap tercatat untuk bagi hasil pasca-BEP.`;
   }
 
-  let alertSummary = '✅ Laporan tersimpan ke localStorage!';
+  // 26 Mei 2026: Message updated — entry SUDAH auto-sync ke Firestore via syncLaporanEntryToFirestore
+  // (fire-and-forget di line 4363). Cross-browser live <2 detik. Pesan sebelumnya "tersimpan ke localStorage"
+  // misleading karena cuma reflect step 1 dari 2-step persistence.
+  let alertSummary = '✅ Laporan tersimpan + auto-sync ke Firestore (cross-browser live <2 detik)';
   if (climateAlerts.length > 0) {
     alertSummary += `\n\n⚡ ${climateAlerts.length} climate alert(s) terdeteksi:\n` +
       climateAlerts.map((a,i) => `${i+1}. ${a.msg}`).join('\n');
