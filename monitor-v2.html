@@ -455,13 +455,14 @@
             <div id="f-tgl-preview" style="font-size:12px;color:var(--moss);font-weight:700;margin-top:6px;letter-spacing:0.3px"></div>
           </div>
           <div class="field">
-            <label class="field-lbl">Kebun <span class="req">*</span></label>
+            <label class="field-lbl">Kebun <span class="req">*</span> <small style="font-weight:400;color:var(--mute);font-size:10px">(boleh pilih >1 — parity PWA Worker)</small></label>
             <div class="radio-row" id="form-bidang">
-              <div class="radio-pill" data-val="1" onclick="setRadio('form-bidang',this)">Kebun 1<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, kecil</small></div>
-              <div class="radio-pill" data-val="2" onclick="setRadio('form-bidang',this)">Kebun 2<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, besar</small></div>
-              <div class="radio-pill" data-val="3" onclick="setRadio('form-bidang',this)">Kebun 3<br><small style="font-weight:400;color:var(--mute);font-size:10px">bawah</small></div>
-              <div class="radio-pill" data-val="4" onclick="setRadio('form-bidang',this)">🏠 Kebun 4<br><small style="font-weight:400;color:var(--mute);font-size:10px">belakang Rumah</small></div>
+              <div class="radio-pill" data-val="1" onclick="setMultiKebun(this)">Kebun 1<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, kecil</small></div>
+              <div class="radio-pill" data-val="2" onclick="setMultiKebun(this)">Kebun 2<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, besar</small></div>
+              <div class="radio-pill" data-val="3" onclick="setMultiKebun(this)">Kebun 3<br><small style="font-weight:400;color:var(--mute);font-size:10px">bawah</small></div>
+              <div class="radio-pill" data-val="4" onclick="setMultiKebun(this)">🏠 Kebun 4<br><small style="font-weight:400;color:var(--mute);font-size:10px">belakang Rumah</small></div>
             </div>
+            <div id="form-bidang-preview" style="font-size:11px;color:var(--moss);font-weight:600;margin-top:4px;min-height:14px"></div>
           </div>
           <div class="field">
             <label class="field-lbl">Blok / Lokasi spesifik</label>
@@ -728,9 +729,62 @@
         </div>
       </div>
 
+      <!-- Expected Funding Inflow from Bonsari Y1 (locked 27 Mei 2026) -->
+      <div class="card" style="background:linear-gradient(135deg,#e8f4ed,#fdf8ee);border-left:4px solid var(--moss)">
+        <div class="card-title" style="color:var(--moss)"><span class="num" style="background:var(--moss)">2</span>💰 Expected Funding — Saldo Kas Kebun dari Bonsari Y1</div>
+        <p style="font-size:11px;color:#4a4030;margin-bottom:12px">Saldo expected dari musyarakah Wakaf × Bonsari (panen 2025 invested ke Bonsari Y1). <strong>Cair 30 Sep 2026</strong> saat Bonsari Y1 close. Formula LOCKED 27 Mei 2026.</p>
+
+        <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:start">
+          <!-- Hero saldo -->
+          <div style="background:linear-gradient(135deg,#2d5640,#5b9279);color:#fff;border-radius:10px;padding:16px 18px;position:relative;overflow:hidden">
+            <div style="position:absolute;top:-12px;right:-8px;font-size:70px;opacity:0.1">🌱</div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;font-weight:800;opacity:0.92">Saldo Untuk Perawatan Siklus 2027</div>
+            <div style="font-size:30px;font-weight:800;line-height:1;margin-top:6px;font-variant-numeric:tabular-nums">Rp 9.417.671</div>
+            <div style="font-size:11px;opacity:0.95;margin-top:6px;line-height:1.45">~37% dari RAB target Rp 25 jt · Cair 30 Sep 2026</div>
+          </div>
+
+          <!-- Breakdown -->
+          <div style="background:#fff;border-radius:10px;padding:12px 14px;border:1px solid #e5ddd0">
+            <div style="font-size:10px;color:#7a6a55;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px">Komponen Breakdown</div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px dashed #e5ddd0">
+              <span>Modal 40% Invest kembali</span>
+              <strong>Rp 4.452.000</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px dashed #e5ddd0">
+              <span>Bagi Hasil (X% 10,02% × Net)</span>
+              <strong>Rp 795.841</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0">
+              <span>Komitmen Sedekah (30% × Net)</span>
+              <strong>Rp 4.169.830</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0 0;margin-top:4px;border-top:1px solid #5b9279;font-weight:800;color:#2d5640">
+              <span>= TOTAL POOL OPERASIONAL</span>
+              <span>Rp 9.417.671</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes & Liability separate -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+          <div style="background:#fdf8ee;border-left:3px solid #C19A30;border-radius:6px;padding:8px 11px">
+            <div style="font-size:10px;font-weight:800;color:#C19A30;text-transform:uppercase;margin-bottom:3px">📒 Liability ke Wakif (Separate)</div>
+            <div style="font-size:11px;color:#4a4030;line-height:1.4"><strong>Rp 3.935.881</strong> (Hak Wakif modal + bagi hasil 30/70) — carry-over di Kas Kebun. BUKAN bagian saldo perawatan.</div>
+          </div>
+          <div style="background:#fdf1ee;border-left:3px solid var(--cherry);border-radius:6px;padding:8px 11px">
+            <div style="font-size:10px;font-weight:800;color:var(--cherry);text-transform:uppercase;margin-bottom:3px">⏱ Timing</div>
+            <div style="font-size:11px;color:#4a4030;line-height:1.4">Cair <strong>30 Sep 2026</strong>. Untuk perawatan Mei-Sep 2026 (4 bulan menjelang panen) → sumber dana lain (Adib personal funding atau pinjam Liability).</div>
+          </div>
+        </div>
+
+        <div style="margin-top:10px;font-size:10px;color:#7a6a55;font-style:italic">
+          ℹ️ Detail formula musyarakah lihat: <code>Coffee/Coffee & Wakaf/Mekanisme_Musyarakah_Modal_40_Persen_Wakaf_27Mei2026.html</code> · Calculator: <code>Kalkulator_Musyarakah_Wakaf_Bonsari_27Mei2026.xlsx</code> · SOP: <code>SOP_Perhitungan_Musyarakah_Wakaf_Bonsari_27Mei2026.docx</code>
+        </div>
+      </div>
+
       <!-- Charts Row -->
       <div class="card">
-        <div class="card-title"><span class="num">2</span>Visualisasi Serapan per Kategori</div>
+        <div class="card-title"><span class="num">3</span>Visualisasi Serapan per Kategori</div>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px">
           <div>
             <div style="font-size:11px;color:var(--mute);margin-bottom:6px;font-weight:600">📊 % Serapan vs RAB Final</div>
@@ -745,7 +799,7 @@
 
       <!-- Tabel RAB 9 Kategori Expandable -->
       <div class="card">
-        <div class="card-title"><span class="num">3</span>Detail RAB per Kategori (9 utama × ~30 sub-item)</div>
+        <div class="card-title"><span class="num">4</span>Detail RAB per Kategori (9 utama × ~30 sub-item)</div>
         <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Klik baris kategori untuk expand sub-items. Kolom: Estimasi Nasional · Adjustment Lokal Pujon-NGT · RAB Final · Aktual (auto dari Cashbook) · % Serapan.</p>
         <div class="table-wrap">
           <table style="font-size:12px">
@@ -819,7 +873,7 @@
       <!-- ============ SECTION 1 — UANG MASUK ============ -->
       <div class="card" style="border-left:4px solid var(--moss)">
         <div class="card-title" style="color:var(--moss)"><span class="num">1</span>💰 Laporan Uang Masuk</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pemasukan ke Kas Wakif Kebun: hasil panen kopi, donasi, hibah, atau modal kerja. <strong style="color:var(--moss)">Saldo Awal 2026 = Rp 6.307.000</strong> dari Panen 2025 (Modal Kerja 40% Rp 4,45 jt + Haq Musyarakah Rp 1,86 jt). Distribusi hulu (Haq DM Rp 5 jt + Haq Wakif Personal Rp 1,68 jt) terjadi di account Adib bisnis, tidak masuk Kas Kebun — lihat rincian di catatan row saldo awal.</p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pemasukan ke Kas Wakif Kebun: hasil panen kopi, donasi, hibah, atau modal kerja. <strong style="color:var(--moss)">Saldo dari Panen 2025 = Rp 9.417.671</strong> (proyeksi cair 30 Sep 2026 saat Bonsari Y1 close): Modal Invest 40% Rp 4,45 jt + Bagi Hasil ops Rp 796K + Komitmen Sedekah Rp 4,17 jt. Distribusi hulu (DM Rp 3,34 jt → TPQ) + Liability Hak Wakif Rp 3,94 jt (carry-over sampai BEP) tracked terpisah — lihat rincian di catatan row. <em>Formula Musyarakah LOCKED 27 Mei 2026 · X% 10,02%.</em></p>
         <div style="display:flex;justify-content:space-between;align-items:center;background:#f5fbf7;padding:14px 18px;border-radius:8px;margin-bottom:12px;gap:14px;flex-wrap:wrap">
           <div>
             <div style="font-size:11px;color:var(--mute);letter-spacing:.5px;font-weight:700">TOTAL UANG MASUK</div>
@@ -3436,7 +3490,25 @@ function editLaporan(id) {
 
     // Set radio pills
     setRadioByValue('form-pelapor', lap.pelapor); STATE.pelapor = lap.pelapor;
-    setRadioByValue('form-bidang', String(lap.bidang)); STATE.bidang = lap.bidang;
+    // Multi-kebun populate (locked 26 Mei 2026 — parity PWA):
+    // Prefer lap.kebun_list (array) — fallback lap.bidang (single string) untuk entries lama
+    const kebunArr = Array.isArray(lap.kebun_list) && lap.kebun_list.length > 0
+      ? lap.kebun_list.map(k => String(k).replace(/[KkBb]/g, ''))  // 'K1' → '1'
+      : (lap.bidang ? [String(lap.bidang)] : []);
+    STATE.bidang_list = kebunArr;
+    STATE.bidang = kebunArr[0] || null;
+    // Visual: highlight semua pill kebun yang ada di bidang_list
+    document.querySelectorAll('#form-bidang .radio-pill').forEach(p => {
+      if (kebunArr.includes(p.dataset.val)) p.classList.add('on');
+      else p.classList.remove('on');
+    });
+    // Update preview
+    const preview = document.getElementById('form-bidang-preview');
+    if (preview && kebunArr.length > 0) {
+      preview.innerHTML = kebunArr.length > 1
+        ? `📍 <strong>${kebunArr.length} kebun</strong>: ${kebunArr.map(b => 'K'+b).join(' + ')}`
+        : `📍 Kebun ${kebunArr[0]}`;
+    }
     if (lap.cuaca_pagi) { setRadioByValue('form-cuaca-pagi', lap.cuaca_pagi); STATE.cuaca_pagi = lap.cuaca_pagi; }
     if (lap.cuaca_siang) { setRadioByValue('form-cuaca-siang', lap.cuaca_siang); STATE.cuaca_siang = lap.cuaca_siang; }
     if (lap.durasi) { setRadioByValue('form-durasi', lap.durasi); STATE.durasi = lap.durasi; }
@@ -3559,6 +3631,39 @@ function setRadio(group, el) {
   // Refresh rainfall alerts kalau cuaca berubah
   if (group === 'form-cuaca-pagi' || group === 'form-cuaca-siang') {
     if (typeof updateRainfallAlert === 'function') updateRainfallAlert();
+  }
+}
+
+// Multi-select kebun (locked 26 Mei 2026 — parity dengan PWA Worker lapor.html)
+// Adib bisa pilih beberapa kebun saat 1 entry mencakup multiple lokasi.
+// STATE.bidang_list = array of strings ['1','3']. STATE.bidang = first (backward-compat).
+function setMultiKebun(el) {
+  if (!Array.isArray(STATE.bidang_list)) STATE.bidang_list = [];
+  const val = el.dataset.val;
+  const idx = STATE.bidang_list.indexOf(val);
+  if (idx >= 0) {
+    // Toggle off
+    STATE.bidang_list.splice(idx, 1);
+    el.classList.remove('on');
+  } else {
+    // Toggle on
+    STATE.bidang_list.push(val);
+    el.classList.add('on');
+  }
+  // Sort numerically untuk consistent display
+  STATE.bidang_list.sort((a, b) => parseInt(a, 10) - parseInt(b, 10));
+  // Maintain backward-compat: STATE.bidang = first selected (or null kalau empty)
+  STATE.bidang = STATE.bidang_list[0] || null;
+  // Update preview text
+  const preview = document.getElementById('form-bidang-preview');
+  if (preview) {
+    if (STATE.bidang_list.length === 0) {
+      preview.textContent = '';
+    } else if (STATE.bidang_list.length === 1) {
+      preview.textContent = `📍 Kebun ${STATE.bidang_list[0]}`;
+    } else {
+      preview.innerHTML = `📍 <strong>${STATE.bidang_list.length} kebun</strong>: ${STATE.bidang_list.map(b => 'K'+b).join(' + ')}`;
+    }
   }
 }
 
@@ -4148,8 +4253,12 @@ function submitForm() {
   const r24 = +document.getElementById('f-rainfall-24h').value || 0;
   const r7d = +document.getElementById('f-rainfall-7d').value || 0;
 
-  if (!STATE.pelapor || !STATE.bidang || !kategori) {
-    alert('Field wajib belum lengkap: Pelapor, Kebun, Kategori');
+  // Backward-compat: kalau bidang_list belum di-set tapi bidang ada (legacy single-select), sync
+  if (STATE.bidang && (!Array.isArray(STATE.bidang_list) || STATE.bidang_list.length === 0)) {
+    STATE.bidang_list = [STATE.bidang];
+  }
+  if (!STATE.pelapor || !STATE.bidang || !Array.isArray(STATE.bidang_list) || STATE.bidang_list.length === 0 || !kategori) {
+    alert('Field wajib belum lengkap: Pelapor, Kebun (minimal 1), Kategori');
     return;
   }
   // Comment 2 (16 Mei): Durasi Kerja wajib untuk YIT/KUMPUL (auto-link ke Upah Pekerja).
@@ -4171,9 +4280,14 @@ function submitForm() {
     const idx = STATE.laporan.findIndex(l => l.id === CURRENT_EDIT_LAPORAN_ID);
     if (idx >= 0) {
       const oldEntry = STATE.laporan[idx];
+      // Multi-kebun fields (locked 26 Mei 2026 — parity PWA)
+      const kebunListArr = STATE.bidang_list.map(b => 'K' + b);
       STATE.laporan[idx] = {
         ...oldEntry,
         tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
+        kebun_list: kebunListArr,                       // ['K1','K3'] — array form
+        kebun_primary: kebunListArr[0] || null,         // first for backward-compat display
+        kebun_list_str: kebunListArr.join('+'),         // 'K1+K3' — display-friendly
         pohon: +pohon || 0, detail: catatan || '(no detail)',
         durasi: STATE.durasi || null,
         detail_form: harvestDetailForm() || oldEntry.detail_form,
@@ -4182,7 +4296,7 @@ function submitForm() {
         last_edited_at: new Date().toISOString(),
         // ⭐ v3.4 (23 Mei 2026): Pattern #10 Firestore sync fields
         tanggal: tgl,  // mirror tgl untuk Firestore Rules compat
-        schema_version: oldEntry.schema_version || '3.4',
+        schema_version: '3.5',  // bump 3.5 = + kebun_list multi-select (26 Mei 2026)
         src: oldEntry.src || 'wakif_form'
       };
       localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
@@ -4211,18 +4325,24 @@ function submitForm() {
     if (typeof hideEditBanner === 'function') hideEditBanner();
   }
 
+  // Multi-kebun fields (locked 26 Mei 2026 — parity PWA Worker lapor.html)
+  const kebunListArr = STATE.bidang_list.map(b => 'K' + b);
   const newEntry = {
     id: 'lap_' + tgl.replace(/-/g,'') + '_' + Math.random().toString(36).substr(2,5),  // ⭐ v3.2: unique ID untuk edit/delete
     tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
+    kebun_list: kebunListArr,                       // ['K1','K3'] — array form, multi-select aware
+    kebun_primary: kebunListArr[0] || null,         // first for backward-compat display
+    kebun_list_str: kebunListArr.join('+'),         // 'K1+K3' — display-friendly
     pohon: +pohon || 0, detail: catatan || '(no detail)',
     durasi: STATE.durasi || null,  // ⭐ v3.1: simpan durasi utk traceability + recovery
     detail_form: harvestDetailForm(),  // ⭐ v3.3 (16 Mei 2026): capture all sub-fields per kategori
     rainfall_24h: r24, rainfall_7d: r7d,
     compliance, alerts: alertMsgs,
     created_at: new Date().toISOString(),
+    // ⭐ v3.5 (26 Mei 2026): + kebun_list multi-select (parity PWA Worker)
     // ⭐ v3.4 (23 Mei 2026): Pattern #10 Firestore Sync — fields untuk Rules compat + cross-browser sync
     tanggal: tgl,                  // mirror tgl untuk Firestore Rules compat
-    schema_version: '3.4',
+    schema_version: '3.5',
     src: 'wakif_form'              // distinguish dari lapor_pwa (worker PWA)
   };
   STATE.laporan.unshift(newEntry);
@@ -4244,7 +4364,11 @@ function submitForm() {
     let model = 'harian';
     let tarifVal = 0;
     let qty = 1;
-    let aktivitasLbl = `${kategori.replace(/_/g,' ')} di Kebun ${STATE.bidang}` + (pohon ? ` (${pohon} phn)` : '');
+    // Multi-kebun aware aktivitas label (locked 26 Mei 2026)
+    const kebunLabel = STATE.bidang_list.length > 1
+      ? `Kebun ${STATE.bidang_list.join('+')}`
+      : `Kebun ${STATE.bidang}`;
+    let aktivitasLbl = `${kategori.replace(/_/g,' ')} di ${kebunLabel}` + (pohon ? ` (${pohon} phn)` : '');
 
     if (STATE.durasi === 'setengah_hari') {
       satuanLbl = '½ hari';
@@ -4319,6 +4443,9 @@ function resetForm() {
   const ralrt = document.getElementById('rainfall-alert-box');
   if (ralrt) { ralrt.style.display = 'none'; ralrt.innerHTML = ''; }
   STATE.pelapor = STATE.bidang = STATE.cuaca_pagi = STATE.cuaca_siang = STATE.durasi = STATE.rainfall_source = null;
+  STATE.bidang_list = [];  // 26 Mei 2026: reset multi-kebun array juga
+  const preview = document.getElementById('form-bidang-preview');
+  if (preview) preview.textContent = '';
   // Default rainfall source
   const obs = document.querySelector('#form-rainfall-source .radio-pill[data-val="observasi"]');
   if (obs) obs.classList.add('on');
@@ -11717,10 +11844,10 @@ function saveCashbook() {
 //
 // Cross-ref: project_kas_wakif_panen2025_backfill.md memory v3.
 // ============================================================================
-const PANEN_2025_BACKFILL_VERSION = '3.0';
+const PANEN_2025_BACKFILL_VERSION = '4.0';
 const PANEN_2025_SEED_IDS = [
   'cb_seed_panen2025_saldo_awal_kebun',
-  // v1 + v2 legacy IDs — included for cleanup migration
+  // v1 + v2 + v3 legacy IDs — included for cleanup migration
   'cb_seed_panen2025_revenue_bonsari',
   'cb_seed_panen2025_dm_distribusi',
   'cb_seed_panen2025_adib_personal_hak',
@@ -11733,14 +11860,14 @@ if (storedBackfillVer !== PANEN_2025_BACKFILL_VERSION) {
   // Cleanup: remove old v1/v2/v3 entries to prevent duplication
   CASHBOOK = CASHBOOK.filter(t => !PANEN_2025_SEED_IDS.includes(t.id));
 
-  // Inject v3.0 single-entry saldo awal
+  // Inject v4.0 single-entry saldo perawatan (LOCKED Formula Musyarakah 27 Mei 2026)
   CASHBOOK.push({
     id: 'cb_seed_panen2025_saldo_awal_kebun',
     tgl: '2025-12-31',
     tipe: 'masuk',
     kat: '',
-    ket: '[BACKFILL Panen 2025 · v3] Saldo Awal Kas Wakif Kebun 2026 = Rp 6.307.000. RINCIAN: (a) Modal Kerja 40% Panen 2025 = Rp 4.452.000 (= 40% × revenue Bonsari Rp 11.130.000 dari penjualan 210 KG GB @ Rp 53K) — saham wakaf yang ditahan di Bonsari sebagai modal kerja. (b) Haq Wakaf Musyarakah = Rp 1.855.000 (= 12,59% × margin pool Rp 14.733.268 dari processing 667 KG Panen 2025-tagged di Bonsari; Wakaf share 12,59% berdasar kontribusi modal Rp 4,45 jt dari total pool gabungan Rp 35,35 jt yang juga termasuk modal Adib pribadi Rp 30,9 jt untuk beli 457 KG tambahan). DISTRIBUSI HULU (di luar Kas Kebun, langsung dari account Adib bisnis): 30% Haq DM Mauquf Alaih TPQ Darul Mujtaba Rp 5.000.000 (aktual "1/3 even more", gesture antaradin) + 30% Haq Wakif Personal Adib Rp 1.680.000 (residual setelah relakan ke DM). Total revenue Rp 11.130.000 = Rp 5 jt DM + Rp 1,68 jt Adib + Rp 4,45 jt Modal Kerja (yang masuk Kas Kebun sebagai saldo awal ini). PRINSIP: musyarakah proporsional, antaradin, no riba. Refs: project_kas_wakif_panen2025_backfill.md, Bonsari Sales Rebuild Excel.',
-    masuk: 6307000,
+    ket: '[BACKFILL Panen 2025 · v4 Formula Musyarakah LOCKED 27 Mei 2026] Saldo Kas Wakif Kebun dari Panen 2025 = Rp 9.417.671 (proyeksi cair 30 Sep 2026 saat Bonsari Y1 close). RINCIAN POOL OPERASIONAL: (a) Modal Invest Kebun Wakaf 40% kembali utuh = Rp 4.452.000 (= 40% × Rp 11.130.000 panen 210 kg @ Rp 53K). (b) Bagi Hasil Musyarakah porsi operasional = Rp 795.841 (= 57,14% × Rp 1.392.722; X% Wakaf 10,02% × Net Profit Bonsari Y1 Rp 13.899.432). (c) Komitmen Sedekah pre-BEP = Rp 4.169.830 (= 30% × Net Profit Bonsari + Bon\'s Cafe Y1; pre-BEP ke operasional, post-BEP pivot ke DM). DISTRIBUSI HULU (DI LUAR Pool Operasional ini): 30% DM Mauquf Alaih TPQ Darul Mujtaba = Rp 3.339.000 (Adib absorb dari personal funds saat pembelian, passthrough ke TPQ). LIABILITY KE WAKIF PERSONAL (carry-over sampai BEP, BUKAN saldo operasional): Rp 3.935.881 (= modal 30% Hak Wakif Rp 3.339.000 + bagi hasil porsi 42,86% Rp 596.881). TIMING: cair 30 Sep 2026 saat Bonsari Y1 close. Untuk perawatan Mei-Sep 2026 → Adib personal funding atau pinjam dari Liability Hak Wakif. POOL MODAL BONSARI Y1 = Rp 77,75 jt (Modal Adib Pribadi Rp 69,96 jt + Invest Wakaf Total Rp 7,79 jt = 10,02%). BEP Opsi A: hasil panen ≥ RAB Rp 25 jt × 2 siklus berturut-turut (target Siklus 2028). PRINSIP: musyarakah proporsional, antaradin, no riba. 3 Term: Hak Wakif (30% Liability) · Komitmen Sedekah (30% × Net Profit Bonsari+Bon\'s Cafe) · Invest Kebun Wakaf (40% Modal Bonsari). Refs: project_musyarakah_formula_locked_27mei2026.md, /Coffee/Coffee & Wakaf/Mekanisme_Musyarakah_Modal_40_Persen_Wakaf_27Mei2026.html, Kalkulator_Musyarakah_Wakaf_Bonsari_27Mei2026.xlsx, SOP_Perhitungan_Musyarakah_Wakaf_Bonsari_27Mei2026.docx, Aset_Knowledge_Musyarakah_Formula_LOCKED_27Mei2026.docx.',
+    masuk: 9417671,
     keluar: 0,
     src: 'auto_backfill',
     nota: null,
@@ -11749,7 +11876,7 @@ if (storedBackfillVer !== PANEN_2025_BACKFILL_VERSION) {
 
   saveCashbook();
   localStorage.setItem('wkkn_v2_panen2025_backfill_ver', PANEN_2025_BACKFILL_VERSION);
-  console.log('[Seed v3.0 Simplified] Panen 2025 backfill — 1 single entry pemasukan Rp 6.307.000 (40% Modal Kerja Rp 4,45 jt + Musyarakah Return Rp 1,86 jt). Distribusi hulu DM/Adib tidak masuk Kas Kebun, hanya di catatan.');
+  console.log('[Seed v4.0 Musyarakah Formula LOCKED] Panen 2025 backfill updated: Saldo Pool Operasional Rp 9.417.671 (proyeksi cair 30 Sep 2026). Pakai formula final 27 Mei 2026 (X% 10,02%, term Hak Wakif/Komitmen Sedekah/Invest Kebun Wakaf). Liability Hak Wakif Rp 3,94 jt tracked separately (carry-over sampai BEP).');
 }
 
 // ---------- COMPUTE SALDO ----------
