@@ -1910,12 +1910,33 @@
       <!-- ─── PER-KEBUN BREAKDOWN — validated dari xlsx Okt 2023 ─── -->
       <div class="card">
         <div class="card-title"><span class="num">2</span>Per Kebun — Kopi 2023 (validated) → 2026 (proyeksi) → 2027 (target)</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Kopi only · Non-kopi (shade + sekunder) di section terpisah di bawah.</p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:8px">Kopi only · Non-kopi (shade + sekunder) di section terpisah di bawah.</p>
+
+        <!-- ─── LUAS TOTAL + DISCREPANCY FLAG (locked Map Wakaf 28 Mei 2026) ─── -->
+        <div style="margin-bottom:14px;padding:11px 14px;background:linear-gradient(90deg,#FFFBEB,#FEF3C7);border-radius:8px;border-left:4px solid #D97706">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+            <div style="font-size:12px;color:#78350F;font-weight:700">
+              📐 <strong>Luas Total Aktual (Map Wakaf):</strong> 5.342 m² (0,534 ha)
+              <small style="font-weight:500;font-style:italic">— K1+K2+K3+K4 sum</small>
+            </div>
+            <span style="background:#D97706;color:#fff;padding:3px 9px;border-radius:10px;font-size:9.5px;font-weight:800">🚨 +424 m² vs CLAUDE.md</span>
+          </div>
+          <div style="font-size:11px;color:#78350F;line-height:1.55">
+            CLAUDE.md sebelumnya catat <strong>4.918 m²</strong> (total kebun). Map aktual <strong>5.342 m²</strong> (per-kebun breakdown). Selisih <strong>+8,6%</strong> — perlu reconcile dengan sertifikat tanah / AIW sebagai canonical.
+            <br/>
+            <strong>Implikasi target density 1.333 phn/ha (jarak 3×2,5 m):</strong> ideal post-selection = <strong>712 phn</strong> (bukan 750 di CLAUDE.md lama).
+          </div>
+        </div>
+        <!-- ──────────────────────────────────────────────────────────────── -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
           <!-- Kebun 1 — Census PENDING (besok 27 Mei) -->
           <div style="border:2px solid #94A3B8;border-radius:10px;padding:14px 16px;background:#F8FAFC;position:relative">
             <div style="position:absolute;top:-12px;left:14px;background:#475569;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 1 ⏳</div>
-            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Paling kecil, pinggir jalan setapak</div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:6px;margin-top:6px;font-style:italic">📍 Paling kecil, pinggir jalan setapak</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:5px 8px;background:#F1F5F9;border-radius:5px;border-left:3px solid #6B7280">
+              <span style="font-size:10px;color:#374151;font-weight:700">📐 Luas</span>
+              <span style="font-size:13px;font-weight:800;color:#1F2937">617 m² <small style="font-weight:500;color:#6B7280">(0,062 ha · 11,5%)</small></span>
+            </div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
               <span style="font-size:10px;color:#78350F;font-weight:700">Okt 2023</span>
               <span style="font-size:18px;font-weight:800;color:#78350F">150</span>
@@ -1940,7 +1961,11 @@
           <!-- Kebun 2 — CENSUS FINAL 26 Mei (Hijau/Biru/Merah) -->
           <div style="border:2px solid #16A34A;border-radius:10px;padding:14px 16px;background:#F0FDF4;position:relative">
             <div style="position:absolute;top:-12px;left:14px;background:#16A34A;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 2 ✅</div>
-            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Paling luas, pinggir jalan utama</div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:6px;margin-top:6px;font-style:italic">📍 Paling luas, pinggir jalan utama</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:5px 8px;background:#ECFDF5;border-radius:5px;border-left:3px solid #16A34A">
+              <span style="font-size:10px;color:#14532D;font-weight:700">📐 Luas</span>
+              <span style="font-size:13px;font-weight:800;color:#14532D">2.324 m² <small style="font-weight:500;color:#15803D">(0,232 ha · 43,5%)</small></span>
+            </div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
               <span style="font-size:10px;color:#78350F;font-weight:700">Okt 2023</span>
               <span style="font-size:18px;font-weight:800;color:#78350F">623</span>
@@ -1955,6 +1980,9 @@
             </div>
             <div style="text-align:right;margin-bottom:6px;padding:3px 6px;background:#DCFCE7;border-radius:4px;font-size:10px;color:#14532D;font-weight:700">
               ▲ +79 phn vs proyeksi (<strong>+19,2%</strong>) — survival rate lebih baik
+            </div>
+            <div style="text-align:right;margin-bottom:6px;padding:3px 6px;background:#FEF3C7;border-radius:4px;font-size:10px;color:#78350F;font-weight:700" title="Density actual 490 phn / 0,232 ha; target ideal 1.333 phn/ha (jarak 3×2,5 m)">
+              📊 Density: <strong>2.108 phn/ha</strong> (+58% over target 1.333)
             </div>
             <!-- 3-warna breakdown -->
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px">
@@ -1983,7 +2011,11 @@
           <!-- Kebun 3 — CENSUS FINAL 26 Mei + 🚨 priority replanting -->
           <div style="border:2px solid #DC2626;border-radius:10px;padding:14px 16px;background:#FEF2F2;position:relative">
             <div style="position:absolute;top:-12px;left:14px;background:#DC2626;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 3 ✅ 🚨</div>
-            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Paling bawah, lereng curam · <strong style="color:#B91C1C">Priority peremajaan</strong></div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:6px;margin-top:6px;font-style:italic">📍 Paling bawah, lereng curam · <strong style="color:#B91C1C">Priority peremajaan</strong></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:5px 8px;background:#FEF2F2;border-radius:5px;border-left:3px solid #DC2626">
+              <span style="font-size:10px;color:#7F1D1D;font-weight:700">📐 Luas</span>
+              <span style="font-size:13px;font-weight:800;color:#7F1D1D">1.577 m² <small style="font-weight:500;color:#B91C1C">(0,158 ha · 29,5%)</small></span>
+            </div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
               <span style="font-size:10px;color:#78350F;font-weight:700">Okt 2023</span>
               <span style="font-size:18px;font-weight:800;color:#78350F">397</span>
@@ -1998,6 +2030,9 @@
             </div>
             <div style="text-align:right;margin-bottom:6px;padding:3px 6px;background:#DCFCE7;border-radius:4px;font-size:10px;color:#14532D;font-weight:700">
               ▲ +88 phn vs proyeksi (<strong>+33,6%</strong>) — survival surprisingly better despite 57% Merah
+            </div>
+            <div style="text-align:right;margin-bottom:6px;padding:3px 6px;background:#FEF3C7;border-radius:4px;font-size:10px;color:#78350F;font-weight:700" title="Density actual 350 phn / 0,158 ha; target ideal 1.333 phn/ha (jarak 3×2,5 m)">
+              📊 Density: <strong>2.220 phn/ha</strong> (+67% over target 1.333)
             </div>
             <!-- 3-warna breakdown -->
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px">
@@ -2026,7 +2061,11 @@
           <!-- Kebun 4 — Census PENDING (besok 27 Mei) -->
           <div style="border:2px solid #94A3B8;border-radius:10px;padding:14px 16px;background:#F8FAFC;position:relative">
             <div style="position:absolute;top:-12px;left:14px;background:#475569;color:#fff;padding:3px 10px;border-radius:12px;font-size:10px;font-weight:800;letter-spacing:1px">KEBUN 4 🏠 ⏳</div>
-            <div style="font-size:11px;color:var(--mute);margin-bottom:8px;margin-top:6px;font-style:italic">📍 Belakang Rumah Wakif · pilot Brocap</div>
+            <div style="font-size:11px;color:var(--mute);margin-bottom:6px;margin-top:6px;font-style:italic">📍 Belakang Rumah Wakif · pilot Brocap</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:5px 8px;background:#F1F5F9;border-radius:5px;border-left:3px solid #6B7280">
+              <span style="font-size:10px;color:#374151;font-weight:700">📐 Luas</span>
+              <span style="font-size:13px;font-weight:800;color:#1F2937">824 m² <small style="font-weight:500;color:#6B7280">(0,082 ha · 15,4%)</small></span>
+            </div>
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
               <span style="font-size:10px;color:#78350F;font-weight:700">Okt 2023</span>
               <span style="font-size:18px;font-weight:800;color:#78350F">212</span>
