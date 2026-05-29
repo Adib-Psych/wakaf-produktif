@@ -4883,10 +4883,17 @@ function renderUpahSummary() {
     summary[it.pelapor].total += total;
     if (it.model === 'harian') {
       summary[it.pelapor].harianRp += total;
-      if (it.satuan === 'full_day') {
+      // Normalize satuan variants — mirror autoCreateUpahFromEntry (line 13571-13573)
+      // Bug fix 29 Mei 2026: previously strict === 'full_day' miss-counted PWA entries
+      // dengan satuan='satu_hari' (lapor.html chip data-val) atau '1_hari' / 'full'.
+      // Total Rp tidak terpengaruh (calcTotal pakai tarif × qty), tapi day counter
+      // undercount → "7 full day + 2 ½ hari" salah, harusnya "15 full + 2 ½".
+      const isFull = (it.satuan === 'full_day' || it.satuan === '1_hari' || it.satuan === 'satu_hari' || it.satuan === 'full');
+      const isHalf = (it.satuan === 'setengah_hari' || it.satuan === '½_hari' || it.satuan === 'half_day');
+      if (isFull) {
         summary[it.pelapor].harianFull += qty;
         if (it.status === 'lunas') summary[it.pelapor].harianFullLunas += qty;
-      } else if (it.satuan === 'setengah_hari') {
+      } else if (isHalf) {
         summary[it.pelapor].harianHalf += qty;
         if (it.status === 'lunas') summary[it.pelapor].harianHalfLunas += qty;
       }
