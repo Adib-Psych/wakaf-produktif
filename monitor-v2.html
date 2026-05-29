@@ -15101,11 +15101,53 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       return { syncFn, loadFn };
     }
 
-    // === UPAH ===
+    // === UPAH (with MERGE GUARD — Pattern #10 hardening, locked 29 Mei 2026) ===
+    // Casus belli: UPAH lunas state lost berulang kali via Firestore sync overwrite.
+    // Wipe-and-replace setter [.length=0 + .push] destroy local LUNAS jika remote
+    // device push state stale (mis. device baru first-load, race condition multi-tab).
+    //
+    // Merge guard semantics:
+    // - LUNAS adalah "forward progress" — bayaran sudah terjadi, financial reality
+    // - Local LUNAS NEVER overwritten by remote BELUM (or remote missing entry)
+    // - Saat merge preservation terjadi, auto-resync ke Firestore propagate ke devices
+    //
+    // Memory: feedback_pattern10_upah_merge_not_overwrite
     {
+      const upahMergeSetter = (d) => {
+        if (typeof UPAH_ITEMS === 'undefined' || !Array.isArray(d)) return;
+        const incomingMap = new Map(d.map(u => [u.id, u]));
+        const preserved = [];
+        UPAH_ITEMS.forEach(local => {
+          const remote = incomingMap.get(local.id);
+          // Preserve LUNAS yang tidak match di remote (remote missing OR remote downgrade ke belum)
+          if (local.status === 'lunas' && (!remote || remote.status !== 'lunas')) {
+            preserved.push(local);
+          }
+        });
+        // Apply incoming (replace local)
+        UPAH_ITEMS.length = 0;
+        d.forEach(x => UPAH_ITEMS.push(x));
+        // Override with preserved local LUNAS (financial reality protect)
+        preserved.forEach(p => {
+          const idx = UPAH_ITEMS.findIndex(u => u.id === p.id);
+          if (idx >= 0) UPAH_ITEMS[idx] = p;
+          else UPAH_ITEMS.push(p);
+        });
+        if (preserved.length > 0) {
+          console.warn(`[UPAH MergeGuard] ${preserved.length} LUNAS entries preserved against remote overwrite — auto re-sync triggered`);
+          // Re-sync to propagate preserved state to other devices
+          setTimeout(() => {
+            if (typeof window.syncUpahToFirestore === 'function') {
+              window.syncUpahToFirestore().catch(e => console.warn('[UPAH MergeGuard] re-sync fail:', e));
+            }
+          }, 1500);
+        } else {
+          console.log(`[UPAH MergeGuard] No local LUNAS to preserve — clean apply ${d.length} entries`);
+        }
+      };
       const { syncFn, loadFn } = _makeStateSync('Upah', 'wkkn_v2_upah', 'upah',
         () => typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : null,
-        (d) => { if (typeof UPAH_ITEMS !== 'undefined' && Array.isArray(d)) { UPAH_ITEMS.length = 0; d.forEach(x => UPAH_ITEMS.push(x)); } },
+        upahMergeSetter,  // ← merge-aware (replaces wipe-and-replace)
         () => typeof UPAH_SCHEMA_VERSION !== 'undefined' ? UPAH_SCHEMA_VERSION : '3.0',
         'renderUpahTable');
       window.syncUpahToFirestore = syncFn;
