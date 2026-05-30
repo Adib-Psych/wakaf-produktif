@@ -12687,8 +12687,14 @@ function renderCashbook() {
     opts = opts || {};
     const srcInfo = srcLabel[t.src] || { icon: '?', desc: 'Unknown source' };
     const isManual = t.src === 'manual';
-    const actionBtns = isManual
-      ? `<button onclick="editTrx('${t.id}')" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Edit transaksi">✏️ Edit</button><button onclick="deleteTrx('${t.id}')" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Hapus transaksi">🗑️</button>`
+    // 29 Mei 2026: Unlock Edit/Hapus for batch children (manual cleanup mode per Adib)
+    // Auto-link normally locked, but children of expandable batch need manual override
+    // saat Pattern #10 sync bug damage. deleteUpahLinkedTrx revert linked UPAH juga.
+    const allowManualOverride = isManual || opts.isChild;
+    const editFn = isManual ? `editTrx('${t.id}')` : `editTrx('${t.id}')`;  // edit OK for both
+    const deleteFn = (t.ref && t.ref.startsWith('upah_')) ? `deleteUpahLinkedTrx('${t.id}')` : `deleteTrx('${t.id}')`;
+    const actionBtns = allowManualOverride
+      ? `<button onclick="event.stopPropagation();${editFn}" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Edit transaksi">✏️ Edit</button><button onclick="event.stopPropagation();${deleteFn}" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="${t.ref && t.ref.startsWith('upah_') ? 'Hapus + revert UPAH terkait ke belum' : 'Hapus transaksi'}">🗑️</button>`
       : `<span style="font-size:10px;color:#bbb;cursor:help" title="Auto-link dari UPAH Pekerja — untuk edit/batal, gunakan tombol di tab Upah Pekerja (↺ Batal). Mencegah sync break antara UPAH dan Cashbook.">🔒 locked</span>`;
     const rowStyle = opts.isChild ? 'background:#fafaf7' : '';
     const indent = opts.isChild ? 'padding-left:24px;font-size:11px;color:#6b7878' : '';
@@ -12722,6 +12728,10 @@ function renderCashbook() {
     })();
     const groupKey = g.key.replace(/[^a-zA-Z0-9]/g, '_');
     const firstKat = g.entries[0].kat || '';
+    // 29 Mei 2026: Unlock batch parent Edit + Hapus (manual cleanup mode per Adib)
+    // saat Pattern #10 sync bug damage. deleteBatchUpah revert seluruh UPAH terkait.
+    const entryIds = g.entries.map(e => e.id).join(',');
+    const totalRp = total;
     return `<tr style="background:#FFFBEB;border-top:2px solid #D4AF37;cursor:pointer" onclick="_toggleBatchGroup('${groupKey}', this)">
       <td style="font-weight:700">${formatTglShort(g.entries[0].tgl)}</td>
       <td style="font-weight:700">💵 Bayar Upah</td>
@@ -12734,7 +12744,10 @@ function renderCashbook() {
       <td style="text-align:right;color:var(--cherry);font-weight:800;font-size:13px">${fmtRp(total)}</td>
       <td style="text-align:center"><span style="color:#bbb;font-size:10px">${g.entries.filter(e => e.nota).length} / ${g.entries.length} nota</span></td>
       <td style="text-align:center" title="Auto-linked batch dari UPAH Pekerja"><span style="font-size:13px">🔗</span></td>
-      <td style="text-align:center;white-space:nowrap"><span style="font-size:10px;color:#bbb;cursor:help" title="Klik baris untuk expand/collapse rincian. Untuk batal individual item, gunakan tab Upah Pekerja → ↺ Batal.">🔒 group</span></td>
+      <td style="text-align:center;white-space:nowrap">
+        <button onclick="event.stopPropagation();editBatchUpah('${groupKey}', this)" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Expand batch + edit per item">✏️ Edit</button>
+        <button onclick="event.stopPropagation();deleteBatchUpah('${entryIds}','${g.pelapor}',${g.entries.length},${totalRp})" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Hapus seluruh batch (revert ${g.entries.length} UPAH ke belum + delete cashbook)">🗑️ Hapus Batch</button>
+      </td>
     </tr>`;
   }
 
@@ -12765,6 +12778,109 @@ function _toggleBatchGroup(groupKey, parentRow) {
   children.forEach(c => c.style.display = isExpanded ? 'none' : 'table-row');
   if (toggleIcon) toggleIcon.textContent = isExpanded ? '▶' : '▼';
 }
+
+// ====================================================================
+// MANUAL CLEANUP MODE — Batch + Child Edit/Delete (locked 29 Mei 2026)
+// Adib request: Pattern #10 sync bug recurring → need manual override
+// untuk cleanup damage. Helpers handle UPAH revert + cashbook delete atomic.
+// ====================================================================
+
+// Delete seluruh batch upah (entries IDs comma-separated). Revert UPAH linked + delete cashbook.
+window.deleteBatchUpah = function(entryIdsStr, pelapor, count, totalRp) {
+  const ids = String(entryIdsStr).split(',').map(s => s.trim()).filter(Boolean);
+  if (ids.length === 0) { alert('No entry IDs to delete'); return; }
+  const fmtRpLocal = (typeof fmtRp === 'function') ? fmtRp(totalRp) : 'Rp ' + (totalRp||0).toLocaleString('id-ID');
+  const confirmMsg = `🗑️ Hapus batch upah ${pelapor} (${count} entries)?\n\n` +
+    `Aksi:\n` +
+    `• Delete ${count} cashbook entries (total ${fmtRpLocal})\n` +
+    `• Revert UPAH linked ke status='belum' (delete bayar_tgl, bayar_source)\n` +
+    `• Sync ke Firestore propagate ke devices lain\n\n` +
+    `Lanjut? (Aksi tidak bisa di-undo via UI — backup dulu kalau perlu)`;
+  if (!confirm(confirmMsg)) return;
+  let upahReverted = 0, cashbookDeleted = 0;
+  ids.forEach(id => {
+    const cb = CASHBOOK.find(t => String(t.id) === String(id));
+    if (!cb) return;
+    // Revert linked UPAH if ref present
+    if (cb.ref && typeof cb.ref === 'string' && cb.ref.startsWith('upah_')) {
+      const upahId = +cb.ref.replace(/^upah_/, '').split('·')[0];
+      const upah = UPAH_ITEMS.find(u => u.id === upahId);
+      if (upah && upah.status === 'lunas') {
+        upah.status = 'belum';
+        delete upah.bayar_tgl;
+        delete upah.bayar_source;
+        upahReverted++;
+      }
+    }
+  });
+  // Bulk delete cashbook entries
+  const beforeLen = CASHBOOK.length;
+  const idsSet = new Set(ids);
+  CASHBOOK = CASHBOOK.filter(t => !idsSet.has(String(t.id)));
+  cashbookDeleted = beforeLen - CASHBOOK.length;
+  // Persist + sync
+  if (typeof saveCashbook === 'function') saveCashbook();
+  if (upahReverted > 0 && typeof saveUpah === 'function') saveUpah();
+  // Re-render all affected views
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderRAB === 'function') renderRAB();
+  if (typeof showToast === 'function') {
+    showToast(`🗑️ Batch ${pelapor}: ${cashbookDeleted} cashbook deleted · ${upahReverted} UPAH reverted ke belum`);
+  } else {
+    alert(`✅ Batch deleted: ${cashbookDeleted} cashbook · ${upahReverted} UPAH reverted`);
+  }
+};
+
+// Edit batch — expand children + tip
+window.editBatchUpah = function(groupKey, parentRow) {
+  // Expand if collapsed
+  const children = document.querySelectorAll('tr.cb-batch-child[data-group-key="' + groupKey + '"]');
+  const isExpanded = children.length > 0 && children[0].style.display !== 'none';
+  if (!isExpanded && parentRow) {
+    _toggleBatchGroup(groupKey, parentRow);
+  }
+  setTimeout(() => {
+    alert('✏️ Batch expanded.\n\nEdit per item via tombol ✏️ di baris detail (↳) di bawah parent. Atau hapus batch dengan 🗑️ Hapus Batch di parent.');
+  }, 150);
+};
+
+// Delete single cashbook entry yang linked ke UPAH (revert UPAH + delete cashbook)
+window.deleteUpahLinkedTrx = function(id) {
+  const cb = CASHBOOK.find(t => String(t.id) === String(id));
+  if (!cb) { alert('Cashbook entry tidak ditemukan'); return; }
+  let upahInfo = '';
+  let upah = null;
+  if (cb.ref && typeof cb.ref === 'string' && cb.ref.startsWith('upah_')) {
+    const upahId = +cb.ref.replace(/^upah_/, '').split('·')[0];
+    upah = UPAH_ITEMS.find(u => u.id === upahId);
+    if (upah && upah.status === 'lunas') {
+      upahInfo = `\n\n• UPAH terkait (id=${upah.id}, ${upah.tgl} ${upah.pelapor}) akan revert ke 'belum'`;
+    }
+  }
+  const fmtRpLocal = (typeof fmtRp === 'function') ? fmtRp(cb.keluar || 0) : 'Rp ' + (cb.keluar||0).toLocaleString('id-ID');
+  if (!confirm(`🗑️ Hapus cashbook entry "${(cb.ket||'').substring(0,50)}" (${fmtRpLocal})?${upahInfo}\n\nLanjut?`)) return;
+  // Revert linked UPAH
+  if (upah && upah.status === 'lunas') {
+    upah.status = 'belum';
+    delete upah.bayar_tgl;
+    delete upah.bayar_source;
+    if (typeof saveUpah === 'function') saveUpah();
+  }
+  // Delete cashbook
+  CASHBOOK = CASHBOOK.filter(t => String(t.id) !== String(id));
+  if (typeof saveCashbook === 'function') saveCashbook();
+  // Re-render
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof showToast === 'function') {
+    showToast(`🗑️ Cashbook deleted${upah ? ' + UPAH reverted ke belum' : ''}`);
+  }
+};
 
 function renderAntoLedger() {
   const antoTrx = CASHBOOK.filter(t => t.tipe === 'transfer_anto' || t.tipe === 'keluar_anto')
