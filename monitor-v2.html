@@ -15174,6 +15174,9 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           return false;
         }
         try {
+          // ⭐ 1 Jun 2026: Track local write timestamp untuk race debounce
+          // Prevent onSnapshot fires balik dengan own data (loop) within 3 detik window
+          window[`_${varName}LastLocalWrite`] = Date.now();
           await setDoc(doc(db, collection, 'active'), {
             version: getVer ? getVer() : '1.0',
             data: data,
@@ -15214,7 +15217,62 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           return null;
         }
       };
-      return { syncFn, loadFn };
+      // ⭐ 1 Jun 2026: onSnapshot listener with auto-retry + race debounce + identity check
+      // Root cause fix recurring sync bug: 7 financial/operational states previously had NO
+      // continuous listener (cuma setTimeout(loadFn) ONCE 3-4 detik setelah page load).
+      // Casus belli: Safari probe 1 Jun reveal Listen stream drop berulang ~1-2 jam interval
+      // (Cak Yit double-pay Rp 900K + Pak Kumpul 17 ghost entries).
+      let _unsubscribe = null;
+      let _retryCount = 0;
+      const _MAX_RETRY = 5;
+      const subscribeFn = () => {
+        if (_unsubscribe) { try { _unsubscribe(); } catch(e) {} }
+        try {
+          _unsubscribe = onSnapshot(doc(db, collection, 'active'), (docSnap) => {
+            if (!docSnap.exists()) return;
+            // Race debounce — skip kalau own local write dalam 3 detik (prevent loop dari own echo)
+            const lastWrite = window[`_${varName}LastLocalWrite`] || 0;
+            const sinceWrite = Date.now() - lastWrite;
+            if (sinceWrite < 3000) {
+              console.log(`[${varName}] ⏭ Skip onSnapshot — within ${sinceWrite}ms of own write`);
+              return;
+            }
+            const cloud = docSnap.data();
+            const localVer = getVer ? getVer() : '1.0';
+            if (cloud.version !== localVer) {
+              console.warn(`[${varName}] onSnapshot schema mismatch — skip override`);
+              return;
+            }
+            if (cloud.data !== undefined) {
+              // Identity check — skip kalau data identik (avoid re-render dari own echo)
+              const localData = getGlobal();
+              try {
+                if (JSON.stringify(localData) === JSON.stringify(cloud.data)) return;
+              } catch(e) { /* fall through to apply */ }
+              setGlobal(cloud.data);
+              try { localStorage.setItem(lsKey, JSON.stringify(cloud.data)); } catch(e) {}
+              const sizeInfo = Array.isArray(cloud.data) ? `${cloud.data.length} entries` : 'object';
+              console.log(`[${varName}] 🔄 onSnapshot update — ${sizeInfo} (origin: ${cloud.updated_by || 'unknown'})`);
+              if (renderFn && typeof window[renderFn] === 'function') window[renderFn]();
+            }
+            _retryCount = 0; // reset on successful fire
+          }, (err) => {
+            console.warn(`[${varName}] onSnapshot error:`, err.message || err);
+            // Auto-retry dengan exponential backoff (5s, 7.5s, 11s, 17s, 25s)
+            if (_retryCount < _MAX_RETRY) {
+              _retryCount++;
+              const delay = 5000 * Math.pow(1.5, _retryCount - 1);
+              console.log(`[${varName}] Retry onSnapshot in ${Math.round(delay/1000)}s (${_retryCount}/${_MAX_RETRY})`);
+              setTimeout(subscribeFn, delay);
+            } else {
+              console.error(`[${varName}] onSnapshot MAX retry reached — fallback to window.onfocus rehydrate`);
+            }
+          });
+        } catch (e) {
+          console.error(`[${varName}] onSnapshot setup failed:`, e);
+        }
+      };
+      return { syncFn, loadFn, subscribeFn };
     }
 
     // === UPAH (with MERGE GUARD — Pattern #10 hardening, locked 29 Mei 2026) ===
@@ -15261,7 +15319,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           console.log(`[UPAH MergeGuard] No local LUNAS to preserve — clean apply ${d.length} entries`);
         }
       };
-      const { syncFn, loadFn } = _makeStateSync('Upah', 'wkkn_v2_upah', 'upah',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('Upah', 'wkkn_v2_upah', 'upah',
         () => typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : null,
         upahMergeSetter,  // ← merge-aware (replaces wipe-and-replace)
         () => typeof UPAH_SCHEMA_VERSION !== 'undefined' ? UPAH_SCHEMA_VERSION : '3.0',
@@ -15269,11 +15327,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncUpahToFirestore = syncFn;
       window.loadUpahFromFirestore = loadFn;
       setTimeout(loadFn, 3000);
+      setTimeout(subscribeFn, 3500); // ⭐ 1 Jun 2026: continuous onSnapshot listener AFTER initial load
     }
 
     // === CASHBOOK ===
     {
-      const { syncFn, loadFn } = _makeStateSync('Cashbook', 'wkkn_v2_cashbook', 'cashbook',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('Cashbook', 'wkkn_v2_cashbook', 'cashbook',
         () => typeof CASHBOOK !== 'undefined' ? CASHBOOK : null,
         (d) => { if (typeof CASHBOOK !== 'undefined' && Array.isArray(d)) { CASHBOOK.length = 0; d.forEach(x => CASHBOOK.push(x)); } },
         () => typeof CASHBOOK_SCHEMA_VERSION !== 'undefined' ? CASHBOOK_SCHEMA_VERSION : '1.1',
@@ -15281,11 +15340,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncCashbookToFirestore = syncFn;
       window.loadCashbookFromFirestore = loadFn;
       setTimeout(loadFn, 3200);
+      setTimeout(subscribeFn, 3700); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === OPT_OBSERVATIONS ===
     {
-      const { syncFn, loadFn } = _makeStateSync('OPT', 'wkkn_v2_opt_obs', 'opt_observations',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('OPT', 'wkkn_v2_opt_obs', 'opt_observations',
         () => typeof OPT_OBSERVATIONS !== 'undefined' ? OPT_OBSERVATIONS : null,
         (d) => { if (typeof OPT_OBSERVATIONS !== 'undefined' && Array.isArray(d)) { OPT_OBSERVATIONS.length = 0; d.forEach(x => OPT_OBSERVATIONS.push(x)); } },
         () => typeof OPT_OBS_SCHEMA_VERSION !== 'undefined' ? OPT_OBS_SCHEMA_VERSION : '1.0',
@@ -15293,11 +15353,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncOPTToFirestore = syncFn;
       window.loadOPTFromFirestore = loadFn;
       setTimeout(loadFn, 3400);
+      setTimeout(subscribeFn, 3900); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === PANEN_DATA ===
     {
-      const { syncFn, loadFn } = _makeStateSync('PanenData', 'wkkn_v2_panen_2026', 'panen_data',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('PanenData', 'wkkn_v2_panen_2026', 'panen_data',
         () => typeof PANEN_DATA !== 'undefined' ? PANEN_DATA : null,
         (d) => { if (typeof PANEN_DATA !== 'undefined' && Array.isArray(d)) { PANEN_DATA.length = 0; d.forEach(x => PANEN_DATA.push(x)); } },
         () => typeof PANEN_SCHEMA_VERSION !== 'undefined' ? PANEN_SCHEMA_VERSION : '1.1',
@@ -15305,11 +15366,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncPanenDataToFirestore = syncFn;
       window.loadPanenDataFromFirestore = loadFn;
       setTimeout(loadFn, 3600);
+      setTimeout(subscribeFn, 4100); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === PANEN_LOTS_DATA ===
     {
-      const { syncFn, loadFn } = _makeStateSync('PanenLots', 'wkkn_v2_panen_lots', 'panen_lots',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('PanenLots', 'wkkn_v2_panen_lots', 'panen_lots',
         () => typeof PANEN_LOTS_DATA !== 'undefined' ? PANEN_LOTS_DATA : null,
         (d) => { if (typeof PANEN_LOTS_DATA !== 'undefined' && Array.isArray(d)) { PANEN_LOTS_DATA.length = 0; d.forEach(x => PANEN_LOTS_DATA.push(x)); } },
         () => typeof PANEN_LOTS_SCHEMA_VERSION !== 'undefined' ? PANEN_LOTS_SCHEMA_VERSION : '1.0',
@@ -15317,11 +15379,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncPanenLotsToFirestore = syncFn;
       window.loadPanenLotsFromFirestore = loadFn;
       setTimeout(loadFn, 3800);
+      setTimeout(subscribeFn, 4300); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === PANEN_SAMPLING_DATA ===
     {
-      const { syncFn, loadFn } = _makeStateSync('PanenSampling', 'wkkn_v2_panen_sampling_2026', 'panen_sampling',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('PanenSampling', 'wkkn_v2_panen_sampling_2026', 'panen_sampling',
         () => typeof PANEN_SAMPLING_DATA !== 'undefined' ? PANEN_SAMPLING_DATA : null,
         (d) => { if (typeof PANEN_SAMPLING_DATA !== 'undefined' && Array.isArray(d)) { PANEN_SAMPLING_DATA.length = 0; d.forEach(x => PANEN_SAMPLING_DATA.push(x)); } },
         () => typeof PANEN_SAMPLING_SCHEMA_VERSION !== 'undefined' ? PANEN_SAMPLING_SCHEMA_VERSION : '1.1',
@@ -15329,11 +15392,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncPanenSamplingToFirestore = syncFn;
       window.loadPanenSamplingFromFirestore = loadFn;
       setTimeout(loadFn, 4000);
+      setTimeout(subscribeFn, 4500); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === SOP_STATUS (object, not array) ===
     {
-      const { syncFn, loadFn } = _makeStateSync('SOPStatus', 'wkkn_sop_status_v1', 'sop_status',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('SOPStatus', 'wkkn_sop_status_v1', 'sop_status',
         () => typeof SOP_STATUS !== 'undefined' ? SOP_STATUS : null,
         (d) => { if (typeof SOP_STATUS !== 'undefined' && d && typeof d === 'object') { Object.keys(SOP_STATUS).forEach(k => delete SOP_STATUS[k]); Object.assign(SOP_STATUS, d); } },
         () => typeof SOP_STATUS_VERSION !== 'undefined' ? SOP_STATUS_VERSION : '1.5',
@@ -15341,6 +15405,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncSOPStatusToFirestore = syncFn;
       window.loadSOPStatusFromFirestore = loadFn;
       setTimeout(loadFn, 4200);
+      setTimeout(subscribeFn, 4700); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // ===========================================================================
@@ -15464,42 +15529,60 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     // Handled di code Step 4 di bawah ini.
 
     // onSnapshot listener — auto-refresh saat ada perubahan dari device/browser lain (cross-device real-time sync)
-    try {
-      onSnapshot(doc(db, 'milestones', 'active'), (docSnap) => {
-        if (!docSnap.exists()) return;
-        const cloud = docSnap.data();
-        const localVersion = typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0';
-        if (cloud.version !== localVersion) return;
+    // ⭐ 1 Jun 2026: Wrapped dalam named function untuk auto-retry pada error (Safari Listen stream drop)
+    let _milestonesRetryCount = 0;
+    const _MILESTONES_MAX_RETRY = 5;
+    let _milestonesUnsub = null;
+    const setupMilestonesListener = () => {
+      if (_milestonesUnsub) { try { _milestonesUnsub(); } catch(e) {} }
+      try {
+        _milestonesUnsub = onSnapshot(doc(db, 'milestones', 'active'), (docSnap) => {
+          if (!docSnap.exists()) return;
+          const cloud = docSnap.data();
+          const localVersion = typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0';
+          if (cloud.version !== localVersion) return;
 
-        // ⭐ 24 Mei 2026 — Race condition debounce (fix bug Batch Curation milestone hilang):
-        // Skip listener fires dalam 3 detik setelah local saveMilestones() — krn cloud data
-        // bisa masih stale (push belum complete) → listener overwrite MILESTONES baru dengan
-        // state lama → milestone yang baru di-create via Batch Curation HILANG.
-        const lastWrite = window._milestonesLastLocalWrite || 0;
-        const sinceLastWrite = Date.now() - lastWrite;
-        if (sinceLastWrite < 3000) {
-          console.log(`[Milestones] ⏭ Skip listener — within ${sinceLastWrite}ms of own local write (race debounce)`);
-          return;
-        }
+          // ⭐ 24 Mei 2026 — Race condition debounce (fix bug Batch Curation milestone hilang):
+          // Skip listener fires dalam 3 detik setelah local saveMilestones() — krn cloud data
+          // bisa masih stale (push belum complete) → listener overwrite MILESTONES baru dengan
+          // state lama → milestone yang baru di-create via Batch Curation HILANG.
+          const lastWrite = window._milestonesLastLocalWrite || 0;
+          const sinceLastWrite = Date.now() - lastWrite;
+          if (sinceLastWrite < 3000) {
+            console.log(`[Milestones] ⏭ Skip listener — within ${sinceLastWrite}ms of own local write (race debounce)`);
+            return;
+          }
 
-        if (cloud.data && Array.isArray(cloud.data) && typeof MILESTONES !== 'undefined') {
-          // Skip update kalau data identik (avoid render loop dari own write)
-          const localJson = JSON.stringify(MILESTONES);
-          const cloudJson = JSON.stringify(cloud.data);
-          if (localJson === cloudJson) return;
-          MILESTONES.length = 0;
-          cloud.data.forEach(m => MILESTONES.push(m));
-          localStorage.setItem('wkkn_v2_milestones', JSON.stringify(MILESTONES));
-          console.log(`[Milestones] 🔄 Auto-refreshed from cloud (${MILESTONES.length} entries) — origin: ${cloud.updated_by || 'unknown'}`);
-          if (typeof renderMilestonesTable === 'function') renderMilestonesTable();
-          if (typeof renderMilestonesSummary === 'function') renderMilestonesSummary();
-        }
-      }, (err) => {
-        console.warn('[Milestones] onSnapshot listener error (will retry):', err);
-      });
-    } catch (e) {
-      console.warn('[Milestones] onSnapshot setup failed:', e);
-    }
+          if (cloud.data && Array.isArray(cloud.data) && typeof MILESTONES !== 'undefined') {
+            // Skip update kalau data identik (avoid render loop dari own write)
+            const localJson = JSON.stringify(MILESTONES);
+            const cloudJson = JSON.stringify(cloud.data);
+            if (localJson === cloudJson) return;
+            MILESTONES.length = 0;
+            cloud.data.forEach(m => MILESTONES.push(m));
+            localStorage.setItem('wkkn_v2_milestones', JSON.stringify(MILESTONES));
+            console.log(`[Milestones] 🔄 Auto-refreshed from cloud (${MILESTONES.length} entries) — origin: ${cloud.updated_by || 'unknown'}`);
+            if (typeof renderMilestonesTable === 'function') renderMilestonesTable();
+            if (typeof renderMilestonesSummary === 'function') renderMilestonesSummary();
+          }
+          _milestonesRetryCount = 0; // reset on successful fire
+        }, (err) => {
+          console.warn('[Milestones] onSnapshot listener error:', err.message || err);
+          // ⭐ 1 Jun 2026: Auto-retry dengan exponential backoff (Safari Listen stream drop)
+          if (_milestonesRetryCount < _MILESTONES_MAX_RETRY) {
+            _milestonesRetryCount++;
+            const delay = 5000 * Math.pow(1.5, _milestonesRetryCount - 1);
+            console.log(`[Milestones] Retry onSnapshot in ${Math.round(delay/1000)}s (${_milestonesRetryCount}/${_MILESTONES_MAX_RETRY})`);
+            setTimeout(setupMilestonesListener, delay);
+          } else {
+            console.error('[Milestones] onSnapshot MAX retry — fallback to window.onfocus rehydrate');
+          }
+        });
+      } catch (e) {
+        console.warn('[Milestones] onSnapshot setup failed:', e);
+      }
+    };
+    setupMilestonesListener();
 
     // Normalize incoming Firestore data — bridge field naming between lapor.html (worker PWA) ↔ monitor-v2 (dashboard)
     function normalizeWorkerEntry(data) {
@@ -15665,61 +15748,97 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     setTimeout(reprocessPendingEntries, 3000);
 
     // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
-    onSnapshot(q, (snapshot) => {
-      let newCount = 0;
-      let upahCreatedCount = 0;
-      let removedCount = 0;
-      snapshot.docChanges().forEach(change => {
-        const docId = change.doc.id;
+    // ⭐ 1 Jun 2026: Wrapped dalam named function untuk auto-retry pada error (Safari Listen stream drop)
+    let _laporanRetryCount = 0;
+    const _LAPORAN_MAX_RETRY = 5;
+    let _laporanUnsub = null;
+    const setupLaporanListener = () => {
+      if (_laporanUnsub) { try { _laporanUnsub(); } catch(e) {} }
+      _laporanUnsub = onSnapshot(q, (snapshot) => {
+        let newCount = 0;
+        let upahCreatedCount = 0;
+        let removedCount = 0;
+        snapshot.docChanges().forEach(change => {
+          const docId = change.doc.id;
 
-        if (change.type === 'removed') {
-          // Firestore deletion — remove from local STATE (locked 17 Mei 2026)
-          const idx = STATE.laporan.findIndex(l => l.id === docId);
-          if (idx >= 0) {
-            STATE.laporan.splice(idx, 1);
-            removedCount++;
-          }
-          window._deletedTombstones?.delete(docId);   // clear tombstone after Firestore confirms removal
-          return;
-        }
-
-        if (change.type === 'added' || change.type === 'modified') {
-          // Skip if this docId was just locally deleted (race condition — Firestore hasn't propagated yet)
-          if (window._deletedTombstones?.has(docId)) {
-            console.log('[Listener] Skipping tombstoned entry:', docId);
+          if (change.type === 'removed') {
+            // Firestore deletion — remove from local STATE (locked 17 Mei 2026)
+            const idx = STATE.laporan.findIndex(l => l.id === docId);
+            if (idx >= 0) {
+              STATE.laporan.splice(idx, 1);
+              removedCount++;
+            }
+            window._deletedTombstones?.delete(docId);   // clear tombstone after Firestore confirms removal
             return;
           }
-          const data = normalizeWorkerEntry(change.doc.data());
-          const existingIdx = STATE.laporan.findIndex(l => l.id === data.id);
-          if (existingIdx === -1) {
-            STATE.laporan.unshift(data);
-            newCount++;
-            if (typeof autoCreateUpahFromEntry === 'function') {
-              const upahEntry = autoCreateUpahFromEntry(data);
-              if (upahEntry) upahCreatedCount++;
+
+          if (change.type === 'added' || change.type === 'modified') {
+            // Skip if this docId was just locally deleted (race condition — Firestore hasn't propagated yet)
+            if (window._deletedTombstones?.has(docId)) {
+              console.log('[Listener] Skipping tombstoned entry:', docId);
+              return;
             }
-          } else if (change.type === 'modified') {
-            STATE.laporan[existingIdx] = { ...STATE.laporan[existingIdx], ...data };
+            const data = normalizeWorkerEntry(change.doc.data());
+            const existingIdx = STATE.laporan.findIndex(l => l.id === data.id);
+            if (existingIdx === -1) {
+              STATE.laporan.unshift(data);
+              newCount++;
+              if (typeof autoCreateUpahFromEntry === 'function') {
+                const upahEntry = autoCreateUpahFromEntry(data);
+                if (upahEntry) upahCreatedCount++;
+              }
+            } else if (change.type === 'modified') {
+              STATE.laporan[existingIdx] = { ...STATE.laporan[existingIdx], ...data };
+            }
           }
+        });
+        if (newCount > 0 || removedCount > 0) {
+          localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+          // Refresh views
+          if (typeof renderDashboard === 'function') renderDashboard();
+          if (typeof renderLog === 'function') renderLog();
+          if (upahCreatedCount > 0 && typeof renderUpah === 'function') renderUpah();
+          // Show toast notification
+          const toast = document.createElement('div');
+          toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#2D8466;color:#fff;padding:14px 22px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);font-weight:600;z-index:9999;max-width:340px';
+          const upahLine = upahCreatedCount > 0 ? `<br><span style="font-size:11px;opacity:0.9">💰 ${upahCreatedCount} entry upah dibuat otomatis</span>` : '';
+          toast.innerHTML = `🔥 ${newCount} laporan baru dari worker${upahLine}`;
+          document.body.appendChild(toast);
+          setTimeout(() => toast.remove(), 6000);
+          console.log(`[Firestore Listener] +${newCount} entries, +${upahCreatedCount} upah auto-created`);
+        }
+        _laporanRetryCount = 0; // reset on successful fire
+      }, (err) => {
+        console.error('[Firestore Listener] error:', err.message || err);
+        // ⭐ 1 Jun 2026: Auto-retry dengan exponential backoff (Safari Listen stream drop)
+        if (_laporanRetryCount < _LAPORAN_MAX_RETRY) {
+          _laporanRetryCount++;
+          const delay = 5000 * Math.pow(1.5, _laporanRetryCount - 1);
+          console.log(`[Laporan] Retry onSnapshot in ${Math.round(delay/1000)}s (${_laporanRetryCount}/${_LAPORAN_MAX_RETRY})`);
+          setTimeout(setupLaporanListener, delay);
+        } else {
+          console.error('[Laporan] onSnapshot MAX retry — fallback to window.onfocus rehydrate');
         }
       });
-      if (newCount > 0 || removedCount > 0) {
-        localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
-        // Refresh views
-        if (typeof renderDashboard === 'function') renderDashboard();
-        if (typeof renderLog === 'function') renderLog();
-        if (upahCreatedCount > 0 && typeof renderUpah === 'function') renderUpah();
-        // Show toast notification
-        const toast = document.createElement('div');
-        toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#2D8466;color:#fff;padding:14px 22px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);font-weight:600;z-index:9999;max-width:340px';
-        const upahLine = upahCreatedCount > 0 ? `<br><span style="font-size:11px;opacity:0.9">💰 ${upahCreatedCount} entry upah dibuat otomatis</span>` : '';
-        toast.innerHTML = `🔥 ${newCount} laporan baru dari worker${upahLine}`;
-        document.body.appendChild(toast);
-        setTimeout(() => toast.remove(), 6000);
-        console.log(`[Firestore Listener] +${newCount} entries, +${upahCreatedCount} upah auto-created`);
-      }
-    }, (err) => {
-      console.error('[Firestore Listener] error:', err);
+    };
+    setupLaporanListener();
+
+    // ⭐ 1 Jun 2026: Window focus rehydrate — Safari sleep/wake + Listen stream drop recovery
+    // Probe 1 Jun 2026 reveal Listen stream drop berulang ~1-2 jam interval di Safari.
+    // Safety net: force-reload semua state from Firestore saat user kembali ke tab.
+    let _lastFocusRehydrate = 0;
+    window.addEventListener('focus', () => {
+      const now = Date.now();
+      if (now - _lastFocusRehydrate < 10000) return; // debounce — max 1x per 10 detik
+      _lastFocusRehydrate = now;
+      console.log('[Rehydrate] 👁 Window focus — re-pull all state from Firestore');
+      const STATE_LOAD_FNS = ['Upah', 'Cashbook', 'OPT', 'PanenData', 'PanenLots', 'PanenSampling', 'SOPStatus'];
+      STATE_LOAD_FNS.forEach(name => {
+        const fn = window[`load${name}FromFirestore`];
+        if (typeof fn === 'function') {
+          fn().catch(e => console.warn(`[Rehydrate] ${name} fail:`, e));
+        }
+      });
     });
 
     console.log('[Firebase] ✅ Dashboard listener active (Wakaf Ngantang)');
