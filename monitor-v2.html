@@ -15120,8 +15120,11 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         }
         const cloud = docSnap.data();
         const localVersion = typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0';
-        if (cloud.version !== localVersion) {
-          console.warn(`[Milestones] Schema mismatch — cloud=${cloud.version} vs local=${localVersion}, skip override`);
+        // ⭐ 1 Jun 2026: Allow additive versions per MILESTONE_ADDITIVE_VERSIONS (line 8111)
+        // Casus: Safari probe 1 Jun 2026 reveal cloud=3.0 vs local=3.1 blocking sync.
+        const additiveOk = typeof MILESTONE_ADDITIVE_VERSIONS !== 'undefined' && MILESTONE_ADDITIVE_VERSIONS.includes(cloud.version);
+        if (cloud.version !== localVersion && !additiveOk) {
+          console.warn(`[Milestones] Schema mismatch — cloud=${cloud.version} vs local=${localVersion} (not in additive list), skip override`);
           return null;
         }
         if (cloud.data && Array.isArray(cloud.data) && typeof MILESTONES !== 'undefined') {
@@ -15540,7 +15543,14 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           if (!docSnap.exists()) return;
           const cloud = docSnap.data();
           const localVersion = typeof MILESTONE_SCHEMA_VERSION !== 'undefined' ? MILESTONE_SCHEMA_VERSION : '3.0';
-          if (cloud.version !== localVersion) return;
+          // ⭐ 1 Jun 2026: Allow additive versions (per MILESTONE_ADDITIVE_VERSIONS list at line 8111)
+          // Casus: Safari probe 1 Jun reveal cloud=3.0 vs local=3.1 mismatch blocking sync.
+          // Pattern follows feedback_schema_migration_additive_vs_breaking (locked 19 Mei).
+          const additiveOk = typeof MILESTONE_ADDITIVE_VERSIONS !== 'undefined' && MILESTONE_ADDITIVE_VERSIONS.includes(cloud.version);
+          if (cloud.version !== localVersion && !additiveOk) {
+            console.warn(`[Milestones] onSnapshot schema mismatch — cloud=${cloud.version} vs local=${localVersion} (not in additive list), skip`);
+            return;
+          }
 
           // ⭐ 24 Mei 2026 — Race condition debounce (fix bug Batch Curation milestone hilang):
           // Skip listener fires dalam 3 detik setelah local saveMilestones() — krn cloud data
