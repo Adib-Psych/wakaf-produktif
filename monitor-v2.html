@@ -366,7 +366,7 @@
             <button id="pelapor-mode-all" onclick="togglePelaporMode('all')" style="padding:4px 10px;border:0;border-radius:4px;background:transparent;color:var(--earth);cursor:pointer">Cumulative All-Time</button>
           </span>
         </div>
-        <p style="font-size:10.5px;color:var(--mute);margin:-2px 0 8px;font-style:italic" id="pelapor-mode-note">📅 Periode Aktif (post-19 Mei 2026) — historikal Mas Anto 1-18 Mei tidak ditampilkan. Toggle ke Cumulative All-Time untuk include kontribusi historis.</p>
+        <p style="font-size:10.5px;color:var(--mute);margin:-2px 0 8px;font-style:italic" id="pelapor-mode-note">📅 Periode Aktif (post-19 Mei 2026) — entries era pre-restructuring tidak ditampilkan. Toggle ke Cumulative All-Time untuk include semua historis.</p>
         <div class="chart-wrap"><canvas id="chart-pelapor"></canvas></div>
       </div>
 
@@ -2417,7 +2417,7 @@
       <div class="card" style="background:linear-gradient(135deg,#2D8466,#1F5F47);color:#fff;border:0">
         <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800;margin-bottom:8px">🎫 SECTION A · WORKER URL MANAGEMENT</div>
         <div style="font-size:18px;font-weight:800;margin-bottom:6px">Manage Worker Tokens & Activity</div>
-        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian. <em style="color:#a8c8bc">Token <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px;color:#fff;font-style:normal">ANTO</code> preserved untuk backfill historis 1-18 Mei 2026 saja.</em></div>
+        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian.</div>
       </div>
 
       <div class="card">
@@ -2432,7 +2432,7 @@
           <button class="btn btn-primary" onclick="renderWorkersTab()" style="background:var(--moss)">🔄 Refresh Last Active</button>
         </div>
 
-        <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = simple worker code (KUMPUL/YIT/ANTO) — no revoke yet.</p>
+        <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = simple worker code (KUMPUL/YIT) — no revoke yet.</p>
       </div>
 
       <div class="card" style="background:rgba(168,200,188,.15);border-left:3px solid var(--moss)">
@@ -2472,8 +2472,7 @@
         <div style="font-size:12px;color:#4a4030;line-height:1.7">
           <p style="margin-bottom:8px"><strong>Cak Yit (Yitno):</strong> spesialis bagian atas pohon — pruning, sambung pucuk Robusta klon unggul, wiwilan. <strong>+ PIC Pupuk (sole owner, locked 19 Mei 2026)</strong>. Tarif Rp 60K ½ hari · Rp 120K full day. Borongan: Rp 20K/pohon untuk panjat durian (insidental).</p>
           <p style="margin-bottom:8px"><strong>Pak Kumpul:</strong> spesialis bagian bawah + tanaman penaung + konservasi (babat rumput, rorak, composting, lamtoro/jahe Bidang 3). Tarif Rp 50K ½ hari · Rp 100K full day. Plus side project jahe self-financed di Kebun 3 (tidak dibayar dari kas kebun kopi wakaf — biaya & hasil dari panen jahe sendiri).</p>
-          <p style="margin-bottom:8px"><strong>Wakif (Adib) + Hendy:</strong> keputusan strategis, anggaran, soil test, infrastruktur, audit transparansi, koordinasi observasi & verifikasi compliance (peran ini sebelumnya di-share dengan Mas Anto, sekarang di Wakif sepenuhnya). Tim panen ad-hoc saat Jun-Agu (extra labor + Cak Yit + Pak Kumpul).</p>
-          <p style="margin-bottom:0;padding-top:8px;border-top:1px dashed #d4a017;font-size:11px;color:var(--mute);font-style:italic"><strong>📌 Historis — Mas Anto:</strong> sweat equity Koordinator Lapangan 1-18 Mei 2026. OUT permanen per 19 Mei 2026 (atasan utama require full-time). Kontribusi pra-19 Mei tetap tercatat untuk bagi hasil pasca-BEP. Token <code>ANTO</code> preserved untuk backfill historis entries 1-18 Mei.</p>
+          <p style="margin-bottom:0"><strong>Wakif (Adib) + Hendy:</strong> keputusan strategis, anggaran, soil test, infrastruktur, audit transparansi, koordinasi observasi & verifikasi compliance. Tim panen ad-hoc saat Jun-Agu (extra labor + Cak Yit + Pak Kumpul).</p>
         </div>
       </div>
     </div>
@@ -3573,8 +3572,8 @@ function togglePelaporMode(mode) {
   }
   if (note) {
     note.textContent = mode === 'aktif'
-      ? '📅 Periode Aktif (post-19 Mei 2026) — historikal Mas Anto 1-18 Mei tidak ditampilkan. Toggle ke Cumulative All-Time untuk include kontribusi historis.'
-      : '🗂 Cumulative All-Time — termasuk historis Mas Anto 1-18 Mei 2026 (OUT permanen 19 Mei). Sweat equity untuk bagi hasil pasca-BEP.';
+      ? '📅 Periode Aktif (post-19 Mei 2026) — entries era pre-restructuring tidak ditampilkan. Toggle ke Cumulative All-Time untuk include semua historis.'
+      : '🗂 Cumulative All-Time — termasuk entries historis 1-18 Mei 2026 (era pre-restructuring tim lapangan).';
   }
   // Re-render chart
   if (window._pelaporChart) { try { window._pelaporChart.destroy(); } catch(e){} }
@@ -7660,7 +7659,7 @@ function renderDistribusi() {
       });
     });
   });
-  const antoNote = '<div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:3px">📌 Mas Anto: OUT permanen per 19 Mei 2026 (atasan utama require full-time, sweat equity tidak bisa force comeback)</div>';
+  // ⭐ 8 Juni 2026 (Task 2 per Adib): antoNote KPI item REMOVED — Anto OUT permanen, info ditangani via era-aware filter logic + WORKER_DEFS active:false backward compat.
   kpiC.innerHTML = `
     <div class="kpi"><div class="kpi-num">${DISTRIBUSI_DATA.length}</div><div class="kpi-lbl">Fase Fenologi</div></div>
     <div class="kpi"><div class="kpi-num">${totalAct}</div><div class="kpi-lbl">Aktivitas Per Tahun</div></div>
@@ -7668,7 +7667,6 @@ function renderDistribusi() {
     <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#5b4690">${counts.KUMPUL}</div><div class="kpi-lbl">🌱 Pak Kumpul</div></div>
     <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#2e7d5e">${counts.TIM}</div><div class="kpi-lbl">👥 Tim Ad-Hoc</div></div>
     <div class="kpi"><div class="kpi-num" style="font-size:18px;color:var(--gold)">${counts.ADIB + counts.HENDY}</div><div class="kpi-lbl">🔒 Adib + Hendy (verif)</div></div>
-    <div class="kpi" style="grid-column:1/-1;background:rgba(168,200,188,0.15);border:1px dashed var(--moss)">${antoNote}</div>
   `;
 
   // ===== Reorder: bulan berjalan paling atas, lalu lanjut maju + wrap-around =====
@@ -7996,9 +7994,6 @@ function openPICEditModal(faseIdx, aIdx) {
           <div style="margin-bottom:10px">
             <div style="font-size:12px;font-weight:800;color:var(--earth);margin-bottom:8px;letter-spacing:0.5px">✅ PIC VERIFIKASI <span style="color:var(--mute);font-weight:500;font-size:10px;letter-spacing:0">(multi-pilih)</span></div>
             <div style="display:grid;grid-template-columns:1fr;gap:6px">${renderOpts(VERIFIKASI_KEYS, _picEditState.verif, 'verif')}</div>
-          </div>
-          <div style="background:rgba(212,175,55,0.08);border-left:3px solid var(--gold);padding:10px 12px;border-radius:6px;font-size:11px;color:var(--mute);line-height:1.5;margin-top:14px">
-            💡 <strong>Mas Anto status:</strong> OUT permanen per 19 Mei 2026 (atasan utama require full-time). Tidak muncul di dropdown PIC aktif. Token <code>ANTO</code> preserved untuk backfill historis entries 1-18 Mei 2026.
           </div>
         </div>
         <div style="padding:14px 22px;border-top:1px solid var(--bg-deep);display:flex;justify-content:flex-end;gap:10px;background:#fafbfa;border-radius:0 0 14px 14px">
@@ -11059,7 +11054,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
     aktivitas: [
       {t:'Monitoring infiltrasi rorak setelah hujan', sop:'Robusta Edisi 2 hal 149', prio:'rutin', siapa:'Cak Yit', topik_v2:'L'},
       {t:'Pemangkasan ringan (cabang sakit/non-produktif)', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Cak Yit', topik_v2:'I'},
-      {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Mas Anto/Cak Yit', topik_v2:'N'},
+      {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Cak Yit / Pak Kumpul', topik_v2:'N'},
       {t:'Review tahunan + planning Kebun/blok prioritas', sop:'—', prio:'rutin', siapa:'Wakif + tim Ahli'}
     ]
   }
@@ -11604,7 +11599,7 @@ function renderComplianceAnalysis() {
         <div style="font-size:11px;font-weight:800;color:#1F5F47;letter-spacing:.8px;margin-bottom:8px;text-transform:uppercase">💡 Konteks &amp; Recommendation</div>
         <div style="font-size:12px;line-height:1.75;color:#2e4040">
           <div style="margin-bottom:8px"><strong style="color:#8b6914">1. Pre-T0 era T.A. RWI (Jan-Apr 2026):</strong> Tenaga Ahli pakai protokol berbeda dari SOP Robusta Edisi 2 (BRIN + Kementan). Premium brands (NPK Yaramila, Karate Plus Boron, Fish Extract) ≠ BRIN spec (Urea + SP-36 + KCl + Kieserit + Dolomit). Substituted = 50% credit per methodology.</div>
-          <div style="margin-bottom:8px"><strong style="color:#8b6914">2. T0 (Mei 2026+):</strong> SOP nasional formally adopted. Compliance akan naik organik saat tim lapangan (Mas Anto, Cak Yit, Pak Kumpul) eksekusi wajib items per bulan + Wakif mark status via SOP Kalender harian.</div>
+          <div style="margin-bottom:8px"><strong style="color:#8b6914">2. T0 (Mei 2026+):</strong> SOP nasional formally adopted. Compliance akan naik organik saat tim lapangan (Cak Yit, Pak Kumpul) eksekusi wajib items per bulan + Wakif mark status via SOP Kalender harian.</div>
           <div style="margin-bottom:8px"><strong style="color:#8b6914">3. Target realistic year-end 2026:</strong> 60-80% kalau seluruh wajib items Mei-Des terpenuhi. Saat ini ${pct}% = baseline organik yang akan tumbuh seiring siklus berjalan.</div>
           <div><strong style="color:#8b6914">4. Action sekarang:</strong> <a href="#" onclick="document.querySelector('.sb-tab[data-panel=kalender]').click();return false;" style="color:#c14b3a;font-weight:700;text-decoration:underline">Buka tab SOP Kalender</a> → klik bulan <strong>${namaBulanFull[m.currentMonth]}</strong> → mark status setiap item (Belum → Sudah → Tidak Sesuai → N/A) sesuai progress lapangan harian. Tiap update auto-recompute score di sini.</div>
         </div>
@@ -14303,9 +14298,17 @@ function auditDeleteUpahDup(upahId) {
 
 // Bulk merge — keep oldest UPAH, delete all duplicates dgn confirm sekali untuk semua duplicates
 function auditMergeUpahDup(key) {
+  // ⭐ 8 Juni 2026 — Task 1 INSTRUMENTATION (per QC report bug: klik OK no change)
+  // Hipotesis utama: Pattern #10 upahMergeSetter revert duplicate post-merge (race condition
+  // 0-500ms window sebelum saveUpah debounced sync set _UpahLastLocalWrite timestamp).
+  // Log capture untuk reproduce + identify hop yang break.
+  console.log('[MergeUpah] START', { key, ts: Date.now() });
   const grp = AUDIT_STATE.upahDup.find(d => d.key === key);
   if (!grp) { alert('Group duplicate tidak ditemukan — refresh modal'); return; }
   const dupIds = grp.duplicates.map(u => u.id);
+  console.log('[MergeUpah] Primary ID:', grp.primary.id, '· src:', grp.primary.src, '· Dup IDs:', dupIds);
+  console.log('[MergeUpah] UPAH_ITEMS BEFORE:', UPAH_ITEMS.length, 'entries');
+  console.log('[MergeUpah] Duplicate entries pre-delete:', dupIds.map(id => UPAH_ITEMS.find(u => u.id === id)));
   const totalCashbookToDelete = grp.duplicates.reduce((s, u) => {
     const ref = 'upah_' + u.id;
     return s + ((typeof CASHBOOK !== 'undefined') ? CASHBOOK.filter(t => t.ref === ref).length : 0);
@@ -14320,7 +14323,8 @@ function auditMergeUpahDup(key) {
               `Linked cashbook to clean: ${totalCashbookToDelete}\n` +
               `Total "fake" UPAH value: ${(typeof fmtRp === 'function') ? fmtRp(totalRp) : totalRp}\n\n` +
               `Lanjut merge?`;
-  if (!confirm(msg)) return;
+  if (!confirm(msg)) { console.log('[MergeUpah] User cancelled'); return; }
+  console.log('[MergeUpah] User confirmed — starting splice + filter');
   // Delete duplicates
   let deletedCb = 0;
   dupIds.forEach(id => {
@@ -14333,6 +14337,8 @@ function auditMergeUpahDup(key) {
       deletedCb += (before - CASHBOOK.length);
     }
   });
+  console.log('[MergeUpah] UPAH_ITEMS AFTER local splice:', UPAH_ITEMS.length, '· Cashbook deleted:', deletedCb);
+  console.log('[MergeUpah] Calling saveUpah() — Firestore push debounced 500ms · saveCashbook() same');
   if (typeof saveUpah === 'function') saveUpah();
   if (typeof saveCashbook === 'function') saveCashbook();
   if (typeof renderUpahTable === 'function') renderUpahTable();
@@ -14342,6 +14348,21 @@ function auditMergeUpahDup(key) {
   if (typeof renderAntoLedger === 'function') renderAntoLedger();
   openAuditModal();
   if (typeof showToast === 'function') showToast(`🔀 Merged · kept primary UPAH ${grp.primary.id} · ${dupIds.length} duplikat + ${deletedCb} cashbook dihapus`);
+  // ⭐ Race detection — check UPAH_ITEMS state at T+600ms (post-debounce) + T+2000ms (post-listener-window)
+  setTimeout(() => {
+    const stillPresent = dupIds.filter(id => UPAH_ITEMS.find(u => u.id === id));
+    console.log('[MergeUpah] T+600ms (post-debounce):', UPAH_ITEMS.length, 'entries · Dup IDs still present:', stillPresent);
+  }, 600);
+  setTimeout(() => {
+    const stillPresent = dupIds.filter(id => UPAH_ITEMS.find(u => u.id === id));
+    console.log('[MergeUpah] T+2000ms (post-listener-window):', UPAH_ITEMS.length, 'entries · Dup IDs still present:', stillPresent);
+    if (stillPresent.length > 0) {
+      console.error('[MergeUpah] 🚨 REVERT DETECTED — duplicates resurrected via Pattern #10 upahMergeSetter race');
+      console.error('[MergeUpah] Hipotesis B CONFIRMED — fix: add UPAH_INTENTIONAL_DELETES Set + force-push immediate');
+    } else {
+      console.log('[MergeUpah] ✓ No revert detected — merge successful');
+    }
+  }, 2000);
 }
 
 // Roll back: set UPAH back to 'belum' + delete linked cashbook entries (locked 17 Mei 2026)
