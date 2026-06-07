@@ -108,10 +108,19 @@ Per root CLAUDE.md Section 6 (Safari/Chrome split):
 
 | Aksi | Browser |
 |------|---------|
-| Update GitHub via PAT | **Chrome WAJIB** |
-| Test live page setelah push | **Chrome WAJIB** (Adib jangan Safari — pernah hilang ~50% kerjaan karena Safari sync issue) |
-| Saat generate output dengan link ke `monitor-v2.html` / `lapor.html` / `living-lab.html` di production | Eksplisit "Open in Chrome — copy URL ini, paste di Chrome" + URL plain text |
+| Update GitHub via PAT | **Chrome ATAU Terminal** — PAT di Apple Keychain (sejak 26 Mei 2026), terminal `git push` browser-independent. |
+| Test live page `monitor-v2.html` setelah push | **Chrome ATAU Safari** ✅ — post commits a9f867b + 196f1d9 (1-6 Juni 2026): cross-browser onSnapshot listeners aktif untuk 9 collections + auto-retry + window.onfocus rehydrate + L3 Firestore-authoritative dedup. Concern lama "lose 50% kerjaan" RESOLVED. |
+| Test live page `lapor.html` (Worker PWA) | **Chrome ATAU Safari** ✅ — online-first sync Pattern #9 (commit e7ec9c2 16 Mei 2026). |
+| Test live page `living-lab.html` | **Chrome ATAU Safari** ✅ — read-only, fetch JSON. |
+| Saat generate output dengan link production page | Boleh "Open di browser pilihan Adib (Chrome atau Safari)" + URL plain text. **Pengecualian**: Apps Script editor + Firebase Console = **Chrome WAJIB** (session auth). |
 | Saat link ke `computer://` local file (preview HTML/PDF/MD lokal) | Safari OK (no auth required) |
+
+**Honest disclosure cross-browser sync history:**
+- ❌ Pre-24 Mei 2026: dashboard hanya jalan Chrome (Firestore client init asumsi Chrome session).
+- ⚠️ 24 Mei (commit ac7aee4): "Layer 1 Systematic Sync 7 states · 100% Firestore-backed" — claim over-stated. Code-path hanya push + initial-load once, TANPA continuous onSnapshot listener.
+- ⚠️ 1 Jun 2026 (commit a9f867b): L1+L2 fix — onSnapshot listeners ke 7 state + auto-retry + window.onfocus rehydrate. Safari Listen stream drop ~1-2 jam interval addressed.
+- ✅ 6 Jun 2026 (commit 196f1d9): L3 fix — Firestore-authoritative dedup di `autoCreateUpahFromEntry` (eliminates Pak Kumpul ghost + Cak Yit double-pay race). saveUpah/saveCashbook debounce 500ms (prevent push storm).
+- ⏳ Soak test 24-48 jam multi-device Safari + Chrome pending Adib verify.
 
 ---
 
