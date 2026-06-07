@@ -1890,10 +1890,10 @@
           </div>
           <div style="background:linear-gradient(135deg,#DBEAFE,#BFDBFE);padding:16px;border-radius:10px;border:2px solid #2563EB;text-align:center;position:relative">
             <div style="position:absolute;top:-10px;right:8px;background:#2563EB;color:#fff;padding:2px 8px;border-radius:10px;font-size:9px;font-weight:800;letter-spacing:.5px">🔥 KINI</div>
-            <div style="font-size:10px;letter-spacing:1.5px;color:#1E3A8A;font-weight:800;margin-bottom:4px">📊 ESTIMASI WAKIF</div>
-            <div style="font-size:30px;font-weight:900;color:#1E3A8A">~915</div>
-            <div style="font-size:11px;color:#1E3A8A;font-weight:700">Mei 2026 (Adib)</div>
-            <div style="font-size:9px;color:#1E3A8A;margin-top:4px;font-style:italic;opacity:0.8">Validasi: gap 0,3% vs proyeksi ✓</div>
+            <div style="font-size:10px;letter-spacing:1.5px;color:#1E3A8A;font-weight:800;margin-bottom:4px">📊 ACTUAL CENSUS</div>
+            <div style="font-size:30px;font-weight:900;color:#1E3A8A">1.298</div>
+            <div style="font-size:11px;color:#1E3A8A;font-weight:700">28–29 Mei 2026 (4 kebun)</div>
+            <div style="font-size:9px;color:#1E3A8A;margin-top:4px;font-style:italic;opacity:0.8">994 Kebun Wakaf + 304 K4</div>
           </div>
           <div style="background:linear-gradient(135deg,#D1FAE5,#A7F3D0);padding:16px;border-radius:10px;border:1px solid #059669;text-align:center">
             <div style="font-size:10px;letter-spacing:1.5px;color:#064E3B;font-weight:800;margin-bottom:4px">🎯 TARGET</div>
@@ -1903,8 +1903,77 @@
           </div>
         </div>
         <div style="margin-top:14px;padding:10px 14px;background:#F0FDF4;border-left:3px solid #16A34A;border-radius:6px;font-size:11px;color:#14532D;line-height:1.6">
-          💡 <strong>Decay rate ~14%/tahun di-derive dari data:</strong> 1.382 (Okt 2023) × 0,86^2,6 yr ≈ 912 → match dengan estimasi Wakif (Adib) 915 (gap cuma 0,3%, dalam tolerance). Faktor attrition: kematian alami pohon tua (umur produktif 25-30 thn), tanaman mati hama/penyakit, pohon roboh angin, era T.A. RWI seleksi tidak terdokumentasi. Final count Cak Yit akan tighten range ini.
+          💡 <strong>Decay rate ~14%/tahun di-derive dari data:</strong> 1.382 (Okt 2023) × 0,86^2,6 yr ≈ 912 → revisi 6 Juni 2026: actual census 1.298 di 4 kebun (994 Kebun Wakaf + 304 K4). Selisih dari proyeksi 912 ke actual 1.298 = +386 phn (+42,3%) → decay model terlalu agresif, recalibrate untuk projection panen 2027.
         </div>
+      </div>
+
+      <!-- ─── LATAR HISTORI — POHON NON-KOPI (Okt 2023, kini sudah ditebang) — moved from below 6 Juni 2026 ─── -->
+      <div class="card" style="background:#F0FDF4;border-left:5px solid #16A34A">
+        <div class="card-title" style="color:#14532D"><span class="num" style="background:#16A34A">1B</span>🌳 Latar Histori — Pohon Non-Kopi (Okt 2023, kini sudah ditebang)</div>
+        <p style="font-size:11.5px;color:#14532D;line-height:1.6;margin-bottom:12px">Total <strong>166 pohon</strong> non-kopi <strong>tercatat Oktober 2023, sebelum penebangan</strong>. Dahulu berfungsi sebagai penaung kopi + sumber buah sekunder. Lamtoro/Sengon/Suren = penaung kopi (essential per SOP era itu). Durian/Petai/Rambutan/Langsat/Alpukat/Cengkeh/Gandaria = produk sekunder.</p>
+        <div style="margin-bottom:12px;padding:12px 16px;background:#FEE2E2;border-left:5px solid #DC2626;border-radius:8px">
+          <div style="font-size:12px;font-weight:800;color:#7F1D1D;margin-bottom:4px;letter-spacing:0.5px">🚨 STATUS KINI</div>
+          <div style="font-size:11.5px;color:#7F1D1D;line-height:1.6">Seluruh pohon non-kopi ini <strong>telah ditebang sejak Okt 2023</strong> — termasuk kayu keras (waru, suren, sengon, durian). Yang tersisa adalah <strong>tunggak lapuk dimakan rayap</strong> = "Pohon X" sumber dugaan busuk akar (root rot reservoir) yang sedang diinvestigasi untuk pohon kopi sekitarnya.</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">
+          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss);opacity:0.92">
+            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 1 · 22 pohon (historis)</div>
+            <div style="font-size:11px;color:var(--earth);line-height:1.6">
+              Alpukat <strong>3</strong> · Durian <strong>5</strong> · Kelapa <strong>4</strong> · Lamtoro <strong>2</strong> · Sengon <strong>1</strong> · Suren <strong>3</strong> · Waru <strong>4</strong>
+            </div>
+          </div>
+          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss);opacity:0.92">
+            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 2 · 74 pohon (historis)</div>
+            <div style="font-size:11px;color:var(--earth);line-height:1.6">
+              Durian <strong>21</strong> · Kelapa <strong>5</strong> · Lamtoro <strong>6</strong> · Petai <strong>6</strong> · Rambutan <strong>1</strong> · Sengon <strong>5</strong> · Suren <strong>19</strong> · Waru <strong>11</strong>
+            </div>
+          </div>
+          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss);opacity:0.92">
+            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 3 · 42 pohon (historis)</div>
+            <div style="font-size:11px;color:var(--earth);line-height:1.6">
+              Durian <strong>4</strong> · Gandaria <strong>1</strong> · Kelapa <strong>6</strong> · Lamtoro <strong>4</strong> · Petai <strong>14</strong> · Suren <strong>1</strong> · Waru <strong>12</strong>
+            </div>
+          </div>
+          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss);opacity:0.92">
+            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 4 · 28 pohon (historis)</div>
+            <div style="font-size:11px;color:var(--earth);line-height:1.6">
+              Durian <strong>4</strong> · Kelapa <strong>1</strong> · Langsat <strong>15</strong> · Rambutan <strong>4</strong> · Sengon <strong>2</strong> · Cengkeh <strong>1</strong> · Waru <strong>1</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── LEGEND TALI RAFIA 3-WARNA (28 Mei 2026 dual-layer) + CHART KOMPOSISI KONDISI PER KEBUN ─── -->
+      <div class="card">
+        <div class="card-title"><span class="num">1C</span>🎀 Komposisi Kondisi Pohon — Sistem Tali Rafia 3-Warna (Census 28–29 Mei 2026)</div>
+
+        <!-- Legend 3-warna tepat di atas chart (setara di atas grid kartu Kebun 1-4) -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-bottom:14px">
+          <div style="background:#F0FDF4;padding:10px 14px;border-radius:8px;border-left:5px solid #16A34A">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="display:inline-block;width:14px;height:14px;background:#16A34A;border-radius:50%"></span>
+              <strong style="color:#14532D;font-size:12.5px">🟢 Tali Hijau — Pohon Sehat</strong>
+            </div>
+            <p style="font-size:11px;color:#14532D;line-height:1.55;margin:0">Tidak perlu intervensi apa pun, cukup perawatan berkala.</p>
+          </div>
+          <div style="background:#EFF6FF;padding:10px 14px;border-radius:8px;border-left:5px solid #2563EB">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="display:inline-block;width:14px;height:14px;background:#2563EB;border-radius:50%"></span>
+              <strong style="color:#1E3A8A;font-size:12.5px">🔵 Tali Biru — Pohon Kurang Sehat</strong>
+            </div>
+            <p style="font-size:11px;color:#1E3A8A;line-height:1.55;margin:0">Masih bisa diperbaiki dengan perawatan intensif, termasuk pohon yang butuh stek/sambung.</p>
+          </div>
+          <div style="background:#FEF2F2;padding:10px 14px;border-radius:8px;border-left:5px solid #DC2626">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+              <span style="display:inline-block;width:14px;height:14px;background:#DC2626;border-radius:50%"></span>
+              <strong style="color:#7F1D1D;font-size:12.5px">🔴 Tali Merah — Pohon Sakit/Mati</strong>
+            </div>
+            <p style="font-size:11px;color:#7F1D1D;line-height:1.55;margin:0">Sudah tidak dapat diperbaiki, potensi tebang/tanam baru & kandidat penyesuaian jarak tanam — kategori inilah yang akan dibuang.</p>
+          </div>
+        </div>
+
+        <!-- Chart grouped vertical bar: 3 seri per kebun -->
+        <div class="chart-wrap" style="margin-top:6px;height:340px"><canvas id="chart-composition-tali"></canvas></div>
       </div>
 
       <!-- ─── PER-KEBUN BREAKDOWN — validated dari xlsx Okt 2023 ─── -->
@@ -2273,75 +2342,9 @@
         <div class="chart-wrap" style="margin-top:18px"><canvas id="chart-inventory"></canvas></div>
       </div>
 
-      <!-- ─── NON-KOPI BREAKDOWN (shade + sekunder, dari xlsx Adib) ─── -->
-      <div class="card" style="background:#F0FDF4;border-left:5px solid #16A34A">
-        <div class="card-title" style="color:#14532D"><span class="num" style="background:#16A34A">3</span>🌳 Pohon Non-Kopi — Shade Trees + Sekunder (Okt 2023)</div>
-        <p style="font-size:11.5px;color:#14532D;line-height:1.6;margin-bottom:12px">Total <strong>166 pohon</strong> non-kopi tersebar di 4 kebun. Berfungsi sebagai penaung kopi + sumber buah sekunder. Lamtoro/Sengon/Suren = penaung kopi (essential per SOP). Durian/Petai/Rambutan/Langsat/Alpukat/Cengkeh/Gandaria = produk sekunder.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px">
-          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss)">
-            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 1 · 22 pohon</div>
-            <div style="font-size:11px;color:var(--earth);line-height:1.6">
-              Alpukat <strong>3</strong> · Durian <strong>5</strong> · Kelapa <strong>4</strong> · Lamtoro <strong>2</strong> · Sengon <strong>1</strong> · Suren <strong>3</strong> · Waru <strong>4</strong>
-            </div>
-          </div>
-          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss)">
-            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 2 · 74 pohon</div>
-            <div style="font-size:11px;color:var(--earth);line-height:1.6">
-              Durian <strong>21</strong> · Kelapa <strong>5</strong> · Lamtoro <strong>6</strong> · Petai <strong>6</strong> · Rambutan <strong>1</strong> · Sengon <strong>5</strong> · Suren <strong>19</strong> · Waru <strong>11</strong>
-            </div>
-          </div>
-          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss)">
-            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 3 · 42 pohon</div>
-            <div style="font-size:11px;color:var(--earth);line-height:1.6">
-              Durian <strong>4</strong> · Gandaria <strong>1</strong> · Kelapa <strong>6</strong> · Lamtoro <strong>4</strong> · Petai <strong>14</strong> · Suren <strong>1</strong> · Waru <strong>12</strong>
-            </div>
-          </div>
-          <div style="background:#fff;padding:10px 14px;border-radius:8px;border-left:3px solid var(--moss)">
-            <div style="font-size:10px;color:var(--moss);font-weight:800;letter-spacing:1px;margin-bottom:4px">KEBUN 4 · 28 pohon</div>
-            <div style="font-size:11px;color:var(--earth);line-height:1.6">
-              Durian <strong>4</strong> · Kelapa <strong>1</strong> · Langsat <strong>15</strong> · Rambutan <strong>4</strong> · Sengon <strong>2</strong> · Cengkeh <strong>1</strong> · Waru <strong>1</strong>
-            </div>
-          </div>
-        </div>
-        <div style="margin-top:12px;padding:10px 14px;background:#fff;border-radius:6px;font-size:11px;color:var(--earth);line-height:1.6">
-          📍 <strong>Catatan strategis:</strong> Total durian <strong>34 pohon</strong> (K2 dominan dengan 21) = aset insidental yang dimonitor terpisah (Cak Yit panjat per pohon Rp 20K). Total <strong>lamtoro 12 + sengon 8 + suren 23 = 43 pohon penaung</strong> — perlu ditambah ke target 200-300 phn (per Q7 Klarifikasi Wakif 8 Mei). Total petai <strong>20</strong> (cluster di K3) = potensi sumber pendapatan musiman.
-        </div>
-      </div>
-
-      <!-- ─── TALI RAFIA 2-WARNA INOVASI ─── -->
-      <div class="card" style="background:linear-gradient(135deg,#FFFBEB,#FEF3C7);border-left:5px solid #D97706">
-        <div class="card-title"><span class="num">3</span>🎀 Sistem Tali Rafia 2-Warna (Inovasi Wakif · 16 Mei 2026)</div>
-        <p style="font-size:12px;color:var(--earth);line-height:1.6;margin-bottom:12px">Cara cepat & murah untuk census pohon saat pemangkasan, no extra labor. Cak Yit nge-tag pohon yang dia identifikasi, Wakif foto + GPS via lapor.html, data masuk dashboard otomatis.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
-          <div style="background:#fff;padding:14px;border-radius:8px;border-left:4px solid #DC2626">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <span style="display:inline-block;width:14px;height:14px;background:#DC2626;border-radius:50%"></span>
-              <strong style="color:#7F1D1D;font-size:13px">Tali Merah · Tebang</strong>
-            </div>
-            <p style="font-size:11px;color:#7F1D1D;line-height:1.55;margin-bottom:6px">Pohon mati / produktivitas nol / batang busuk. <strong>Tidak dipupuk</strong> (waste). Feed langsung ke RAB Siklus 2027 sebagai data jumlah final pasca-seleksi.</p>
-            <div style="font-size:10px;color:#7F1D1D;font-style:italic;opacity:0.85">Estimasi 18-22% dari total pre-selection</div>
-          </div>
-          <div style="background:#fff;padding:14px;border-radius:8px;border-left:4px solid #F59E0B">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <span style="display:inline-block;width:14px;height:14px;background:#F59E0B;border-radius:50%"></span>
-              <strong style="color:#78350F;font-size:13px">Tali Kuning · Observasi</strong>
-            </div>
-            <p style="font-size:11px;color:#78350F;line-height:1.55;margin-bottom:6px">Kurang sehat, mungkin masih bisa diobati. <strong>Trigger observasi ahli</strong> (BRIN penjajakan) + potensi top-graft klon unggul BP 358/SA 237.</p>
-            <div style="font-size:10px;color:#78350F;font-style:italic;opacity:0.85">Estimasi 8-12% — kandidat peremajaan selektif</div>
-          </div>
-          <div style="background:#fff;padding:14px;border-radius:8px;border-left:4px solid #16A34A">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-              <span style="display:inline-block;width:14px;height:14px;background:#16A34A;border-radius:50%"></span>
-              <strong style="color:#14532D;font-size:13px">Tanpa Tali · Produktif</strong>
-            </div>
-            <p style="font-size:11px;color:#14532D;line-height:1.55;margin-bottom:6px">Pohon sehat, produksi normal. <strong>Dipupuk full BRIN dosis</strong> 5-10 thn, pemangkasan rutin wiwilan. Default baseline.</p>
-            <div style="font-size:10px;color:#14532D;font-style:italic;opacity:0.85">Estimasi 70-75% — ini yang jadi 750 phn target post-selection</div>
-          </div>
-        </div>
-        <div style="margin-top:14px;padding:10px 14px;background:#fff;border-radius:6px;font-size:11px;color:var(--earth);line-height:1.6;border:1px dashed #D97706">
-          ⚠️ <strong>Mitigasi:</strong> tali rafia rentan rusak cuaca. WAJIB foto + GPS upload ke lapor.html dalam 48 jam (Form Input → kategori "Inventarisasi Pohon" → kondisi_pohon enum). Backup data ke localStorage + Firestore.
-        </div>
-      </div>
+      <!-- Non-Kopi card MOVED to position 1B (after Timeline, before Per-Kebun) per 6 Juni 2026 update -->
+      <!-- Tali Rafia 2-warna card SUPERSEDED by Legend 3-warna + Chart Komposisi (card 1C) — 28 Mei 2026 system dual-layer -->
+      <!-- Density Analysis below stays — separate concern, not in scope of 6 Juni Inventarisasi update -->
 
       <!-- ─── DENSITY ANALYSIS ─── -->
       <div class="card">
@@ -3455,6 +3458,7 @@ function initApp() {
   renderDashboard();
   renderLog();
   renderInventoryChart();
+  renderInventoryCompositionChart();   // ⭐ 6 Juni 2026: chart komposisi tali Hijau/Biru/Merah per kebun
   renderBudgetChart();
   renderUpahSummary();
   renderUpahTable();
@@ -7278,6 +7282,68 @@ function renderInventoryChart() {
               if (idx === 2) return ['', '▲ K3 actual 350 vs proyeksi 262 = +88 phn (+33,6%)'];
               if (idx === 3) return ['', '▲ K4 actual 304 vs proyeksi 140 = +164 phn (+117%) · paling subur'];
               return [];
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+// ⭐ 6 Juni 2026: Komposisi Kondisi Pohon per Kebun — Grouped bar 3 seri Hijau/Biru/Merah
+// Data census 28-29 Mei 2026 — K1: 70/60/24 · K2: 194/198/98 · K3: 62/88/200 · K4: 106/138/60
+// Sumber: Laporan Asesmen 6 Juni 2026 + memory Wakaf CLAUDE.md "Update Pendataan Pohon 28 Mei 2026"
+function renderInventoryCompositionChart() {
+  const ctx = document.getElementById('chart-composition-tali');
+  if (!ctx) return;
+  if (window._inventoryCompositionChart) { try { window._inventoryCompositionChart.destroy(); } catch(e){} }
+  // Per Adib spec 6 Juni: Hijau #16A34A · Biru #2563EB · Merah #DC2626
+  const hijau = [70, 194, 62, 106];   // sehat — tidak butuh intervensi
+  const biru  = [60, 198, 88, 138];   // kurang sehat — perawatan intensif / stek-sambung
+  const merah = [24, 98, 200, 60];    // sakit/mati — kandidat tebang
+  window._inventoryCompositionChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Kebun 1','Kebun 2','Kebun 3','Kebun 4'],
+      datasets: [
+        { label: '🟢 Hijau · Sehat', data: hijau, backgroundColor: '#16A34A', borderColor: '#14532D', borderWidth: 1 },
+        { label: '🔵 Biru · Kurang Sehat', data: biru, backgroundColor: '#2563EB', borderColor: '#1E3A8A', borderWidth: 1 },
+        { label: '🔴 Merah · Sakit/Mati', data: merah, backgroundColor: '#DC2626', borderColor: '#7F1D1D', borderWidth: 1 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { stacked: false },
+        y: { stacked: false, beginAtZero: true, title: { display: true, text: 'Jumlah Pohon (census 28–29 Mei 2026)' } }
+      },
+      datasets: { bar: { categoryPercentage: 0.78, barPercentage: 0.88 } },
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } },
+        title: {
+          display: true,
+          text: 'Komposisi Kondisi Pohon per Kebun — Tali Hijau/Biru/Merah (Census 28–29 Mei 2026)',
+          font: { size: 13, weight: '600' }
+        },
+        // Data label angka di tiap batang (per Adib spec)
+        datalabels: {
+          display: true,
+          anchor: 'end',
+          align: 'top',
+          font: { size: 10, weight: '700' },
+          color: '#374151',
+          formatter: (v) => v
+        },
+        tooltip: {
+          callbacks: {
+            afterBody: (items) => {
+              const idx = items[0]?.dataIndex;
+              const totals = [154, 490, 350, 304];
+              if (idx === undefined) return [];
+              const pctH = (hijau[idx] / totals[idx] * 100).toFixed(0);
+              const pctB = (biru[idx] / totals[idx] * 100).toFixed(0);
+              const pctM = (merah[idx] / totals[idx] * 100).toFixed(0);
+              return ['', `Total ${totals[idx]} phn · Hijau ${pctH}% · Biru ${pctB}% · Merah ${pctM}%`];
             }
           }
         }
