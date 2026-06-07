@@ -359,7 +359,14 @@
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">2</span>Distribusi Aktivitas per Pelapor</div>
+        <div class="card-title"><span class="num">2</span>Distribusi Aktivitas per Pelapor
+          <!-- ⭐ 8 Juni 2026 (Action #7 Opsi B): Era-aware filter toggle -->
+          <span style="float:right;display:inline-flex;gap:4px;background:#f5f0e6;padding:3px;border-radius:6px;font-size:10px;font-weight:600">
+            <button id="pelapor-mode-aktif" onclick="togglePelaporMode('aktif')" style="padding:4px 10px;border:0;border-radius:4px;background:var(--moss);color:#fff;cursor:pointer">Periode Aktif</button>
+            <button id="pelapor-mode-all" onclick="togglePelaporMode('all')" style="padding:4px 10px;border:0;border-radius:4px;background:transparent;color:var(--earth);cursor:pointer">Cumulative All-Time</button>
+          </span>
+        </div>
+        <p style="font-size:10.5px;color:var(--mute);margin:-2px 0 8px;font-style:italic" id="pelapor-mode-note">📅 Periode Aktif (post-19 Mei 2026) — historikal Mas Anto 1-18 Mei tidak ditampilkan. Toggle ke Cumulative All-Time untuk include kontribusi historis.</p>
         <div class="chart-wrap"><canvas id="chart-pelapor"></canvas></div>
       </div>
 
@@ -676,7 +683,7 @@
 
       <div class="card">
         <div class="card-title"><span class="num">5</span>Riwayat Transaksi Lain (non-upah, legacy view)</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">⚠️ Section legacy. Gunakan tab <strong>Laporan Keuangan</strong> untuk input + tracking transaksi yang lebih lengkap (dengan Petty Cash Anto, kategori RAB, upload nota, dll).</p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">⚠️ Section legacy. Gunakan tab <strong>Laporan Keuangan</strong> untuk input + tracking transaksi yang lebih lengkap (kategori RAB, upload nota, audit trail, dll).</p>
         <div class="table-wrap">
           <table>
             <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr></thead>
@@ -895,15 +902,10 @@
 
         <!-- Breakdown 3 kategori -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:14px">
-          <div style="background:#fff8f0;padding:12px 14px;border-radius:8px;border-left:3px solid #d4a017">
-            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">🏦 TRANSFER KE MAS ANTO</div>
-            <div style="font-size:17px;font-weight:800;color:#8B6914;margin-top:4px" id="total-transfer-anto-display">Rp. 0,-</div>
-            <div style="font-size:10px;color:var(--mute);margin-top:2px">Advance untuk petty cash Anto</div>
-          </div>
           <div style="background:#fff0f0;padding:12px 14px;border-radius:8px;border-left:3px solid var(--cherry)">
             <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">💵 BAYAR PEKERJA LANGSUNG</div>
             <div style="font-size:17px;font-weight:800;color:var(--cherry);margin-top:4px" id="total-bayar-pekerja-display">Rp. 0,-</div>
-            <div style="font-size:10px;color:var(--mute);margin-top:2px">Upah dari Adib langsung (bukan via Anto)</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px">Upah harian + borongan ke Cak Yit · Pak Kumpul</div>
           </div>
           <div style="background:#fef9e7;padding:12px 14px;border-radius:8px;border-left:3px solid #8a6d1f">
             <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">🛍️ BELANJA LAIN-LAIN</div>
@@ -932,7 +934,6 @@
           </select>
           <select id="filter-cb-tipe" onchange="renderCashbook()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <option value="">Semua Tipe</option>
-            <option value="transfer_anto">🏦 Transfer ke Anto</option>
             <option value="bayar_upah">💵 Bayar Upah Langsung</option>
             <option value="keluar_langsung">🛍️ Pengeluaran Lain-lain</option>
           </select>
@@ -946,48 +947,14 @@
             <tbody id="cashbook-tbody"></tbody>
           </table>
         </div>
-        <p style="font-size:10px;color:var(--mute);margin-top:8px"><strong>Source legend:</strong> ✏️ Manual · 🔗 Auto-link dari Upah Pekerja · 🏦 Auto dari Anto petty cash settlement. <em>Saldo column dihapus (menunggu pemasukan pertama biar tidak minus).</em></p>
+        <p style="font-size:10px;color:var(--mute);margin-top:8px"><strong>Source legend:</strong> ✏️ Manual · 🔗 Auto-link dari Upah Pekerja. <em>Saldo column dihapus (menunggu pemasukan pertama biar tidak minus). Entry historis era T.A. Anto 1-18 Mei 2026 tetap tampil sebagai pengeluaran biasa.</em></p>
       </div>
 
-      <!-- ============ SECTION 3 — KAS MAS ANTO ============ -->
-      <div class="card" style="border-left:4px solid #d4a017">
-        <div class="card-title" style="color:#8B6914"><span class="num" style="background:#d4a017">3</span>🏦 Kas Mas Anto (Petty Cash)</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Saldo dana yang Adib transfer ke Mas Anto untuk belanja lapangan. Adib transfer (in) → Mas Anto pakai (out) → sisa saldo.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px">
-          <div style="background:#f5fbf7;padding:12px 14px;border-radius:8px">
-            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">📥 TRANSFER IN</div>
-            <div style="font-size:18px;font-weight:800;color:var(--moss);margin-top:4px" id="anto-total-in">Rp. 0,-</div>
-            <div style="font-size:10px;color:var(--mute);margin-top:2px">Dari Adib</div>
-          </div>
-          <div style="background:#fff0f0;padding:12px 14px;border-radius:8px">
-            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">📤 SUDAH DIPAKAI</div>
-            <div style="font-size:18px;font-weight:800;color:var(--cherry);margin-top:4px" id="anto-total-out">Rp. 0,-</div>
-            <div style="font-size:10px;color:var(--mute);margin-top:2px">Upah + belanja lapangan</div>
-          </div>
-          <div style="background:#fbf3f3;padding:12px 14px;border-radius:8px" id="anto-sisa-card">
-            <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">📊 SISA DI ANTO</div>
-            <div style="font-size:18px;font-weight:800;margin-top:4px" id="anto-sisa">Rp. 0,-</div>
-            <div style="font-size:10px;color:var(--mute);margin-top:2px" id="anto-sisa-note">—</div>
-          </div>
-        </div>
-        <!-- Mas Anto OUT permanen 19 Mei 2026 — tombol entry baru disembunyikan.
-             Tabel historis di bawah tetap visible untuk audit trail era pre-19 Mei. -->
-        <div style="display:none">
-          <button class="btn btn-primary" onclick="openTrxModal('transfer_anto')" style="background:var(--moss);font-size:11px">+ Tambah Transfer ke Anto (DEPRECATED)</button>
-          <button class="btn btn-primary" onclick="openTrxModal('keluar_anto')" style="background:var(--cherry);font-size:11px">+ Tambah Pengeluaran Anto (DEPRECATED)</button>
-        </div>
-        <div style="margin-bottom:12px;padding:8px 12px;background:#f4f4f0;border-left:3px solid #8B8579;border-radius:6px;font-size:10.5px;color:#6b6b6b;font-style:italic">
-          📜 Mas Anto OUT permanen sejak 19 Mei 2026. Tabel di bawah = audit trail historis (Transfer + Pengeluaran via Anto era T.A.). Pembayaran baru langsung via "Pengeluaran Kas Wakif" di atas.
-        </div>
-        <div class="table-wrap">
-          <table style="font-size:11.5px">
-            <thead style="background:var(--cream)">
-              <tr><th>Tgl</th><th>Tipe</th><th>Keterangan</th><th>Kategori RAB</th><th style="text-align:right">Masuk</th><th style="text-align:right">Keluar</th><th style="text-align:right">Saldo Anto</th><th>Nota</th><th style="text-align:center">Aksi</th></tr>
-            </thead>
-            <tbody id="anto-tbody"></tbody>
-          </table>
-        </div>
-      </div>
+      <!-- ============ SECTION 3 — KAS MAS ANTO REMOVED 8 Juni 2026 ============ -->
+      <!-- Petty Cash Anto card DELETED per Adib instruction (Action #7 comprehensive Anto cleanup).
+           Historis Rp 500K transfer_anto entries tetap tersimpan di CASHBOOK array & ter-render
+           di Section 2 (Pengeluaran Kas Wakif) sebagai expense biasa — included di totalPengeluaran
+           computation. Backward compat parser (line 12633+) untuk tag [via Anto] tetap preserve. -->
 
       <!-- ============ SECTION 4 — RINGKASAN ============ -->
       <div class="card" style="background:linear-gradient(135deg,#1f5f47,#2e4040);color:#f5f0e6;border:0">
@@ -2450,7 +2417,7 @@
       <div class="card" style="background:linear-gradient(135deg,#2D8466,#1F5F47);color:#fff;border:0">
         <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800;margin-bottom:8px">🎫 SECTION A · WORKER URL MANAGEMENT</div>
         <div style="font-size:18px;font-weight:800;margin-bottom:6px">Manage Worker Tokens & Activity</div>
-        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit · Mas Anto. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian.</div>
+        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian. <em style="color:#a8c8bc">Token <code style="background:rgba(255,255,255,.15);padding:1px 5px;border-radius:3px;color:#fff;font-style:normal">ANTO</code> preserved untuk backfill historis 1-18 Mei 2026 saja.</em></div>
       </div>
 
       <div class="card">
@@ -3587,21 +3554,50 @@ function renderActivityChart() {
   });
 }
 
+// ⭐ 8 Juni 2026 (Action #7 Opsi B per Adib): Era-aware filter toggle
+// Mode 'aktif' (default): filter laporan post-19 Mei 2026 — hide Mas Anto (OUT permanen).
+// Mode 'all': cumulative all-time termasuk historis Anto 1-18 Mei 2026.
+const ANTO_OUT_DATE = '2026-05-19';
+let _pelaporChartMode = 'aktif';
+function togglePelaporMode(mode) {
+  _pelaporChartMode = mode;
+  // Update button styling
+  const btnAktif = document.getElementById('pelapor-mode-aktif');
+  const btnAll = document.getElementById('pelapor-mode-all');
+  const note = document.getElementById('pelapor-mode-note');
+  if (btnAktif && btnAll) {
+    btnAktif.style.background = mode === 'aktif' ? 'var(--moss)' : 'transparent';
+    btnAktif.style.color = mode === 'aktif' ? '#fff' : 'var(--earth)';
+    btnAll.style.background = mode === 'all' ? 'var(--moss)' : 'transparent';
+    btnAll.style.color = mode === 'all' ? '#fff' : 'var(--earth)';
+  }
+  if (note) {
+    note.textContent = mode === 'aktif'
+      ? '📅 Periode Aktif (post-19 Mei 2026) — historikal Mas Anto 1-18 Mei tidak ditampilkan. Toggle ke Cumulative All-Time untuk include kontribusi historis.'
+      : '🗂 Cumulative All-Time — termasuk historis Mas Anto 1-18 Mei 2026 (OUT permanen 19 Mei). Sweat equity untuk bagi hasil pasca-BEP.';
+  }
+  // Re-render chart
+  if (window._pelaporChart) { try { window._pelaporChart.destroy(); } catch(e){} }
+  renderPelaporChart();
+}
 function renderPelaporChart() {
   const ctx = document.getElementById('chart-pelapor');
   if (!ctx) return;
+  if (window._pelaporChart) { try { window._pelaporChart.destroy(); } catch(e){} }
+  // Filter laporan based on mode
+  const filtered = _pelaporChartMode === 'aktif'
+    ? (STATE.laporan || []).filter(d => (d.tgl || '') >= ANTO_OUT_DATE)
+    : (STATE.laporan || []);
   const counts = {ANTO:0, YIT:0, KUMPUL:0};
-  STATE.laporan.forEach(d => counts[d.pelapor] = (counts[d.pelapor]||0) + 1);
-  new Chart(ctx, {
+  filtered.forEach(d => counts[d.pelapor] = (counts[d.pelapor]||0) + 1);
+  // Build labels + data — hide Anto kalau mode aktif (count 0)
+  const showAnto = _pelaporChartMode === 'all';
+  const labels = showAnto ? ['Mas Anto (Historis 1-18 Mei)','Cak Yit (Atas)','Pak Kumpul (Bawah)'] : ['Cak Yit (Atas)','Pak Kumpul (Bawah)'];
+  const data = showAnto ? [counts.ANTO, counts.YIT, counts.KUMPUL] : [counts.YIT, counts.KUMPUL];
+  const colors = showAnto ? ['#9CA3AF','#c14b3a','#8b6914'] : ['#c14b3a','#8b6914'];
+  window._pelaporChart = new Chart(ctx, {
     type: 'doughnut',
-    data: {
-      labels: ['Mas Anto (Koord)','Cak Yit (Atas)','Pak Kumpul (Bawah)'],
-      datasets: [{
-        data: [counts.ANTO, counts.YIT, counts.KUMPUL],
-        backgroundColor: ['#5a9080','#c14b3a','#8b6914'],
-        borderColor: '#fff', borderWidth: 2
-      }]
-    },
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: '#fff', borderWidth: 2 }] },
     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
   });
 }
@@ -4923,12 +4919,9 @@ function renderUpahSummary() {
       </div>
     </div>`;
   }).join('');
-  html += `<div class="kpi" style="background:#f5f0e6;border-left:3px solid var(--mute)">
-      <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">👷 Mas Anto (Koord)</div>
-      <div class="kpi-num" style="color:var(--mute);font-size:18px">Sweat Equity</div>
-      <div class="kpi-lbl">Pro-bono — Notulen 1-2 Mei</div>
-      <div style="font-size:10px;color:var(--mute);margin-top:6px;border-top:1px solid #eee;padding-top:6px">Tidak masuk timeline pekerja harian. Kontribusi terdokumentasi untuk bagi hasil pasca-BEP (Fase 3).</div>
-    </div>`;
+  // ⭐ 8 Juni 2026 (Action #7 per Adib): KPI card Mas Anto REMOVED.
+  // Mas Anto OUT permanen 19 Mei 2026 — tidak tampil di Tim Aktif KPI summary.
+  // Sweat equity kontribusi 1-18 Mei terdokumentasi via laporan entries historis (pelapor=ANTO).
   c.innerHTML = html;
 }
 
