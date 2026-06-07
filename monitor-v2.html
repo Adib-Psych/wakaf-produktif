@@ -2344,9 +2344,9 @@
             <li><strong>Investigate Pohon X root rot reservoir</strong> — tunggak lapuk Okt 2023 (waru/suren/sengon/durian) sebagai dugaan sumber busuk akar pohon kopi sekitarnya</li>
           </ul>
         </div>
-        <div class="chart-wrap" style="margin-top:18px"><canvas id="chart-inventory"></canvas></div>
       </div>
 
+      <!-- chart-inventory canvas REMOVED 6 Juni 2026 — Adib request: chart komposisi baseline 2023/proyeksi/actual redundan dgn Card #3 Komposisi Tali 3-Warna (lebih actionable per kondisi sehat/biru/merah) -->
       <!-- Density Analysis card REMOVED 6 Juni 2026 Opsi C refactor — angka outdated + redundan dengan Per-Kebun Final Subtotal -->
       <!-- Single source of truth density: Card #4 Per-Kebun (per-K density actual + Final Subtotal aggregate) + Card #5 Target Max table (target ideal 1.333 phn/ha) -->
 
@@ -3434,7 +3434,7 @@ function initApp() {
 
   renderDashboard();
   renderLog();
-  renderInventoryChart();
+  renderInventoryKPI();                // KPI ringkasan inventarisasi (banner). Chart komposisi baseline/proyeksi DELETED 6 Juni 2026.
   renderInventoryCompositionChart();   // ⭐ 6 Juni 2026: chart komposisi tali Hijau/Biru/Merah per kebun
   renderBudgetChart();
   renderUpahSummary();
@@ -7208,64 +7208,10 @@ document.addEventListener('DOMContentLoaded', () => {
   if (panenTab) panenTab.addEventListener('click', () => setTimeout(renderPanen, 100));
 });
 
-function renderInventoryChart() {
-  renderInventoryKPI();
-  const ctx = document.getElementById('chart-inventory');
-  if (!ctx) return;
-  // Repurposed 19 Mei 2026 malam (per Adib): tampilkan komposisi Kopi vs Non-Kopi baseline Oktober 2023
-  // Extended 26 Mei 2026 sore (per Adib): tambah Proyeksi Mei 2026 + Actual Census · K2+K3 28 Mei, K1+K4 29 Mei (complete 29 Mei 2026)
-  // Source: Baseline_List_Pohon_Kebun_Wakaf_NGT_Oktober2023.xlsx (Adib survey)
-  // Proyeksi = decay 14%/yr → 1382 × 0,86^2,6 ≈ 912 total, distribute proportional per kebun
-  // Census 28 Mei: K2=490, K3=350 (kemarin) · 29 Mei: K1=154, K4=304 (hari ini)
-  if (window._inventoryChart) { try { window._inventoryChart.destroy(); } catch(e){} }
-  const kopi = POHON_BASELINE.baseline2023_kopi || [150, 623, 397, 212];
-  const nonkopi = POHON_BASELINE.baseline2023_nonkopi || [22, 74, 42, 28];
-  // Proyeksi Mei 2026 per kebun (decay 14%/yr proportional): K1=99, K2=411, K3=262, K4=140 → total ~912
-  const proyeksi2026 = [99, 411, 262, 140];
-  // Actual census 29 Mei 2026: all 4 kebun done — K1=154, K2=490, K3=350, K4=304
-  const actualCensus = [154, 490, 350, 304];
-  window._inventoryChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Kebun 1 (pinggir jalan, kecil)','Kebun 2 (pinggir jalan, besar)','Kebun 3 (bawah)','Kebun 4 (belakang Rumah)'],
-      datasets: [
-        { label: '☕ Kopi (baseline Okt 2023)', data: kopi, backgroundColor: '#6b3a1f', borderColor: '#4a2812', borderWidth: 1 },
-        { label: '🌳 Non-Kopi (shade + sekunder Okt 2023)', data: nonkopi, backgroundColor: '#5a9080', borderColor: '#1f5f47', borderWidth: 1 },
-        { label: '📊 Proyeksi Mei 2026 (decay 14%/yr)', data: proyeksi2026, backgroundColor: '#3B82F6', borderColor: '#1E3A8A', borderWidth: 1 },
-        { label: '✅ Actual Census 28-29 Mei 2026 (4 kebun complete)', data: actualCensus, backgroundColor: '#16A34A', borderColor: '#14532D', borderWidth: 2 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      // Grouped layout (per Adib 19 Mei malam): bar side-by-side bukan stacked
-      // Lebih ramping per item, mudah baca masing-masing nilai
-      scales: {
-        x: { stacked: false },
-        y: { stacked: false, beginAtZero: true, title: { display: true, text: 'Jumlah Pohon (timeline: Okt 2023 → Mei 2026 proyeksi → Mei 2026 actual)' } }
-      },
-      // Tipiskan bar (default ~70%, kasih 0.55 supaya makin ramping)
-      datasets: { bar: { categoryPercentage: 0.78, barPercentage: 0.88 } },
-      plugins: {
-        legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 10 } },
-        title: { display: true, text: 'Komposisi Pohon per Kebun — Baseline Okt 2023 → Proyeksi Mei 2026 → Actual Census 28-29 Mei', font: { size: 13, weight: '600' } },
-        datalabels: { display: false },
-        tooltip: {
-          callbacks: {
-            // Delta annotation in tooltip for all 4 kebun (actual vs proyeksi · final 28 Mei)
-            afterBody: (items) => {
-              const idx = items[0]?.dataIndex;
-              if (idx === 0) return ['', '▲ K1 actual 154 vs proyeksi 99 = +55 phn (+55,6%)'];
-              if (idx === 1) return ['', '▲ K2 actual 490 vs proyeksi 411 = +79 phn (+19,2%)'];
-              if (idx === 2) return ['', '▲ K3 actual 350 vs proyeksi 262 = +88 phn (+33,6%)'];
-              if (idx === 3) return ['', '▲ K4 actual 304 vs proyeksi 140 = +164 phn (+117%) · paling subur'];
-              return [];
-            }
-          }
-        }
-      }
-    }
-  });
-}
+// renderInventoryChart() DELETED 6 Juni 2026 (Adib request) — chart komposisi baseline 2023 / proyeksi / actual
+// dianggap redundan dengan Card #3 Komposisi Tali 3-Warna (Hijau/Biru/Merah) yang lebih actionable.
+// renderInventoryKPI() tetap dipakai standalone (KPI ringkasan inventarisasi di banner top).
+// Canvas chart-inventory + Chart.js instance _inventoryChart sudah di-remove dari DOM.
 
 // ⭐ 6 Juni 2026: Komposisi Kondisi Pohon per Kebun — Grouped bar 3 seri Hijau/Biru/Merah
 // Data census 28-29 Mei 2026 — K1: 70/60/24 · K2: 194/198/98 · K3: 62/88/200 · K4: 106/138/60
