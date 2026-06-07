@@ -4833,12 +4833,20 @@ let UPAH_ITEMS = JSON.parse(localStorage.getItem('wkkn_v2_upah') || '[]');
 UPAH_ITEMS = UPAH_ITEMS.filter(it => it.pelapor !== 'ANTO');
 // PRODUCTION: empty default — diisi dari Distribusi Tugas tab
 
+// ⭐ 6 Juni 2026: Debounce Firestore push (prevent storm)
+// Casus: Safari probe 1 Jun reveal 15× consecutive [Upah] Pushed (37 entries)
+// dari rapid save calls (batch ops, sync cascade). Quota waste + race exposure.
+// Strategy: localStorage write IMMEDIATELY (sync, fast), Firestore push debounced 500ms.
+let _saveUpahDebounceTimer = null;
 function saveUpah() {
   localStorage.setItem('wkkn_v2_upah', JSON.stringify(UPAH_ITEMS));
-  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
-  if (typeof window.syncUpahToFirestore === 'function') {
-    window.syncUpahToFirestore().catch(e => console.warn('[saveUpah] Firestore push fail (local saved):', e));
-  }
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync + debounce L3 fix 6 Juni 2026
+  if (_saveUpahDebounceTimer) clearTimeout(_saveUpahDebounceTimer);
+  _saveUpahDebounceTimer = setTimeout(() => {
+    if (typeof window.syncUpahToFirestore === 'function') {
+      window.syncUpahToFirestore().catch(e => console.warn('[saveUpah] Firestore push fail (local saved):', e));
+    }
+  }, 500);
 }
 
 function calcTotal(item) {
@@ -12136,12 +12144,17 @@ if (cbStoredVer !== CASHBOOK_SCHEMA_VERSION) {
 }
 let CASHBOOK = JSON.parse(localStorage.getItem('wkkn_v2_cashbook') || '[]');
 // PRODUCTION: empty default — diisi via Form Input + Tambah Transaksi di tab Laporan Keuangan
+// ⭐ 6 Juni 2026: Debounce Firestore push (mirror saveUpah pattern, prevent storm dari batch ops)
+let _saveCashbookDebounceTimer = null;
 function saveCashbook() {
   localStorage.setItem('wkkn_v2_cashbook', JSON.stringify(CASHBOOK));
-  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync
-  if (typeof window.syncCashbookToFirestore === 'function') {
-    window.syncCashbookToFirestore().catch(e => console.warn('[saveCashbook] Firestore push fail (local saved):', e));
-  }
+  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync + debounce L3 fix 6 Juni 2026
+  if (_saveCashbookDebounceTimer) clearTimeout(_saveCashbookDebounceTimer);
+  _saveCashbookDebounceTimer = setTimeout(() => {
+    if (typeof window.syncCashbookToFirestore === 'function') {
+      window.syncCashbookToFirestore().catch(e => console.warn('[saveCashbook] Firestore push fail (local saved):', e));
+    }
+  }, 500);
 }
 
 // ============================================================================
@@ -13656,19 +13669,37 @@ if (document.readyState === 'loading'){
 }
 
 // Auto-create UPAH entry dari Firestore-sourced laporan (reusable for Phase 1B sync)
-// Fixed 18 Mei 2026: dedupe filter broadened ke SEMUA auto-create + backfill sources untuk
-// cegah duplikat saat Wakif backfill manual + worker juga submit lapor.html paralel.
-function autoCreateUpahFromEntry(entry) {
+// Fixed 18 Mei 2026: dedupe filter broadened ke SEMUA auto-create + backfill sources.
+// ⭐ 6 Juni 2026 (L3 fix root cause Pak Kumpul 17 ghost entries + Cak Yit double-pay Rp 900K):
+//   Optional 2nd param `firestoreUpahMap` (Map keyed `tgl|pelapor` → UPAH entry).
+//   Jika provided, dedup pakai Firestore-authoritative state DULU (Opsi A) — eliminates
+//   race condition di mana local UPAH_ITEMS stale saat laporan listener fires sebelum
+//   UPAH onSnapshot catch up. Casus: Safari probe 1 Jun reveal local 37 vs Firestore 69
+//   entries (drift +32 ghost entries dari re-create cycle).
+//   Fallback: local UPAH_ITEMS check (defense-in-depth + supports sync callers).
+function autoCreateUpahFromEntry(entry, firestoreUpahMap = null) {
   if (typeof UPAH_ITEMS === 'undefined') return null;
   if (entry.pelapor !== 'YIT' && entry.pelapor !== 'KUMPUL') return null;  // ANTO = sweat equity, skip
   if (!entry.durasi) return null;
+
+  // ⭐ Firestore-authoritative dedup (L3 fix 6 Juni 2026) — runs FIRST if map provided
+  if (firestoreUpahMap) {
+    const key = `${entry.tgl}|${entry.pelapor}`;
+    if (firestoreUpahMap.has(key)) {
+      const cloudExisting = firestoreUpahMap.get(key);
+      console.log('[autoCreateUpah] Skip — exists in Firestore for', entry.tgl, entry.pelapor, '(src:', cloudExisting.src, ', status:', cloudExisting.status, ')');
+      return null;
+    }
+  }
+
+  // Fallback: local UPAH_ITEMS dedup (defense-in-depth + supports sync callers like reprocessPendingEntries)
   // Skip if any UPAH already exists for same tgl + pelapor (regardless of src)
   // Previously filter cuma auto_form|auto_firestore → MISS auto_backfill duplikat (bug 18 Mei laporan Adib)
   const existing = UPAH_ITEMS.find(u =>
     u.tgl === entry.tgl && u.pelapor === entry.pelapor
   );
   if (existing) {
-    console.log('[autoCreateUpah] Skip — UPAH already exists for', entry.tgl, entry.pelapor, '(src:', existing.src, ')');
+    console.log('[autoCreateUpah] Skip — UPAH already exists (local) for', entry.tgl, entry.pelapor, '(src:', existing.src, ')');
     return null;
   }
 
@@ -15753,11 +15784,30 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     let _laporanUnsub = null;
     const setupLaporanListener = () => {
       if (_laporanUnsub) { try { _laporanUnsub(); } catch(e) {} }
-      _laporanUnsub = onSnapshot(q, (snapshot) => {
+      _laporanUnsub = onSnapshot(q, async (snapshot) => {
         let newCount = 0;
         let upahCreatedCount = 0;
         let removedCount = 0;
-        snapshot.docChanges().forEach(change => {
+
+        // ⭐ 6 Juni 2026 (L3 fix): Pre-fetch Firestore UPAH state ONCE per listener fire
+        // Eliminates race condition di mana local UPAH_ITEMS stale → autoCreateUpah re-creates
+        // ghost entries (Pak Kumpul 17 ghost + Cak Yit double-pay Rp 900K casus belli).
+        // Cost: 1 Firestore read per listener fire (acceptable — listener fires sparingly).
+        let firestoreUpahMap = null;
+        try {
+          const upahSnap = await getDoc(doc(db, 'upah', 'active'));
+          if (upahSnap.exists()) {
+            const upahData = upahSnap.data();
+            if (Array.isArray(upahData.data)) {
+              firestoreUpahMap = new Map(upahData.data.map(u => [`${u.tgl}|${u.pelapor}`, u]));
+              console.log(`[Laporan Listener] Pre-fetched Firestore UPAH map: ${firestoreUpahMap.size} entries (authoritative dedup)`);
+            }
+          }
+        } catch (e) {
+          console.warn('[Laporan Listener] Firestore UPAH pre-fetch fail (fallback to local dedup):', e.message || e);
+        }
+
+        for (const change of snapshot.docChanges()) {
           const docId = change.doc.id;
 
           if (change.type === 'removed') {
@@ -15768,14 +15818,14 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
               removedCount++;
             }
             window._deletedTombstones?.delete(docId);   // clear tombstone after Firestore confirms removal
-            return;
+            continue;
           }
 
           if (change.type === 'added' || change.type === 'modified') {
             // Skip if this docId was just locally deleted (race condition — Firestore hasn't propagated yet)
             if (window._deletedTombstones?.has(docId)) {
               console.log('[Listener] Skipping tombstoned entry:', docId);
-              return;
+              continue;
             }
             const data = normalizeWorkerEntry(change.doc.data());
             const existingIdx = STATE.laporan.findIndex(l => l.id === data.id);
@@ -15783,14 +15833,15 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
               STATE.laporan.unshift(data);
               newCount++;
               if (typeof autoCreateUpahFromEntry === 'function') {
-                const upahEntry = autoCreateUpahFromEntry(data);
+                // ⭐ Pass Firestore-authoritative map untuk dedup (L3 fix)
+                const upahEntry = autoCreateUpahFromEntry(data, firestoreUpahMap);
                 if (upahEntry) upahCreatedCount++;
               }
             } else if (change.type === 'modified') {
               STATE.laporan[existingIdx] = { ...STATE.laporan[existingIdx], ...data };
             }
           }
-        });
+        }
         if (newCount > 0 || removedCount > 0) {
           localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
           // Refresh views
