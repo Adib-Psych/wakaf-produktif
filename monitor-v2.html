@@ -4893,10 +4893,21 @@ UPAH_ITEMS = UPAH_ITEMS.filter(it => it.pelapor !== 'ANTO');
 // Casus: Safari probe 1 Jun reveal 15× consecutive [Upah] Pushed (37 entries)
 // dari rapid save calls (batch ops, sync cascade). Quota waste + race exposure.
 // Strategy: localStorage write IMMEDIATELY (sync, fast), Firestore push debounced 500ms.
+// ⭐ 8 Juni 2026 (Task 1 Cashbook Merge Bug fix): forceImmediate=true param untuk
+// audit delete/merge handlers — skip debounce, push langsung. Mencegah 0-500ms race
+// window di mana onSnapshot listener fire dengan stale cloud → revert local delete.
 let _saveUpahDebounceTimer = null;
-function saveUpah() {
+function saveUpah(forceImmediate) {
   localStorage.setItem('wkkn_v2_upah', JSON.stringify(UPAH_ITEMS));
   // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync + debounce L3 fix 6 Juni 2026
+  if (forceImmediate === true) {
+    if (_saveUpahDebounceTimer) clearTimeout(_saveUpahDebounceTimer);
+    if (typeof window.syncUpahToFirestore === 'function') {
+      console.log('[saveUpah] ⚡ Force-immediate push (skip 500ms debounce — audit op)');
+      window.syncUpahToFirestore().catch(e => console.warn('[saveUpah forced] Firestore push fail (local saved):', e));
+    }
+    return;
+  }
   if (_saveUpahDebounceTimer) clearTimeout(_saveUpahDebounceTimer);
   _saveUpahDebounceTimer = setTimeout(() => {
     if (typeof window.syncUpahToFirestore === 'function') {
@@ -12196,10 +12207,18 @@ if (cbStoredVer !== CASHBOOK_SCHEMA_VERSION) {
 let CASHBOOK = JSON.parse(localStorage.getItem('wkkn_v2_cashbook') || '[]');
 // PRODUCTION: empty default — diisi via Form Input + Tambah Transaksi di tab Laporan Keuangan
 // ⭐ 6 Juni 2026: Debounce Firestore push (mirror saveUpah pattern, prevent storm dari batch ops)
+// ⭐ 8 Juni 2026 (Task 1 fix): forceImmediate=true param untuk audit delete/merge
 let _saveCashbookDebounceTimer = null;
-function saveCashbook() {
+function saveCashbook(forceImmediate) {
   localStorage.setItem('wkkn_v2_cashbook', JSON.stringify(CASHBOOK));
-  // ⭐ Pattern #10 (locked 24 Mei 2026): cross-browser sync + debounce L3 fix 6 Juni 2026
+  if (forceImmediate === true) {
+    if (_saveCashbookDebounceTimer) clearTimeout(_saveCashbookDebounceTimer);
+    if (typeof window.syncCashbookToFirestore === 'function') {
+      console.log('[saveCashbook] ⚡ Force-immediate push (skip 500ms debounce — audit op)');
+      window.syncCashbookToFirestore().catch(e => console.warn('[saveCashbook forced] Firestore push fail (local saved):', e));
+    }
+    return;
+  }
   if (_saveCashbookDebounceTimer) clearTimeout(_saveCashbookDebounceTimer);
   _saveCashbookDebounceTimer = setTimeout(() => {
     if (typeof window.syncCashbookToFirestore === 'function') {
@@ -14482,6 +14501,34 @@ function auditMarkUpahPaid(upahId) {
 
 // NEW (18 Mei 2026): UPAH duplicate cleanup functions
 // Delete single duplicate UPAH entry — also cleanup linked cashbook autolink.
+// ⭐ 8 Juni 2026 (Task 1 fix root cause Cashbook merge/delete bug): Intentional Deletes registry
+// Mencegah upahMergeSetter resurrect entries yang user intentionally deleted via audit handler.
+// Auto-expire entries after 10s (cleanup garbage collection).
+window._upahIntentionalDeletes = window._upahIntentionalDeletes || new Set();
+window._upahIntentionalDeletesTimestamp = window._upahIntentionalDeletesTimestamp || new Map();
+function markUpahIntentionalDelete(ids) {
+  if (!Array.isArray(ids)) ids = [ids];
+  const now = Date.now();
+  ids.forEach(id => {
+    window._upahIntentionalDeletes.add(id);
+    window._upahIntentionalDeletesTimestamp.set(id, now);
+  });
+  console.log(`[UPAH IntentionalDeletes] 🚫 Marked ${ids.length} IDs as intentional delete (race protection 10s):`, ids);
+  // Auto-cleanup expired entries (>10s) to prevent set bloat
+  setTimeout(() => {
+    const cutoff = Date.now() - 10000;
+    let cleaned = 0;
+    for (const [id, ts] of window._upahIntentionalDeletesTimestamp) {
+      if (ts < cutoff) {
+        window._upahIntentionalDeletes.delete(id);
+        window._upahIntentionalDeletesTimestamp.delete(id);
+        cleaned++;
+      }
+    }
+    if (cleaned > 0) console.log(`[UPAH IntentionalDeletes] 🧹 Cleaned ${cleaned} expired entries`);
+  }, 11000);
+}
+
 function auditDeleteUpahDup(upahId) {
   const u = UPAH_ITEMS.find(x => x.id === upahId);
   if (!u) { alert('UPAH tidak ditemukan'); return; }
@@ -14501,21 +14548,37 @@ function auditDeleteUpahDup(upahId) {
               (u.bayar_source === 'anto' ? `• Saldo Anto auto-naik kembali\n` : '') +
               `\nLanjut hapus?`;
   if (!confirm(msg)) return;
+  console.log('[DeleteUpah] START', { upahId, pelapor: u.pelapor, tgl: u.tgl, ts: Date.now() });
+  // ⭐ Mark intentional delete BEFORE splice — race protection via upahMergeSetter filter
+  markUpahIntentionalDelete([upahId]);
   // Delete UPAH
   const idx = UPAH_ITEMS.findIndex(x => x.id === upahId);
   if (idx >= 0) UPAH_ITEMS.splice(idx, 1);
   // Delete linked cashbook (autolink only)
+  let cbDeleted = 0;
   if (typeof CASHBOOK !== 'undefined') {
+    const before = CASHBOOK.length;
     CASHBOOK = CASHBOOK.filter(t => t.ref !== ref);
-    if (typeof saveCashbook === 'function') saveCashbook();
+    cbDeleted = before - CASHBOOK.length;
+    if (typeof saveCashbook === 'function') saveCashbook(true); // ⭐ force-push immediate
   }
-  if (typeof saveUpah === 'function') saveUpah();
+  if (typeof saveUpah === 'function') saveUpah(true); // ⭐ force-push immediate
+  console.log('[DeleteUpah] Splice + force-push done · UPAH_ITEMS:', UPAH_ITEMS.length, '· CB deleted:', cbDeleted);
   if (typeof renderUpahTable === 'function') renderUpahTable();
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
   if (typeof renderCashbook === 'function') renderCashbook();
   if (typeof renderKeuangan === 'function') renderKeuangan();
   if (typeof renderAntoLedger === 'function') renderAntoLedger();
   openAuditModal();
+  // ⭐ Race detection — verify UPAH ID tidak resurrect post-listener-window
+  setTimeout(() => {
+    const stillPresent = UPAH_ITEMS.find(x => x.id === upahId);
+    if (stillPresent) {
+      console.error('[DeleteUpah] 🚨 T+2000ms REVERT DETECTED — ID', upahId, 'resurrected. Race protection FAILED.');
+    } else {
+      console.log('[DeleteUpah] ✓ T+2000ms — delete persisted, no revert');
+    }
+  }, 2000);
   if (typeof showToast === 'function') showToast(`🗑 UPAH duplikat ${u.tgl} ${u.pelapor} dihapus · ${linkedCb.length} cashbook cleaned`);
 }
 
@@ -14548,6 +14611,8 @@ function auditMergeUpahDup(key) {
               `Lanjut merge?`;
   if (!confirm(msg)) { console.log('[MergeUpah] User cancelled'); return; }
   console.log('[MergeUpah] User confirmed — starting splice + filter');
+  // ⭐ 8 Juni 2026 Task 1 fix: Mark intentional delete BEFORE splice — race protection
+  markUpahIntentionalDelete(dupIds);
   // Delete duplicates
   let deletedCb = 0;
   dupIds.forEach(id => {
@@ -14561,9 +14626,9 @@ function auditMergeUpahDup(key) {
     }
   });
   console.log('[MergeUpah] UPAH_ITEMS AFTER local splice:', UPAH_ITEMS.length, '· Cashbook deleted:', deletedCb);
-  console.log('[MergeUpah] Calling saveUpah() — Firestore push debounced 500ms · saveCashbook() same');
-  if (typeof saveUpah === 'function') saveUpah();
-  if (typeof saveCashbook === 'function') saveCashbook();
+  console.log('[MergeUpah] Calling saveUpah(true) + saveCashbook(true) — force-immediate push');
+  if (typeof saveUpah === 'function') saveUpah(true);     // ⭐ force-push immediate
+  if (typeof saveCashbook === 'function') saveCashbook(true);   // ⭐ force-push immediate
   if (typeof renderUpahTable === 'function') renderUpahTable();
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
   if (typeof renderCashbook === 'function') renderCashbook();
@@ -15549,7 +15614,25 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     {
       const upahMergeSetter = (d) => {
         if (typeof UPAH_ITEMS === 'undefined' || !Array.isArray(d)) return;
-        const incomingMap = new Map(d.map(u => [u.id, u]));
+        // ⭐ 8 Juni 2026 (Task 1 fix): Skip cloud entries yang baru di-delete via audit handler.
+        // Mencegah upahMergeSetter resurrect entries yang user intentionally deleted (Cashbook
+        // merge bug) — race window 0-500ms post-delete sebelum sync push completes.
+        const intentionalDeletes = (window._upahIntentionalDeletes instanceof Set) ? window._upahIntentionalDeletes : null;
+        let blockedRevertIds = [];
+        let filteredCloud = d;
+        if (intentionalDeletes && intentionalDeletes.size > 0) {
+          filteredCloud = d.filter(u => {
+            if (intentionalDeletes.has(u.id)) {
+              blockedRevertIds.push(u.id);
+              return false;
+            }
+            return true;
+          });
+          if (blockedRevertIds.length > 0) {
+            console.log(`[UPAH IntentionalDeletes] 🛡 Blocked ${blockedRevertIds.length} cloud entries from revert (IDs: ${blockedRevertIds.join(', ')}) — recently deleted via audit handler`);
+          }
+        }
+        const incomingMap = new Map(filteredCloud.map(u => [u.id, u]));
         const preserved = [];
         UPAH_ITEMS.forEach(local => {
           const remote = incomingMap.get(local.id);
@@ -15560,7 +15643,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         });
         // Apply incoming (replace local)
         UPAH_ITEMS.length = 0;
-        d.forEach(x => UPAH_ITEMS.push(x));
+        filteredCloud.forEach(x => UPAH_ITEMS.push(x));
         // Override with preserved local LUNAS (financial reality protect)
         preserved.forEach(p => {
           const idx = UPAH_ITEMS.findIndex(u => u.id === p.id);
