@@ -2430,9 +2430,60 @@
 
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-primary" onclick="renderWorkersTab()" style="background:var(--moss)">🔄 Refresh Last Active</button>
+          <!-- ⭐ 8 Juni 2026 (Task C3 per Adib): Tambah Pekerja Baru — modal flow -->
+          <button class="btn btn-primary" onclick="openAddWorkerModal()" style="background:#2E5C4F">➕ Tambah Pekerja Baru</button>
         </div>
 
         <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = simple worker code (KUMPUL/YIT) — no revoke yet.</p>
+
+        <!-- ⭐ MODAL: Tambah Pekerja Baru (Task C3 8 Juni 2026) -->
+        <div id="add-worker-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px">
+          <div style="background:#fff;border-radius:14px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;padding:24px 28px;box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;border-bottom:1px solid #eee;padding-bottom:12px">
+              <div style="font-size:16px;font-weight:800;color:var(--earth)">➕ Tambah Pekerja Baru</div>
+              <button onclick="closeAddWorkerModal()" style="background:none;border:0;font-size:20px;cursor:pointer;color:var(--mute)">✕</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div>
+                <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Nama Pekerja <span style="color:var(--cherry)">*</span></label>
+                <input type="text" id="aw-nama" placeholder="cth: Sukma" oninput="awAutoToken()" style="width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:13px">
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Role <span style="color:var(--cherry)">*</span></label>
+                <input type="text" id="aw-role" placeholder="cth: Pekerja Sortir Panen" style="width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:13px">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Icon (emoji)</label>
+                  <input type="text" id="aw-icon" placeholder="👷" maxlength="4" style="width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;text-align:center">
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Color</label>
+                  <input type="color" id="aw-color" value="#2E5C4F" style="width:100%;padding:5px;border:1.5px solid #ddd;border-radius:6px;height:38px">
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Tarif ½ hari (Rp)</label>
+                  <input type="number" id="aw-tarif-half" placeholder="cth: 50000" style="width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:13px">
+                </div>
+                <div>
+                  <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Tarif full day (Rp)</label>
+                  <input type="number" id="aw-tarif-full" placeholder="cth: 100000" style="width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:13px">
+                </div>
+              </div>
+              <div>
+                <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Token PWA (auto-generate, editable)</label>
+                <input type="text" id="aw-token" placeholder="cth: SUKMA" maxlength="20" style="width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;font-family:'SF Mono',Monaco,monospace;text-transform:uppercase">
+                <p style="font-size:10px;color:var(--mute);margin-top:4px;font-style:italic">Auto-uppercase. PWA URL: <code style="background:#fafaf0;padding:1px 5px;border-radius:3px">lapor.html?w=&lt;TOKEN&gt;</code>. Unique per worker.</p>
+              </div>
+            </div>
+            <div style="margin-top:18px;padding-top:12px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end">
+              <button onclick="closeAddWorkerModal()" class="btn btn-secondary">Cancel</button>
+              <button onclick="saveNewWorker()" class="btn btn-primary" style="background:#2E5C4F">💾 Simpan & Generate URL</button>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="card" style="background:rgba(168,200,188,.15);border-left:3px solid var(--moss)">
@@ -3579,6 +3630,9 @@ function togglePelaporMode(mode) {
   if (window._pelaporChart) { try { window._pelaporChart.destroy(); } catch(e){} }
   renderPelaporChart();
 }
+// ⭐ 8 Juni 2026 (Task E per Adib): Dynamic chart-pelapor — loop WORKER_DEFS aktif.
+// Future-proof: pekerja baru yang ditambah via "+ Tambah Pekerja Baru" (Task C3) otomatis
+// ter-include tanpa code change. Inactive workers (Anto) tampil hanya di mode 'all'.
 function renderPelaporChart() {
   const ctx = document.getElementById('chart-pelapor');
   if (!ctx) return;
@@ -3587,13 +3641,21 @@ function renderPelaporChart() {
   const filtered = _pelaporChartMode === 'aktif'
     ? (STATE.laporan || []).filter(d => (d.tgl || '') >= ANTO_OUT_DATE)
     : (STATE.laporan || []);
-  const counts = {ANTO:0, YIT:0, KUMPUL:0};
-  filtered.forEach(d => counts[d.pelapor] = (counts[d.pelapor]||0) + 1);
-  // Build labels + data — hide Anto kalau mode aktif (count 0)
-  const showAnto = _pelaporChartMode === 'all';
-  const labels = showAnto ? ['Mas Anto (Historis 1-18 Mei)','Cak Yit (Atas)','Pak Kumpul (Bawah)'] : ['Cak Yit (Atas)','Pak Kumpul (Bawah)'];
-  const data = showAnto ? [counts.ANTO, counts.YIT, counts.KUMPUL] : [counts.YIT, counts.KUMPUL];
-  const colors = showAnto ? ['#9CA3AF','#c14b3a','#8b6914'] : ['#c14b3a','#8b6914'];
+  // Build counts dynamic dari WORKER_DEFS — include semua tokens (active + inactive)
+  const counts = {};
+  WORKER_DEFS.forEach(w => { counts[w.token] = 0; });
+  filtered.forEach(d => {
+    if (counts[d.pelapor] !== undefined) counts[d.pelapor]++;
+  });
+  // Build labels + data + colors — show inactive workers (Anto) hanya di mode 'all'
+  const showInactive = _pelaporChartMode === 'all';
+  const workersToShow = WORKER_DEFS.filter(w => w.active || showInactive);
+  const labels = workersToShow.map(w => {
+    const suffix = w.active ? '' : ' (Historis)';
+    return `${w.nama}${suffix}`;
+  });
+  const data = workersToShow.map(w => counts[w.token] || 0);
+  const colors = workersToShow.map(w => w.active ? w.color : '#9CA3AF');
   window._pelaporChart = new Chart(ctx, {
     type: 'doughnut',
     data: { labels, datasets: [{ data, backgroundColor: colors, borderColor: '#fff', borderWidth: 2 }] },
@@ -7464,7 +7526,7 @@ const PIC_REGISTRY = {
   KUMPUL: {name: 'Pak Kumpul',       short: 'Pak Kumpul',      pool: 'eksekusi',  css: 'role-kumpul',  active: true},
   TIM:    {name: 'Tim Panen Ad-Hoc', short: 'Tim Ad-Hoc',      pool: 'eksekusi',  css: 'bidang-4',     active: true},
   // Verifikasi (supervisory)
-  ADIB:   {name: 'Adib (Wakif)',     short: 'Adib',            pool: 'verifikasi', css: 'bidang-1',    active: true},
+  ADIB:   {name: 'Adib (Wakif)',     short: 'Adib',            pool: 'verifikasi', dual_pool: ['eksekusi','verifikasi'], css: 'bidang-1',    active: true},
   HENDY:  {name: 'Hendy',            short: 'Hendy',           pool: 'verifikasi', css: 'bidang-2',    active: true},
   BRIN:   {name: 'Tim BRIN',         short: 'BRIN',            pool: 'verifikasi', css: 'role-tosin',  active: true},
   TA:     {name: 'Tenaga Ahli',      short: 'TA',              pool: 'verifikasi', css: 'role-tosin',  active: true},
@@ -7476,7 +7538,9 @@ const PIC_REGISTRY = {
   __LEGACY_RWI_TA__: {name: 'T.A. RWI (out)', short: 'TA-RWI (out)', pool: 'inactive', css: '', active: false, note: 'Era T.A. RWI tidak aktif sejak Mei 2026'}
 };
 
-const EKSEKUSI_KEYS    = ['YIT', 'KUMPUL', 'TIM'];
+// ⭐ 8 Juni 2026 (DD=a per Adib): ADIB dual-pool — appears di eksekusi + verifikasi
+// Plus dual_pool marker di PIC_REGISTRY.ADIB untuk future getters yang compute dari pool field.
+const EKSEKUSI_KEYS    = ['YIT', 'KUMPUL', 'TIM', 'ADIB'];
 const VERIFIKASI_KEYS  = ['ADIB', 'HENDY', 'BRIN', 'TA'];
 
 // Migrate ANTO/WAKIF/legacy_TA dari data hardcoded lama:
@@ -7504,7 +7568,7 @@ const DISTRIBUSI_DATA_DEFAULT = [
       {act: 'Pemangkasan ringan wiwilan (4 mgg sekali)', exec: ['YIT'], verif: ['ADIB']},
       {act: 'Pemupukan awal MH ½ dosis (Urea/SP36/KCl/Dolomit)', exec: ['KUMPUL'], verif: ['ADIB']},
       {act: 'Sanitasi gulma piringan', exec: ['KUMPUL'], verif: []},
-      {act: 'OPT monitoring 5-pohon-diagonal mingguan', exec: ['KUMPUL'], verif: ['ADIB']}
+      {act: 'OPT monitoring 5-pohon-diagonal mingguan', exec: ['YIT','ADIB'], verif: ['ADIB']}
     ]
   },
   {
@@ -10932,7 +10996,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
       {t:'Pemangkasan ringan wiwilan (4 mgg sekali)', sop:'Robusta Edisi 2 hal 122-135', prio:'rutin', siapa:'Cak Yit'},
       {t:'Pemupukan akhir MH ½ dosis (BRIN tabel umur 5-10 thn) — DUAL BASELINE', sop:'BRIN 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Pak Kumpul', dosis:'<strong>RUMUS UNIVERSAL: dosis_BRIN(g/phn) × jumlah_pohon_aktual = total_kg</strong><br>BRIN ½ dosis akhir MH per pohon: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g · Dolomit ~125g (NGT +25%)<br><br><strong>📅 Jan 2026 — Pre-selection (~915 phn aktual):</strong> Urea 137 kg (2,7 sak) · SP-36 73 kg (1,5 sak) · KCl 92 kg (1,8 sak) · Kieserit 46 kg (1 sak) · Dolomit 114 kg (2,3 sak)<br><strong>📅 Jan 2027+ — Post-selection (target 750 phn ideal):</strong> Urea 113 kg (2,3 sak) · SP-36 60 kg (1,2 sak) · KCl 75 kg (1,5 sak) · Kieserit 38 kg (0,75 sak) · Dolomit 94 kg (1,9 sak)', lokal:'<strong>Aturan workflow:</strong> Sebelum Nov 2026 = pakai jumlah pohon aktual (~915, scale up dari 750 baseline). Setelah Nov 2026 (post-selection) = pakai 750 phn baseline ATAU jumlah final hasil seleksi (update di CLAUDE.md).<br><strong>Kieserit BARU per BRIN 9 Mei</strong> — sumber Mg+S larut cepat (komplemen Dolomit). Cek BMKG Karangploso 7 hari sebelum aplikasi — TUNDA jika hujan deras &gt;100mm/minggu (pencucian).'},
       {t:'Sanitasi gulma piringan', sop:'Robusta Edisi 2 hal 145', prio:'rutin', siapa:'Pak Kumpul'},
-      {t:'OPT monitoring 5-pohon-diagonal mingguan', sop:'Robusta Edisi 2 hal 155', prio:'wajib', siapa:'Cak Yit', lokal:'<strong>Ngantang fokus:</strong> Cercospora bercak daun (kondisi lembab tinggi) + jamur akar Rigidoporus + PBKo. Frekuensi sebulan 4× saat MH (vs SOP standar mingguan).'}
+      {t:'OPT monitoring 5-pohon-diagonal mingguan', sop:'Robusta Edisi 2 hal 155', prio:'wajib', siapa:'Adib / Cak Yit', lokal:'<strong>Ngantang fokus:</strong> Cercospora bercak daun (kondisi lembab tinggi) + jamur akar Rigidoporus + PBKo. Frekuensi sebulan 4× saat MH (vs SOP standar mingguan).'}
     ]
   },
   2: {
@@ -10941,7 +11005,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
     aktivitas: [
       {t:'Pemangkasan ringan wiwilan', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Cak Yit'},
       {t:'Mulsa untuk simpan kelembapan', sop:'Robusta Edisi 2 hal 117', prio:'rekomendasi', siapa:'Pak Kumpul'},
-      {t:'OPT monitoring intensif (PBKo aktif)', sop:'Robusta Edisi 2 hal 161', prio:'wajib', siapa:'Cak Yit'},
+      {t:'OPT monitoring intensif (PBKo aktif)', sop:'Robusta Edisi 2 hal 161', prio:'wajib', siapa:'Adib / Cak Yit'},
       {t:'Persiapan pemupukan akhir MH', sop:'Robusta Edisi 2 hal 111', prio:'rencana', siapa:'Wakif + tim'}
     ]
   },
@@ -10974,7 +11038,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
       {t:'Konfirmasi processing partner per lot (Bonsari/penggilingan lokal)', sop:'Q12 — Klarifikasi 8 Mei', prio:'wajib', siapa:'Wakif', lokal:'<strong>📍 Hybrid model:</strong> Specialty lot (premium) → Bonsari Coffee. Bulk → penggilingan lokal Pujon ~Rp 1.500/kg.'},
       {t:'Pasang Brocap pilot di Kebun 4 (5 unit) — baseline monitoring', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Pak Kumpul', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pilot 5 unit Kebun 4 saja (Rumah Wakif, ~10-15 pohon). Full deploy 50 unit Kebun 1-3 pindah ke <strong>Nov-Des 2026</strong> (4 bln post-panen, optimal per jurnal).'},
       {t:'Moisture meter — DEFER ke Bonsari', sop:'SNI 01-2907-2008 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Wakif', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> CUT dari RAB Siklus 2026. Pinjam akses moisture meter Bonsari atau anggaran tahun 2027.'},
-      {t:'OPT monitoring intensif menjelang panen', sop:'Robusta Edisi 2 hal 160', prio:'wajib', siapa:'Cak Yit / Pak Kumpul'},
+      {t:'OPT monitoring intensif menjelang panen', sop:'Robusta Edisi 2 hal 160', prio:'wajib', siapa:'Adib / Cak Yit'},
       {t:'Pembongkaran pisang (jika MWC NU sudah panen)', sop:'Robusta Edisi 2 hal 56', prio:'wajib', siapa:'Pak Kumpul'}
     ]
   },
@@ -11054,7 +11118,7 @@ const SOP_AKTIVITAS_PER_BULAN = {
     aktivitas: [
       {t:'Monitoring infiltrasi rorak setelah hujan', sop:'Robusta Edisi 2 hal 149', prio:'rutin', siapa:'Cak Yit', topik_v2:'L'},
       {t:'Pemangkasan ringan (cabang sakit/non-produktif)', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Cak Yit', topik_v2:'I'},
-      {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Cak Yit / Pak Kumpul', topik_v2:'N'},
+      {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Adib / Cak Yit', topik_v2:'N'},
       {t:'Review tahunan + planning Kebun/blok prioritas', sop:'—', prio:'rutin', siapa:'Wakif + tim Ahli'}
     ]
   }
@@ -13769,6 +13833,127 @@ function toggleWorkerActive(token) {
   }
 }
 
+// ⭐ 8 Juni 2026 (Task C3 per Adib): "+ Tambah Pekerja Baru" modal handlers
+// LocalStorage persist + Firestore workers/<TOKEN> collection sync (existing pattern).
+const WORKER_DEFS_CUSTOM_LS_KEY = 'wkkn_worker_defs_custom';
+
+// Load custom WORKER_DEFS dari localStorage saat page init (append ke default WORKER_DEFS array)
+(function loadCustomWorkerDefsFromLS(){
+  try {
+    const raw = localStorage.getItem(WORKER_DEFS_CUSTOM_LS_KEY);
+    if (!raw) return;
+    const customList = JSON.parse(raw);
+    if (!Array.isArray(customList)) return;
+    customList.forEach(cw => {
+      // Skip kalau token sudah ada di WORKER_DEFS (avoid duplicate)
+      if (WORKER_DEFS.some(w => w.token === cw.token)) return;
+      WORKER_DEFS.push(cw);
+    });
+  } catch(e) { console.warn('[WorkerDefsCustom] load fail:', e); }
+})();
+
+function saveCustomWorkerDefsToLS() {
+  // Filter WORKER_DEFS untuk dapat custom only (skip default 3: KUMPUL, YIT, ANTO)
+  const defaultTokens = ['KUMPUL', 'YIT', 'ANTO'];
+  const customList = WORKER_DEFS.filter(w => !defaultTokens.includes(w.token));
+  try { localStorage.setItem(WORKER_DEFS_CUSTOM_LS_KEY, JSON.stringify(customList)); } catch(e) {}
+}
+
+function openAddWorkerModal() {
+  const modal = document.getElementById('add-worker-modal');
+  if (!modal) return;
+  // Reset form fields
+  ['aw-nama','aw-role','aw-icon','aw-tarif-half','aw-tarif-full','aw-token'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = id === 'aw-icon' ? '👷' : '';
+  });
+  const elColor = document.getElementById('aw-color');
+  if (elColor) elColor.value = '#2E5C4F';
+  modal.style.display = 'flex';
+}
+
+function closeAddWorkerModal() {
+  const modal = document.getElementById('add-worker-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+// Auto-generate token from nama input (uppercase slug, no spaces/special chars)
+function awAutoToken() {
+  const nama = (document.getElementById('aw-nama').value || '').trim();
+  if (!nama) return;
+  const elToken = document.getElementById('aw-token');
+  // Skip auto-gen kalau user sudah edit manual
+  if (elToken.dataset.manualEdit === '1') return;
+  const slug = nama.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 15);
+  elToken.value = slug;
+}
+
+async function saveNewWorker() {
+  const nama = (document.getElementById('aw-nama').value || '').trim();
+  const role = (document.getElementById('aw-role').value || '').trim();
+  const icon = (document.getElementById('aw-icon').value || '👷').trim();
+  const color = (document.getElementById('aw-color').value || '#2E5C4F').trim();
+  const tarifHalf = parseInt(document.getElementById('aw-tarif-half').value, 10) || 0;
+  const tarifFull = parseInt(document.getElementById('aw-tarif-full').value, 10) || 0;
+  const token = (document.getElementById('aw-token').value || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+  // Validation
+  if (!nama) { alert('Nama Pekerja wajib diisi'); return; }
+  if (!role) { alert('Role wajib diisi'); return; }
+  if (!token) { alert('Token wajib diisi (auto-generate dari Nama)'); return; }
+  if (token.length < 2) { alert('Token minimal 2 karakter'); return; }
+  if (WORKER_DEFS.some(w => w.token === token)) {
+    alert(`Token "${token}" sudah dipakai. Ubah token jadi unique (mis. ${token}2 atau pakai inisial role).`);
+    return;
+  }
+  // Build tarif_label
+  let tarifLabel = 'Tarif TBD';
+  if (tarifHalf && tarifFull) tarifLabel = `½ Rp ${(tarifHalf/1000).toFixed(0)}K · Full Rp ${(tarifFull/1000).toFixed(0)}K`;
+  else if (tarifFull) tarifLabel = `Full Rp ${(tarifFull/1000).toFixed(0)}K`;
+  else if (tarifHalf) tarifLabel = `½ Rp ${(tarifHalf/1000).toFixed(0)}K`;
+  // Build new worker entry
+  const newWorker = {
+    token, nama, role, icon, color,
+    tarif_label: tarifLabel,
+    active: true,
+    custom: true,
+    created_at: new Date().toISOString()
+  };
+  // Append to WORKER_DEFS array (in-memory)
+  WORKER_DEFS.push(newWorker);
+  // Persist localStorage
+  saveCustomWorkerDefsToLS();
+  // Push to Firestore workers/<TOKEN> collection (best-effort, non-blocking)
+  try {
+    if (typeof window.firestoreSetWorker === 'function') {
+      await window.firestoreSetWorker(token, { ...newWorker, last_active: null });
+    }
+  } catch(e) { console.warn('[AddWorker] Firestore push fail (local saved):', e); }
+  // Update TARIF_PEKERJA (existing pattern) — kalau ada tarif
+  if (typeof TARIF_PEKERJA !== 'undefined' && (tarifHalf || tarifFull)) {
+    TARIF_PEKERJA[token] = { setengah_hari: tarifHalf, full_day: tarifFull };
+  }
+  // Initialize KATEGORI_BY_WORKER[TOKEN] = [] (default empty, Adib setup later via Distribusi)
+  if (typeof KATEGORI_BY_WORKER !== 'undefined') {
+    KATEGORI_BY_WORKER[token] = [];
+  }
+  // Re-render
+  renderWorkersTab();
+  if (typeof renderDistribusi === 'function') renderDistribusi();
+  if (typeof renderPelaporChart === 'function') renderPelaporChart();
+  closeAddWorkerModal();
+  if (typeof showToast === 'function') {
+    showToast(`✓ ${nama} tersimpan · URL: lapor.html?w=${token}`, 'success');
+  } else {
+    alert(`✓ ${nama} tersimpan\nPWA URL: lapor.html?w=${token}\nKategori default: empty (setup via Distribusi Tugas)`);
+  }
+}
+
+// Track manual edit token (disable auto-gen kalau user mengubah manual)
+document.addEventListener('DOMContentLoaded', () => {
+  const elToken = document.getElementById('aw-token');
+  if (elToken) elToken.addEventListener('input', () => { elToken.dataset.manualEdit = '1'; });
+});
+
 function renderWorkersTab() {
   const grid = document.getElementById('worker-cards-grid');
   if (!grid) return;
@@ -13791,7 +13976,10 @@ function renderWorkersTab() {
 
   const baseUrl = window.location.origin + (window.location.pathname.includes('/monitor-v2.html') ? window.location.pathname.replace('/monitor-v2.html', '/lapor.html') : '/lapor.html');
 
-  grid.innerHTML = WORKER_DEFS.map(w => {
+  // ⭐ 8 Juni 2026 (DC1=A per Adib): Filter ACTIVE workers only. Mas Anto OUT permanen
+  // 19 Mei tidak tampil di Section A. Backward compat: token ANTO preserved di WORKER_DEFS
+  // array (active:false) + lapor.html?w=ANTO PWA URL tetap functional untuk backfill historis.
+  grid.innerHTML = WORKER_DEFS.filter(w => w.active).map(w => {
     const url = `${baseUrl}?w=${w.token}`;
     const lastActive = lastActiveMap[w.token];
     const daysSince = lastActive ? Math.round((Date.now() - new Date(lastActive.tgl).getTime()) / 86400000) : null;
