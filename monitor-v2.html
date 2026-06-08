@@ -450,10 +450,9 @@
           <div class="field">
             <label class="field-lbl">Pelapor <span class="req">*</span></label>
             <div class="radio-row" id="form-pelapor">
-              <!-- Mas Anto removed dari pelapor pre-fill per Adib 19 Mei 2026 (transisi sejak 17 Mei). Worker PWA token `?w=ANTO` tetap functional. Reactivation via Manage Worker tab. -->
-              <div class="radio-pill" data-val="YIT" onclick="setRadio('form-pelapor',this)">🪜 Cak Yit</div>
-              <div class="radio-pill" data-val="KUMPUL" onclick="setRadio('form-pelapor',this)">🌱 Pak Kumpul</div>
-              <div class="radio-pill" data-val="WAKIF" onclick="setRadio('form-pelapor',this)" style="background:rgba(212,175,55,0.12);border-color:var(--gold)">📋 Adib (Wakif)</div>
+              <!-- ⭐ 9 Juni 2026: Dynamic populate via populateFormPelaporRadio() from WORKER_DEFS (active only).
+                   Anto excluded via active:false. Custom workers (Task C3) appear automatically post-Firestore sync.
+                   Previously hardcoded YIT/KUMPUL/WAKIF + WAKIF had inline gold style yang break .on class active state. -->
             </div>
           </div>
           <div class="field">
@@ -3867,6 +3866,32 @@ function setRadioByValue(group, val) {
     else p.classList.remove('on');
   });
 }
+
+// ⭐ 9 Juni 2026 — Dynamic populate Form Input pelapor radio dari WORKER_DEFS (active only).
+// Replaces hardcoded 3-pill HTML (Anto-out, ANTO active:false di WORKER_DEFS).
+// Custom workers (Task C3 "+ Tambah Pekerja Baru") otomatis appear post-Firestore sync.
+// Preserves current STATE.pelapor selection bila pill yang sama masih ada setelah re-populate.
+function populateFormPelaporRadio() {
+  const container = document.getElementById('form-pelapor');
+  if (!container || typeof WORKER_DEFS === 'undefined') return;
+  const currentSelection = STATE && STATE.pelapor ? STATE.pelapor : null;
+  const activeWorkers = WORKER_DEFS.filter(w => w.active);
+  container.innerHTML = activeWorkers.map(w => {
+    const icon = w.icon || '👷';
+    // Sanitize nama untuk attribute-safe insertion
+    const safeName = (w.nama || w.token || '').replace(/"/g, '&quot;').replace(/'/g, "&#39;").replace(/</g, '&lt;');
+    return `<div class="radio-pill" data-val="${w.token}" onclick="setRadio('form-pelapor',this)">${icon} ${safeName}</div>`;
+  }).join('');
+  // Restore selection kalau pelapor sebelumnya masih active
+  if (currentSelection && activeWorkers.some(w => w.token === currentSelection)) {
+    setRadioByValue('form-pelapor', currentSelection);
+  }
+}
+
+// Populate on DOMContentLoaded (initial render) — WORKER_DEFS already hydrated dari localStorage
+document.addEventListener('DOMContentLoaded', () => {
+  if (typeof populateFormPelaporRadio === 'function') populateFormPelaporRadio();
+});
 
 function showEditBanner(lap) {
   let banner = document.getElementById('edit-banner');
@@ -13858,6 +13883,7 @@ function toggleWorkerActive(token) {
   // Re-render Distribusi (PIC badges) + Form Input radio + filter dropdowns
   if (typeof renderDistribusi === 'function') renderDistribusi();
   if (typeof populatePelaporSelects === 'function') populatePelaporSelects();   // ⭐ refresh filter dropdowns
+  if (typeof populateFormPelaporRadio === 'function') populateFormPelaporRadio();   // ⭐ refresh Form Input radio
   if (typeof showToast === 'function') {
     showToast(`${w.nama} ${w.active ? 'diaktifkan kembali' : 'dinonaktifkan (transisi)'}`, w.active ? 'success' : 'info');
   }
@@ -13977,6 +14003,7 @@ async function saveNewWorker() {
   if (typeof renderDistribusi === 'function') renderDistribusi();
   if (typeof renderPelaporChart === 'function') renderPelaporChart();
   if (typeof populatePelaporSelects === 'function') populatePelaporSelects();   // ⭐ refresh filter dropdowns
+  if (typeof populateFormPelaporRadio === 'function') populateFormPelaporRadio();   // ⭐ 9 Juni 2026: refresh Form Input radio
   closeAddWorkerModal();
   if (typeof showToast === 'function') {
     showToast(`✓ ${nama} tersimpan · URL: lapor.html?w=${token}`, 'success');
@@ -15861,6 +15888,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         if (typeof renderWorkersTab === 'function') renderWorkersTab();
         if (typeof renderDistribusi === 'function') renderDistribusi();
         if (typeof populatePelaporSelects === 'function') populatePelaporSelects();
+        if (typeof populateFormPelaporRadio === 'function') populateFormPelaporRadio();   // ⭐ refresh Form Input radio
         if (added > 0 || updated > 0) {
           console.log(`[WorkerDefsCustom] Merged: ${added} added, ${updated} updated`);
         }
