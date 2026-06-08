@@ -12955,6 +12955,15 @@ window.deleteUpahLinkedTrx = function(id) {
 };
 
 function renderAntoLedger() {
+  // ⭐ 9 Juni 2026 (Task 1 ROOT CAUSE fix Cashbook merge/delete bug):
+  // Petty Cash Anto card removed from DOM during Layer B cleanup (Mas Anto OUT permanen 19 Mei 2026,
+  // commit cadfc10 area). Function masih ter-call dari multiple call sites (auditDeleteUpahDup,
+  // auditMergeUpahDup, renderKeuangan, initRABKeuangan, render cycles).
+  // Without guard, getElementById('anto-tbody').innerHTML throws TypeError → break execution flow
+  // → openAuditModal() tidak fire post delete → modal counter UI stale (Adib see 8 dups never decrease).
+  // Fix: early return if target DOM missing. Function preserved untuk backward-compat parser paths.
+  const tbody = document.getElementById('anto-tbody');
+  if (!tbody) return;
   const antoTrx = CASHBOOK.filter(t => t.tipe === 'transfer_anto' || t.tipe === 'keluar_anto')
     .sort((a,b) => a.tgl.localeCompare(b.tgl));
   let run = 0;
@@ -12977,7 +12986,7 @@ function renderAntoLedger() {
   const tipeLabel = { transfer_anto: '🏦 Transfer In', keluar_anto: '🛒 Pengeluaran' };
   // Render-time rename Bidang → Kebun (cosmetic, preserve stored data)
   const renameKebun = (text) => (text || '').replace(/Bidang\s+(\d)/g, 'Kebun $1').replace(/Bidang\s+(\w+)/g, 'Kebun $1');
-  document.getElementById('anto-tbody').innerHTML = antoTrx.map(t => {
+  tbody.innerHTML = antoTrx.map(t => {
     if (t.tipe === 'transfer_anto') run += t.keluar;
     else run -= t.keluar;
     // Edit/Delete — manual only. Autolink (kalau ada dari UPAH lewat Anto) = locked.
@@ -13812,9 +13821,11 @@ function autoCreateUpahFromEntry(entry, firestoreUpahMap = null) {
 // WORKER_DEFS — active workers shown by default
 // Mas Anto OUT permanen per 19 Mei 2026 (status pause 17 Mei dikonversi ke OUT permanen).
 // active:false permanent. Token preserved untuk backfill historis entries 1-18 Mei 2026.
+// ⭐ 9 Juni 2026 (Task C2 carryover): WAKIF/Adib added — Wakif + PIC eksekusi belajar lapangan
 const WORKER_DEFS = [
   { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: true },
   { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon + PIC Pupuk', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: true },
+  { token: 'WAKIF', nama: 'Adib (Wakif)', role: 'Wakif + PIC Eksekusi (Belajar Lapangan)', icon: '🌱👤', color: '#2E5C4F', tarif_label: 'Sweat-Equity Wakif (tidak masuk timeline upah)', active: true, note: 'Token WAKIF (alias_of:ADIB di PIC_REGISTRY). Entry via dashboard Form Input — no PWA URL needed.' },
   { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan (OUT permanen)', icon: '👷', color: '#9CA3AF', tarif_label: 'Sweat Equity (OUT 19 Mei 2026)', active: false, transition_note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026' }
 ];
 
@@ -13941,12 +13952,18 @@ async function saveNewWorker() {
   WORKER_DEFS.push(newWorker);
   // Persist localStorage
   saveCustomWorkerDefsToLS();
-  // Push to Firestore workers/<TOKEN> collection (best-effort, non-blocking)
+  // Push to Firestore workers/<TOKEN> collection (per-worker, last_active tracking)
   try {
     if (typeof window.firestoreSetWorker === 'function') {
       await window.firestoreSetWorker(token, { ...newWorker, last_active: null });
     }
   } catch(e) { console.warn('[AddWorker] Firestore push fail (local saved):', e); }
+  // ⭐ 9 Juni 2026 (Task 2 opsi A): Also push singleton worker_defs_custom/active untuk cross-device discovery
+  try {
+    if (typeof window.syncWorkerDefsCustomToFirestore === 'function') {
+      await window.syncWorkerDefsCustomToFirestore();
+    }
+  } catch(e) { console.warn('[AddWorker] Singleton sync fail (local saved):', e); }
   // Update TARIF_PEKERJA (existing pattern) — kalau ada tarif
   if (typeof TARIF_PEKERJA !== 'undefined' && (tarifHalf || tarifFull)) {
     TARIF_PEKERJA[token] = { setengah_hari: tarifHalf, full_day: tarifFull };
@@ -15798,6 +15815,94 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       setTimeout(subscribeFn, 4700); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
+    // === WORKER_DEFS_CUSTOM (9 Juni 2026 — Task 2 opsi A cross-device sync) ==========
+    // Custom workers yang Adib add via "+ Tambah Pekerja Baru" modal — sync ke
+    // worker_defs_custom/active singleton supaya cross-device (Chrome ↔ Safari ↔ lapor.html PWA).
+    // Pattern #10 (singleton Firestore-auth + global merge).
+    // Default workers (KUMPUL, YIT, WAKIF, ANTO) di-skip dari sync — hanya custom entries.
+    {
+      const DEFAULT_TOKENS = ['KUMPUL', 'YIT', 'WAKIF', 'ANTO'];
+      const WORKER_DEFS_CUSTOM_SCHEMA_VERSION = '1.0';
+
+      window.syncWorkerDefsCustomToFirestore = async () => {
+        if (typeof WORKER_DEFS === 'undefined') return;
+        try {
+          const customList = WORKER_DEFS.filter(w => !DEFAULT_TOKENS.includes(w.token));
+          const payload = {
+            version: WORKER_DEFS_CUSTOM_SCHEMA_VERSION,
+            data: customList,
+            updated_at: serverTimestamp(),
+            updated_by: 'wakif_dashboard'
+          };
+          await setDoc(doc(db, 'worker_defs_custom', 'active'), payload);
+          console.log(`[WorkerDefsCustom] ✓ Pushed to Firestore (${customList.length} custom entries)`);
+        } catch (e) {
+          console.warn('[WorkerDefsCustom] Firestore push fail:', e.message || e);
+        }
+      };
+
+      const applyCustomWorkers = (customList) => {
+        if (!Array.isArray(customList)) return;
+        let added = 0, updated = 0;
+        customList.forEach(cw => {
+          if (!cw || !cw.token || DEFAULT_TOKENS.includes(cw.token)) return;
+          const existing = WORKER_DEFS.findIndex(w => w.token === cw.token);
+          if (existing >= 0) {
+            WORKER_DEFS[existing] = { ...WORKER_DEFS[existing], ...cw };
+            updated++;
+          } else {
+            WORKER_DEFS.push(cw);
+            added++;
+          }
+        });
+        // Persist localStorage cache
+        if (typeof saveCustomWorkerDefsToLS === 'function') saveCustomWorkerDefsToLS();
+        // Re-render UI yang depend on WORKER_DEFS
+        if (typeof renderWorkersTab === 'function') renderWorkersTab();
+        if (typeof renderDistribusi === 'function') renderDistribusi();
+        if (typeof populatePelaporSelects === 'function') populatePelaporSelects();
+        if (added > 0 || updated > 0) {
+          console.log(`[WorkerDefsCustom] Merged: ${added} added, ${updated} updated`);
+        }
+      };
+
+      window.loadWorkerDefsCustomFromFirestore = async () => {
+        try {
+          const snap = await getDoc(doc(db, 'worker_defs_custom', 'active'));
+          if (!snap.exists()) {
+            console.log('[WorkerDefsCustom] Firestore doc empty (no custom workers yet)');
+            return;
+          }
+          const data = snap.data();
+          if (!Array.isArray(data.data)) return;
+          console.log(`[WorkerDefsCustom] ✓ Loaded from Firestore (${data.data.length} custom entries)`);
+          applyCustomWorkers(data.data);
+        } catch (e) {
+          console.warn('[WorkerDefsCustom] Firestore load fail:', e.message || e);
+        }
+      };
+
+      const subscribeWorkerDefsCustom = () => {
+        try {
+          onSnapshot(doc(db, 'worker_defs_custom', 'active'), (snap) => {
+            if (!snap.exists()) return;
+            const data = snap.data();
+            if (!Array.isArray(data.data)) return;
+            const origin = data.updated_by || 'unknown';
+            console.log(`[WorkerDefsCustom] 🔄 onSnapshot update — ${data.data.length} custom entries (origin: ${origin})`);
+            applyCustomWorkers(data.data);
+          }, (err) => {
+            console.warn('[WorkerDefsCustom] onSnapshot error:', err.message || err);
+          });
+        } catch (e) {
+          console.warn('[WorkerDefsCustom] subscribe fail:', e.message || e);
+        }
+      };
+
+      setTimeout(() => window.loadWorkerDefsCustomFromFirestore(), 4400);
+      setTimeout(subscribeWorkerDefsCustom, 4900);
+    }
+
     // ===========================================================================
     // LAYER 2 GUARD RAILS (added 24 Mei 2026) — runtime audit Firestore coverage.
     // Casus: future developer/Claude session add state baru di localStorage tanpa
@@ -15814,6 +15919,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       'wkkn_sop_status_v1':              'syncSOPStatusToFirestore',
       'wkkn_v2_distribusi_pic':          'syncDistribusiPicToFirestore',
       'wkkn_sop_master_v1':              'syncSOPMasterToFirestore',
+      'wkkn_worker_defs_custom':         'syncWorkerDefsCustomToFirestore',  // ⭐ 9 Juni 2026 (Task 2 opsi A cross-device)
       // NOTE: 'wkkn_v2_laporan' (STATE.laporan) pakai per-entry sync via
       // syncLaporanEntryToFirestore (bukan singleton bulk push), jadi tidak
       // masuk audit list ini. Coverage verified via submitForm + Edit + Delete hooks.
@@ -15822,9 +15928,11 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     const LS_PER_DEVICE_ONLY = new Set([
       'anthropic_api_key', 'wkkn_v2_github_pat',           // sensitive credentials
       'wkkn_v2_enso_state',                                 // read-only cache from NOAA
-      'wkkn_form_hero_closed', 'wkkn_late_entry_reviewed', // UI state per-device
+      'wkkn_form_hero_closed', 'wkkn_form_hero_dismissed',  // UI state per-device (dismissed = current key per FORM_HERO_KEY line 13672, closed = legacy)
+      'wkkn_late_entry_reviewed',                           // UI state per-device
       'wkkn_workers_active_v1',                             // display cache
       'wkkn_v2_dismissed_suggest',                          // 25 Mei 2026: Suggested Panel dismiss list (local preference)
+      'wkkn_v2_upah_intent_del',                            // ⭐ 8 Juni 2026 Task 1 v2: IntentionalDeletes set (race protection 60s, per-device transient)
       // Per-entry Firestore sync (NOT singleton bulk) — verified via submitForm + Edit + Delete hooks
       'wkkn_v2_laporan',                                    // 25 Mei 2026: synced via syncLaporanEntry per-entry
       // schema version flags (trivial)
