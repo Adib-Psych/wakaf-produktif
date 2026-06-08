@@ -5188,28 +5188,60 @@ function markPaid(id) {
 function markUnpaid(id) {
   const it = UPAH_ITEMS.find(x => x.id === id);
   if (!it) { console.warn('[markUnpaid] UPAH not found id=', id); return; }
-  const ref = 'upah_' + id;
-  const linkedCb = (typeof CASHBOOK !== 'undefined') ? CASHBOOK.filter(t => t.ref === ref) : [];
+  const refSingle = 'upah_' + id;
+  // ⭐ 9 Juni 2026 (root cause fix orphan batch bug):
+  // Sebelumnya cuma cek exact match `t.ref === refSingle` — MISS batch refs format
+  // `upah_4·5·6·7` (multi-id concatenated). Result: UPAH status revert tapi batch
+  // cashbook persist sebagai orphan. Sekarang detect batch membership via ref parsing.
+  const allLinked = (typeof CASHBOOK !== 'undefined') ? CASHBOOK.filter(t => {
+    if (!t.ref || typeof t.ref !== 'string' || !t.ref.startsWith('upah_')) return false;
+    if (t.ref === refSingle) return true;
+    // Parse batch ref: 'upah_4·5·6' → ['4','5','6']
+    const idsInRef = t.ref.replace(/^upah_/, '').split('·').map(s => s.trim()).filter(Boolean);
+    return idsInRef.includes(String(id));
+  }) : [];
+  const batchEntries = allLinked.filter(t => t.ref !== refSingle);   // batch refs (multi-member)
+  const singleEntries = allLinked.filter(t => t.ref === refSingle);  // single-pair entries
   const nm = (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[it.pelapor]) ? NAMA_PEKERJA[it.pelapor] : it.pelapor;
   const totalRp = (typeof calcTotal === 'function') ? calcTotal(it) : (it.tarif * it.qty);
   const wasViaAnto = it.bayar_source === 'anto';
+
+  // Compute affected UPAH IDs from batch refs (cascade revert)
+  const cascadeUpahIds = new Set([id]);
+  batchEntries.forEach(cb => {
+    const idsInRef = cb.ref.replace(/^upah_/, '').split('·').map(s => s.trim()).filter(Boolean);
+    idsInRef.forEach(idStr => cascadeUpahIds.add(+idStr));
+  });
+
   const msg = `↺ Batalkan pembayaran "${nm} — ${(it.aktivitas||'').substring(0,40)}" (${(typeof formatTglShort==='function')?formatTglShort(it.tgl):it.tgl})?\n\n` +
               `Roll back ini akan:\n` +
-              `• Set UPAH status: belum dibayar\n` +
-              `• Hapus ${linkedCb.length} cashbook entry yang link ke UPAH ini (${(typeof fmtRp==='function')?fmtRp(totalRp):totalRp})\n` +
-              (wasViaAnto ? `• Saldo Kas Anto auto-naik kembali ${(typeof fmtRp==='function')?fmtRp(totalRp):totalRp}\n` : '') +
+              `• Set ${cascadeUpahIds.size} UPAH status: belum dibayar${cascadeUpahIds.size > 1 ? ` (cascade — UPAH ini bagian dari batch ${cascadeUpahIds.size} item)` : ''}\n` +
+              `• Hapus ${allLinked.length} cashbook entry (${singleEntries.length} single + ${batchEntries.length} batch · total ${(typeof fmtRp==='function')?fmtRp(allLinked.reduce((s,t)=>s+(t.keluar||0),0)):''})\n` +
+              (wasViaAnto ? `• Saldo Kas Anto auto-naik kembali\n` : '') +
               `\nLanjut?`;
   if (!confirm(msg)) return;
-  // Roll back UPAH status
-  it.status = 'belum';
-  delete it.bayar_tgl;
-  delete it.bayar_source;
-  // Delete linked cashbook entries (auto-link by ref)
+
+  // Roll back ALL UPAH dalam cascade set
+  let upahReverted = 0;
+  cascadeUpahIds.forEach(uid => {
+    const u = UPAH_ITEMS.find(x => x.id === uid);
+    if (u && u.status === 'lunas') {
+      u.status = 'belum';
+      delete u.bayar_tgl;
+      delete u.bayar_source;
+      upahReverted++;
+    }
+  });
+
+  // Delete ALL linked cashbook entries (single + batch)
   if (typeof CASHBOOK !== 'undefined') {
-    CASHBOOK = CASHBOOK.filter(t => t.ref !== ref);
-    if (typeof saveCashbook === 'function') saveCashbook();
+    const linkedIds = new Set(allLinked.map(t => String(t.id)));
+    CASHBOOK = CASHBOOK.filter(t => !linkedIds.has(String(t.id)));
+    if (typeof saveCashbook === 'function') saveCashbook(true);   // ⭐ force-immediate push
   }
-  saveUpah();
+  saveUpah(true);   // ⭐ force-immediate push
+  console.log(`[markUnpaid] ${upahReverted} UPAH reverted (cascade), ${allLinked.length} cashbook deleted (${singleEntries.length} single + ${batchEntries.length} batch)`);
+
   // Re-render all affected views
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
   if (typeof renderUpahTable === 'function') renderUpahTable();
@@ -5218,9 +5250,198 @@ function markUnpaid(id) {
   if (typeof renderAntoLedger === 'function') renderAntoLedger();
   if (typeof renderRAB === 'function') renderRAB();
   if (typeof showToast === 'function') {
-    showToast(`↺ UPAH ${nm} batal — ${linkedCb.length} cashbook entry dihapus${wasViaAnto?' · saldo Anto restored':''}`);
+    showToast(`↺ ${upahReverted} UPAH batal · ${allLinked.length} cashbook entry dihapus${wasViaAnto?' · saldo Anto restored':''}`);
   }
 }
+
+// ====================================================================
+// CONSOLE-ONLY CLEANUP HELPERS (9 Juni 2026 — destructive ops, no UI buttons)
+// Adib jalankan via DevTools Console. Sequence: backup → diagnose → wipe.
+// ====================================================================
+
+// 1. BACKUP — Download full state ke JSON file (CRITICAL sebelum destructive ops)
+window.exportWkknBackup = function() {
+  try {
+    const backup = {
+      meta: {
+        exported_at: new Date().toISOString(),
+        exported_by: 'wakif_dashboard_console',
+        schema_version: '1.0',
+        purpose: 'Pre-cleanup backup — restore via console import or manual Firestore upload'
+      },
+      counts: {
+        laporan: (typeof STATE !== 'undefined' && Array.isArray(STATE.laporan)) ? STATE.laporan.length : 0,
+        upah: (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.length : 0,
+        cashbook: (typeof CASHBOOK !== 'undefined') ? CASHBOOK.length : 0
+      },
+      laporan: (typeof STATE !== 'undefined' && Array.isArray(STATE.laporan)) ? STATE.laporan : [],
+      upah: (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS : [],
+      cashbook: (typeof CASHBOOK !== 'undefined') ? CASHBOOK : [],
+      panen_data: (typeof PANEN_DATA !== 'undefined') ? PANEN_DATA : null,
+      panen_lots: (typeof PANEN_LOTS !== 'undefined') ? PANEN_LOTS : null,
+      opt: (typeof OPT_OBSERVATIONS !== 'undefined') ? OPT_OBSERVATIONS : null
+    };
+    const json = JSON.stringify(backup, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const ts = new Date().toISOString().slice(0,10);
+    a.href = url;
+    a.download = `wkkn_backup_${ts}.json`;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+    console.log('[Backup] ✓ Downloaded wkkn_backup_' + ts + '.json (' + (blob.size/1024).toFixed(1) + ' KB)');
+    console.log('[Backup] Counts:', backup.counts);
+    return backup;
+  } catch (e) {
+    console.error('[Backup] Export fail:', e);
+    return null;
+  }
+};
+
+// 2. DIAGNOSE — Print orphan/inconsistency report (read-only, safe)
+window.diagnoseCashbookOrphans = function() {
+  if (typeof CASHBOOK === 'undefined' || typeof UPAH_ITEMS === 'undefined') {
+    console.warn('[Diagnose] CASHBOOK or UPAH_ITEMS undefined');
+    return null;
+  }
+  const upahMap = new Map(UPAH_ITEMS.map(u => [String(u.id), u]));
+  const orphans = [];
+  const partialBatches = [];
+  CASHBOOK.forEach(cb => {
+    if (!cb.ref || typeof cb.ref !== 'string' || !cb.ref.startsWith('upah_')) return;
+    const idsInRef = cb.ref.replace(/^upah_/, '').split('·').map(s => s.trim()).filter(Boolean);
+    const isBatch = idsInRef.length > 1;
+    const statuses = idsInRef.map(idStr => {
+      const u = upahMap.get(idStr);
+      return { id: idStr, status: u ? u.status : 'MISSING' };
+    });
+    const allLunas = statuses.every(s => s.status === 'lunas');
+    const anyMissing = statuses.some(s => s.status === 'MISSING');
+    const anyBelum = statuses.some(s => s.status === 'belum');
+    if (anyMissing || anyBelum) {
+      const orphanInfo = {
+        cashbook_id: cb.id,
+        cashbook_tgl: cb.tgl,
+        cashbook_ket: (cb.ket || '').substring(0, 60),
+        cashbook_keluar: cb.keluar,
+        ref: cb.ref,
+        is_batch: isBatch,
+        members: statuses,
+        any_missing: anyMissing,
+        any_belum: anyBelum
+      };
+      if (isBatch) partialBatches.push(orphanInfo);
+      else orphans.push(orphanInfo);
+    }
+  });
+  console.log('═══════════════════════════════════════════════════════');
+  console.log('[Diagnose] Cashbook ↔ UPAH Orphan Report');
+  console.log('═══════════════════════════════════════════════════════');
+  console.log(`Single Orphans: ${orphans.length}`);
+  if (orphans.length) console.table(orphans);
+  console.log(`Partial Batches (≥1 member belum/missing): ${partialBatches.length}`);
+  if (partialBatches.length) console.table(partialBatches.map(o => ({
+    cb_id: o.cashbook_id, cb_tgl: o.cashbook_tgl, ket: o.cashbook_ket,
+    keluar: o.cashbook_keluar, members: o.members.length,
+    belum_count: o.members.filter(m => m.status === 'belum').length,
+    missing_count: o.members.filter(m => m.status === 'MISSING').length
+  })));
+  return { single_orphans: orphans, partial_batches: partialBatches };
+};
+
+// 3. WIPE ORPHAN BATCHES — Delete cashbook entries dimana semua UPAH members != lunas (less destructive)
+window.wipeOrphanCashbookBatches = async function() {
+  const diag = window.diagnoseCashbookOrphans();
+  if (!diag) return;
+  const toDelete = [...diag.single_orphans, ...diag.partial_batches];
+  if (toDelete.length === 0) {
+    console.log('[WipeOrphan] No orphans found — clean state ✓');
+    return;
+  }
+  const totalRp = toDelete.reduce((s,o) => s + (o.cashbook_keluar || 0), 0);
+  const msg = `🗑 Wipe ${toDelete.length} orphan Cashbook entries (total Rp ${(totalRp||0).toLocaleString('id-ID')})?\n\n` +
+              `${diag.single_orphans.length} single orphan + ${diag.partial_batches.length} partial batch.\n\n` +
+              `Effect: Cashbook entries DELETED (push ke Firestore). UPAH status NOT changed.\n\n` +
+              `Backup dulu via exportWkknBackup()! Lanjut?`;
+  if (!confirm(msg)) { console.log('[WipeOrphan] Cancelled'); return; }
+  const deleteIds = new Set(toDelete.map(o => String(o.cashbook_id)));
+  const before = CASHBOOK.length;
+  CASHBOOK = CASHBOOK.filter(t => !deleteIds.has(String(t.id)));
+  const deleted = before - CASHBOOK.length;
+  if (typeof saveCashbook === 'function') saveCashbook(true);
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  console.log(`[WipeOrphan] ✓ ${deleted} orphan cashbook entries deleted + pushed`);
+  if (typeof showToast === 'function') showToast(`🗑 ${deleted} orphan cashbook entries cleaned`);
+  return deleted;
+};
+
+// 4. WIPE AUTO-GENERATED UPAH (Scope B per Adib 9 Juni 2026) — preserve manual entries
+window.wipeAutoUpah = async function() {
+  if (typeof UPAH_ITEMS === 'undefined') { console.warn('[WipeAuto] UPAH_ITEMS undefined'); return; }
+  const autoSources = ['auto_form', 'auto_firestore', 'auto_backfill'];
+  const toDelete = UPAH_ITEMS.filter(u => autoSources.includes(u.src));
+  const preserved = UPAH_ITEMS.filter(u => !autoSources.includes(u.src));
+  const lunasCount = toDelete.filter(u => u.status === 'lunas').length;
+  const totalRp = toDelete.reduce((s,u) => {
+    const t = (typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty);
+    return s + t;
+  }, 0);
+
+  const msg = `🗑 WIPE auto-generated UPAH (Scope B)?\n\n` +
+              `Akan DIHAPUS: ${toDelete.length} UPAH entries (${lunasCount} lunas, ${toDelete.length-lunasCount} belum)\n` +
+              `  Total nilai: Rp ${(totalRp||0).toLocaleString('id-ID')}\n` +
+              `  Sources: auto_form, auto_firestore, auto_backfill\n\n` +
+              `Akan DIPRESERVE: ${preserved.length} UPAH entries (src='manual' atau lainnya)\n\n` +
+              `JUGA hapus linked Cashbook entries (single + batch refs yang contain auto-UPAH IDs).\n\n` +
+              `⚠️ DESTRUCTIVE. Backup via exportWkknBackup() dulu!\n\nLanjut?`;
+  if (!confirm(msg)) { console.log('[WipeAuto] Cancelled'); return; }
+  const confirmMsg2 = `KONFIRMASI FINAL: Hapus ${toDelete.length} auto UPAH + linked Cashbook?\nKetik 'WIPE' di prompt berikut untuk lanjut.`;
+  const typed = prompt(confirmMsg2);
+  if (typed !== 'WIPE') { console.log('[WipeAuto] Cancelled (wrong confirmation)'); return; }
+
+  const toDeleteIds = new Set(toDelete.map(u => String(u.id)));
+  // Delete UPAH
+  UPAH_ITEMS = UPAH_ITEMS.filter(u => !toDeleteIds.has(String(u.id)));
+  // Delete linked Cashbook (single + batch where ANY member di auto)
+  let cashbookDeleted = 0;
+  if (typeof CASHBOOK !== 'undefined') {
+    const before = CASHBOOK.length;
+    CASHBOOK = CASHBOOK.filter(t => {
+      if (!t.ref || typeof t.ref !== 'string' || !t.ref.startsWith('upah_')) return true;
+      const idsInRef = t.ref.replace(/^upah_/, '').split('·').map(s => s.trim()).filter(Boolean);
+      // Delete kalau ALL members ada di toDelete (atau ANY untuk less strict — pakai ANY supaya partial batch tidak bocor)
+      const anyDeleted = idsInRef.some(idStr => toDeleteIds.has(idStr));
+      return !anyDeleted;
+    });
+    cashbookDeleted = before - CASHBOOK.length;
+    if (typeof saveCashbook === 'function') saveCashbook(true);
+  }
+  if (typeof saveUpah === 'function') saveUpah(true);
+
+  // Re-render
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderRAB === 'function') renderRAB();
+
+  console.log(`[WipeAuto] ✓ DONE: ${toDelete.length} UPAH deleted, ${cashbookDeleted} cashbook deleted`);
+  console.log(`[WipeAuto] Remaining UPAH: ${UPAH_ITEMS.length} (preserved manual entries)`);
+  console.log(`[WipeAuto] Remaining Cashbook: ${CASHBOOK.length}`);
+  if (typeof showToast === 'function') {
+    showToast(`🗑 WIPE DONE: ${toDelete.length} auto UPAH + ${cashbookDeleted} cashbook deleted`);
+  }
+  return { upah_deleted: toDelete.length, cashbook_deleted: cashbookDeleted, upah_remaining: UPAH_ITEMS.length };
+};
+
+console.log('[Cleanup Helpers] Available console commands:');
+console.log('  exportWkknBackup()          — Download JSON backup (safe, do FIRST)');
+console.log('  diagnoseCashbookOrphans()   — Print orphan report (read-only)');
+console.log('  wipeOrphanCashbookBatches() — Delete orphan cashbook only (less destructive)');
+console.log('  wipeAutoUpah()              — Wipe auto-generated UPAH + linked CB (Scope B, destructive)');
 
 function batchPay() {
   const checked = document.querySelectorAll('.upah-check:checked');
