@@ -5236,6 +5236,10 @@ function markUnpaid(id) {
   // Delete ALL linked cashbook entries (single + batch)
   if (typeof CASHBOOK !== 'undefined') {
     const linkedIds = new Set(allLinked.map(t => String(t.id)));
+    // ⭐ 10 Juni 2026: Mark intentional delete BEFORE filter — race protection via cashbookMergeSetter
+    if (typeof markCashbookIntentionalDelete === 'function') {
+      markCashbookIntentionalDelete([...linkedIds]);
+    }
     CASHBOOK = CASHBOOK.filter(t => !linkedIds.has(String(t.id)));
     if (typeof saveCashbook === 'function') saveCashbook(true);   // ⭐ force-immediate push
   }
@@ -5481,7 +5485,8 @@ function batchPay() {
         tgl: today, tipe, kat: katRAB,
         ket: `Upah ${nm} — ${aktivitasClean} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto·batch]':'[lgs·batch]'}`,
         masuk: 0, keluar: calcTotal(it),
-        src: 'autolink', nota: null, ref: 'upah_' + it.id
+        src: 'autolink', nota: null, ref: 'upah_' + it.id,
+        last_modified_at: new Date().toISOString()   // ⭐ 10 Juni 2026: Pattern #10 merge guard
       });
     }
   });
@@ -13282,13 +13287,18 @@ function closeTrxModal() {
 function editTrx(id) {
   const t = CASHBOOK.find(x => x.id === id);
   if (!t) { alert('Transaksi tidak ditemukan'); return; }
+  // ⭐ 10 Juni 2026 (Adib decision Opsi B): allow edit auto-link entries dengan WARN.
+  // Sebelumnya hard block (audit integrity), tapi UX confusing — Adib force indirect path via ↺ Batal.
   if (t.src !== 'manual') {
-    alert(
-      'Transaksi ini auto-link dari UPAH Pekerja, tidak bisa di-edit langsung di sini.\n\n' +
-      'Untuk batalkan: buka tab "Upah Pekerja" → klik tombol "↺ Batal" pada baris yang sesuai.\n' +
-      'Untuk koreksi: ↺ Batal dulu, lalu Bayar ulang dengan data yang benar.'
-    );
-    return;
+    const linkedUpahId = t.ref ? +t.ref.replace(/^upah_/,'').split('·')[0] : null;
+    const linkedUpah = linkedUpahId ? UPAH_ITEMS.find(u => u.id === linkedUpahId) : null;
+    const warnMsg = `⚠️ PERHATIAN — Cashbook ini auto-link dari UPAH Pekerja\n\n` +
+                    `Linked UPAH: ${linkedUpah ? `ID ${linkedUpah.id} · ${linkedUpah.pelapor} · ${linkedUpah.tgl}` : '(unknown — orphan link)'}\n\n` +
+                    `Edit di Cashbook akan UPDATE side cashbook saja. UPAH side tidak otomatis sync.\n\n` +
+                    `Untuk perubahan yang affect both side (nilai, status), recommend:\n` +
+                    `1. Cancel ini\n2. Buka tab "Upah Pekerja"\n3. Klik ↺ Batal\n4. Bayar ulang dengan data baru\n\n` +
+                    `Lanjut edit cashbook side saja?`;
+    if (!confirm(warnMsg)) return;
   }
   // Load existing data
   TRX_EDIT_ID = id;
@@ -13309,32 +13319,64 @@ function editTrx(id) {
   document.getElementById('trx-modal-overlay').style.display = 'flex';
 }
 
-// DELETE manual transaction with confirmation.
+// DELETE transaction with confirmation.
+// ⭐ 10 Juni 2026 (Adib decision Opsi B): allow delete auto-link entries dengan WARN + auto-revert UPAH option.
 function deleteTrx(id) {
   const t = CASHBOOK.find(x => x.id === id);
   if (!t) { alert('Transaksi tidak ditemukan'); return; }
-  if (t.src !== 'manual') {
-    alert(
-      'Transaksi ini auto-link dari UPAH Pekerja, tidak bisa dihapus langsung.\n\n' +
-      'Untuk hapus: buka tab "Upah Pekerja" → klik tombol "↺ Batal" pada baris yang sesuai.'
-    );
-    return;
-  }
   const jml = t.tipe === 'masuk' ? t.masuk : t.keluar;
-  const msg = `🗑️ Hapus transaksi ini?\n\n` +
-              `Tgl: ${(typeof formatTglShort==='function')?formatTglShort(t.tgl):t.tgl}\n` +
-              `Tipe: ${t.tipe}\n` +
-              `Keterangan: ${t.ket}\n` +
-              `Jumlah: ${(typeof fmtRp==='function')?fmtRp(jml):jml}\n\n` +
-              `Lanjut hapus?`;
-  if (!confirm(msg)) return;
+  let linkedUpahIds = [];
+  let linkedUpahEntries = [];
+  let wantRevert = false;
+  if (t.src !== 'manual') {
+    linkedUpahIds = t.ref ? t.ref.replace(/^upah_/,'').split('·').map(s => +s.trim()).filter(Boolean) : [];
+    linkedUpahEntries = linkedUpahIds.map(uid => UPAH_ITEMS.find(u => u.id === uid)).filter(Boolean);
+    const warnMsg = `⚠️ PERHATIAN — Cashbook ini auto-link dari UPAH Pekerja\n\n` +
+                    `Linked UPAH: ${linkedUpahEntries.length} entries (IDs: ${linkedUpahIds.join(', ')})\n\n` +
+                    `Hapus cashbook ini akan ORPHAN ${linkedUpahEntries.length} UPAH (status tetap lunas tapi tanpa bukti bayar).\n\n` +
+                    `Lanjut hapus cashbook?`;
+    if (!confirm(warnMsg)) return;
+    // Second prompt — offer revert
+    if (linkedUpahEntries.length > 0) {
+      wantRevert = confirm(`Tambahan: Revert ${linkedUpahEntries.length} UPAH ke "Belum Dibayar"?\n\nOK = revert (recommended untuk audit integrity)\nCancel = jangan revert (UPAH tetap lunas, manual cleanup later)`);
+    }
+  } else {
+    // Manual entry — standard confirm
+    const msg = `🗑️ Hapus transaksi ini?\n\n` +
+                `Tgl: ${(typeof formatTglShort==='function')?formatTglShort(t.tgl):t.tgl}\n` +
+                `Tipe: ${t.tipe}\n` +
+                `Keterangan: ${t.ket}\n` +
+                `Jumlah: ${(typeof fmtRp==='function')?fmtRp(jml):jml}\n\n` +
+                `Lanjut hapus?`;
+    if (!confirm(msg)) return;
+  }
+  // Apply revert UPAH kalau requested
+  if (wantRevert && linkedUpahEntries.length > 0) {
+    linkedUpahEntries.forEach(u => {
+      u.status = 'belum';
+      delete u.bayar_tgl;
+      delete u.bayar_source;
+      u.last_modified_at = new Date().toISOString();
+    });
+    if (typeof saveUpah === 'function') saveUpah(true);
+    console.log(`[deleteTrx] Reverted ${linkedUpahEntries.length} UPAH to belum dibayar`);
+  }
+  // ⭐ 10 Juni 2026: Mark intentional delete BEFORE filter — race protection
+  if (typeof markCashbookIntentionalDelete === 'function') markCashbookIntentionalDelete([id]);
   CASHBOOK = CASHBOOK.filter(x => x.id !== id);
-  if (typeof saveCashbook === 'function') saveCashbook();
+  if (typeof saveCashbook === 'function') saveCashbook(true);   // ⭐ force-immediate push
   if (typeof renderKeuangan === 'function') renderKeuangan();
   if (typeof renderCashbook === 'function') renderCashbook();
   if (typeof renderAntoLedger === 'function') renderAntoLedger();
   if (typeof renderRAB === 'function') renderRAB();
-  if (typeof showToast === 'function') showToast(`🗑️ Transaksi "${(t.ket||'').substring(0,30)}…" dihapus`);
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof showToast === 'function') {
+    const extra = (linkedUpahIds.length > 0)
+      ? ` · ${linkedUpahIds.length} UPAH linked${wantRevert ? ' (reverted)' : ' (lunas preserved)'}`
+      : '';
+    showToast(`🗑️ Transaksi "${(t.ket||'').substring(0,30)}…" dihapus${extra}`);
+  }
 }
 function populateKategoriDropdown() {
   const sel = document.getElementById('trx-kat');
@@ -13401,7 +13443,8 @@ async function saveTrx() {
     existing.masuk = tipe === 'masuk' ? jml : 0;
     existing.keluar = tipe === 'masuk' ? 0 : jml;
     if (notaId) existing.nota = notaId;  // preserve old nota kalau tidak ada upload baru
-    saveCashbook();
+    existing.last_modified_at = new Date().toISOString();   // ⭐ 10 Juni 2026: Pattern #10 merge guard preserve detect
+    saveCashbook(true);   // ⭐ force-immediate push
     closeTrxModal();
     renderKeuangan();
     renderCashbook && renderCashbook();
@@ -13416,10 +13459,11 @@ async function saveTrx() {
     id, tgl, tipe, kat, ket,
     masuk: tipe === 'masuk' ? jml : 0,
     keluar: tipe === 'masuk' ? 0 : jml,
-    src: 'manual', nota: notaId, ref: null
+    src: 'manual', nota: notaId, ref: null,
+    last_modified_at: new Date().toISOString()   // ⭐ 10 Juni 2026: Pattern #10 merge guard preserve detect
   };
   CASHBOOK.push(entry);
-  saveCashbook();
+  saveCashbook(true);   // ⭐ force-immediate push
   closeTrxModal();
   renderKeuangan();
   renderCashbook && renderCashbook();
@@ -13595,9 +13639,10 @@ async function confirmPaid() {
     tgl, tipe, kat: katRAB,
     ket: `Upah ${nm} — ${aktivitasClean} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto]':'[lgs]'}`,
     masuk: 0, keluar: total,
-    src: 'autolink', nota: notaId, ref: 'upah_' + it.id
+    src: 'autolink', nota: notaId, ref: 'upah_' + it.id,
+    last_modified_at: new Date().toISOString()   // ⭐ 10 Juni 2026: Pattern #10 merge guard
   });
-  saveCashbook();
+  saveCashbook(true);   // ⭐ force-immediate push
   closePaidModal();
   if (typeof renderUpahTable === 'function') renderUpahTable();
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
@@ -14743,8 +14788,10 @@ function auditDeleteCashbook(cbId) {
   if (!confirm(`Hapus cashbook entry ${cbId.substring(0,20)}…?\n\nIni TIDAK akan affect UPAH status. Hanya hapus entry duplikat/orphan dari laporan keuangan.`)) return;
   const idx = CASHBOOK.findIndex(t => t.id === cbId);
   if (idx < 0) { alert('Cashbook entry tidak ditemukan'); return; }
+  // ⭐ 10 Juni 2026: Mark intentional delete BEFORE splice — race protection
+  if (typeof markCashbookIntentionalDelete === 'function') markCashbookIntentionalDelete([cbId]);
   CASHBOOK.splice(idx, 1);
-  if (typeof saveCashbook === 'function') saveCashbook();
+  if (typeof saveCashbook === 'function') saveCashbook(true);   // ⭐ force-immediate push
   if (typeof renderCashbook === 'function') renderCashbook();
   if (typeof renderAntoLedger === 'function') renderAntoLedger();
   // Refresh audit modal
@@ -14839,6 +14886,75 @@ function markUpahIntentionalDelete(ids) {
       console.log(`[UPAH IntentionalDeletes] 🧹 Cleaned ${cleaned} expired entries`);
     }
   }, UPAH_INTENTIONAL_DELETES_WINDOW_MS + 1000);   // 61s
+}
+
+// ⭐ 10 Juni 2026 — Cashbook IntentionalDeletes (mirror UPAH pattern 29 Mei + 8 Juni)
+// Casus belli: Adib klik Batal di Upah Pekerja, markUnpaid revert UPAH + delete cashbook batch,
+// force push. Refresh → BOTH UPAH status revert ke Lunas + Cashbook batches reappear.
+// Root cause: cashbookMergeSetter default wipe-and-replace (no filter, no preserve).
+// Fix: 2-layer guard — IntentionalDeletes filter + last_modified_at preserve di cashbookMergeSetter.
+// Memory: feedback_pattern10_cashbook_merge_guard_10jun2026
+const CASHBOOK_INTENTIONAL_DELETES_WINDOW_MS = 60000;
+const CASHBOOK_INTENTIONAL_DELETES_LS_KEY = 'wkkn_v2_cashbook_intent_del';
+window._cashbookIntentionalDeletes = window._cashbookIntentionalDeletes || new Set();
+window._cashbookIntentionalDeletesTimestamp = window._cashbookIntentionalDeletesTimestamp || new Map();
+
+(function restoreCashbookIntentionalDeletes() {
+  try {
+    const raw = localStorage.getItem(CASHBOOK_INTENTIONAL_DELETES_LS_KEY);
+    if (!raw) return;
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return;
+    const now = Date.now();
+    const cutoff = now - CASHBOOK_INTENTIONAL_DELETES_WINDOW_MS;
+    let restored = 0, expired = 0;
+    arr.forEach(([id, ts]) => {
+      if (ts >= cutoff) {
+        window._cashbookIntentionalDeletes.add(id);
+        window._cashbookIntentionalDeletesTimestamp.set(id, ts);
+        restored++;
+      } else expired++;
+    });
+    if (restored > 0) console.log(`[Cashbook IntentionalDeletes] 📂 Restored ${restored} entries from localStorage (60s window, ${expired} expired)`);
+    if (expired > 0 && restored === 0) localStorage.removeItem(CASHBOOK_INTENTIONAL_DELETES_LS_KEY);
+  } catch(e) { console.warn('[Cashbook IntentionalDeletes] Restore fail:', e.message || e); }
+})();
+
+function persistCashbookIntentionalDeletes() {
+  try {
+    const arr = Array.from(window._cashbookIntentionalDeletesTimestamp.entries());
+    if (arr.length === 0) {
+      localStorage.removeItem(CASHBOOK_INTENTIONAL_DELETES_LS_KEY);
+    } else {
+      localStorage.setItem(CASHBOOK_INTENTIONAL_DELETES_LS_KEY, JSON.stringify(arr));
+    }
+  } catch(e) { console.warn('[Cashbook IntentionalDeletes] Persist fail:', e.message || e); }
+}
+
+function markCashbookIntentionalDelete(ids) {
+  if (!Array.isArray(ids)) ids = [ids];
+  const now = Date.now();
+  ids.forEach(id => {
+    window._cashbookIntentionalDeletes.add(id);
+    window._cashbookIntentionalDeletesTimestamp.set(id, now);
+  });
+  persistCashbookIntentionalDeletes();
+  console.log(`[Cashbook IntentionalDeletes] 🚫 Marked ${ids.length} IDs as intentional delete (race protection 60s, persisted):`, ids);
+  setTimeout(() => {
+    const cutoff = Date.now() - CASHBOOK_INTENTIONAL_DELETES_WINDOW_MS;
+    let cleaned = 0;
+    for (const [id, ts] of window._cashbookIntentionalDeletesTimestamp) {
+      if (ts < cutoff) {
+        window._cashbookIntentionalDeletes.delete(id);
+        window._cashbookIntentionalDeletesTimestamp.delete(id);
+        cleaned++;
+      }
+    }
+    if (cleaned > 0) {
+      persistCashbookIntentionalDeletes();
+      console.log(`[Cashbook IntentionalDeletes] 🧹 Cleaned ${cleaned} expired entries`);
+    }
+  }, CASHBOOK_INTENTIONAL_DELETES_WINDOW_MS + 1000);
 }
 
 function auditDeleteUpahDup(upahId) {
@@ -15986,10 +16102,66 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     }
 
     // === CASHBOOK ===
+    // ⭐ 10 Juni 2026 — cashbookMergeSetter mirror upahMergeSetter pattern (29 Mei 2026 + 8 Juni 2026).
+    // Casus belli: markUnpaid push sukses lokal tapi refresh BOTH UPAH revert + Cashbook batches reappear.
+    // 2-layer protection:
+    //   Layer A: IntentionalDeletes filter (block cloud entries baru di-delete via markUnpaid/deleteTrx/audit)
+    //   Layer B: last_modified_at preserve (local edits newer than cloud preserved)
+    // Memory: feedback_pattern10_cashbook_merge_guard_10jun2026
     {
+      const cashbookMergeSetter = (d) => {
+        if (typeof CASHBOOK === 'undefined' || !Array.isArray(d)) return;
+        // Layer A: Block revert untuk intentional deletes (race protection 60s)
+        const intentionalDeletes = (window._cashbookIntentionalDeletes instanceof Set) ? window._cashbookIntentionalDeletes : null;
+        let blockedRevertIds = [];
+        let filteredCloud = d;
+        if (intentionalDeletes && intentionalDeletes.size > 0) {
+          filteredCloud = d.filter(t => {
+            if (intentionalDeletes.has(t.id)) {
+              blockedRevertIds.push(t.id);
+              return false;
+            }
+            return true;
+          });
+          if (blockedRevertIds.length > 0) {
+            console.log(`[Cashbook IntentionalDeletes] 🛡 Blocked ${blockedRevertIds.length} cloud entries from revert (IDs: ${blockedRevertIds.join(', ')}) — recently deleted`);
+          }
+        }
+        // Layer B: Preserve local recent edits (last_modified_at newer than cloud)
+        const incomingMap = new Map(filteredCloud.map(t => [t.id, t]));
+        const preserved = [];
+        CASHBOOK.forEach(local => {
+          const remote = incomingMap.get(local.id);
+          if (!remote) return;
+          // Compare timestamps — local newer than cloud → preserve local
+          if (local.last_modified_at && remote.last_modified_at &&
+              local.last_modified_at > remote.last_modified_at) {
+            preserved.push(local);
+          }
+        });
+        // Apply cloud (replace local)
+        CASHBOOK.length = 0;
+        filteredCloud.forEach(x => CASHBOOK.push(x));
+        // Override with preserved local recent edits
+        preserved.forEach(p => {
+          const idx = CASHBOOK.findIndex(t => t.id === p.id);
+          if (idx >= 0) CASHBOOK[idx] = p;
+          else CASHBOOK.push(p);
+        });
+        if (preserved.length > 0) {
+          console.warn(`[Cashbook MergeGuard] ${preserved.length} local entries preserved (newer last_modified_at) — auto re-sync triggered`);
+          setTimeout(() => {
+            if (typeof window.syncCashbookToFirestore === 'function') {
+              window.syncCashbookToFirestore().catch(e => console.warn('[Cashbook MergeGuard] re-sync fail:', e));
+            }
+          }, 1500);
+        } else if (blockedRevertIds.length === 0) {
+          console.log(`[Cashbook MergeGuard] Clean apply ${d.length} entries`);
+        }
+      };
       const { syncFn, loadFn, subscribeFn } = _makeStateSync('Cashbook', 'wkkn_v2_cashbook', 'cashbook',
         () => typeof CASHBOOK !== 'undefined' ? CASHBOOK : null,
-        (d) => { if (typeof CASHBOOK !== 'undefined' && Array.isArray(d)) { CASHBOOK.length = 0; d.forEach(x => CASHBOOK.push(x)); } },
+        cashbookMergeSetter,   // ← replace wipe-and-replace with merge-aware
         () => typeof CASHBOOK_SCHEMA_VERSION !== 'undefined' ? CASHBOOK_SCHEMA_VERSION : '1.1',
         'renderCashbookTab');
       window.syncCashbookToFirestore = syncFn;
