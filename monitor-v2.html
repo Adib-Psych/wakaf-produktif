@@ -5342,6 +5342,7 @@ function markUnpaid(id) {
       u.status = 'belum';
       delete u.bayar_tgl;
       delete u.bayar_source;
+      u.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect (mirror Cashbook touchpoint)
       upahReverted++;
     }
   });
@@ -5731,17 +5732,45 @@ console.log('  wipeAutoUpah()              — Wipe auto-generated UPAH + linked
 // Memory: project_reconciliation_dashboard_phase1_10jun2026
 // ====================================================================
 
-// Bukti Fisik manifest (hardcoded — folder Invoices Kebun Wakaf scan)
-// Update manual saat Adib tambah bukti baru. Phase 2: folder scan API.
+// Bukti Fisik manifest — covered_dates dari ISI breakdown bukti file (bukan cuma tanggal issue).
+// Reading bukti PNG 11 Juni 2026: file = 1 invoice covering multiple work dates.
+// Update manual saat Adib tambah bukti baru. Phase 2: folder scan API + auto-parse.
 const BUKTI_MANIFEST = {
   YIT: [
-    { tgl: '2026-05-25', file: 'BUKTI-NGT-20260526-YIT-25 Mei 2026.png', issued_tgl: '2026-05-26' }
+    {
+      file: 'BUKTI-NGT-20260526-YIT-25 Mei 2026.png',
+      issued_tgl: '2026-05-26',
+      total: 900000,
+      item_count: 15,
+      // 15 items × Rp 60K = Rp 900K · cover periode 9-25 Mei (gaps 15, 19, 23 Mei)
+      covered_dates: ['2026-05-09','2026-05-10','2026-05-11','2026-05-12','2026-05-13','2026-05-14','2026-05-16','2026-05-17','2026-05-18','2026-05-20','2026-05-21','2026-05-22','2026-05-23','2026-05-24','2026-05-25']
+    }
   ],
   KUMPUL: [
-    { tgl: '2026-05-17', file: 'Bukti Pembayaran Upah KUMPUL_17 Mei 2026.png', issued_tgl: '2026-05-16' },
-    { tgl: '2026-05-26', file: 'BUKTI-NGT-20260526-KUMPUL-26 Mei 2026.png', issued_tgl: '2026-05-26' }
+    {
+      file: 'Bukti Pembayaran Upah KUMPUL_17 Mei 2026.png',
+      issued_tgl: '2026-05-17',
+      total: 1100000,
+      item_count: 11,
+      // 11 items × Rp 100K = Rp 1.100K · cover periode 6-16 Mei (consecutive)
+      covered_dates: ['2026-05-06','2026-05-07','2026-05-08','2026-05-09','2026-05-10','2026-05-11','2026-05-12','2026-05-13','2026-05-14','2026-05-15','2026-05-16']
+    },
+    {
+      file: 'BUKTI-NGT-20260526-KUMPUL-26 Mei 2026.png',
+      issued_tgl: '2026-05-26',
+      total: 800000,
+      item_count: 9,
+      // 9 items · cover periode 18-26 Mei · mix full/half day = Rp 800K
+      covered_dates: ['2026-05-18','2026-05-19','2026-05-20','2026-05-21','2026-05-22','2026-05-23','2026-05-24','2026-05-25','2026-05-26']
+    }
   ]
 };
+
+// Helper: find bukti covering specific tgl + pelapor
+function findBuktiForDate(pelapor, tgl) {
+  const list = BUKTI_MANIFEST[pelapor] || [];
+  return list.find(b => Array.isArray(b.covered_dates) && b.covered_dates.includes(tgl)) || null;
+}
 
 // Cak Yit No-Bukti Whitelist (localStorage persistent)
 // Adib tag tanggal yang LEGIT no-bukti via UI button. Format: ['YYYY-MM-DD', ...]
@@ -5870,7 +5899,7 @@ window.runReconciliationAudit = function() {
       const upahArr = upahByKey.get(key) || [];
       const firstUpah = upahArr[0] || null;
       const cashflows = firstUpah ? (cashflowByUpahId.get(firstUpah.id) || []) : [];
-      const bukti = (BUKTI_MANIFEST[pelapor] || []).find(b => b.tgl === tgl);
+      const bukti = findBuktiForDate(pelapor, tgl);   // ⭐ 11 Juni 2026: check covered_dates array (bukti covers multiple work days)
       const whitelisted = pelapor === 'YIT' && whitelist.includes(tgl);
       const row = {
         tgl, pelapor,
@@ -6148,6 +6177,7 @@ function batchPay() {
     it.status = 'lunas';
     it.bayar_tgl = today;
     it.bayar_source = source;
+    it.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect
     // Auto-create cashbook entry per item
     if (typeof CASHBOOK !== 'undefined') {
       const tipe = source === 'anto' ? 'keluar_anto' : 'bayar_upah';
@@ -14302,6 +14332,7 @@ async function confirmPaid() {
   it.status = 'lunas';
   it.bayar_tgl = tgl;
   it.bayar_source = source;
+  it.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect
   localStorage.setItem('wkkn_v2_upah', JSON.stringify(UPAH_ITEMS));
   // Auto-create cashbook entry — kategori RAB sesuai pekerja & model
   const tipe = source === 'anto' ? 'keluar_anto' : 'bayar_upah';
@@ -15480,7 +15511,8 @@ function auditMarkUpahPaid(upahId) {
   u.status = 'lunas';
   u.bayar_tgl = new Date().toISOString().slice(0,10);
   u.bayar_source = 'wakif';
-  if (typeof saveUpah === 'function') saveUpah();
+  u.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect
+  if (typeof saveUpah === 'function') saveUpah(true);
   if (typeof renderUpahTable === 'function') renderUpahTable();
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
   openAuditModal();
@@ -16737,32 +16769,44 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         }
         const incomingMap = new Map(filteredCloud.map(u => [u.id, u]));
         const preserved = [];
+        const preservedReasons = { lunas_forward: 0, last_modified_newer: 0 };
         UPAH_ITEMS.forEach(local => {
           const remote = incomingMap.get(local.id);
-          // Preserve LUNAS yang tidak match di remote (remote missing OR remote downgrade ke belum)
+          // Layer B: Preserve LUNAS forward (Lunas local vs Belum remote — financial reality)
           if (local.status === 'lunas' && (!remote || remote.status !== 'lunas')) {
             preserved.push(local);
+            preservedReasons.lunas_forward++;
+            return;
+          }
+          // ⭐ 11 Juni 2026 Layer C — Preserve REVERSE direction via last_modified_at (mirror cashbookMergeSetter).
+          // Root cause Adib's Revert bug 10 Juni: Layer B only forward, miss reverse (Belum local vs Lunas remote).
+          // Saat user click Revert, local set status=belum + last_modified_at=NOW. Cloud might still have lunas (push pending).
+          // Without Layer C, Layer B condition fails (local not lunas) → cloud wins → status reverts back to Lunas.
+          if (remote && local.last_modified_at && remote.last_modified_at &&
+              local.last_modified_at > remote.last_modified_at) {
+            preserved.push(local);
+            preservedReasons.last_modified_newer++;
           }
         });
         // Apply incoming (replace local)
         UPAH_ITEMS.length = 0;
         filteredCloud.forEach(x => UPAH_ITEMS.push(x));
-        // Override with preserved local LUNAS (financial reality protect)
+        // Override with preserved local edits (financial reality + recent edit protect)
         preserved.forEach(p => {
           const idx = UPAH_ITEMS.findIndex(u => u.id === p.id);
           if (idx >= 0) UPAH_ITEMS[idx] = p;
           else UPAH_ITEMS.push(p);
         });
         if (preserved.length > 0) {
-          console.warn(`[UPAH MergeGuard] ${preserved.length} LUNAS entries preserved against remote overwrite — auto re-sync triggered`);
+          console.warn(`[UPAH MergeGuard] ${preserved.length} local entries preserved (${preservedReasons.lunas_forward} LUNAS forward + ${preservedReasons.last_modified_newer} newer last_modified_at) — auto re-sync triggered`);
           // Re-sync to propagate preserved state to other devices
           setTimeout(() => {
             if (typeof window.syncUpahToFirestore === 'function') {
               window.syncUpahToFirestore().catch(e => console.warn('[UPAH MergeGuard] re-sync fail:', e));
             }
           }, 1500);
-        } else {
-          console.log(`[UPAH MergeGuard] No local LUNAS to preserve — clean apply ${d.length} entries`);
+        } else if (blockedRevertIds.length === 0) {
+          console.log(`[UPAH MergeGuard] Clean apply ${d.length} entries`);
         }
       };
       const { syncFn, loadFn, subscribeFn } = _makeStateSync('Upah', 'wkkn_v2_upah', 'upah',
