@@ -14503,9 +14503,52 @@ function auditMarkUpahPaid(upahId) {
 // Delete single duplicate UPAH entry — also cleanup linked cashbook autolink.
 // ⭐ 8 Juni 2026 (Task 1 fix root cause Cashbook merge/delete bug): Intentional Deletes registry
 // Mencegah upahMergeSetter resurrect entries yang user intentionally deleted via audit handler.
-// Auto-expire entries after 10s (cleanup garbage collection).
+// ⭐ 8 Juni 2026 v2 follow-up: Window extended 10s → 60s + persisted ke localStorage supaya
+//   survive page refresh (defense-in-depth complement L3 Firestore-auth fix di reprocess).
+const UPAH_INTENTIONAL_DELETES_WINDOW_MS = 60000;       // 60s window (was 10s)
+const UPAH_INTENTIONAL_DELETES_LS_KEY = 'wkkn_v2_upah_intent_del';
 window._upahIntentionalDeletes = window._upahIntentionalDeletes || new Set();
 window._upahIntentionalDeletesTimestamp = window._upahIntentionalDeletesTimestamp || new Map();
+
+// Restore intentional deletes from localStorage on page load (survive refresh)
+(function restoreIntentionalDeletes() {
+  try {
+    const raw = localStorage.getItem(UPAH_INTENTIONAL_DELETES_LS_KEY);
+    if (!raw) return;
+    const arr = JSON.parse(raw);
+    if (!Array.isArray(arr)) return;
+    const now = Date.now();
+    const cutoff = now - UPAH_INTENTIONAL_DELETES_WINDOW_MS;
+    let restored = 0, expired = 0;
+    arr.forEach(([id, ts]) => {
+      if (ts >= cutoff) {
+        window._upahIntentionalDeletes.add(id);
+        window._upahIntentionalDeletesTimestamp.set(id, ts);
+        restored++;
+      } else {
+        expired++;
+      }
+    });
+    if (restored > 0) console.log(`[UPAH IntentionalDeletes] 📂 Restored ${restored} entries from localStorage (60s window, ${expired} expired)`);
+    if (expired > 0 && restored === 0) localStorage.removeItem(UPAH_INTENTIONAL_DELETES_LS_KEY);
+  } catch (e) {
+    console.warn('[UPAH IntentionalDeletes] Restore fail:', e.message || e);
+  }
+})();
+
+function persistUpahIntentionalDeletes() {
+  try {
+    const arr = Array.from(window._upahIntentionalDeletesTimestamp.entries());
+    if (arr.length === 0) {
+      localStorage.removeItem(UPAH_INTENTIONAL_DELETES_LS_KEY);
+    } else {
+      localStorage.setItem(UPAH_INTENTIONAL_DELETES_LS_KEY, JSON.stringify(arr));
+    }
+  } catch (e) {
+    console.warn('[UPAH IntentionalDeletes] Persist fail:', e.message || e);
+  }
+}
+
 function markUpahIntentionalDelete(ids) {
   if (!Array.isArray(ids)) ids = [ids];
   const now = Date.now();
@@ -14513,10 +14556,11 @@ function markUpahIntentionalDelete(ids) {
     window._upahIntentionalDeletes.add(id);
     window._upahIntentionalDeletesTimestamp.set(id, now);
   });
-  console.log(`[UPAH IntentionalDeletes] 🚫 Marked ${ids.length} IDs as intentional delete (race protection 10s):`, ids);
-  // Auto-cleanup expired entries (>10s) to prevent set bloat
+  persistUpahIntentionalDeletes();   // ⭐ persist to localStorage (survive refresh)
+  console.log(`[UPAH IntentionalDeletes] 🚫 Marked ${ids.length} IDs as intentional delete (race protection 60s, persisted):`, ids);
+  // Auto-cleanup expired entries (>60s) to prevent set bloat
   setTimeout(() => {
-    const cutoff = Date.now() - 10000;
+    const cutoff = Date.now() - UPAH_INTENTIONAL_DELETES_WINDOW_MS;
     let cleaned = 0;
     for (const [id, ts] of window._upahIntentionalDeletesTimestamp) {
       if (ts < cutoff) {
@@ -14525,8 +14569,11 @@ function markUpahIntentionalDelete(ids) {
         cleaned++;
       }
     }
-    if (cleaned > 0) console.log(`[UPAH IntentionalDeletes] 🧹 Cleaned ${cleaned} expired entries`);
-  }, 11000);
+    if (cleaned > 0) {
+      persistUpahIntentionalDeletes();   // ⭐ persist post-cleanup
+      console.log(`[UPAH IntentionalDeletes] 🧹 Cleaned ${cleaned} expired entries`);
+    }
+  }, UPAH_INTENTIONAL_DELETES_WINDOW_MS + 1000);   // 61s
 }
 
 function auditDeleteUpahDup(upahId) {
@@ -16055,13 +16102,35 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       }
     }
 
-    // Migration: re-process pending entries (locked 17 Mei 2026)
+    // Migration: re-process pending entries (locked 17 Mei 2026 · L3 fix 8 Juni 2026)
     // (a) Re-compute compliance kalau masih 'pending'
     // (b) Re-create UPAH linkages untuk YIT/KUMPUL yang belum punya UPAH entry
-    function reprocessPendingEntries() {
+    // ⭐ 8 Juni 2026 (Task 1 root cause Cashbook merge/delete ghost cascade):
+    //    Pre-fetch Firestore UPAH map BEFORE iterating laporan — eliminates ghost recreate dari
+    //    stale localStorage cache. Casus belli: Adib delete UPAH ID 42 di session prev, refresh
+    //    page → localStorage cache stale (52 entries) vs Firestore (52 — after delete) →
+    //    autoCreate sees gap in local → creates 2 ghost UPAH → cycle continues setiap refresh.
+    //    L3 fix di setupLaporanListener (line 16116-16128) sudah ada — sekarang apply ke reprocess.
+    async function reprocessPendingEntries() {
       if (!Array.isArray(STATE.laporan)) return;
       let complianceFixed = 0;
       let upahCreated = 0;
+
+      // ⭐ Pre-fetch Firestore UPAH map untuk Firestore-authoritative dedup (L3 pattern)
+      let firestoreUpahMap = null;
+      try {
+        const upahSnap = await getDoc(doc(db, 'upah', 'active'));
+        if (upahSnap.exists()) {
+          const upahData = upahSnap.data();
+          if (Array.isArray(upahData.data)) {
+            firestoreUpahMap = new Map(upahData.data.map(u => [`${u.tgl}|${u.pelapor}`, u]));
+            console.log(`[Migration reprocess] Pre-fetched Firestore UPAH map: ${firestoreUpahMap.size} entries (Firestore-auth dedup — prevents ghost recreate)`);
+          }
+        }
+      } catch (e) {
+        console.warn('[Migration reprocess] Firestore UPAH pre-fetch fail (fallback local — may create ghosts):', e.message || e);
+      }
+
       STATE.laporan.forEach(l => {
         // (a) Re-compute compliance
         if (l.compliance === 'pending' && typeof computeRainfallAlerts === 'function') {
@@ -16076,9 +16145,9 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
             complianceFixed++;
           } catch (e) { /* keep pending */ }
         }
-        // (b) Re-create UPAH untuk YIT/KUMPUL yang belum ter-link
+        // (b) Re-create UPAH untuk YIT/KUMPUL yang belum ter-link (Firestore-auth check FIRST)
         if ((l.pelapor === 'YIT' || l.pelapor === 'KUMPUL') && l.durasi && typeof autoCreateUpahFromEntry === 'function') {
-          const newUpah = autoCreateUpahFromEntry(l);
+          const newUpah = autoCreateUpahFromEntry(l, firestoreUpahMap);  // ⭐ pass map → L3 dedup
           if (newUpah) upahCreated++;
         }
       });
@@ -16089,6 +16158,8 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         if (typeof renderUpahTable === 'function') renderUpahTable();
         if (typeof renderUpahSummary === 'function') renderUpahSummary();
         if (typeof renderDashboard === 'function') renderDashboard();
+      } else {
+        console.log(`[Migration] reprocess: no compliance/UPAH changes (Firestore-auth dedup blocked all candidates)`);
       }
     }
 
