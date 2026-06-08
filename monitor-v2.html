@@ -317,6 +317,7 @@
       <div style="font-size:10px;letter-spacing:1.5px;color:var(--gold);padding:4px 14px 6px;font-weight:800">💰 WAKIF</div>
       <div class="sb-tab wakif-only" data-panel="anggaran" data-tier="wakif"><span class="ico">💰</span><span class="lbl">Upah Pekerja</span></div>
       <div class="sb-tab wakif-only" data-panel="keuangan" data-tier="wakif"><span class="ico">📒</span><span class="lbl">Keuangan / Cashbook</span></div>
+      <div class="sb-tab wakif-only" data-panel="reconcile" data-tier="wakif"><span class="ico">🔍</span><span class="lbl">Reconciliation</span></div>
       <div class="sb-tab wakif-only" data-panel="rab" data-tier="wakif"><span class="ico">📊</span><span class="lbl">Anggaran (RAB)</span></div>
       <div class="sb-tab wakif-only" data-panel="milestones" data-tier="wakif"><span class="ico">📜</span><span class="lbl">Milestones Publik</span></div>
     </nav>
@@ -2683,6 +2684,118 @@
           <strong style="color:#e8dec8">⚖️ Permentan 39/2015</strong> — Daftar pestisida terlarang (Lampiran II).<br>
           <strong style="color:#e8dec8">🧠 BRIN Purwodadi 5 Mei 2026</strong> — Prinsip SOP-first + 70% air bawah daun + lamtoro PG 79 + sampling diagonal.<br><br>
           <em style="color:#c5d8d2;font-size:11px">Semua sumber tersimpan di workspace folder <code>SOP/</code></em>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ RECONCILIATION DASHBOOK (Wakif-only, 10 Juni 2026 Phase 1) ============ -->
+    <!-- 3-source ground truth (Log Harian + Bukti Fisik + UPAH/Cashflow state) audit + cleanup -->
+    <div class="panel" id="panel-reconcile">
+      <div class="card" style="background:linear-gradient(135deg,#8c2519,#5a1810);color:#fff;border:0;border-left:5px solid #fde2dc">
+        <div style="font-size:11px;font-weight:800;letter-spacing:1.5px;color:#fde2dc;margin-bottom:8px">🔍 FINANCIAL TRUTH AUDIT — Phase 1 (10 Juni 2026)</div>
+        <div style="font-size:14px;line-height:1.6">
+          <strong>Reconciliation Dashboard berbasis 3-source ground truth hierarchy.</strong><br>
+          Source 1: Log Harian (entitlement) · Source 2: Bukti Fisik (proof folder Invoices) · Source 3: UPAH/Cashflow state (computed).<br>
+          Tujuan: detect drift (saat ini 25 orphan UPAH ~Rp 1.760K) + resolve per-entry sesuai bukti aktual.
+        </div>
+        <div style="margin-top:10px;font-size:11px;color:#fde2dc;font-style:italic">
+          ⚠️ Backup dulu sebelum apply resolution actions. Toggle "Pause auto-create" saat audit untuk stop bleeding.
+        </div>
+      </div>
+
+      <!-- Header Controls Row -->
+      <div class="card" style="background:#fff;border:1px solid #e0e0e0">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+          <button onclick="downloadFullBackup()" class="btn btn-secondary" style="background:#1f5f47;color:#fff;border:0">💾 Download Full Backup</button>
+          <button onclick="runReconciliationAudit()" class="btn btn-primary" style="background:#8c2519">🔍 Run Reconciliation</button>
+          <button onclick="exportReconcileCSV()" class="btn btn-secondary">📥 Export Drift CSV</button>
+          <div style="margin-left:auto;display:flex;align-items:center;gap:8px;background:#fff5e6;padding:6px 12px;border-radius:6px;border:1px solid #e67e22">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:12px;font-weight:600;color:#8c4a13">
+              <input type="checkbox" id="reconcile-pause-toggle" onchange="toggleReconciliationMode(this.checked)">
+              ⏸ Pause auto-create cycle (RECONCILIATION_MODE)
+            </label>
+          </div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--mute)">
+          💡 Workflow: Backup → Pause ON → Run Reconciliation → Review matrix → Resolve per-entry → Toggle Pause OFF → Soak test
+        </div>
+      </div>
+
+      <!-- Section 1 — KPI Cards (4 KPIs) -->
+      <div class="card-title" style="margin-top:24px"><span class="num">1</span>Drift Detection Summary</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:16px">
+        <div class="kpi kpi-wide" style="border-top-color:var(--cherry)">
+          <div style="font-size:11px;color:var(--mute);letter-spacing:1.5px">🔴 ORPHAN UPAH (Lunas tanpa Cashflow)</div>
+          <div id="kpi-orphan-upah" style="font-size:22px;font-weight:800;color:var(--cherry);margin-top:4px">—</div>
+          <div id="kpi-orphan-upah-rp" style="font-size:13px;color:var(--earth);margin-top:2px">—</div>
+        </div>
+        <div class="kpi kpi-wide" style="border-top-color:var(--orange)">
+          <div style="font-size:11px;color:var(--mute);letter-spacing:1.5px">🔴 ORPHAN CASHFLOW</div>
+          <div id="kpi-orphan-cb" style="font-size:22px;font-weight:800;color:var(--orange);margin-top:4px">—</div>
+          <div id="kpi-orphan-cb-rp" style="font-size:13px;color:var(--earth);margin-top:2px">—</div>
+        </div>
+        <div class="kpi kpi-wide" style="border-top-color:var(--moss)">
+          <div style="font-size:11px;color:var(--mute);letter-spacing:1.5px">✅ MATCH (with bukti)</div>
+          <div id="kpi-match" style="font-size:22px;font-weight:800;color:var(--moss);margin-top:4px">—</div>
+          <div id="kpi-match-rp" style="font-size:13px;color:var(--earth);margin-top:2px">—</div>
+        </div>
+        <div class="kpi kpi-wide gold">
+          <div style="font-size:11px;color:var(--mute);letter-spacing:1.5px">🟡 LEGIT (Cak Yit whitelist)</div>
+          <div id="kpi-whitelist" style="font-size:22px;font-weight:800;color:var(--gold);margin-top:4px">—</div>
+          <div id="kpi-whitelist-rp" style="font-size:13px;color:var(--earth);margin-top:2px">—</div>
+        </div>
+      </div>
+
+      <!-- Section 2 — Filter + Matrix Table -->
+      <div class="card-title"><span class="num">2</span>Reconciliation Matrix — Per Pekerja Per Day</div>
+      <div class="card" style="background:#fff;padding:14px">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+          <select id="reconcile-filter-pelapor" onchange="renderReconcileMatrix()" style="padding:6px 10px;border:1px solid #ddd;border-radius:6px">
+            <option value="">Semua Pekerja</option>
+            <option value="YIT">Cak Yit</option>
+            <option value="KUMPUL">Pak Kumpul</option>
+          </select>
+          <select id="reconcile-filter-verdict" onchange="renderReconcileMatrix()" style="padding:6px 10px;border:1px solid #ddd;border-radius:6px">
+            <option value="">Semua Verdict</option>
+            <option value="MATCH">✅ MATCH</option>
+            <option value="LEGIT_WHITELIST">🟡 LEGIT (whitelist)</option>
+            <option value="PENDING">🟡 PENDING</option>
+            <option value="ORPHAN_UPAH">🔴 ORPHAN UPAH</option>
+            <option value="ORPHAN_CASHFLOW">🔴 ORPHAN CASHFLOW</option>
+            <option value="DOUBLE_PAY">🔴 DOUBLE PAY</option>
+          </select>
+          <span id="reconcile-matrix-count" style="font-size:12px;color:var(--mute);margin-left:auto">— rows</span>
+        </div>
+        <div style="overflow-x:auto;max-height:600px;overflow-y:auto;border:1px solid #eee;border-radius:6px">
+          <table id="reconcile-matrix-table" style="width:100%;font-size:11px;border-collapse:collapse">
+            <thead style="position:sticky;top:0;background:#1f5f47;color:#fff;z-index:1">
+              <tr>
+                <th style="padding:8px;text-align:left">Tgl</th>
+                <th style="padding:8px;text-align:left">Pekerja</th>
+                <th style="padding:8px;text-align:left">Aktivitas</th>
+                <th style="padding:8px;text-align:right">Hak</th>
+                <th style="padding:8px;text-align:center">Bukti?</th>
+                <th style="padding:8px;text-align:center">UPAH</th>
+                <th style="padding:8px;text-align:right">Cashflow</th>
+                <th style="padding:8px;text-align:center">Verdict</th>
+                <th style="padding:8px;text-align:center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="reconcile-matrix-tbody">
+              <tr><td colspan="9" style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Klik <strong>🔍 Run Reconciliation</strong> di atas untuk mulai audit.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Section 4 — Cak Yit Whitelist Display -->
+      <div class="card-title" style="margin-top:24px"><span class="num">3</span>Cak Yit No-Bukti Exception Whitelist</div>
+      <div class="card" style="background:#fff8e6;border:1px solid #e67e22">
+        <div style="font-size:12px;color:#8c4a13;margin-bottom:10px">
+          📝 Cak Yit ada tambahan pembayaran tanpa bukti fisik (extra lapangan post-issue main bukti). Tanggal di-whitelist = LEGIT, jangan auto-flag.
+        </div>
+        <div id="reconcile-whitelist-display" style="font-size:12px;color:var(--earth)">
+          <em style="color:var(--mute)">(Whitelist akan populate setelah Adib tag dari matrix di atas)</em>
         </div>
       </div>
     </div>
@@ -5441,11 +5554,573 @@ window.wipeAutoUpah = async function() {
   return { upah_deleted: toDelete.length, cashbook_deleted: cashbookDeleted, upah_remaining: UPAH_ITEMS.length };
 };
 
+// 5. RECONCILE UPAH FROM CASHBOOK (10 Juni 2026 — declarative truth-source approach)
+// Cashbook = source of truth. UPAH status derived dari Cashbook presence.
+// Forward: UPAH belum tapi cashbook exists → set lunas
+// Reverse: UPAH lunas tapi cashbook missing → revert ke belum (orphan Lunas cleanup)
+// Plus: detect orphan cashbook (ref to non-existent UPAH) + UPAH with multi-cashbook (corruption)
+window.reconcileUpahFromCashbook = function(options) {
+  options = options || {};
+  const dryRun = options.dryRun !== false;   // default DRY RUN (safe)
+  const verbose = options.verbose !== false;
+
+  if (typeof UPAH_ITEMS === 'undefined' || typeof CASHBOOK === 'undefined') {
+    console.warn('[Reconcile] UPAH or CASHBOOK undefined');
+    return null;
+  }
+
+  // Build cashbook → UPAH ID mapping (parse single + batch refs)
+  const cashbookByUpahId = new Map();
+  CASHBOOK.forEach(cb => {
+    if (!cb.ref || typeof cb.ref !== 'string' || !cb.ref.startsWith('upah_')) return;
+    const idsInRef = cb.ref.replace(/^upah_/, '').split('·').map(s => +s.trim()).filter(Boolean);
+    idsInRef.forEach(uid => {
+      if (!cashbookByUpahId.has(uid)) cashbookByUpahId.set(uid, []);
+      cashbookByUpahId.get(uid).push(cb);
+    });
+  });
+
+  const changes = {
+    upah_to_lunas: [],         // UPAH belum + cashbook exists → should lunas
+    upah_to_belum: [],         // UPAH lunas + cashbook missing → should belum (ORPHAN LUNAS — root of mismatch)
+    upah_multi_cashbook: [],   // UPAH dengan multiple cashbook (corruption flag)
+    cashbook_orphan_ref: []    // Cashbook ref to UPAH ID yang nonexistent
+  };
+
+  // Forward direction: scan UPAH for status drift
+  UPAH_ITEMS.forEach(u => {
+    const linkedCb = cashbookByUpahId.get(u.id) || [];
+    if (linkedCb.length > 1) {
+      changes.upah_multi_cashbook.push({
+        upahId: u.id, pelapor: u.pelapor, tgl: u.tgl,
+        cashbook_count: linkedCb.length, cashbook_ids: linkedCb.map(c => c.id).join(',')
+      });
+    }
+    if (u.status === 'lunas' && linkedCb.length === 0) {
+      changes.upah_to_belum.push({
+        upahId: u.id, pelapor: u.pelapor, tgl: u.tgl,
+        aktivitas: (u.aktivitas || '').substring(0, 40),
+        tarif_total: (typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty),
+        current_bayar_tgl: u.bayar_tgl || '-', current_bayar_source: u.bayar_source || '-'
+      });
+    }
+    if (u.status === 'belum' && linkedCb.length > 0) {
+      const firstCb = linkedCb[0];
+      changes.upah_to_lunas.push({
+        upahId: u.id, pelapor: u.pelapor, tgl: u.tgl,
+        aktivitas: (u.aktivitas || '').substring(0, 40),
+        cashbook_id: firstCb.id, cashbook_tgl: firstCb.tgl,
+        cashbook_total: firstCb.keluar || 0
+      });
+    }
+  });
+
+  // Reverse direction: orphan cashbook (ref to UPAH that doesn't exist)
+  const upahIds = new Set(UPAH_ITEMS.map(u => u.id));
+  CASHBOOK.forEach(cb => {
+    if (!cb.ref || !cb.ref.startsWith('upah_')) return;
+    const idsInRef = cb.ref.replace(/^upah_/, '').split('·').map(s => +s.trim()).filter(Boolean);
+    idsInRef.forEach(uid => {
+      if (!upahIds.has(uid)) {
+        changes.cashbook_orphan_ref.push({
+          cashbook_id: cb.id, cashbook_tgl: cb.tgl,
+          ket: (cb.ket || '').substring(0, 50),
+          ref: cb.ref, missing_upah_id: uid
+        });
+      }
+    });
+  });
+
+  // Print structured report
+  console.log('═══════════════════════════════════════════════════════');
+  console.log('[Reconcile] Cashbook-Truth Reconciliation Report');
+  console.log('═══════════════════════════════════════════════════════');
+  console.log('Mode:', dryRun ? '🟡 DRY RUN (no changes applied)' : '🔴 APPLY MODE');
+  console.log('');
+  console.log(`📊 Summary:`);
+  console.log(`  UPAH lunas → belum (orphan Lunas, no cashbook proof): ${changes.upah_to_belum.length}`);
+  console.log(`  UPAH belum → lunas (cashbook exists, status drift):   ${changes.upah_to_lunas.length}`);
+  console.log(`  UPAH multi-cashbook (data corruption):                ${changes.upah_multi_cashbook.length}`);
+  console.log(`  Cashbook orphan ref (UPAH ID missing):                ${changes.cashbook_orphan_ref.length}`);
+  console.log('');
+
+  if (verbose) {
+    if (changes.upah_to_belum.length) {
+      console.log('🔻 UPAH → BELUM (will revert these if applied):');
+      console.table(changes.upah_to_belum);
+    }
+    if (changes.upah_to_lunas.length) {
+      console.log('🔺 UPAH → LUNAS (will mark paid if applied):');
+      console.table(changes.upah_to_lunas);
+    }
+    if (changes.upah_multi_cashbook.length) {
+      console.log('⚠️ UPAH MULTI-CASHBOOK (manual cleanup needed):');
+      console.table(changes.upah_multi_cashbook);
+    }
+    if (changes.cashbook_orphan_ref.length) {
+      console.log('⚠️ CASHBOOK ORPHAN REF (UPAH missing — consider wipeOrphanCashbookBatches()):');
+      console.table(changes.cashbook_orphan_ref);
+    }
+  }
+
+  if (dryRun) {
+    console.log('');
+    console.log('💡 Run reconcileUpahFromCashbook({dryRun: false}) to APPLY changes.');
+    console.log('💡 Backup dulu: exportWkknBackup()');
+    return changes;
+  }
+
+  // APPLY MODE
+  const totalChanges = changes.upah_to_belum.length + changes.upah_to_lunas.length;
+  if (totalChanges === 0) {
+    console.log('[Reconcile] ✓ No UPAH status changes needed — already aligned with Cashbook truth');
+    return changes;
+  }
+  const confirmMsg = `Apply ${totalChanges} UPAH status changes (cashbook-as-truth)?\n\n` +
+                      `${changes.upah_to_belum.length} → belum (orphan Lunas, no cashbook proof)\n` +
+                      `${changes.upah_to_lunas.length} → lunas (cashbook exists, drift)\n\n` +
+                      `⚠️ Backup dulu via exportWkknBackup()!\n\nLanjut?`;
+  if (!confirm(confirmMsg)) {
+    console.log('[Reconcile] Cancelled');
+    return changes;
+  }
+
+  changes.upah_to_belum.forEach(c => {
+    const u = UPAH_ITEMS.find(x => x.id === c.upahId);
+    if (u) {
+      u.status = 'belum';
+      delete u.bayar_tgl;
+      delete u.bayar_source;
+      u.last_modified_at = new Date().toISOString();
+    }
+  });
+  changes.upah_to_lunas.forEach(c => {
+    const u = UPAH_ITEMS.find(x => x.id === c.upahId);
+    if (u) {
+      u.status = 'lunas';
+      u.bayar_tgl = c.cashbook_tgl;
+      u.bayar_source = 'wakif';
+      u.last_modified_at = new Date().toISOString();
+    }
+  });
+
+  if (typeof saveUpah === 'function') saveUpah(true);
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderRAB === 'function') renderRAB();
+
+  console.log(`[Reconcile] ✓ Applied ${totalChanges} UPAH status changes. UPAH now aligned with Cashbook truth.`);
+  if (typeof showToast === 'function') {
+    showToast(`✓ Reconcile: ${changes.upah_to_belum.length} → belum · ${changes.upah_to_lunas.length} → lunas`);
+  }
+  return changes;
+};
+
 console.log('[Cleanup Helpers] Available console commands:');
-console.log('  exportWkknBackup()          — Download JSON backup (safe, do FIRST)');
-console.log('  diagnoseCashbookOrphans()   — Print orphan report (read-only)');
-console.log('  wipeOrphanCashbookBatches() — Delete orphan cashbook only (less destructive)');
+console.log('  exportWkknBackup()                — Download JSON backup (safe, do FIRST)');
+console.log('  diagnoseCashbookOrphans()         — Print orphan report (read-only)');
+console.log('  reconcileUpahFromCashbook()       — ⭐ Reconcile UPAH status from Cashbook truth (dry run default)');
+console.log('  reconcileUpahFromCashbook({dryRun:false}) — APPLY reconcile (after backup)');
+console.log('  wipeOrphanCashbookBatches()       — Delete orphan cashbook only (less destructive)');
 console.log('  wipeAutoUpah()              — Wipe auto-generated UPAH + linked CB (Scope B, destructive)');
+
+// ====================================================================
+// RECONCILIATION DASHBOARD ENGINE (Phase 1 — 10 Juni 2026)
+// 3-source ground truth hierarchy: Log Harian + Bukti Fisik + UPAH/Cashflow state
+// Memory: project_reconciliation_dashboard_phase1_10jun2026
+// ====================================================================
+
+// Bukti Fisik manifest (hardcoded — folder Invoices Kebun Wakaf scan)
+// Update manual saat Adib tambah bukti baru. Phase 2: folder scan API.
+const BUKTI_MANIFEST = {
+  YIT: [
+    { tgl: '2026-05-25', file: 'BUKTI-NGT-20260526-YIT-25 Mei 2026.png', issued_tgl: '2026-05-26' }
+  ],
+  KUMPUL: [
+    { tgl: '2026-05-17', file: 'Bukti Pembayaran Upah KUMPUL_17 Mei 2026.png', issued_tgl: '2026-05-16' },
+    { tgl: '2026-05-26', file: 'BUKTI-NGT-20260526-KUMPUL-26 Mei 2026.png', issued_tgl: '2026-05-26' }
+  ]
+};
+
+// Cak Yit No-Bukti Whitelist (localStorage persistent)
+// Adib tag tanggal yang LEGIT no-bukti via UI button. Format: ['YYYY-MM-DD', ...]
+const CAK_YIT_WHITELIST_LS_KEY = 'wkkn_cak_yit_no_bukti_whitelist';
+function getCakYitWhitelist() {
+  try { return JSON.parse(localStorage.getItem(CAK_YIT_WHITELIST_LS_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function setCakYitWhitelist(arr) {
+  localStorage.setItem(CAK_YIT_WHITELIST_LS_KEY, JSON.stringify(arr));
+}
+function addToCakYitWhitelist(tgl) {
+  const arr = getCakYitWhitelist();
+  if (!arr.includes(tgl)) {
+    arr.push(tgl);
+    setCakYitWhitelist(arr);
+  }
+}
+function removeFromCakYitWhitelist(tgl) {
+  const arr = getCakYitWhitelist().filter(t => t !== tgl);
+  setCakYitWhitelist(arr);
+}
+
+// Reconciliation state (matrix) — populated by runReconciliationAudit
+window.RECONCILE_MATRIX = [];
+
+// Source 1: Compute Hak from Log Harian (STATE.laporan)
+function computeHakFromLaporan() {
+  if (typeof STATE === 'undefined' || !Array.isArray(STATE.laporan)) return {};
+  const hakMap = {};   // pelapor → { tgl → { hak, aktivitas, durasi, laporan_ids } }
+  STATE.laporan.forEach(l => {
+    if (l.pelapor !== 'YIT' && l.pelapor !== 'KUMPUL') return;
+    if (!l.durasi || !l.tgl) return;
+    const tarif = (typeof TARIF_PEKERJA !== 'undefined' && TARIF_PEKERJA[l.pelapor]) ? TARIF_PEKERJA[l.pelapor] : null;
+    if (!tarif) return;
+    let hakValue = 0;
+    if (l.durasi === 'setengah_hari' || l.durasi === '½_hari' || l.durasi === 'half_day') {
+      hakValue = tarif.setengah_hari;
+    } else if (l.durasi === 'full_day' || l.durasi === '1_hari' || l.durasi === 'satu_hari' || l.durasi === 'full') {
+      hakValue = tarif.full_day;
+    } else {
+      return;   // borongan etc — skip untuk now
+    }
+    if (!hakMap[l.pelapor]) hakMap[l.pelapor] = {};
+    if (!hakMap[l.pelapor][l.tgl]) {
+      hakMap[l.pelapor][l.tgl] = {
+        hak: 0, aktivitas: [], durasi: l.durasi, laporan_ids: []
+      };
+    }
+    hakMap[l.pelapor][l.tgl].hak += hakValue;
+    const aktivitasLbl = `${(l.kategori || '').replace(/_/g,' ')}${l.bidang ? ` di Kebun ${l.bidang}` : ''}`;
+    hakMap[l.pelapor][l.tgl].aktivitas.push(aktivitasLbl);
+    hakMap[l.pelapor][l.tgl].laporan_ids.push(l.id);
+  });
+  return hakMap;
+}
+
+// Verdict computation per row
+function computeVerdict(row) {
+  const { hak, bukti, upah, cashflows, whitelisted } = row;
+  const cashflowCount = cashflows ? cashflows.length : 0;
+  // DOUBLE PAY first (1 hari, 2+ cashflow)
+  if (cashflowCount > 1) return 'DOUBLE_PAY';
+  // ORPHAN CASHFLOW (cashflow exists, no UPAH match — rare since we iterate from Hak)
+  if (cashflowCount > 0 && !upah) return 'ORPHAN_CASHFLOW';
+  // ORPHAN UPAH (UPAH lunas, no cashflow)
+  if (upah && upah.status === 'lunas' && cashflowCount === 0) {
+    return whitelisted ? 'LEGIT_WHITELIST' : 'ORPHAN_UPAH';
+  }
+  // MATCH (Hak = Cashflow, UPAH lunas, bukti exists)
+  if (upah && upah.status === 'lunas' && cashflowCount === 1 && bukti) return 'MATCH';
+  // LEGIT WHITELIST (cashflow exists, bukti missing, Cak Yit exception)
+  if (upah && upah.status === 'lunas' && cashflowCount === 1 && !bukti && whitelisted) return 'LEGIT_WHITELIST';
+  // MATCH without bukti (general — cashflow exists but no bukti, not whitelisted) — still drift but minor
+  if (upah && upah.status === 'lunas' && cashflowCount === 1 && !bukti) return 'MATCH_NO_BUKTI';
+  // PENDING (hak exists, UPAH belum, no cashflow)
+  if ((!upah || upah.status === 'belum') && cashflowCount === 0) return 'PENDING';
+  // Edge case: UPAH belum tapi cashflow ada (status drift)
+  if (upah && upah.status === 'belum' && cashflowCount > 0) return 'DRIFT_BELUM_WITH_CASHFLOW';
+  return 'UNKNOWN';
+}
+
+const VERDICT_META = {
+  MATCH:                       { lbl: '✅ MATCH', color: '#2e7d5e', bg: '#e8f1ec', sev: 'green' },
+  MATCH_NO_BUKTI:              { lbl: '✅ MATCH (no bukti)', color: '#1f5f47', bg: '#e8f1ec', sev: 'green' },
+  LEGIT_WHITELIST:             { lbl: '🟡 LEGIT (whitelist)', color: '#8c4a13', bg: '#fff8e6', sev: 'yellow' },
+  PENDING:                     { lbl: '🟡 PENDING', color: '#8c4a13', bg: '#fff8e6', sev: 'yellow' },
+  ORPHAN_UPAH:                 { lbl: '🔴 ORPHAN UPAH', color: '#8c2519', bg: '#fde2dc', sev: 'red' },
+  ORPHAN_CASHFLOW:             { lbl: '🔴 ORPHAN CASHFLOW', color: '#8c2519', bg: '#fde2dc', sev: 'red' },
+  DOUBLE_PAY:                  { lbl: '🔴 DOUBLE PAY', color: '#8c2519', bg: '#fde2dc', sev: 'red' },
+  DRIFT_BELUM_WITH_CASHFLOW:   { lbl: '🔴 DRIFT (belum + cashflow)', color: '#8c2519', bg: '#fde2dc', sev: 'red' },
+  UNKNOWN:                     { lbl: '⚪ UNKNOWN', color: '#666', bg: '#eee', sev: 'gray' }
+};
+
+// Core function — build reconciliation matrix
+window.runReconciliationAudit = function() {
+  console.log('[Reconcile] Building matrix from 3 sources…');
+  const hakMap = computeHakFromLaporan();
+  const whitelist = getCakYitWhitelist();
+  // Build UPAH index by tgl|pelapor
+  const upahByKey = new Map();
+  if (typeof UPAH_ITEMS !== 'undefined') {
+    UPAH_ITEMS.forEach(u => {
+      const key = `${u.tgl}|${u.pelapor}`;
+      if (!upahByKey.has(key)) upahByKey.set(key, []);
+      upahByKey.get(key).push(u);
+    });
+  }
+  // Build Cashflow index by linked UPAH id
+  const cashflowByUpahId = new Map();
+  if (typeof CASHBOOK !== 'undefined') {
+    CASHBOOK.forEach(cb => {
+      if (!cb.ref || typeof cb.ref !== 'string' || !cb.ref.startsWith('upah_')) return;
+      const idsInRef = cb.ref.replace(/^upah_/, '').split('·').map(s => +s.trim()).filter(Boolean);
+      idsInRef.forEach(uid => {
+        if (!cashflowByUpahId.has(uid)) cashflowByUpahId.set(uid, []);
+        cashflowByUpahId.get(uid).push(cb);
+      });
+    });
+  }
+  // Build matrix
+  const matrix = [];
+  Object.entries(hakMap).forEach(([pelapor, daysMap]) => {
+    Object.entries(daysMap).forEach(([tgl, hakInfo]) => {
+      const key = `${tgl}|${pelapor}`;
+      const upahArr = upahByKey.get(key) || [];
+      const firstUpah = upahArr[0] || null;
+      const cashflows = firstUpah ? (cashflowByUpahId.get(firstUpah.id) || []) : [];
+      const bukti = (BUKTI_MANIFEST[pelapor] || []).find(b => b.tgl === tgl);
+      const whitelisted = pelapor === 'YIT' && whitelist.includes(tgl);
+      const row = {
+        tgl, pelapor,
+        hak: hakInfo.hak,
+        aktivitas: hakInfo.aktivitas.join(' · '),
+        durasi: hakInfo.durasi,
+        laporan_ids: hakInfo.laporan_ids,
+        bukti: bukti || null,
+        upah: firstUpah,
+        upah_all: upahArr,   // detect multi UPAH for same key
+        cashflows,
+        whitelisted
+      };
+      row.verdict = computeVerdict(row);
+      matrix.push(row);
+    });
+  });
+  // Also detect ORPHAN CASHFLOW (cashflow exists, no Hak from Laporan)
+  // Skip for now (complex — UPAH might exist tanpa Laporan via auto-backfill)
+  // Sort matrix by tgl desc, pelapor
+  matrix.sort((a, b) => {
+    if (a.tgl !== b.tgl) return b.tgl.localeCompare(a.tgl);
+    return a.pelapor.localeCompare(b.pelapor);
+  });
+  window.RECONCILE_MATRIX = matrix;
+  console.log(`[Reconcile] Matrix built: ${matrix.length} rows`);
+  renderReconcileKPIs();
+  renderReconcileMatrix();
+  renderReconcileWhitelist();
+};
+
+// Render KPI cards
+function renderReconcileKPIs() {
+  const matrix = window.RECONCILE_MATRIX || [];
+  const buckets = {
+    ORPHAN_UPAH: { count: 0, rp: 0 },
+    ORPHAN_CASHFLOW: { count: 0, rp: 0 },
+    MATCH: { count: 0, rp: 0 },
+    LEGIT_WHITELIST: { count: 0, rp: 0 }
+  };
+  matrix.forEach(r => {
+    if (buckets[r.verdict]) {
+      buckets[r.verdict].count++;
+      buckets[r.verdict].rp += r.hak;
+    }
+    if (r.verdict === 'MATCH_NO_BUKTI') {
+      buckets.MATCH.count++; buckets.MATCH.rp += r.hak;
+    }
+  });
+  const fmtRpLocal = (n) => (typeof fmtRp === 'function') ? fmtRp(n) : 'Rp ' + (n||0).toLocaleString('id-ID');
+  const set = (id, count, rp) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = count + ' entries';
+    const rpEl = document.getElementById(id + '-rp');
+    if (rpEl) rpEl.textContent = fmtRpLocal(rp);
+  };
+  set('kpi-orphan-upah', buckets.ORPHAN_UPAH.count, buckets.ORPHAN_UPAH.rp);
+  set('kpi-orphan-cb', buckets.ORPHAN_CASHFLOW.count, buckets.ORPHAN_CASHFLOW.rp);
+  set('kpi-match', buckets.MATCH.count, buckets.MATCH.rp);
+  set('kpi-whitelist', buckets.LEGIT_WHITELIST.count, buckets.LEGIT_WHITELIST.rp);
+}
+
+// Render matrix table
+window.renderReconcileMatrix = function() {
+  const matrix = window.RECONCILE_MATRIX || [];
+  const tbody = document.getElementById('reconcile-matrix-tbody');
+  const countEl = document.getElementById('reconcile-matrix-count');
+  if (!tbody) return;
+  const filterPelapor = (document.getElementById('reconcile-filter-pelapor') || {}).value || '';
+  const filterVerdict = (document.getElementById('reconcile-filter-verdict') || {}).value || '';
+  const filtered = matrix.filter(r => {
+    if (filterPelapor && r.pelapor !== filterPelapor) return false;
+    if (filterVerdict && r.verdict !== filterVerdict) return false;
+    return true;
+  });
+  if (countEl) countEl.textContent = `${filtered.length} rows (total ${matrix.length})`;
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" style="padding:24px;text-align:center;color:var(--mute);font-style:italic">Tidak ada row sesuai filter.</td></tr>';
+    return;
+  }
+  const fmtRpLocal = (n) => (typeof fmtRp === 'function') ? fmtRp(n) : 'Rp ' + (n||0).toLocaleString('id-ID');
+  const nm = (p) => (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[p]) ? NAMA_PEKERJA[p] : p;
+  tbody.innerHTML = filtered.map(r => {
+    const meta = VERDICT_META[r.verdict] || VERDICT_META.UNKNOWN;
+    const cashflowSum = r.cashflows.reduce((s, c) => s + (c.keluar || 0), 0);
+    const buktiCell = r.bukti ? `<span title="${r.bukti.file}" style="color:var(--moss)">✅</span>` : '<span style="color:var(--mute)">❌</span>';
+    const upahCell = r.upah ? (r.upah.status === 'lunas' ? '<span style="color:var(--moss)">✅ lunas</span>' : '<span style="color:var(--mute)">🟡 belum</span>') : '<span style="color:#ccc">—</span>';
+    const upahId = r.upah ? r.upah.id : '';
+    // Action buttons based on verdict
+    let actions = '';
+    if (r.verdict === 'ORPHAN_UPAH') {
+      actions = `
+        <button onclick="reconcileRevertUpah(${upahId})" style="background:#fde2dc;color:#8c2519;border:0;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;margin-right:2px" title="Revert UPAH ke belum dibayar">↺ Revert</button>
+        <button onclick="reconcileCreateCashflow(${upahId})" style="background:#e8f1ec;color:#1f5f47;border:0;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;margin-right:2px" title="Re-create Cashflow retroaktif (Cak Yit extra)">💰 Backfill</button>
+        ${r.pelapor === 'YIT' ? `<button onclick="reconcileWhitelistTgl('${r.tgl}')" style="background:#fff8e6;color:#8c4a13;border:0;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer" title="Mark sebagai Cak Yit no-bukti exception">🏷 Whitelist</button>` : ''}
+      `;
+    } else if (r.verdict === 'DOUBLE_PAY') {
+      actions = `<button onclick="reconcileMergeDoublePay(${upahId})" style="background:#fde2dc;color:#8c2519;border:0;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer">🔗 Merge</button>`;
+    } else if (r.verdict === 'LEGIT_WHITELIST') {
+      actions = `<button onclick="reconcileUnwhitelist('${r.tgl}')" style="background:#eee;color:#666;border:0;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer" title="Remove dari whitelist">🗑 Unwhitelist</button>`;
+    } else {
+      actions = '<span style="color:#ccc;font-size:10px">—</span>';
+    }
+    return `<tr style="background:${meta.bg}">
+      <td style="padding:6px 8px;font-weight:600;white-space:nowrap">${(typeof formatTglShort==='function')?formatTglShort(r.tgl):r.tgl}</td>
+      <td style="padding:6px 8px">${nm(r.pelapor)}</td>
+      <td style="padding:6px 8px;font-size:10px;color:#555">${r.aktivitas.substring(0,50)}</td>
+      <td style="padding:6px 8px;text-align:right;font-weight:700">${fmtRpLocal(r.hak)}</td>
+      <td style="padding:6px 8px;text-align:center">${buktiCell}</td>
+      <td style="padding:6px 8px;text-align:center">${upahCell}</td>
+      <td style="padding:6px 8px;text-align:right;color:${cashflowSum>0?'var(--cherry)':'#ccc'}">${cashflowSum>0?fmtRpLocal(cashflowSum):'—'}${r.cashflows.length>1?' ('+r.cashflows.length+'×)':''}</td>
+      <td style="padding:6px 8px;text-align:center;font-size:10px;font-weight:700;color:${meta.color}">${meta.lbl}</td>
+      <td style="padding:6px 8px;text-align:center;white-space:nowrap">${actions}</td>
+    </tr>`;
+  }).join('');
+};
+
+function renderReconcileWhitelist() {
+  const whitelist = getCakYitWhitelist();
+  const el = document.getElementById('reconcile-whitelist-display');
+  if (!el) return;
+  if (whitelist.length === 0) {
+    el.innerHTML = '<em style="color:var(--mute)">(Whitelist akan populate setelah Adib tag dari matrix di atas)</em>';
+    return;
+  }
+  el.innerHTML = '<strong>Whitelisted Cak Yit dates (' + whitelist.length + ')</strong>: ' + whitelist.map(t => `<span style="background:#fff;padding:2px 8px;border:1px solid #e67e22;border-radius:12px;font-size:11px;margin:2px;display:inline-block">${(typeof formatTglShort==='function')?formatTglShort(t):t} <button onclick="reconcileUnwhitelist(\'' + t + '\')" style="background:none;border:0;cursor:pointer;color:#8c2519">×</button></span>`).join(' ');
+}
+
+// === RESOLUTION ACTION HANDLERS ===
+window.reconcileRevertUpah = function(upahId) {
+  const u = UPAH_ITEMS.find(x => x.id === upahId);
+  if (!u) { alert('UPAH not found'); return; }
+  if (!confirm(`↺ Revert UPAH ${u.pelapor} ${u.tgl} ke "Belum Dibayar"?\n\nUPAH status: lunas → belum\nbayar_tgl, bayar_source: cleared\n\nBackup dulu! Lanjut?`)) return;
+  u.status = 'belum';
+  delete u.bayar_tgl;
+  delete u.bayar_source;
+  u.last_modified_at = new Date().toISOString();
+  if (typeof saveUpah === 'function') saveUpah(true);
+  if (typeof showToast === 'function') showToast(`↺ UPAH ${u.pelapor} ${u.tgl} reverted ke belum`);
+  runReconciliationAudit();   // refresh matrix
+};
+
+window.reconcileCreateCashflow = function(upahId) {
+  const u = UPAH_ITEMS.find(x => x.id === upahId);
+  if (!u) { alert('UPAH not found'); return; }
+  const total = (typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty);
+  const tgl = prompt(`💰 Backfill Cashflow — Tgl pembayaran (YYYY-MM-DD)?\nDefault: ${u.bayar_tgl || u.tgl}`, u.bayar_tgl || u.tgl);
+  if (!tgl) return;
+  const ket = prompt(`Keterangan? Default: "Upah ${u.pelapor} backfill — no bukti issued di lapangan"`, `Upah ${u.pelapor} backfill — no bukti issued di lapangan (${u.aktivitas || ''})`);
+  if (!ket) return;
+  const katRAB = u.model === 'borongan' ? '4.1' : (u.pelapor === 'YIT' ? '3.1' : '3.2');
+  CASHBOOK.push({
+    id: 'cb_backfill_' + Date.now() + '_' + u.id,
+    tgl, tipe: 'bayar_upah', kat: katRAB,
+    ket, masuk: 0, keluar: total,
+    src: 'autolink', nota: null, ref: 'upah_' + u.id,
+    last_modified_at: new Date().toISOString(),
+    backfill_note: 'reconciliation-dashboard-phase1'
+  });
+  if (typeof saveCashbook === 'function') saveCashbook(true);
+  if (typeof showToast === 'function') showToast(`💰 Cashflow backfilled untuk ${u.pelapor} ${u.tgl}`);
+  runReconciliationAudit();
+};
+
+window.reconcileMergeDoublePay = function(upahId) {
+  const cashflowsForUpah = CASHBOOK.filter(cb => {
+    if (!cb.ref || !cb.ref.startsWith('upah_')) return false;
+    const ids = cb.ref.replace(/^upah_/, '').split('·').map(s => +s.trim()).filter(Boolean);
+    return ids.includes(upahId);
+  }).sort((a, b) => (a.tgl || '').localeCompare(b.tgl || ''));
+  if (cashflowsForUpah.length < 2) { alert('No duplicate cashflow found'); return; }
+  const keep = cashflowsForUpah[0];
+  const dropIds = cashflowsForUpah.slice(1).map(c => c.id);
+  if (!confirm(`🔗 Merge double-pay — keep ${keep.id} (${keep.tgl}), DELETE ${dropIds.length} duplicates?\n\nLanjut?`)) return;
+  if (typeof markCashbookIntentionalDelete === 'function') markCashbookIntentionalDelete(dropIds);
+  const dropSet = new Set(dropIds);
+  CASHBOOK = CASHBOOK.filter(t => !dropSet.has(t.id));
+  if (typeof saveCashbook === 'function') saveCashbook(true);
+  if (typeof showToast === 'function') showToast(`🔗 Merged · ${dropIds.length} duplicate cashflow dihapus`);
+  runReconciliationAudit();
+};
+
+window.reconcileWhitelistTgl = function(tgl) {
+  addToCakYitWhitelist(tgl);
+  if (typeof showToast === 'function') showToast(`🏷 ${tgl} added to Cak Yit whitelist`);
+  runReconciliationAudit();
+};
+
+window.reconcileUnwhitelist = function(tgl) {
+  removeFromCakYitWhitelist(tgl);
+  if (typeof showToast === 'function') showToast(`🗑 ${tgl} removed dari whitelist`);
+  runReconciliationAudit();
+};
+
+// === UI Helper handlers ===
+window.downloadFullBackup = function() {
+  if (typeof window.exportWkknBackup === 'function') {
+    window.exportWkknBackup();
+    if (typeof showToast === 'function') showToast('💾 Backup downloaded ke ~/Downloads');
+  } else {
+    alert('Backup helper not loaded');
+  }
+};
+
+window.toggleReconciliationMode = function(checked) {
+  if (checked) {
+    localStorage.setItem('wkkn_reconciliation_mode', 'on');
+    if (typeof showToast === 'function') showToast('⏸ RECONCILIATION_MODE ON — auto-create cycle paused (refresh untuk apply)', 'info');
+  } else {
+    localStorage.removeItem('wkkn_reconciliation_mode');
+    if (typeof showToast === 'function') showToast('▶ RECONCILIATION_MODE OFF — auto-create resumed (refresh untuk apply)', 'info');
+  }
+};
+
+window.exportReconcileCSV = function() {
+  const matrix = window.RECONCILE_MATRIX || [];
+  if (matrix.length === 0) { alert('Run reconciliation dulu'); return; }
+  const headers = ['tgl','pelapor','aktivitas','hak_rp','bukti_file','upah_id','upah_status','cashflow_count','cashflow_total','verdict','whitelisted'];
+  const rows = matrix.map(r => [
+    r.tgl, r.pelapor, r.aktivitas.replace(/,/g,';'),
+    r.hak,
+    r.bukti ? r.bukti.file : '',
+    r.upah ? r.upah.id : '',
+    r.upah ? r.upah.status : '',
+    r.cashflows.length,
+    r.cashflows.reduce((s,c)=>s+(c.keluar||0), 0),
+    r.verdict,
+    r.whitelisted ? 'YES' : ''
+  ]);
+  const csv = [headers, ...rows].map(row => row.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `wkkn_reconcile_${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  if (typeof showToast === 'function') showToast(`📥 CSV ${matrix.length} rows downloaded`);
+};
+
+// Init reconcile tab UI — pause toggle reflect localStorage
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('reconcile-pause-toggle');
+  if (toggle) toggle.checked = localStorage.getItem('wkkn_reconciliation_mode') === 'on';
+});
+
+console.log('[Reconciliation Dashboard] Available console commands:');
+console.log('  runReconciliationAudit()          — Build matrix (Source 1+2+3 hierarchy)');
+console.log('  RECONCILE_MATRIX                  — Inspect matrix object');
+console.log('  getCakYitWhitelist()              — Show whitelist array');
 
 function batchPay() {
   const checked = document.querySelectorAll('.upah-check:checked');
@@ -16694,8 +17369,15 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 
     // Run migrations on page load
     fixLegacyDetailObjects();
-    // Delay reprocess until other render functions are ready (3s after load)
-    setTimeout(reprocessPendingEntries, 3000);
+    // ⭐ 10 Juni 2026 (Task B Reconciliation Dashboard): Pause flag stop the bleeding
+    // Sementara reconciliation belum tuntas, disable cycle yang generate drift baru.
+    // Toggle via Reconciliation tab UI atau localStorage langsung.
+    const RECONCILIATION_MODE = localStorage.getItem('wkkn_reconciliation_mode') === 'on';
+    if (!RECONCILIATION_MODE) {
+      setTimeout(reprocessPendingEntries, 3000);
+    } else {
+      console.warn('[Migration] reprocessPendingEntries SKIPPED — RECONCILIATION_MODE active. Toggle OFF di Reconciliation tab saat audit selesai.');
+    }
 
     // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
     // ⭐ 1 Jun 2026: Wrapped dalam named function untuk auto-retry pada error (Safari Listen stream drop)
