@@ -382,10 +382,8 @@
         <div class="card-title"><span class="num">1</span>Filter Log Harian</div>
         <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">
           <select id="filter-pelapor" onchange="renderLog()" class="field-input" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <!-- ⭐ 8 Juni 2026: Options populated dynamic via populatePelaporSelects() — auto-include WORKER_DEFS active + WAKIF (Adib) + future pekerja baru via Task C3 modal -->
             <option value="">Semua Pelapor</option>
-            <option value="YIT">Cak Yit</option>
-            <option value="KUMPUL">Pak Kumpul</option>
-            <!-- Mas Anto OUT permanen 19 Mei 2026 — option dihapus 23 Mei 2026. Entries historis 1-18 Mei tetap tampil via 'Semua Pelapor'. -->
           </select>
           <select id="filter-bidang" onchange="renderLog()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <option value="">Semua Kebun</option>
@@ -2769,6 +2767,7 @@
           <span style="font-size:11px;color:var(--mute)">→</span>
           <input id="bc-date-to" type="date" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
           <select id="bc-filter-pelapor" onchange="renderBatchCuration()" style="padding:6px 8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <!-- ⭐ Dynamic via populatePelaporSelects() — WORKER_DEFS active + WAKIF -->
             <option value="">Semua Pelapor</option>
             <option value="WAKIF">Wakif (Adib)</option>
             <option value="KUMPUL">Pak Kumpul</option>
@@ -13826,8 +13825,9 @@ function toggleWorkerActive(token) {
   if (PIC_REGISTRY[token]) PIC_REGISTRY[token].active = w.active;
   saveWorkerActiveToLS();
   renderWorkersTab();
-  // Re-render Distribusi (PIC badges) + Form Input radio
+  // Re-render Distribusi (PIC badges) + Form Input radio + filter dropdowns
   if (typeof renderDistribusi === 'function') renderDistribusi();
+  if (typeof populatePelaporSelects === 'function') populatePelaporSelects();   // ⭐ refresh filter dropdowns
   if (typeof showToast === 'function') {
     showToast(`${w.nama} ${w.active ? 'diaktifkan kembali' : 'dinonaktifkan (transisi)'}`, w.active ? 'success' : 'info');
   }
@@ -13940,6 +13940,7 @@ async function saveNewWorker() {
   renderWorkersTab();
   if (typeof renderDistribusi === 'function') renderDistribusi();
   if (typeof renderPelaporChart === 'function') renderPelaporChart();
+  if (typeof populatePelaporSelects === 'function') populatePelaporSelects();   // ⭐ refresh filter dropdowns
   closeAddWorkerModal();
   if (typeof showToast === 'function') {
     showToast(`✓ ${nama} tersimpan · URL: lapor.html?w=${token}`, 'success');
@@ -13952,6 +13953,40 @@ async function saveNewWorker() {
 document.addEventListener('DOMContentLoaded', () => {
   const elToken = document.getElementById('aw-token');
   if (elToken) elToken.addEventListener('input', () => { elToken.dataset.manualEdit = '1'; });
+});
+
+// ⭐ 8 Juni 2026 (post Adib feedback): Dynamic pelapor filter dropdowns
+// Populate dari WORKER_DEFS active + optional WAKIF (Adib) per dropdown semantics.
+// Future-proof: pekerja baru via Task C3 "+ Tambah Pekerja Baru" auto-include.
+// Targets:
+//   - filter-pelapor (Log Harian) — semua pelapor termasuk Adib
+//   - bc-filter-pelapor (Batch Curation) — semua pelapor termasuk Adib
+//   - filter-bayar-pelapor (Upah Pekerja) — WORKER_DEFS only (Adib sweat-equity, tidak masuk upah)
+function populatePelaporSelects() {
+  const targets = [
+    { id: 'filter-pelapor', includeWakif: true, semuaLabel: 'Semua Pelapor' },
+    { id: 'bc-filter-pelapor', includeWakif: true, semuaLabel: 'Semua Pelapor' },
+    { id: 'filter-bayar-pelapor', includeWakif: false, semuaLabel: 'Semua Pelapor' }
+  ];
+  targets.forEach(({ id, includeWakif, semuaLabel }) => {
+    const select = document.getElementById(id);
+    if (!select) return;
+    const currentValue = select.value;
+    const semuaOpt = `<option value="">${semuaLabel}</option>`;
+    const workerOpts = WORKER_DEFS.filter(w => w.active).map(w =>
+      `<option value="${w.token}">${w.nama}</option>`).join('');
+    const wakifOpt = includeWakif ? '<option value="WAKIF">Adib (Wakif)</option>' : '';
+    select.innerHTML = semuaOpt + workerOpts + wakifOpt;
+    // Restore selected value kalau masih valid
+    if (currentValue && select.querySelector(`option[value="${currentValue}"]`)) {
+      select.value = currentValue;
+    }
+  });
+}
+
+// Call on page init + setelah WORKER_DEFS changes (saveNewWorker, toggleWorkerActive)
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(populatePelaporSelects, 150);
 });
 
 function renderWorkersTab() {
