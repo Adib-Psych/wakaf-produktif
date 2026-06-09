@@ -8036,6 +8036,14 @@ function aggregateSamplingPerPohon(pohonId) {
   const sessions = PANEN_SAMPLING_DATA.filter(e => e.pohon_id === pohonId)
     .sort((a, b) => (a.tgl || '').localeCompare(b.tgl || ''));
   if (sessions.length === 0) return null;
+  // ⭐ 11 Juni 2026 v1.2: Defensive idempotent migration (in case Firestore stale or earlier migration miss)
+  // Render-time fallback supaya data lama (kg field only) tetap terlihat sebagai gram
+  sessions.forEach(s => {
+    if (s.cherry_gram == null) {
+      const kgVal = s.kg || s.cherry_basah_kg;
+      if (kgVal != null) s.cherry_gram = Math.round(kgVal * 1000);
+    }
+  });
   const totalGram = sessions.reduce((s, e) => s + (e.cherry_gram || 0), 0);
   const avgGram = totalGram / sessions.length;
   const firstTgl = sessions[0].tgl;
@@ -17221,11 +17229,29 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     }
 
     // === PANEN_SAMPLING_DATA ===
+    // ⭐ 11 Juni 2026 v1.2: Setter inline migration kg → cherry_gram (mencegah Firestore stale data wipe local migrated state)
     {
+      const panenSamplingMigrateSetter = (d) => {
+        if (typeof PANEN_SAMPLING_DATA === 'undefined' || !Array.isArray(d)) return;
+        // Inline migration: setiap entry yang belum punya cherry_gram, auto-convert dari kg field
+        let migrated = 0;
+        d.forEach(e => {
+          if (e.cherry_gram == null) {
+            const kgVal = e.kg || e.cherry_basah_kg;
+            if (kgVal != null) {
+              e.cherry_gram = Math.round(kgVal * 1000);
+              migrated++;
+            }
+          }
+        });
+        if (migrated > 0) console.log(`[PanenSampling] 🔄 Setter migrated ${migrated} entries (kg → cherry_gram)`);
+        PANEN_SAMPLING_DATA.length = 0;
+        d.forEach(x => PANEN_SAMPLING_DATA.push(x));
+      };
       const { syncFn, loadFn, subscribeFn } = _makeStateSync('PanenSampling', 'wkkn_v2_panen_sampling_2026', 'panen_sampling',
         () => typeof PANEN_SAMPLING_DATA !== 'undefined' ? PANEN_SAMPLING_DATA : null,
-        (d) => { if (typeof PANEN_SAMPLING_DATA !== 'undefined' && Array.isArray(d)) { PANEN_SAMPLING_DATA.length = 0; d.forEach(x => PANEN_SAMPLING_DATA.push(x)); } },
-        () => typeof PANEN_SAMPLING_SCHEMA_VERSION !== 'undefined' ? PANEN_SAMPLING_SCHEMA_VERSION : '1.1',
+        panenSamplingMigrateSetter,   // ← inline migration replaces wipe-and-replace
+        () => typeof PANEN_SAMPLING_SCHEMA_VERSION !== 'undefined' ? PANEN_SAMPLING_SCHEMA_VERSION : '1.2',
         'renderPanenSampling');
       window.syncPanenSamplingToFirestore = syncFn;
       window.loadPanenSamplingFromFirestore = loadFn;
