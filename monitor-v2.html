@@ -1495,7 +1495,7 @@
           </select>
         </div>
 
-        <!-- Sampling Tabel Prefilled 40 Pohon -->
+        <!-- Sampling Tabel — Multi-batch v1.2 (11 Juni 2026): sesi per pohon, satuan GRAM -->
         <div class="table-wrap">
           <table style="font-size:11.5px;width:100%">
             <thead style="background:var(--cream)">
@@ -1503,19 +1503,18 @@
                 <th style="text-align:left">ID Pohon</th>
                 <th>Kebun</th>
                 <th>Kondisi Baseline</th>
-                <th style="text-align:right">Cherry Basah (kg)</th>
-                <th style="text-align:right">Cherry Kering (kg)</th>
-                <th style="text-align:right">Green Bean (kg)</th>
-                <th style="text-align:right">Rendemen (%)</th>
-                <th>Tgl Ukur</th>
-                <th>Catatan</th>
-                <th style="text-align:center">Status</th>
+                <th style="text-align:center" title="Berapa kali pohon ini sudah dipetik">Sesi</th>
+                <th style="text-align:right" title="Total cherry kumulatif semua sesi panen">Total Cherry</th>
+                <th style="text-align:right" title="Rata-rata per sesi petik">Avg / Sesi</th>
+                <th>Range Tgl</th>
+                <th>Catatan Terakhir</th>
+                <th style="text-align:center">Aksi</th>
               </tr>
             </thead>
             <tbody id="panen-sampling-tbody"></tbody>
           </table>
         </div>
-        <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">Klik <strong>Status</strong> column atau row "Belum diukur" untuk input data per pohon (modal popup). Render dari 40-pohon baseline + merge dengan PANEN_SAMPLING_DATA actual. Hidden form fields preserved untuk compat existing submitPanenSampling() function.</p>
+        <p style="font-size:10px;color:var(--mute);margin-top:8px;font-style:italic">⭐ <strong>Multi-batch v1.2</strong> · Satuan <strong>gram</strong> (petik selektif sample kecil). Klik <strong>📋 N sesi</strong> atau <strong>⏳ Input</strong> untuk lihat sesi existing + tambah sesi panen baru. Target: <strong style="color:var(--moss)">≥400 g/pohon kumulatif</strong> (= 0,4 kg).</p>
 
         <!-- Hidden form fields untuk preserve compatibility submitPanenSampling() -->
         <div style="display:none">
@@ -5400,16 +5399,30 @@ window.exportWkknBackup = function() {
       opt: (typeof OPT_OBSERVATIONS !== 'undefined') ? OPT_OBSERVATIONS : null
     };
     const json = JSON.stringify(backup, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
+    const ts = new Date().toISOString().slice(0,10);
+    const filename = `wkkn_backup_${ts}.json`;
+    // ⭐ 11 Juni 2026: Safari WebKitBlobResource error 1 workaround
+    // Pakai application/octet-stream (force download, bypass open-as-page)
+    // Plus delayed cleanup 2000ms supaya Safari sempat mulai download
+    const blob = new Blob([json], { type: 'application/octet-stream' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const ts = new Date().toISOString().slice(0,10);
     a.href = url;
-    a.download = `wkkn_backup_${ts}.json`;
+    a.download = filename;
+    a.style.display = 'none';
     document.body.appendChild(a);
     a.click();
-    setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
-    console.log('[Backup] ✓ Downloaded wkkn_backup_' + ts + '.json (' + (blob.size/1024).toFixed(1) + ' KB)');
+    // Safari fallback: copy ke clipboard juga (kalau download fail, Adib bisa paste manual ke TextEdit)
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(json).then(() => {
+          console.log('[Backup] 📋 Also copied ke clipboard — paste ke TextEdit kalau download fail di Safari');
+        }).catch(() => {});
+      }
+    } catch(e) {}
+    setTimeout(() => { try { document.body.removeChild(a); } catch(e) {} URL.revokeObjectURL(url); }, 2000);
+    console.log('[Backup] ✓ Triggered download ' + filename + ' (' + (blob.size/1024).toFixed(1) + ' KB)');
+    console.log('[Backup] 💡 Kalau Safari error "WebKitBlobResource error 1": clipboard fallback active, paste ke TextEdit save as .json');
     console.log('[Backup] Counts:', backup.counts);
     return backup;
   } catch (e) {
@@ -7957,9 +7970,10 @@ function updateGradingLiveValidation() {
 // Added 20 Mei sore — SOP item: sampling 30 pohon (10/Kebun)
 // Validate yield assumption: target 0.4 kg/pohon
 // ============================================================
-const PANEN_SAMPLING_SCHEMA_VERSION = '1.1';  // v1.1 (24 Mei 2026): add SAMPLING_POHON_BASELINE prefilled 40 pohon
+const PANEN_SAMPLING_SCHEMA_VERSION = '1.2';  // v1.2 (11 Juni 2026): multi-batch sessions per pohon, cherry_gram unit (was 1.1 single-entry kg)
 const PANEN_SAMPLING_LS_KEY = 'wkkn_v2_panen_sampling_2026';
 const PANEN_SAMPLING_TARGET_KG = 0.4;  // Target Adib konservatif per pohon
+const PANEN_SAMPLING_TARGET_GRAM = 400;   // = 0.4 kg dalam gram (sample tracking pakai gram per petik selektif)
 
 // ⭐ 40 Pohon BRIN Research Sampling Baseline (prefilled dari folder R&D/BRIN Research/Hanging Tag Pohon & Cherry)
 // Pattern locked 22 Mei 2026: 10 pohon per kebun × 4 kebun = 40 pohon total
@@ -7996,11 +8010,52 @@ let PANEN_SAMPLING_DATA = [];
     const raw = localStorage.getItem(PANEN_SAMPLING_LS_KEY);
     if (!raw) return;
     const parsed = JSON.parse(raw);
-    if (parsed.version === PANEN_SAMPLING_SCHEMA_VERSION && Array.isArray(parsed.data)) {
+    if (Array.isArray(parsed.data)) {
       PANEN_SAMPLING_DATA = parsed.data;
+      // ⭐ 11 Juni 2026 — Migration: legacy v1.1 entries (kg field) → v1.2 (cherry_gram field)
+      // Preserve original kg field for backward compat, add cherry_gram for new aggregation
+      let migrated = 0;
+      PANEN_SAMPLING_DATA.forEach(e => {
+        if (e.cherry_gram == null) {
+          const kgVal = e.kg || e.cherry_basah_kg;
+          if (kgVal != null) {
+            e.cherry_gram = Math.round(kgVal * 1000);
+            migrated++;
+          }
+        }
+      });
+      if (migrated > 0) console.log(`[Sampling] 🔄 Migrated ${migrated} legacy entries (kg → cherry_gram)`);
     }
   } catch(e) { console.warn('[Sampling] LS load fail:', e); }
 })();
+
+// ⭐ 11 Juni 2026 — Aggregate helper: collect ALL sessions per pohon_id (multi-batch fix)
+// Sebelumnya render pakai .find() — returns single first match. Adib insight: petik merah selective
+// = multi-session per pohon. Sekarang .filter() + aggregate untuk total per pohon.
+function aggregateSamplingPerPohon(pohonId) {
+  const sessions = PANEN_SAMPLING_DATA.filter(e => e.pohon_id === pohonId)
+    .sort((a, b) => (a.tgl || '').localeCompare(b.tgl || ''));
+  if (sessions.length === 0) return null;
+  const totalGram = sessions.reduce((s, e) => s + (e.cherry_gram || 0), 0);
+  const avgGram = totalGram / sessions.length;
+  const firstTgl = sessions[0].tgl;
+  const lastTgl = sessions[sessions.length - 1].tgl;
+  // Aggregate other fields from last/most-complete session
+  const last = sessions[sessions.length - 1];
+  return {
+    sessions,
+    sessions_count: sessions.length,
+    total_gram: totalGram,
+    avg_gram: avgGram,
+    first_tgl: firstTgl,
+    last_tgl: lastTgl,
+    // Carryover (legacy fields from last session — for backward compat)
+    cherry_kering_kg: last.cherry_kering_kg || null,
+    green_bean_kg: last.green_bean_kg || null,
+    catatan_last: last.catatan || '',
+    season_complete: last.season_complete || false
+  };
+}
 
 function savePanenSamplingToLS() {
   try {
@@ -8066,21 +8121,28 @@ function renderPanenSampling() {
 
 function renderPanenSamplingKPI() {
   const el = (id) => document.getElementById(id);
-  const data = PANEN_SAMPLING_DATA;
-  if (el('panen-samp-total')) el('panen-samp-total').textContent = data.length;
-  if (data.length === 0) {
+  // ⭐ 11 Juni 2026 v1.2: Aggregate per pohon (multi-batch). Total = pohon count yang sudah punya ≥1 sesi.
+  // Avg/Median/Top = total kumulatif gram per pohon (bukan per session).
+  const aggregates = SAMPLING_POHON_BASELINE
+    .map(b => aggregateSamplingPerPohon(b.id))
+    .filter(a => a != null);
+  if (el('panen-samp-total')) el('panen-samp-total').textContent = aggregates.length;
+  if (aggregates.length === 0) {
     ['panen-samp-avg-kg','panen-samp-median-kg','panen-samp-top'].forEach(id => { const e = el(id); if (e) e.textContent = '—'; });
     return;
   }
-  const kgs = data.map(e => e.kg).sort((a,b) => a-b);
-  const avg = (kgs.reduce((s,v) => s+v, 0) / kgs.length).toFixed(2);
-  const median = kgs.length % 2 === 0
-    ? ((kgs[kgs.length/2 - 1] + kgs[kgs.length/2]) / 2).toFixed(2)
-    : kgs[Math.floor(kgs.length/2)].toFixed(2);
-  const top = Math.max(...kgs).toFixed(2);
-  if (el('panen-samp-avg-kg')) el('panen-samp-avg-kg').textContent = avg + ' kg';
-  if (el('panen-samp-median-kg')) el('panen-samp-median-kg').textContent = median + ' kg';
-  if (el('panen-samp-top')) el('panen-samp-top').textContent = top + ' kg';
+  const grams = aggregates.map(a => a.total_gram).sort((a,b) => a-b);
+  const avg = grams.reduce((s,v) => s+v, 0) / grams.length;
+  const median = grams.length % 2 === 0
+    ? (grams[grams.length/2 - 1] + grams[grams.length/2]) / 2
+    : grams[Math.floor(grams.length/2)];
+  const topGram = Math.max(...grams);
+  const topAgg = aggregates.find(a => a.total_gram === topGram);
+  const topPohon = topAgg ? PANEN_SAMPLING_DATA.find(e => e.id === topAgg.sessions[0].id)?.pohon_id || '?' : '?';
+  const fmt = (g) => Math.round(g).toLocaleString('id-ID') + ' g';
+  if (el('panen-samp-avg-kg')) el('panen-samp-avg-kg').textContent = fmt(avg);
+  if (el('panen-samp-median-kg')) el('panen-samp-median-kg').textContent = fmt(median);
+  if (el('panen-samp-top')) el('panen-samp-top').textContent = `${fmt(topGram)} (${topPohon})`;
 }
 
 function renderPanenSamplingChart() {
@@ -8134,123 +8196,207 @@ function renderPanenSamplingTable() {
   const tbody = document.getElementById('panen-sampling-tbody');
   if (!tbody) return;
 
-  // Filter values (compatibility: filter UI may not exist in legacy view)
   const fKebun = document.getElementById('filter-sampling-kebun')?.value || '';
   const fKondisi = document.getElementById('filter-sampling-kondisi')?.value || '';
   const fStatus = document.getElementById('filter-sampling-status')?.value || '';
 
-  // Merge BASELINE 40 pohon + actual data (PANEN_SAMPLING_DATA via pohon_id match)
+  // ⭐ 11 Juni 2026 v1.2: Multi-batch aggregation per pohon (replace .find() with aggregateSamplingPerPohon())
   const rows = SAMPLING_POHON_BASELINE.map(baseline => {
-    const actual = PANEN_SAMPLING_DATA.find(e => e.pohon_id === baseline.id);
+    const agg = aggregateSamplingPerPohon(baseline.id);
     return {
       ...baseline,
-      // Actual fields
-      cherry_basah_kg: actual?.kg || actual?.cherry_basah_kg || null,
-      cherry_kering_kg: actual?.cherry_kering_kg || null,
-      green_bean_kg: actual?.green_bean_kg || null,
-      rendemen_pct: (actual?.cherry_basah_kg && actual?.green_bean_kg)
-        ? ((actual.green_bean_kg / actual.cherry_basah_kg) * 100)
-        : (actual?.kg && actual?.green_bean_kg ? ((actual.green_bean_kg / actual.kg) * 100) : null),
-      tgl_ukur: actual?.tgl || null,
-      catatan: actual?.catatan || '',
-      status: actual ? 'done' : 'pending',
-      _actual_id: actual?.id
+      sessions_count: agg?.sessions_count || 0,
+      total_gram: agg?.total_gram || null,
+      avg_gram: agg?.avg_gram || null,
+      first_tgl: agg?.first_tgl || null,
+      last_tgl: agg?.last_tgl || null,
+      catatan_last: agg?.catatan_last || '',
+      status: agg ? 'done' : 'pending'
     };
   });
 
-  // Apply filters
   let filtered = rows;
   if (fKebun) filtered = filtered.filter(r => r.kebun === fKebun);
   if (fKondisi) filtered = filtered.filter(r => r.kondisi === fKondisi);
   if (fStatus) filtered = filtered.filter(r => r.status === fStatus);
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:18px;color:var(--mute);font-size:11px">Tidak ada pohon match filter.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:18px;color:var(--mute);font-size:11px">Tidak ada pohon match filter.</td></tr>`;
     return;
   }
+
+  const fmtG = (g) => g != null ? `${Math.round(g).toLocaleString('id-ID')} g` : '<span style="color:#bbb">—</span>';
+  const fmtTglRange = (first, last) => {
+    if (!first) return '<span style="color:#bbb">—</span>';
+    if (first === last) return `<span style="font-size:10px">${formatTglShort ? formatTglShort(first) : first}</span>`;
+    return `<span style="font-size:9.5px">${formatTglShort ? formatTglShort(first) : first} → ${formatTglShort ? formatTglShort(last) : last}</span>`;
+  };
 
   tbody.innerHTML = filtered.map(r => {
     const kondisi = SAMPLING_KONDISI_LABEL[r.kondisi] || {id: r.kondisi, color:'#888', bg:'#f5f5f5'};
     const isDone = r.status === 'done';
-    const cherryBasahCell = r.cherry_basah_kg != null ? `<strong style="color:${r.cherry_basah_kg >= PANEN_SAMPLING_TARGET_KG ? '#16a34a' : '#dc2626'}">${r.cherry_basah_kg.toFixed(2)}</strong>` : '<span style="color:#bbb">—</span>';
-    const cherryKeringCell = r.cherry_kering_kg != null ? r.cherry_kering_kg.toFixed(2) : '<span style="color:#bbb">—</span>';
-    const greenBeanCell = r.green_bean_kg != null ? `<strong>${r.green_bean_kg.toFixed(2)}</strong>` : '<span style="color:#bbb">—</span>';
-    const rendemenCell = r.rendemen_pct != null ? `<span style="color:${r.rendemen_pct >= 18 ? '#16a34a' : (r.rendemen_pct >= 15 ? '#d4a017' : '#dc2626')};font-weight:700">${r.rendemen_pct.toFixed(1)}%</span>` : '<span style="color:#bbb">—</span>';
-    const tglUkurCell = r.tgl_ukur ? `<span style="font-size:10px">${formatTglShort ? formatTglShort(r.tgl_ukur) : r.tgl_ukur}</span>` : '<span style="color:#bbb">—</span>';
-    const catatanCell = r.catatan ? `<span style="font-size:10px;color:var(--mute)" title="${r.catatan.replace(/"/g,'&quot;')}">${r.catatan.slice(0,40)}${r.catatan.length>40?'…':''}</span>` : '<span style="color:#bbb">—</span>';
-    const statusCell = isDone
-      ? `<button onclick="openSamplingInput('${r.id}')" style="background:#F0FDF4;color:#15803D;border:1px solid #16a34a;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">✓ Done</button>`
+    const totalCell = r.total_gram != null
+      ? `<strong style="color:${r.total_gram >= PANEN_SAMPLING_TARGET_GRAM ? '#16a34a' : '#dc2626'}">${Math.round(r.total_gram).toLocaleString('id-ID')} g</strong>${r.total_gram >= 1000 ? `<br><span style="font-size:9px;color:var(--mute)">(${(r.total_gram/1000).toFixed(2)} kg)</span>` : ''}`
+      : '<span style="color:#bbb">—</span>';
+    const sessionsCell = r.sessions_count > 0
+      ? `<span style="background:#E0F2FE;color:#075985;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700">${r.sessions_count}×</span>`
+      : '<span style="color:#bbb">—</span>';
+    const avgCell = r.avg_gram != null ? fmtG(r.avg_gram) : '<span style="color:#bbb">—</span>';
+    const catatanCell = r.catatan_last ? `<span style="font-size:10px;color:var(--mute)" title="${r.catatan_last.replace(/"/g,'&quot;')}">${r.catatan_last.slice(0,35)}${r.catatan_last.length>35?'…':''}</span>` : '<span style="color:#bbb">—</span>';
+    const actionCell = isDone
+      ? `<button onclick="openSamplingInput('${r.id}')" style="background:#F0FDF4;color:#15803D;border:1px solid #16a34a;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer" title="View sessions + add new session">📋 ${r.sessions_count} sesi</button>`
       : `<button onclick="openSamplingInput('${r.id}')" style="background:#FFFBEB;color:#78350F;border:1px solid #d4a017;padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer">⏳ Input</button>`;
 
     return `<tr style="background:${isDone ? '#FAFCFB' : '#fff'}">
       <td style="font-family:monospace;font-weight:700;font-size:10.5px">${r.id}</td>
       <td style="text-align:center;font-weight:600">K${r.kebun}</td>
       <td><span style="background:${kondisi.bg};color:${kondisi.color};padding:2px 6px;border-radius:8px;font-size:10px;font-weight:700">${kondisi.id}</span></td>
-      <td style="text-align:right">${cherryBasahCell}</td>
-      <td style="text-align:right">${cherryKeringCell}</td>
-      <td style="text-align:right">${greenBeanCell}</td>
-      <td style="text-align:right">${rendemenCell}</td>
-      <td>${tglUkurCell}</td>
+      <td style="text-align:center">${sessionsCell}</td>
+      <td style="text-align:right">${totalCell}</td>
+      <td style="text-align:right">${avgCell}</td>
+      <td>${fmtTglRange(r.first_tgl, r.last_tgl)}</td>
       <td>${catatanCell}</td>
-      <td style="text-align:center">${statusCell}</td>
+      <td style="text-align:center">${actionCell}</td>
     </tr>`;
   }).join('');
 }
 
-// Modal popup untuk input data sampling per pohon (replace inline form)
+// ⭐ 11 Juni 2026 v1.2 — Multi-batch modal: list existing sessions + add new session form.
+// Replaced prompt-based single-input flow. Now true multi-session UI per pohon.
 function openSamplingInput(pohonId) {
   const baseline = SAMPLING_POHON_BASELINE.find(b => b.id === pohonId);
   if (!baseline) return alert('Pohon ID tidak ditemukan: ' + pohonId);
-  const existing = PANEN_SAMPLING_DATA.find(e => e.pohon_id === pohonId);
-  const kondisi = SAMPLING_KONDISI_LABEL[baseline.kondisi] || {id: baseline.kondisi};
+  const agg = aggregateSamplingPerPohon(pohonId);
+  const kondisi = SAMPLING_KONDISI_LABEL[baseline.kondisi] || {id: baseline.kondisi, color:'#888', bg:'#f5f5f5'};
 
-  // Pre-populate hidden form fields
-  document.getElementById('panen-sampling-tgl').value = existing?.tgl || todayIso();
-  document.getElementById('panen-sampling-pohon-id').value = pohonId;
-  document.getElementById('panen-sampling-kg').value = existing?.kg || existing?.cherry_basah_kg || '';
-  document.getElementById('panen-sampling-catatan').value = existing?.catatan || '';
+  // Build sessions list HTML
+  const sessionsHtml = (agg?.sessions || []).map((s, idx) => {
+    const gramDisplay = s.cherry_gram != null ? `${Math.round(s.cherry_gram).toLocaleString('id-ID')} g` : '<em style="color:var(--mute)">no gram</em>';
+    return `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-bottom:1px solid #eee;font-size:11.5px;background:${idx%2?'#FAFCFB':'#fff'}">
+      <span style="font-family:monospace;font-size:10px;color:var(--mute);min-width:18px">#${idx+1}</span>
+      <strong style="min-width:90px;font-size:11px">${formatTglShort ? formatTglShort(s.tgl) : s.tgl}</strong>
+      <strong style="color:var(--cherry);min-width:80px">${gramDisplay}</strong>
+      <span style="flex:1;font-size:10.5px;color:var(--mute);font-style:italic">${s.catatan || '—'}</span>
+      <button onclick="deleteSamplingSession('${pohonId}','${s.id}')" style="background:#fde2dc;color:#8c2519;border:0;padding:2px 7px;border-radius:4px;font-size:9.5px;cursor:pointer" title="Hapus sesi ini">🗑</button>
+    </div>`;
+  }).join('') || '<div style="padding:14px;text-align:center;color:var(--mute);font-size:11px;font-style:italic">Belum ada sesi panen untuk pohon ini.</div>';
 
-  // Simple prompt-based input (fast iteration — could upgrade to proper modal later)
-  const tglInput = prompt(`📅 Tanggal ukur untuk pohon ${pohonId} (${kondisi.id}, Kebun ${baseline.kebun}):\n\nFormat: YYYY-MM-DD\nDefault: hari ini`, existing?.tgl || todayIso());
-  if (tglInput === null) return;
-  const cherryBasahInput = prompt(`🍒 Cherry basah (kg) — pohon ${pohonId}:`, existing?.cherry_basah_kg || existing?.kg || '');
-  if (cherryBasahInput === null) return;
-  const cherryBasah = parseFloat(cherryBasahInput);
-  if (!cherryBasah || cherryBasah < 0) return alert('Cherry basah harus angka > 0');
-  const cherryKeringInput = prompt(`🌾 Cherry kering (kg) — opsional (kosongkan kalau belum jemur):`, existing?.cherry_kering_kg || '');
-  if (cherryKeringInput === null) return;
-  const cherryKering = cherryKeringInput ? parseFloat(cherryKeringInput) : null;
-  const greenBeanInput = prompt(`🌰 Green bean (kg) — opsional (kosongkan kalau belum kupas):`, existing?.green_bean_kg || '');
-  if (greenBeanInput === null) return;
-  const greenBean = greenBeanInput ? parseFloat(greenBeanInput) : null;
-  const catatanInput = prompt(`📝 Catatan (opsional):`, existing?.catatan || '');
-  if (catatanInput === null) return;
+  const totalGramDisplay = agg?.total_gram != null ? Math.round(agg.total_gram).toLocaleString('id-ID') + ' g' : '0 g';
+  const totalKgDisplay = agg?.total_gram >= 1000 ? ` (${(agg.total_gram/1000).toFixed(2)} kg)` : '';
+  const targetReached = (agg?.total_gram || 0) >= PANEN_SAMPLING_TARGET_GRAM;
 
-  // Save/update entry
-  if (existing) {
-    existing.tgl = tglInput;
-    existing.cherry_basah_kg = cherryBasah;
-    existing.kg = cherryBasah;  // backward compat
-    if (cherryKering) existing.cherry_kering_kg = cherryKering;
-    if (greenBean) existing.green_bean_kg = greenBean;
-    existing.catatan = catatanInput;
-    existing.last_edited_at = new Date().toISOString();
-  } else {
-    const id = 'sampling_' + tglInput.replace(/-/g, '') + '_' + pohonId;
-    PANEN_SAMPLING_DATA.push({
-      id, tgl: tglInput, kebun: baseline.kebun, pohon_id: pohonId,
-      kg: cherryBasah,                  // backward compat (existing reports)
-      cherry_basah_kg: cherryBasah,
-      cherry_kering_kg: cherryKering,
-      green_bean_kg: greenBean,
-      kondisi: baseline.kondisi,        // dari baseline (sehat/sedang/lemah)
-      catatan: catatanInput,
-      created_at: new Date().toISOString()
-    });
-  }
+  const modalHtml = `
+    <div id="sampling-input-modal-overlay" onclick="if(event.target.id==='sampling-input-modal-overlay')closeSamplingInputModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.3)">
+        <!-- Header -->
+        <div style="padding:18px 22px;background:linear-gradient(135deg,#1f5f47,#2e4040);color:#fff;border-radius:12px 12px 0 0">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:10px;letter-spacing:1.8px;color:#a8c8bc;font-weight:700">🌳 SAMPLING BRIN 40 POHON</div>
+              <div style="font-size:20px;font-weight:800;margin-top:2px;font-family:monospace">${pohonId}</div>
+              <div style="font-size:11px;color:#c5d8d2;margin-top:2px">Kebun ${baseline.kebun} · ${kondisi.id}</div>
+            </div>
+            <button onclick="closeSamplingInputModal()" style="background:rgba(255,255,255,.18);color:#fff;border:0;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:16px">×</button>
+          </div>
+        </div>
+
+        <!-- Aggregate KPI -->
+        <div style="padding:14px 22px;background:#FAFCFB;border-bottom:1px solid #eee;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <div>
+            <div style="font-size:10px;color:var(--mute);letter-spacing:1px">TOTAL KUMULATIF</div>
+            <div style="font-size:22px;font-weight:800;color:${targetReached?'#16a34a':'#8c2519'};line-height:1">${totalGramDisplay}${totalKgDisplay}</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--mute);letter-spacing:1px">SESI</div>
+            <div style="font-size:18px;font-weight:700;color:#075985">${agg?.sessions_count || 0}×</div>
+          </div>
+          <div>
+            <div style="font-size:10px;color:var(--mute);letter-spacing:1px">AVG / SESI</div>
+            <div style="font-size:18px;font-weight:700;color:var(--earth)">${agg?.avg_gram != null ? Math.round(agg.avg_gram).toLocaleString('id-ID') + ' g' : '—'}</div>
+          </div>
+          <div style="margin-left:auto;text-align:right;font-size:10px;color:var(--mute)">
+            Target: <strong style="color:${targetReached?'#16a34a':'var(--cherry)'}">≥400 g</strong> ${targetReached?'✓':''}
+          </div>
+        </div>
+
+        <!-- Sessions List -->
+        <div style="padding:0">
+          <div style="padding:12px 22px 6px;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--mute)">📋 RIWAYAT SESI PANEN</div>
+          <div style="max-height:200px;overflow-y:auto;border-top:1px solid #eee;border-bottom:1px solid #eee">
+            ${sessionsHtml}
+          </div>
+        </div>
+
+        <!-- Add New Session Form -->
+        <div style="padding:16px 22px;background:#F0F5F3;border-left:4px solid var(--moss)">
+          <div style="font-size:12px;font-weight:800;color:var(--moss);margin-bottom:10px">+ TAMBAH SESI PANEN BARU</div>
+          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;font-size:12px">
+            <label style="font-weight:600">📅 Tanggal *</label>
+            <input type="date" id="new-session-tgl" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <label style="font-weight:600">🍒 Cherry (gram) *</label>
+            <input type="number" id="new-session-gram" placeholder="cth: 85" min="1" step="1" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
+            <textarea id="new-session-catatan" placeholder="opsional — cuaca, kondisi pohon, anomaly, dll" rows="2" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
+          </div>
+          <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+            <button onclick="closeSamplingInputModal()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Tutup</button>
+            <button onclick="addSamplingSession('${pohonId}')" class="btn btn-primary" style="background:var(--moss);font-size:12px;padding:7px 14px">✓ Simpan Sesi</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Remove existing modal if any
+  const existing = document.getElementById('sampling-input-modal-overlay');
+  if (existing) existing.remove();
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+  // Focus gram input untuk fast entry
+  setTimeout(() => { const el = document.getElementById('new-session-gram'); if (el) el.focus(); }, 100);
+}
+
+function closeSamplingInputModal() {
+  const modal = document.getElementById('sampling-input-modal-overlay');
+  if (modal) modal.remove();
+}
+
+// Add new session entry untuk pohon (multi-batch)
+function addSamplingSession(pohonId) {
+  const baseline = SAMPLING_POHON_BASELINE.find(b => b.id === pohonId);
+  if (!baseline) return alert('Pohon ID tidak ditemukan');
+  const tgl = document.getElementById('new-session-tgl').value;
+  const gram = parseInt(document.getElementById('new-session-gram').value, 10);
+  const catatan = document.getElementById('new-session-catatan').value.trim();
+  if (!tgl) return alert('Tanggal wajib diisi');
+  if (!gram || gram < 1) return alert('Cherry gram harus angka > 0');
+  const id = 'sampling_' + tgl.replace(/-/g, '') + '_' + pohonId + '_' + Date.now().toString().slice(-6);
+  PANEN_SAMPLING_DATA.push({
+    id, tgl, kebun: baseline.kebun, pohon_id: pohonId,
+    cherry_gram: gram,
+    kg: gram / 1000,              // backward compat (legacy reports baca kg)
+    cherry_basah_kg: gram / 1000, // backward compat
+    kondisi: baseline.kondisi,
+    catatan,
+    created_at: new Date().toISOString(),
+    schema_version: '1.2'
+  });
   savePanenSamplingToLS();
-  if (typeof showToast === 'function') showToast(`✓ Sampling ${pohonId} tersimpan (${cherryBasah} kg)`, 'success');
+  if (typeof showToast === 'function') showToast(`✓ Sesi panen ${pohonId} (+${gram} g) tersimpan`, 'success');
+  // Re-render + re-open modal dengan data terbaru
   renderPanenSampling();
+  setTimeout(() => openSamplingInput(pohonId), 200);
+}
+
+// Delete single session (multi-batch)
+function deleteSamplingSession(pohonId, sessionId) {
+  const idx = PANEN_SAMPLING_DATA.findIndex(e => e.id === sessionId);
+  if (idx < 0) return alert('Sesi tidak ditemukan');
+  if (!confirm(`Hapus sesi panen #${idx+1} ini?\n\nTanggal: ${PANEN_SAMPLING_DATA[idx].tgl}\nGram: ${PANEN_SAMPLING_DATA[idx].cherry_gram || PANEN_SAMPLING_DATA[idx].kg*1000} g\n\nLanjut?`)) return;
+  PANEN_SAMPLING_DATA.splice(idx, 1);
+  savePanenSamplingToLS();
+  if (typeof showToast === 'function') showToast(`🗑 Sesi dihapus`, 'info');
+  renderPanenSampling();
+  setTimeout(() => openSamplingInput(pohonId), 200);
 }
 
 // Toggle chart visibility (default collapsed per Adib UI minimalism)
