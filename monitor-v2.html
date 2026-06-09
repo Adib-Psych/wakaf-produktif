@@ -1467,15 +1467,20 @@
           <div>⚖️ Avg: <strong id="panen-samp-avg-kg" style="color:var(--cherry)">—</strong></div>
           <div>📊 Median: <strong id="panen-samp-median-kg">—</strong></div>
           <div>⭐ Top: <strong id="panen-samp-top">—</strong></div>
-          <div style="margin-left:auto">
-            <button class="btn btn-secondary" onclick="toggleSamplingChart()" style="font-size:10.5px;padding:4px 10px">📈 Toggle Chart per Kebun</button>
+          <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
+            <select id="panen-samp-chart-type" onchange="renderPanenSamplingChart()" style="font-size:10.5px;padding:4px 8px;border:1px solid #d4a017;border-radius:6px;background:#FFFBEB;color:#78350F;font-weight:600">
+              <option value="kebun">📊 Per Kebun</option>
+              <option value="top10">🏆 Top 10 Pohon</option>
+              <option value="kondisi">🎨 Per Kondisi Baseline</option>
+            </select>
+            <button class="btn btn-secondary" onclick="toggleSamplingChart()" style="font-size:10.5px;padding:4px 10px">📈 Toggle</button>
           </div>
         </div>
 
-        <!-- Chart collapsible (default hidden) -->
+        <!-- Chart collapsible (default hidden) — v1.2 11 Juni 2026 multi-chart selector -->
         <div id="panen-sampling-chart-wrap" style="display:none;margin-bottom:12px">
-          <div class="chart-wrap" style="height:240px"><canvas id="chart-panen-sampling-kebun"></canvas></div>
-          <p style="font-size:10.5px;color:var(--mute);margin-top:6px;font-style:italic">Avg per kebun · Garis merah putus = target 0,4 kg. Outlier high-yielder = parent stock candidate.</p>
+          <div class="chart-wrap" style="height:260px"><canvas id="chart-panen-sampling-kebun"></canvas></div>
+          <p id="panen-samp-chart-desc" style="font-size:10.5px;color:var(--mute);margin-top:6px;font-style:italic">Avg per kebun · Garis merah putus = target 400 g. Outlier high-yielder = parent stock candidate.</p>
         </div>
 
         <!-- Filter dropdown sederhana -->
@@ -8156,33 +8161,55 @@ function renderPanenSamplingKPI() {
   if (el('panen-samp-top')) el('panen-samp-top').textContent = `${fmt(topGram)} (${topPohon})`;
 }
 
+// ⭐ 11 Juni 2026 v1.2 Tier 2: Multi-chart selector (Per Kebun / Top 10 / Per Kondisi).
+// All charts use cumulative gram per pohon (aggregate via aggregateSamplingPerPohon).
 function renderPanenSamplingChart() {
   const ctx = document.getElementById('chart-panen-sampling-kebun');
   if (!ctx) return;
   if (window._panenSamplingChart) { try { window._panenSamplingChart.destroy(); } catch(e){} }
 
-  // Group per kebun, compute avg + min + max
-  const perKebun = { '1':[], '2':[], '3':[], '4':[] };
-  PANEN_SAMPLING_DATA.forEach(e => {
-    if (perKebun[e.kebun]) perKebun[e.kebun].push(e.kg);
-  });
-  const labels = ['Kebun 1', 'Kebun 2', 'Kebun 3', 'Kebun 4'];
-  const avgs = ['1','2','3','4'].map(k => perKebun[k].length > 0 ? (perKebun[k].reduce((s,v)=>s+v,0) / perKebun[k].length) : 0);
-  const counts = ['1','2','3','4'].map(k => perKebun[k].length);
-  const targetLine = [PANEN_SAMPLING_TARGET_KG, PANEN_SAMPLING_TARGET_KG, PANEN_SAMPLING_TARGET_KG, PANEN_SAMPLING_TARGET_KG];
+  const typeEl = document.getElementById('panen-samp-chart-type');
+  const chartType = typeEl?.value || 'kebun';
+  const descEl = document.getElementById('panen-samp-chart-desc');
 
+  // Pre-compute aggregate per pohon (cumulative gram)
+  const allAggregates = SAMPLING_POHON_BASELINE.map(b => {
+    const agg = aggregateSamplingPerPohon(b.id);
+    return {
+      pohon_id: b.id, kebun: b.kebun, kondisi: b.kondisi,
+      total_gram: agg?.total_gram || 0, sessions_count: agg?.sessions_count || 0
+    };
+  });
+  const withData = allAggregates.filter(a => a.total_gram > 0);
+
+  if (chartType === 'kebun') {
+    renderChartPerKebun(ctx, withData, descEl);
+  } else if (chartType === 'top10') {
+    renderChartTop10(ctx, withData, descEl);
+  } else if (chartType === 'kondisi') {
+    renderChartPerKondisi(ctx, withData, descEl);
+  }
+}
+
+function renderChartPerKebun(ctx, withData, descEl) {
+  if (descEl) descEl.textContent = 'Avg total gram/pohon per kebun · Garis merah putus = target 400 g/pohon · Hover untuk min/max/sample count.';
+  const perKebun = { '1':[], '2':[], '3':[], '4':[] };
+  withData.forEach(a => { if (perKebun[a.kebun]) perKebun[a.kebun].push(a.total_gram); });
+  const labels = ['Kebun 1', 'Kebun 2', 'Kebun 3', 'Kebun 4'];
+  const avgs = ['1','2','3','4'].map(k => perKebun[k].length > 0 ? perKebun[k].reduce((s,v)=>s+v,0) / perKebun[k].length : 0);
+  const targetLine = [PANEN_SAMPLING_TARGET_GRAM, PANEN_SAMPLING_TARGET_GRAM, PANEN_SAMPLING_TARGET_GRAM, PANEN_SAMPLING_TARGET_GRAM];
   window._panenSamplingChart = new Chart(ctx, {
     type: 'bar',
     data: {
       labels,
       datasets: [
-        { type: 'bar', label: 'Avg kg/pohon', data: avgs.map(v => v.toFixed(3)), backgroundColor: ['#a8c8bc','#5a9080','#c4906a','#d4a017'] },
-        { type: 'line', label: 'Target 0,4 kg', data: targetLine, borderColor: '#dc2626', borderDash: [6,4], borderWidth: 2, fill: false, pointRadius: 0 }
+        { type: 'bar', label: 'Avg total gram/pohon', data: avgs.map(v => Math.round(v)), backgroundColor: ['#a8c8bc','#5a9080','#c4906a','#d4a017'] },
+        { type: 'line', label: 'Target 400 g', data: targetLine, borderColor: '#dc2626', borderDash: [6,4], borderWidth: 2, fill: false, pointRadius: 0 }
       ]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
-      scales: { y: { beginAtZero: true, title: { display: true, text: 'kg cherry / pohon' } } },
+      scales: { y: { beginAtZero: true, title: { display: true, text: 'gram cherry kumulatif / pohon' } } },
       plugins: {
         legend: { position: 'bottom' },
         tooltip: {
@@ -8190,10 +8217,109 @@ function renderPanenSamplingChart() {
             afterBody: (items) => {
               const idx = items[0].dataIndex;
               const arr = perKebun[String(idx+1)];
-              if (!arr || arr.length === 0) return ['Tidak ada sampel'];
-              const min = Math.min(...arr).toFixed(2);
-              const max = Math.max(...arr).toFixed(2);
-              return [`Sampel: ${arr.length}`, `Min: ${min} · Max: ${max}`];
+              if (!arr || arr.length === 0) return ['Belum ada sampel'];
+              const min = Math.round(Math.min(...arr));
+              const max = Math.round(Math.max(...arr));
+              return [`Sampel: ${arr.length} pohon`, `Min: ${min} g · Max: ${max} g`];
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderChartTop10(ctx, withData, descEl) {
+  if (descEl) descEl.textContent = '🏆 Top 10 high-yielder pohon (sorted total gram desc). Highlight cyan = parent stock candidate. Color base mengikuti kondisi baseline.';
+  const sorted = [...withData].sort((a, b) => b.total_gram - a.total_gram).slice(0, 10);
+  if (sorted.length === 0) {
+    window._panenSamplingChart = new Chart(ctx, {
+      type: 'bar', data: { labels: [], datasets: [] },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { title: { display: true, text: 'Belum ada data sampel — input dulu via row Aksi' } } }
+    });
+    return;
+  }
+  const labels = sorted.map(s => `${s.pohon_id}`);
+  const data = sorted.map(s => Math.round(s.total_gram));
+  const colors = sorted.map(s => {
+    const k = SAMPLING_KONDISI_LABEL[s.kondisi];
+    return k?.color || '#888';
+  });
+  // Border highlight cyan for top 3 (parent stock candidate)
+  const borderColors = sorted.map((s, i) => i < 3 ? '#0891b2' : 'rgba(0,0,0,0.1)');
+  const borderWidths = sorted.map((s, i) => i < 3 ? 3 : 1);
+
+  window._panenSamplingChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Total cumulative gram',
+        data,
+        backgroundColor: colors,
+        borderColor: borderColors,
+        borderWidth: borderWidths
+      }]
+    },
+    options: {
+      indexAxis: 'y',           // horizontal bars
+      responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { beginAtZero: true, title: { display: true, text: 'gram cherry kumulatif' } },
+        y: { ticks: { font: { family: 'monospace', size: 11, weight: 'bold' } } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            afterBody: (items) => {
+              const idx = items[0].dataIndex;
+              const s = sorted[idx];
+              const k = SAMPLING_KONDISI_LABEL[s.kondisi]?.id || s.kondisi;
+              const trophy = idx < 3 ? ' 🏆 PARENT STOCK CANDIDATE' : '';
+              return [`Kebun: ${s.kebun} · Kondisi: ${k}`, `Sesi panen: ${s.sessions_count}×${trophy}`];
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
+function renderChartPerKondisi(ctx, withData, descEl) {
+  if (descEl) descEl.textContent = '🎨 Avg gram/pohon per kondisi baseline. Hipotesis: kondisi visual (sehat/sedang/lemah) prediktif yield? Lihat apakah pattern memang konsisten.';
+  const perKondisi = { sehat:[], sedang:[], lemah:[] };
+  withData.forEach(a => { if (perKondisi[a.kondisi]) perKondisi[a.kondisi].push(a.total_gram); });
+  const order = ['sehat','sedang','lemah'];
+  const labels = order.map(k => SAMPLING_KONDISI_LABEL[k]?.id || k);
+  const avgs = order.map(k => perKondisi[k].length > 0 ? perKondisi[k].reduce((s,v)=>s+v,0) / perKondisi[k].length : 0);
+  const colors = order.map(k => SAMPLING_KONDISI_LABEL[k]?.color || '#888');
+  const targetLine = order.map(() => PANEN_SAMPLING_TARGET_GRAM);
+  window._panenSamplingChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { type: 'bar', label: 'Avg total gram/pohon', data: avgs.map(v => Math.round(v)), backgroundColor: colors, borderColor: colors, borderWidth: 1 },
+        { type: 'line', label: 'Target 400 g', data: targetLine, borderColor: '#dc2626', borderDash: [6,4], borderWidth: 2, fill: false, pointRadius: 0 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true, title: { display: true, text: 'gram cherry kumulatif / pohon' } } },
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            afterBody: (items) => {
+              const idx = items[0].dataIndex;
+              const k = order[idx];
+              const arr = perKondisi[k];
+              if (!arr || arr.length === 0) return ['Belum ada sampel'];
+              const min = Math.round(Math.min(...arr));
+              const max = Math.round(Math.max(...arr));
+              return [`Sampel: ${arr.length} pohon`, `Min: ${min} g · Max: ${max} g`];
             }
           }
         }
