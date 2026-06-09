@@ -5718,11 +5718,157 @@ window.reconcileUpahFromCashbook = function(options) {
   return changes;
 };
 
+// 6. MASS BACKFILL FROM BUKTI (11 Juni 2026 — orphan UPAH covered di bukti file)
+// Scan UPAH status='lunas' + tidak ada cashflow + bukti covers tanggal → auto-create cashflow.
+// Resolves 21 missing cashflow entries (Pak Kumpul 8 + Cak Yit 13) total ~Rp 1.480K.
+// Dry run default + apply mode with confirm.
+window.massBackfillFromBukti = function(options) {
+  options = options || {};
+  const dryRun = options.dryRun !== false;
+  if (typeof UPAH_ITEMS === 'undefined' || typeof CASHBOOK === 'undefined') {
+    console.warn('[MassBackfill] UPAH or CASHBOOK undefined');
+    return null;
+  }
+
+  // Build cashflow ref → UPAH id mapping (parse single + batch refs)
+  const cashflowByUpahId = new Map();
+  CASHBOOK.forEach(cb => {
+    if (!cb.ref || typeof cb.ref !== 'string' || !cb.ref.startsWith('upah_')) return;
+    const idsInRef = cb.ref.replace(/^upah_/, '').split('·').map(s => +s.trim()).filter(Boolean);
+    idsInRef.forEach(uid => {
+      if (!cashflowByUpahId.has(uid)) cashflowByUpahId.set(uid, []);
+      cashflowByUpahId.get(uid).push(cb);
+    });
+  });
+
+  // Find orphan UPAH (lunas + no cashflow) + bukti coverage
+  const candidates = [];
+  const skipped = { no_bukti: [], has_cashflow: [], not_lunas: [] };
+  UPAH_ITEMS.forEach(u => {
+    if (u.status !== 'lunas') { skipped.not_lunas.push(u.id); return; }
+    const existing = cashflowByUpahId.get(u.id) || [];
+    if (existing.length > 0) { skipped.has_cashflow.push(u.id); return; }
+    const bukti = (typeof findBuktiForDate === 'function') ? findBuktiForDate(u.pelapor, u.tgl) : null;
+    if (!bukti) { skipped.no_bukti.push({ id: u.id, pelapor: u.pelapor, tgl: u.tgl }); return; }
+    const total = (typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty);
+    candidates.push({
+      upah_id: u.id, pelapor: u.pelapor, tgl_work: u.tgl,
+      aktivitas: (u.aktivitas || '').substring(0, 50),
+      hak: total,
+      bukti_file: bukti.file,
+      bukti_issued_tgl: bukti.issued_tgl
+    });
+  });
+
+  // Group by bukti for clarity
+  const byBukti = {};
+  candidates.forEach(c => {
+    const key = c.pelapor + '|' + c.bukti_issued_tgl;
+    if (!byBukti[key]) byBukti[key] = { pelapor: c.pelapor, bukti_issued_tgl: c.bukti_issued_tgl, bukti_file: c.bukti_file, items: [], total: 0 };
+    byBukti[key].items.push(c);
+    byBukti[key].total += c.hak;
+  });
+
+  // Print report
+  const fmtRpLocal = (n) => (typeof fmtRp === 'function') ? fmtRp(n) : 'Rp ' + (n||0).toLocaleString('id-ID');
+  console.log('═══════════════════════════════════════════════════════');
+  console.log('[MassBackfill] Bukti-Coverage Orphan Report');
+  console.log('═══════════════════════════════════════════════════════');
+  console.log('Mode:', dryRun ? '🟡 DRY RUN (no changes applied)' : '🔴 APPLY MODE');
+  console.log('');
+  const grandTotal = candidates.reduce((s, c) => s + c.hak, 0);
+  console.log(`📊 Backfill candidates: ${candidates.length} entries · total ${fmtRpLocal(grandTotal)}`);
+  console.log(`📊 Skipped no_bukti: ${skipped.no_bukti.length} (will NOT backfill — di luar bukti coverage)`);
+  console.log(`📊 Skipped has_cashflow: ${skipped.has_cashflow.length} (already linked, no action needed)`);
+  console.log('');
+
+  Object.values(byBukti).forEach(g => {
+    const nm = (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[g.pelapor]) ? NAMA_PEKERJA[g.pelapor] : g.pelapor;
+    console.log(`📑 ${nm} · bukti issued ${g.bukti_issued_tgl} · ${g.items.length} backfill items · ${fmtRpLocal(g.total)}`);
+    console.log(`   File: ${g.bukti_file}`);
+    console.table(g.items.map(i => ({
+      upah_id: i.upah_id, tgl_kerja: i.tgl_work,
+      aktivitas: i.aktivitas, hak: i.hak
+    })));
+  });
+  if (skipped.no_bukti.length > 0) {
+    console.log('');
+    console.log('🔻 Orphan UPAH TANPA bukti coverage (need manual decision: Revert or Backfill custom):');
+    console.table(skipped.no_bukti);
+  }
+
+  if (dryRun) {
+    console.log('');
+    console.log('💡 Run massBackfillFromBukti({dryRun: false}) to APPLY backfill.');
+    console.log('💡 Backup dulu: exportWkknBackup()');
+    return { candidates, byBukti, skipped };
+  }
+
+  // APPLY MODE
+  if (candidates.length === 0) {
+    console.log('[MassBackfill] No candidates — clean state ✓');
+    return { candidates, byBukti, skipped };
+  }
+  const confirmMsg = `💰 Mass Backfill ${candidates.length} cashflow records (total ${fmtRpLocal(grandTotal)})?\n\n` +
+                      `Source: BUKTI_MANIFEST covered_dates\n` +
+                      `Effect: cashbook entries created with src='autolink', ref='upah_<id>', backfill_note tagged\n\n` +
+                      `⚠️ Backup dulu via exportWkknBackup()!\nLanjut?`;
+  if (!confirm(confirmMsg)) { console.log('[MassBackfill] Cancelled'); return null; }
+
+  const now = new Date().toISOString();
+  let created = 0;
+  candidates.forEach(c => {
+    const u = UPAH_ITEMS.find(x => x.id === c.upah_id);
+    if (!u) return;
+    const total = c.hak;
+    const nm = (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[u.pelapor]) ? NAMA_PEKERJA[u.pelapor] : u.pelapor;
+    const aktivitasClean = (u.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
+    const tglFormat = (typeof formatTglShort === 'function') ? formatTglShort(u.tgl) : u.tgl;
+    const katRAB = u.model === 'borongan' ? '4.1' : (u.pelapor === 'YIT' ? '3.1' : '3.2');
+    CASHBOOK.push({
+      id: 'cb_backfill_bukti_' + Date.now() + '_' + u.id,
+      tgl: c.bukti_issued_tgl,
+      tipe: 'bayar_upah',
+      kat: katRAB,
+      ket: `Upah ${nm} — ${aktivitasClean} (${tglFormat}) [backfill-bukti ${c.bukti_file.substring(0, 30)}…]`,
+      masuk: 0, keluar: total,
+      src: 'autolink',
+      nota: null,
+      ref: 'upah_' + u.id,
+      last_modified_at: now,
+      backfill_note: 'mass-backfill-from-bukti-' + new Date().toISOString().slice(0,10)
+    });
+    // Also update UPAH bayar_tgl to match bukti (kalau current value berbeda)
+    if (u.bayar_tgl !== c.bukti_issued_tgl) {
+      u.bayar_tgl = c.bukti_issued_tgl;
+      u.last_modified_at = now;
+    }
+    if (!u.bayar_source) u.bayar_source = 'wakif';
+    created++;
+  });
+
+  if (typeof saveCashbook === 'function') saveCashbook(true);
+  if (typeof saveUpah === 'function') saveUpah(true);
+  // Re-render
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderRAB === 'function') renderRAB();
+  if (typeof runReconciliationAudit === 'function') runReconciliationAudit();
+
+  console.log(`[MassBackfill] ✓ Created ${created} cashflow records · ${fmtRpLocal(grandTotal)} backfilled.`);
+  if (typeof showToast === 'function') showToast(`💰 Mass backfill done: ${created} cashflow records · ${fmtRpLocal(grandTotal)}`);
+  return { created, grandTotal, byBukti, skipped };
+};
+
 console.log('[Cleanup Helpers] Available console commands:');
 console.log('  exportWkknBackup()                — Download JSON backup (safe, do FIRST)');
 console.log('  diagnoseCashbookOrphans()         — Print orphan report (read-only)');
 console.log('  reconcileUpahFromCashbook()       — ⭐ Reconcile UPAH status from Cashbook truth (dry run default)');
 console.log('  reconcileUpahFromCashbook({dryRun:false}) — APPLY reconcile (after backup)');
+console.log('  massBackfillFromBukti()           — ⭐ NEW: Auto-create cashflow for UPAH Lunas covered di bukti (dry run)');
+console.log('  massBackfillFromBukti({dryRun:false}) — APPLY mass backfill (after backup)');
 console.log('  wipeOrphanCashbookBatches()       — Delete orphan cashbook only (less destructive)');
 console.log('  wipeAutoUpah()              — Wipe auto-generated UPAH + linked CB (Scope B, destructive)');
 
