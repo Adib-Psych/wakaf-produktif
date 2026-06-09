@@ -7974,6 +7974,9 @@ const PANEN_SAMPLING_SCHEMA_VERSION = '1.2';  // v1.2 (11 Juni 2026): multi-batc
 const PANEN_SAMPLING_LS_KEY = 'wkkn_v2_panen_sampling_2026';
 const PANEN_SAMPLING_TARGET_KG = 0.4;  // Target Adib konservatif per pohon
 const PANEN_SAMPLING_TARGET_GRAM = 400;   // = 0.4 kg dalam gram (sample tracking pakai gram per petik selektif)
+// ⭐ 11 Juni 2026: Additive version backward compat (mirror MILESTONE_ADDITIVE_VERSIONS pattern)
+// Cloud Firestore mungkin masih punya v1.1 data — accept + auto-migrate via setter.
+window.PANEN_SAMPLING_ADDITIVE_VERSIONS = ['1.1', '1.2'];
 
 // ⭐ 40 Pohon BRIN Research Sampling Baseline (prefilled dari folder R&D/BRIN Research/Hanging Tag Pohon & Cherry)
 // Pattern locked 22 Mei 2026: 10 pohon per kebun × 4 kebun = 40 pohon total
@@ -16960,9 +16963,17 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           }
           const cloud = snap.data();
           const localVer = getVer ? getVer() : '1.0';
-          if (cloud.version !== localVer) {
+          // ⭐ 11 Juni 2026: Additive version backward compat via window['<VARNAME>_ADDITIVE_VERSIONS']
+          // Convention: varName='PanenSampling' → window.PANEN_SAMPLING_ADDITIVE_VERSIONS array
+          const additiveKey = varName.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toUpperCase() + '_ADDITIVE_VERSIONS';
+          const additiveList = window[additiveKey];
+          const isAdditiveOk = Array.isArray(additiveList) && additiveList.includes(cloud.version);
+          if (cloud.version !== localVer && !isAdditiveOk) {
             console.warn(`[${varName}] Schema mismatch — cloud=${cloud.version} vs local=${localVer}, skip override`);
             return null;
+          }
+          if (isAdditiveOk && cloud.version !== localVer) {
+            console.log(`[${varName}] ✓ Additive version accepted (cloud=${cloud.version} → local=${localVer} via ${additiveKey})`);
           }
           if (cloud.data !== undefined) {
             setGlobal(cloud.data);
@@ -16999,7 +17010,11 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
             }
             const cloud = docSnap.data();
             const localVer = getVer ? getVer() : '1.0';
-            if (cloud.version !== localVer) {
+            // ⭐ 11 Juni 2026: Additive version backward compat (same convention as loadFn)
+            const additiveKey = varName.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toUpperCase() + '_ADDITIVE_VERSIONS';
+            const additiveList = window[additiveKey];
+            const isAdditiveOk = Array.isArray(additiveList) && additiveList.includes(cloud.version);
+            if (cloud.version !== localVer && !isAdditiveOk) {
               console.warn(`[${varName}] onSnapshot schema mismatch — skip override`);
               return;
             }
