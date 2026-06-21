@@ -2373,8 +2373,28 @@ function setLang(lang) {
   document.getElementById('btn-en').classList.toggle('active', lang === 'en');
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// REVERSE PHASE BLOCKS UNTUK TAHUN BERJALAN (Locked 23 Mei 2026 per Adib)
+// Rule: push terbaru muncul di TOP — applied juga ke level PHASE BLOCK,
+// bukan hanya items dalam phase. Untuk year-2026, urutan jadi:
+//   Awal MH (Nov-Des) → Post-Panen (Sep-Okt) → Panen (Jun-Agt) → Pre-Panen (Jan-Jun)
+// Phase yang baru di-update (mis. Panen dengan Strategi Jemur + Lesson Learned)
+// muncul di atas Pre-Panen yang content statisnya sudah lama di-lock.
+// ════════════════════════════════════════════════════════════════════════
+function reversePhaseBlocksForCurrentYear() {
+  var currentYear = '2026';  // tahun berjalan
+  var yearContent = document.getElementById('year-' + currentYear);
+  if (!yearContent) return;
+  var phaseBlocks = Array.from(yearContent.querySelectorAll(':scope > .phase-block'));
+  if (phaseBlocks.length <= 1) return;
+  phaseBlocks.slice().reverse().forEach(function(pb) {
+    yearContent.appendChild(pb);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   buildTheoryColumns();
+  reversePhaseBlocksForCurrentYear();
   buildFenologi();
   buildStatusBoard();
   setLang(new URLSearchParams(location.search).get('lang') || localStorage.getItem('lang') || 'id');
