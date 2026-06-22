@@ -165,6 +165,35 @@ Hub: `belajar.html` — 3 card terbaru (O, P, Q) sudah clickable per commit `bbf
 
 ---
 
+## 🌿 Living Lab — Rule Konten (Locked 25 Mei 2026)
+
+> **Prinsip inti:** Living Lab HANYA untuk intervensi yang **SUDAH DIJALANKAN**, bukan placeholder/disclaimer untuk fase yang belum aktif.
+
+### Aturan Konten
+- ✅ **Push hanya event yang sudah dilakukan** (status `s-done`, `s-ongoing`) — semua jenis: intervensi agronomi, asesmen lapangan, lesson learned, strategi locked
+- ❌ **JANGAN auto-add disclaimer** untuk fase yang belum punya event (mis. "Periode ini belum aktif" untuk Awal MH yang belum dimulai). Biarkan phase block ke-hide oleh CSS rule `phase-block:not(:has(.act-log-item:not(.status-planned):not(.status-upcoming))):not(:has(.ll5-card))`
+- ❌ **JANGAN bikin item s-norecord placeholder** untuk transparansi "siklus penuh" — Adib lebih prefer fase yang belum aktif TIDAK ditampilkan sama sekali daripada placeholder kosong
+- ✅ **Adib push manual** setiap update baru via Claude session — bukan auto-generated content
+
+### Aturan Ordering (Locked 23 Mei 2026)
+- **Tahun berjalan (2026)**: phase block + items reverse-chronological — newest at TOP
+  - Phase order: Awal MH (Nov-Des) → Post-Panen → Panen → Pre-Panen (oldest at bottom)
+  - Items per phase: newest event di top, oldest di bottom
+- **Tahun statis (2024, 2025)**: original chronological order (no reverse)
+
+### Aturan Anti-Over-Claim (untuk konten Living Lab publik)
+- BRIN = "penjajakan kemitraan" / "penjajakan" — JANGAN "mitra BRIN" / "kerja sama BRIN" sampai MoU/PKS resmi dittd
+- Mas Anto, Pak Tosin, RWI, TA RWI = historical (sebelum OUT date) — bukan aktor aktif
+- Disclaimer 2025 ringkas (1 kalimat) — bukan naratif panjang
+- Honest: tidak meng-glorifikasi periode tanpa data primer
+
+### File Implementation
+- HTML: `living-lab.html` — `act-log-item` per event + theoryData/evalData per index
+- Status class: `s-done`, `s-ongoing`, `s-planned` (hidden), `s-upcoming` (hidden)
+- Reverse phase block: function `reversePhaseBlocksForCurrentYear()` di-call setelah `buildTheoryColumns()`
+
+---
+
 ## 📅 Active Git Repos with PAT in Chrome (per root CLAUDE.md)
 
 - ✅ `wakaf-produktif/` (ini)
