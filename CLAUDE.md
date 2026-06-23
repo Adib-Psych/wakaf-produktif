@@ -165,7 +165,7 @@ Hub: `belajar.html` — 3 card terbaru (O, P, Q) sudah clickable per commit `bbf
 
 ---
 
-## 🌿 Living Lab — Rule Konten (Locked 25 Mei 2026)
+## 🌿 Living Lab — Rule Konten (Locked 25 Jun 2026)
 
 > **Prinsip inti:** Living Lab HANYA untuk intervensi yang **SUDAH DIJALANKAN**, bukan placeholder/disclaimer untuk fase yang belum aktif.
 
@@ -206,7 +206,51 @@ Hub: `belajar.html` — 3 card terbaru (O, P, Q) sudah clickable per commit `bbf
 
 - **v1** (pre-23 Mei 2026) — Duplikat sectional Wakaf Produktif (violation single-brain)
 - **v2** (23 Mei 2026) — Total rewrite jadi hybrid sub-sectional. Reference balik ke root + parent sectional + sibling Digital Platform. Konten website-specific only (deploy, page inventory, design system, browser rule, LMS structure, anti-patterns)
+- **v3** (23 Jun 2026) — Web Curator section appended (pre-archive handover by Website-Curator session). Sync Mas Anto OUT permanen 19 Mei → "Sudah Tidak Aktif" table.
 
 ---
 
-_End of Website Sub-Sectional. Untuk perubahan arsitektural ke monitor-v2/lapor.html, **WAJIB auto-update** Section 23 V2 reference per memory rule `auto-update-arsitektur-v2`._
+## 🎨 Web Curator Role (added 23 Jun 2026)
+
+**Web Curator** = role/agent yang bertanggung jawab untuk editorial standard, copy quality, visual consistency, dan content strategy pada 6 halaman publik website wakaf-produktif (Beranda, Program, Belajar, Living Lab, Galeri, Kontak).
+
+### Single Source of Truth untuk Editorial
+
+📂 **`CONTENT_GUIDELINES.md`** (di folder yang sama) — **WAJIB read** sebelum:
+- Modifikasi caption foto Galeri
+- Update tagline, sub-quote, hero H1, closing-verse
+- Tambah halaman baru / section baru
+- Iterasi visual style (palette, typography, layout)
+- Apply revisi copy lintas halaman (consistency check)
+
+### Scope Web Curator vs Sectional Manual
+
+| Topic | Source |
+|---|---|
+| Editorial standard (voice, tone, copy templates) | `CONTENT_GUIDELINES.md` |
+| Page inventory + deploy mechanics + LMS structure | This file (Section 📄 Page Inventory) |
+| People status (Tim Wakaf Fase 4) | This file Section 🟡 Level Lapangan |
+| Architectural / Firestore patterns | Sibling: `Digital Platform/CLAUDE.md` |
+| Identity Adib + cross-konteks rules | Root: `~/Documents/Claude/CLAUDE.md` |
+| People status authoritative source | Parent: `Wakaf Produktif/CLAUDE.md` (sync this sub-sectional saat ada update) |
+
+### Editorial Decisions Locked di Session 18-23 Mei 2026
+
+Lihat `CONTENT_GUIDELINES.md` Section 12 (Editorial Decision Log) untuk full table. Highlight:
+- Hero H1 baru: **"Dari Kebun Wakaf Menjadi Ekosistem Kopi Berdampak Sosial"** (1-liner, italic em outcome)
+- Footer simplified ke tagline-only (was 3-block gold standard)
+- Galeri: per-kebun grouping (4 K1-K4), date badge top-right, Map `object-fit:contain`, hadis Muslim closing di Kontak
+- Tree count public: **~1.000** konservatif (was inkonsisten 1.100/~915 lintas page)
+- "Insiden tanah wakaf" → **"Penjagaan asas tanah wakaf"** (reframe to integrity)
+- No Rp nominal di public photo captions (audit Galeri caption 3 round)
+
+### Pending Items Tracked di CONTENT_GUIDELINES.md
+
+- SEO/keyword strategy formal (Section 6 — NOT yet addressed)
+- Content calendar formal (Section 7 — implicit only)
+- Performance metrics integration (Section 8 — NOT yet integrated)
+- 14 polish opportunities catalogued (Section 9 — P0-P3 prioritized)
+
+---
+
+_End of Website Sub-Sectional. Untuk perubahan arsitektural ke monitor-v2/lapor.html, **WAJIB auto-update** Section 23 V2 reference per memory rule `auto-update-arsitektur-v2`. Untuk perubahan editorial/copy, **WAJIB read CONTENT_GUIDELINES.md dulu**._
