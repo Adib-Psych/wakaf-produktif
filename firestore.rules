@@ -154,6 +154,26 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ===== Collections shipped Mei-Juni 2026 (missing from previous rules update) =====
+    // Distribusi PIC singleton (Pattern #10), SOP Master, Worker Defs Custom cross-device sync
+    match /distribusi_pic/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /sop_master/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
+    match /worker_defs_custom/{docId} {
+      allow read: if true;
+      allow create, update: if request.resource.size() < 1000000;
+      allow delete: if false;
+    }
+
     // ===== milestones collection (singleton pattern, locked 23 Mei 2026) =====
     // Curated milestones by Wakif via Tab Milestones Publik di monitor-v2.html.
     // Pattern #10 Firestore Sync Global Variable (sync `MILESTONES` array <-> Firestore).
