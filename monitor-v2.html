@@ -8898,6 +8898,9 @@ function renderPanenStorage() {
   const THRESH = 20;
   const pool = getDriedPool();
   const totalDried = DRIED_GRADES.reduce((s,g)=>s+pool[g],0);
+  const gbInv = getGbInventory();
+  const totalGb = DRIED_GRADES.reduce((s,g)=>s+gbInv[g],0);
+  const gbInvHtml = totalGb > 0.001 ? `<div style="margin-top:10px;padding-top:8px;border-top:1px dashed #ddd;font-size:11px;color:var(--earth)"><strong>📦 GREEN BEAN siap jual:</strong> ${DRIED_GRADES.filter(g=>gbInv[g]>0.001).map(g=>`<span style="color:${PANEN_GRADES[g].color};font-weight:700">${PANEN_GRADES[g].label} ${gbInv[g].toFixed(1)} kg</span>`).join(' · ')} <span style="color:var(--mute)">(total ${totalGb.toFixed(1)} kg)</span></div>` : '';
   const cards = DRIED_GRADES.map(g => {
     const grade = PANEN_GRADES[g] || {label:g,color:'#888'};
     const kg = pool[g];
@@ -8918,9 +8921,11 @@ function renderPanenStorage() {
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
           <span style="font-size:10px;color:var(--mute)">total <strong>${totalDried.toFixed(1)} kg</strong> · ambang ≥${THRESH}</span>
           <button onclick="openJemurEventDialog()" class="btn btn-primary" style="background:#b45309;font-size:10.5px;padding:4px 10px">☀️ Catat Jemur</button>
+          <button onclick="openGilingEventDialog()" class="btn btn-primary" style="background:#6d28d9;font-size:10.5px;padding:4px 10px">⚙️ Catat Giling</button>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${cards}</div>
+      ${gbInvHtml}
     </div>`;
 }
 
@@ -9019,6 +9024,84 @@ function deleteDriedEvent(id) {
   PANEN_LOTS_DATA = PANEN_LOTS_DATA.filter(l => l.id !== id);
   savePanenLotsToLS();
   if (typeof showToast === 'function') showToast('🗑 Event dihapus, pool diperbarui', 'info');
+  renderPanenLots();
+}
+
+// parse multi-karung: "8,5+7,2+6,3" → 22.0 (jumlah tiap karung, koma-safe)
+function parseSumInput(raw) {
+  if (raw == null) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  const parts = s.split('+').map(p => parseDecimalInput(p)).filter(n => n != null);
+  if (parts.length === 0) return null;
+  return parts.reduce((a,b)=>a+b, 0);
+}
+
+// GB inventory per warna = Σ giling_event.gb_out_kg (siap jual)
+function getGbInventory() {
+  const inv = {}; DRIED_GRADES.forEach(g=>inv[g]=0);
+  PANEN_LOTS_DATA.forEach(l => {
+    if (l.type === 'giling_event' && inv[l.grade] != null) inv[l.grade] += (l.gb_out_kg || 0);
+  });
+  return inv;
+}
+
+// Catat Giling — tarik dried dari pool warna → GB out + rendemen auto
+function openGilingEventDialog() {
+  const ex = document.getElementById('giling-event-modal-overlay'); if (ex) ex.remove();
+  const pool = getDriedPool();
+  const gradeOpts = DRIED_GRADES.map(g => `<option value="${g}">${PANEN_GRADES[g].label} — stok ${pool[g].toFixed(1)} kg</option>`).join('');
+  const html = `
+  <div id="giling-event-modal-overlay" onclick="if(event.target.id==='giling-event-modal-overlay')this.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:12px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+      <div style="padding:16px 20px;background:linear-gradient(135deg,#6d28d9,#4c1d95);color:#fff;border-radius:12px 12px 0 0">
+        <div style="font-size:13px;font-weight:800">⚙️ CATAT GILING — tarik dari pool</div>
+        <div style="font-size:10.5px;color:#ddd6fe;margin-top:2px">Dried digiling → green bean. Rendemen otomatis.</div>
+      </div>
+      <div style="padding:18px 20px;display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;font-size:12px">
+        <label style="font-weight:600">📅 Tanggal</label>
+        <input type="date" id="gi-tgl" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600">🎨 Warna</label>
+        <select id="gi-grade" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">${gradeOpts}</select>
+        <label style="font-weight:600;color:#7a5c2e">🌰 Dried ditarik (kg)</label>
+        <input type="text" inputmode="decimal" id="gi-dried" placeholder="cth 45 · ≤ stok" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
+        <label style="font-weight:600;color:#6d28d9">📦 GB out (kg)</label>
+        <input type="text" inputmode="decimal" id="gi-gb" placeholder="multi-karung: 8,5+7,2+6,3" style="padding:6px 10px;border:1.5px solid #c9a6e0;border-radius:6px;font-size:12px;background:#fdf7ff">
+        <label style="font-weight:600">💧 GB MC %</label>
+        <input type="text" inputmode="decimal" id="gi-mc" placeholder="opsional" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
+        <textarea id="gi-catatan" rows="2" placeholder="opsional" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
+      </div>
+      <div style="padding:0 20px 6px;font-size:10px;color:var(--mute);font-style:italic">📦 GB boleh multi-karung pakai "+" (mis. 8,5+7,2). Rendemen normal ~44% (35-55%).</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;padding:8px 20px 18px">
+        <button onclick="document.getElementById('giling-event-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Batal</button>
+        <button onclick="submitGilingEvent()" class="btn btn-primary" style="background:#6d28d9;font-size:12px;padding:7px 14px">✓ Simpan Giling</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  setTimeout(()=>{const el=document.getElementById('gi-dried');if(el)el.focus();},100);
+}
+
+function submitGilingEvent() {
+  const tgl = document.getElementById('gi-tgl').value;
+  const grade = document.getElementById('gi-grade').value;
+  const driedPulled = parseDecimalInput(document.getElementById('gi-dried').value);
+  const gbOut = parseSumInput(document.getElementById('gi-gb').value);
+  const mc = parseDecimalInput(document.getElementById('gi-mc').value);
+  const catatan = document.getElementById('gi-catatan').value.trim();
+  if (!tgl) return alert('Tanggal wajib diisi');
+  if (!driedPulled || driedPulled <= 0) return alert('Dried ditarik harus angka > 0');
+  if (!gbOut || gbOut <= 0) return alert('GB out harus angka > 0');
+  const pool = getDriedPool();
+  if (driedPulled > (pool[grade]||0) + 0.01) { if (!confirm(`⚠ Stok ${PANEN_GRADES[grade].label} cuma ${(pool[grade]||0).toFixed(1)} kg — masa giling ${driedPulled} kg? (pool bisa jadi minus). Tetap simpan?`)) return; }
+  const rendemen = gbOut / driedPulled;
+  if (rendemen > 0.55 || rendemen < 0.35) { if (!confirm(`⚠ Rendemen ${Math.round(rendemen*100)}% tak wajar (normal ~44%, range 35-55%). Cek timbangan. Tetap simpan?`)) return; }
+  const id = 'giling_' + tgl.replace(/-/g,'') + '_' + grade + '_' + Date.now().toString().slice(-6);
+  PANEN_LOTS_DATA.push({ id, type:'giling_event', grade, dried_pulled_kg:driedPulled, gb_out_kg:gbOut, gb_mc:mc, rendemen, tgl, catatan, created_at:new Date().toISOString(), schema_version:'3c' });
+  savePanenLotsToLS();
+  const ov = document.getElementById('giling-event-modal-overlay'); if (ov) ov.remove();
+  if (typeof showToast === 'function') showToast(`⚙️ Giling ${PANEN_GRADES[grade].label}: ${driedPulled}→${gbOut} kg GB (rdm ${Math.round(rendemen*100)}%)`, 'success');
   renderPanenLots();
 }
 
