@@ -1560,7 +1560,13 @@
         <div id="panen-lot-storage"></div>
         <!-- Fase 3c (25 Jun 2026): Riwayat Jemur & Giling events -->
         <div id="panen-dried-events"></div>
+        <!-- Fase 3d (25 Jun 2026): Analitik rendemen (surfaced) -->
+        <div id="panen-lot-analytics"></div>
 
+        <!-- Fase 3d: Riwayat Sortir = audit read-only, collapse default -->
+        <details style="margin-bottom:8px">
+          <summary style="cursor:pointer;font-size:12px;font-weight:800;color:var(--earth);padding:8px 0">📋 Riwayat Sortir per Warna — audit cherry per batch (klik untuk expand)</summary>
+          <div style="padding-top:10px">
         <!-- Filter pills -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
           <span style="font-size:11px;color:var(--mute);font-weight:700">FILTER:</span>
@@ -1607,7 +1613,9 @@
           <div class="chart-wrap" style="height:240px"><canvas id="chart-panen-lots-grade"></canvas></div>
         </div>
 
-        <p style="font-size:10.5px;color:var(--mute);margin-top:12px;font-style:italic;line-height:1.55">💡 <strong>Cara kerja:</strong> Saat batch panen advance ke "🎨 Sortir 4-Warna", muncul modal input kg per bucket. Sistem auto-create lot child di tabel ini. Lot kemudian advance pipeline-nya sendiri (jemur → kupas → green bean → sold). Klik 💰 untuk catat sale dengan harga aktual.</p>
+        <p style="font-size:10.5px;color:var(--mute);margin-top:12px;font-style:italic;line-height:1.55">💡 <strong>Riwayat sortir</strong> = audit cherry per warna per batch (read-only). Pengolahan (jemur → giling) sekarang di <strong>pool storage</strong> di atas — bukan per-lot lagi (model pool, 25 Jun 2026).</p>
+          </div>
+        </details>
       </div>
       <!-- ─────────────────────────────────────────────────────────────── -->
       <!-- ANALITIK DEEP-DIVE — Komparasi + Charts (collapsed default)     -->
@@ -6889,7 +6897,8 @@ const PANEN_GRADES = {
   merah:  { label: '🟥 Merah',    color: '#ef4444', default_price: 62500, target_buyer: 'Bonsari / Nomad (specialty)', range: '55-70K' },
   kuning: { label: '🟨 Kuning',   color: '#facc15', default_price: 47500, target_buyer: 'Commercial / blend',          range: '40-55K' },
   hijau:  { label: '🟩 Hijau',    color: '#22c55e', default_price: 30000, target_buyer: 'Pengepul (grade C)',          range: '25-35K' },
-  hitam:  { label: '⬛ Hitam',     color: '#78716c', default_price: 37500, target_buyer: 'Natural process / grade C',   range: '30-45K' }
+  hitam:  { label: '⬛ Hitam',     color: '#78716c', default_price: 37500, target_buyer: 'Natural process / grade C',   range: '30-45K' },
+  mengambang: { label: '⚪ Mengambang', color: '#06b6d4', default_price: 15000, target_buyer: 'Lokal / lowest grade', range: '10-20K' }
 };
 
 let PANEN_DATA = [];
@@ -8868,8 +8877,39 @@ function renderPanenLots() {
   renderPanenLotsKPI();
   renderPanenStorage();
   renderDriedEventHistory();
+  renderPanenAnalytics();
   renderPanenLotsTable();
   renderPanenLotsGradeChart();
+}
+
+// Fase 3d (25 Jun 2026): Analitik rendemen — learning loop dari event jemur/giling (surfaced)
+function renderPanenAnalytics() {
+  const el = document.getElementById('panen-lot-analytics'); if (!el) return;
+  const giling = PANEN_LOTS_DATA.filter(l => l.type === 'giling_event');
+  const jemur = PANEN_LOTS_DATA.filter(l => l.type === 'jemur_event');
+  if (giling.length === 0 && jemur.length === 0) { el.innerHTML = ''; return; }
+  const gRdm = giling.filter(e=>e.rendemen).map(e=>e.rendemen);
+  const avgG = gRdm.length ? gRdm.reduce((a,b)=>a+b,0)/gRdm.length : null;
+  const jRdm = jemur.filter(e=>e.cherry_kg && e.dried_kg).map(e=>e.dried_kg/e.cherry_kg);
+  const avgJ = jRdm.length ? jRdm.reduce((a,b)=>a+b,0)/jRdm.length : null;
+  const totalGb = giling.reduce((s,e)=>s+(e.gb_out_kg||0),0);
+  const totalDriedGiled = giling.reduce((s,e)=>s+(e.dried_pulled_kg||0),0);
+  const pct = v => v!=null ? Math.round(v*100)+'%' : '—';
+  const deltaBadge = (act, asum) => { if (act==null) return ''; const d=(act-asum)*100; return ` <span style="font-size:9px;color:${Math.abs(d)<3?'#16a34a':'#b45309'}">(${d>=0?'+':''}${d.toFixed(0)} vs asumsi)</span>`; };
+  const card = (icon, title, val, sub) => `<div style="flex:1;min-width:150px;background:#fff;border:1.5px solid #eee;border-radius:10px;padding:10px 12px">
+    <div style="font-size:10px;color:var(--mute);font-weight:700;letter-spacing:.3px">${icon} ${title}</div>
+    <div style="font-size:20px;font-weight:800;color:#2b2721;line-height:1.1;margin:3px 0">${val}</div>
+    <div style="font-size:9.5px;color:var(--mute)">${sub}</div>
+  </div>`;
+  el.innerHTML = `
+    <div style="background:#EDF6F9;border-radius:12px;padding:12px 14px;margin-bottom:14px">
+      <div style="font-size:12px;font-weight:800;color:#0e7490;letter-spacing:.5px;margin-bottom:8px">🎯 ANALITIK RENDEMEN — learning loop (makin akurat tiap event)</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${card('⚙️','Rendemen Giling (dried→GB)', avgG!=null?pct(avgG):'—', avgG!=null?`${gRdm.length} giling · asumsi 44%${deltaBadge(avgG,0.444)}`:'belum ada giling')}
+        ${card('☀️','Rendemen Jemur (cherry→dried)', avgJ!=null?pct(avgJ):'—', avgJ!=null?`${jRdm.length} jemur ber-cherry · asumsi 44%${deltaBadge(avgJ,0.44)}`:'isi cherry asal di jemur')}
+        ${card('📦','Total GB diproduksi', totalGb.toFixed(1)+' kg', `dari ${totalDriedGiled.toFixed(1)} kg dried digiling`)}
+      </div>
+    </div>`;
 }
 
 // ============================================================
@@ -8878,7 +8918,7 @@ function renderPanenLots() {
 // Events = marker entry di panen_lots (type:'jemur_event'/'giling_event') — rules-safe.
 // Pool warna = Σ jemur_event.dried_kg − Σ giling_event.dried_pulled_kg
 // ============================================================
-const DRIED_GRADES = ['merah','kuning','hijau','hitam'];
+const DRIED_GRADES = ['merah','kuning','hijau','hitam','mengambang'];  // Fase 3d: + mengambang (opsi B Adib — salvage lowest grade)
 function getDriedEvents() {
   return PANEN_LOTS_DATA.filter(l => l.type === 'jemur_event' || l.type === 'giling_event');
 }
