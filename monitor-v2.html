@@ -7397,13 +7397,16 @@ function advancePanenLotStage(lotId) {
     openPanenLotSoldDialog(lot);
     return;
   }
-  // Default advance with auto-compute kg
+  // Fase 3a (25 Jun 2026): jemur pakai input AKTUAL (ganti auto-rasio ×0.45) — dialog set stage di submitPanenJemur
+  if (nextStage.key === 'jemur') {
+    openPanenJemurDialog(lot);
+    return;
+  }
+  // Default advance with auto-compute kg (kupas/green_bean — akan diganti Event Giling di Fase 3c)
   lot.stage = nextStage.key;
   // Auto-compute kg downstream
   const baseKg = lot.kg_sortir_awal;
-  if (nextStage.key === 'jemur') {
-    lot.kg_jemur_done = parseFloat((baseKg * 0.45).toFixed(2));  // ~50% air hilang
-  } else if (nextStage.key === 'kupas') {
+  if (nextStage.key === 'kupas') {
     // Asumsi base kupas dari kg_jemur_done dengan ratio ke kupas
     // kupas/sortir = 0.22, jemur/sortir = 0.45 → kupas/jemur = 0.49
     if (lot.kg_jemur_done) {
@@ -7417,6 +7420,56 @@ function advancePanenLotStage(lotId) {
   lot.last_modified_at = new Date().toISOString();
   savePanenLotsToLS();
   if (typeof showToast === 'function') showToast(`📦 Lot ${lotId} advanced ke ${PANEN_LOT_STAGE_LBL[nextStage.key]}`, 'info');
+  renderPanen();
+}
+
+// ─── Fase 3a (25 Jun 2026): Jemur AKTUAL dialog (ganti auto-rasio) ─────────────
+function openPanenJemurDialog(lot) {
+  const grade = PANEN_GRADES[lot.grade] || { label: lot.grade, color: '#888' };
+  const cherry = lot.kg_sortir_awal || 0;
+  const estDried = (cherry * 0.44).toFixed(2);
+  const existing = document.getElementById('panen-jemur-modal-overlay');
+  if (existing) existing.remove();
+  const html = `
+  <div id="panen-jemur-modal-overlay" onclick="if(event.target.id==='panen-jemur-modal-overlay')document.getElementById('panen-jemur-modal-overlay').remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:12px;max-width:420px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+      <div style="padding:16px 20px;background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border-radius:12px 12px 0 0">
+        <div style="font-size:10px;letter-spacing:1.5px;color:#fde68a;font-weight:700">☀️ INPUT JEMUR AKTUAL · ${lot.lot_id}</div>
+        <div style="font-size:14px;font-weight:700;margin-top:2px">${grade.label} · cherry ${cherry.toFixed(2)} kg</div>
+      </div>
+      <div style="padding:18px 20px;display:grid;grid-template-columns:140px 1fr;gap:10px;align-items:center;font-size:12px">
+        <label style="font-weight:600;color:#7a5c2e">🌰 Dried aktual (kg)</label>
+        <input type="text" inputmode="decimal" id="jemur-dried-kg" placeholder="cth 8,5 · est ~${estDried}" style="padding:7px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
+        <label style="font-weight:600">💧 MC % (opsional)</label>
+        <input type="text" inputmode="decimal" id="jemur-mc" placeholder="cth 12" style="padding:7px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+      </div>
+      <div style="padding:0 20px 8px;font-size:10px;color:var(--mute);font-style:italic">Dried normal ~44% cherry (est ${estDried} kg). Koma = desimal kg.</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;padding:12px 20px 18px">
+        <button onclick="document.getElementById('panen-jemur-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Batal</button>
+        <button onclick="submitPanenJemur('${lot.lot_id}')" class="btn btn-primary" style="background:#b45309;font-size:12px;padding:7px 14px">✓ Simpan Jemur</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  setTimeout(() => { const el = document.getElementById('jemur-dried-kg'); if (el) el.focus(); }, 100);
+}
+
+function submitPanenJemur(lotId) {
+  const lot = PANEN_LOTS_DATA.find(l => l.lot_id === lotId);
+  if (!lot) return alert('Lot tidak ditemukan');
+  const dried = parseDecimalInput(document.getElementById('jemur-dried-kg').value);
+  const mc = parseDecimalInput(document.getElementById('jemur-mc').value);
+  if (!dried || dried <= 0) return alert('Dried kg harus angka > 0');
+  const cherry = lot.kg_sortir_awal || 0;
+  // §5b guard: dried > cherry basah
+  if (cherry && dried > cherry) { if (!confirm(`⚠ Jemur kok nambah berat? Dried ${dried} kg > cherry ${cherry.toFixed(2)} kg (dried normal ~44% cherry). Cek timbangan. Tetap simpan?`)) return; }
+  lot.kg_jemur_done = dried;
+  if (mc != null) lot.kering_mc = mc;
+  lot.stage = 'jemur';
+  lot.last_modified_at = new Date().toISOString();
+  savePanenLotsToLS();
+  const ov = document.getElementById('panen-jemur-modal-overlay'); if (ov) ov.remove();
+  if (typeof showToast === 'function') showToast(`☀️ Lot ${lotId}: dried ${dried} kg${mc != null ? ` (MC ${mc}%)` : ''} tersimpan`, 'success');
   renderPanen();
 }
 
@@ -8629,6 +8682,16 @@ function parseGramInput(raw) {
   }
   const g = parseInt(s.replace(/\./g, ''), 10);            // titik = pemisah ribuan
   return isNaN(g) ? null : g;
+}
+
+// Fase 3a (25 Jun 2026): parse desimal KG tahan koma ID. "8,5"→8.5 · "1,345"→1.345 · "8.5"→8.5 (dot=desimal utk kg kecil)
+function parseDecimalInput(raw) {
+  if (raw == null) return null;
+  let s = String(raw).trim();
+  if (!s) return null;
+  if (s.includes(',')) s = s.replace(/\./g, '').replace(',', '.');  // koma=desimal → titik ribuan dibuang
+  const n = parseFloat(s);
+  return isNaN(n) ? null : n;
 }
 
 // Add new session entry untuk pohon (multi-batch)
