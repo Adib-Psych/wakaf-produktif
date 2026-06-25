@@ -8043,6 +8043,7 @@ let PANEN_SAMPLING_DATA = [];
       // Preserve original kg field for backward compat, add cherry_gram for new aggregation
       let migrated = 0;
       PANEN_SAMPLING_DATA.forEach(e => {
+        if (e.type === 'final') return;  // Fase 4b: skip FINAL marker (no cherry/kg)
         if (e.cherry_gram == null) {
           const kgVal = e.kg || e.cherry_basah_kg;
           if (kgVal != null) {
@@ -8060,7 +8061,7 @@ let PANEN_SAMPLING_DATA = [];
 // Sebelumnya render pakai .find() — returns single first match. Adib insight: petik merah selective
 // = multi-session per pohon. Sekarang .filter() + aggregate untuk total per pohon.
 function aggregateSamplingPerPohon(pohonId) {
-  const sessions = PANEN_SAMPLING_DATA.filter(e => e.pohon_id === pohonId)
+  const sessions = PANEN_SAMPLING_DATA.filter(e => e.pohon_id === pohonId && e.type !== 'final')  // Fase 4b: exclude FINAL marker
     .sort((a, b) => (a.tgl || '').localeCompare(b.tgl || ''));
   if (sessions.length === 0) return null;
   // ⭐ 11 Juni 2026 v1.2: Defensive idempotent migration (in case Firestore stale or earlier migration miss)
@@ -8451,6 +8452,19 @@ function openSamplingInput(pohonId) {
   const driedEstG = totCherryG * 0.44;
   const gbEstG = totCherryG * 0.196;
   const _g = n => Math.round(n).toLocaleString('id-ID');
+  // Fase 4b (ADR-025): FINAL per-pohon (marker entry type:'final') + Δ vs est + validasi Σ-sesi-vs-FINAL
+  const finalRec = PANEN_SAMPLING_DATA.find(e => e.type === 'final' && e.pohon_id === pohonId);
+  const driedFinalG = finalRec && finalRec.dried_final_gram != null ? finalRec.dried_final_gram : null;
+  const gbFinalG = finalRec && finalRec.gb_final_gram != null ? finalRec.gb_final_gram : null;
+  const _deltaStr = (act, est) => { if (act == null || !(est > 0)) return '<span style="color:var(--mute)">—</span>'; const d = (act - est) / est * 100; return `<span style="color:${d>=0?'#16a34a':'#c14b3a'};font-weight:700">${d>=0?'+':''}${d.toFixed(0)}%</span>`; };
+  const _valid = (sesiSum, finalVal) => {
+    if (finalVal == null) return '<span style="color:var(--mute)">FINAL belum diisi</span>';
+    if (!sesiSum) return '<span style="color:#7a5c2e">FINAL saja (per-sesi belum diisi)</span>';
+    const diff = finalVal - sesiSum, tol = Math.max(2, finalVal * 0.02);
+    if (Math.abs(diff) <= tol) return '<span style="color:#16a34a;font-weight:700">✓ Σ sesi = FINAL (lengkap)</span>';
+    if (sesiSum < finalVal) return `<span style="color:#b45309">⚠ Σ sesi −${_g(diff)} g · ada sesi belum ditimbang (FINAL dipakai)</span>`;
+    return `<span style="color:#c14b3a;font-weight:700">❗ Σ sesi > FINAL +${_g(-diff)} g · cek typo</span>`;
+  };
 
   const modalHtml = `
     <div id="sampling-input-modal-overlay" onclick="if(event.target.id==='sampling-input-modal-overlay')closeSamplingInputModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px">
@@ -8481,16 +8495,40 @@ function openSamplingInput(pohonId) {
             <div style="font-size:10px;color:var(--mute);letter-spacing:1px">AVG / SESI</div>
             <div style="font-size:18px;font-weight:700;color:var(--earth)">${agg?.avg_gram != null ? Math.round(agg.avg_gram).toLocaleString('id-ID') + ' g' : '—'}</div>
           </div>
-          <div title="Dried cherry kumulatif: aktual vs estimasi (cherry × 0,44)">
-            <div style="font-size:10px;color:var(--mute);letter-spacing:1px">🌰 DRIED</div>
-            <div style="font-size:14px;font-weight:700;color:#7a5c2e">${totDriedG>0?_g(totDriedG)+' g':'—'} <span style="font-size:9px;color:var(--mute);font-weight:400">est ${_g(driedEstG)}</span></div>
-          </div>
-          <div title="Green bean kumulatif: aktual vs estimasi (cherry × 0,196) = produktivitas pohon">
-            <div style="font-size:10px;color:var(--mute);letter-spacing:1px">📦 GREEN BEAN</div>
-            <div style="font-size:14px;font-weight:700;color:#7e22ce">${totGbG>0?_g(totGbG)+' g':'—'} <span style="font-size:9px;color:var(--mute);font-weight:400">est ${_g(gbEstG)}</span></div>
-          </div>
           <div style="margin-left:auto;text-align:right;font-size:10px;color:var(--mute)">
             Target: <strong style="color:${targetReached?'#16a34a':'var(--cherry)'}">≥400 g</strong> ${targetReached?'✓':''}
+          </div>
+        </div>
+
+        <!-- Hasil Pascapanen — Fase 4b (ADR-025): Est | Σ Sesi | FINAL | Δ + validasi -->
+        <div style="padding:14px 22px;background:#FBFAF7;border-top:1px solid #eee">
+          <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:var(--moss);margin-bottom:8px">🧮 HASIL PASCAPANEN — validasi akhir</div>
+          <table style="width:100%;font-size:11px;border-collapse:collapse">
+            <thead><tr style="color:var(--mute);font-size:9px;letter-spacing:.3px">
+              <th style="text-align:left">&nbsp;</th><th style="text-align:right">EST (cherry)</th><th style="text-align:right">Σ SESI</th><th style="text-align:right">FINAL</th><th style="text-align:right">Δ est</th>
+            </tr></thead>
+            <tbody>
+              <tr style="border-top:1px solid #eee">
+                <td style="text-align:left;padding:5px 0;font-weight:700;color:#7a5c2e">🌰 Dried</td>
+                <td style="text-align:right">${_g(driedEstG)} g</td>
+                <td style="text-align:right">${totDriedG>0?_g(totDriedG)+' g':'—'}</td>
+                <td style="text-align:right"><input type="text" inputmode="decimal" id="final-dried-input" value="${driedFinalG??''}" placeholder="g·koma=kg" style="width:80px;padding:3px 6px;border:1.5px solid #c9a86a;border-radius:5px;font-size:11px;text-align:right;background:#fffdf7"></td>
+                <td style="text-align:right">${_deltaStr(driedFinalG, driedEstG)}</td>
+              </tr>
+              <tr><td colspan="5" style="text-align:left;font-size:9px;padding:0 0 6px 0">⚖ ${_valid(totDriedG, driedFinalG)}</td></tr>
+              <tr style="border-top:1px solid #eee">
+                <td style="text-align:left;padding:5px 0;font-weight:700;color:#7e22ce">📦 Green Bean</td>
+                <td style="text-align:right">${_g(gbEstG)} g</td>
+                <td style="text-align:right">${totGbG>0?_g(totGbG)+' g':'—'}</td>
+                <td style="text-align:right"><input type="text" inputmode="decimal" id="final-gb-input" value="${gbFinalG??''}" placeholder="g·koma=kg" style="width:80px;padding:3px 6px;border:1.5px solid #c9a6e0;border-radius:5px;font-size:11px;text-align:right;background:#fdf7ff"></td>
+                <td style="text-align:right">${_deltaStr(gbFinalG, gbEstG)}</td>
+              </tr>
+              <tr><td colspan="5" style="text-align:left;font-size:9px;padding:0 0 4px 0">⚖ ${_valid(totGbG, gbFinalG)}</td></tr>
+            </tbody>
+          </table>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:8px">
+            <span style="font-size:9px;color:var(--mute);font-style:italic;line-height:1.3">FINAL = angka otoritatif saat semua kering/giling · prioritas analisis: FINAL → Σ sesi → est</span>
+            <button onclick="saveSamplingFinal('${pohonId}')" class="btn btn-primary" style="background:var(--earth);font-size:11px;padding:5px 12px;white-space:nowrap">💾 Simpan FINAL</button>
           </div>
         </div>
 
@@ -8651,6 +8689,30 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   const ov = document.getElementById('sampling-edit-modal-overlay'); if (ov) ov.remove();
   renderPanenSampling();
   setTimeout(() => openSamplingInput(pohonId), 150);
+}
+
+// Fase 4b (25 Jun 2026, ADR-025): simpan FINAL per-pohon (dried + green bean otoritatif) sebagai marker entry type:'final'
+function saveSamplingFinal(pohonId) {
+  const baseline = SAMPLING_POHON_BASELINE.find(b => b.id === pohonId);
+  const driedVal = parseGramInput(document.getElementById('final-dried-input').value);
+  const gbVal = parseGramInput(document.getElementById('final-gb-input').value);
+  const agg = aggregateSamplingPerPohon(pohonId);
+  const totCherry = agg ? agg.total_gram : 0;
+  // guard §5b
+  if (driedVal && totCherry && driedVal > totCherry) { if (!confirm(`⚠ Dried FINAL (${driedVal} g) > total cherry (${totCherry} g) — kering kok > basah? Tetap simpan?`)) return; }
+  if (gbVal && driedVal && gbVal > driedVal * 0.55) { if (!confirm(`⚠ Green bean FINAL (${gbVal} g) > 55% dried FINAL — rendemen tak wajar. Tetap simpan?`)) return; }
+  let rec = PANEN_SAMPLING_DATA.find(e => e.type === 'final' && e.pohon_id === pohonId);
+  if (!rec) {
+    rec = { id: 'final_' + pohonId, type: 'final', pohon_id: pohonId, kebun: baseline ? baseline.kebun : null, created_at: new Date().toISOString(), schema_version: '1.2' };
+    PANEN_SAMPLING_DATA.push(rec);
+  }
+  rec.dried_final_gram = driedVal;
+  rec.gb_final_gram = gbVal;
+  rec.updated_at = new Date().toISOString();
+  savePanenSamplingToLS();
+  if (typeof showToast === 'function') showToast(`✓ Hasil Pascapanen ${pohonId} tersimpan`, 'success');
+  renderPanenSampling();
+  setTimeout(() => openSamplingInput(pohonId), 120);
 }
 
 // Delete single session (multi-batch)
