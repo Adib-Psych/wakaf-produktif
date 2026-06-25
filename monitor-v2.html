@@ -1556,6 +1556,9 @@
           <div class="kpi"><div class="kpi-num" id="panen-lot-revenue">Rp 0</div><div class="kpi-lbl">💵 Total Revenue Aktual</div></div>
         </div>
 
+        <!-- Fase 3b (25 Jun 2026): Storage Dried per grade -->
+        <div id="panen-lot-storage"></div>
+
         <!-- Filter pills -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
           <span style="font-size:11px;color:var(--mute);font-weight:700">FILTER:</span>
@@ -8861,8 +8864,43 @@ renderPanen = function() {
 // ============================================================
 function renderPanenLots() {
   renderPanenLotsKPI();
+  renderPanenStorage();
   renderPanenLotsTable();
   renderPanenLotsGradeChart();
+}
+
+// Fase 3b (25 Jun 2026): Storage Dried per grade — lot stage 'jemur' (sudah kering, belum digiling). Ambang giling ≥20 kg.
+function renderPanenStorage() {
+  const el = document.getElementById('panen-lot-storage');
+  if (!el) return;
+  const THRESH = 20;
+  const grades = ['merah','kuning','hijau','hitam'];
+  const byGrade = {}; grades.forEach(g => byGrade[g] = 0);
+  PANEN_LOTS_DATA.forEach(l => {
+    if (l.stage === 'jemur' && byGrade[l.grade] != null) byGrade[l.grade] += (l.kg_jemur_done || 0);
+  });
+  const totalDried = grades.reduce((s,g)=>s+byGrade[g],0);
+  const cards = grades.map(g => {
+    const grade = PANEN_GRADES[g] || {label:g,color:'#888'};
+    const kg = byGrade[g];
+    const siap = kg >= THRESH;
+    const status = kg <= 0 ? '<span style="color:#bbb;font-size:9.5px">kosong</span>'
+      : siap ? '<span style="color:#15803d;font-size:9.5px;font-weight:700">✅ siap giling</span>'
+      : `<span style="color:#b45309;font-size:9.5px">⏳ nunggu (−${(THRESH-kg).toFixed(1)} kg)</span>`;
+    return `<div style="flex:1;min-width:115px;background:${kg>0?'#fff':'#FAFAF9'};border:1.5px solid ${siap?'#16a34a':'#eee'};border-radius:10px;padding:9px 12px">
+      <div style="font-size:11px;font-weight:700;color:${grade.color}">${grade.label}</div>
+      <div style="font-size:19px;font-weight:800;color:${kg>0?'#2b2721':'#ccc'};line-height:1.1;margin:2px 0">${kg>0?kg.toFixed(1):'—'}<span style="font-size:10px;font-weight:600;color:var(--mute)"> kg</span></div>
+      ${status}
+    </div>`;
+  }).join('');
+  el.innerHTML = `
+    <div style="background:#F5F3EF;border-radius:12px;padding:12px 14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px">
+        <div style="font-size:12px;font-weight:800;color:var(--earth);letter-spacing:.5px">📦 STORAGE DRIED — siap giling</div>
+        <div style="font-size:10px;color:var(--mute)">total <strong>${totalDried.toFixed(1)} kg</strong> · ambang giling ≥${THRESH} kg</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">${cards}</div>
+    </div>`;
 }
 
 function renderPanenLotsKPI() {
