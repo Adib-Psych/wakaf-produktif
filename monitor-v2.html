@@ -1431,7 +1431,7 @@
                 <th>Tgl</th>
                 <th>Kebun</th>
                 <th style="text-align:right">Cherry (kg)</th>
-                <th style="text-align:right">Komposisi</th>
+                <th style="text-align:right">Sortir Aktual (kg)</th>
                 <th style="text-align:right">Pohon</th>
                 <th>Context</th>
                 <th>Stage</th>
@@ -7651,8 +7651,17 @@ function renderPanenBatchTable() {
   const sorted = [...PANEN_DATA].sort((a,b) => b.tgl.localeCompare(a.tgl));
   tbody.innerHTML = sorted.map(e => {
     const kebunDisplay = e.kebun.includes('mixed') ? '🔀 Campuran' : e.kebun.map(k => 'K'+k).join(' · ');
-    const komp = e.komposisi || {};
-    const kompDisplay = `<span style="color:#c14b3a">${komp.merah || 0}%</span> · <span style="color:#d4a017">${komp.kuning || 0}%</span> · <span style="color:#16a34a">${komp.hijau || 0}%</span> · <span style="color:#1c1917">${komp.hitam || 0}%</span>`;
+    // Fase 2 (25 Jun 2026, ADR-025): tampilkan SORTIR AKTUAL dari lot child, BUKAN komposisi% placeholder palsu (55/25/12/8).
+    let kompDisplay;
+    const myLots = PANEN_LOTS_DATA.filter(l => l.parent_batch_id === e.id);
+    if (myLots.length > 0) {
+      const byGrade = {};
+      myLots.forEach(l => { byGrade[l.grade] = (byGrade[l.grade] || 0) + (l.kg_sortir_awal || 0); });
+      const cc = { merah:'#c14b3a', kuning:'#d4a017', hijau:'#16a34a', hitam:'#1c1917' };
+      kompDisplay = Object.keys(byGrade).map(g => `<span style="color:${cc[g]||'#888'};font-weight:700">${g.charAt(0).toUpperCase()+g.slice(1)} ${byGrade[g].toFixed(1)}</span>`).join(' · ');
+    } else {
+      kompDisplay = `<span style="color:var(--mute);font-style:italic">belum sortir</span>`;
+    }
     // v1.1 (21 Mei): support legacy stages (sortir_hijau, jemur, kupas, green_bean, lot_ready) untuk entry pre-refactor
     const stageLabel = PANEN_STAGE_LBL[e.processing_stage] || e.processing_stage;
     const currentIdx = PANEN_PIPELINE_STAGES.findIndex(s => s.key === e.processing_stage);
