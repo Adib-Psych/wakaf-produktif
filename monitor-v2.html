@@ -8509,8 +8509,8 @@ function openSamplingInput(pohonId) {
           <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;font-size:12px">
             <label style="font-weight:600">📅 Tanggal *</label>
             <input type="date" id="new-session-tgl" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-            <label style="font-weight:600">🍒 Cherry (gram) *</label>
-            <input type="number" id="new-session-gram" placeholder="cth: 85" min="1" step="1" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+            <label style="font-weight:600">🍒 Cherry *</label>
+            <input type="text" inputmode="decimal" id="new-session-gram" placeholder="gram (cth 85) · koma = kg (1,345)" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
             <textarea id="new-session-catatan" placeholder="opsional — cuaca, kondisi pohon, anomaly, dll" rows="2" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
           </div>
@@ -8536,15 +8536,31 @@ function closeSamplingInputModal() {
   if (modal) modal.remove();
 }
 
+// Fase 4 (25 Jun 2026, ADR-025): parse input gram TAHAN koma desimal Indonesia.
+// "1,345" → 1345 g (koma=desimal kg ×1000) · "1.345" → 1345 g (titik=ribuan) · "85" → 85 g
+// Casus belli: parseInt("1,345")=1 → silent truncation (entry P08 23 Jun).
+function parseGramInput(raw) {
+  if (raw == null) return null;
+  const s = String(raw).trim();
+  if (!s) return null;
+  if (s.includes(',')) {                                   // koma = desimal kg
+    const kg = parseFloat(s.replace(/\./g, '').replace(',', '.'));
+    return isNaN(kg) ? null : Math.round(kg * 1000);
+  }
+  const g = parseInt(s.replace(/\./g, ''), 10);            // titik = pemisah ribuan
+  return isNaN(g) ? null : g;
+}
+
 // Add new session entry untuk pohon (multi-batch)
 function addSamplingSession(pohonId) {
   const baseline = SAMPLING_POHON_BASELINE.find(b => b.id === pohonId);
   if (!baseline) return alert('Pohon ID tidak ditemukan');
   const tgl = document.getElementById('new-session-tgl').value;
-  const gram = parseInt(document.getElementById('new-session-gram').value, 10);
+  const gram = parseGramInput(document.getElementById('new-session-gram').value);
   const catatan = document.getElementById('new-session-catatan').value.trim();
   if (!tgl) return alert('Tanggal wajib diisi');
-  if (!gram || gram < 1) return alert('Cherry gram harus angka > 0');
+  if (!gram || gram < 1) return alert('Cherry harus angka > 0');
+  if (gram < 20) { if (!confirm(`🍒 Cherry ${gram} g — sangat kecil (1 cherry ~1-2 g). Kalau maksudmu kg, ketik pakai koma (mis. "1,345" = 1345 g). Tetap simpan ${gram} g?`)) return; }
   const id = 'sampling_' + tgl.replace(/-/g, '') + '_' + pohonId + '_' + Date.now().toString().slice(-6);
   PANEN_SAMPLING_DATA.push({
     id, tgl, kebun: baseline.kebun, pohon_id: pohonId,
@@ -8589,11 +8605,11 @@ function editSamplingSession(pohonId, sessionId) {
           <label style="font-weight:600">📅 Tanggal</label>
           <input type="date" id="edit-session-tgl" value="${cur.tgl}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
           <label style="font-weight:600">🍒 Cherry (g)</label>
-          <input type="number" id="edit-session-cherry" value="${cur.cherry}" min="1" step="1" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <input type="text" inputmode="decimal" id="edit-session-cherry" value="${cur.cherry}" placeholder="gram · koma = kg" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
           <label style="font-weight:600;color:#7a5c2e">🌰 Dried (g)</label>
-          <input type="number" id="edit-session-dried" value="${cur.dried}" placeholder="isi saat sudah kering" min="0" step="0.1" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
+          <input type="text" inputmode="decimal" id="edit-session-dried" value="${cur.dried}" placeholder="isi saat sudah kering · koma = kg" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
           <label style="font-weight:600;color:#7e22ce">📦 Green Bean (g)</label>
-          <input type="number" id="edit-session-gb" value="${cur.gb}" placeholder="isi setelah giling" min="0" step="0.1" style="padding:6px 10px;border:1.5px solid #c9a6e0;border-radius:6px;font-size:12px;background:#fdf7ff">
+          <input type="text" inputmode="decimal" id="edit-session-gb" value="${cur.gb}" placeholder="isi setelah giling · koma = kg" style="padding:6px 10px;border:1.5px solid #c9a6e0;border-radius:6px;font-size:12px;background:#fdf7ff">
           <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
           <textarea id="edit-session-catatan" rows="2" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical">${cur.catatan}</textarea>
         </div>
@@ -8611,12 +8627,13 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   const e = PANEN_SAMPLING_DATA.find(x => x.id === sessionId);
   if (!e) return alert('Sesi tidak ditemukan');
   const tgl = document.getElementById('edit-session-tgl').value;
-  const cherry = parseInt(document.getElementById('edit-session-cherry').value, 10);
-  const dried = parseFloat(document.getElementById('edit-session-dried').value) || null;
-  const gb = parseFloat(document.getElementById('edit-session-gb').value) || null;
+  const cherry = parseGramInput(document.getElementById('edit-session-cherry').value);
+  const dried = parseGramInput(document.getElementById('edit-session-dried').value);
+  const gb = parseGramInput(document.getElementById('edit-session-gb').value);
   const catatan = document.getElementById('edit-session-catatan').value.trim();
   if (!tgl) return alert('Tanggal wajib diisi');
-  if (!cherry || cherry < 1) return alert('Cherry gram harus angka > 0');
+  if (!cherry || cherry < 1) return alert('Cherry harus angka > 0');
+  if (cherry < 20) { if (!confirm(`🍒 Cherry ${cherry} g — sangat kecil. Kalau maksudmu kg, pakai koma (mis. "1,345" = 1345 g). Tetap simpan?`)) return; }
   // guard §5b
   if (dried && dried > cherry) { if (!confirm(`⚠ Dried (${dried} g) > cherry basah (${cherry} g) — kering kok lebih berat? Tetap simpan?`)) return; }
   if (gb && dried && gb > dried * 0.55) { if (!confirm(`⚠ Green bean (${gb} g) > 55% dried — rendemen tak wajar. Tetap simpan?`)) return; }
