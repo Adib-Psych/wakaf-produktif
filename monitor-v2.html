@@ -8436,6 +8436,7 @@ function openSamplingInput(pohonId) {
       <strong style="color:var(--cherry);min-width:60px">${gramDisplay}</strong>
       <span style="font-size:10px;color:var(--earth);min-width:128px">${driedDisp}${driedDisp&&gbDisp?' · ':''}${gbDisp}</span>
       <span style="flex:1;font-size:10px;color:var(--mute);font-style:italic">${s.catatan || '—'}</span>
+      <button onclick="editSamplingSession('${pohonId}','${s.id}')" style="background:#e6f0ec;color:#1f5f47;border:0;padding:2px 7px;border-radius:4px;font-size:9.5px;cursor:pointer" title="Edit / isi dried & green bean">✏️</button>
       <button onclick="deleteSamplingSession('${pohonId}','${s.id}')" style="background:#fde2dc;color:#8c2519;border:0;padding:2px 7px;border-radius:4px;font-size:9.5px;cursor:pointer" title="Hapus sesi ini">🗑</button>
     </div>`;
   }).join('') || '<div style="padding:14px;text-align:center;color:var(--mute);font-size:11px;font-style:italic">Belum ada sesi panen untuk pohon ini.</div>';
@@ -8503,16 +8504,13 @@ function openSamplingInput(pohonId) {
 
         <!-- Add New Session Form -->
         <div style="padding:16px 22px;background:#F0F5F3;border-left:4px solid var(--moss)">
-          <div style="font-size:12px;font-weight:800;color:var(--moss);margin-bottom:10px">+ TAMBAH SESI PANEN BARU</div>
+          <div style="font-size:12px;font-weight:800;color:var(--moss);margin-bottom:4px">+ TAMBAH SESI PANEN BARU</div>
+          <div style="font-size:10px;color:var(--mute);font-style:italic;margin-bottom:10px">🍒 cherry basah saja saat panen · 🌰 dried & 📦 green bean diisi belakangan lewat ✏️ di riwayat sesi</div>
           <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;font-size:12px">
             <label style="font-weight:600">📅 Tanggal *</label>
             <input type="date" id="new-session-tgl" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <label style="font-weight:600">🍒 Cherry (gram) *</label>
             <input type="number" id="new-session-gram" placeholder="cth: 85" min="1" step="1" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-            <label style="font-weight:600">🌰 Dried (gram)</label>
-            <input type="number" id="new-session-dried" placeholder="opsional — isi setelah kering" min="0" step="0.1" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-            <label style="font-weight:600">📦 Green Bean (gram)</label>
-            <input type="number" id="new-session-gb" placeholder="opsional — isi setelah mikro-giling" min="0" step="0.1" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
             <textarea id="new-session-catatan" placeholder="opsional — cuaca, kondisi pohon, anomaly, dll" rows="2" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
           </div>
@@ -8544,20 +8542,15 @@ function addSamplingSession(pohonId) {
   if (!baseline) return alert('Pohon ID tidak ditemukan');
   const tgl = document.getElementById('new-session-tgl').value;
   const gram = parseInt(document.getElementById('new-session-gram').value, 10);
-  const driedG = parseFloat(document.getElementById('new-session-dried')?.value) || null;
-  const gbG = parseFloat(document.getElementById('new-session-gb')?.value) || null;
   const catatan = document.getElementById('new-session-catatan').value.trim();
   if (!tgl) return alert('Tanggal wajib diisi');
   if (!gram || gram < 1) return alert('Cherry gram harus angka > 0');
-  // Fase 4 (25 Jun 2026, ADR-025) sanity guard §5b
-  if (driedG && driedG > gram) { if (!confirm(`⚠ Dried (${driedG} g) > cherry basah (${gram} g) — kering kok lebih berat? Tetap simpan?`)) return; }
-  if (gbG && driedG && gbG > driedG * 0.55) { if (!confirm(`⚠ Green bean (${gbG} g) > 55% dried — rendemen tak wajar. Tetap simpan?`)) return; }
   const id = 'sampling_' + tgl.replace(/-/g, '') + '_' + pohonId + '_' + Date.now().toString().slice(-6);
   PANEN_SAMPLING_DATA.push({
     id, tgl, kebun: baseline.kebun, pohon_id: pohonId,
     cherry_gram: gram,
-    dried_gram: driedG,           // Fase 4: dried cherry per sesi (opsional, additive)
-    gb_gram: gbG,                 // Fase 4: green bean per sesi (opsional, additive)
+    dried_gram: null,             // Fase 4: diisi belakangan via ✏️ edit sesi (time-delayed)
+    gb_gram: null,                // Fase 4: diisi belakangan via ✏️ edit sesi (setelah giling)
     kg: gram / 1000,              // backward compat (legacy reports baca kg)
     cherry_basah_kg: gram / 1000, // backward compat
     kondisi: baseline.kondisi,
@@ -8570,6 +8563,77 @@ function addSamplingSession(pohonId) {
   // Re-render + re-open modal dengan data terbaru
   renderPanenSampling();
   setTimeout(() => openSamplingInput(pohonId), 200);
+}
+
+// Fase 4 (25 Jun 2026, ADR-025): EDIT sesi existing — isi dried/GB belakangan (time-delayed measurement)
+function editSamplingSession(pohonId, sessionId) {
+  const e = PANEN_SAMPLING_DATA.find(x => x.id === sessionId);
+  if (!e) return alert('Sesi tidak ditemukan');
+  const cur = {
+    tgl: e.tgl || todayIso(),
+    cherry: e.cherry_gram != null ? e.cherry_gram : (e.kg != null ? Math.round(e.kg * 1000) : ''),
+    dried: e.dried_gram != null ? e.dried_gram : '',
+    gb: e.gb_gram != null ? e.gb_gram : '',
+    catatan: e.catatan || ''
+  };
+  const existing = document.getElementById('sampling-edit-modal-overlay');
+  if (existing) existing.remove();
+  const html = `
+    <div id="sampling-edit-modal-overlay" onclick="if(event.target.id==='sampling-edit-modal-overlay')document.getElementById('sampling-edit-modal-overlay').remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:center;justify-content:center;padding:20px">
+      <div style="background:#fff;border-radius:12px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+        <div style="padding:16px 20px;background:linear-gradient(135deg,#1f5f47,#2e4040);color:#fff;border-radius:12px 12px 0 0">
+          <div style="font-size:10px;letter-spacing:1.5px;color:#a8c8bc;font-weight:700">✏️ EDIT SESI · ${pohonId}</div>
+          <div style="font-size:14px;font-weight:700;margin-top:2px">${formatTglShort ? formatTglShort(cur.tgl) : cur.tgl}</div>
+        </div>
+        <div style="padding:18px 20px;display:grid;grid-template-columns:130px 1fr;gap:9px;align-items:center;font-size:12px">
+          <label style="font-weight:600">📅 Tanggal</label>
+          <input type="date" id="edit-session-tgl" value="${cur.tgl}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <label style="font-weight:600">🍒 Cherry (g)</label>
+          <input type="number" id="edit-session-cherry" value="${cur.cherry}" min="1" step="1" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <label style="font-weight:600;color:#7a5c2e">🌰 Dried (g)</label>
+          <input type="number" id="edit-session-dried" value="${cur.dried}" placeholder="isi saat sudah kering" min="0" step="0.1" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
+          <label style="font-weight:600;color:#7e22ce">📦 Green Bean (g)</label>
+          <input type="number" id="edit-session-gb" value="${cur.gb}" placeholder="isi setelah giling" min="0" step="0.1" style="padding:6px 10px;border:1.5px solid #c9a6e0;border-radius:6px;font-size:12px;background:#fdf7ff">
+          <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
+          <textarea id="edit-session-catatan" rows="2" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical">${cur.catatan}</textarea>
+        </div>
+        <div style="padding:0 20px 8px;font-size:10px;color:var(--mute);font-style:italic">🌰 dried &amp; 📦 green bean boleh dikosongi kalau lupa ditimbang — nanti divalidasi dari total per pohon.</div>
+        <div style="display:flex;gap:8px;justify-content:flex-end;padding:12px 20px 18px">
+          <button onclick="document.getElementById('sampling-edit-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Batal</button>
+          <button onclick="saveSamplingSessionEdit('${pohonId}','${sessionId}')" class="btn btn-primary" style="background:var(--moss);font-size:12px;padding:7px 14px">✓ Simpan Perubahan</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+function saveSamplingSessionEdit(pohonId, sessionId) {
+  const e = PANEN_SAMPLING_DATA.find(x => x.id === sessionId);
+  if (!e) return alert('Sesi tidak ditemukan');
+  const tgl = document.getElementById('edit-session-tgl').value;
+  const cherry = parseInt(document.getElementById('edit-session-cherry').value, 10);
+  const dried = parseFloat(document.getElementById('edit-session-dried').value) || null;
+  const gb = parseFloat(document.getElementById('edit-session-gb').value) || null;
+  const catatan = document.getElementById('edit-session-catatan').value.trim();
+  if (!tgl) return alert('Tanggal wajib diisi');
+  if (!cherry || cherry < 1) return alert('Cherry gram harus angka > 0');
+  // guard §5b
+  if (dried && dried > cherry) { if (!confirm(`⚠ Dried (${dried} g) > cherry basah (${cherry} g) — kering kok lebih berat? Tetap simpan?`)) return; }
+  if (gb && dried && gb > dried * 0.55) { if (!confirm(`⚠ Green bean (${gb} g) > 55% dried — rendemen tak wajar. Tetap simpan?`)) return; }
+  if (gb && !dried) { if (!confirm(`📦 Green bean diisi tapi 🌰 dried kosong. Tetap simpan? (boleh — dried bisa diisi nanti)`)) return; }
+  e.tgl = tgl;
+  e.cherry_gram = cherry;
+  e.kg = cherry / 1000;
+  e.cherry_basah_kg = cherry / 1000;
+  e.dried_gram = dried;
+  e.gb_gram = gb;
+  e.catatan = catatan;
+  e.edited_at = new Date().toISOString();
+  savePanenSamplingToLS();
+  if (typeof showToast === 'function') showToast(`✓ Sesi ${pohonId} diperbarui`, 'success');
+  const ov = document.getElementById('sampling-edit-modal-overlay'); if (ov) ov.remove();
+  renderPanenSampling();
+  setTimeout(() => openSamplingInput(pohonId), 150);
 }
 
 // Delete single session (multi-batch)
