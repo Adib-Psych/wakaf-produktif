@@ -1510,6 +1510,8 @@
                 <th>Kondisi Baseline</th>
                 <th style="text-align:center" title="Berapa kali pohon ini sudah dipetik">Sesi</th>
                 <th style="text-align:right" title="Total cherry kumulatif semua sesi panen">Total Cherry</th>
+                <th style="text-align:right" title="Dried cherry per pohon — ● final · biasa Σ sesi · ~est dari cherry">🌰 Dried</th>
+                <th style="text-align:right" title="Green bean per pohon (produktivitas riset) — ● final · biasa Σ sesi · ~est">📦 GB</th>
                 <th style="text-align:right" title="Rata-rata per sesi petik">Avg / Sesi</th>
                 <th>Range Tgl</th>
                 <th>Catatan Terakhir</th>
@@ -8360,6 +8362,20 @@ function renderPanenSamplingTable() {
   // ⭐ 11 Juni 2026 v1.2: Multi-batch aggregation per pohon (replace .find() with aggregateSamplingPerPohon())
   const rows = SAMPLING_POHON_BASELINE.map(baseline => {
     const agg = aggregateSamplingPerPohon(baseline.id);
+    // Fase 4c: resolusi dried/GB per pohon — prioritas FINAL → Σ sesi → est (cherry×ratio)
+    const sess = agg?.sessions || [];
+    const sumDried = sess.reduce((a,s)=>a+(s.dried_gram||0),0);
+    const sumGb = sess.reduce((a,s)=>a+(s.gb_gram||0),0);
+    const finalRec = PANEN_SAMPLING_DATA.find(e=>e.type==='final' && e.pohon_id===baseline.id);
+    const cherryG = agg?.total_gram || 0;
+    let driedVal=null, driedKind=null;
+    if (finalRec && finalRec.dried_final_gram!=null){driedVal=finalRec.dried_final_gram;driedKind='final';}
+    else if (sumDried>0){driedVal=sumDried;driedKind='sesi';}
+    else if (cherryG>0){driedVal=cherryG*0.44;driedKind='est';}
+    let gbVal=null, gbKind=null;
+    if (finalRec && finalRec.gb_final_gram!=null){gbVal=finalRec.gb_final_gram;gbKind='final';}
+    else if (sumGb>0){gbVal=sumGb;gbKind='sesi';}
+    else if (cherryG>0){gbVal=cherryG*0.196;gbKind='est';}
     return {
       ...baseline,
       sessions_count: agg?.sessions_count || 0,
@@ -8368,6 +8384,7 @@ function renderPanenSamplingTable() {
       first_tgl: agg?.first_tgl || null,
       last_tgl: agg?.last_tgl || null,
       catatan_last: agg?.catatan_last || '',
+      driedVal, driedKind, gbVal, gbKind,
       status: agg ? 'done' : 'pending'
     };
   });
@@ -8378,7 +8395,7 @@ function renderPanenSamplingTable() {
   if (fStatus) filtered = filtered.filter(r => r.status === fStatus);
 
   if (filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:18px;color:var(--mute);font-size:11px">Tidak ada pohon match filter.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center;padding:18px;color:var(--mute);font-size:11px">Tidak ada pohon match filter.</td></tr>`;
     return;
   }
 
@@ -8388,8 +8405,16 @@ function renderPanenSamplingTable() {
     if (first === last) return `<span style="font-size:10px">${formatTglShort ? formatTglShort(first) : first}</span>`;
     return `<span style="font-size:9.5px">${formatTglShort ? formatTglShort(first) : first} → ${formatTglShort ? formatTglShort(last) : last}</span>`;
   };
+  // Fase 4c: sel dried/GB per pohon — ● final · biasa Σ sesi · ~est (abu miring)
+  const cellDG = (val, kind, color) => {
+    if (val == null) return '<span style="color:#bbb">—</span>';
+    const g = Math.round(val).toLocaleString('id-ID');
+    if (kind === 'final') return `<strong style="color:${color}">● ${g} g</strong>`;
+    if (kind === 'sesi') return `<span style="color:${color}">${g} g</span>`;
+    return `<span style="color:#bbb;font-style:italic">~${g} g</span>`;
+  };
 
-  tbody.innerHTML = filtered.map(r => {
+  const rowsHtml = filtered.map(r => {
     const kondisi = SAMPLING_KONDISI_LABEL[r.kondisi] || {id: r.kondisi, color:'#888', bg:'#f5f5f5'};
     const isDone = r.status === 'done';
     const totalCell = r.total_gram != null
@@ -8410,12 +8435,28 @@ function renderPanenSamplingTable() {
       <td><span style="background:${kondisi.bg};color:${kondisi.color};padding:2px 6px;border-radius:8px;font-size:10px;font-weight:700">${kondisi.id}</span></td>
       <td style="text-align:center">${sessionsCell}</td>
       <td style="text-align:right">${totalCell}</td>
+      <td style="text-align:right">${cellDG(r.driedVal, r.driedKind, '#7a5c2e')}</td>
+      <td style="text-align:right">${cellDG(r.gbVal, r.gbKind, '#7e22ce')}</td>
       <td style="text-align:right">${avgCell}</td>
       <td>${fmtTglRange(r.first_tgl, r.last_tgl)}</td>
       <td>${catatanCell}</td>
       <td style="text-align:center">${actionCell}</td>
     </tr>`;
   }).join('');
+  // Fase 4c: Σ TOTAL footer (best-available per pohon: final → sesi → est)
+  const sampledCount = filtered.filter(r=>r.status==='done').length;
+  const sumCherry = filtered.reduce((a,r)=>a+(r.total_gram||0),0);
+  const sumDriedAll = filtered.reduce((a,r)=>a+(r.driedVal||0),0);
+  const sumGbAll = filtered.reduce((a,r)=>a+(r.gbVal||0),0);
+  const _kg = g => g>=1000 ? `<br><span style="font-size:9px;opacity:.85">${(g/1000).toFixed(2)} kg</span>` : '';
+  const totalsRow = `<tr style="background:#1f5f47;color:#fff;font-weight:700;font-size:11px">
+    <td colspan="4" style="text-align:right;padding:8px">Σ TOTAL · ${sampledCount} pohon tersampling →</td>
+    <td style="text-align:right">${Math.round(sumCherry).toLocaleString('id-ID')} g${_kg(sumCherry)}</td>
+    <td style="text-align:right">🌰 ${Math.round(sumDriedAll).toLocaleString('id-ID')} g${_kg(sumDriedAll)}</td>
+    <td style="text-align:right">📦 ${Math.round(sumGbAll).toLocaleString('id-ID')} g${_kg(sumGbAll)}</td>
+    <td colspan="4" style="text-align:left;font-size:8.5px;opacity:.85;padding-left:10px">● final · biasa Σ sesi · ~est</td>
+  </tr>`;
+  tbody.innerHTML = rowsHtml + totalsRow;
 }
 
 // ⭐ 11 Juni 2026 v1.2 — Multi-batch modal: list existing sessions + add new session form.
