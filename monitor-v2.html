@@ -1558,6 +1558,8 @@
 
         <!-- Fase 3b (25 Jun 2026): Storage Dried per grade -->
         <div id="panen-lot-storage"></div>
+        <!-- Fase 3c (25 Jun 2026): Riwayat Jemur & Giling events -->
+        <div id="panen-dried-events"></div>
 
         <!-- Filter pills -->
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
@@ -8865,49 +8867,167 @@ renderPanen = function() {
 function renderPanenLots() {
   renderPanenLotsKPI();
   renderPanenStorage();
+  renderDriedEventHistory();
   renderPanenLotsTable();
   renderPanenLotsGradeChart();
 }
 
-// Fase 3b (25 Jun 2026): Storage Dried per grade — lot stage 'jemur' (sudah kering, belum digiling). Ambang giling ≥20 kg.
+// ============================================================
+// Fase 3c (25 Jun 2026): POOL-BASED dried storage + Catat Jemur/Giling
+// Realita Wakif: TIDAK ada lot ID. Dried numpuk per WARNA (pool); giling tarik dari pool.
+// Events = marker entry di panen_lots (type:'jemur_event'/'giling_event') — rules-safe.
+// Pool warna = Σ jemur_event.dried_kg − Σ giling_event.dried_pulled_kg
+// ============================================================
+const DRIED_GRADES = ['merah','kuning','hijau','hitam'];
+function getDriedEvents() {
+  return PANEN_LOTS_DATA.filter(l => l.type === 'jemur_event' || l.type === 'giling_event');
+}
+function getDriedPool() {
+  const pool = {}; DRIED_GRADES.forEach(g => pool[g] = 0);
+  PANEN_LOTS_DATA.forEach(l => {
+    if (l.type === 'jemur_event' && pool[l.grade] != null) pool[l.grade] += (l.dried_kg || 0);
+    else if (l.type === 'giling_event' && pool[l.grade] != null) pool[l.grade] -= (l.dried_pulled_kg || 0);
+  });
+  return pool;
+}
+
+// Storage Dried per warna — saldo berjalan dari events (bukan stage per-lot)
 function renderPanenStorage() {
   const el = document.getElementById('panen-lot-storage');
   if (!el) return;
   const THRESH = 20;
-  const grades = ['merah','kuning','hijau','hitam'];
-  const byGrade = {}; grades.forEach(g => byGrade[g] = 0);
-  PANEN_LOTS_DATA.forEach(l => {
-    if (l.stage === 'jemur' && byGrade[l.grade] != null) byGrade[l.grade] += (l.kg_jemur_done || 0);
-  });
-  const totalDried = grades.reduce((s,g)=>s+byGrade[g],0);
-  const cards = grades.map(g => {
+  const pool = getDriedPool();
+  const totalDried = DRIED_GRADES.reduce((s,g)=>s+pool[g],0);
+  const cards = DRIED_GRADES.map(g => {
     const grade = PANEN_GRADES[g] || {label:g,color:'#888'};
-    const kg = byGrade[g];
+    const kg = pool[g];
     const siap = kg >= THRESH;
-    const status = kg <= 0 ? '<span style="color:#bbb;font-size:9.5px">kosong</span>'
+    const status = kg <= 0.001 ? '<span style="color:#bbb;font-size:9.5px">kosong</span>'
       : siap ? '<span style="color:#15803d;font-size:9.5px;font-weight:700">✅ siap giling</span>'
       : `<span style="color:#b45309;font-size:9.5px">⏳ nunggu (−${(THRESH-kg).toFixed(1)} kg)</span>`;
-    return `<div style="flex:1;min-width:115px;background:${kg>0?'#fff':'#FAFAF9'};border:1.5px solid ${siap?'#16a34a':'#eee'};border-radius:10px;padding:9px 12px">
+    return `<div style="flex:1;min-width:110px;background:${kg>0.001?'#fff':'#FAFAF9'};border:1.5px solid ${siap?'#16a34a':'#eee'};border-radius:10px;padding:9px 12px">
       <div style="font-size:11px;font-weight:700;color:${grade.color}">${grade.label}</div>
-      <div style="font-size:19px;font-weight:800;color:${kg>0?'#2b2721':'#ccc'};line-height:1.1;margin:2px 0">${kg>0?kg.toFixed(1):'—'}<span style="font-size:10px;font-weight:600;color:var(--mute)"> kg</span></div>
+      <div style="font-size:19px;font-weight:800;color:${kg>0.001?'#2b2721':'#ccc'};line-height:1.1;margin:2px 0">${kg>0.001?kg.toFixed(1):'—'}<span style="font-size:10px;font-weight:600;color:var(--mute)"> kg</span></div>
       ${status}
     </div>`;
   }).join('');
   el.innerHTML = `
     <div style="background:#F5F3EF;border-radius:12px;padding:12px 14px;margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:4px">
-        <div style="font-size:12px;font-weight:800;color:var(--earth);letter-spacing:.5px">📦 STORAGE DRIED — siap giling</div>
-        <div style="font-size:10px;color:var(--mute)">total <strong>${totalDried.toFixed(1)} kg</strong> · ambang giling ≥${THRESH} kg</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap;gap:6px">
+        <div style="font-size:12px;font-weight:800;color:var(--earth);letter-spacing:.5px">📦 STORAGE DRIED — saldo per warna</div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:10px;color:var(--mute)">total <strong>${totalDried.toFixed(1)} kg</strong> · ambang ≥${THRESH}</span>
+          <button onclick="openJemurEventDialog()" class="btn btn-primary" style="background:#b45309;font-size:10.5px;padding:4px 10px">☀️ Catat Jemur</button>
+        </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${cards}</div>
     </div>`;
 }
 
+// Catat Jemur — dried masuk pool warna
+function openJemurEventDialog() {
+  const ex = document.getElementById('jemur-event-modal-overlay'); if (ex) ex.remove();
+  const gradeOpts = DRIED_GRADES.map(g => `<option value="${g}">${PANEN_GRADES[g].label}</option>`).join('');
+  const html = `
+  <div id="jemur-event-modal-overlay" onclick="if(event.target.id==='jemur-event-modal-overlay')this.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:12px;max-width:430px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+      <div style="padding:16px 20px;background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border-radius:12px 12px 0 0">
+        <div style="font-size:13px;font-weight:800">☀️ CATAT JEMUR — dried masuk storage</div>
+        <div style="font-size:10.5px;color:#fde68a;margin-top:2px">Hasil jemur (sudah kering) → nambah pool warna</div>
+      </div>
+      <div style="padding:18px 20px;display:grid;grid-template-columns:128px 1fr;gap:10px;align-items:center;font-size:12px">
+        <label style="font-weight:600">📅 Tanggal</label>
+        <input type="date" id="je-tgl" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600">🎨 Warna</label>
+        <select id="je-grade" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">${gradeOpts}</select>
+        <label style="font-weight:600;color:#7a5c2e">🌰 Dried (kg)</label>
+        <input type="text" inputmode="decimal" id="je-dried" placeholder="cth 8,5 · koma=kg" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
+        <label style="font-weight:600">🍒 Cherry asal (kg)</label>
+        <input type="text" inputmode="decimal" id="je-cherry" placeholder="opsional — utk rendemen" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600">💧 MC %</label>
+        <input type="text" inputmode="decimal" id="je-mc" placeholder="opsional" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
+        <textarea id="je-catatan" rows="2" placeholder="opsional — dari kebun mana, gabungan batch, dll" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
+      </div>
+      <div style="padding:0 20px 6px;font-size:10px;color:var(--mute);font-style:italic">Dried normal ~44% cherry. Pooling antar-batch/kebun = wajar.</div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;padding:8px 20px 18px">
+        <button onclick="document.getElementById('jemur-event-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Batal</button>
+        <button onclick="submitJemurEvent()" class="btn btn-primary" style="background:#b45309;font-size:12px;padding:7px 14px">✓ Simpan Jemur</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  setTimeout(()=>{const el=document.getElementById('je-dried');if(el)el.focus();},100);
+}
+
+function submitJemurEvent() {
+  const tgl = document.getElementById('je-tgl').value;
+  const grade = document.getElementById('je-grade').value;
+  const dried = parseDecimalInput(document.getElementById('je-dried').value);
+  const cherry = parseDecimalInput(document.getElementById('je-cherry').value);
+  const mc = parseDecimalInput(document.getElementById('je-mc').value);
+  const catatan = document.getElementById('je-catatan').value.trim();
+  if (!tgl) return alert('Tanggal wajib diisi');
+  if (!dried || dried <= 0) return alert('Dried kg harus angka > 0');
+  if (cherry && dried > cherry) { if (!confirm(`⚠ Dried ${dried} kg > cherry ${cherry} kg — jemur kok nambah berat? (dried normal ~44% cherry). Cek timbangan. Tetap simpan?`)) return; }
+  const id = 'jemur_' + tgl.replace(/-/g,'') + '_' + grade + '_' + Date.now().toString().slice(-6);
+  PANEN_LOTS_DATA.push({ id, type:'jemur_event', grade, dried_kg:dried, cherry_kg:cherry, mc, tgl, catatan, created_at:new Date().toISOString(), schema_version:'3c' });
+  savePanenLotsToLS();
+  const ov = document.getElementById('jemur-event-modal-overlay'); if (ov) ov.remove();
+  if (typeof showToast === 'function') showToast(`☀️ Jemur ${PANEN_GRADES[grade].label} +${dried} kg dried → pool`, 'success');
+  renderPanenLots();
+}
+
+// Riwayat event jemur + giling
+function renderDriedEventHistory() {
+  const el = document.getElementById('panen-dried-events'); if (!el) return;
+  const events = getDriedEvents().sort((a,b)=>(b.tgl||'').localeCompare(a.tgl||''));
+  if (events.length === 0) { el.innerHTML = ''; return; }
+  const rows = events.slice(0,15).map(e => {
+    const grade = PANEN_GRADES[e.grade] || {label:e.grade,color:'#888'};
+    const tglS = formatTglShort ? formatTglShort(e.tgl) : e.tgl;
+    const del = `<button onclick="deleteDriedEvent('${e.id}')" style="background:#fde2dc;color:#8c2519;border:0;padding:2px 6px;border-radius:4px;font-size:9px;cursor:pointer" title="Hapus event">🗑</button>`;
+    if (e.type === 'jemur_event') {
+      const rdm = e.cherry_kg ? ` <span style="color:var(--mute);font-weight:400">(dari ${e.cherry_kg} kg cherry · ${Math.round(e.dried_kg/e.cherry_kg*100)}%)</span>` : '';
+      return `<div style="display:flex;align-items:center;gap:8px;padding:5px 9px;border-bottom:1px solid #f0eee9;font-size:11px">
+        <span style="font-size:10px;color:var(--mute);min-width:64px">${tglS}</span>
+        <span style="min-width:72px">☀️ Jemur</span>
+        <span style="font-weight:700;color:${grade.color};min-width:58px">${grade.label}</span>
+        <span style="flex:1;color:#7a5c2e;font-weight:600">+${(e.dried_kg||0).toFixed(1)} kg dried${rdm}</span>
+        ${del}
+      </div>`;
+    }
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 9px;border-bottom:1px solid #f0eee9;font-size:11px">
+      <span style="font-size:10px;color:var(--mute);min-width:64px">${tglS}</span>
+      <span style="min-width:72px">⚙️ Giling</span>
+      <span style="font-weight:700;color:${grade.color};min-width:58px">${grade.label}</span>
+      <span style="flex:1;color:#6d28d9;font-weight:600">−${(e.dried_pulled_kg||0).toFixed(1)} dried → ${(e.gb_out_kg||0).toFixed(1)} kg GB <span style="color:var(--mute);font-weight:400">(rdm ${e.rendemen?Math.round(e.rendemen*100):'?'}%)</span></span>
+      ${del}
+    </div>`;
+  }).join('');
+  el.innerHTML = `<div style="margin-bottom:14px">
+    <div style="font-size:11px;font-weight:800;color:var(--earth);letter-spacing:.5px;margin-bottom:6px">📜 RIWAYAT JEMUR &amp; GILING</div>
+    <div style="border:1px solid #eee;border-radius:10px;overflow:hidden">${rows}</div>
+  </div>`;
+}
+
+function deleteDriedEvent(id) {
+  const e = PANEN_LOTS_DATA.find(l => l.id === id);
+  if (!e) return;
+  const lbl = e.type === 'jemur_event' ? 'Jemur' : 'Giling';
+  if (!confirm(`Hapus event ${lbl} ${PANEN_GRADES[e.grade]?.label||e.grade} (${e.tgl})? Pool storage akan menyesuaikan.`)) return;
+  PANEN_LOTS_DATA = PANEN_LOTS_DATA.filter(l => l.id !== id);
+  savePanenLotsToLS();
+  if (typeof showToast === 'function') showToast('🗑 Event dihapus, pool diperbarui', 'info');
+  renderPanenLots();
+}
+
 function renderPanenLotsKPI() {
   const el = (id) => document.getElementById(id);
-  const total = PANEN_LOTS_DATA.length;
-  const merahKg = PANEN_LOTS_DATA.filter(l => l.grade === 'merah').reduce((s, l) => s + l.kg_sortir_awal, 0);
-  const soldLots = PANEN_LOTS_DATA.filter(l => l.stage === 'sold');
+  const realLots = PANEN_LOTS_DATA.filter(l => l.type !== 'jemur_event' && l.type !== 'giling_event');  // Fase 3c: exclude event markers
+  const total = realLots.length;
+  const merahKg = realLots.filter(l => l.grade === 'merah').reduce((s, l) => s + (l.kg_sortir_awal||0), 0);
+  const soldLots = realLots.filter(l => l.stage === 'sold');
   const totalRevenue = soldLots.reduce((s, l) => s + (l.revenue_actual || 0), 0);
   if (el('panen-lot-total')) el('panen-lot-total').textContent = total;
   if (el('panen-lot-merah-kg')) el('panen-lot-merah-kg').textContent = merahKg > 0 ? merahKg.toFixed(1) + ' kg' : '—';
@@ -8921,7 +9041,7 @@ function renderPanenLotsTable() {
   // Apply filters
   const gradeFilter = document.querySelector('#panen-lot-filter-grade .on')?.dataset.val || 'all';
   const stageFilter = document.querySelector('#panen-lot-filter-stage .on')?.dataset.val || 'all';
-  let lots = [...PANEN_LOTS_DATA];
+  let lots = PANEN_LOTS_DATA.filter(l => l.type !== 'jemur_event' && l.type !== 'giling_event');  // Fase 3c: exclude event markers (sortir lots only)
   if (gradeFilter !== 'all') lots = lots.filter(l => l.grade === gradeFilter);
   if (stageFilter === 'active') lots = lots.filter(l => l.stage !== 'sold');
   else if (stageFilter === 'sold') lots = lots.filter(l => l.stage === 'sold');
@@ -8942,7 +9062,7 @@ function renderPanenLotsTable() {
     const isSold = l.stage === 'sold';
     const advanceBtn = isSold
       ? '<span style="font-size:10px;color:#15803D;font-style:italic">✓ Sold</span>'
-      : `<button onclick="advancePanenLotStage('${l.lot_id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 8px" title="Advance ke ${PANEN_LOT_STAGES[currentIdx+1]?.label}">▶ Advance</button>`;
+      : `<span style="font-size:9px;color:var(--mute);font-style:italic" title="Sortir read-only — jemur & giling pindah ke pool storage di atas (Fase 3c)">sortir</span>`;
     const gbKg = l.kg_green_bean_aktual !== null ? l.kg_green_bean_aktual.toFixed(2) : '—';
     const targetPrice = l.price_per_kg_target ? 'Rp ' + l.price_per_kg_target.toLocaleString('id-ID') : '—';
     const actualPrice = l.price_per_kg_actual ? 'Rp ' + l.price_per_kg_actual.toLocaleString('id-ID') : '—';
