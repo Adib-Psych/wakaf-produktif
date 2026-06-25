@@ -7668,7 +7668,9 @@ function renderPanenBatchTable() {
     } else if (isLast) {
       advanceBtn = `<span style="font-size:10px;color:var(--mute);font-style:italic">Stage akhir</span>`;
     } else {
-      advanceBtn = `<button onclick="advancePanenStage('${e.id}')" class="btn btn-secondary" style="font-size:10px;padding:3px 8px" title="Advance ke ${PANEN_PIPELINE_STAGES[currentIdx+1]?.label}">▶ Advance</button>`;
+      // Fase 1 single-source (25 Jun 2026, ADR-025): jalur sortir via Batch Tracker DI-RETIRE.
+      // Sortir HANYA via Card "Input Sortir Cherry (5-Varian)". Fungsi advancePanenStage di-deprecate (preserved untuk audit, tidak dipanggil dari UI).
+      advanceBtn = `<span style="font-size:9.5px;color:var(--gold);font-style:italic" title="Sortir batch ini lewat Card 'Input Sortir Cherry (5-Varian)' di atas — single-source (ADR-025)">↑ Sortir di Card 5-Varian</span>`;
     }
     const ctxLabel = { terjadwal: '📅 Terjadwal', incidental: '🎯 Incidental', sortir_terlambat: '⏰ Sortir Terlambat' }[e.context] || e.context;
     // Green bean total: sum dari lot child (kalau has_split) atau legacy field e.green_bean_kg
