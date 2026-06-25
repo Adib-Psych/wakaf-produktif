@@ -1415,7 +1415,7 @@
       <!-- ────────────────────────────────────────────────────────── -->
       <div class="card">
         <div class="card-title"><span class="num">3</span>🏭 Processing Pipeline — Cherry → Green Bean</div>
-        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Visual flow setiap batch dari cherry mentah sampai green bean siap jual. <strong>Persentase per varian = ACTUAL hasil sortir Stage 3</strong> (auto-computed dari Section 2 di atas). Conversion ratio cherry→green bean typical Robusta: 16-20% (semi-washed) atau 18-22% (fully washed). Klik panah untuk advance stage.</p>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Matriks <strong>est vs aktual per warna</strong> — auto dari Sortir (cherry) + Catat Jemur (dried) + Catat Giling (green bean), nol re-entry. <strong>Δ = discrepancy</strong> → kalibrasi rendemen kebun. Ratio tervalidasi Robusta NGT: cherry→dried ×0,44 · dried→GB ×0,444 · cherry→GB ×0,196.</p>
         <div id="panen-pipeline-funnel" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"></div>
       </div>
 
@@ -7674,36 +7674,59 @@ function renderPanenKebunChart() {
   });
 }
 
+// Fase pipeline-matrix (26 Jun 2026): cherry per warna = sortir lots (M/K/H/Hitam) + pengapung batch (mengambang)
+function getCherryPerGrade() {
+  const c = {}; DRIED_GRADES.forEach(g => c[g] = 0);
+  PANEN_LOTS_DATA.forEach(l => {
+    if (l.type === 'jemur_event' || l.type === 'giling_event') return;  // skip event markers
+    if (c[l.grade] != null) c[l.grade] += (l.kg_sortir_awal || 0);
+  });
+  if (typeof PANEN_DATA !== 'undefined') PANEN_DATA.forEach(e => { c.mengambang += (e.pengapung_kg || 0); });
+  return c;
+}
+
+// Fase pipeline-matrix (26 Jun 2026): Card 3 = PROCESSING PIPELINE matrix per warna, est vs aktual + Δ.
+// Auto dari Sortir (cherry) + Catat Jemur (dried) + Catat Giling (GB). Ganti funnel 7-stage lama (stale pasca pool model).
 function renderPanenPipelineFunnel() {
   const c = document.getElementById('panen-pipeline-funnel');
   if (!c) return;
-  // Sum kg at each stage
-  const stageKg = {};
-  PANEN_PIPELINE_STAGES.forEach(s => stageKg[s.key] = 0);
-  PANEN_DATA.forEach(e => {
-    const currentIdx = PANEN_PIPELINE_STAGES.findIndex(s => s.key === e.processing_stage);
-    if (currentIdx < 0) return;
-    // Each entry contributes to all stages it has reached
-    for (let i = 0; i <= currentIdx; i++) {
-      const stage = PANEN_PIPELINE_STAGES[i];
-      const calcKg = i === 0 ? e.cherry_kg : (e.cherry_kg * stage.ratio);
-      stageKg[stage.key] += calcKg;
-    }
+  c.style.display = 'block';  // override grid lama
+  const R_CD = 0.44, R_CG = 0.196;
+  const cherry = getCherryPerGrade();
+  const driedAct = {}, gbAct = {};
+  DRIED_GRADES.forEach(g => { driedAct[g] = 0; gbAct[g] = 0; });
+  PANEN_LOTS_DATA.forEach(l => {
+    if (l.type === 'jemur_event' && driedAct[l.grade] != null) driedAct[l.grade] += (l.dried_kg || 0);
+    else if (l.type === 'giling_event' && gbAct[l.grade] != null) gbAct[l.grade] += (l.gb_out_kg || 0);
   });
-  const maxKg = Math.max(...Object.values(stageKg), 1);
-  c.innerHTML = PANEN_PIPELINE_STAGES.map((s, idx) => {
-    const kg = stageKg[s.key];
-    const pct = Math.round((kg / maxKg) * 100);
-    const heightPx = Math.max(40, Math.round(pct * 1.4));
-    const isLast = idx === PANEN_PIPELINE_STAGES.length - 1;
-    return `<div style="display:flex;flex-direction:column;align-items:center;padding:8px 4px;background:linear-gradient(180deg,#fafaf6,#fff);border:1px solid #e0e0d0;border-radius:8px">
-      <div style="font-size:10px;font-weight:800;color:var(--earth);text-align:center;letter-spacing:0.3px;min-height:30px;display:flex;align-items:center;justify-content:center">${s.label}</div>
-      <div style="width:80%;height:${heightPx}px;background:linear-gradient(180deg,#c14b3a,#8c2519);border-radius:6px;display:flex;align-items:center;justify-content:center;margin:6px 0;transition:.3s">
-        <div style="font-size:14px;font-weight:900;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3)">${kg.toFixed(1)}</div>
-      </div>
-      <div style="font-size:9px;color:var(--mute);text-align:center">kg · ratio ${(s.ratio*100).toFixed(0)}%</div>
-    </div>`;
-  }).join('');
+  const fmt = v => v > 0.001 ? v.toFixed(1) : '<span style="color:#ccc">—</span>';
+  const sum = o => DRIED_GRADES.reduce((s, g) => s + o[g], 0);
+  const dCell = (act, est) => {
+    if (est <= 0.001) return '<span style="color:#ccc">—</span>';
+    if (act <= 0.001) return '<span style="color:#bbb;font-style:italic">belum</span>';
+    const d = act - est, p = Math.round(d / est * 100);
+    const col = Math.abs(p) <= 10 ? '#16a34a' : (p < 0 ? '#c14b3a' : '#b45309');
+    return `<span style="color:${col};font-weight:700">${d >= 0 ? '+' : ''}${d.toFixed(1)}<span style="font-size:8px;font-weight:400"> ${p >= 0 ? '+' : ''}${p}%</span></span>`;
+  };
+  const cells = (obj, st) => DRIED_GRADES.map(g => `<td style="text-align:right${st || ''}">${typeof obj === 'function' ? obj(g) : fmt(obj[g])}</td>`).join('');
+  const gradeHead = DRIED_GRADES.map(g => { const lbl = PANEN_GRADES[g].label.split(' '); return `<th style="text-align:right;color:${PANEN_GRADES[g].color};font-size:10px">${lbl[0]}<br><span style="font-size:8px;color:var(--mute);font-weight:400">${lbl[1] || ''}</span></th>`; }).join('');
+  const bl = 'border-left:2px solid #e0d9c8';
+  c.innerHTML = `
+    <div class="table-wrap"><table style="width:100%;font-size:11px;border-collapse:collapse;min-width:560px">
+      <thead><tr style="background:var(--cream)">
+        <th style="text-align:left;min-width:118px">Tahap</th>${gradeHead}<th style="text-align:right;${bl}">TOTAL</th>
+      </tr></thead>
+      <tbody>
+        <tr style="border-top:2px solid #e8e3d8;background:#FFFCF9"><td style="text-align:left;font-weight:800;color:#c14b3a;padding:8px 4px">🍒 Cherry basah<br><span style="font-size:8.5px;color:var(--mute);font-weight:400">aktual · dari Sortir</span></td>${cells(cherry)}<td style="text-align:right;font-weight:800;${bl}">${fmt(sum(cherry))}</td></tr>
+        <tr><td style="text-align:left;color:var(--mute);padding:5px 4px 5px 10px">🌰 Dried · est <span style="font-size:8.5px">×0,44</span></td>${cells(g => `<span style="color:var(--mute)">${fmt(cherry[g] * R_CD)}</span>`)}<td style="text-align:right;color:var(--mute);${bl}">${fmt(sum(cherry) * R_CD)}</td></tr>
+        <tr><td style="text-align:left;font-weight:700;color:#7a5c2e;padding-left:10px">🌰 Dried · <strong>aktual</strong></td>${cells(g => `<strong style="color:#7a5c2e">${fmt(driedAct[g])}</strong>`)}<td style="text-align:right;font-weight:800;color:#7a5c2e;${bl}">${fmt(sum(driedAct))}</td></tr>
+        <tr style="border-bottom:1px solid #eee"><td style="text-align:left;font-size:9.5px;color:var(--mute);padding:3px 4px 7px 10px">Δ vs est</td>${cells(g => dCell(driedAct[g], cherry[g] * R_CD))}<td style="${bl}"></td></tr>
+        <tr><td style="text-align:left;color:var(--mute);padding:5px 4px 5px 10px">📦 Green bean · est <span style="font-size:8.5px">×0,196</span></td>${cells(g => `<span style="color:var(--mute)">${fmt(cherry[g] * R_CG)}</span>`)}<td style="text-align:right;color:var(--mute);${bl}">${fmt(sum(cherry) * R_CG)}</td></tr>
+        <tr><td style="text-align:left;font-weight:700;color:#7e22ce;padding-left:10px">📦 Green bean · <strong>aktual</strong></td>${cells(g => `<strong style="color:#7e22ce">${fmt(gbAct[g])}</strong>`)}<td style="text-align:right;font-weight:800;color:#7e22ce;${bl}">${fmt(sum(gbAct))}</td></tr>
+        <tr><td style="text-align:left;font-size:9.5px;color:var(--mute);padding:3px 4px 6px 10px">Δ vs est</td>${cells(g => dCell(gbAct[g], cherry[g] * R_CG))}<td style="${bl}"></td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:9.5px;color:var(--mute);margin-top:8px;font-style:italic;line-height:1.5">🍒 cherry · 🌰 dried · 📦 GB <strong>auto</strong> dari Sortir + Catat Jemur + Catat Giling — nol re-entry. EST = rumus (×0,44 · ×0,196), AKTUAL = timbangan, <strong>Δ = aktual − est</strong> → kalibrasi rendemen kebun. "belum" = aktual belum ditimbang.</p>`;
 }
 
 function renderPanenBatchTable() {
