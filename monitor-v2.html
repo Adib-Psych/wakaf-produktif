@@ -355,6 +355,12 @@
         <div class="kpi-wide-num" id="kpi-budget">—</div>
       </div>
 
+      <!-- Panen Tahun Ini + Pohon per Kebun (27 Jun 2026) -->
+      <div class="card" data-tier="wakif">
+        <div class="card-title"><span class="num">🍒</span>Panen Tahun Ini + Pohon per Kebun</div>
+        <div id="dash-panen-summary"></div>
+      </div>
+
       <div class="card">
         <div class="card-title"><span class="num">1</span>Aktivitas 30 Hari Terakhir</div>
         <div class="chart-wrap"><canvas id="chart-activity"></canvas></div>
@@ -3512,6 +3518,44 @@ function initApp() {
 }
 
 // ===== DASHBOARD =====
+// Dashboard panen tracking + pohon per kebun (27 Jun 2026)
+function renderDashPanenSummary() {
+  const c = document.getElementById('dash-panen-summary'); if (!c) return;
+  const PD = (typeof PANEN_DATA !== 'undefined') ? PANEN_DATA : [];
+  const cherry = PD.reduce((s,e)=>s+(e.cherry_kg||0),0);
+  const peng = PD.reduce((s,e)=>s+(e.pengapung_kg||0),0);
+  const good = Math.max(0, cherry - peng);
+  const driedPool = (typeof getDriedPool==='function') ? Object.values(getDriedPool()).reduce((s,v)=>s+(v||0),0) : 0;
+  const gb = (typeof getGbInventory==='function') ? Object.values(getGbInventory()).reduce((s,v)=>s+(v||0),0) : 0;
+  const revenue = (typeof PANEN_LOTS_DATA!=='undefined') ? PANEN_LOTS_DATA.filter(l=>l.type==='jual_event').reduce((s,l)=>s+(l.revenue||0),0) : 0;
+  const days = new Set(PD.map(e=>e.tgl)).size;
+  const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+  const kg = n => (n||0).toFixed(1);
+  const pb = (typeof POHON_BASELINE!=='undefined') ? POHON_BASELINE : {perBidang:[0,0,0,0], baseline2023_kopi:[0,0,0,0]};
+  const est = pb.perBidang||[0,0,0,0], srv = pb.baseline2023_kopi||[0,0,0,0];
+  const estTot = est.reduce((s,v)=>s+v,0), srvTot = srv.reduce((s,v)=>s+v,0);
+  const chip = (lbl,val,col) => `<div style="background:#fff;border:1px solid #e8e3d8;border-radius:8px;padding:7px 12px;min-width:84px"><div style="font-size:9px;color:var(--mute);text-transform:uppercase;letter-spacing:.3px">${lbl}</div><div style="font-size:17px;font-weight:800;color:${col}">${val}</div></div>`;
+  c.innerHTML = `
+    <div style="font-size:11px;color:var(--mute);font-weight:700;margin-bottom:6px">🍒 PANEN SIKLUS 2026 (akumulasi)</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      ${chip('Cherry kotor', kg(cherry)+' kg', '#c14b3a')}
+      ${chip('Good (jual)', kg(good)+' kg', '#16a34a')}
+      ${chip('Dried storage', kg(driedPool)+' kg', '#7a5c2e')}
+      ${chip('Green Bean', kg(gb)+' kg', '#7e22ce')}
+      ${chip('Revenue', rp(revenue), '#15803d')}
+      ${chip('Hari panen', String(days), '#2E5C4F')}
+    </div>
+    <div style="font-size:11px;color:var(--mute);font-weight:700;margin-bottom:6px">🌳 JUMLAH POHON KOPI PER KEBUN</div>
+    <div class="table-wrap"><table style="width:100%;font-size:11.5px;border-collapse:collapse;max-width:440px">
+      <thead><tr style="background:var(--earth);color:#fff"><th style="text-align:left;padding:5px 8px">Kebun</th><th style="text-align:right">Survei Okt 2023</th><th style="text-align:right">Estimasi kini</th></tr></thead>
+      <tbody>
+        ${['K1','K2','K3','K4'].map((k,i)=>`<tr style="border-bottom:1px solid #efe9dd"><td style="padding:5px 8px;font-weight:700">${k}</td><td style="text-align:right;color:var(--mute)">${srv[i]||0}</td><td style="text-align:right;font-weight:700">${est[i]||0}</td></tr>`).join('')}
+        <tr style="background:#FAFCFB;font-weight:800;border-top:2px solid #e0d9c8"><td style="padding:5px 8px">TOTAL</td><td style="text-align:right;color:var(--mute)">${srvTot}</td><td style="text-align:right">${estTot}</td></tr>
+      </tbody>
+    </table></div>
+    <div style="font-size:9.5px;color:var(--mute);margin-top:5px;font-style:italic">Survei Okt 2023 = census locked · Estimasi kini = decay-adjusted Mei 2026 · census ulang in-progress (aktual 28 Mei: K2 490 · K3 350)</div>`;
+}
+
 function renderDashboard() {
   const data = STATE.laporan;
   // Total laporan 30 hari terakhir
@@ -3586,6 +3630,8 @@ function renderDashboard() {
   } else {
     document.getElementById('kpi-budget').textContent = '—';
   }
+  // 27 Jun 2026: panen tracking + pohon per kebun di bawah Burn Rate
+  if (typeof renderDashPanenSummary === 'function') renderDashPanenSummary();
 
   // Auto-update KPI trends "Belum ada data" → real metrics
   // Note: kpi-compliance-trend sudah di-set di block compliance di atas (locked 17 Mei 2026).
@@ -15946,8 +15992,10 @@ function autoCreateUpahFromEntry(entry, firestoreUpahMap = null) {
 // active:false permanent. Token preserved untuk backfill historis entries 1-18 Mei 2026.
 // ⭐ 9 Juni 2026 (Task C2 carryover): WAKIF/Adib added — Wakif + PIC eksekusi belajar lapangan
 const WORKER_DEFS = [
-  { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: true },
-  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon + PIC Pupuk', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: true },
+  { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon (OUT 22 Jun 2026)', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: false, transition_note: 'OUT permanen 22 Jun 2026 — diganti Pak Yasir. Preserved untuk backfill historis.' },
+  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon (OUT 22 Jun 2026)', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: false, transition_note: 'OUT permanen 22 Jun 2026 — diganti Mas Kamto. Preserved untuk backfill historis.' },
+  { token: 'YASIR', nama: 'Pak Yasir', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: true, note: 'Pengganti Pak Kumpul sejak 22 Jun 2026 (dibawa Mbah Mul).' },
+  { token: 'KAMTO', nama: 'Mas Kamto', role: 'Pekerja Atas Pohon + PIC Pupuk', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: true, note: 'Pengganti Cak Yit sejak 22 Jun 2026 (dibawa Pak Dhe Mujiono).' },
   { token: 'WAKIF', nama: 'Adib (Wakif)', role: 'Wakif + PIC Eksekusi (Belajar Lapangan)', icon: '🌱👤', color: '#2E5C4F', tarif_label: 'Sweat-Equity Wakif (tidak masuk timeline upah)', active: true, note: 'Token WAKIF (alias_of:ADIB di PIC_REGISTRY). Entry via dashboard Form Input — no PWA URL needed.' },
   { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan (OUT permanen)', icon: '👷', color: '#9CA3AF', tarif_label: 'Sweat Equity (OUT 19 Mei 2026)', active: false, transition_note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026' }
 ];
@@ -16008,7 +16056,7 @@ const WORKER_DEFS_CUSTOM_LS_KEY = 'wkkn_worker_defs_custom';
 
 function saveCustomWorkerDefsToLS() {
   // Filter WORKER_DEFS untuk dapat custom only (skip default 3: KUMPUL, YIT, ANTO)
-  const defaultTokens = ['KUMPUL', 'YIT', 'ANTO'];
+  const defaultTokens = ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'WAKIF'];
   const customList = WORKER_DEFS.filter(w => !defaultTokens.includes(w.token));
   try { localStorage.setItem(WORKER_DEFS_CUSTOM_LS_KEY, JSON.stringify(customList)); } catch(e) {}
 }
