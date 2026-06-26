@@ -245,7 +245,7 @@
   .field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .total-preview{background:var(--greenlt);padding:10px 12px;border-radius:8px;text-align:center;font-size:13px;color:var(--green);margin-top:6px}
   .total-preview strong{font-size:18px;color:var(--earth)}
-.freeze-tbl{max-height:440px;overflow:auto}.freeze-tbl thead th{position:sticky;top:0;z-index:2;background:var(--cream);box-shadow:0 1px 0 #ddd}
+.freeze-tbl{max-height:440px;overflow:auto}.freeze-tbl thead th{position:sticky;top:0;z-index:2;background:var(--earth);color:#fff;box-shadow:0 1px 0 #ddd}
 </style>
 </head>
 <body>
@@ -7437,18 +7437,14 @@ function renderPanenKPI() {
   const days = new Set(PANEN_DATA.map(e => e.tgl)).size;
   const totalPohon = PANEN_DATA.reduce((s, e) => s + (e.pohon || 0), 0);
   const avgYield = totalPohon > 0 ? (cumulative / totalPohon).toFixed(2) : '—';
-  // Weighted avg % merah
-  const totalCherryWithKomp = PANEN_DATA.reduce((s, e) => s + e.cherry_kg, 0);
-  const weightedMerah = PANEN_DATA.reduce((s, e) => s + (e.cherry_kg * (e.komposisi?.merah || 0)), 0);
-  const avgMerah = totalCherryWithKomp > 0 ? Math.round(weightedMerah / totalCherryWithKomp) + '%' : '—';
-  // Green Bean Ready: sum dari lot child stage 'green_bean' atau 'sold' + legacy entry green_bean_kg
-  const greenBeanFromLots = PANEN_LOTS_DATA
-    .filter(l => l.stage === 'green_bean' || l.stage === 'sold')
-    .reduce((s, l) => s + (l.kg_green_bean_aktual || 0), 0);
-  const greenBeanFromLegacy = PANEN_DATA
-    .filter(e => !e.has_split && (e.processing_stage === 'green_bean' || e.processing_stage === 'lot_ready'))
-    .reduce((s, e) => s + (e.green_bean_kg || 0), 0);
-  const greenBeanReady = greenBeanFromLots + greenBeanFromLegacy;
+  // Avg % Merah (26 Jun 2026): dari split cherry RIIL (getCherryPerGrade merah-remainder), BUKAN placeholder komposisi 55/25/8/12
+  const _cpg = (typeof getCherryPerGrade === 'function') ? getCherryPerGrade() : {};
+  const _cpgTot = Object.values(_cpg).reduce((s, v) => s + (v || 0), 0);
+  const avgMerah = _cpgTot > 0 ? Math.round((_cpg.merah || 0) / _cpgTot * 100) + '%' : '—';
+  // Green Bean Ready (26 Jun 2026): dari POOL getGbInventory() (sum giling - sum jual), BUKAN per-lot stage lama (stale -> baca 0,03)
+  const greenBeanReady = (typeof getGbInventory === 'function')
+    ? Object.values(getGbInventory()).reduce((s, v) => s + (v || 0), 0)
+    : 0;
 
   const el = (id) => document.getElementById(id);
   if (el('panen-cumulative-kg')) el('panen-cumulative-kg').textContent = cumulative.toFixed(1);
@@ -7563,12 +7559,19 @@ function renderPanenKebunChart() {
 
 // Fase pipeline-matrix (26 Jun 2026): cherry per warna = sortir lots (M/K/H/Hitam) + pengapung batch (mengambang)
 function getCherryPerGrade() {
+  // Model konfirmasi Wakif 26 Jun 2026: panen ditimbang SEBELUM sortasi air (berat aktual, tak kecampur air cuci).
+  // Cherry tenggelam (good, semua warna) = Total Panen - Mengambang. Petik selektif -> sisa stlh kuning/hijau/hitam = MERAH.
   const c = {}; DRIED_GRADES.forEach(g => c[g] = 0);
+  // kuning/hijau/hitam: dari sortir lot eksplisit (merah & mengambang dihitung terpisah di bawah)
   PANEN_LOTS_DATA.forEach(l => {
-    if (l.type === 'jemur_event' || l.type === 'giling_event') return;  // skip event markers
-    if (c[l.grade] != null) c[l.grade] += (l.kg_sortir_awal || 0);
+    if (l.type) return;  // skip event markers (jemur/giling/jual)
+    if (l.grade !== 'merah' && l.grade !== 'mengambang' && c[l.grade] != null) c[l.grade] += (l.kg_sortir_awal || 0);
   });
-  if (typeof PANEN_DATA !== 'undefined') PANEN_DATA.forEach(e => { c.mengambang += (e.pengapung_kg || 0); });
+  // total panen + mengambang (floater) dari panen_data (pengapung_kg ditulis submitForm + sortir form)
+  let totalPanen = 0;
+  if (typeof PANEN_DATA !== 'undefined') PANEN_DATA.forEach(e => { totalPanen += (e.cherry_kg || 0); c.mengambang += (e.pengapung_kg || 0); });
+  // merah = (total panen - mengambang) - kuning - hijau - hitam  [tenggelam minus warna lain; unsorted ~ merah]
+  c.merah = Math.max(0, totalPanen - c.mengambang - c.kuning - c.hijau - c.hitam);
   return c;
 }
 
@@ -7604,7 +7607,7 @@ function renderPanenPipelineFunnel() {
         <th style="text-align:left;min-width:118px">Tahap</th>${gradeHead}<th style="text-align:right;${bl}">TOTAL</th>
       </tr></thead>
       <tbody>
-        <tr style="border-top:2px solid #e8e3d8;background:#FFFCF9"><td style="text-align:left;font-weight:800;color:#c14b3a;padding:8px 4px">🍒 Cherry basah<br><span style="font-size:8.5px;color:var(--mute);font-weight:400">aktual · dari Sortir</span></td>${cells(cherry)}<td style="text-align:right;font-weight:800;${bl}">${fmt(sum(cherry))}</td></tr>
+        <tr style="border-top:2px solid #e8e3d8;background:#FFFCF9"><td style="text-align:left;font-weight:800;color:#c14b3a;padding:8px 4px">🍒 Cherry basah<br><span style="font-size:8.5px;color:var(--mute);font-weight:400">aktual · Panen−ngambang</span></td>${cells(cherry)}<td style="text-align:right;font-weight:800;${bl}">${fmt(sum(cherry))}</td></tr>
         <tr><td style="text-align:left;color:var(--mute);padding:5px 4px 5px 10px">🌰 Dried · est <span style="font-size:8.5px">×0,44</span></td>${cells(g => `<span style="color:var(--mute)">${fmt(cherry[g] * R_CD)}</span>`)}<td style="text-align:right;color:var(--mute);${bl}">${fmt(sum(cherry) * R_CD)}</td></tr>
         <tr><td style="text-align:left;font-weight:700;color:#7a5c2e;padding-left:10px">🌰 Dried · <strong>aktual</strong></td>${cells(g => `<strong style="color:#7a5c2e">${fmt(driedAct[g])}</strong>`)}<td style="text-align:right;font-weight:800;color:#7a5c2e;${bl}">${fmt(sum(driedAct))}</td></tr>
         <tr style="border-bottom:1px solid #eee"><td style="text-align:left;font-size:9.5px;color:var(--mute);padding:3px 4px 7px 10px">Δ vs est</td>${cells(g => dCell(driedAct[g], cherry[g] * R_CD))}<td style="${bl}"></td></tr>
