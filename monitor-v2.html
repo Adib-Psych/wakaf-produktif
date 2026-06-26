@@ -1303,6 +1303,10 @@
             <label class="field-lbl">Pekerja Panen <span style="font-size:9px;color:var(--mute)">(buat hitung upah per KG nanti)</span></label>
             <select id="panen-pekerja"><option value="">— pilih pekerja —</option></select>
           </div>
+          <div class="field">
+            <label class="field-lbl">💧 Kadar Air % <span style="font-size:9px;color:var(--mute)">(opsional)</span></label>
+            <input type="number" id="panen-cherry-mc" step="0.1" min="0" max="100" placeholder="cth: 60">
+          </div>
           <!-- Komposisi maturasi (% perkiraan) DIHAPUS 24 Mei 2026 per request Wakif.
                Reason: estimasi ngga reliable, jadi noise. Actual % per varian akan muncul
                di Section "Processing Pipeline" hasil sortir 4-warna real (Stage 3).
@@ -1369,11 +1373,11 @@
               </div>
               <div style="padding:10px 12px;background:#FEF2F2;border:2px solid #ef4444;border-radius:8px">
                 <div style="font-weight:800;color:#b91c1c;font-size:11.5px;margin-bottom:4px">🟥 Merah (kg)</div>
-                <input type="number" id="sortir5-merah" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #ef4444;border-radius:5px;background:#fff">
-                <div style="font-size:9.5px;color:#b91c1c;font-style:italic;margin-top:3px">Ripe → Bonsari/Nomad</div>
+                <input type="number" id="sortir5-merah" readonly placeholder="auto" title="Merah = sisa otomatis: cherry mentah − mengambang − kuning − hijau − hitam" style="width:100%;font-size:14px;font-weight:800;padding:6px 8px;border:1px solid #ef4444;border-radius:5px;background:#fff5f5;color:#b91c1c;cursor:not-allowed">
+                <div style="font-size:9.5px;color:#b91c1c;font-style:italic;margin-top:3px">= sisa otomatis · Ripe → Bonsari/Nomad</div>
               </div>
               <div style="padding:10px 12px;background:#FFFBEB;border:2px solid #d4a017;border-radius:8px">
-                <div style="font-weight:800;color:#a16207;font-size:11.5px;margin-bottom:4px">🟨 Kuning (kg)</div>
+                <div style="font-weight:800;color:#a16207;font-size:11.5px;margin-bottom:4px">🟨 Kuning (kg) <span style="font-weight:400;font-size:9px">opsional</span></div>
                 <input type="number" id="sortir5-kuning" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #d4a017;border-radius:5px;background:#fff">
                 <div style="font-size:9.5px;color:#a16207;font-style:italic;margin-top:3px">Transisi → commercial</div>
               </div>
@@ -1383,7 +1387,7 @@
                 <div style="font-size:9.5px;color:#15803d;font-style:italic;margin-top:3px">Unripe → pengepul C</div>
               </div>
               <div style="padding:10px 12px;background:#F4F4F5;border:2px solid #78716c;border-radius:8px">
-                <div style="font-weight:800;color:#3f3f46;font-size:11.5px;margin-bottom:4px">⬛ Hitam (kg)</div>
+                <div style="font-weight:800;color:#3f3f46;font-size:11.5px;margin-bottom:4px">⬛ Hitam (kg) <span style="font-weight:400;font-size:9px">opsional</span></div>
                 <input type="number" id="sortir5-hitam" step="0.01" min="0" placeholder="0.0" oninput="updateSortir5Total()" style="width:100%;font-size:14px;font-weight:700;padding:6px 8px;border:1px solid #78716c;border-radius:5px;background:#fff">
                 <div style="font-size:9.5px;color:#3f3f46;font-style:italic;margin-top:3px">Overripe → natural/C</div>
               </div>
@@ -6868,6 +6872,7 @@ function resetPanenForm() {
   document.getElementById('panen-tgl').value = todayIso();
   document.getElementById('panen-cherry-kg').value = '';
   { const _pp=document.getElementById('panen-pekerja'); if(_pp) _pp.value=''; }
+  { const _mc=document.getElementById('panen-cherry-mc'); if(_mc) _mc.value=''; }
   document.getElementById('panen-pct-merah').value = 55;
   document.getElementById('panen-pct-kuning').value = 25;
   document.getElementById('panen-pct-hijau').value = 12;
@@ -6884,6 +6889,7 @@ function submitPanenEntry() {
   const pohon = null;  // field pohon dihapus 26 Jun 2026 — produktivitas/pohon dari Sampling Card 5
   const pekerjaToken = document.getElementById('panen-pekerja') ? (document.getElementById('panen-pekerja').value || null) : null;
   const pekerjaNama = pekerjaToken ? (((typeof WORKER_DEFS!=='undefined' && WORKER_DEFS.find(w=>w.token===pekerjaToken)) || {}).nama || pekerjaToken) : null;
+  const cherry_mc = parseFloat(document.getElementById('panen-cherry-mc') ? document.getElementById('panen-cherry-mc').value : '') || null;
   const context = document.querySelector('#panen-context .on')?.dataset.val;
   const cuaca = document.querySelector('#panen-cuaca .on')?.dataset.val || null;
   const catatan = document.getElementById('panen-catatan').value.trim();
@@ -6918,6 +6924,7 @@ function submitPanenEntry() {
     pohon,
     pekerja: pekerjaToken,
     pekerja_nama: pekerjaNama,
+    cherry_mc,
     komposisi: { merah: k_merah, kuning: k_kuning, hijau: k_hijau, hitam: k_hitam },
     context,
     cuaca,
@@ -7159,45 +7166,34 @@ function loadBatchForSortir5(batchId) {
 }
 
 function updateSortir5Total() {
+  // Fase 2 (26 Jun 2026): Merah = SISA otomatis (cherry mentah − mengambang − kuning − hijau − hitam)
   const meng = parseFloat(document.getElementById('sortir5-mengambang')?.value) || 0;
-  const m = parseFloat(document.getElementById('sortir5-merah')?.value) || 0;
   const k = parseFloat(document.getElementById('sortir5-kuning')?.value) || 0;
   const h = parseFloat(document.getElementById('sortir5-hijau')?.value) || 0;
   const b = parseFloat(document.getElementById('sortir5-hitam')?.value) || 0;
-  const total = meng + m + k + h + b;
-  const targetText = document.getElementById('sortir5-target-mentah')?.textContent || '—';
-  const target = parseFloat(targetText) || 0;
+  const target = parseFloat(document.getElementById('sortir5-target-mentah')?.textContent) || 0;
+  const merahEl = document.getElementById('sortir5-merah');
+  const merah = target > 0 ? (target - meng - k - h - b) : 0;
+  if (merahEl) merahEl.value = target > 0 ? merah.toFixed(2) : '';
   const totalEl = document.getElementById('sortir5-total');
   const diffEl = document.getElementById('sortir5-diff');
   const msgEl = document.getElementById('sortir5-validation-msg');
   const containerEl = document.getElementById('sortir5-mass-balance');
-  if (totalEl) totalEl.textContent = total.toFixed(2);
-  if (!target || target === 0) {
-    if (diffEl) diffEl.textContent = '—';
+  if (totalEl) totalEl.textContent = (target > 0 ? target : (meng + k + h + b)).toFixed(2);
+  if (!target) {
+    if (diffEl) diffEl.textContent = 'pilih batch dulu';
     if (msgEl) msgEl.innerHTML = '';
     if (containerEl) { containerEl.style.borderColor = 'var(--moss)'; containerEl.style.background = '#FAFCFB'; }
     return;
   }
-  const diff = total - target;
-  const pctDiff = (diff / target) * 100;
-  if (diffEl) diffEl.innerHTML = `${diff >= 0 ? '+' : ''}${diff.toFixed(2)} kg (${pctDiff >= 0 ? '+' : ''}${pctDiff.toFixed(1)}%)`;
+  if (diffEl) diffEl.innerHTML = `mengambang+kuning+hijau+hitam = <strong>${(meng + k + h + b).toFixed(2)}</strong> kg`;
   if (msgEl && containerEl) {
-    if (total === 0) {
-      msgEl.innerHTML = '';
-      containerEl.style.borderColor = 'var(--moss)';
-      containerEl.style.background = '#FAFCFB';
-    } else if (Math.abs(pctDiff) <= 5) {
-      msgEl.innerHTML = '<span style="color:#15803d">✓ Match!</span>';
-      containerEl.style.borderColor = '#16a34a';
-      containerEl.style.background = '#F0FDF4';
-    } else if (Math.abs(pctDiff) <= 15) {
-      msgEl.innerHTML = '<span style="color:#a16207">⚠ Off > 5%</span>';
-      containerEl.style.borderColor = '#d4a017';
-      containerEl.style.background = '#FFFBEB';
+    if (merah < -0.01) {
+      msgEl.innerHTML = '<span style="color:#dc2626">⚠ Varian lain > cherry mentah → merah negatif! Cek timbangan.</span>';
+      containerEl.style.borderColor = '#dc2626'; containerEl.style.background = '#FEF2F2';
     } else {
-      msgEl.innerHTML = '<span style="color:#dc2626">⚠ Off > 15% — recheck timbangan</span>';
-      containerEl.style.borderColor = '#dc2626';
-      containerEl.style.background = '#FEF2F2';
+      msgEl.innerHTML = `<span style="color:#15803d">✓ 🟥 Merah (sisa) = <strong>${merah.toFixed(2)} kg</strong></span>`;
+      containerEl.style.borderColor = '#16a34a'; containerEl.style.background = '#F0FDF4';
     }
   }
 }
@@ -7221,18 +7217,17 @@ function submitSortir5Warna() {
   if (!batch) { alert('Batch tidak ditemukan: ' + batchId); return; }
 
   const meng = parseFloat(document.getElementById('sortir5-mengambang').value) || 0;
-  const m = parseFloat(document.getElementById('sortir5-merah').value) || 0;
   const k = parseFloat(document.getElementById('sortir5-kuning').value) || 0;
   const h = parseFloat(document.getElementById('sortir5-hijau').value) || 0;
   const b = parseFloat(document.getElementById('sortir5-hitam').value) || 0;
-  const total = meng + m + k + h + b;
   const target = batch.cherry_kg;
-  const pctDiff = target > 0 ? Math.abs((total - target) / target) * 100 : 0;
+  const m = parseFloat((target - meng - k - h - b).toFixed(2));  // Fase 2: Merah = sisa otomatis
+  const total = meng + m + k + h + b;
 
-  if (total === 0) { alert('Input minimal 1 varian (kg > 0).'); return; }
-  if (pctDiff > 15) {
-    if (!confirm(`Total 5-varian (${total.toFixed(2)} kg) berbeda > 15% dari cherry mentah (${target.toFixed(2)} kg).\n\nDiff: ${(total - target).toFixed(2)} kg (${pctDiff.toFixed(1)}% off)\n\nTetap submit?`)) return;
-  }
+  if (m < -0.01) { alert(`Varian lain (mengambang+kuning+hijau+hitam = ${(meng + k + h + b).toFixed(2)} kg) melebihi cherry mentah (${target.toFixed(2)} kg) → merah negatif. Cek timbangan.`); return; }
+  // edge: mengambang & hijau "wajib" → soft-confirm kalau 0
+  if (meng === 0) { if (!confirm('🌀 Mengambang 0 kg? Biasanya selalu ada ceri ngambang saat sortir air. Tetap submit?')) return; }
+  if (h === 0) { if (!confirm('🟩 Hijau 0 kg? Biasanya ada ceri muda kebawa. Tetap submit?')) return; }
 
   // Update parent batch
   batch.pengapung_kg = meng;
