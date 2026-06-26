@@ -9147,7 +9147,7 @@ function submitGilingEvent() {
 
 function renderPanenLotsKPI() {
   const el = (id) => document.getElementById(id);
-  const realLots = PANEN_LOTS_DATA.filter(l => l.type !== 'jemur_event' && l.type !== 'giling_event');  // Fase 3c: exclude event markers
+  const realLots = PANEN_LOTS_DATA.filter(l => !l.type);  // sortir lots only (auto-exclude semua event marker)
   const total = realLots.length;
   const merahKg = realLots.filter(l => l.grade === 'merah').reduce((s, l) => s + (l.kg_sortir_awal||0), 0);
   const soldLots = PANEN_LOTS_DATA.filter(l => l.type === 'jual_event');  // Catat Jual pool-based (26 Jun): KPI "Sold" = transaksi jual
@@ -9164,7 +9164,7 @@ function renderPanenLotsTable() {
   // Apply filters
   const gradeFilter = document.querySelector('#panen-lot-filter-grade .on')?.dataset.val || 'all';
   const stageFilter = document.querySelector('#panen-lot-filter-stage .on')?.dataset.val || 'all';
-  let lots = PANEN_LOTS_DATA.filter(l => l.type !== 'jemur_event' && l.type !== 'giling_event');  // Fase 3c: exclude event markers (sortir lots only)
+  let lots = PANEN_LOTS_DATA.filter(l => !l.type);  // sortir lots only (event markers jemur/giling/jual punya .type — auto-exclude)
   if (gradeFilter !== 'all') lots = lots.filter(l => l.grade === gradeFilter);
   if (stageFilter === 'active') lots = lots.filter(l => l.stage !== 'sold');
   else if (stageFilter === 'sold') lots = lots.filter(l => l.stage === 'sold');
