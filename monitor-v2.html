@@ -1479,7 +1479,7 @@
         <!-- Lot KPI -->
         <div class="kpi-grid" id="panen-lot-kpi" style="margin-bottom:14px">
           <div class="kpi"><div class="kpi-num" id="panen-lot-total">0</div><div class="kpi-lbl">📦 Total Lot</div></div>
-          <div class="kpi"><div class="kpi-num" id="panen-lot-merah-kg">—</div><div class="kpi-lbl">🟥 Merah (kg sortir)</div></div>
+          <div class="kpi"><div class="kpi-num" id="panen-lot-merah-kg">—</div><div class="kpi-lbl">🟥 Merah (kg cherry)</div></div>
           <div class="kpi"><div class="kpi-num" id="panen-lot-sold-count">0</div><div class="kpi-lbl">💰 Lot Sold</div></div>
           <div class="kpi"><div class="kpi-num" id="panen-lot-revenue">Rp 0</div><div class="kpi-lbl">💵 Total Revenue Aktual</div></div>
         </div>
@@ -9147,7 +9147,7 @@ function renderPanenLotsKPI() {
   const el = (id) => document.getElementById(id);
   const realLots = PANEN_LOTS_DATA.filter(l => !l.type);  // sortir lots only (auto-exclude semua event marker)
   const total = realLots.length;
-  const merahKg = realLots.filter(l => l.grade === 'merah').reduce((s, l) => s + (l.kg_sortir_awal||0), 0);
+  const merahKg = (typeof getCherryPerGrade === 'function') ? (getCherryPerGrade().merah || 0) : realLots.filter(l => l.grade === 'merah').reduce((s, l) => s + (l.kg_sortir_awal||0), 0);  // 26 Jun: reconciled (Panen-ngambang-warna lain), konsisten matrix Card 3
   const soldLots = PANEN_LOTS_DATA.filter(l => l.type === 'jual_event');  // Catat Jual pool-based (26 Jun): KPI "Sold" = transaksi jual
   const totalRevenue = soldLots.reduce((s, l) => s + (l.revenue || 0), 0);
   if (el('panen-lot-total')) el('panen-lot-total').textContent = total;
