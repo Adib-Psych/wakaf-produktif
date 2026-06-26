@@ -7742,12 +7742,21 @@ function renderPanenBatchTable() {
     const kebunDisplay = e.kebun.includes('mixed') ? '🔀 Campuran' : e.kebun.map(k => 'K'+k).join(' · ');
     // Fase 2 (25 Jun 2026, ADR-025): tampilkan SORTIR AKTUAL dari lot child, BUKAN komposisi% placeholder palsu (55/25/12/8).
     let kompDisplay;
-    const myLots = PANEN_LOTS_DATA.filter(l => l.parent_batch_id === e.id);
-    if (myLots.length > 0) {
+    const myLots = PANEN_LOTS_DATA.filter(l => l.parent_batch_id === e.id && !l.type);
+    const _peng = e.pengapung_kg || 0;
+    const _isSorted = _peng > 0.001 || myLots.length > 0;
+    if (_isSorted) {
       const byGrade = {};
       myLots.forEach(l => { byGrade[l.grade] = (byGrade[l.grade] || 0) + (l.kg_sortir_awal || 0); });
       const cc = { merah:'#c14b3a', kuning:'#d4a017', hijau:'#16a34a', hitam:'#1c1917' };
-      kompDisplay = Object.keys(byGrade).map(g => `<span style="color:${cc[g]||'#888'};font-weight:700">${g.charAt(0).toUpperCase()+g.slice(1)} ${byGrade[g].toFixed(1)}</span>`).join(' · ');
+      // 26 Jun 2026: merah = lot eksplisit kalau ada, else SISA (cherry − ngambang − warna lain) — konsisten model remainder
+      const _nonMerah = (byGrade.kuning||0)+(byGrade.hijau||0)+(byGrade.hitam||0);
+      const _merah = (byGrade.merah > 0) ? byGrade.merah : Math.max(0, (e.cherry_kg||0) - _peng - _nonMerah);
+      const parts = [];
+      if (_merah > 0.01) parts.push(`<span style="color:#c14b3a;font-weight:700">Merah ${_merah.toFixed(1)}</span>`);
+      ['kuning','hijau','hitam'].forEach(g => { if ((byGrade[g]||0) > 0.01) parts.push(`<span style="color:${cc[g]};font-weight:700">${g.charAt(0).toUpperCase()+g.slice(1)} ${byGrade[g].toFixed(1)}</span>`); });
+      if (_peng > 0.01) parts.push(`<span style="color:#0891b2;font-weight:600" title="mengambang/floater">⚪${_peng.toFixed(1)}</span>`);
+      kompDisplay = parts.join(' · ');
     } else {
       kompDisplay = `<span style="color:var(--mute);font-style:italic">belum sortir</span>`;
     }
