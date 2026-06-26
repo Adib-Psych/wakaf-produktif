@@ -8846,7 +8846,7 @@ function renderPanenAnalytics() {
 // ============================================================
 const DRIED_GRADES = ['merah','kuning','hijau','hitam','mengambang'];  // Fase 3d: + mengambang (opsi B Adib — salvage lowest grade)
 function getDriedEvents() {
-  return PANEN_LOTS_DATA.filter(l => l.type === 'jemur_event' || l.type === 'giling_event');
+  return PANEN_LOTS_DATA.filter(l => l.type === 'jemur_event' || l.type === 'giling_event' || l.type === 'jual_event');
 }
 function getDriedPool() {
   const pool = {}; DRIED_GRADES.forEach(g => pool[g] = 0);
@@ -8888,6 +8888,7 @@ function renderPanenStorage() {
           <span style="font-size:10px;color:var(--mute)">total <strong>${totalDried.toFixed(1)} kg</strong> · ambang ≥${THRESH}</span>
           <button onclick="openJemurEventDialog()" class="btn btn-primary" style="background:#b45309;font-size:10.5px;padding:4px 10px">☀️ Catat Jemur</button>
           <button onclick="openGilingEventDialog()" class="btn btn-primary" style="background:#6d28d9;font-size:10.5px;padding:4px 10px">⚙️ Catat Giling</button>
+          <button onclick="openJualEventDialog()" class="btn btn-primary" style="background:#15803d;font-size:10.5px;padding:4px 10px">💰 Catat Jual</button>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">${cards}</div>
@@ -8968,16 +8969,24 @@ function renderDriedEventHistory() {
         ${del}
       </div>`;
     }
-    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 9px;border-bottom:1px solid #f0eee9;font-size:11px">
+    if (e.type === 'giling_event') return `<div style="display:flex;align-items:center;gap:8px;padding:5px 9px;border-bottom:1px solid #f0eee9;font-size:11px">
       <span style="font-size:10px;color:var(--mute);min-width:64px">${tglS}</span>
       <span style="min-width:72px">⚙️ Giling</span>
       <span style="font-weight:700;color:${grade.color};min-width:58px">${grade.label}</span>
       <span style="flex:1;color:#6d28d9;font-weight:600">−${(e.dried_pulled_kg||0).toFixed(1)} dried → ${(e.gb_out_kg||0).toFixed(1)} kg GB <span style="color:var(--mute);font-weight:400">(rdm ${e.rendemen?Math.round(e.rendemen*100):'?'}%)</span></span>
       ${del}
     </div>`;
+    // jual_event
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 9px;border-bottom:1px solid #f0eee9;font-size:11px">
+      <span style="font-size:10px;color:var(--mute);min-width:64px">${tglS}</span>
+      <span style="min-width:72px">💰 Jual</span>
+      <span style="font-weight:700;color:${grade.color};min-width:58px">${grade.label}</span>
+      <span style="flex:1;color:#15803d;font-weight:600">−${(e.gb_kg||0).toFixed(1)} kg GB → Rp ${(e.revenue||0).toLocaleString('id-ID')} <span style="color:var(--mute);font-weight:400">@${(e.price_per_kg||0).toLocaleString('id-ID')}/kg${e.buyer?' · '+e.buyer:''}</span></span>
+      ${del}
+    </div>`;
   }).join('');
   el.innerHTML = `<div style="margin-bottom:14px">
-    <div style="font-size:11px;font-weight:800;color:var(--earth);letter-spacing:.5px;margin-bottom:6px">📜 RIWAYAT JEMUR &amp; GILING</div>
+    <div style="font-size:11px;font-weight:800;color:var(--earth);letter-spacing:.5px;margin-bottom:6px">📜 RIWAYAT JEMUR · GILING · JUAL</div>
     <div style="border:1px solid #eee;border-radius:10px;overflow:hidden">${rows}</div>
   </div>`;
 }
@@ -8985,7 +8994,7 @@ function renderDriedEventHistory() {
 function deleteDriedEvent(id) {
   const e = PANEN_LOTS_DATA.find(l => l.id === id);
   if (!e) return;
-  const lbl = e.type === 'jemur_event' ? 'Jemur' : 'Giling';
+  const lbl = e.type === 'jemur_event' ? 'Jemur' : (e.type === 'jual_event' ? 'Jual' : 'Giling');
   if (!confirm(`Hapus event ${lbl} ${PANEN_GRADES[e.grade]?.label||e.grade} (${e.tgl})? Pool storage akan menyesuaikan.`)) return;
   PANEN_LOTS_DATA = PANEN_LOTS_DATA.filter(l => l.id !== id);
   savePanenLotsToLS();
@@ -9008,8 +9017,73 @@ function getGbInventory() {
   const inv = {}; DRIED_GRADES.forEach(g=>inv[g]=0);
   PANEN_LOTS_DATA.forEach(l => {
     if (l.type === 'giling_event' && inv[l.grade] != null) inv[l.grade] += (l.gb_out_kg || 0);
+    else if (l.type === 'jual_event' && inv[l.grade] != null) inv[l.grade] -= (l.gb_kg || 0);  // Catat Jual: GB keluar
   });
   return inv;
+}
+
+// Catat Jual (26 Jun 2026) — GB inventory keluar → revenue. Event type:'jual_event'.
+function openJualEventDialog() {
+  const ex = document.getElementById('jual-event-modal-overlay'); if (ex) ex.remove();
+  const inv = getGbInventory();
+  const gradeOpts = DRIED_GRADES.map(g => `<option value="${g}">${PANEN_GRADES[g].label} — stok GB ${inv[g].toFixed(1)} kg</option>`).join('');
+  const html = `
+  <div id="jual-event-modal-overlay" onclick="if(event.target.id==='jual-event-modal-overlay')this.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:center;justify-content:center;padding:20px">
+    <div style="background:#fff;border-radius:12px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+      <div style="padding:16px 20px;background:linear-gradient(135deg,#15803d,#166534);color:#fff;border-radius:12px 12px 0 0">
+        <div style="font-size:13px;font-weight:800">💰 CATAT JUAL — green bean keluar</div>
+        <div style="font-size:10.5px;color:#bbf7d0;margin-top:2px">GB inventory turun · revenue tercatat</div>
+      </div>
+      <div style="padding:18px 20px;display:grid;grid-template-columns:130px 1fr;gap:10px;align-items:center;font-size:12px">
+        <label style="font-weight:600">📅 Tanggal</label>
+        <input type="date" id="ju-tgl" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600">🎨 Warna</label>
+        <select id="ju-grade" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">${gradeOpts}</select>
+        <label style="font-weight:600;color:#15803d">📦 GB dijual (kg)</label>
+        <input type="text" inputmode="decimal" id="ju-kg" placeholder="cth 20 · koma=desimal" style="padding:6px 10px;border:1.5px solid #86c79c;border-radius:6px;font-size:12px;background:#f7fdf9">
+        <label style="font-weight:600">💵 Harga / kg (Rp)</label>
+        <input type="text" inputmode="numeric" id="ju-harga" placeholder="cth 62500" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600">🧑 Buyer</label>
+        <input type="text" id="ju-buyer" placeholder="cth Bonsari · Nomad · pengepul" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
+        <textarea id="ju-catatan" rows="2" placeholder="opsional" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
+      </div>
+      <div id="ju-preview" style="padding:0 20px 6px;font-size:11px;color:#15803d;font-weight:700;min-height:16px"></div>
+      <div style="display:flex;gap:8px;justify-content:flex-end;padding:6px 20px 18px">
+        <button onclick="document.getElementById('jual-event-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Batal</button>
+        <button onclick="submitJualEvent()" class="btn btn-primary" style="background:#15803d;font-size:12px;padding:7px 14px">✓ Simpan Jual</button>
+      </div>
+    </div>
+  </div>`;
+  document.body.insertAdjacentHTML('beforeend', html);
+  const upd = () => {
+    const kg = parseDecimalInput(document.getElementById('ju-kg').value) || 0;
+    const h = parseInt((document.getElementById('ju-harga').value||'').replace(/[^\d]/g,''),10) || 0;
+    const pv = document.getElementById('ju-preview'); if (pv) pv.textContent = (kg&&h) ? `Revenue: Rp ${(kg*h).toLocaleString('id-ID')}` : '';
+  };
+  ['ju-kg','ju-harga'].forEach(id => { const e=document.getElementById(id); if(e) e.oninput=upd; });
+  setTimeout(()=>{const el=document.getElementById('ju-kg');if(el)el.focus();},100);
+}
+
+function submitJualEvent() {
+  const tgl = document.getElementById('ju-tgl').value;
+  const grade = document.getElementById('ju-grade').value;
+  const kg = parseDecimalInput(document.getElementById('ju-kg').value);
+  const harga = parseInt((document.getElementById('ju-harga').value||'').replace(/[^\d]/g,''),10) || null;
+  const buyer = document.getElementById('ju-buyer').value.trim();
+  const catatan = document.getElementById('ju-catatan').value.trim();
+  if (!tgl) return alert('Tanggal wajib diisi');
+  if (!kg || kg <= 0) return alert('GB dijual (kg) harus angka > 0');
+  if (!harga || harga <= 0) return alert('Harga/kg wajib diisi');
+  const inv = getGbInventory();
+  if (kg > (inv[grade]||0) + 0.01) { if (!confirm(`⚠ Stok GB ${PANEN_GRADES[grade].label} cuma ${(inv[grade]||0).toFixed(1)} kg — jual ${kg} kg? (inventory bisa minus). Tetap simpan?`)) return; }
+  const revenue = Math.round(kg * harga);
+  const id = 'jual_' + tgl.replace(/-/g,'') + '_' + grade + '_' + Date.now().toString().slice(-6);
+  PANEN_LOTS_DATA.push({ id, type:'jual_event', grade, gb_kg:kg, price_per_kg:harga, revenue, buyer:buyer||null, tgl, catatan, created_at:new Date().toISOString(), schema_version:'3c' });
+  savePanenLotsToLS();
+  const ov = document.getElementById('jual-event-modal-overlay'); if (ov) ov.remove();
+  if (typeof showToast === 'function') showToast(`💰 Jual ${PANEN_GRADES[grade].label} ${kg} kg → Rp ${revenue.toLocaleString('id-ID')}`, 'success');
+  renderPanenLots();
 }
 
 // Catat Giling — tarik dried dari pool warna → GB out + rendemen auto
@@ -9076,8 +9150,8 @@ function renderPanenLotsKPI() {
   const realLots = PANEN_LOTS_DATA.filter(l => l.type !== 'jemur_event' && l.type !== 'giling_event');  // Fase 3c: exclude event markers
   const total = realLots.length;
   const merahKg = realLots.filter(l => l.grade === 'merah').reduce((s, l) => s + (l.kg_sortir_awal||0), 0);
-  const soldLots = realLots.filter(l => l.stage === 'sold');
-  const totalRevenue = soldLots.reduce((s, l) => s + (l.revenue_actual || 0), 0);
+  const soldLots = PANEN_LOTS_DATA.filter(l => l.type === 'jual_event');  // Catat Jual pool-based (26 Jun): KPI "Sold" = transaksi jual
+  const totalRevenue = soldLots.reduce((s, l) => s + (l.revenue || 0), 0);
   if (el('panen-lot-total')) el('panen-lot-total').textContent = total;
   if (el('panen-lot-merah-kg')) el('panen-lot-merah-kg').textContent = merahKg > 0 ? merahKg.toFixed(1) + ' kg' : '—';
   if (el('panen-lot-sold-count')) el('panen-lot-sold-count').textContent = soldLots.length;
