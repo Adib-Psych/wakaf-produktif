@@ -16182,8 +16182,8 @@ function populatePelaporSelects() {
     if (!select) return;
     const currentValue = select.value;
     const semuaOpt = `<option value="">${semuaLabel}</option>`;
-    const workerOpts = WORKER_DEFS.filter(w => w.active).map(w =>
-      `<option value="${w.token}">${w.nama}</option>`).join('');
+    const workerOpts = WORKER_DEFS.filter(w => w.active && w.token !== 'WAKIF').map(w =>
+      `<option value="${w.token}">${w.nama}</option>`).join('');  // 27 Jun: exclude WAKIF (ditambah via wakifOpt, hormati includeWakif) — fix dobel
     const wakifOpt = includeWakif ? '<option value="WAKIF">Adib (Wakif)</option>' : '';
     select.innerHTML = semuaOpt + workerOpts + wakifOpt;
     // Restore selected value kalau masih valid
