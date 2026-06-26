@@ -1435,6 +1435,7 @@
               <tr>
                 <th>Tgl</th>
                 <th>Kebun</th>
+                <th>Pekerja</th>
                 <th style="text-align:right">Cherry (kg)</th>
                 <th style="text-align:right">Sortir Aktual (kg)</th>
                 <th>Context</th>
@@ -7729,7 +7730,7 @@ function renderPanenBatchTable() {
   const tbody = document.getElementById('panen-batch-tbody');
   if (!tbody) return;
   if (PANEN_DATA.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--mute)">
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--mute)">
       <div style="font-size:24px;margin-bottom:6px">☕</div>
       <div style="font-weight:700;color:var(--earth)">Belum ada panen ter-catat</div>
       <div style="font-size:11px;margin-top:4px">Submit panen pertama via form di atas</div>
@@ -7782,6 +7783,7 @@ function renderPanenBatchTable() {
     return `<tr>
       <td style="white-space:nowrap">${formatTglShort ? formatTglShort(e.tgl) : e.tgl}</td>
       <td style="font-size:10.5px">${kebunDisplay}</td>
+      <td style="font-size:10px;font-weight:600">${e.pekerja_nama || e.pekerja || '<span style="color:var(--mute)">—</span>'}</td>
       <td style="text-align:right;font-weight:700">${e.cherry_kg.toFixed(1)}</td>
       <td style="text-align:right;font-size:10px">${kompDisplay}</td>
       <td style="font-size:10px">${ctxLabel}</td>
