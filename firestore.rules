@@ -1,6 +1,8 @@
 // ============================================================
 // Firestore Security Rules — Wakaf Ngantang
 // Updated 17 Mei 2026 — Phase 1 production rules
+// REV 26 Jun 2026: + worker baru YASIR/KAMTO/HARNI/MAKMIS ke allowlist laporan (create+update) + workers.
+//   Casus: laporan Mak Mis(MAKMIS)/Mba Harmi(HARNI) ditolak ("sync 0") krn pelapor tak ada di allowlist lama.
 //
 // DEPLOY: Paste isi file ini ke Firebase Console:
 //   Firebase Console → Build → Firestore Database → Rules tab → Edit
@@ -35,7 +37,7 @@ service cloud.firestore {
       // CREATE: validasi minimal — mencegah spam + struktur baseline.
       allow create: if
         // Worker valid (atau Wakif via monitor-v2 dengan pelapor='WAKIF')
-        request.resource.data.pelapor in ['KUMPUL', 'YIT', 'ANTO', 'WAKIF', 'ADIB']
+        request.resource.data.pelapor in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS', 'WAKIF', 'ADIB']
         // Wajib ada tanggal entry
         && request.resource.data.tanggal is string
         // Wajib ada kategori aktivitas
@@ -52,7 +54,7 @@ service cloud.firestore {
       // Validation: pelapor tetap di allowed list + tanggal masih string.
       // Phase 2 (post-Firebase-Auth): tighten ke Wakif role-only via custom claims.
       allow update: if
-        request.resource.data.pelapor in ['KUMPUL', 'YIT', 'ANTO', 'WAKIF', 'ADIB']
+        request.resource.data.pelapor in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS', 'WAKIF', 'ADIB']
         && request.resource.data.tanggal is string
         && request.resource.size() < 900000;
 
@@ -69,7 +71,7 @@ service cloud.firestore {
 
       // CREATE/UPDATE: hanya kalau workerId match pelapor valid
       allow create, update: if
-        workerId in ['KUMPUL', 'YIT', 'ANTO']
+        workerId in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS']
         && request.resource.data.last_active is string;
 
       // DELETE: locked
