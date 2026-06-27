@@ -9082,9 +9082,17 @@ function jemurDaysElapsed(ev) {
 }
 
 // Catat Jemur — 2-fase (Mulai drying → Selesai kering→pool) + link batch + tracking durasi
+// total cherry SISA (belum dijemur, semua warna) per batch
+function getBatchRemainingKg(b) {
+  let sum = 0; DRIED_GRADES.forEach(g => { if (!jemurUsedBatchIds(g).has(b.id)) sum += getBatchGradeKg(b, g); }); return sum;
+}
+function getBatchRemainingBreakdown(b) {
+  const out = {}; DRIED_GRADES.forEach(g => { if (!jemurUsedBatchIds(g).has(b.id)) { const k = getBatchGradeKg(b,g); if (k>0.01) out[g]=k; } }); return out;
+}
+
 function openJemurEventDialog() {
   const ex = document.getElementById('jemur-event-modal-overlay'); if (ex) ex.remove();
-  const gradeOpts = DRIED_GRADES.map((g,idx) => `<option value="${g}"${idx===0?' selected':''}>${PANEN_GRADES[g].label}</option>`).join('');
+  const gradeOpts = '<option value="ALL" selected>🌈 Semua warna (auto pisah per grup)</option>' + DRIED_GRADES.map(g => `<option value="${g}">${PANEN_GRADES[g].label}</option>`).join('');
   const html = `
   <div id="jemur-event-modal-overlay" onclick="if(event.target.id==='jemur-event-modal-overlay')this.remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:center;justify-content:center;padding:20px">
     <div style="background:#fff;border-radius:12px;max-width:560px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)">
@@ -9150,21 +9158,27 @@ function setJemurMode(mode) {
 function refreshJemurBatchPicker() {
   const el = document.getElementById('je-batch-picker'); if (!el) return;
   const grade = document.getElementById('je-grade').value;
-  const used = jemurUsedBatchIds(grade);
+  const isAll = grade === 'ALL';
+  const used = isAll ? null : jemurUsedBatchIds(grade);
   const PD = (typeof PANEN_DATA!=='undefined') ? PANEN_DATA : [];
-  const batches = PD.filter(b => !b.jemur_archived && !used.has(b.id) && getBatchGradeKg(b, grade) > 0.01).sort((a,b)=>(a.tgl||'').localeCompare(b.tgl||''));
+  const kgOf = b => isAll ? getBatchRemainingKg(b) : getBatchGradeKg(b, grade);
+  const batches = PD.filter(b => !b.jemur_archived && kgOf(b) > 0.01 && (isAll || !used.has(b.id))).sort((a,b)=>(a.tgl||'').localeCompare(b.tgl||''));
+  const color = isAll ? '#7a5c2e' : PANEN_GRADES[grade].color;
+  const gLbl = isAll ? 'sisa belum dijemur' : PANEN_GRADES[grade].label;
   const nArch = PD.filter(b => b.jemur_archived).length;
   const archNote = nArch>0 ? `<div style="font-size:9px;color:var(--mute);padding:4px 8px;background:#f5f3ef;border-bottom:1px solid #eee">📦 ${nArch} batch lama (sudah dried+giling) diarsipkan — tidak ditampilkan</div>` : '';
-  if (!batches.length) { el.innerHTML = archNote + `<div style="color:var(--mute);font-size:11px;padding:10px;text-align:center">Tidak ada batch ${PANEN_GRADES[grade].label} yang belum dijemur</div>`; updateJemurCherryTotal(); return; }
+  if (!batches.length) { el.innerHTML = archNote + `<div style="color:var(--mute);font-size:11px;padding:10px;text-align:center">Tidak ada batch ${gLbl}</div>`; updateJemurCherryTotal(); return; }
   el.innerHTML = archNote + batches.map(b => {
-    const kg = getBatchGradeKg(b, grade);
+    const kg = kgOf(b);
     const tgl = (typeof formatTglShort==='function') ? formatTglShort(b.tgl) : b.tgl;
     const kebun = (b.kebun||[]).map(k=>'K'+k).join(',');
+    let bd = '';
+    if (isAll) { const br = getBatchRemainingBreakdown(b); bd = ` <span style="font-size:8.5px;color:#999">(${Object.keys(br).map(g=>`${(PANEN_GRADES[g].label.split(' ')[1]||g)} ${br[g].toFixed(1)}`).join(' · ')})</span>`; }
     return `<label style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-bottom:1px solid #f0eee9;font-size:11px;cursor:pointer">
       <input type="checkbox" class="je-batch-cb" value="${b.id}" data-kg="${kg.toFixed(2)}" onchange="updateJemurCherryTotal()">
       <span style="min-width:64px;font-weight:600">${tgl}</span>
-      <span style="flex:1;color:var(--mute)">${kebun}${b.pekerja_nama?' · '+b.pekerja_nama:''}</span>
-      <span style="font-weight:700;color:${PANEN_GRADES[grade].color}">${kg.toFixed(1)} kg</span>
+      <span style="flex:1;color:var(--mute)">${kebun}${b.pekerja_nama?' · '+b.pekerja_nama:''}${bd}</span>
+      <span style="font-weight:700;color:${color}">${kg.toFixed(1)} kg</span>
     </label>`;
   }).join('');
   updateJemurCherryTotal();
@@ -9202,16 +9216,29 @@ function submitJemurEvent() {
   const grade = document.getElementById('je-grade').value;
   const tglMulai = document.getElementById('je-tgl-mulai').value;
   const cbs = [...document.querySelectorAll('.je-batch-cb:checked')];
-  const sourceIds = cbs.map(cb=>cb.value);
-  const cherryTotal = cbs.reduce((s,cb)=>s+(parseFloat(cb.dataset.kg)||0),0);
+  const selectedIds = cbs.map(cb=>cb.value);
   const catatan = document.getElementById('je-catatan').value.trim();
   if (!tglMulai) return alert('Tanggal mulai jemur wajib diisi');
-  if (!sourceIds.length) { if (!confirm('Belum pilih batch panen. Lanjut "Mulai Jemur" tanpa link batch?')) return; }
-  const id = 'jemur_' + tglMulai.replace(/-/g,'') + '_' + grade + '_' + Date.now().toString().slice(-6);
-  PANEN_LOTS_DATA.push({ id, type:'jemur_event', grade, tgl:tglMulai, tgl_mulai_jemur:tglMulai, source_batch_ids:sourceIds, cherry_kg: cherryTotal||null, catatan, status:'drying', dried_kg:null, created_at:new Date().toISOString(), schema_version:'3d' });
+  if (!selectedIds.length) { if (!confirm('Belum pilih batch panen. Lanjut "Mulai Jemur" tanpa link batch?')) return; }
+  const stamp = Date.now().toString().slice(-6);
+  const mk = (g, ids, cherry) => ({ id:'jemur_'+tglMulai.replace(/-/g,'')+'_'+g+'_'+stamp, type:'jemur_event', grade:g, tgl:tglMulai, tgl_mulai_jemur:tglMulai, source_batch_ids:ids, cherry_kg:cherry||null, catatan, status:'drying', dried_kg:null, created_at:new Date().toISOString(), schema_version:'3d' });
+  const created = [];
+  if (grade === 'ALL') {
+    DRIED_GRADES.forEach(g => {
+      const usedG = jemurUsedBatchIds(g);
+      const idsG = selectedIds.filter(id => !usedG.has(id));
+      const sumG = idsG.map(id => PANEN_DATA.find(b=>b.id===id)).filter(Boolean).reduce((s,b)=>s+getBatchGradeKg(b,g),0);
+      if (sumG > 0.01) { PANEN_LOTS_DATA.push(mk(g, idsG, sumG)); created.push(`${PANEN_GRADES[g].label} ${sumG.toFixed(1)}kg`); }
+    });
+    if (!created.length) return alert('Batch terpilih tidak punya cherry yang belum dijemur.');
+  } else {
+    const cherryTotal = cbs.reduce((s,cb)=>s+(parseFloat(cb.dataset.kg)||0),0);
+    PANEN_LOTS_DATA.push(mk(grade, selectedIds, cherryTotal));
+    created.push(`${PANEN_GRADES[grade].label} ${cherryTotal.toFixed(1)}kg`);
+  }
   savePanenLotsToLS();
   const ov = document.getElementById('jemur-event-modal-overlay'); if (ov) ov.remove();
-  if (typeof showToast==='function') showToast(`🌤️ Mulai jemur ${PANEN_GRADES[grade].label} (${cherryTotal.toFixed(1)} kg cherry) — counter durasi jalan`, 'success');
+  if (typeof showToast==='function') showToast(`🌤️ Mulai jemur: ${created.join(' · ')} — counter durasi jalan`, 'success');
   renderPanenLots();
 }
 
