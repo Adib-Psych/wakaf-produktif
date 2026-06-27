@@ -9090,40 +9090,39 @@ function openJemurEventDialog() {
     <div style="background:#fff;border-radius:12px;max-width:560px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)">
       <div style="padding:16px 20px;background:linear-gradient(135deg,#b45309,#92400e);color:#fff;border-radius:12px 12px 0 0">
         <div style="font-size:13px;font-weight:800">☀️ CATAT JEMUR — per grup warna + tracking durasi</div>
-        <div style="font-size:10.5px;color:#fde68a;margin-top:2px">Pilih batch panen → jemur bareng → track lama jemur sampai kering</div>
+        <div style="font-size:10.5px;color:#fde68a;margin-top:2px">Mulai jemur (pilih batch) → track durasi → tandai kering masuk stok</div>
       </div>
       <div style="padding:16px 20px;font-size:12px">
         <input type="hidden" id="je-mode" value="drying">
         <div style="display:flex;gap:6px;margin-bottom:12px">
-          <button type="button" class="je-mode-btn active" data-mode="drying" onclick="setJemurMode('drying')" style="flex:1;padding:8px;border:1.5px solid #b45309;border-radius:7px;background:#b45309;color:#fff;font-size:11px;font-weight:700;cursor:pointer">🌤️ Mulai Jemur<br><span style="font-size:8.5px;font-weight:400">tracking durasi</span></button>
-          <button type="button" class="je-mode-btn" data-mode="done" onclick="setJemurMode('done')" style="flex:1;padding:8px;border:1.5px solid #ddd;border-radius:7px;background:#fff;color:var(--mute);font-size:11px;font-weight:700;cursor:pointer">✅ Langsung Kering<br><span style="font-size:8.5px;font-weight:400">back-entry, sudah kering</span></button>
+          <button type="button" class="je-mode-btn active" data-mode="drying" onclick="setJemurMode('drying')" style="flex:1;padding:8px;border:1.5px solid #b45309;border-radius:7px;background:#b45309;color:#fff;font-size:11px;font-weight:700;cursor:pointer">🌤️ Mulai Jemur<br><span style="font-size:8.5px;font-weight:400">pilih batch + tracking durasi</span></button>
+          <button type="button" class="je-mode-btn" data-mode="done" onclick="setJemurMode('done')" style="flex:1;padding:8px;border:1.5px solid #ddd;border-radius:7px;background:#fff;color:var(--mute);font-size:11px;font-weight:700;cursor:pointer">✅ Batch Jemur yg Sudah Kering<br><span style="font-size:8.5px;font-weight:400">tandai kering → masuk stok</span></button>
         </div>
-        <div style="display:grid;grid-template-columns:120px 1fr;gap:9px;align-items:center">
-          <label style="font-weight:600">🎨 Warna</label>
-          <select id="je-grade" onchange="refreshJemurBatchPicker()" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">${gradeOpts}</select>
-          <label style="font-weight:600" id="je-tgl-lbl">📅 Tgl mulai jemur</label>
-          <input type="date" id="je-tgl-mulai" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+        <div id="je-mode1">
+          <div style="display:grid;grid-template-columns:120px 1fr;gap:9px;align-items:center">
+            <label style="font-weight:600">🎨 Warna</label>
+            <select id="je-grade" onchange="refreshJemurBatchPicker()" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">${gradeOpts}</select>
+            <label style="font-weight:600">📅 Tgl mulai jemur</label>
+            <input type="date" id="je-tgl-mulai" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          </div>
+          <div style="margin-top:11px">
+            <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">🍒 Pilih batch panen yang dijemur <span style="font-weight:400;color:var(--mute)">(dari Card 4 · batch lama yg sudah diproses tidak muncul)</span></div>
+            <div id="je-batch-picker" style="max-height:180px;overflow:auto;border:1px solid #eee;border-radius:7px;background:#fafaf8"></div>
+            <div style="text-align:right;font-size:12px;margin-top:5px">Total cherry terpilih: <strong id="je-cherry-total" style="color:#c14b3a;font-size:14px">0</strong> kg</div>
+          </div>
+          <div style="display:grid;grid-template-columns:120px 1fr;gap:9px;align-items:start;margin-top:10px">
+            <label style="font-weight:600;padding-top:4px">📝 Catatan</label>
+            <textarea id="je-catatan" rows="2" placeholder="opsional" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
+          </div>
         </div>
-        <div style="margin-top:11px">
-          <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">🍒 Pilih batch panen yang dijemur <span style="font-weight:400;color:var(--mute)">(dari Card 4)</span></div>
-          <div id="je-batch-picker" style="max-height:180px;overflow:auto;border:1px solid #eee;border-radius:7px;background:#fafaf8"></div>
-          <div style="text-align:right;font-size:12px;margin-top:5px">Total cherry terpilih: <strong id="je-cherry-total" style="color:#c14b3a;font-size:14px">0</strong> kg</div>
-        </div>
-        <div id="je-done-fields" style="display:none;grid-template-columns:120px 1fr;gap:9px;align-items:center;margin-top:10px;padding-top:10px;border-top:1px dashed #e0d9c8">
-          <label style="font-weight:600;color:#7a5c2e">🌰 Dried (kg)</label>
-          <input type="text" inputmode="decimal" id="je-dried" placeholder="cth 8,5 · koma=kg" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
-          <label style="font-weight:600">💧 MC %</label>
-          <input type="text" inputmode="decimal" id="je-mc" placeholder="opsional — ⚠ MC meter suka under-read" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-        </div>
-        <div style="display:grid;grid-template-columns:120px 1fr;gap:9px;align-items:start;margin-top:10px">
-          <label style="font-weight:600;padding-top:4px">📝 Catatan</label>
-          <textarea id="je-catatan" rows="2" placeholder="opsional" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical"></textarea>
+        <div id="je-mode2" style="display:none">
+          <div id="je-drying-list"></div>
         </div>
       </div>
-      <div style="padding:0 20px 6px;font-size:10px;color:var(--mute);font-style:italic">Mulai Jemur: dried diisi nanti pas "Selesai". Dried normal ~44% cherry. Target jemur ~${DRYING_TARGET_DAYS} hari.</div>
+      <div id="je-footer-note" style="padding:0 20px 6px;font-size:10px;color:var(--mute);font-style:italic">Mulai Jemur: dried diisi nanti pas "Sudah Kering". Dried normal ~44% cherry. Target jemur ~${DRYING_TARGET_DAYS} hari.</div>
       <div style="display:flex;gap:8px;justify-content:flex-end;padding:8px 20px 18px">
-        <button onclick="document.getElementById('jemur-event-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Batal</button>
-        <button onclick="submitJemurEvent()" class="btn btn-primary" style="background:#b45309;font-size:12px;padding:7px 14px">✓ Simpan</button>
+        <button onclick="document.getElementById('jemur-event-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Tutup</button>
+        <button id="je-submit-btn" onclick="submitJemurEvent()" class="btn btn-primary" style="background:#b45309;font-size:12px;padding:7px 14px">✓ Simpan Mulai Jemur</button>
       </div>
     </div>
   </div>`;
@@ -9133,14 +9132,19 @@ function openJemurEventDialog() {
 
 function setJemurMode(mode) {
   const mi = document.getElementById('je-mode'); if (mi) mi.value = mode;
-  const df = document.getElementById('je-done-fields'); if (df) df.style.display = mode==='done' ? 'grid' : 'none';
-  const lbl = document.getElementById('je-tgl-lbl'); if (lbl) lbl.textContent = mode==='done' ? '📅 Tgl mulai jemur' : '📅 Tgl mulai jemur';
-  document.querySelectorAll('.je-mode-btn').forEach(b => {
-    const on = b.dataset.mode===mode;
-    b.style.background = on ? '#b45309' : '#fff';
-    b.style.color = on ? '#fff' : 'var(--mute)';
-    b.style.borderColor = on ? '#b45309' : '#ddd';
-  });
+  const m1 = document.getElementById('je-mode1'), m2 = document.getElementById('je-mode2');
+  const submitBtn = document.getElementById('je-submit-btn'), note = document.getElementById('je-footer-note');
+  if (mode === 'done') {
+    if (m1) m1.style.display = 'none'; if (m2) m2.style.display = 'block';
+    if (submitBtn) submitBtn.style.display = 'none';
+    if (note) note.innerHTML = 'Tandai batch yang sudah kering → otomatis masuk stok dried cherry. Hanya batch yang sudah "Mulai Jemur" yang muncul (konsep sama kayak sortir: butuh entry panen dulu).';
+    renderJemurDryingList();
+  } else {
+    if (m1) m1.style.display = 'block'; if (m2) m2.style.display = 'none';
+    if (submitBtn) submitBtn.style.display = '';
+    if (note) note.innerHTML = `Mulai Jemur: dried diisi nanti pas "Sudah Kering". Dried normal ~44% cherry. Target jemur ~${DRYING_TARGET_DAYS} hari.`;
+  }
+  document.querySelectorAll('.je-mode-btn').forEach(b => { const on = b.dataset.mode===mode; b.style.background = on?'#b45309':'#fff'; b.style.color = on?'#fff':'var(--mute)'; b.style.borderColor = on?'#b45309':'#ddd'; });
 }
 
 function refreshJemurBatchPicker() {
@@ -9148,19 +9152,19 @@ function refreshJemurBatchPicker() {
   const grade = document.getElementById('je-grade').value;
   const used = jemurUsedBatchIds(grade);
   const PD = (typeof PANEN_DATA!=='undefined') ? PANEN_DATA : [];
-  const batches = PD.filter(b => getBatchGradeKg(b, grade) > 0.01).sort((a,b)=>(a.tgl||'').localeCompare(b.tgl||''));
-  if (!batches.length) { el.innerHTML = `<div style="color:var(--mute);font-size:11px;padding:10px;text-align:center">Belum ada batch dengan ${PANEN_GRADES[grade].label}</div>`; updateJemurCherryTotal(); return; }
-  el.innerHTML = batches.map(b => {
+  const batches = PD.filter(b => !b.jemur_archived && !used.has(b.id) && getBatchGradeKg(b, grade) > 0.01).sort((a,b)=>(a.tgl||'').localeCompare(b.tgl||''));
+  const nArch = PD.filter(b => b.jemur_archived).length;
+  const archNote = nArch>0 ? `<div style="font-size:9px;color:var(--mute);padding:4px 8px;background:#f5f3ef;border-bottom:1px solid #eee">📦 ${nArch} batch lama (sudah dried+giling) diarsipkan — tidak ditampilkan</div>` : '';
+  if (!batches.length) { el.innerHTML = archNote + `<div style="color:var(--mute);font-size:11px;padding:10px;text-align:center">Tidak ada batch ${PANEN_GRADES[grade].label} yang belum dijemur</div>`; updateJemurCherryTotal(); return; }
+  el.innerHTML = archNote + batches.map(b => {
     const kg = getBatchGradeKg(b, grade);
-    const isUsed = used.has(b.id);
     const tgl = (typeof formatTglShort==='function') ? formatTglShort(b.tgl) : b.tgl;
     const kebun = (b.kebun||[]).map(k=>'K'+k).join(',');
-    return `<label style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-bottom:1px solid #f0eee9;font-size:11px;cursor:pointer;${isUsed?'background:#fff7ed':''}">
+    return `<label style="display:flex;align-items:center;gap:8px;padding:5px 8px;border-bottom:1px solid #f0eee9;font-size:11px;cursor:pointer">
       <input type="checkbox" class="je-batch-cb" value="${b.id}" data-kg="${kg.toFixed(2)}" onchange="updateJemurCherryTotal()">
       <span style="min-width:64px;font-weight:600">${tgl}</span>
       <span style="flex:1;color:var(--mute)">${kebun}${b.pekerja_nama?' · '+b.pekerja_nama:''}</span>
       <span style="font-weight:700;color:${PANEN_GRADES[grade].color}">${kg.toFixed(1)} kg</span>
-      ${isUsed?'<span style="font-size:8px;color:#b45309;font-weight:700">⚠ sdh dijemur</span>':''}
     </label>`;
   }).join('');
   updateJemurCherryTotal();
@@ -9172,8 +9176,29 @@ function updateJemurCherryTotal() {
   const el = document.getElementById('je-cherry-total'); if (el) el.textContent = total.toFixed(1);
 }
 
+// Mode 2: daftar batch SEDANG dijemur (status drying) → tandai kering. Kosong sebelum ada "Mulai Jemur".
+function renderJemurDryingList() {
+  const el = document.getElementById('je-drying-list'); if (!el) return;
+  const drying = PANEN_LOTS_DATA.filter(l => l.type==='jemur_event' && l.status==='drying');
+  if (!drying.length) {
+    el.innerHTML = `<div style="padding:20px;text-align:center;background:#FFFBEB;border:1px dashed #fcd34d;border-radius:8px;font-size:12px;color:#92400e">🌤️ Belum ada batch yang sedang dijemur.<br><span style="font-size:11px">"Mulai Jemur" dulu — nggak bisa tandai kering sebelum ada batch yang dijemur (sama kayak sortir butuh panen dulu).</span></div>`;
+    return;
+  }
+  el.innerHTML = drying.sort((a,b)=>(a.tgl_mulai_jemur||'').localeCompare(b.tgl_mulai_jemur||'')).map(ev => {
+    const g = PANEN_GRADES[ev.grade] || {label:ev.grade,color:'#888'};
+    const days = jemurDaysElapsed(ev);
+    const tglM = (typeof formatTglShort==='function') ? formatTglShort(ev.tgl_mulai_jemur) : ev.tgl_mulai_jemur;
+    const col = days>=DRYING_TARGET_DAYS ? '#16a34a' : (days>=14 ? '#d4a017' : '#b45309');
+    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 11px;border:1px solid #f0d9b8;border-radius:8px;margin-bottom:6px">
+      <div><span style="font-weight:700;color:${g.color}">${g.label}</span> <span style="font-size:10.5px;color:var(--mute)">${(ev.cherry_kg||0).toFixed(1)} kg cherry · ${(ev.source_batch_ids||[]).length} batch · mulai ${tglM} · <strong style="color:${col}">dijemur ${days} hari</strong></span></div>
+      <button onclick="finishJemurEvent('${ev.id}')" class="btn btn-primary" style="background:#16a34a;font-size:10.5px;padding:4px 11px;white-space:nowrap">✅ Tandai Kering</button>
+    </div>`;
+  }).join('');
+}
+
 function submitJemurEvent() {
   const mode = (document.getElementById('je-mode')||{}).value || 'drying';
+  if (mode === 'done') return;  // mode 2 pakai tombol per-baris "Tandai Kering"
   const grade = document.getElementById('je-grade').value;
   const tglMulai = document.getElementById('je-tgl-mulai').value;
   const cbs = [...document.querySelectorAll('.je-batch-cb:checked')];
@@ -9181,22 +9206,12 @@ function submitJemurEvent() {
   const cherryTotal = cbs.reduce((s,cb)=>s+(parseFloat(cb.dataset.kg)||0),0);
   const catatan = document.getElementById('je-catatan').value.trim();
   if (!tglMulai) return alert('Tanggal mulai jemur wajib diisi');
+  if (!sourceIds.length) { if (!confirm('Belum pilih batch panen. Lanjut "Mulai Jemur" tanpa link batch?')) return; }
   const id = 'jemur_' + tglMulai.replace(/-/g,'') + '_' + grade + '_' + Date.now().toString().slice(-6);
-  const base = { id, type:'jemur_event', grade, tgl:tglMulai, tgl_mulai_jemur:tglMulai, source_batch_ids:sourceIds, cherry_kg: cherryTotal||null, catatan, created_at:new Date().toISOString(), schema_version:'3d' };
-  if (mode === 'done') {
-    const dried = parseDecimalInput(document.getElementById('je-dried').value);
-    const mc = parseDecimalInput(document.getElementById('je-mc').value);
-    if (!dried || dried <= 0) return alert('Mode "Langsung Kering": Dried kg harus angka > 0');
-    if (cherryTotal && dried > cherryTotal) { if (!confirm(`⚠ Dried ${dried} kg > cherry ${cherryTotal.toFixed(1)} kg — jemur kok nambah berat? Cek timbangan. Tetap simpan?`)) return; }
-    PANEN_LOTS_DATA.push({ ...base, status:'done', dried_kg:dried, mc, tgl_selesai:todayIso() });
-    if (typeof showToast==='function') showToast(`☀️ Jemur ${PANEN_GRADES[grade].label} +${dried} kg dried → pool`, 'success');
-  } else {
-    if (!sourceIds.length) { if (!confirm('Belum pilih batch panen. Lanjut "Mulai Jemur" tanpa link batch?')) return; }
-    PANEN_LOTS_DATA.push({ ...base, status:'drying', dried_kg:null });
-    if (typeof showToast==='function') showToast(`🌤️ Mulai jemur ${PANEN_GRADES[grade].label} (${cherryTotal.toFixed(1)} kg cherry) — counter durasi jalan`, 'success');
-  }
+  PANEN_LOTS_DATA.push({ id, type:'jemur_event', grade, tgl:tglMulai, tgl_mulai_jemur:tglMulai, source_batch_ids:sourceIds, cherry_kg: cherryTotal||null, catatan, status:'drying', dried_kg:null, created_at:new Date().toISOString(), schema_version:'3d' });
   savePanenLotsToLS();
   const ov = document.getElementById('jemur-event-modal-overlay'); if (ov) ov.remove();
+  if (typeof showToast==='function') showToast(`🌤️ Mulai jemur ${PANEN_GRADES[grade].label} (${cherryTotal.toFixed(1)} kg cherry) — counter durasi jalan`, 'success');
   renderPanenLots();
 }
 
