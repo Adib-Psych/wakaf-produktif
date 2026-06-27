@@ -4986,6 +4986,12 @@ const BORONGAN_PRESETS = {
   sortasi_cherry: 1000     // v1.1 (21 Mei) — Sortasi 4-bucket pasca-panen, Rp 1.000/kg sorted (median TBD final). Reference: derive dari full-day Pak Kumpul Rp 100K @ ~100 kg/day sortir, plus cross-check Aceh petik Rp 3.300/kg cherry (sortasi typically 30-50% effort dari petik). Adib akan finalize dgn Cak Yit + Pak Kumpul.
 };
 const NAMA_PEKERJA = { YIT:'Cak Yit', KUMPUL:'Pak Kumpul' };
+// 27 Jun (Pattern #12): NAMA_PEKERJA dulu STATIS 2-pekerja → pemanen/Yasir/Kamto tampil "undefined" di tabel upah,
+// bukti bayar, & Card 3 "TUNGGAKAN PER NAMA" cuma Yit/Kumpul. rebuildNamaPekerja() sinkron dari WORKER_DEFS
+// (semua pekerja, aktif + arsip). Dipanggil di init + tiap render upah supaya selalu fresh.
+function rebuildNamaPekerja() {
+  if (typeof WORKER_DEFS !== 'undefined') WORKER_DEFS.forEach(w => { if (w && w.token) NAMA_PEKERJA[w.token] = w.nama; });
+}
 
 // Schema v3.0 — production clean (no sample data)
 const UPAH_SCHEMA_VERSION = '3.0';
@@ -5032,9 +5038,13 @@ function calcTotal(item) {
 function renderUpahSummary() {
   const c = document.getElementById('upah-summary-cards');
   if (!c) return;
+  rebuildNamaPekerja();   // 27 Jun: nama semua pekerja fresh dari WORKER_DEFS (bukan stale {YIT,KUMPUL})
   const summary = {};
-  Object.keys(NAMA_PEKERJA).forEach(k => summary[k] = {
-    nama:NAMA_PEKERJA[k], total:0, lunas:0, belum:0, belumCount:0, lunasCount:0,
+  // Card 3 = view historis upah (FILTER semantics, Pattern #12): SEMUA pekerja yang PUNYA upah item (aktif+arsip),
+  // bukan Object.keys(NAMA_PEKERJA) yg dulu stale 2-pekerja → pemanen dgn tunggakan kini muncul.
+  const tokensWithUpah = [...new Set((UPAH_ITEMS||[]).map(it => it.pelapor).filter(Boolean))];
+  tokensWithUpah.forEach(k => summary[k] = {
+    nama:(typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[k]) ? NAMA_PEKERJA[k] : k, total:0, lunas:0, belum:0, belumCount:0, lunasCount:0,
     harianRp:0, boronganRp:0,
     // Day counters (only for model='harian')
     harianFull: 0, harianHalf: 0,        // total (belum + lunas)
@@ -5081,13 +5091,15 @@ function renderUpahSummary() {
     return `${parts.join(' + ')} = ${eqStr} day${eq === 1 ? '' : 's'}`;
   }
 
-  let html = Object.entries(summary).map(([k,s]) => {
+  let html = Object.entries(summary).sort((a,b)=> (b[1].belum - a[1].belum) || (b[1].total - a[1].total)).map(([k,s]) => {
     const cls = s.belum > 0 ? 'warn' : '';
-    const ico = k === 'YIT' ? '🪜' : '🌱';
+    const _wd = (typeof WORKER_DEFS!=='undefined') ? WORKER_DEFS.find(x=>x.token===k) : null;
+    const ico = (_wd && _wd.icon) ? _wd.icon : '🌱';
+    const arsip = (_wd && !_wd.active) ? ' <span style="font-size:9px;color:var(--mute);font-weight:400">(arsip)</span>' : '';
     const harianDaysLine = formatDaysLine(s.harianFull, s.harianHalf);
     const lunasDaysLine = formatDaysLine(s.harianFullLunas, s.harianHalfLunas);
     return `<div class="kpi ${cls}" style="cursor:pointer" onclick="document.getElementById('filter-bayar-pelapor').value='${k}';renderUpahTable()">
-      <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">${ico} ${s.nama}</div>
+      <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">${ico} ${s.nama}${arsip}</div>
       <div class="kpi-num" style="color:${s.belum>0?'var(--orange)':'var(--green)'};font-size:20px">${fmtRpShort(s.belum)}</div>
       <div class="kpi-lbl">${s.belumCount} item belum dibayar</div>
       <div style="font-size:10px;color:var(--mute);margin-top:6px;border-top:1px solid #eee;padding-top:6px;line-height:1.6">
@@ -5106,6 +5118,7 @@ function renderUpahSummary() {
 }
 
 function renderUpahTable() {
+  if (typeof rebuildNamaPekerja==='function') rebuildNamaPekerja();   // 27 Jun: nama pemanen fresh di baris tabel
   const fp = document.getElementById('filter-bayar-pelapor').value;
   const fs = document.getElementById('filter-bayar-status').value;
   const fm = document.getElementById('filter-bayar-model') ? document.getElementById('filter-bayar-model').value : '';
@@ -16405,7 +16418,7 @@ function populatePelaporSelects() {
 
 // Call on page init + setelah WORKER_DEFS changes (saveNewWorker, toggleWorkerActive)
 document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(populatePelaporSelects, 150);
+  setTimeout(() => { populatePelaporSelects(); if (typeof rebuildNamaPekerja==='function') rebuildNamaPekerja(); }, 150);
 });
 
 function renderWorkersTab() {
