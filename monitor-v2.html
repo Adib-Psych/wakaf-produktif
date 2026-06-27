@@ -16208,12 +16208,12 @@ function autoCreateUpahFromEntry(entry, firestoreUpahMap = null) {
 // active:false permanent. Token preserved untuk backfill historis entries 1-18 Mei 2026.
 // ⭐ 9 Juni 2026 (Task C2 carryover): WAKIF/Adib added — Wakif + PIC eksekusi belajar lapangan
 const WORKER_DEFS = [
-  { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon (OUT 22 Jun 2026)', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: false, transition_note: 'OUT permanen 22 Jun 2026 — diganti Pak Yasir. Preserved untuk backfill historis.' },
-  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon (OUT 22 Jun 2026)', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: false, transition_note: 'OUT permanen 22 Jun 2026 — diganti Mas Kamto. Preserved untuk backfill historis.' },
+  { token: 'KUMPUL', nama: 'Pak Kumpul', role: 'Pekerja Bawah Pohon (OUT 22 Jun 2026)', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: false, retired: true, transition_note: 'OUT permanen 22 Jun 2026 — diganti Pak Yasir. Preserved untuk backfill historis.' },
+  { token: 'YIT', nama: 'Cak Yit', role: 'Pekerja Atas Pohon (OUT 22 Jun 2026)', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: false, retired: true, transition_note: 'OUT permanen 22 Jun 2026 — diganti Mas Kamto. Preserved untuk backfill historis.' },
   { token: 'YASIR', nama: 'Pak Yasir', role: 'Pekerja Bawah Pohon', icon: '🌱', color: '#15803d', tarif_label: '½ Rp 50K · Full Rp 100K', active: true, note: 'Pengganti Pak Kumpul sejak 22 Jun 2026 (dibawa Mbah Mul).' },
   { token: 'KAMTO', nama: 'Mas Kamto', role: 'Pekerja Atas Pohon + PIC Pupuk', icon: '🪜', color: '#d4a017', tarif_label: '½ Rp 60K · Full Rp 120K', active: true, note: 'Pengganti Cak Yit sejak 22 Jun 2026 (dibawa Pak Dhe Mujiono).' },
   { token: 'WAKIF', nama: 'Adib (Wakif)', role: 'Wakif + PIC Eksekusi (Belajar Lapangan)', icon: '🌱👤', color: '#2E5C4F', tarif_label: 'Sweat-Equity Wakif (tidak masuk timeline upah)', active: true, note: 'Token WAKIF (alias_of:ADIB di PIC_REGISTRY). Entry via dashboard Form Input — no PWA URL needed.' },
-  { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan (OUT permanen)', icon: '👷', color: '#9CA3AF', tarif_label: 'Sweat Equity (OUT 19 Mei 2026)', active: false, transition_note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026' }
+  { token: 'ANTO', nama: 'Mas Anto', role: 'Koordinator Lapangan (OUT permanen)', icon: '👷', color: '#9CA3AF', tarif_label: 'Sweat Equity (OUT 19 Mei 2026)', active: false, retired: true, transition_note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026' }
 ];
 
 // LS key untuk persistensi reactivation state (Adib bisa toggle Anto via UI)
@@ -16452,10 +16452,12 @@ function renderWorkersTab() {
 
   const baseUrl = window.location.origin + (window.location.pathname.includes('/monitor-v2.html') ? window.location.pathname.replace('/monitor-v2.html', '/lapor.html') : '/lapor.html');
 
-  // ⭐ 8 Juni 2026 (DC1=A per Adib): Filter ACTIVE workers only. Mas Anto OUT permanen
-  // 19 Mei tidak tampil di Section A. Backward compat: token ANTO preserved di WORKER_DEFS
-  // array (active:false) + lapor.html?w=ANTO PWA URL tetap functional untuk backfill historis.
-  grid.innerHTML = WORKER_DEFS.filter(w => w.active).map(w => {
+  // ⭐ 27 Jun 2026: Grid tampilkan pekerja AKTIF + di-PAUSE (transisi, reversible) — sembunyikan
+  // HANYA yang RETIRED permanen (KUMPUL/YIT/ANTO, retired:true, never return). Pause (active:false,
+  // !retired) => kartu redup + badge TRANSISI + tombol "Aktifkan kembali" (reversible). Token tetap
+  // preserved di WORKER_DEFS + lapor.html PWA URL functional untuk backfill historis.
+  // (Sebelumnya filter w.active => paused hilang tanpa jejak + tombol Aktifkan jadi dead code.)
+  grid.innerHTML = WORKER_DEFS.filter(w => !w.retired).map(w => {
     const url = `${baseUrl}?w=${w.token}`;
     const lastActive = lastActiveMap[w.token];
     const daysSince = lastActive ? Math.round((Date.now() - new Date(lastActive.tgl).getTime()) / 86400000) : null;
