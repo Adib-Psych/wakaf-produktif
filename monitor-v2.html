@@ -3613,9 +3613,10 @@ function renderDashboard() {
         totalKeluar += t.keluar || 0;
       }
     });
-    // Total RAB 2 siklus
+    // Total RAB — acuan Siklus 2026 (per Wakif 27 Jun 2026): % penyerapan vs siklus berjalan, bukan 2-siklus
     let totalRAB = 0;
-    Object.values(RAB_DATA).forEach(siklus => {
+    const _rabSiklus = RAB_DATA['2026'] ? [RAB_DATA['2026']] : Object.values(RAB_DATA);
+    _rabSiklus.forEach(siklus => {
       siklus.kategori.forEach(k => k.items.forEach(it => { totalRAB += it.qty * it.hf; }));
     });
     // Full format (locked 16 Mei 2026): Rp. 1.000.000,- (no abbreviation)
@@ -3626,7 +3627,7 @@ function renderDashboard() {
     const pct = totalRAB > 0 ? Math.round((totalKeluar/totalRAB)*100) : 0;
     document.getElementById('kpi-budget').textContent = fmtJt(totalKeluar) + ' / ' + fmtJt(totalRAB);
     const trendEl = document.getElementById('kpi-budget-trend');
-    if (trendEl) trendEl.textContent = pct + '% serapan total RAB';
+    if (trendEl) trendEl.textContent = pct + '% serapan RAB Siklus 2026';
   } else {
     document.getElementById('kpi-budget').textContent = '—';
   }
