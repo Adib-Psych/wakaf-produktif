@@ -799,12 +799,18 @@ dialog .modal-actions button {
    CONSTANTS & CONFIG
    ============================================================ */
 const WORKER_MAP = {
-  KUMPUL: { name: 'Pak Kumpul', tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true },
-  YIT:    { name: 'Cak Yit',    tarif: { setengah_hari: 60000, satu_hari: 120000 }, active: true },
-  // Mas Anto — status pause 17 Mei 2026 dikonversi jadi OUT permanen 19 Mei 2026.
-  // URL `?w=ANTO` di-deprecate (boleh dipertahankan untuk backfill historis dokumen lama).
-  // PIC_REGISTRY.ANTO.active=false permanent. Inventarisasi pohon di-takeover Wakif + Cak Yit/Pak Kumpul.
-  ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity, closed */, active: false, transition_note: 'OUT permanen per 19 Mei 2026 (sebelumnya pause 17 Mei)' }
+  // OUT 22 Jun 2026 — preserve untuk backfill historis (active:false => PWA tolak entry baru, dokumen lama tetap ter-attribute).
+  KUMPUL: { name: 'Pak Kumpul', tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: false, transition_note: 'OUT 22 Jun 2026 — diganti Pak Yasir' },
+  YIT:    { name: 'Cak Yit',    tarif: { setengah_hari: 60000, satu_hari: 120000 }, active: false, transition_note: 'OUT 22 Jun 2026 — diganti Mas Kamto' },
+  // Mas Anto — OUT permanen 19 Mei 2026. URL ?w=ANTO deprecated (preserve backfill historis).
+  ANTO:   { name: 'Mas Anto',   tarif: null /* sweat equity, closed */, active: false, transition_note: 'OUT permanen per 19 Mei 2026 (sebelumnya pause 17 Mei)' },
+  // ⭐ Tim lapangan baru (locked 22 Jun 2026) — pengganti Kumpul/Yit
+  YASIR:  { name: 'Pak Yasir',  tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true },
+  KAMTO:  { name: 'Mas Kamto',  tarif: { setengah_hari: 60000, satu_hari: 120000 }, active: true },
+  // ⭐ Pemanen / crew petik harian (self-report via PWA, 27 Jun 2026). Tarif Rp 50K/hari (model upah pemanen masih dievaluasi: harian vs per-KG).
+  HARNI:  { name: 'Mba Harmi',  tarif: { setengah_hari: 25000, satu_hari: 50000 }, active: true },
+  MAKMIS: { name: 'Mak Mis',    tarif: { setengah_hari: 25000, satu_hari: 50000 }, active: true },
+  CHRISTO:{ name: 'Christo',    tarif: { setengah_hari: 25000, satu_hari: 50000 }, active: true }
 };
 
 // KATEGORI_BY_WORKER — Role-based filter (Notulen 1-2 Mei 2026, updated 16 Mei 2026)
@@ -825,7 +831,23 @@ const KATEGORI_BY_WORKER = {
            'lain'],
   // ANTO list preserved untuk reactivation — saat Mas Anto kembali, flip WORKER_MAP.ANTO.active=true
   ANTO:   ['inventarisasi_pohon', 'opt_monitoring', 'soil_test',
-           'komunikasi_stakeholder', 'pisang_management', 'lain']
+           'komunikasi_stakeholder', 'pisang_management', 'lain'],
+  // ⭐ Pak Yasir (bawah pohon) — mirror kategori Pak Kumpul (22 Jun 2026)
+  YASIR:  ['pemupukan_organik', 'pemupukan_kimia', 'babat_rumput', 'build_rorak',
+           'kompos_kulit_kopi', 'tanam_penaung', 'sortasi_buah', 'penjemuran',
+           'brocap_management', 'bokashi_production', 'arachis_management',
+           'biochar_pyrolysis',
+           'inventarisasi_pohon', 'opt_monitoring', 'komunikasi_stakeholder',
+           'lain'],
+  // ⭐ Mas Kamto (atas pohon) — mirror kategori Cak Yit (22 Jun 2026)
+  KAMTO:  ['pemangkasan', 'panen', 'penyemprotan', 'opt_monitoring',
+           'topgraft_robusta',
+           'pemupukan_organik', 'pemupukan_kimia',
+           'lain'],
+  // ⭐ Pemanen / crew petik harian (27 Jun 2026) — fokus panen + pascapanen
+  HARNI:  ['panen', 'penjemuran', 'sortasi_buah', 'lain'],
+  MAKMIS: ['panen', 'penjemuran', 'sortasi_buah', 'lain'],
+  CHRISTO:['panen', 'penjemuran', 'sortasi_buah', 'lain']
 };
 
 const KATEGORI_TOPIK_MAP = {
