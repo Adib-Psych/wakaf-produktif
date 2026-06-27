@@ -5052,6 +5052,7 @@ function renderUpahSummary() {
     boronganCount: 0
   });
   UPAH_ITEMS.forEach(it => {
+    if (it.voided_duplicate) return;   // 27 Jun: skip duplikat ter-void (Pattern #14) — tak masuk hitungan
     if (!summary[it.pelapor]) return;
     const total = calcTotal(it);
     const qty = +it.qty || 1;
@@ -5133,6 +5134,7 @@ function renderUpahTable() {
   const fm = document.getElementById('filter-bayar-model') ? document.getElementById('filter-bayar-model').value : '';
   const fArch = document.getElementById('filter-bayar-archive')?.value || 'active';
   const data = UPAH_ITEMS.filter(it => {
+    if (it.voided_duplicate) return false;   // 27 Jun: sembunyikan duplikat ter-void dari tabel (data tetap di cloud, audit trail)
     if (fp && it.pelapor !== fp) return false;
     if (fs && it.status !== fs) return false;
     if (fm && it.model !== fm) return false;
@@ -16684,6 +16686,7 @@ function computeAudit() {
   // miss auto_backfill → backfill via Recover + worker submit paralel = duplikat. Sekarang dedupe broaden.
   const upahByKey = {};
   upah.forEach(u => {
+    if (u.voided_duplicate) return;   // 27 Jun: duplikat sudah di-void → jangan deteksi sbg dup lagi
     if (!u.tgl || !u.pelapor) return;
     const key = u.tgl + '|' + u.pelapor;
     if (!upahByKey[key]) upahByKey[key] = [];
