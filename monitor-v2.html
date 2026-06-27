@@ -641,7 +641,7 @@
 
       <div class="card">
         <div class="card-title"><span class="num">3</span>Summary Upah Pekerja — Tunggakan per Nama</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pembayaran tidak selalu harian — bisa per batch / per group item pekerjaan. Tracker di bawah memungkinkan tandai item terbayar satu per satu atau batch.</p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pembayaran tidak selalu harian — bisa per batch / per group item pekerjaan. Tracker di bawah memungkinkan tandai item terbayar satu per satu atau batch. <strong>Hanya pekerja dengan tunggakan yang tampil di sini</strong> — kalau nama tidak muncul, berarti semua upahnya sudah lunas.</p>
         <div class="kpi-grid" id="upah-summary-cards"></div>
       </div>
 
@@ -5091,8 +5091,17 @@ function renderUpahSummary() {
     return `${parts.join(' + ')} = ${eqStr} day${eq === 1 ? '' : 's'}`;
   }
 
-  let html = Object.entries(summary).sort((a,b)=> (b[1].belum - a[1].belum) || (b[1].total - a[1].total)).map(([k,s]) => {
-    const cls = s.belum > 0 ? 'warn' : '';
+  // Card 3 = LIVE tunggakan tracker (27 Jun, Pattern #13): HANYA pekerja dengan belum > 0. Lunas penuh
+  // auto-hilang (BUKAN tampil Rp 0). Pekerja baru (Yasir/Kamto/dst) otomatis muncul saat ada upah belum dibayar.
+  // Asumsi: nama TIDAK ada di card = semua upahnya sudah lunas.
+  const tunggakanEntries = Object.entries(summary).filter(([k,s]) => s.belum > 0)
+    .sort((a,b)=> (b[1].belum - a[1].belum) || (b[1].total - a[1].total));
+  if (!tunggakanEntries.length) {
+    c.innerHTML = '<div style="grid-column:1/-1;width:100%;padding:18px 20px;text-align:center;color:var(--green);font-weight:600;font-size:13px;background:#f0f9f4;border:1px solid #cce8d8;border-radius:10px">✅ Semua upah pekerja sudah lunas — tidak ada tunggakan saat ini</div>';
+    return;
+  }
+  let html = tunggakanEntries.map(([k,s]) => {
+    const cls = 'warn';   // semua yang tampil = ada tunggakan
     const _wd = (typeof WORKER_DEFS!=='undefined') ? WORKER_DEFS.find(x=>x.token===k) : null;
     const ico = (_wd && _wd.icon) ? _wd.icon : '🌱';
     const arsip = (_wd && !_wd.active) ? ' <span style="font-size:9px;color:var(--mute);font-weight:400">(arsip)</span>' : '';
