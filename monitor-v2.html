@@ -4969,7 +4969,9 @@ function renderBudgetChart() {
 // Cak Yit: skill atas pohon (lebih tinggi) · Pak Kumpul: perawatan bawah
 const TARIF_PEKERJA = {
   YIT:    { setengah_hari: 60000, full_day: 120000 },
-  KUMPUL: { setengah_hari: 50000, full_day: 100000 }
+  KUMPUL: { setengah_hari: 50000, full_day: 100000 },
+  YASIR:  { setengah_hari: 50000, full_day: 100000 },   // 27 Jun: pengganti Kumpul (bawah)
+  KAMTO:  { setengah_hari: 60000, full_day: 120000 }    // 27 Jun: pengganti Yit (atas)
 };
 // Helper untuk legacy code yang masih panggil TARIF[satuan] — default ke Cak Yit (worst case)
 const TARIF = { setengah_hari: 60000, full_day: 120000 };
@@ -6670,10 +6672,21 @@ async function generateBuktiBayar() {
 // ===== UPAH ENTRY DIALOG =====
 let dlgModel = 'harian';
 
+// ⭐ 27 Jun: dialog manual upah = aktif (upah baru) + non-aktif-punya-data (backfill historis); exclude WAKIF (sweat-equity)
+function populateDlgPelapor() {
+  const sel = document.getElementById('dlg-pelapor');
+  if (!sel || typeof workersForFilter !== 'function') return;
+  const list = workersForFilter().filter(w => w.token !== 'WAKIF');
+  sel.innerHTML = list.map(w =>
+    `<option value="${w.token}">${w.icon||''} ${w.nama}${w.active ? '' : ' (arsip)'} (${w.tarif_label||'tarif manual'})</option>`).join('');
+  const firstActive = list.find(w => w.active);
+  if (firstActive) sel.value = firstActive.token;
+}
+
 function openDlg() {
   // Reset form
   document.getElementById('dlg-tgl').value = new Date().toISOString().slice(0,10);
-  document.getElementById('dlg-pelapor').value = 'YIT';
+  populateDlgPelapor();   // 27 Jun: list dinamis (aktif + arsip-punya-data), default pekerja aktif pertama — bukan 'YIT' (OUT)
   document.getElementById('dlg-act').value = '';
   setDlgModel('harian');
   refreshHarianOptions();           // populate tipe options for selected pekerja
@@ -16352,19 +16365,35 @@ document.addEventListener('DOMContentLoaded', () => {
 //   - filter-pelapor (Log Harian) — semua pelapor termasuk Adib
 //   - bc-filter-pelapor (Batch Curation) — semua pelapor termasuk Adib
 //   - filter-bayar-pelapor (Upah Pekerja) — WORKER_DEFS only (Adib sweat-equity, tidak masuk upah)
+// ⭐ 27 Jun: Entry-vs-Filter rule. FILTER dropdown = pekerja aktif + non-aktif yang PUNYA DATA
+// (ditandai "arsip"), supaya record pekerja OUT (Kumpul/Yit/Anto) tetap bisa difilter & diaudit.
+// ENTRY dropdown (Form Input, Submit Panen) tetap aktif-saja.
+function workersWithData() {
+  const s = new Set();
+  try { (typeof STATE!=='undefined' && STATE.laporan ? STATE.laporan : []).forEach(l => { if (l && l.pelapor) s.add(l.pelapor); }); } catch(e){}
+  try { (typeof UPAH_ITEMS!=='undefined' ? UPAH_ITEMS : []).forEach(u => { if (u && u.pelapor) s.add(u.pelapor); }); } catch(e){}
+  try { (typeof PANEN_DATA!=='undefined' ? PANEN_DATA : []).forEach(b => { if (b && b.pekerja) s.add(b.pekerja); }); } catch(e){}
+  return s;
+}
+function workersForFilter() {
+  const dt = workersWithData();
+  return WORKER_DEFS.filter(w => w.active || dt.has(w.token));
+}
+
 function populatePelaporSelects() {
   const targets = [
     { id: 'filter-pelapor', includeWakif: true, semuaLabel: 'Semua Pelapor' },
     { id: 'bc-filter-pelapor', includeWakif: true, semuaLabel: 'Semua Pelapor' },
-    { id: 'filter-bayar-pelapor', includeWakif: false, semuaLabel: 'Semua Pelapor' }
+    { id: 'filter-bayar-pelapor', includeWakif: false, semuaLabel: 'Semua Pelapor' },
+    { id: 'reconcile-filter-pelapor', includeWakif: false, semuaLabel: 'Semua Pekerja' }
   ];
   targets.forEach(({ id, includeWakif, semuaLabel }) => {
     const select = document.getElementById(id);
     if (!select) return;
     const currentValue = select.value;
     const semuaOpt = `<option value="">${semuaLabel}</option>`;
-    const workerOpts = WORKER_DEFS.filter(w => w.active && w.token !== 'WAKIF').map(w =>
-      `<option value="${w.token}">${w.nama}</option>`).join('');  // 27 Jun: exclude WAKIF (ditambah via wakifOpt, hormati includeWakif) — fix dobel
+    const workerOpts = workersForFilter().filter(w => w.token !== 'WAKIF').map(w =>
+      `<option value="${w.token}">${w.nama}${w.active ? '' : ' (arsip)'}</option>`).join('');  // 27 Jun: FILTER = aktif + non-aktif-punya-data (arsip); WAKIF via wakifOpt
     const wakifOpt = includeWakif ? '<option value="WAKIF">Adib (Wakif)</option>' : '';
     select.innerHTML = semuaOpt + workerOpts + wakifOpt;
     // Restore selected value kalau masih valid
