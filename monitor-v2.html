@@ -3531,9 +3531,11 @@ function renderDashPanenSummary() {
   const days = new Set(PD.map(e=>e.tgl)).size;
   const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
   const kg = n => (n||0).toFixed(1);
-  const pb = (typeof POHON_BASELINE!=='undefined') ? POHON_BASELINE : {perBidang:[0,0,0,0], baseline2023_kopi:[0,0,0,0]};
-  const est = pb.perBidang||[0,0,0,0], srv = pb.baseline2023_kopi||[0,0,0,0];
-  const estTot = est.reduce((s,v)=>s+v,0), srvTot = srv.reduce((s,v)=>s+v,0);
+  const pb = (typeof POHON_BASELINE!=='undefined') ? POHON_BASELINE : {perBidang:[0,0,0,0], baseline2023_kopi:[0,0,0,0], census2026:[0,0,0,0], censusLocked:[false,false,false,false]};
+  const srv = pb.baseline2023_kopi||[0,0,0,0];
+  const cur = (pb.census2026 && pb.census2026.length===4) ? pb.census2026 : (pb.perBidang||[0,0,0,0]);   // TERKINI per kebun: census aktual / est
+  const locked = pb.censusLocked || [false,false,false,false];
+  const curTot = cur.reduce((s,v)=>s+(v||0),0), srvTot = srv.reduce((s,v)=>s+(v||0),0);
   const chip = (lbl,val,col) => `<div style="background:#fff;border:1px solid #e8e3d8;border-radius:8px;padding:7px 12px;min-width:84px"><div style="font-size:9px;color:var(--mute);text-transform:uppercase;letter-spacing:.3px">${lbl}</div><div style="font-size:17px;font-weight:800;color:${col}">${val}</div></div>`;
   c.innerHTML = `
     <div style="font-size:11px;color:var(--mute);font-weight:700;margin-bottom:6px">🍒 PANEN SIKLUS 2026 (akumulasi)</div>
@@ -3547,13 +3549,13 @@ function renderDashPanenSummary() {
     </div>
     <div style="font-size:11px;color:var(--mute);font-weight:700;margin-bottom:6px">🌳 JUMLAH POHON KOPI PER KEBUN</div>
     <div class="table-wrap"><table style="width:100%;font-size:11.5px;border-collapse:collapse;max-width:440px">
-      <thead><tr style="background:var(--earth);color:#fff"><th style="text-align:left;padding:5px 8px">Kebun</th><th style="text-align:right">Survei Okt 2023</th><th style="text-align:right">Estimasi kini</th></tr></thead>
+      <thead><tr style="background:var(--earth);color:#fff"><th style="text-align:left;padding:5px 8px">Kebun</th><th style="text-align:right">Survei Okt 2023</th><th style="text-align:right;padding-right:8px">Terkini</th></tr></thead>
       <tbody>
-        ${['K1','K2','K3','K4'].map((k,i)=>`<tr style="border-bottom:1px solid #efe9dd"><td style="padding:5px 8px;font-weight:700">${k}</td><td style="text-align:right;color:var(--mute)">${srv[i]||0}</td><td style="text-align:right;font-weight:700">${est[i]||0}</td></tr>`).join('')}
-        <tr style="background:#FAFCFB;font-weight:800;border-top:2px solid #e0d9c8"><td style="padding:5px 8px">TOTAL</td><td style="text-align:right;color:var(--mute)">${srvTot}</td><td style="text-align:right">${estTot}</td></tr>
+        ${['K1','K2','K3','K4'].map((k,i)=>`<tr style="border-bottom:1px solid #efe9dd"><td style="padding:5px 8px;font-weight:700">${k}</td><td style="text-align:right;color:var(--mute)">${srv[i]||0}</td><td style="text-align:right;font-weight:700;padding-right:8px;${locked[i]?'':'color:#b45309'}">${cur[i]||0} ${locked[i]?'<span style="color:#16a34a;font-size:9px;font-weight:700">✓</span>':'<span style="font-size:9px;font-weight:600">~est</span>'}</td></tr>`).join('')}
+        <tr style="background:#FAFCFB;font-weight:800;border-top:2px solid #e0d9c8"><td style="padding:5px 8px">TOTAL</td><td style="text-align:right;color:var(--mute)">${srvTot}</td><td style="text-align:right;padding-right:8px">${curTot}</td></tr>
       </tbody>
     </table></div>
-    <div style="font-size:9.5px;color:var(--mute);margin-top:5px;font-style:italic">Survei Okt 2023 = census locked · Estimasi kini = decay-adjusted Mei 2026 · census ulang in-progress (aktual 28 Mei: K2 490 · K3 350)</div>`;
+    <div style="font-size:9.5px;color:var(--mute);margin-top:5px;font-style:italic"><span style="color:#16a34a;font-weight:700">✓</span> census aktual lapangan (K2·K3 locked 28 Mei 2026) · <span style="color:#b45309;font-weight:600">~est</span> estimasi (K1·K4 census 29 Mei belum direkonsiliasi kopi-only — konfirmasi Wakif). Angka lama "912" (decay penuh) terlalu agresif vs aktual.</div>`;
 }
 
 function renderDashboard() {
@@ -9009,6 +9011,9 @@ function renderPanenLots() {
   renderPanenAnalytics();
   renderPanenLotsTable();
   renderPanenLotsGradeChart();
+  // ⭐ 2 Jul 2026: keep Dashboard card "PANEN TAHUN INI" live — renderPanenLots dipanggil oleh renderPanen (PanenData sync)
+  // + PanenLots sync + tiap mutasi panen/jemur/giling/jual. Hook di sini = 1 titik cover semua source change.
+  if (typeof renderDashPanenSummary === 'function') renderDashPanenSummary();
 }
 
 // Fase 3d (25 Jun 2026): Analitik rendemen — learning loop dari event jemur/giling (surfaced)
@@ -14855,7 +14860,13 @@ const POHON_BASELINE = {
   pre: 915,
   post: 750,
   current: 915,                       // Active baseline — manual update after seleksi
-  perBidang: [99, 411, 262, 140],     // 2023 KOPI × decay 2.6yr (15 Okt 2023 → Mei 2026)
+  perBidang: [99, 411, 262, 140],     // 2023 KOPI × decay 2.6yr — LEGACY decay est (terlalu agresif vs aktual census)
+  // ⭐ 2 Jul 2026: census2026 = angka TERKINI per kebun (dipakai kartu Dashboard "Terkini").
+  //   K2·K3 = census AKTUAL lapangan 28 Mei 2026 (locked ✓, konsisten CLAUDE.md).
+  //   K1·K4 = estimasi revisi 11 Jun (census 29 Mei belum direkonsiliasi kopi-only vs total — angka "1298/K4 304" diduga campur non-kopi).
+  //   Update angka + set censusLocked=true begitu Wakif konfirmasi census kopi-only K1·K4.
+  census2026:   [130, 490, 350, 185],
+  censusLocked: [false, true, true, false],
   baseline2023_kopi: [150, 623, 397, 212],  // Adib survey Oktober 2023 — locked
   baseline2023_nonkopi: [22, 74, 42, 28]    // Shade + sekunder Oktober 2023 — locked
 };
