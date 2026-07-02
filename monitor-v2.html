@@ -4701,8 +4701,12 @@ function submitForm() {
   }
   // Comment 2 (16 Mei): Durasi Kerja wajib untuk YIT/KUMPUL (auto-link ke Upah Pekerja).
   // Mas Anto = sweat equity, durasi opsional (boleh kosong).
-  if ((STATE.pelapor === 'YIT' || STATE.pelapor === 'KUMPUL') && !STATE.durasi) {
-    alert('Durasi Kerja wajib diisi untuk ' + (STATE.pelapor === 'YIT' ? 'Cak Yit' : 'Pak Kumpul') + ' (auto-link ke Upah Pekerja).\n\nPilih: 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
+  // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA (data-driven), bukan hardcode YIT/KUMPUL.
+  // Pekerja harian ber-tarif (YIT/KUMPUL/YASIR/KAMTO) wajib durasi → auto-link upah.
+  // Pemanen (MAKMIS/HARNI/CHRISTO) + WAKIF/ANTO = TIDAK di TARIF_PEKERJA → durasi opsional (upah manual / model per-kg masih pending).
+  if (TARIF_PEKERJA[STATE.pelapor] && !STATE.durasi) {
+    const _nm = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor;
+    alert('Durasi Kerja wajib diisi untuk ' + _nm + ' (auto-link ke Upah Pekerja).\n\nPilih: 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
     return;
   }
   // Compute alerts based on rainfall + kategori
@@ -4795,7 +4799,7 @@ function submitForm() {
 
   // ===== AUTO-LINK ke UPAH_ITEMS (Yit/Kumpul saja, ANTO = sweat equity) =====
   let upahMsg = '';
-  if ((STATE.pelapor === 'YIT' || STATE.pelapor === 'KUMPUL') && STATE.durasi && typeof UPAH_ITEMS !== 'undefined') {
+  if (TARIF_PEKERJA[STATE.pelapor] && STATE.durasi && typeof UPAH_ITEMS !== 'undefined') {
     const tarif = TARIF_PEKERJA[STATE.pelapor];
     let satuan = STATE.durasi;
     let satuanLbl = '';
@@ -5957,7 +5961,7 @@ function computeHakFromLaporan() {
   if (typeof STATE === 'undefined' || !Array.isArray(STATE.laporan)) return {};
   const hakMap = {};   // pelapor → { tgl → { hak, aktivitas, durasi, laporan_ids } }
   STATE.laporan.forEach(l => {
-    if (l.pelapor !== 'YIT' && l.pelapor !== 'KUMPUL') return;
+    if (typeof TARIF_PEKERJA === 'undefined' || !TARIF_PEKERJA[l.pelapor]) return;  // ⭐ 2 Jul: data-driven gate (Pattern #12) — cover Yasir/Kamto, exclude pemanen
     if (!l.durasi || !l.tgl) return;
     const tarif = (typeof TARIF_PEKERJA !== 'undefined' && TARIF_PEKERJA[l.pelapor]) ? TARIF_PEKERJA[l.pelapor] : null;
     if (!tarif) return;
@@ -9189,7 +9193,7 @@ function setJemurMode(mode) {
   if (mode === 'done') {
     if (m1) m1.style.display = 'none'; if (m2) m2.style.display = 'block';
     if (submitBtn) submitBtn.style.display = 'none';
-    if (note) note.innerHTML = 'Tandai batch yang sudah kering → otomatis masuk stok dried cherry. Hanya batch yang sudah "Mulai Jemur" yang muncul (konsep sama kayak sortir: butuh entry panen dulu).';
+    if (note) note.innerHTML = 'Centang batch yang sudah kering (bisa &gt;1 kalau dijemur campur) → isi 1 berat DRIED total → masuk stok. Dried dibagi proporsional per cherry. Hanya batch yang sudah "Mulai Jemur" yang muncul.';
     renderJemurDryingList();
   } else {
     if (m1) m1.style.display = 'block'; if (m2) m2.style.display = 'none';
@@ -9234,24 +9238,109 @@ function updateJemurCherryTotal() {
   const el = document.getElementById('je-cherry-total'); if (el) el.textContent = total.toFixed(1);
 }
 
-// Mode 2: daftar batch SEDANG dijemur (status drying) → tandai kering. Kosong sebelum ada "Mulai Jemur".
+// Mode 2: daftar batch SEDANG dijemur (status drying) → tandai kering.
+// ⭐ 2 Jul 2026: MULTI-SELECT (checkbox) — Adib jemur/timbang campur beberapa batch → 1 berat DRIED total,
+// dibagi proporsional per cherry_kg. Mirror UX "Mulai Jemur". (dulu singular prompt per-batch.)
 function renderJemurDryingList() {
   const el = document.getElementById('je-drying-list'); if (!el) return;
-  const drying = PANEN_LOTS_DATA.filter(l => l.type==='jemur_event' && l.status==='drying');
+  const drying = PANEN_LOTS_DATA.filter(l => l.type==='jemur_event' && l.status==='drying')
+    .sort((a,b)=>(a.tgl_mulai_jemur||'').localeCompare(b.tgl_mulai_jemur||''));
   if (!drying.length) {
     el.innerHTML = `<div style="padding:20px;text-align:center;background:#FFFBEB;border:1px dashed #fcd34d;border-radius:8px;font-size:12px;color:#92400e">🌤️ Belum ada batch yang sedang dijemur.<br><span style="font-size:11px">"Mulai Jemur" dulu — nggak bisa tandai kering sebelum ada batch yang dijemur (sama kayak sortir butuh panen dulu).</span></div>`;
     return;
   }
-  el.innerHTML = drying.sort((a,b)=>(a.tgl_mulai_jemur||'').localeCompare(b.tgl_mulai_jemur||'')).map(ev => {
+  const rows = drying.map(ev => {
     const g = PANEN_GRADES[ev.grade] || {label:ev.grade,color:'#888'};
     const days = jemurDaysElapsed(ev);
     const tglM = (typeof formatTglShort==='function') ? formatTglShort(ev.tgl_mulai_jemur) : ev.tgl_mulai_jemur;
     const col = days>=DRYING_TARGET_DAYS ? '#16a34a' : (days>=14 ? '#d4a017' : '#b45309');
-    return `<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 11px;border:1px solid #f0d9b8;border-radius:8px;margin-bottom:6px">
-      <div><span style="font-weight:700;color:${g.color}">${g.label}</span> <span style="font-size:10.5px;color:var(--mute)">${(ev.cherry_kg||0).toFixed(1)} kg cherry · ${(ev.source_batch_ids||[]).length} batch · mulai ${tglM} · <strong style="color:${col}">dijemur ${days} hari</strong></span></div>
-      <button onclick="finishJemurEvent('${ev.id}')" class="btn btn-primary" style="background:#16a34a;font-size:10.5px;padding:4px 11px;white-space:nowrap">✅ Tandai Kering</button>
-    </div>`;
+    return `<label style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid #f0d9b8;border-radius:8px;margin-bottom:6px;cursor:pointer">
+      <input type="checkbox" class="jf-batch-cb" value="${ev.id}" data-cherry="${(ev.cherry_kg||0).toFixed(2)}" data-days="${days}" onchange="updateJemurFinishTotal()" style="width:15px;height:15px;cursor:pointer;flex:0 0 auto">
+      <span style="font-weight:700;color:${g.color};min-width:82px">${g.label}</span>
+      <span style="flex:1;font-size:10.5px;color:var(--mute)">${(ev.cherry_kg||0).toFixed(1)} kg cherry · ${(ev.source_batch_ids||[]).length} batch · mulai ${tglM}</span>
+      <span style="font-size:10.5px;font-weight:800;color:${col};white-space:nowrap">${days} hari</span>
+    </label>`;
   }).join('');
+  el.innerHTML = `
+    <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:6px">🍒 Pilih batch yang sudah kering
+      <span style="font-weight:400;color:var(--mute)">— centang &gt;1 kalau dijemur/ditimbang campur (1 timbangan utk beberapa batch)</span></div>
+    ${rows}
+    <div style="margin-top:8px;padding:11px 12px;background:#f0fdf4;border:1.5px solid #86c79c;border-radius:9px">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;margin-bottom:9px">
+        <span>Cherry terpilih: <strong id="jf-cherry-total" style="color:#c14b3a">0 kg</strong></span>
+        <span id="jf-days-note" style="color:var(--mute);font-size:10px"></span>
+      </div>
+      <div style="display:grid;grid-template-columns:132px 1fr;gap:8px;align-items:center">
+        <label style="font-weight:700;font-size:11px;color:#15803d">🌰 DRIED total (kg)</label>
+        <input type="text" inputmode="decimal" id="jf-dried-total" placeholder="cth 8,5 · koma=desimal" oninput="updateJemurFinishTotal()" style="padding:7px 10px;border:1.5px solid #86c79c;border-radius:6px;font-size:12px;background:#fff">
+        <label style="font-weight:600;font-size:11px">💧 MC % (opsional)</label>
+        <input type="text" inputmode="decimal" id="jf-mc" placeholder="Enter skip" style="padding:7px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+      </div>
+      <div id="jf-preview" style="font-size:10.5px;color:#15803d;font-weight:600;margin-top:8px;min-height:14px"></div>
+      <button onclick="submitFinishJemurMulti()" class="btn btn-primary" style="background:#16a34a;font-size:12px;padding:8px 14px;margin-top:9px;width:100%">✅ Tandai Kering (gabungan) → masuk stok dried</button>
+    </div>`;
+  updateJemurFinishTotal();
+}
+
+// Live total cherry + rendemen preview untuk multi-select finish
+function updateJemurFinishTotal() {
+  const cbs = [...document.querySelectorAll('.jf-batch-cb:checked')];
+  const totalCherry = cbs.reduce((s,cb)=>s+(parseFloat(cb.dataset.cherry)||0),0);
+  const ct = document.getElementById('jf-cherry-total'); if (ct) ct.textContent = totalCherry.toFixed(1)+' kg';
+  const daysArr = cbs.map(cb=>parseInt(cb.dataset.days)||0);
+  const dn = document.getElementById('jf-days-note');
+  if (dn) dn.textContent = !cbs.length ? '' : (cbs.length>1 ? `${cbs.length} batch · dijemur ${Math.min(...daysArr)}–${Math.max(...daysArr)} hari` : `dijemur ${daysArr[0]} hari`);
+  const dried = (typeof parseDecimalInput==='function') ? parseDecimalInput((document.getElementById('jf-dried-total')||{}).value||'') : parseFloat((document.getElementById('jf-dried-total')||{}).value);
+  const pv = document.getElementById('jf-preview');
+  if (pv) {
+    if (dried && totalCherry>0) {
+      const rdm = Math.round(dried/totalCherry*100);
+      pv.innerHTML = `≈ rendemen ${rdm}% (dried/cherry)` + (rdm>60?` · <span style="color:#b45309">⚠ tinggi — cek timbangan</span>`:'') + (cbs.length>1?` · dibagi proporsional ke ${cbs.length} batch`:'');
+    } else pv.textContent = '';
+  }
+}
+
+// Selesai jemur GABUNGAN — N batch, 1 berat DRIED total, split proporsional per cherry_kg.
+// Pool per warna tetap konsisten (Σ dried_kg = dried total). Warn durasi pendek (lesson jamur 21 Jun).
+function submitFinishJemurMulti() {
+  const cbs = [...document.querySelectorAll('.jf-batch-cb:checked')];
+  if (!cbs.length) return alert('Pilih minimal 1 batch yang sudah kering (centang di atas).');
+  const ids = cbs.map(cb=>cb.value);
+  const events = ids.map(id => PANEN_LOTS_DATA.find(l => l.id===id)).filter(Boolean);
+  if (!events.length) return alert('Batch tidak ditemukan — refresh dulu.');
+  const dried = parseDecimalInput((document.getElementById('jf-dried-total')||{}).value||'');
+  if (!dried || dried <= 0) return alert('Berat DRIED total harus angka > 0');
+  const totalCherry = events.reduce((s,e)=>s+(e.cherry_kg||0),0);
+  if (totalCherry > 0 && dried > totalCherry) { if (!confirm(`⚠ Dried ${dried} kg > cherry terpilih ${totalCherry.toFixed(1)} kg. Cek timbangan. Tetap lanjut?`)) return; }
+  const mc = parseDecimalInput((document.getElementById('jf-mc')||{}).value||'');
+  const daysArr = events.map(e => jemurDaysElapsed(e));
+  const minDays = Math.min(...daysArr);
+  if (minDays < 14) { if (!confirm(`⚠ Ada batch baru dijemur ${minDays} hari (target ~${DRYING_TARGET_DAYS}). Risiko under-dried walau MC meter bilang kering (lesson jamur 21 Jun → jamur di storage). Tetap tandai KERING?`)) return; }
+  const now = new Date().toISOString();
+  const todayI = (typeof todayIso==='function') ? todayIso() : now.slice(0,10);
+  const multi = events.length > 1;
+  const groupId = multi ? ('dg_'+Date.now().toString(36)) : null;
+  let assigned = 0;
+  events.forEach((e,i) => {
+    const isLast = (i === events.length-1);
+    const share = totalCherry > 0 ? (e.cherry_kg||0)/totalCherry : 1/events.length;
+    const d = isLast ? +(dried - assigned).toFixed(2) : +(dried*share).toFixed(2);  // last absorbs rounding → Σ = dried
+    if (!isLast) assigned += d;
+    e.status = 'done'; e.dried_kg = d; e.mc = mc; e.tgl_selesai = todayI; e.last_modified_at = now;
+    if (multi) { e.dried_gabungan = true; e.dried_gabungan_group = groupId; e.dried_gabungan_total = dried; e.dried_gabungan_n = events.length; }
+    else { delete e.dried_gabungan; delete e.dried_gabungan_group; delete e.dried_gabungan_total; delete e.dried_gabungan_n; }
+  });
+  savePanenLotsToLS();
+  const grades = [...new Set(events.map(e=>e.grade))];
+  if (typeof showToast==='function') showToast(`✅ ${events.length} batch kering: ${dried} kg dried → pool${multi?` (gabungan${grades.length>1?', '+grades.length+' warna':''})`:''}`, 'success');
+  renderJemurDryingList();   // refresh list — batch yg sudah 'done' otomatis hilang
+  if (typeof renderPanenLots==='function') renderPanenLots();
+}
+
+// Quick-open modal langsung ke mode "Sudah Kering" (dipakai tombol Selesai di panel Sedang Dijemur)
+function openJemurDoneModal() {
+  openJemurEventDialog();
+  setJemurMode('done');
 }
 
 function submitJemurEvent() {
@@ -9320,7 +9409,7 @@ function renderDryingTrackerHtml() {
     return `<div style="background:#fff;border:1px solid #fcd9a8;border-radius:8px;padding:8px 11px;margin-bottom:6px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
         <div><span style="font-weight:700;color:${g.color}">${g.label}</span> <span style="font-size:10px;color:var(--mute)">${(ev.cherry_kg||0).toFixed(1)} kg cherry · ${nB} batch · mulai ${tglM}</span></div>
-        <button onclick="finishJemurEvent('${ev.id}')" class="btn btn-primary" style="background:#16a34a;font-size:10px;padding:3px 10px">✅ Selesai (kering)</button>
+        <button onclick="openJemurDoneModal()" class="btn btn-primary" style="background:#16a34a;font-size:10px;padding:3px 10px" title="Buka daftar batch kering (bisa pilih banyak sekaligus)">✅ Selesai (kering)</button>
       </div>
       <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
         <div style="flex:1;height:7px;background:#f0eee9;border-radius:4px;overflow:hidden"><div style="width:${pct}%;height:100%;background:${col}"></div></div>
@@ -15786,7 +15875,7 @@ function findRecoverCandidates() {
   if (!STATE || !Array.isArray(STATE.laporan)) return [];
   const candidates = [];
   STATE.laporan.forEach((lap, idx) => {
-    if (lap.pelapor !== 'YIT' && lap.pelapor !== 'KUMPUL') return;
+    if (typeof TARIF_PEKERJA === 'undefined' || !TARIF_PEKERJA[lap.pelapor]) return;  // ⭐ 2 Jul: data-driven gate (Pattern #12) — recover Yasir/Kamto too, exclude pemanen (per-kg pending)
     // Cek apakah sudah ada UPAH dgn tgl + pelapor + src auto_form/auto_backfill
     const exists = UPAH_ITEMS.some(it =>
       it.tgl === lap.tgl &&
@@ -16176,7 +16265,9 @@ if (document.readyState === 'loading'){
 //   Fallback: local UPAH_ITEMS check (defense-in-depth + supports sync callers).
 function autoCreateUpahFromEntry(entry, firestoreUpahMap = null) {
   if (typeof UPAH_ITEMS === 'undefined') return null;
-  if (entry.pelapor !== 'YIT' && entry.pelapor !== 'KUMPUL') return null;  // ANTO = sweat equity, skip
+  // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA (data-driven). Hanya pekerja ber-tarif harian/borongan
+  // (YIT/KUMPUL/YASIR/KAMTO) yg auto-create upah. Pemanen (per-kg model pending) + WAKIF/ANTO sweat-equity = skip (manual).
+  if (!TARIF_PEKERJA[entry.pelapor]) return null;
   if (!entry.durasi) return null;
 
   // ⭐ Firestore-authoritative dedup (L3 fix 6 Juni 2026) — runs FIRST if map provided
@@ -18865,8 +18956,9 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
             complianceFixed++;
           } catch (e) { /* keep pending */ }
         }
-        // (b) Re-create UPAH untuk YIT/KUMPUL yang belum ter-link (Firestore-auth check FIRST)
-        if ((l.pelapor === 'YIT' || l.pelapor === 'KUMPUL') && l.durasi && typeof autoCreateUpahFromEntry === 'function') {
+        // (b) Re-create UPAH untuk pekerja ber-tarif (YIT/KUMPUL/YASIR/KAMTO) yang belum ter-link (Firestore-auth check FIRST)
+        // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA. Pemanen (per-kg pending) tidak auto-reprocess.
+        if (TARIF_PEKERJA[l.pelapor] && l.durasi && typeof autoCreateUpahFromEntry === 'function') {
           const newUpah = autoCreateUpahFromEntry(l, firestoreUpahMap);  // ⭐ pass map → L3 dedup
           if (newUpah) upahCreated++;
         }
