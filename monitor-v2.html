@@ -3555,7 +3555,7 @@ function renderDashPanenSummary() {
         <tr style="background:#FAFCFB;font-weight:800;border-top:2px solid #e0d9c8"><td style="padding:5px 8px">TOTAL</td><td style="text-align:right;color:var(--mute)">${srvTot}</td><td style="text-align:right;padding-right:8px">${curTot}</td></tr>
       </tbody>
     </table></div>
-    <div style="font-size:9.5px;color:var(--mute);margin-top:5px;font-style:italic"><span style="color:#16a34a;font-weight:700">✓</span> census aktual lapangan (K2·K3 locked 28 Mei 2026) · <span style="color:#b45309;font-weight:600">~est</span> estimasi (K1·K4 census 29 Mei belum direkonsiliasi kopi-only — konfirmasi Wakif). Angka lama "912" (decay penuh) terlalu agresif vs aktual.</div>`;
+    <div style="font-size:9.5px;color:var(--mute);margin-top:5px;font-style:italic"><span style="color:#16a34a;font-weight:700">✓</span> census aktual lapangan 28–29 Mei 2026 (sumber: Tab Inventarisasi). Kebun Wakaf K1+K2+K3 = <strong>994</strong> · K4 Rumah Wakif <em>(bukan aset wakaf)</em> = 304 · total fisik 1.298. Angka lama "912" (decay) terlalu agresif vs aktual.</div>`;
 }
 
 function renderDashboard() {
@@ -14861,12 +14861,11 @@ const POHON_BASELINE = {
   post: 750,
   current: 915,                       // Active baseline — manual update after seleksi
   perBidang: [99, 411, 262, 140],     // 2023 KOPI × decay 2.6yr — LEGACY decay est (terlalu agresif vs aktual census)
-  // ⭐ 2 Jul 2026: census2026 = angka TERKINI per kebun (dipakai kartu Dashboard "Terkini").
-  //   K2·K3 = census AKTUAL lapangan 28 Mei 2026 (locked ✓, konsisten CLAUDE.md).
-  //   K1·K4 = estimasi revisi 11 Jun (census 29 Mei belum direkonsiliasi kopi-only vs total — angka "1298/K4 304" diduga campur non-kopi).
-  //   Update angka + set censusLocked=true begitu Wakif konfirmasi census kopi-only K1·K4.
-  census2026:   [130, 490, 350, 185],
-  censusLocked: [false, true, true, false],
+  // ⭐ 2 Jul 2026: census2026 = census AKTUAL per kebun (28-29 Mei 2026 · sumber: cards Tab Inventarisasi, per-warna H/B/M).
+  //   K1 154 (70H+60B+24M) · K2 490 (194H+198B+98M) · K3 350 (62H+88B+200M) · K4 304 (106H+138B+60M).
+  //   Kebun Wakaf K1+K2+K3 = 994 · K4 Rumah Wakif (BUKAN aset wakaf) = 304 · total fisik 1.298. Semua locked ✓.
+  census2026:   [154, 490, 350, 304],
+  censusLocked: [true, true, true, true],
   baseline2023_kopi: [150, 623, 397, 212],  // Adib survey Oktober 2023 — locked
   baseline2023_nonkopi: [22, 74, 42, 28]    // Shade + sekunder Oktober 2023 — locked
 };
