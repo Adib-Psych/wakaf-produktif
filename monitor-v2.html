@@ -9255,7 +9255,7 @@ function renderJemurDryingList() {
     const tglM = (typeof formatTglShort==='function') ? formatTglShort(ev.tgl_mulai_jemur) : ev.tgl_mulai_jemur;
     const col = days>=DRYING_TARGET_DAYS ? '#16a34a' : (days>=14 ? '#d4a017' : '#b45309');
     return `<label style="display:flex;align-items:center;gap:9px;padding:8px 10px;border:1px solid #f0d9b8;border-radius:8px;margin-bottom:6px;cursor:pointer">
-      <input type="checkbox" class="jf-batch-cb" value="${ev.id}" data-cherry="${(ev.cherry_kg||0).toFixed(2)}" data-days="${days}" onchange="updateJemurFinishTotal()" style="width:15px;height:15px;cursor:pointer;flex:0 0 auto">
+      <input type="checkbox" class="jf-batch-cb" value="${ev.id}" data-cherry="${(ev.cherry_kg||0).toFixed(2)}" data-days="${days}" data-grade="${g.label}" onchange="updateJemurFinishTotal()" style="width:15px;height:15px;cursor:pointer;flex:0 0 auto">
       <span style="font-weight:700;color:${g.color};min-width:82px">${g.label}</span>
       <span style="flex:1;font-size:10.5px;color:var(--mute)">${(ev.cherry_kg||0).toFixed(1)} kg cherry · ${(ev.source_batch_ids||[]).length} batch · mulai ${tglM}</span>
       <span style="font-size:10.5px;font-weight:800;color:${col};white-space:nowrap">${days} hari</span>
@@ -9270,6 +9270,7 @@ function renderJemurDryingList() {
         <span>Cherry terpilih: <strong id="jf-cherry-total" style="color:#c14b3a">0 kg</strong></span>
         <span id="jf-days-note" style="color:var(--mute);font-size:10px"></span>
       </div>
+      <div id="jf-est" style="font-size:10.5px;color:#0e7490;font-weight:700;margin:-3px 0 9px;min-height:14px"></div>
       <div style="display:grid;grid-template-columns:132px 1fr;gap:8px;align-items:center">
         <label style="font-weight:700;font-size:11px;color:#15803d">🌰 DRIED total (kg)</label>
         <input type="text" inputmode="decimal" id="jf-dried-total" placeholder="cth 8,5 · koma=desimal" oninput="updateJemurFinishTotal()" style="padding:7px 10px;border:1.5px solid #86c79c;border-radius:6px;font-size:12px;background:#fff">
@@ -9282,20 +9283,41 @@ function renderJemurDryingList() {
   updateJemurFinishTotal();
 }
 
-// Live total cherry + rendemen preview untuk multi-select finish
+// Estimasi rendemen jemur (cherry→dried): rata² historis kalau ada, else asumsi 44% (samain dgn Analitik Rendemen).
+function estJemurRendemen() {
+  const ev = (typeof PANEN_LOTS_DATA!=='undefined'?PANEN_LOTS_DATA:[]).filter(l => l.type==='jemur_event' && l.status==='done' && l.cherry_kg>0 && l.dried_kg>0);
+  const r = ev.map(e => e.dried_kg/e.cherry_kg).filter(x => x>0.25 && x<0.65);   // buang outlier
+  if (r.length >= 2) { const a = r.reduce((s,x)=>s+x,0)/r.length; return { rate:a, n:r.length, src:`rata² ${r.length} jemur lalu` }; }
+  return { rate:0.44, n:0, src:'asumsi ~44%' };
+}
+
+// Live total cherry + 🎯 estimasi dried (sanity target) + preview rendemen aktual — multi-select finish.
+// ⭐ 2 Jul 2026 (Adib): estimasi dried per centang → double-check jumlah masuk akal + inget batch mana yg diangkat.
 function updateJemurFinishTotal() {
   const cbs = [...document.querySelectorAll('.jf-batch-cb:checked')];
   const totalCherry = cbs.reduce((s,cb)=>s+(parseFloat(cb.dataset.cherry)||0),0);
   const ct = document.getElementById('jf-cherry-total'); if (ct) ct.textContent = totalCherry.toFixed(1)+' kg';
+  // grade + durasi summary — bantu inget batch mana yg lagi diangkat
   const daysArr = cbs.map(cb=>parseInt(cb.dataset.days)||0);
+  const gc = {}; cbs.forEach(cb=>{ const g=cb.dataset.grade||'?'; gc[g]=(gc[g]||0)+1; });
+  const gradeStr = Object.entries(gc).map(([g,n])=>`${g}×${n}`).join(' · ');
   const dn = document.getElementById('jf-days-note');
-  if (dn) dn.textContent = !cbs.length ? '' : (cbs.length>1 ? `${cbs.length} batch · dijemur ${Math.min(...daysArr)}–${Math.max(...daysArr)} hari` : `dijemur ${daysArr[0]} hari`);
+  if (dn) dn.textContent = !cbs.length ? '' : `${gradeStr} · dijemur ${daysArr.length>1?Math.min(...daysArr)+'–'+Math.max(...daysArr):daysArr[0]} hari`;
+  // 🎯 estimasi dried — target sanity sebelum timbang
+  const est = estJemurRendemen();
+  const ee = document.getElementById('jf-est');
+  if (ee) ee.innerHTML = totalCherry>0
+    ? `🎯 Perkiraan dried: <strong>~${(totalCherry*est.rate).toFixed(1)} kg</strong> <span style="color:var(--mute);font-weight:500">(@${Math.round(est.rate*100)}% · ${est.src}) — timbangan aktual harusnya mendekati ini</span>`
+    : '';
+  // preview: rendemen aktual vs kisaran wajar (38–52%)
   const dried = (typeof parseDecimalInput==='function') ? parseDecimalInput((document.getElementById('jf-dried-total')||{}).value||'') : parseFloat((document.getElementById('jf-dried-total')||{}).value);
   const pv = document.getElementById('jf-preview');
   if (pv) {
     if (dried && totalCherry>0) {
-      const rdm = Math.round(dried/totalCherry*100);
-      pv.innerHTML = `≈ rendemen ${rdm}% (dried/cherry)` + (rdm>60?` · <span style="color:#b45309">⚠ tinggi — cek timbangan</span>`:'') + (cbs.length>1?` · dibagi proporsional ke ${cbs.length} batch`:'');
+      const rdm = dried/totalCherry, p = Math.round(rdm*100);
+      const ok = rdm>=0.38 && rdm<=0.52;
+      const flag = ok ? `<span style="color:#16a34a">✓ masuk akal</span>` : `<span style="color:#b45309">⚠ di luar kisaran wajar 38–52% — cek batch/timbangan</span>`;
+      pv.innerHTML = `Aktual: ${dried.toFixed(1)} kg = rendemen ${p}% · ${flag}` + (cbs.length>1?` · dibagi proporsional ke ${cbs.length} batch`:'');
     } else pv.textContent = '';
   }
 }
