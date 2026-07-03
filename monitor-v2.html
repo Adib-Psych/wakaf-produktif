@@ -8647,6 +8647,60 @@ function renderPanenSamplingTable() {
 
 // ⭐ 11 Juni 2026 v1.2 — Multi-batch modal: list existing sessions + add new session form.
 // Replaced prompt-based single-input flow. Now true multi-session UI per pohon.
+// ⭐ 3 Jul 2026 — Sampling drying tracker (per Adib): jemur-date + safe-to-store + estimator 44% dua-arah.
+const SAMPLING_SAFE_DAYS = 18;   // target jemur cherry utuh (≈DRYING_TARGET_DAYS) — proxy aman-simpan
+function samplingJemurDays(s){
+  const start = s && s.jemur_date;
+  if(!start) return null;
+  const d = Math.floor((Date.now() - new Date(start+'T00:00:00').getTime())/86400000);
+  return d>=0 ? d : 0;
+}
+// cherry total yg diwakili 1 dried (sesi ini + sesi lain yg digabung jemur via dried_covers)
+function samplingCoversCherry(s){
+  let c = (s && s.cherry_gram) || 0;
+  if(s && Array.isArray(s.dried_covers)) s.dried_covers.forEach(id=>{
+    const o = PANEN_SAMPLING_DATA.find(x=>x.id===id); if(o) c += (o.cherry_gram||0);
+  });
+  return c;
+}
+// status pengeringan per sesi — 2 arah (rendemen dried/cherry) + tracking hari jemur
+function samplingDryStatus(s){
+  if(!s) return {code:'', lbl:'', col:'var(--mute)'};
+  if(s.dried_covered_by) return {code:'covered', lbl:'🔗 digabung ke sesi lain', col:'#0e7490'};
+  if(s.dried_gram != null){
+    const totCh = samplingCoversCherry(s), r = totCh ? s.dried_gram/totCh : 0;
+    if(!totCh) return {code:'kering', lbl:'🌰 kering', col:'#7a5c2e'};
+    if(r > 0.48) return {code:'basah', lbl:`🚩 ${Math.round(r*100)}% · cek (mungkin basah)`, col:'#c14b3a'};
+    if(r < 0.40) return {code:'kurang', lbl:`🟡 ${Math.round(r*100)}% · rendah`, col:'#b45309'};
+    return {code:'kering', lbl:`✅ kering ${Math.round(r*100)}%`, col:'#16a34a'};
+  }
+  if(!s.jemur_date) return {code:'blm', lbl:'— belum jemur', col:'var(--mute)'};
+  const d = samplingJemurDays(s);
+  if(d >= SAMPLING_SAFE_DAYS) return {code:'siap', lbl:`🌤️ ${d} hr · siap ditimbang`, col:'#16a34a'};
+  return {code:'jemur', lbl:`🌤️ jemur ${d} hr`, col: d>=14 ? '#d4a017' : '#b45309'};
+}
+// live verdict di modal edit sesi: Σcherry terpilih → perkiraan dried 44% + rendemen aktual 2-arah
+function updateSamplingDriedVerdict(){
+  const pg = (id)=> (typeof parseGramInput==='function' ? parseGramInput((document.getElementById(id)||{}).value||'') : parseFloat((document.getElementById(id)||{}).value)) || 0;
+  const own = pg('edit-session-cherry');
+  const covers = [...document.querySelectorAll('.edit-cover-cb:checked')];
+  const covCh = covers.reduce((a,c)=>a+(parseFloat(c.dataset.cherry)||0),0);
+  const totCh = own + covCh;
+  const dried = pg('edit-session-dried');
+  const el = document.getElementById('edit-dried-verdict'); if(!el) return;
+  if(totCh<=0){ el.innerHTML=''; return; }
+  let s = `Σ cherry <strong>${Math.round(totCh)} g</strong>${covers.length?` (sesi ini + ${covers.length} gabungan)`:''} · perkiraan dried <strong>~${Math.round(totCh*0.44)} g</strong> <span style="color:var(--mute)">(@44%)</span>`;
+  if(dried>0){
+    const r = dried/totCh, p = Math.round(r*100);
+    let v,c;
+    if(r>0.48){ v='mungkin BELUM kering (masih basah) → lanjut jemur'; c='#c14b3a'; }
+    else if(r<0.40){ v='rendah — ada batch belum ikut / susut'; c='#b45309'; }
+    else { v='kering (pas)'; c='#16a34a'; }
+    s += `<br>aktual ${Math.round(dried)} g = <strong style="color:${c}">${p}% · ${v}</strong>`;
+  }
+  el.innerHTML = s;
+}
+
 function openSamplingInput(pohonId) {
   const baseline = SAMPLING_POHON_BASELINE.find(b => b.id === pohonId);
   if (!baseline) return alert('Pohon ID tidak ditemukan: ' + pohonId);
@@ -8658,12 +8712,14 @@ function openSamplingInput(pohonId) {
     const gramDisplay = s.cherry_gram != null ? `${Math.round(s.cherry_gram).toLocaleString('id-ID')} g` : '<em style="color:var(--mute)">no gram</em>';
     const driedDisp = s.dried_gram != null ? `🌰 ${Math.round(s.dried_gram).toLocaleString('id-ID')}g${s.dried_gabungan ? ' 🔗' : ''}` : '';
     const gbDisp = s.gb_gram != null ? `📦 ${Math.round(s.gb_gram).toLocaleString('id-ID')}g` : '';
+    const st = (typeof samplingDryStatus==='function') ? samplingDryStatus(s) : {lbl:'',col:''};   // ⭐ 3 Jul: status jemur/kering
     return `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px solid #eee;font-size:11.5px;background:${idx%2?'#FAFCFB':'#fff'}">
       <span style="font-family:monospace;font-size:10px;color:var(--mute);min-width:18px">#${idx+1}</span>
-      <strong style="min-width:74px;font-size:11px">${formatTglShort ? formatTglShort(s.tgl) : s.tgl}</strong>
-      <strong style="color:var(--cherry);min-width:60px">${gramDisplay}</strong>
-      <span style="font-size:10px;color:var(--earth);min-width:128px">${driedDisp}${driedDisp&&gbDisp?' · ':''}${gbDisp}</span>
-      <span style="flex:1;font-size:10px;color:var(--mute);font-style:italic">${s.catatan || '—'}</span>
+      <strong style="min-width:70px;font-size:11px">${formatTglShort ? formatTglShort(s.tgl) : s.tgl}</strong>
+      <strong style="color:var(--cherry);min-width:54px">${gramDisplay}</strong>
+      <span style="font-size:10px;color:var(--earth);min-width:96px">${driedDisp}${driedDisp&&gbDisp?' · ':''}${gbDisp}</span>
+      <span style="font-size:9px;font-weight:700;color:${st.col};min-width:104px">${st.lbl}</span>
+      <span style="flex:1;font-size:9.5px;color:var(--mute);font-style:italic">${s.catatan || '—'}</span>
       <button onclick="editSamplingSession('${pohonId}','${s.id}')" style="background:#e6f0ec;color:#1f5f47;border:0;padding:2px 7px;border-radius:4px;font-size:9.5px;cursor:pointer" title="Edit / isi dried & green bean">✏️</button>
       <button onclick="deleteSamplingSession('${pohonId}','${s.id}')" style="background:#fde2dc;color:#8c2519;border:0;padding:2px 7px;border-radius:4px;font-size:9.5px;cursor:pointer" title="Hapus sesi ini">🗑</button>
     </div>`;
@@ -8863,12 +8919,19 @@ function editSamplingSession(pohonId, sessionId) {
   if (!e) return alert('Sesi tidak ditemukan');
   const cur = {
     tgl: e.tgl || todayIso(),
+    jemur_date: e.jemur_date || '',
     cherry: e.cherry_gram != null ? e.cherry_gram : (e.kg != null ? Math.round(e.kg * 1000) : ''),
     dried: e.dried_gram != null ? e.dried_gram : '',
     gb: e.gb_gram != null ? e.gb_gram : '',
     gabungan: !!e.dried_gabungan,
     catatan: e.catatan || ''
   };
+  // ⭐ 3 Jul: sesi lain (pohon sama) yg bisa digabung-jemur ke dried ini (belum punya dried sendiri, atau sudah di-cover sesi ini)
+  const otherSess = PANEN_SAMPLING_DATA.filter(x => x.pohon_id===pohonId && x.id!==sessionId && x.type!=='final' && (x.dried_gram==null || x.dried_covered_by===sessionId))
+    .sort((a,b)=>(a.tgl||'').localeCompare(b.tgl||''));
+  const coversHtml = otherSess.map(o=>`<label style="display:flex;gap:6px;align-items:center;font-size:10.5px;padding:1px 0;cursor:pointer">
+      <input type="checkbox" class="edit-cover-cb" value="${o.id}" data-cherry="${o.cherry_gram||0}" ${o.dried_covered_by===sessionId?'checked':''} onchange="updateSamplingDriedVerdict()" style="width:13px;height:13px;cursor:pointer">
+      <span style="min-width:54px">${formatTglShort?formatTglShort(o.tgl):o.tgl}</span> <strong style="color:var(--cherry)">${o.cherry_gram||0} g</strong></label>`).join('');
   const existing = document.getElementById('sampling-edit-modal-overlay');
   if (existing) existing.remove();
   const html = `
@@ -8882,17 +8945,24 @@ function editSamplingSession(pohonId, sessionId) {
           <label style="font-weight:600">📅 Tanggal</label>
           <input type="date" id="edit-session-tgl" value="${cur.tgl}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
           <label style="font-weight:600">🍒 Cherry (g)</label>
-          <input type="text" inputmode="decimal" id="edit-session-cherry" value="${cur.cherry}" placeholder="gram · koma = kg" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <input type="text" inputmode="decimal" id="edit-session-cherry" value="${cur.cherry}" oninput="updateSamplingDriedVerdict()" placeholder="gram · koma = kg" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <label style="font-weight:600;color:#b45309">📅 Tgl Jemur</label>
+          <input type="date" id="edit-session-jemur" value="${cur.jemur_date}" title="tanggal mulai dijemur → dipakai tracking hari + flag aman-simpan" style="padding:6px 10px;border:1.5px solid #f0c78a;border-radius:6px;font-size:12px;background:#fffdf7">
           <label style="font-weight:600;color:#7a5c2e">🌰 Dried (g)</label>
-          <input type="text" inputmode="decimal" id="edit-session-dried" value="${cur.dried}" placeholder="isi saat sudah kering · koma = kg" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
+          <input type="text" inputmode="decimal" id="edit-session-dried" value="${cur.dried}" oninput="updateSamplingDriedVerdict()" placeholder="isi saat sudah kering · koma = kg" style="padding:6px 10px;border:1.5px solid #c9a86a;border-radius:6px;font-size:12px;background:#fffdf7">
+          ${otherSess.length ? `<label style="font-weight:600;color:#0e7490;align-self:start;padding-top:4px">🔗 Digabung</label>
+          <div style="border:1.5px solid #bae6fd;border-radius:6px;padding:6px 9px;background:#f0f9ff;max-height:96px;overflow:auto">
+            <div style="font-size:9px;color:#0e7490;margin-bottom:3px">Centang sesi lain yang dijemur BARENG dried ini (biar rendemen &amp; batch akurat):</div>
+            ${coversHtml}
+          </div>` : `<span></span><span style="font-size:9.5px;color:var(--mute)">(tidak ada sesi lain utk digabung)</span>`}
           <span></span>
-          <label style="font-size:10.5px;color:#0e7490;display:flex;align-items:center;gap:6px;cursor:pointer;font-weight:600"><input type="checkbox" id="edit-session-dried-gabungan" ${cur.gabungan?'checked':''} style="width:14px;height:14px;cursor:pointer"> 🔗 Dried gabungan (1 timbangan utk beberapa batch — sesi lain dikosongi)</label>
+          <div id="edit-dried-verdict" style="font-size:10.5px;color:var(--earth);line-height:1.5;padding:2px 0;min-height:16px"></div>
           <label style="font-weight:600;color:#7e22ce">📦 Green Bean (g)</label>
           <input type="text" inputmode="decimal" id="edit-session-gb" value="${cur.gb}" placeholder="isi setelah giling · koma = kg" style="padding:6px 10px;border:1.5px solid #c9a6e0;border-radius:6px;font-size:12px;background:#fdf7ff">
           <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
           <textarea id="edit-session-catatan" rows="2" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical">${cur.catatan}</textarea>
         </div>
-        <div style="padding:0 20px 8px;font-size:10px;color:var(--mute);font-style:italic">🌰 dried &amp; 📦 GB boleh dikosongi · kalau jemur digabung beberapa batch → isi dried di SATU sesi + centang 🔗 gabungan (jangan dobel).</div>
+        <div style="padding:0 20px 8px;font-size:10px;color:var(--mute);font-style:italic">📅 isi <strong>Tgl Jemur</strong> pas mulai dijemur → hari kejaga otomatis + flag aman-simpan (≥${SAMPLING_SAFE_DAYS} hr). 🌰 dried diisi saat kering; kalau dijemur gabung → centang sesi di <strong>🔗 Digabung</strong> (verdict rendemen 44% muncul otomatis: ✓ kering / 🟡 belum lengkap / 🚩 masih basah).</div>
         <div style="display:flex;gap:8px;justify-content:flex-end;padding:12px 20px 18px">
           <button onclick="document.getElementById('sampling-edit-modal-overlay').remove()" class="btn btn-secondary" style="font-size:12px;padding:7px 14px">Batal</button>
           <button onclick="saveSamplingSessionEdit('${pohonId}','${sessionId}')" class="btn btn-primary" style="background:var(--moss);font-size:12px;padding:7px 14px">✓ Simpan Perubahan</button>
@@ -8900,6 +8970,7 @@ function editSamplingSession(pohonId, sessionId) {
       </div>
     </div>`;
   document.body.insertAdjacentHTML('beforeend', html);
+  setTimeout(()=>{ if(typeof updateSamplingDriedVerdict==='function') updateSamplingDriedVerdict(); }, 50);   // ⭐ 3 Jul: init verdict
 }
 
 function saveSamplingSessionEdit(pohonId, sessionId) {
@@ -8909,13 +8980,15 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   const cherry = parseGramInput(document.getElementById('edit-session-cherry').value);
   const dried = parseGramInput(document.getElementById('edit-session-dried').value);
   const gb = parseGramInput(document.getElementById('edit-session-gb').value);
-  const driedGabungan = document.getElementById('edit-session-dried-gabungan')?.checked || false;
+  const jemurDate = document.getElementById('edit-session-jemur')?.value || null;
+  const coverIds = [...document.querySelectorAll('.edit-cover-cb:checked')].map(c=>c.value);
+  const coverCherry = coverIds.reduce((a,id)=>{ const o=PANEN_SAMPLING_DATA.find(x=>x.id===id); return a+((o&&o.cherry_gram)||0); },0);
   const catatan = document.getElementById('edit-session-catatan').value.trim();
   if (!tgl) return alert('Tanggal wajib diisi');
   if (!cherry || cherry < 1) return alert('Cherry harus angka > 0');
   if (cherry < 20) { if (!confirm(`🍒 Cherry ${cherry} g — sangat kecil. Kalau maksudmu kg, pakai koma (mis. "1,345" = 1345 g). Tetap simpan?`)) return; }
   // guard §5b
-  if (dried && dried > cherry) { if (!confirm(`⚠ Dried (${dried} g) > cherry basah (${cherry} g) — kering kok lebih berat? Tetap simpan?`)) return; }
+  if (dried && dried > cherry + coverCherry) { if (!confirm(`⚠ Dried (${dried} g) > cherry basah (${cherry + coverCherry} g${coverCherry?' termasuk gabungan':''}) — kering kok lebih berat? Tetap simpan?`)) return; }
   if (gb && dried && gb > dried * 0.55) { if (!confirm(`⚠ Green bean (${gb} g) > 55% dried — rendemen tak wajar. Tetap simpan?`)) return; }
   if (gb && !dried) { if (!confirm(`📦 Green bean diisi tapi 🌰 dried kosong. Tetap simpan? (boleh — dried bisa diisi nanti)`)) return; }
   e.tgl = tgl;
@@ -8924,7 +8997,15 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   e.cherry_basah_kg = cherry / 1000;
   e.dried_gram = dried;
   e.gb_gram = gb;
-  e.dried_gabungan = driedGabungan;
+  e.jemur_date = jemurDate || null;
+  e.dried_covers = coverIds.length ? coverIds : null;
+  e.dried_gabungan = coverIds.length > 0;
+  // ⭐ 3 Jul: tandai/lepas sesi lain yg dicakup dried gabungan ini (biar tak double-count + status benar)
+  PANEN_SAMPLING_DATA.forEach(x=>{
+    if(x.pohon_id!==pohonId || x.id===sessionId) return;
+    if(coverIds.includes(x.id)){ x.dried_covered_by = sessionId; x.dried_gram = null; }
+    else if(x.dried_covered_by===sessionId){ x.dried_covered_by = null; }
+  });
   e.catatan = catatan;
   e.edited_at = new Date().toISOString();
   savePanenSamplingToLS();
