@@ -8187,6 +8187,8 @@ const PANEN_SAMPLING_SCHEMA_VERSION = '1.2';  // v1.2 (11 Juni 2026): multi-batc
 const PANEN_SAMPLING_LS_KEY = 'wkkn_v2_panen_sampling_2026';
 const PANEN_SAMPLING_TARGET_KG = 0.4;  // Target Adib konservatif per pohon
 const PANEN_SAMPLING_TARGET_GRAM = 400;   // = 0.4 kg dalam gram (sample tracking pakai gram per petik selektif)
+// ⭐ 5 Jul 2026 — faktor konversi cherry basah → produk (single source; edit di sini kalau kalibrasi kebun berubah)
+const SAMPLING_RENDEMEN = { dried: 0.44, gb_kering: 0.20, gb_basah: 0.35 };
 // ⭐ 11 Juni 2026: Additive version backward compat (mirror MILESTONE_ADDITIVE_VERSIONS pattern)
 // Cloud Firestore mungkin masih punya v1.1 data — accept + auto-migrate via setter.
 window.PANEN_SAMPLING_ADDITIVE_VERSIONS = ['1.1', '1.2'];
@@ -8553,16 +8555,18 @@ function renderPanenSamplingTable() {
     const sess = agg?.sessions || [];
     const sumDried = sess.reduce((a,s)=>a+(s.dried_gram||0),0);
     const sumGb = sess.reduce((a,s)=>a+(s.gb_gram||0),0);
+    const totKupas = sess.reduce((a,s)=>a+(s.cherry_kupas_gram||0),0);   // ⭐ 5 Jul: porsi kupas-basah → GB
     const finalRec = PANEN_SAMPLING_DATA.find(e=>e.type==='final' && e.pohon_id===baseline.id);
     const cherryG = agg?.total_gram || 0;
+    const RS = (typeof SAMPLING_RENDEMEN!=='undefined')?SAMPLING_RENDEMEN:{dried:0.44,gb_kering:0.20};
     let driedVal=null, driedKind=null;
     if (finalRec && finalRec.dried_final_gram!=null){driedVal=finalRec.dried_final_gram;driedKind='final';}
     else if (sumDried>0){driedVal=sumDried;driedKind='sesi';}
-    else if (cherryG>0){driedVal=cherryG*0.44;driedKind='est';}
+    else if (cherryG>0){driedVal=(cherryG-totKupas)*RS.dried;driedKind='est';}   // est dari porsi dijemur saja
     let gbVal=null, gbKind=null;
     if (finalRec && finalRec.gb_final_gram!=null){gbVal=finalRec.gb_final_gram;gbKind='final';}
     else if (sumGb>0){gbVal=sumGb;gbKind='sesi';}
-    else if (cherryG>0){gbVal=cherryG*0.196;gbKind='est';}
+    else if (totKupas>0){gbVal=totKupas*RS.gb_kering;gbKind='est';}   // GB est hanya dari porsi kupas-basah (tak semua pohon punya GB)
     return {
       ...baseline,
       sessions_count: agg?.sessions_count || 0,
@@ -8689,19 +8693,35 @@ function updateSamplingDriedVerdict(){
   const covers = [...document.querySelectorAll('.edit-cover-cb:checked')];
   const covCh = covers.reduce((a,c)=>a+(parseFloat(c.dataset.cherry)||0),0);
   const totCh = own + covCh;
+  const kupas = pg('edit-session-kupas');                 // porsi cherry dikupas-basah → GB
+  const driedPortion = Math.max(0, totCh - kupas);        // sisanya → dijemur jadi dried cherry
   const dried = pg('edit-session-dried');
+  const gb = pg('edit-session-gb');
   const el = document.getElementById('edit-dried-verdict'); if(!el) return;
   if(totCh<=0){ el.innerHTML=''; return; }
-  let s = `Σ cherry <strong>${Math.round(totCh)} g</strong>${covers.length?` (sesi ini + ${covers.length} gabungan)`:''} · perkiraan dried <strong>~${Math.round(totCh*0.44)} g</strong> <span style="color:var(--mute)">(@44%)</span>`;
-  if(dried>0){
-    const r = dried/totCh, p = Math.round(r*100);
-    let v,c;
-    if(r>0.48){ v='mungkin BELUM kering (masih basah) → lanjut jemur'; c='#c14b3a'; }
-    else if(r<0.40){ v='rendah — ada batch belum ikut / susut'; c='#b45309'; }
-    else { v='kering (pas)'; c='#16a34a'; }
-    s += `<br>aktual ${Math.round(dried)} g = <strong style="color:${c}">${p}% · ${v}</strong>`;
+  const R = (typeof SAMPLING_RENDEMEN!=='undefined') ? SAMPLING_RENDEMEN : {dried:0.44, gb_kering:0.20};
+  const lines = [];
+  if(kupas>0) lines.push(`Σ cherry <strong>${Math.round(totCh)} g</strong>${covers.length?` (+${covers.length} gabungan)`:''} → 🌰 dijemur ${Math.round(driedPortion)} g · 🫘 dikupas ${Math.round(kupas)} g`);
+  else if(covers.length) lines.push(`Σ cherry <strong>${Math.round(totCh)} g</strong> (sesi ini + ${covers.length} gabungan)`);
+  if(driedPortion>0){
+    let s = `🌰 perkiraan dried <strong>~${Math.round(driedPortion*R.dried)} g</strong> (44%)`;
+    if(dried>0){ const r=dried/driedPortion, p=Math.round(r*100); let v,c;
+      if(r>0.48){v='🚩 masih basah → lanjut jemur';c='#c14b3a';} else if(r<0.40){v='🟡 belum lengkap';c='#b45309';} else {v='✓ kering';c='#16a34a';}
+      s += ` · aktual ${Math.round(dried)} g = <strong style="color:${c}">${p}% ${v}</strong>`;
+    }
+    lines.push(s);
   }
-  el.innerHTML = s;
+  if(kupas>0){
+    let s = `🫘 perkiraan GB kering <strong>~${Math.round(kupas*R.gb_kering)} g</strong> (20%)`;
+    if(gb>0){ const r=gb/kupas, p=Math.round(r*100); let v,c;
+      if(r>0.25){v='🚩 cek (mungkin blm kering)';c='#c14b3a';} else if(r<0.14){v='🟡 rendah';c='#b45309';} else {v='✓ wajar';c='#16a34a';}
+      s += ` · aktual ${Math.round(gb)} g = <strong style="color:${c}">${p}% ${v}</strong>`;
+    }
+    lines.push(s);
+  } else if(gb>0){
+    lines.push(`🫘 GB ${Math.round(gb)} g — isi <strong>Dikupas-basah (g)</strong> dulu biar verdict GB akurat`);
+  }
+  el.innerHTML = lines.join('<br>');
 }
 
 // ⭐ 3 Jul: roll-up status jemur per pohon utk kolom "Monitor Jemur" tabel Card 7.
@@ -8761,8 +8781,10 @@ function openSamplingInput(pohonId) {
   const totCherryG = agg?.total_gram || 0;
   const totDriedG = (agg?.sessions || []).reduce((a, s) => a + (s.dried_gram || 0), 0);
   const totGbG = (agg?.sessions || []).reduce((a, s) => a + (s.gb_gram || 0), 0);
-  const driedEstG = totCherryG * 0.44;
-  const gbEstG = totCherryG * 0.196;
+  const totKupasG = (agg?.sessions || []).reduce((a, s) => a + (s.cherry_kupas_gram || 0), 0);   // ⭐ 5 Jul: porsi kupas-basah → GB
+  const _RS = (typeof SAMPLING_RENDEMEN!=='undefined')?SAMPLING_RENDEMEN:{dried:0.44,gb_kering:0.20};
+  const driedEstG = (totCherryG - totKupasG) * _RS.dried;   // est dari porsi dijemur saja (bukan yg dikupas)
+  const gbEstG = totKupasG * _RS.gb_kering;                 // GB est HANYA dari porsi kupas-basah (tak semua pohon punya GB)
   const _g = n => Math.round(n).toLocaleString('id-ID');
   // Fase 4b (ADR-025): FINAL per-pohon (marker entry type:'final') + Δ vs est + validasi Σ-sesi-vs-FINAL
   const finalRec = PANEN_SAMPLING_DATA.find(e => e.type === 'final' && e.pohon_id === pohonId);
@@ -8952,6 +8974,7 @@ function editSamplingSession(pohonId, sessionId) {
     cherry: e.cherry_gram != null ? e.cherry_gram : (e.kg != null ? Math.round(e.kg * 1000) : ''),
     dried: e.dried_gram != null ? e.dried_gram : '',
     gb: e.gb_gram != null ? e.gb_gram : '',
+    kupas: e.cherry_kupas_gram != null ? e.cherry_kupas_gram : '',
     gabungan: !!e.dried_gabungan,
     catatan: e.catatan || ''
   };
@@ -8975,6 +8998,8 @@ function editSamplingSession(pohonId, sessionId) {
           <input type="date" id="edit-session-tgl" value="${cur.tgl}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
           <label style="font-weight:600">🍒 Cherry (g)</label>
           <input type="text" inputmode="decimal" id="edit-session-cherry" value="${cur.cherry}" oninput="updateSamplingDriedVerdict()" placeholder="gram · koma = kg" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
+          <label style="font-weight:600;color:#0e7490">🫘 Dikupas-basah (g)</label>
+          <input type="text" inputmode="decimal" id="edit-session-kupas" value="${cur.kupas}" oninput="updateSamplingDriedVerdict()" title="porsi cherry yg dikupas basah → jadi GB (BRIN). Sisanya dijemur jadi dried cherry. Kosong = semua dijemur." placeholder="porsi dikupas→GB · kosong=semua dijemur" style="padding:6px 10px;border:1.5px solid #bae6fd;border-radius:6px;font-size:12px;background:#f0f9ff">
           <label style="font-weight:600;color:#b45309">📅 Tgl Jemur</label>
           <input type="date" id="edit-session-jemur" value="${cur.jemur_date}" title="tanggal mulai dijemur → dipakai tracking hari + flag aman-simpan" style="padding:6px 10px;border:1.5px solid #f0c78a;border-radius:6px;font-size:12px;background:#fffdf7">
           <label style="font-weight:600;color:#7a5c2e">🌰 Dried (g)</label>
@@ -8987,7 +9012,7 @@ function editSamplingSession(pohonId, sessionId) {
           <span></span>
           <div id="edit-dried-verdict" style="font-size:10.5px;color:var(--earth);line-height:1.5;padding:2px 0;min-height:16px"></div>
           <label style="font-weight:600;color:#7e22ce">📦 Green Bean (g)</label>
-          <input type="text" inputmode="decimal" id="edit-session-gb" value="${cur.gb}" placeholder="isi setelah giling · koma = kg" style="padding:6px 10px;border:1.5px solid #c9a6e0;border-radius:6px;font-size:12px;background:#fdf7ff">
+          <input type="text" inputmode="decimal" id="edit-session-gb" value="${cur.gb}" oninput="updateSamplingDriedVerdict()" placeholder="GB kering hasil kupas-basah · koma = kg" style="padding:6px 10px;border:1.5px solid #c9a6e0;border-radius:6px;font-size:12px;background:#fdf7ff">
           <label style="font-weight:600;align-self:start;padding-top:4px">📝 Catatan</label>
           <textarea id="edit-session-catatan" rows="2" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;resize:vertical">${cur.catatan}</textarea>
         </div>
@@ -9009,6 +9034,7 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   const cherry = parseGramInput(document.getElementById('edit-session-cherry').value);
   const dried = parseGramInput(document.getElementById('edit-session-dried').value);
   const gb = parseGramInput(document.getElementById('edit-session-gb').value);
+  const kupas = parseGramInput(document.getElementById('edit-session-kupas')?.value||'') || 0;
   const jemurDate = document.getElementById('edit-session-jemur')?.value || null;
   const coverIds = [...document.querySelectorAll('.edit-cover-cb:checked')].map(c=>c.value);
   const coverCherry = coverIds.reduce((a,id)=>{ const o=PANEN_SAMPLING_DATA.find(x=>x.id===id); return a+((o&&o.cherry_gram)||0); },0);
@@ -9016,16 +9042,20 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   if (!tgl) return alert('Tanggal wajib diisi');
   if (!cherry || cherry < 1) return alert('Cherry harus angka > 0');
   if (cherry < 20) { if (!confirm(`🍒 Cherry ${cherry} g — sangat kecil. Kalau maksudmu kg, pakai koma (mis. "1,345" = 1345 g). Tetap simpan?`)) return; }
-  // guard §5b
-  if (dried && dried > cherry + coverCherry) { if (!confirm(`⚠ Dried (${dried} g) > cherry basah (${cherry + coverCherry} g${coverCherry?' termasuk gabungan':''}) — kering kok lebih berat? Tetap simpan?`)) return; }
-  if (gb && dried && gb > dried * 0.55) { if (!confirm(`⚠ Green bean (${gb} g) > 55% dried — rendemen tak wajar. Tetap simpan?`)) return; }
-  if (gb && !dried) { if (!confirm(`📦 Green bean diisi tapi 🌰 dried kosong. Tetap simpan? (boleh — dried bisa diisi nanti)`)) return; }
+  // guard §5b (split-aware 5 Jul: cherry bisa dipecah jemur + kupas-basah)
+  if (kupas && kupas > cherry) { if (!confirm(`🫘 Dikupas ${kupas} g > cherry sesi ini ${cherry} g — porsi kupas tidak boleh lebih besar dari cherry. Tetap simpan?`)) return; }
+  const _driedPortion = Math.max(0, cherry - kupas) + coverCherry;
+  if (dried && dried > _driedPortion) { if (!confirm(`⚠ Dried (${dried} g) > cherry dijemur (${_driedPortion} g${kupas?' — sisa setelah kupas':''}${coverCherry?' +gabungan':''}) — kering kok lebih berat? Tetap simpan?`)) return; }
+  if (gb && kupas && gb > kupas * 0.40) { if (!confirm(`⚠ GB (${gb} g) > 40% cherry dikupas (${kupas} g) — rendemen GB tak wajar. Tetap simpan?`)) return; }
+  else if (gb && !kupas && dried && gb > dried * 0.55) { if (!confirm(`⚠ Green bean (${gb} g) > 55% dried — rendemen tak wajar. Tetap simpan?`)) return; }
+  if (gb && !dried && !kupas) { if (!confirm(`📦 Green bean diisi tapi 🌰 dried & 🫘 dikupas kosong. Tetap simpan?`)) return; }
   e.tgl = tgl;
   e.cherry_gram = cherry;
   e.kg = cherry / 1000;
   e.cherry_basah_kg = cherry / 1000;
   e.dried_gram = dried;
   e.gb_gram = gb;
+  e.cherry_kupas_gram = kupas || null;
   e.jemur_date = jemurDate || null;
   e.dried_covers = coverIds.length ? coverIds : null;
   e.dried_gabungan = coverIds.length > 0;
