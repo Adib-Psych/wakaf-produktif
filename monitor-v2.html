@@ -8719,7 +8719,7 @@ function updateSamplingDriedVerdict(){
     }
     lines.push(s);
   } else if(gb>0){
-    lines.push(`🫘 GB ${Math.round(gb)} g — isi <strong>Dikupas-basah (g)</strong> dulu biar verdict GB akurat`);
+    lines.push(`🫘 GB ${Math.round(gb)} g — isi <strong>Porsi cherry → GB (g)</strong> dulu biar verdict GB akurat`);
   }
   el.innerHTML = lines.join('<br>');
 }
@@ -8998,8 +8998,8 @@ function editSamplingSession(pohonId, sessionId) {
           <input type="date" id="edit-session-tgl" value="${cur.tgl}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
           <label style="font-weight:600">🍒 Cherry (g)</label>
           <input type="text" inputmode="decimal" id="edit-session-cherry" value="${cur.cherry}" oninput="updateSamplingDriedVerdict()" placeholder="gram · koma = kg" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-          <label style="font-weight:600;color:#0e7490">🫘 Dikupas-basah (g)</label>
-          <input type="text" inputmode="decimal" id="edit-session-kupas" value="${cur.kupas}" oninput="updateSamplingDriedVerdict()" title="porsi cherry yg dikupas basah → jadi GB (BRIN). Sisanya dijemur jadi dried cherry. Kosong = semua dijemur." placeholder="porsi dikupas→GB · kosong=semua dijemur" style="padding:6px 10px;border:1.5px solid #bae6fd;border-radius:6px;font-size:12px;background:#f0f9ff">
+          <label style="font-weight:600;color:#0e7490">🫘 Porsi cherry → GB (g)</label>
+          <input type="text" inputmode="decimal" id="edit-session-kupas" value="${cur.kupas}" oninput="updateSamplingDriedVerdict()" title="gram CHERRY BASAH (masih berkulit) yg dialokasikan ke jalur kupas→jemur→hull kulit ari→GB kering. Skala SAMA dgn field Cherry di atas. Sisanya dijemur jadi dried cherry. Kosong = semua dijemur." placeholder="gram cherry basah utk GB · kosong=semua jadi dried cherry" style="padding:6px 10px;border:1.5px solid #bae6fd;border-radius:6px;font-size:12px;background:#f0f9ff">
           <label style="font-weight:600;color:#b45309">📅 Tgl Jemur</label>
           <input type="date" id="edit-session-jemur" value="${cur.jemur_date}" title="tanggal mulai dijemur → dipakai tracking hari + flag aman-simpan" style="padding:6px 10px;border:1.5px solid #f0c78a;border-radius:6px;font-size:12px;background:#fffdf7">
           <label style="font-weight:600;color:#7a5c2e">🌰 Dried (g)</label>
