@@ -1255,6 +1255,30 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
   text-align: center; pointer-events: none;
 }
 
+/* ══ Living Lab — Milestone collapse/expand + 3-warna layer (locked 5 Jul 2026 per Adib) ══ */
+.act-log-item.ll-collapsed .act-log-split { grid-template-columns: 1fr; }
+.act-log-item.ll-collapsed .act-log-theory,
+.act-log-item.ll-collapsed .act-log-eval { display: none; }
+.ll5-card.ll-collapsed .ll5-2section-grid,
+.ll5-card.ll-collapsed .ll5-verifikasi,
+.ll5-card.ll-collapsed .ll5-linked-docs { display: none; }
+.ll-toggle {
+  display: inline-flex; align-items: center; gap: 7px; margin-top: 0.7rem;
+  background: none; border: 0; color: #1F5F47;
+  font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 0.8rem;
+  cursor: pointer; padding: 0.4rem 0;
+}
+.ll-toggle:hover { color: #c4906a; }
+.ll-toggle .ll-arw { transition: transform .2s; }
+/* 3 warna layer analisis (hijau narasi · ungu teori · amber evaluasi) + justify */
+.act-log-progress { background: rgba(74,154,105,0.07); }
+.act-log-theory { background: rgba(91,75,158,0.09) !important; }
+.act-log-eval { background: rgba(196,144,106,0.11) !important; }
+.act-log-detail, .theory-body, .eval-body, .eval-followup, .eval-verify,
+.ll5-narrative p, .ll5-section-text { text-align: justify; }
+.ll5-section-impl { background: rgba(74,154,105,0.06); border-radius: 8px; padding: 0.5rem 0.7rem; }
+.ll5-section-bench { background: rgba(91,75,158,0.07); border-radius: 8px; padding: 0.5rem 0.7rem; }
+.ll5-verifikasi { background: rgba(196,144,106,0.09); border-radius: 8px; padding: 0.5rem 0.7rem; margin-top: 0.6rem; }
 </style>
 </head>
 <body>
@@ -4081,6 +4105,48 @@ function buildStatusBoard() {
 
   console.log('[Status Board] Updated for month=' + currentMonth + ' (' + current.id + ') → next=' + next.id);
 }
+</script>
+<script>
+/* ══ Living Lab — Milestone expander (collapse/expand) — additive, tak sentuh render/sync (locked 5 Jul 2026) ══ */
+(function () {
+  function setBtn(btn, card) {
+    var open = !card.classList.contains('ll-collapsed');
+    var a = btn.querySelector('.ll-arw'); if (a) a.textContent = open ? '▾' : '▸';
+    btn.querySelectorAll('.lang-id').forEach(function (e) { e.textContent = open ? 'Sembunyikan analisis' : 'Baca analisis lengkap'; });
+    btn.querySelectorAll('.lang-en').forEach(function (e) { e.textContent = open ? 'Hide analysis' : 'Read full analysis'; });
+  }
+  function addBtn(card, collapsed) {
+    card.dataset.llExp = '1';
+    if (collapsed) card.classList.add('ll-collapsed');
+    var btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'll-toggle';
+    btn.innerHTML = '<span class="lang-id"></span><span class="lang-en"></span> <span class="ll-arw">▸</span>';
+    btn.addEventListener('click', function () { card.classList.toggle('ll-collapsed'); setBtn(btn, card); });
+    setBtn(btn, card);
+    card.appendChild(btn);
+  }
+  function apply() {
+    document.querySelectorAll('[id^="year-"]').forEach(function (yc) {
+      var cards = yc.querySelectorAll('.act-log-item, .ll5-card');
+      cards.forEach(function (card, idx) {
+        if (card.dataset.llExp) return;
+        var teaser = (yc.id === 'year-2026' && idx === 0);  /* 1 kartu contoh dibuka; sisanya collapsed */
+        addBtn(card, !teaser);
+      });
+    });
+    document.querySelectorAll('.act-log-item, .ll5-card').forEach(function (card) {
+      if (card.dataset.llExp) return;
+      addBtn(card, true);
+    });
+  }
+  function boot() {
+    apply();
+    var log = document.querySelector('.log-section') || document.body;
+    try { new MutationObserver(function () { apply(); }).observe(log, { childList: true, subtree: true }); } catch (e) {}
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
 </script>
 </body>
 </html>
