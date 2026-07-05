@@ -419,14 +419,25 @@ span.lang-en { display: none; }
 }
 /* FENOLOGI single column — wheel atas, legend 2-col bawah (locked 19 Mei 2026 evening per Adib) */
 .fenologi-layout {
-  display: block;
+  display: grid;
+  grid-template-columns: minmax(0, 640px) minmax(212px, 300px);
+  justify-content: center;
+  gap: 1.4rem 2.4rem;
+  align-items: stretch;
   margin-top: 2.5rem;
+}
+.fenologi-legend-col { grid-column: 2; grid-row: 1; align-self: stretch; display: flex; }
+.fenologi-layout > .fenologi-note { grid-column: 1 / -1; }
+@media (max-width: 760px) {
+  .fenologi-layout { grid-template-columns: 1fr; gap: 1.4rem; }
+  .fenologi-legend-col { grid-column: 1; }
 }
 .fenologi-layout > .fenologi-wheel-wrap {
   display: flex;
   justify-content: center;
   position: relative;
-  margin-bottom: 2.5rem;
+  grid-column: 1; grid-row: 1; align-self: center;
+  margin-bottom: 0;
 }
 .fenologi-svg { width: 100%; max-width: 640px; height: auto; display: block; }
 /* .fenologi-center-label defined in botanical decoration section below */
@@ -448,12 +459,12 @@ span.lang-en { display: none; }
   max-width: 180px;
 }
 .fenologi-legend {
-  display: grid;
-  grid-template-columns: 1fr 1fr;  /* 2-col grid — 6 items dalam 3 baris (locked 19 Mei 2026 per Adib) */
-  gap: 1.5rem 2.5rem;  /* row-gap 1.5rem, column-gap 2.5rem */
+  display: flex; flex-direction: column;
+  justify-content: space-between;  /* tinggi legend = tinggi roda: 6 item tersebar merata (locked 5 Jul 2026 per Adib) */
+  gap: 0.5rem; width: 100%;
 }
 @media (max-width: 720px) {
-  .fenologi-legend { grid-template-columns: 1fr; gap: 1rem; }  /* mobile fallback single column */
+  .fenologi-legend { gap: 1rem; }  /* mobile: flex column tetap */
 }
 .legend-item {
   display: flex; align-items: flex-start; gap: 0.9rem;
@@ -478,14 +489,13 @@ span.lang-en { display: none; }
   margin-top: 0.2rem; text-align: justify;
 }
 .fenologi-note {
-  margin-top: 2.5rem;
-  padding: 1rem 1.3rem;
-  background: rgba(90,144,128,0.12);
-  border: 1px solid rgba(168,200,188,0.2);
-  border-radius: 10px;
+  margin: 1.6rem auto 0;
+  max-width: 900px;
+  padding: 1rem 1.2rem 0;
+  border-top: 1px solid rgba(196,144,106,0.28);
   font-family: 'Lora', serif; font-style: italic;
-  font-size: 0.82rem; color: rgba(168,200,188,0.7);
-  line-height: 1.7; text-align: justify;
+  font-size: 0.72rem; color: rgba(168,200,188,0.72);
+  line-height: 1.55; text-align: center;
 }
 
 /* ══════════════════════════════════
@@ -1558,10 +1568,10 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
       </div>
 
       <!-- Legend -->
-      <div>
+      <div class="fenologi-legend-col">
         <div class="fenologi-legend">
           <div class="legend-item">
-            <div class="legend-swatch" style="background:#7a9e96;"></div>
+            <div class="legend-swatch" style="background:#5C7A99;"></div>
             <div class="legend-content">
               <div class="legend-phase lang-id">Pemulihan & Dormansi</div>
               <div class="legend-phase lang-en">Recovery & Dormancy</div>
@@ -1572,7 +1582,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
           </div>
           <div class="legend-item">
-            <div class="legend-swatch" style="background:#5a9080;"></div>
+            <div class="legend-swatch" style="background:#2FA36B;"></div>
             <div class="legend-content">
               <div class="legend-phase lang-id">Pertumbuhan Vegetatif</div>
               <div class="legend-phase lang-en">Vegetative Growth</div>
@@ -1582,7 +1592,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
           </div>
           <div class="legend-item">
-            <div class="legend-swatch" style="background:#7db848;"></div>
+            <div class="legend-swatch" style="background:#B5D33C;"></div>
             <div class="legend-content">
               <div class="legend-phase lang-id">Pembentukan Buah</div>
               <div class="legend-phase lang-en">Fruit Formation</div>
@@ -1592,7 +1602,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
           </div>
           <div class="legend-item">
-            <div class="legend-swatch" style="background:#c8a840;"></div>
+            <div class="legend-swatch" style="background:#F2B01E;"></div>
             <div class="legend-content">
               <div class="legend-phase lang-id">Pematangan Buah</div>
               <div class="legend-phase lang-en">Fruit Ripening</div>
@@ -1602,7 +1612,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
           </div>
           <div class="legend-item">
-            <div class="legend-swatch" style="background:#c4906a;"></div>
+            <div class="legend-swatch" style="background:#D64545;"></div>
             <div class="legend-content">
               <div class="legend-phase lang-id">Panen Utama</div>
               <div class="legend-phase lang-en">Main Harvest</div>
@@ -1612,7 +1622,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
           </div>
           <div class="legend-item">
-            <div class="legend-swatch" style="background:#3d7868;"></div>
+            <div class="legend-swatch" style="background:#8E6BB0;"></div>
             <div class="legend-content">
               <div class="legend-phase lang-id">Post-Panen & Intervensi</div>
               <div class="legend-phase lang-en">Post-Harvest & Intervention</div>
@@ -3873,18 +3883,18 @@ function buildFenologi() {
 
   const months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agt','Sep','Okt','Nov','Des'];
   const phaseColors = [
-    '#7a9e96', // Jan  — Pemulihan
-    '#5a9080', // Feb  — Vegetatif
-    '#5a9080', // Mar  — Vegetatif
-    '#7db848', // Apr  — Buah Muda (current)
-    '#7db848', // Mei  — Buah Muda
-    '#c8a840', // Jun  — Pematangan
-    '#c4906a', // Jul  — PANEN
-    '#c4906a', // Agt  — PANEN
-    '#3d7868', // Sep  — Post-Panen
-    '#3d7868', // Okt  — Post-Panen
-    '#7a9e96', // Nov  — Pemulihan
-    '#7a9e96', // Des  — Pemulihan
+    '#5C7A99', // Jan  — Pemulihan & Dormansi
+    '#2FA36B', // Feb  — Vegetatif
+    '#2FA36B', // Mar  — Vegetatif
+    '#B5D33C', // Apr  — Pembentukan Buah
+    '#B5D33C', // Mei  — Pembentukan Buah
+    '#F2B01E', // Jun  — Pematangan
+    '#D64545', // Jul  — PANEN
+    '#D64545', // Agt  — PANEN
+    '#8E6BB0', // Sep  — Post-Panen & Intervensi
+    '#8E6BB0', // Okt  — Post-Panen & Intervensi
+    '#5C7A99', // Nov  — Pemulihan & Dormansi
+    '#5C7A99', // Des  — Pemulihan & Dormansi
   ];
 
   let html = '';
@@ -3933,7 +3943,7 @@ function buildFenologi() {
     if (isNow) {
       const glowR = (R1 + R2) / 2;
       html += `<circle cx="${CX}" cy="${CY}" r="${glowR}" fill="none"
-        stroke="rgba(125,184,72,0.25)" stroke-width="${R2-R1}" opacity="0.3"/>`;
+        stroke="rgba(255,255,255,0.16)" stroke-width="${R2-R1}" opacity="0.3"/>`;
     }
   }
 
@@ -3945,7 +3955,7 @@ function buildFenologi() {
   const nowRad = nowDeg * Math.PI / 180;
   const px = CX + (R1 - 8) * Math.cos(nowRad);
   const py = CY + (R1 - 8) * Math.sin(nowRad);
-  html += `<circle cx="${f(px)}" cy="${f(py)}" r="4" fill="#7db848" opacity="0.9"/>`;
+  html += `<circle cx="${f(px)}" cy="${f(py)}" r="4" fill="#ffffff" opacity="0.9"/>`;
 
   svg.innerHTML = html;
 }
