@@ -1690,64 +1690,80 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         <p style="font-size:0.88rem;color:#6b7878;margin-top:0.7rem;line-height:1.6;text-align:justify" class="lang-id">Persentase compliance dihitung berdasarkan <strong>methodology v2.2 FINAL</strong> — 5 dimensi (Coverage 30% + Quality 25% + Timing 20% + Cost 15% + Documentation 10%) dengan 2-strategy framework (Lesson Learned historikal + Active Monitoring phase-aware).</p>
         <p style="font-size:0.88rem;color:#6b7878;margin-top:0.7rem;line-height:1.6;text-align:justify" class="lang-en">Compliance percentage calculated via <strong>v2.2 FINAL methodology</strong> — 5 dimensions (Coverage 30% + Quality 25% + Timing 20% + Cost 15% + Documentation 10%) with 2-strategy framework (Lesson Learned historical + Active Monitoring phase-aware).</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));gap:1rem">
-        <!-- 2026 YTD (current year, gold highlight) -->
-        <div style="background:#fff;border:2px solid #D4AF37;border-radius:12px;padding:1.2rem;box-shadow:0 4px 14px rgba(212,175,55,0.18)">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:1rem">
+        <!-- LIVE Apr–Kini (DINAMIS — dari dashboard SOP Compliance; id: live-comp-*) -->
+        <div style="background:#e3f2ef;border:2px solid #1d9e75;border-radius:12px;padding:1.2rem">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem">
+            <strong style="color:#2E4040;font-size:1.0rem;display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block"></span>Apr – Kini 2026</strong>
+            <span style="background:#dcfce7;color:#166534;padding:0.15rem 0.55rem;border-radius:5px;font-size:0.6rem;font-weight:700;letter-spacing:0.5px">● LIVE</span>
+          </div>
+          <div id="live-comp-pct" style="font-size:2.4rem;font-weight:800;color:#1d9e75;line-height:1;letter-spacing:-1px">—</div>
+          <div style="background:rgba(0,0,0,0.08);height:6px;border-radius:3px;overflow:hidden;margin:0.5rem 0">
+            <div id="live-comp-bar" style="width:0%;height:100%;background:#1d9e75;transition:width .5s"></div>
+          </div>
+          <div style="font-size:0.7rem;color:#1d9e75;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-id">Self-Managed · Aktif</div>
+          <div style="font-size:0.7rem;color:#1d9e75;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-en">Self-Managed · Active</div>
+          <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-id">Era Self-Managed — monitoring SOP live per fase fenologi (sejak 1 Apr 2026 / T0).</div>
+          <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-en">Self-Managed era — live SOP monitoring per phenological phase (since 1 Apr 2026 / T0).</div>
+          <div id="live-comp-note" style="font-size:0.68rem;color:#5a7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)"><span class="lang-id">Compliance dihitung real-time di dashboard SOP · dipublikasikan berkala.</span><span class="lang-en">Compliance computed real-time in the SOP dashboard · published periodically.</span></div>
+        </div>
+
+        <!-- 2026 Jan–Mar (STATIS terkunci · era T.A. RWI, historis) -->
+        <div style="background:#e8f0fa;border:2px solid #378add;border-radius:12px;padding:1.2rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem">
             <strong style="color:#2E4040;font-size:1.05rem">2026</strong>
-            <span style="background:#FFF4D6;color:#8B6914;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px">YTD</span>
+            <span style="background:#e3edfb;color:#185FA5;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.62rem;font-weight:700;letter-spacing:0.5px">JAN–MAR</span>
           </div>
-          <div style="font-size:2.4rem;font-weight:800;color:#E67E22;line-height:1;letter-spacing:-1px">8<span style="font-size:1.2rem">%</span></div>
-          <div style="background:#eee;height:6px;border-radius:3px;overflow:hidden;margin:0.5rem 0">
-            <div style="width:8%;height:100%;background:#E67E22"></div>
+          <div style="font-size:2.4rem;font-weight:800;color:#185FA5;line-height:1;letter-spacing:-1px">8<span style="font-size:1.2rem">%</span></div>
+          <div style="background:rgba(0,0,0,0.08);height:6px;border-radius:3px;overflow:hidden;margin:0.5rem 0">
+            <div style="width:8%;height:100%;background:#378add"></div>
           </div>
-          <div style="font-size:0.7rem;color:#E67E22;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-id">Berkembang</div>
-          <div style="font-size:0.7rem;color:#E67E22;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-en">Developing</div>
-          <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-id">Tahun Transisi — Static Jan-Mar (Fase 4 RWI) + Live Apr+ (Self-Managed)</div>
-          <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-en">Transition Year — Static Jan-Mar (Phase 4 RWI) + Live Apr+ (Self-Managed)</div>
-          <div style="font-size:0.68rem;color:#5a7878;font-style:italic;display:flex;gap:0.4rem;align-items:center;padding-top:0.4rem;border-top:1px dashed #ddd"><span>🔍</span><span class="lang-id">Strategy 2 · Live phase-aware (1 Apr+)</span><span class="lang-en">Strategy 2 · Live phase-aware (1 Apr+)</span></div>
-          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed #eee" class="lang-id">Jan-Mar: Fase 4 RWI Pre-T0 (locked static). Apr+: Self-Managed live monitoring. Target year-end: 60-80%.</div>
-          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed #eee" class="lang-en">Jan-Mar: Phase 4 RWI Pre-T0 (locked static). Apr+: Self-Managed live monitoring. Year-end target: 60-80%.</div>
+          <div style="font-size:0.7rem;color:#185FA5;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-id">Pra-T0 · Statis</div>
+          <div style="font-size:0.7rem;color:#185FA5;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-en">Pre-T0 · Static</div>
+          <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-id">Fase 4 — era T.A. RWI (Jan–Mar 2026).</div>
+          <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-en">Phase 4 — T.A. RWI era (Jan–Mar 2026).</div>
+          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)" class="lang-id">Baseline pra-adopsi SOP formal (T0, 1 Apr 2026). Terkunci statis (historis). Data Apr+ → kartu Live.</div>
+          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)" class="lang-en">Baseline before formal SOP adoption (T0, 1 Apr 2026). Locked static (historical). Apr+ data → Live card.</div>
         </div>
 
-        <!-- 2025 (Final) -->
-        <div style="background:#fff;border:2px solid #E67E22;border-radius:12px;padding:1.2rem">
+        <!-- 2025 (Final · statis terkunci) -->
+        <div style="background:#efecf8;border:2px solid #7d5ba6;border-radius:12px;padding:1.2rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem">
             <strong style="color:#2E4040;font-size:1.05rem">2025</strong>
-            <span style="background:#e8f1ec;color:#5a9080;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-id">FINAL</span>
-            <span style="background:#e8f1ec;color:#5a9080;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-en">FINAL</span>
+            <span style="background:#eae5f5;color:#5b4b9e;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-id">FINAL</span>
+            <span style="background:#eae5f5;color:#5b4b9e;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-en">FINAL</span>
           </div>
-          <div style="font-size:2.4rem;font-weight:800;color:#E67E22;line-height:1;letter-spacing:-1px">16<span style="font-size:1.2rem">%</span></div>
-          <div style="background:#eee;height:6px;border-radius:3px;overflow:hidden;margin:0.5rem 0">
-            <div style="width:16%;height:100%;background:#E67E22"></div>
+          <div style="font-size:2.4rem;font-weight:800;color:#5b4b9e;line-height:1;letter-spacing:-1px">16<span style="font-size:1.2rem">%</span></div>
+          <div style="background:rgba(0,0,0,0.08);height:6px;border-radius:3px;overflow:hidden;margin:0.5rem 0">
+            <div style="width:16%;height:100%;background:#7d5ba6"></div>
           </div>
-          <div style="font-size:0.7rem;color:#E67E22;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-id">Rendah</div>
-          <div style="font-size:0.7rem;color:#E67E22;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-en">Low</div>
+          <div style="font-size:0.7rem;color:#5b4b9e;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-id">Rendah</div>
+          <div style="font-size:0.7rem;color:#5b4b9e;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-en">Low</div>
           <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-id">Fase 3 — Nadzir Ke-2</div>
           <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-en">Phase 3 — Second Nazhir</div>
-          <div style="font-size:0.68rem;color:#5a7878;font-style:italic;display:flex;gap:0.4rem;align-items:center;padding-top:0.4rem;border-top:1px dashed #ddd"><span>📚</span><span class="lang-id">Strategy 1 · Lesson Learned ⚠️ placeholder</span><span class="lang-en">Strategy 1 · Lesson Learned ⚠️ placeholder</span></div>
-          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed #eee" class="lang-id">Improvement panen (+346% ke 281 KG) tapi sparse SOP-spec match. Audit retroaktif pending dokumen Nadzir Ke-2.</div>
-          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed #eee" class="lang-en">Harvest improvement (+346% to 281 KG) but sparse SOP-spec match. Retroactive audit pending Second Nazhir documents.</div>
+          <a href="lesson-learned.html" target="_blank" rel="noopener" style="font-size:0.68rem;color:#5b4b9e;font-weight:700;text-decoration:none;display:flex;gap:0.4rem;align-items:center;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)"><span>📚</span><span class="lang-id">Lesson Learned per Era →</span><span class="lang-en">Lesson Learned by Era →</span></a>
+          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)" class="lang-id">Improvement panen (+346% ke 281 KG) tapi sparse SOP-spec match. Audit retroaktif pending dokumen Nadzir Ke-2.</div>
+          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)" class="lang-en">Harvest improvement (+346% to 281 KG) but sparse SOP-spec match. Retroactive audit pending Second Nazhir documents.</div>
         </div>
 
-        <!-- 2024 (Final) -->
-        <div style="background:#fff;border:2px solid #B83227;border-radius:12px;padding:1.2rem">
+        <!-- 2024 (Final · statis terkunci) -->
+        <div style="background:#fbeaf0;border:2px solid #d4537e;border-radius:12px;padding:1.2rem">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.4rem">
             <strong style="color:#2E4040;font-size:1.05rem">2024</strong>
-            <span style="background:#e8f1ec;color:#5a9080;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-id">FINAL</span>
-            <span style="background:#e8f1ec;color:#5a9080;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-en">FINAL</span>
+            <span style="background:#f6dde7;color:#993556;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-id">FINAL</span>
+            <span style="background:#f6dde7;color:#993556;padding:0.15rem 0.6rem;border-radius:5px;font-size:0.65rem;font-weight:700;letter-spacing:0.5px" class="lang-en">FINAL</span>
           </div>
-          <div style="font-size:2.4rem;font-weight:800;color:#B83227;line-height:1;letter-spacing:-1px">12<span style="font-size:1.2rem">%</span></div>
-          <div style="background:#eee;height:6px;border-radius:3px;overflow:hidden;margin:0.5rem 0">
-            <div style="width:12%;height:100%;background:#B83227"></div>
+          <div style="font-size:2.4rem;font-weight:800;color:#993556;line-height:1;letter-spacing:-1px">12<span style="font-size:1.2rem">%</span></div>
+          <div style="background:rgba(0,0,0,0.08);height:6px;border-radius:3px;overflow:hidden;margin:0.5rem 0">
+            <div style="width:12%;height:100%;background:#d4537e"></div>
           </div>
-          <div style="font-size:0.7rem;color:#B83227;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-id">Sangat Rendah</div>
-          <div style="font-size:0.7rem;color:#B83227;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-en">Very Low</div>
+          <div style="font-size:0.7rem;color:#993556;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-id">Sangat Rendah</div>
+          <div style="font-size:0.7rem;color:#993556;font-weight:800;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.4rem" class="lang-en">Very Low</div>
           <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-id">Fase 2 — Inisiasi Nadzir 1</div>
           <div style="font-size:0.78rem;color:#2E4040;font-weight:600;line-height:1.45;margin-bottom:0.3rem" class="lang-en">Phase 2 — First Nazhir Initiation</div>
-          <div style="font-size:0.68rem;color:#5a7878;font-style:italic;display:flex;gap:0.4rem;align-items:center;padding-top:0.4rem;border-top:1px dashed #ddd"><span>📚</span><span class="lang-id">Strategy 1 · Lesson Learned ⚠️ placeholder</span><span class="lang-en">Strategy 1 · Lesson Learned ⚠️ placeholder</span></div>
-          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed #eee" class="lang-id">Panen perdana (~100 KG). Sparse documentation, baseline reference saja. Audit retroaktif pending.</div>
-          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed #eee" class="lang-en">First harvest (~100 KG). Sparse documentation, baseline reference only. Retroactive audit pending.</div>
+          <a href="lesson-learned.html" target="_blank" rel="noopener" style="font-size:0.68rem;color:#993556;font-weight:700;text-decoration:none;display:flex;gap:0.4rem;align-items:center;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)"><span>📚</span><span class="lang-id">Lesson Learned per Era →</span><span class="lang-en">Lesson Learned by Era →</span></a>
+          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)" class="lang-id">Panen perdana (~100 KG). Sparse documentation, baseline reference saja. Audit retroaktif pending.</div>
+          <div style="font-size:0.7rem;color:#6b7878;font-style:italic;line-height:1.5;padding-top:0.4rem;border-top:1px dashed rgba(0,0,0,0.12)" class="lang-en">First harvest (~100 KG). Sparse documentation, baseline reference only. Retroactive audit pending.</div>
         </div>
       </div>
       <!-- TIER 3 — Methodology + Sintesa SOP + Lesson Learned footer cross-link -->
@@ -4195,6 +4211,38 @@ function buildStatusBoard() {
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
+})();
+</script>
+<script>
+/* ══ Living Lab — Kartu Live compliance (Apr–Kini) baca Firestore compliance/active — additive, graceful (locked 5 Jul 2026) ══ */
+(async function loadLiveCompliance(){
+  try {
+    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+    const { firebaseConfig } = await import('./firebase-config.js');
+    const existing = getApps().find(function(a){ return a.name === 'compliance'; });
+    const app = existing || initializeApp(firebaseConfig, 'compliance');
+    const db = getFirestore(app);
+    const snap = await getDoc(doc(db, 'compliance', 'active'));
+    if (!snap.exists()) return;
+    const d = snap.data();
+    const yr = new Date().getFullYear();
+    if (d.year !== yr || typeof d.ytd_pct !== 'number') return;
+    const p = Math.max(0, Math.min(100, Math.round(d.ytd_pct)));
+    const pctEl = document.getElementById('live-comp-pct');
+    const barEl = document.getElementById('live-comp-bar');
+    const noteEl = document.getElementById('live-comp-note');
+    if (pctEl) pctEl.innerHTML = p + '<span style="font-size:1.2rem">%</span>';
+    if (barEl) barEl.style.width = p + '%';
+    if (noteEl) {
+      var stamp = 'terkini';
+      try { var dt = d.updated_at && d.updated_at.toDate ? d.updated_at.toDate() : null; if (dt) stamp = dt.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}); } catch(e){}
+      var idEl = noteEl.querySelector('.lang-id'), enEl = noteEl.querySelector('.lang-en');
+      if (idEl) idEl.textContent = 'Live dari dashboard SOP Compliance · diperbarui ' + stamp + '.';
+      if (enEl) enEl.textContent = 'Live from the SOP Compliance dashboard · updated ' + stamp + '.';
+    }
+    console.log('[Live Compliance] ' + p + '% (year ' + d.year + ')');
+  } catch (e) { /* graceful: kartu Live tetap tampil state "Aktif" */ }
 })();
 </script>
 </body>
