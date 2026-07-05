@@ -8802,10 +8802,10 @@ function openSamplingInput(pohonId) {
   };
 
   const modalHtml = `
-    <div id="sampling-input-modal-overlay" onclick="if(event.target.id==='sampling-input-modal-overlay')closeSamplingInputModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1100;display:flex;align-items:center;justify-content:center;padding:20px">
-      <div style="background:#fff;border-radius:12px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.3)">
+    <div id="sampling-input-modal-overlay" onclick="if(event.target.id==='sampling-input-modal-overlay')closeSamplingInputModal()" style="position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:1100;display:flex;align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto">
+      <div style="background:#fff;border-radius:12px;max-width:580px;width:100%;min-width:0;margin:auto;max-height:calc(100vh - 24px);overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.3)">
         <!-- Header -->
-        <div style="padding:18px 22px;background:linear-gradient(135deg,#1f5f47,#2e4040);color:#fff;border-radius:12px 12px 0 0">
+        <div style="padding:16px 18px;background:linear-gradient(135deg,#1f5f47,#2e4040);color:#fff;border-radius:12px 12px 0 0">
           <div style="display:flex;align-items:center;justify-content:space-between">
             <div>
               <div style="font-size:10px;letter-spacing:1.8px;color:#a8c8bc;font-weight:700">🌳 SAMPLING BRIN 40 POHON</div>
@@ -8817,7 +8817,7 @@ function openSamplingInput(pohonId) {
         </div>
 
         <!-- Aggregate KPI -->
-        <div style="padding:14px 22px;background:#FAFCFB;border-bottom:1px solid #eee;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+        <div style="padding:14px 16px;background:#FAFCFB;border-bottom:1px solid #eee;display:flex;gap:14px;flex-wrap:wrap;align-items:center">
           <div>
             <div style="font-size:10px;color:var(--mute);letter-spacing:1px">TOTAL KUMULATIF</div>
             <div style="font-size:22px;font-weight:800;color:${targetReached?'#16a34a':'#8c2519'};line-height:1">${totalGramDisplay}${totalKgDisplay}</div>
@@ -8836,9 +8836,9 @@ function openSamplingInput(pohonId) {
         </div>
 
         <!-- Hasil Pascapanen — Fase 4b (ADR-025): Est | Σ Sesi | FINAL | Δ + validasi -->
-        <div style="padding:14px 22px;background:#FBFAF7;border-top:1px solid #eee">
+        <div style="padding:14px 16px;background:#FBFAF7;border-top:1px solid #eee">
           <div style="font-size:11px;font-weight:800;letter-spacing:1px;color:var(--moss);margin-bottom:8px">🧮 HASIL PASCAPANEN — validasi akhir</div>
-          <table style="width:100%;font-size:11px;border-collapse:collapse">
+          <div style="overflow-x:auto;-webkit-overflow-scrolling:touch"><table style="width:100%;min-width:250px;font-size:11px;border-collapse:collapse">
             <thead><tr style="color:var(--mute);font-size:9px;letter-spacing:.3px">
               <th style="text-align:left">&nbsp;</th><th style="text-align:right">EST (cherry)</th><th style="text-align:right">Σ SESI</th><th style="text-align:right">FINAL</th><th style="text-align:right">Δ est</th>
             </tr></thead>
@@ -8847,7 +8847,7 @@ function openSamplingInput(pohonId) {
                 <td style="text-align:left;padding:5px 0;font-weight:700;color:#7a5c2e">🌰 Dried</td>
                 <td style="text-align:right">${_g(driedEstG)} g</td>
                 <td style="text-align:right">${totDriedG>0?_g(totDriedG)+' g':'—'}</td>
-                <td style="text-align:right"><input type="text" inputmode="decimal" id="final-dried-input" value="${driedFinalG??''}" placeholder="g·koma=kg" style="width:80px;padding:3px 6px;border:1.5px solid #c9a86a;border-radius:5px;font-size:11px;text-align:right;background:#fffdf7"></td>
+                <td style="text-align:right"><input type="text" inputmode="decimal" id="final-dried-input" value="${driedFinalG??''}" placeholder="g·koma=kg" style="width:68px;padding:3px 5px;border:1.5px solid #c9a86a;border-radius:5px;font-size:11px;text-align:right;background:#fffdf7"></td>
                 <td style="text-align:right">${_deltaStr(driedFinalG, driedEstG)}</td>
               </tr>
               <tr><td colspan="5" style="text-align:left;font-size:9px;padding:0 0 6px 0">⚖ ${_valid(totDriedG, driedFinalG, hasDriedGabungan)}</td></tr>
@@ -8855,12 +8855,12 @@ function openSamplingInput(pohonId) {
                 <td style="text-align:left;padding:5px 0;font-weight:700;color:#7e22ce">📦 Green Bean</td>
                 <td style="text-align:right">${_g(gbEstG)} g</td>
                 <td style="text-align:right">${totGbG>0?_g(totGbG)+' g':'—'}</td>
-                <td style="text-align:right"><input type="text" inputmode="decimal" id="final-gb-input" value="${gbFinalG??''}" placeholder="g·koma=kg" style="width:80px;padding:3px 6px;border:1.5px solid #c9a6e0;border-radius:5px;font-size:11px;text-align:right;background:#fdf7ff"></td>
+                <td style="text-align:right"><input type="text" inputmode="decimal" id="final-gb-input" value="${gbFinalG??''}" placeholder="g·koma=kg" style="width:68px;padding:3px 5px;border:1.5px solid #c9a6e0;border-radius:5px;font-size:11px;text-align:right;background:#fdf7ff"></td>
                 <td style="text-align:right">${_deltaStr(gbFinalG, gbEstG)}</td>
               </tr>
               <tr><td colspan="5" style="text-align:left;font-size:9px;padding:0 0 4px 0">⚖ ${_valid(totGbG, gbFinalG)}</td></tr>
             </tbody>
-          </table>
+          </table></div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;gap:8px">
             <span style="font-size:9px;color:var(--mute);font-style:italic;line-height:1.3">FINAL = angka otoritatif saat semua kering/giling · prioritas analisis: FINAL → Σ sesi → est</span>
             <button onclick="saveSamplingFinal('${pohonId}')" class="btn btn-primary" style="background:var(--earth);font-size:11px;padding:5px 12px;white-space:nowrap">💾 Simpan FINAL</button>
@@ -8869,17 +8869,17 @@ function openSamplingInput(pohonId) {
 
         <!-- Sessions List -->
         <div style="padding:0">
-          <div style="padding:12px 22px 6px;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--mute)">📋 RIWAYAT SESI PANEN</div>
+          <div style="padding:12px 16px 6px;font-size:11px;font-weight:800;letter-spacing:1px;color:var(--mute)">📋 RIWAYAT SESI PANEN</div>
           <div style="max-height:200px;overflow-y:auto;border-top:1px solid #eee;border-bottom:1px solid #eee">
             ${sessionsHtml}
           </div>
         </div>
 
         <!-- Add New Session Form -->
-        <div style="padding:16px 22px;background:#F0F5F3;border-left:4px solid var(--moss)">
+        <div style="padding:16px;background:#F0F5F3;border-left:4px solid var(--moss)">
           <div style="font-size:12px;font-weight:800;color:var(--moss);margin-bottom:4px">+ TAMBAH SESI PANEN BARU</div>
           <div style="font-size:10px;color:var(--mute);font-style:italic;margin-bottom:10px">🍒 cherry basah saja saat panen · 🌰 dried & 📦 green bean diisi belakangan lewat ✏️ di riwayat sesi</div>
-          <div style="display:grid;grid-template-columns:140px 1fr;gap:8px;align-items:center;font-size:12px">
+          <div style="display:grid;grid-template-columns:96px 1fr;gap:8px;align-items:center;font-size:12px">
             <label style="font-weight:600">📅 Tanggal *</label>
             <input type="date" id="new-session-tgl" value="${todayIso()}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
             <label style="font-weight:600">🍒 Cherry *</label>
@@ -8987,13 +8987,13 @@ function editSamplingSession(pohonId, sessionId) {
   const existing = document.getElementById('sampling-edit-modal-overlay');
   if (existing) existing.remove();
   const html = `
-    <div id="sampling-edit-modal-overlay" onclick="if(event.target.id==='sampling-edit-modal-overlay')document.getElementById('sampling-edit-modal-overlay').remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:center;justify-content:center;padding:20px">
-      <div style="background:#fff;border-radius:12px;max-width:440px;width:100%;box-shadow:0 12px 40px rgba(0,0,0,.35)">
-        <div style="padding:16px 20px;background:linear-gradient(135deg,#1f5f47,#2e4040);color:#fff;border-radius:12px 12px 0 0">
+    <div id="sampling-edit-modal-overlay" onclick="if(event.target.id==='sampling-edit-modal-overlay')document.getElementById('sampling-edit-modal-overlay').remove()" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1200;display:flex;align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto">
+      <div style="background:#fff;border-radius:12px;max-width:440px;width:100%;min-width:0;margin:auto;max-height:calc(100vh - 24px);overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.35)">
+        <div style="padding:16px 18px;background:linear-gradient(135deg,#1f5f47,#2e4040);color:#fff;border-radius:12px 12px 0 0">
           <div style="font-size:10px;letter-spacing:1.5px;color:#a8c8bc;font-weight:700">✏️ EDIT SESI · ${pohonId}</div>
           <div style="font-size:14px;font-weight:700;margin-top:2px">${formatTglShort ? formatTglShort(cur.tgl) : cur.tgl}</div>
         </div>
-        <div style="padding:18px 20px;display:grid;grid-template-columns:130px 1fr;gap:9px;align-items:center;font-size:12px">
+        <div style="padding:18px 16px;display:grid;grid-template-columns:104px 1fr;gap:9px;align-items:center;font-size:12px">
           <label style="font-weight:600">📅 Tanggal</label>
           <input type="date" id="edit-session-tgl" value="${cur.tgl}" style="padding:6px 10px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
           <label style="font-weight:600">🍒 Cherry (g)</label>
