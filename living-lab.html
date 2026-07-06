@@ -900,6 +900,25 @@ span.lang-en { display: none; }
   margin: 0 0.9rem 0.85rem;
   background: rgba(196,144,106,0.06);
 }
+/* ══ Card variety by TYPE — de-monotone (6 Jul 2026 per Adib) ══
+   Rail warna (progress = kartu identity) + badge pill berwarna per jenis kartu. */
+.act-log-item[data-llcat=lesson]   .act-log-progress { border-left-color:#BA7517; }
+.act-log-item[data-llcat=asesmen]  .act-log-progress { border-left-color:#7d5ba6; }
+.act-log-item[data-llcat=selesai]  .act-log-progress { border-left-color:#1D9E75; }
+.act-log-item[data-llcat=berjalan] .act-log-progress { border-left-color:#D85A30; }
+.act-log-item[data-llcat=strategi] .act-log-progress { border-left-color:#378add; }
+.act-log-item[data-llcat=plan]     .act-log-progress { border-left-color:#5b8fb0; }
+.act-log-item[data-llcat=norecord] .act-log-progress { border-left-color:#b4b2a9; }
+.act-log-item[data-llcat] .act-log-status {
+  border:0; padding:3px 11px; border-radius:20px; font-weight:700; letter-spacing:0.01em;
+}
+.act-log-item[data-llcat=lesson]   .act-log-status { background:#FAEEDA; color:#854F0B; }
+.act-log-item[data-llcat=asesmen]  .act-log-status { background:#EEEDFE; color:#3C3489; }
+.act-log-item[data-llcat=selesai]  .act-log-status { background:#E1F5EE; color:#0F6E56; }
+.act-log-item[data-llcat=berjalan] .act-log-status { background:#FAECE7; color:#993C1D; }
+.act-log-item[data-llcat=strategi] .act-log-status { background:#E6F1FB; color:#0C447C; }
+.act-log-item[data-llcat=plan]     .act-log-status { background:#E6F1FB; color:#185FA5; }
+.act-log-item[data-llcat=norecord] .act-log-status { background:#F1EFE8; color:#5F5E5A; }
 .eval-label {
   font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
   text-transform: uppercase; color: var(--accent);
@@ -4257,6 +4276,150 @@ function buildStatusBoard() {
     }
     console.log('[Live Compliance] ' + p + '% (year ' + d.year + ')');
   } catch (e) { /* graceful: kartu Live tetap tampil state "Aktif" */ }
+})();
+</script>
+
+<!-- ══ Living Lab Card Grid + Modal (7 Jul 2026 per Adib: grid 5/baris · newest-first · badge=item SOP · modal + slot foto) ══ -->
+<style>
+.ll-grid-wrap{margin-top:1.2rem}
+.ll-flow{display:flex;align-items:center;gap:8px;font-size:.7rem;color:#1F5F47;font-weight:800;margin:0 0 13px;text-transform:uppercase;letter-spacing:.06em}
+.ll-flow .ln{height:2px;flex:1;background:linear-gradient(90deg,#1F5F47,transparent);border-radius:2px;opacity:.35}
+.ll-flow .old{color:#9aaaa4;font-weight:700}
+.ll-legend{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:0 0 16px;font-size:.68rem;color:#6b7878}
+.ll-legend .lg{display:inline-flex;align-items:center;gap:5px}
+.ll-legend .lg i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.ll-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:13px}
+@media(max-width:1100px){.ll-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:820px){.ll-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.ll-grid{grid-template-columns:1fr}}
+.ll-gcard{background:#fff;border:1px solid #e2e8e4;border-top:4px solid var(--gc,#888);border-radius:12px;padding:.8rem .85rem .75rem;display:flex;flex-direction:column;min-height:206px;cursor:pointer;transition:transform .12s,box-shadow .12s;position:relative}
+.ll-gcard:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(31,95,71,.12)}
+.ll-gcard.newest::after{content:'TERBARU';position:absolute;top:-9px;right:9px;background:#1F5F47;color:#fff;font-size:.52rem;font-weight:800;letter-spacing:1px;padding:2px 8px;border-radius:10px}
+.ll-gbadge{display:inline-flex;align-items:center;gap:5px;font-size:.58rem;font-weight:800;letter-spacing:.02em;padding:3px 9px;border-radius:20px;align-self:flex-start;text-transform:uppercase;background:var(--gbg);color:var(--gtx)}
+.ll-gdate{font-size:.64rem;color:#8a9a95;font-weight:600;margin:8px 0 5px}
+.ll-gdate .ph{color:#1F5F47;font-weight:700}
+.ll-gtitle{font-size:.8rem;font-weight:700;color:#2E4040;line-height:1.3;margin-bottom:7px}
+.ll-gteaser{font-size:.71rem;color:#55635f;line-height:1.45;margin-bottom:auto}
+.ll-gsop{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:6px;margin:9px 0 7px;align-self:flex-start}
+.ll-gsop.ok{background:#E1F5EE;color:#0F6E56}.ll-gsop.dev{background:#FAEEDA;color:#854F0B}.ll-gsop.na{background:#F1EFE8;color:#5F5E5A}
+.ll-gmore{border:0;background:transparent;color:#1F5F47;font-weight:700;font-size:.7rem;padding:6px 0 1px;border-top:1px solid #eef2f0;cursor:pointer;display:flex;align-items:center;gap:5px;justify-content:center;width:100%}
+.ll-gmore:hover{color:#c4906a}
+#ll-modal-ov{position:fixed;inset:0;background:rgba(31,44,44,.55);display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto;z-index:9999}
+#ll-modal-ov.on{display:flex}
+.ll-modal{background:#fff;max-width:720px;width:100%;min-width:0;border-radius:16px;margin:auto;box-shadow:0 24px 60px rgba(0,0,0,.3);overflow:hidden}
+.llm-head{padding:1.1rem 1.3rem;border-bottom:1px solid #e2e8e4;position:relative}
+.llm-head h3{font-family:'Playfair Display',serif;font-size:1.2rem;color:#2E4040;font-weight:800;line-height:1.3;padding-right:34px;margin-top:8px}
+.llm-head .md{font-size:.72rem;color:#6b7878;margin-top:6px}
+.llm-x{position:absolute;top:14px;right:16px;border:0;background:#f1f4f2;width:30px;height:30px;border-radius:50%;font-size:1.15rem;color:#6b7878;cursor:pointer;line-height:1}
+.llm-x:hover{background:#e3e8e5;color:#2E4040}
+.llm-body{padding:1.1rem 1.3rem 1.4rem;max-height:66vh;overflow-y:auto}
+.llm-photos{margin-bottom:14px}
+.llm-photos .ttl{font-size:.64rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#8a9a95;margin-bottom:7px}
+.llm-prow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.llm-slot{aspect-ratio:4/3;border:1.5px dashed #c3d0ca;border-radius:9px;background:#f4f8f6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#9aaaa4}
+.llm-slot .cam{font-size:1.3rem;line-height:1}.llm-slot span{font-size:.58rem;font-weight:600}
+.llm-layer{border-left:4px solid;padding:10px 13px;margin-bottom:10px;border-radius:0 8px 8px 0}
+.llm-nar{border-color:#2FA36B;background:rgba(47,163,107,.07)}
+.llm-ana{border-color:#7d5ba6;background:rgba(125,91,166,.07)}
+.llm-tin{border-color:#E0952A;background:rgba(224,149,42,.08)}
+.llm-lab{font-size:.64rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;margin-bottom:5px}
+.llm-nar .llm-lab{color:#1d7a4e}.llm-ana .llm-lab{color:#5b4b9e}.llm-tin .llm-lab{color:#a06a12}
+.llm-txt{font-size:.82rem;line-height:1.6;color:#41504c;text-align:justify}
+.llm-txt b,.llm-txt strong{color:#2E4040}
+.year-content.ll-gridded > .phase-block,
+.year-content.ll-gridded > .era-transition-box{display:none}
+</style>
+<div id="ll-modal-ov"><div class="ll-modal" id="ll-modal-box"></div></div>
+<script>
+(function(){
+  var CAT={
+    panen:{c:'#c0466a',bg:'#FBEAF0',tx:'#7B2438',l:'Panen'},
+    pupuk:{c:'#639922',bg:'#EAF3DE',tx:'#3B6D11',l:'Pemupukan'},
+    rawat:{c:'#1D9E75',bg:'#E1F5EE',tx:'#0F6E56',l:'Perawatan Kebun'},
+    opt:{c:'#D85A30',bg:'#FAECE7',tx:'#993C1D',l:'Pengendalian OPT'},
+    pasca:{c:'#378add',bg:'#E6F1FB',tx:'#0C447C',l:'Pascapanen'},
+    riset:{c:'#7d5ba6',bg:'#EEEDFE',tx:'#3C3489',l:'Riset & Sampling'},
+    infra:{c:'#5b8fb0',bg:'#E6F1FB',tx:'#185FA5',l:'Infrastruktur & Data'},
+    lain:{c:'#888780',bg:'#F1EFE8',tx:'#5F5E5A',l:'Aktivitas'}
+  };
+  function catKey(t){t=(t||'').toLowerCase();
+    if(/opt|hama|penyakit|\blayu\b|pbko|penggerek|busuk akar|nematoda|brocap|perangkap/.test(t))return 'opt';
+    if(/jemur|sortasi|pascapanen|kadar air|storage|giling|pengeringan|jamur karung|\bsimpan\b/.test(t))return 'pasca';
+    if(/sampling|riset|baseline|karakterisasi|\bbrin\b|green bean|research|penjajakan/.test(t))return 'riset';
+    if(/pupuk|pemupukan|fish extract|kompos|\bza\b|kcl|\bnpk\b|kandang/.test(t))return 'pupuk';
+    if(/pangkas|wiwil|peremajaan|sambung|penyiangan|rorak|perawatan|kanopi|pruning|penggemburan|babat|pra-panen|pre-panen/.test(t))return 'rawat';
+    if(/petik|\bpanen\b|gelondong|cherry/.test(t))return 'panen';
+    if(/pdam|\bair\b|meter|digital|pelaporan|inventaris|pendataan|sistem/.test(t))return 'infra';
+    return 'lain';}
+  var MO={jan:0,feb:1,mar:2,apr:3,mei:4,jun:5,jul:6,agu:7,agt:7,ags:7,sep:8,okt:9,nov:10,des:11};
+  function parseTs(s){s=s||'';var y=(s.match(/20\d\d/)||['0'])[0];var mm=0,dd=1;
+    var mk=s.toLowerCase().match(/jan|feb|mar|apr|mei|jun|jul|agu|agt|ags|sep|okt|nov|des/);if(mk)mm=(MO[mk[0]]||0);
+    var dk=s.match(/\b(\d{1,2})\b/);if(dk)dd=(parseInt(dk[1],10)||1);
+    return parseInt(y,10)*10000+mm*100+dd;}
+  function firstSentence(html){var d=document.createElement('div');d.innerHTML=html||'';var t=(d.textContent||'').trim();var m=t.match(/^[\s\S]*?[.!?](\s|$)/);var x=m?m[0].trim():t;if(x.length>110)x=x.slice(0,107).trim()+'…';return x;}
+  var STORE={};var seq=0;
+  function extract(item){
+    var titleEl=item.querySelector('.act-log-title.lang-id')||item.querySelector('.act-log-title');
+    var title=titleEl?titleEl.textContent.trim():'';
+    var metaEl=item.querySelector('.act-log-meta');var date=metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():'';
+    var badgeEl=item.querySelector('.act-log-status.lang-id')||item.querySelector('.act-log-status');
+    var badge=badgeEl?badgeEl.textContent.trim():'';
+    var pb=item.closest('.phase-block');var faseEl=pb?pb.querySelector('.phase-block-title.lang-id'):null;var fase=faseEl?faseEl.textContent.trim():'';
+    var pbody=item.querySelector('.act-log-progress-body');var narHtml='';
+    if(pbody){var cl=pbody.cloneNode(true);var t2=cl.querySelector('.act-log-title');if(t2)t2.remove();Array.prototype.forEach.call(cl.querySelectorAll('.lang-en'),function(e){e.remove();});narHtml=cl.innerHTML;}
+    else{var body=item.querySelector('.act-log-detail.lang-id');narHtml=body?body.innerHTML:'';}
+    var theoEl=item.querySelector('.act-log-theory .theory-body.lang-id');var theoHtml=theoEl?theoEl.innerHTML:'';
+    var evalEl=item.querySelector('.act-log-eval');var evalHtml=evalEl?Array.prototype.map.call(evalEl.querySelectorAll('.lang-id'),function(e){return e.outerHTML;}).join(''):'';
+    var eb=item.querySelector('.eval-badge');var comp='na',compT='—';
+    if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai';}else if(eb.classList.contains('b-perhatian')){comp='dev';compT='⚠ Perhatian';}else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Eskalasi';}}
+    var planned=item.classList.contains('status-planned')||item.classList.contains('status-upcoming')||/rencana|akan datang|plan\b/i.test(badge);
+    var ck=catKey(title+' '+badge);
+    var id='llc'+(seq++);
+    STORE[id]={title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,nar:narHtml,theo:theoHtml,ev:evalHtml};
+    return {id:id,ts:parseTs(date),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,teaser:firstSentence(narHtml)};
+  }
+  function cardHtml(c,newest){var C=CAT[c.cat]||CAT.lain;
+    return '<div class="ll-gcard'+(newest?' newest':'')+'" style="--gc:'+C.c+';--gbg:'+C.bg+';--gtx:'+C.tx+'" onclick="llOpen(\''+c.id+'\')">'+
+      '<span class="ll-gbadge">'+C.l+'</span>'+
+      '<div class="ll-gdate">'+(c.date||'')+(c.fase?' · <span class="ph">'+c.fase+'</span>':'')+'</div>'+
+      '<div class="ll-gtitle">'+c.title+'</div>'+
+      '<div class="ll-gteaser">'+c.teaser+'</div>'+
+      (c.comp!=='na'?'<span class="ll-gsop '+c.comp+'">'+c.compT+' SOP</span>':'')+
+      '<button class="ll-gmore" onclick="event.stopPropagation();llOpen(\''+c.id+'\')">Baca selengkapnya ›</button>'+
+    '</div>';}
+  function legendHtml(){var order=['panen','pupuk','rawat','opt','pasca','riset'];
+    return '<div class="ll-legend"><b style="color:#2E4040;font-weight:700">Kategori SOP:</b>'+order.map(function(k){return '<span class="lg"><i style="background:'+CAT[k].c+'"></i>'+CAT[k].l+'</span>';}).join('')+'</div>';}
+  function buildYear(yc){
+    var items=Array.prototype.slice.call(yc.querySelectorAll('.phase-block .act-log-item'));
+    if(!items.length)return;
+    var cards=items.map(extract).sort(function(a,b){return (a.planned-b.planned)||(b.ts-a.ts);});
+    var wrap=yc.querySelector(':scope > .ll-grid-wrap');
+    if(!wrap){wrap=document.createElement('div');wrap.className='ll-grid-wrap';yc.appendChild(wrap);}
+    var firstDone=cards.findIndex(function(c){return !c.planned;});
+    wrap.innerHTML='<div class="ll-flow">TERBARU <span class="ln"></span><span class="old">LAMA</span></div>'+legendHtml()+
+      '<div class="ll-grid">'+cards.map(function(c,i){return cardHtml(c,i===firstDone);}).join('')+'</div>';
+    yc.classList.add('ll-gridded');
+  }
+  function run(){try{seq=0;STORE={};Array.prototype.forEach.call(document.querySelectorAll('.ll-grid-wrap'),function(w){w.remove();});Array.prototype.forEach.call(document.querySelectorAll('.year-content.ll-gridded'),function(y){y.classList.remove('ll-gridded');});Array.prototype.forEach.call(document.querySelectorAll('.year-content'),buildYear);}catch(e){console.warn('[LLGrid]',e&&e.message);}}
+  window.llOpen=function(id){var d=STORE[id];if(!d)return;var C=CAT[d.cat]||CAT.lain;
+    document.getElementById('ll-modal-box').innerHTML=
+     '<div class="llm-head"><span class="ll-gbadge" style="--gbg:'+C.bg+';--gtx:'+C.tx+'">'+C.l+'</span>'+
+       '<h3>'+d.title+'</h3><div class="md">'+(d.date||'')+(d.fase?' · '+d.fase:'')+(d.comp!=='na'?' · <span class="ll-gsop '+d.comp+'" style="padding:1px 7px">'+d.compT+' SOP</span>':'')+'</div>'+
+       '<button class="llm-x" onclick="llClose()" aria-label="Tutup">×</button></div>'+
+     '<div class="llm-body">'+
+       '<div class="llm-photos"><div class="ttl">📷 Foto Lapangan <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9aaaa4">— placeholder, tambah untuk melengkapi narasi</span></div><div class="llm-prow">'+
+         '<div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div>'+
+       '</div></div>'+
+       (d.nar?'<div class="llm-layer llm-nar"><div class="llm-lab">◍ Apa yang terjadi</div><div class="llm-txt">'+d.nar+'</div></div>':'')+
+       (d.theo?'<div class="llm-layer llm-ana"><div class="llm-lab">🔬 Analisis SOP &amp; agronomi</div><div class="llm-txt">'+d.theo+'</div></div>':'')+
+       (d.ev?'<div class="llm-layer llm-tin"><div class="llm-lab">✔ Evaluasi &amp; tindak lanjut</div><div class="llm-txt">'+d.ev+'</div></div>':'')+
+     '</div>';
+    document.getElementById('ll-modal-ov').classList.add('on');document.body.style.overflow='hidden';};
+  window.llClose=function(){document.getElementById('ll-modal-ov').classList.remove('on');document.body.style.overflow='';};
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')llClose();});
+  document.getElementById('ll-modal-ov').addEventListener('click',function(e){if(e.target===this)llClose();});
+  if(document.readyState!=='loading')setTimeout(run,400);else document.addEventListener('DOMContentLoaded',function(){setTimeout(run,400);});
+  [1600,3600,6000].forEach(function(ms){setTimeout(run,ms);});
 })();
 </script>
 </body>
