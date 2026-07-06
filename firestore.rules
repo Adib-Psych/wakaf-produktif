@@ -189,16 +189,13 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // ===== compliance singleton (5 Jul 2026) — SOP Compliance bridge =====
-    // Dashboard (monitor-v2) publish angka compliance live (Apr–Kini) ke sini
-    // via syncComplianceToFirestore(); Living Lab kartu "Live" fetch dari sini.
-    // Doc: compliance/active { year, ytd_pct, method, due_sudah, due_total, updated_at }.
-    // Tidak ada field `version` (beda dari singleton lain) → validasi size saja.
-    match /compliance/{docId} {
-      allow read: if true;
-      allow create, update: if request.resource.size() < 100000;
-      allow delete: if false;
-    }
+    // ===== SOP Compliance bridge (6 Jul 2026) — NOTE penting =====
+    // Angka compliance live (Apr–Kini) dari dashboard TIDAK pakai collection `compliance/*` sendiri
+    // (butuh publish rule baru di Console — dihindari). Sebagai gantinya di-REUSE doc
+    // `sop_status/compliance` (rule sop_status di atas SUDAH mengizinkan write asalkan ada
+    // field `version:string`). Dashboard syncComplianceToFirestore() → setDoc(sop_status/compliance,
+    // {version:'compliance-1.0', year, ytd_pct, ...}); Living Lab kartu Live fetch dari doc yang sama.
+    // Jadi TIDAK perlu blok rule `compliance/*` terpisah.
 
     // ===== milestones collection (singleton pattern, locked 23 Mei 2026) =====
     // Curated milestones by Wakif via Tab Milestones Publik di monitor-v2.html.

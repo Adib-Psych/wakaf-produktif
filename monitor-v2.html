@@ -14489,7 +14489,7 @@ function renderComplianceProgress() {
   const dueSedangCredit = m.dueSedangCredit || 0;
   const dueTotalCredit = m.dueSudah + dueSedangCredit;
   const compliancePct = m.dueExcludingNa ? Math.round((dueTotalCredit / m.dueExcludingNa) * 100) : 0;
-  // ⭐ Publish YTD compliance ke Firestore compliance/active utk Living Lab kartu Live (locked 5 Jul 2026)
+  // ⭐ Publish YTD compliance ke Firestore sop_status/compliance utk Living Lab kartu Live (locked 5 Jul 2026; reuse sop_status 6 Jul)
   if (typeof window.syncComplianceToFirestore === 'function') {
     window.syncComplianceToFirestore(compliancePct, { year: m.currentYear, due_sudah: m.dueSudah, due_total: m.dueExcludingNa });
   }
@@ -18100,11 +18100,14 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);
 
-    // ⭐ Publish SOP Compliance YTD → Firestore compliance/active (dibaca Living Lab kartu Live Apr–Kini) — locked 5 Jul 2026
+    // ⭐ Publish SOP Compliance YTD → Firestore sop_status/compliance (dibaca Living Lab kartu Live Apr–Kini) — locked 5 Jul 2026
+    // NB (6 Jul): reuse collection `sop_status` yg rules-nya SUDAH mengizinkan write (butuh field `version:string`),
+    //   supaya TIDAK perlu publish rule baru `compliance/*` di Firebase Console. docId `compliance` isolated dari `active`.
     window.syncComplianceToFirestore = async (pct, meta) => {
       try {
         if (pct == null || isNaN(pct)) return;
-        await setDoc(doc(db, 'compliance', 'active'), {
+        await setDoc(doc(db, 'sop_status', 'compliance'), {
+          version: 'compliance-1.0',
           year: (meta && meta.year) || new Date().getFullYear(),
           ytd_pct: Math.round(pct),
           method: 'v2.2',
@@ -18114,7 +18117,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           updated_by: 'wakif_dashboard',
           source: 'monitor-v2 SOP Compliance'
         });
-        console.log('[Compliance] ✓ Synced ' + Math.round(pct) + '% → Firestore compliance/active');
+        console.log('[Compliance] ✓ Synced ' + Math.round(pct) + '% → Firestore sop_status/compliance');
       } catch (e) { console.warn('[Compliance] Firestore sync failed:', e && e.message); }
     };
 

@@ -4214,7 +4214,7 @@ function buildStatusBoard() {
 })();
 </script>
 <script>
-/* ══ Living Lab — Kartu Live compliance (Apr–Kini) baca Firestore compliance/active — additive, graceful (locked 5 Jul 2026) ══ */
+/* ══ Living Lab — Kartu Live compliance (Apr–Kini) baca Firestore sop_status/compliance — additive, graceful (locked 5 Jul 2026; repointed 6 Jul: reuse sop_status krn rules-nya sudah izinkan write, tak perlu publish rule baru) ══ */
 (async function loadLiveCompliance(){
   try {
     const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
@@ -4223,7 +4223,7 @@ function buildStatusBoard() {
     const existing = getApps().find(function(a){ return a.name === 'compliance'; });
     const app = existing || initializeApp(firebaseConfig, 'compliance');
     const db = getFirestore(app);
-    const snap = await getDoc(doc(db, 'compliance', 'active'));
+    const snap = await getDoc(doc(db, 'sop_status', 'compliance'));
     if (!snap.exists()) return;
     const d = snap.data();
     const yr = new Date().getFullYear();
