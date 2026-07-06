@@ -4361,7 +4361,8 @@ function buildStatusBoard() {
   function extract(item){
     var titleEl=item.querySelector('.act-log-title.lang-id')||item.querySelector('.act-log-title');
     var title=titleEl?titleEl.textContent.trim():'';
-    var metaEl=item.querySelector('.act-log-meta');var date=metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():'';
+    var metaEl=item.querySelector('.act-log-meta');var dstrong=metaEl?metaEl.querySelector('strong'):null;
+    var date=dstrong?dstrong.textContent.trim():(metaEl?metaEl.textContent.replace(/\s+/g,' ').trim():'');
     var badgeEl=item.querySelector('.act-log-status.lang-id')||item.querySelector('.act-log-status');
     var badge=badgeEl?badgeEl.textContent.trim():'';
     var pb=item.closest('.phase-block');var faseEl=pb?pb.querySelector('.phase-block-title.lang-id'):null;var fase=faseEl?faseEl.textContent.trim():'';
@@ -4371,7 +4372,7 @@ function buildStatusBoard() {
     var theoEl=item.querySelector('.act-log-theory .theory-body.lang-id');var theoHtml=theoEl?theoEl.innerHTML:'';
     var evalEl=item.querySelector('.act-log-eval');var evalHtml=evalEl?Array.prototype.map.call(evalEl.querySelectorAll('.lang-id'),function(e){return e.outerHTML;}).join(''):'';
     var eb=item.querySelector('.eval-badge');var comp='na',compT='—';
-    if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai';}else if(eb.classList.contains('b-perhatian')){comp='dev';compT='⚠ Perhatian';}else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Eskalasi';}}
+    if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai';}else if(eb.classList.contains('b-perhatian')){comp='dev';compT='⚠ Catatan';}else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Eskalasi';}}
     var planned=item.classList.contains('status-planned')||item.classList.contains('status-upcoming')||/rencana|akan datang|plan\b/i.test(badge);
     var ck=catKey(title+' '+badge);
     var id='llc'+(seq++);
