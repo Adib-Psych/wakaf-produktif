@@ -1266,6 +1266,13 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
 .act-log-item.ll-collapsed .act-log-split { grid-template-columns: 1fr; }
 .act-log-item.ll-collapsed .act-log-theory,
 .act-log-item.ll-collapsed .act-log-eval { display: none; }
+/* Collapsed = ~3-line teaser with soft fade (kill "paragraph panjang" — 6 Jul 2026 per Adib) */
+.act-log-item.ll-collapsed .act-log-progress-body {
+  max-height: 5.6em; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #000 62%, transparent);
+  mask-image: linear-gradient(180deg, #000 62%, transparent);
+}
+.act-log-item:not(.ll-collapsed) .act-log-progress-body { max-height: none; -webkit-mask-image: none; mask-image: none; }
 .ll5-card.ll-collapsed .ll5-2section-grid,
 .ll5-card.ll-collapsed .ll5-verifikasi,
 .ll5-card.ll-collapsed .ll5-linked-docs { display: none; }
