@@ -4434,7 +4434,7 @@ function buildStatusBoard() {
   window.llOpen=function(id){var d=STORE[id];if(!d)return;var C=CAT[d.cat]||CAT.lain;
     var photosHtml;
     if(d.photos&&d.photos.length){
-      photosHtml='<div class="ttl">📷 Foto Lapangan</div><div class="llm-prow">'+d.photos.map(function(p){return '<figure class="llm-photo"><img src="'+p.src+'" alt="'+(p.cap||'')+'" loading="lazy" onclick="window.open(this.src,\'_blank\')"><figcaption>'+(p.cap||'')+'</figcaption></figure>';}).join('')+'</div>';
+      photosHtml='<div class="ttl">📷 Foto Lapangan</div><div class="llm-prow">'+d.photos.map(function(p){return '<figure class="llm-photo"><img src="'+p.src+'" alt="'+(p.cap||'')+'" onclick="window.open(this.src,\'_blank\')"><figcaption>'+(p.cap||'')+'</figcaption></figure>';}).join('')+'</div>';
     }else{
       photosHtml='<div class="ttl">📷 Foto Lapangan <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9aaaa4">— belum ada, tambahkan untuk melengkapi narasi</span></div><div class="llm-prow">'+
         '<div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div></div>';
