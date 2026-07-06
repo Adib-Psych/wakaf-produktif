@@ -864,12 +864,14 @@ span.lang-en { display: none; }
 }
 .act-log-item:hover { border-color: rgba(196,144,106,0.35); }
 .act-log-split {
-  display: grid; grid-template-columns: 1fr 1fr 2fr;
+  display: block;
 }
 .act-log-progress {
   display: flex; flex-direction: column;
-  padding: 0.85rem 1rem;
-  border-right: 1px solid var(--bg-deep);
+  padding: 0.85rem 1rem 0.85rem 1.1rem;
+  border-left: 4px solid rgba(74,154,105,0.55);
+  border-radius: 0 8px 8px 0;
+  margin: 0 0.9rem 0.6rem;
 }
 .act-log-progress-header {
   display: flex; align-items: flex-start;
@@ -886,12 +888,17 @@ span.lang-en { display: none; }
 }
 .act-log-theory {
   padding: 0.85rem 1.1rem;
-  border-right: 1px solid var(--bg-deep);
-  background: rgba(90,144,128,0.04);
+  border-left: 4px solid rgba(125,91,166,0.5);
+  border-radius: 0 8px 8px 0;
+  margin: 0 0.9rem 0.6rem;
+  background: rgba(125,91,166,0.05);
 }
 .act-log-eval {
   padding: 0.85rem 1.1rem;
-  background: rgba(196,144,106,0.04);
+  border-left: 4px solid rgba(196,144,106,0.6);
+  border-radius: 0 8px 8px 0;
+  margin: 0 0.9rem 0.85rem;
+  background: rgba(196,144,106,0.06);
 }
 .eval-label {
   font-size: 0.6rem; font-weight: 800; letter-spacing: 0.12em;
