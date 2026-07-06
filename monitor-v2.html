@@ -14489,6 +14489,10 @@ function renderComplianceProgress() {
   const dueSedangCredit = m.dueSedangCredit || 0;
   const dueTotalCredit = m.dueSudah + dueSedangCredit;
   const compliancePct = m.dueExcludingNa ? Math.round((dueTotalCredit / m.dueExcludingNa) * 100) : 0;
+  // ⭐ Publish YTD compliance ke Firestore compliance/active utk Living Lab kartu Live (locked 5 Jul 2026)
+  if (typeof window.syncComplianceToFirestore === 'function') {
+    window.syncComplianceToFirestore(compliancePct, { year: m.currentYear, due_sudah: m.dueSudah, due_total: m.dueExcludingNa });
+  }
   // For display stacked bar — proportional to dueSoFar (atau total dueExcludingNa)
   const denom = Math.max(m.dueExcludingNa, 1);
   const sedangPct = m.dueSedangBerjalan ? Math.round((m.dueSedangBerjalan / denom) * 100) : 0;
@@ -18095,6 +18099,25 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
   try {
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);
+
+    // ⭐ Publish SOP Compliance YTD → Firestore compliance/active (dibaca Living Lab kartu Live Apr–Kini) — locked 5 Jul 2026
+    window.syncComplianceToFirestore = async (pct, meta) => {
+      try {
+        if (pct == null || isNaN(pct)) return;
+        await setDoc(doc(db, 'compliance', 'active'), {
+          year: (meta && meta.year) || new Date().getFullYear(),
+          ytd_pct: Math.round(pct),
+          method: 'v2.2',
+          due_sudah: (meta && meta.due_sudah != null) ? meta.due_sudah : null,
+          due_total: (meta && meta.due_total != null) ? meta.due_total : null,
+          updated_at: serverTimestamp(),
+          updated_by: 'wakif_dashboard',
+          source: 'monitor-v2 SOP Compliance'
+        });
+        console.log('[Compliance] ✓ Synced ' + Math.round(pct) + '% → Firestore compliance/active');
+      } catch (e) { console.warn('[Compliance] Firestore sync failed:', e && e.message); }
+    };
+
     const q = query(collection(db, COLLECTIONS.laporan), orderBy('created_at', 'desc'));
 
     // Expose delete helper to global scope (locked 17 Mei 2026 — fix duplikasi-after-delete bug)
