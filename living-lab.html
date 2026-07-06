@@ -4318,6 +4318,9 @@ function buildStatusBoard() {
 .llm-prow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .llm-slot{aspect-ratio:4/3;border:1.5px dashed #c3d0ca;border-radius:9px;background:#f4f8f6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#9aaaa4}
 .llm-slot .cam{font-size:1.3rem;line-height:1}.llm-slot span{font-size:.58rem;font-weight:600}
+.llm-photo{margin:0}
+.llm-photo img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:9px;display:block;cursor:zoom-in;border:1px solid #e2e8e4}
+.llm-photo figcaption{font-size:.6rem;color:#8a9a95;margin-top:4px;line-height:1.35}
 .llm-layer{border-left:4px solid;padding:10px 13px;margin-bottom:10px;border-radius:0 8px 8px 0}
 .llm-nar{border-color:#2FA36B;background:rgba(47,163,107,.07)}
 .llm-ana{border-color:#7d5ba6;background:rgba(125,91,166,.07)}
@@ -4341,6 +4344,29 @@ function buildStatusBoard() {
     riset:{c:'#7d5ba6',bg:'#EEEDFE',tx:'#3C3489',l:'Riset & Sampling'},
     infra:{c:'#5b8fb0',bg:'#E6F1FB',tx:'#185FA5',l:'Infrastruktur & Data'},
     lain:{c:'#888780',bg:'#F1EFE8',tx:'#5F5E5A',l:'Aktivitas'}
+  };
+  // Kurasi per-kartu: teaser tajam (override kalimat-1 auto) + daftar foto. Key = substring judul.
+  var CURATED={
+    'Layu Mendadak K3-P01':{teaser:'Pohon sampel riset mendadak layu — kayu gubal pucat menunjuk busuk akar dari tunggak penaung, bukan layu daun biasa.',photos:[
+      {src:'images/livinglab/k3p01/k3p01-pohon.jpg',cap:'Pohon K3-P01 — daun hijau tapi lemas menggantung'},
+      {src:'images/livinglab/k3p01/k3p01-cherry.jpg',cap:'Cherry gagal matang, mengering & menghitam dari ujung'},
+      {src:'images/livinglab/k3p01/k3p01-tunggak.jpg',cap:'Tunggak penaung lapuk dekat pohon kopi bertali merah'}
+    ]},
+    'Terbaca 11%':{teaser:'Alat baca "11%" ternyata palsu — kadar air asli 14–16%, tepat di zona bahaya jamur.'},
+    'Strategi Jemur Berlapis':{teaser:'Sortasi 3 dimensi (kerapatan · warna · waktu) untuk jaga mutu specialty tiap lot.'},
+    'Siklus Perawatan Intensif Pre-Panen':{teaser:'Empat kluster perawatan paralel di 4 kebun selama 8 hari jelang panen utama.'},
+    'Program Perawatan Intensif Pra-Panen':{teaser:'Pemangkasan kanopi ≥310 pohon + tekan gulma untuk buka tajuk jelang panen.'},
+    'Pemupukan recovery':{teaser:'Dosis pemulihan pasca-pangkas (ZA+KCl+KSP) untuk pacu tunas baru — hybrid rujukan BRIN.'},
+    'Dugaan PBKo':{teaser:'Dugaan hama penggerek buah — pasang perangkap atraktan buatan sendiri sambil tunggu verifikasi ahli.'},
+    'Pengocoran Fish Extract':{teaser:'Intervensi nutrisi cair pertama di bawah bimbingan Tenaga Ahli — 100 cc/pohon.'},
+    'Penjajakan Calon T.A. Pasca-RWI':{teaser:'Penjajakan calon Tenaga Ahli agronomi + ambil sampel tanah baseline pasca-RWI.'},
+    'Pemasangan Meter Air PDAM':{teaser:'Instalasi air bersih kebun — gantikan pengambilan air manual dari rumah Wakif.'},
+    'Penggemburan Tanah':{teaser:'Gemburkan tanah + 65 sak kompos ayam untuk pancing pertumbuhan akar baru.'},
+    'Pemupukan Makro':{teaser:'Intervensi teknis pertama di bawah Tenaga Ahli — pupuk makro + semprot nutrisi rutin.'},
+    'Baseline Riset Fase 1':{teaser:'Ambil data baseline lengkap (varietas, tanah, green bean) sebelum intervensi — penjajakan BRIN.'},
+    'Peremajaan Selektif':{teaser:'Peremajaan bertahap + sambung pucuk klon unggul — bukan rombak total (jaga cash-flow).'},
+    'Sistem Pelaporan Harian Digital':{teaser:'Pelaporan lapangan harian via aplikasi → dashboard, transparan mendekati real-time.'},
+    'Pengadaan Pupuk Kandang':{teaser:'Rencana beli pupuk kandang di-pivot — stok kompos ayam existing masih mencukupi.'}
   };
   function catKey(t){t=(t||'').toLowerCase();
     if(/opt|hama|penyakit|\blayu\b|pbko|penggerek|busuk akar|nematoda|brocap|perangkap/.test(t))return 'opt';
@@ -4375,14 +4401,17 @@ function buildStatusBoard() {
     if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai';}else if(eb.classList.contains('b-perhatian')){comp='dev';compT='⚠ Catatan';}else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Eskalasi';}}
     var planned=item.classList.contains('status-planned')||item.classList.contains('status-upcoming')||/rencana|akan datang|plan\b/i.test(badge);
     var ck=catKey(title+' '+badge);
+    var cur=null;for(var key in CURATED){if(title.indexOf(key)>=0){cur=CURATED[key];break;}}
+    var teaser=(cur&&cur.teaser)?cur.teaser:firstSentence(narHtml);
+    var photos=(cur&&cur.photos)?cur.photos:null;
     var id='llc'+(seq++);
-    STORE[id]={title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,nar:narHtml,theo:theoHtml,ev:evalHtml};
-    return {id:id,ts:parseTs(date),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,teaser:firstSentence(narHtml)};
+    STORE[id]={title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,nar:narHtml,theo:theoHtml,ev:evalHtml,photos:photos};
+    return {id:id,ts:parseTs(date),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,teaser:teaser,hasPhotos:!!(photos&&photos.length)};
   }
   function cardHtml(c,newest){var C=CAT[c.cat]||CAT.lain;
     return '<div class="ll-gcard'+(newest?' newest':'')+'" style="--gc:'+C.c+';--gbg:'+C.bg+';--gtx:'+C.tx+'" onclick="llOpen(\''+c.id+'\')">'+
       '<span class="ll-gbadge">'+C.l+'</span>'+
-      '<div class="ll-gdate">'+(c.date||'')+(c.fase?' · <span class="ph">'+c.fase+'</span>':'')+'</div>'+
+      '<div class="ll-gdate">'+(c.date||'')+(c.fase?' · <span class="ph">'+c.fase+'</span>':'')+(c.hasPhotos?' · <span title="Ada foto lapangan">📷</span>':'')+'</div>'+
       '<div class="ll-gtitle">'+c.title+'</div>'+
       '<div class="ll-gteaser">'+c.teaser+'</div>'+
       (c.comp!=='na'?'<span class="ll-gsop '+c.comp+'">'+c.compT+' SOP</span>':'')+
@@ -4403,14 +4432,19 @@ function buildStatusBoard() {
   }
   function run(){try{seq=0;STORE={};Array.prototype.forEach.call(document.querySelectorAll('.ll-grid-wrap'),function(w){w.remove();});Array.prototype.forEach.call(document.querySelectorAll('.year-content.ll-gridded'),function(y){y.classList.remove('ll-gridded');});Array.prototype.forEach.call(document.querySelectorAll('.year-content'),buildYear);}catch(e){console.warn('[LLGrid]',e&&e.message);}}
   window.llOpen=function(id){var d=STORE[id];if(!d)return;var C=CAT[d.cat]||CAT.lain;
+    var photosHtml;
+    if(d.photos&&d.photos.length){
+      photosHtml='<div class="ttl">📷 Foto Lapangan</div><div class="llm-prow">'+d.photos.map(function(p){return '<figure class="llm-photo"><img src="'+p.src+'" alt="'+(p.cap||'')+'" loading="lazy" onclick="window.open(this.src,\'_blank\')"><figcaption>'+(p.cap||'')+'</figcaption></figure>';}).join('')+'</div>';
+    }else{
+      photosHtml='<div class="ttl">📷 Foto Lapangan <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9aaaa4">— belum ada, tambahkan untuk melengkapi narasi</span></div><div class="llm-prow">'+
+        '<div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div></div>';
+    }
     document.getElementById('ll-modal-box').innerHTML=
      '<div class="llm-head"><span class="ll-gbadge" style="--gbg:'+C.bg+';--gtx:'+C.tx+'">'+C.l+'</span>'+
        '<h3>'+d.title+'</h3><div class="md">'+(d.date||'')+(d.fase?' · '+d.fase:'')+(d.comp!=='na'?' · <span class="ll-gsop '+d.comp+'" style="padding:1px 7px">'+d.compT+' SOP</span>':'')+'</div>'+
        '<button class="llm-x" onclick="llClose()" aria-label="Tutup">×</button></div>'+
      '<div class="llm-body">'+
-       '<div class="llm-photos"><div class="ttl">📷 Foto Lapangan <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9aaaa4">— placeholder, tambah untuk melengkapi narasi</span></div><div class="llm-prow">'+
-         '<div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div>'+
-       '</div></div>'+
+       '<div class="llm-photos">'+photosHtml+'</div>'+
        (d.nar?'<div class="llm-layer llm-nar"><div class="llm-lab">◍ Apa yang terjadi</div><div class="llm-txt">'+d.nar+'</div></div>':'')+
        (d.theo?'<div class="llm-layer llm-ana"><div class="llm-lab">🔬 Analisis SOP &amp; agronomi</div><div class="llm-txt">'+d.theo+'</div></div>':'')+
        (d.ev?'<div class="llm-layer llm-tin"><div class="llm-lab">✔ Evaluasi &amp; tindak lanjut</div><div class="llm-txt">'+d.ev+'</div></div>':'')+
