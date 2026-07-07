@@ -4397,16 +4397,18 @@ function buildStatusBoard() {
     else{var body=item.querySelector('.act-log-detail.lang-id');narHtml=body?body.innerHTML:'';}
     var theoEl=item.querySelector('.act-log-theory .theory-body.lang-id');var theoHtml=theoEl?theoEl.innerHTML:'';
     var evalEl=item.querySelector('.act-log-eval');var evalHtml=evalEl?Array.prototype.map.call(evalEl.querySelectorAll('.lang-id'),function(e){return e.outerHTML;}).join(''):'';
-    var eb=item.querySelector('.eval-badge');var comp='na',compT='—';
-    if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai';}else if(eb.classList.contains('b-perhatian')){comp='dev';compT='⚠ Catatan';}else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Eskalasi';}}
+    var eb=item.querySelector('.eval-badge');var comp='na',compT='—',compTip='';
+    if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai SOP';compTip='Aktivitas sesuai dengan SOP.';}
+      else if(eb.classList.contains('b-perhatian')){comp='dev';compT='⚠ Ada Deviasi';compTip='Ada penyimpangan dari SOP — perlu diperbaiki/dilengkapi di siklus berikutnya.';}
+      else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Perlu Eskalasi';compTip='Penyimpangan serius — perlu konsultasi ahli.';}}
     var planned=item.classList.contains('status-planned')||item.classList.contains('status-upcoming')||/rencana|akan datang|plan\b/i.test(badge);
     var ck=catKey(title+' '+badge);
     var cur=null;for(var key in CURATED){if(title.indexOf(key)>=0){cur=CURATED[key];break;}}
     var teaser=(cur&&cur.teaser)?cur.teaser:firstSentence(narHtml);
     var photos=(cur&&cur.photos)?cur.photos:null;
     var id='llc'+(seq++);
-    STORE[id]={title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,nar:narHtml,theo:theoHtml,ev:evalHtml,photos:photos};
-    return {id:id,ts:parseTs(date),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,teaser:teaser,hasPhotos:!!(photos&&photos.length)};
+    STORE[id]={title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,nar:narHtml,theo:theoHtml,ev:evalHtml,photos:photos};
+    return {id:id,ts:parseTs(date),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,teaser:teaser,hasPhotos:!!(photos&&photos.length)};
   }
   function cardHtml(c,newest){var C=CAT[c.cat]||CAT.lain;
     return '<div class="ll-gcard'+(newest?' newest':'')+'" style="--gc:'+C.c+';--gbg:'+C.bg+';--gtx:'+C.tx+'" onclick="llOpen(\''+c.id+'\')">'+
@@ -4414,7 +4416,7 @@ function buildStatusBoard() {
       '<div class="ll-gdate">'+(c.date||'')+(c.fase?' · <span class="ph">'+c.fase+'</span>':'')+(c.hasPhotos?' · <span title="Ada foto lapangan">📷</span>':'')+'</div>'+
       '<div class="ll-gtitle">'+c.title+'</div>'+
       '<div class="ll-gteaser">'+c.teaser+'</div>'+
-      (c.comp!=='na'?'<span class="ll-gsop '+c.comp+'">'+c.compT+' SOP</span>':'')+
+      (c.comp!=='na'?'<span class="ll-gsop '+c.comp+'" title="'+(c.compTip||'')+'">'+c.compT+'</span>':'')+
       '<button class="ll-gmore" onclick="event.stopPropagation();llOpen(\''+c.id+'\')">Baca selengkapnya ›</button>'+
     '</div>';}
   function legendHtml(){var order=['panen','pupuk','rawat','opt','pasca','riset'];
@@ -4441,7 +4443,7 @@ function buildStatusBoard() {
     }
     document.getElementById('ll-modal-box').innerHTML=
      '<div class="llm-head"><span class="ll-gbadge" style="--gbg:'+C.bg+';--gtx:'+C.tx+'">'+C.l+'</span>'+
-       '<h3>'+d.title+'</h3><div class="md">'+(d.date||'')+(d.fase?' · '+d.fase:'')+(d.comp!=='na'?' · <span class="ll-gsop '+d.comp+'" style="padding:1px 7px">'+d.compT+' SOP</span>':'')+'</div>'+
+       '<h3>'+d.title+'</h3><div class="md">'+(d.date||'')+(d.fase?' · '+d.fase:'')+(d.comp!=='na'?' · <span class="ll-gsop '+d.comp+'" style="padding:1px 7px" title="'+(d.compTip||'')+'">'+d.compT+'</span>':'')+'</div>'+
        '<button class="llm-x" onclick="llClose()" aria-label="Tutup">×</button></div>'+
      '<div class="llm-body">'+
        '<div class="llm-photos">'+photosHtml+'</div>'+
