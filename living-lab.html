@@ -4378,13 +4378,13 @@ function buildStatusBoard() {
     if(/pdam|\bair\b|meter|digital|pelaporan|inventaris|pendataan|sistem/.test(t))return 'infra';
     return 'lain';}
   var MO={jan:0,feb:1,mar:2,apr:3,mei:4,jun:5,jul:6,agu:7,agt:7,ags:7,sep:8,okt:9,nov:10,des:11};
-  function parseTs(s){s=s||'';var y=(s.match(/20\d\d/)||['0'])[0];var mm=0,dd=1;
+  function parseTs(s,defY){s=s||'';var y=(s.match(/20\d\d/)||[String(defY||2026)])[0];var mm=0,dd=1;
     var mk=s.toLowerCase().match(/jan|feb|mar|apr|mei|jun|jul|agu|agt|ags|sep|okt|nov|des/);if(mk)mm=(MO[mk[0]]||0);
     var dk=s.match(/\b(\d{1,2})\b/);if(dk)dd=(parseInt(dk[1],10)||1);
     return parseInt(y,10)*10000+mm*100+dd;}
   function firstSentence(html){var d=document.createElement('div');d.innerHTML=html||'';var t=(d.textContent||'').trim();var m=t.match(/^[\s\S]*?[.!?](\s|$)/);var x=m?m[0].trim():t;if(x.length>110)x=x.slice(0,107).trim()+'…';return x;}
   var STORE={};var seq=0;
-  function extract(item){
+  function extract(item,defY){
     var titleEl=item.querySelector('.act-log-title.lang-id')||item.querySelector('.act-log-title');
     var title=titleEl?titleEl.textContent.trim():'';
     var metaEl=item.querySelector('.act-log-meta');var dstrong=metaEl?metaEl.querySelector('strong'):null;
@@ -4408,7 +4408,7 @@ function buildStatusBoard() {
     var photos=(cur&&cur.photos)?cur.photos:null;
     var id='llc'+(seq++);
     STORE[id]={title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,nar:narHtml,theo:theoHtml,ev:evalHtml,photos:photos};
-    return {id:id,ts:parseTs(date),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,teaser:teaser,hasPhotos:!!(photos&&photos.length)};
+    return {id:id,ts:parseTs(date,defY),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,teaser:teaser,hasPhotos:!!(photos&&photos.length)};
   }
   function cardHtml(c,newest){var C=CAT[c.cat]||CAT.lain;
     return '<div class="ll-gcard'+(newest?' newest':'')+'" style="--gc:'+C.c+';--gbg:'+C.bg+';--gtx:'+C.tx+'" onclick="llOpen(\''+c.id+'\')">'+
@@ -4424,7 +4424,8 @@ function buildStatusBoard() {
   function buildYear(yc){
     var items=Array.prototype.slice.call(yc.querySelectorAll('.phase-block .act-log-item'));
     if(!items.length)return;
-    var cards=items.map(extract).sort(function(a,b){return (a.planned-b.planned)||(b.ts-a.ts);});
+    var defY=(yc.id.match(/(20\d\d)/)||['2026'])[0];
+    var cards=items.map(function(it){return extract(it,defY);}).sort(function(a,b){return (a.planned-b.planned)||(b.ts-a.ts);});
     var wrap=yc.querySelector(':scope > .ll-grid-wrap');
     if(!wrap){wrap=document.createElement('div');wrap.className='ll-grid-wrap';yc.appendChild(wrap);}
     var firstDone=cards.findIndex(function(c){return !c.planned;});
