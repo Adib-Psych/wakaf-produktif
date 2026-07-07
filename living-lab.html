@@ -4399,7 +4399,7 @@ function buildStatusBoard() {
     var evalEl=item.querySelector('.act-log-eval');var evalHtml=evalEl?Array.prototype.map.call(evalEl.querySelectorAll('.lang-id'),function(e){return e.outerHTML;}).join(''):'';
     var eb=item.querySelector('.eval-badge');var comp='na',compT='—',compTip='';
     if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai SOP';compTip='Aktivitas sesuai dengan SOP.';}
-      else if(eb.classList.contains('b-perhatian')){comp='dev';compT='⚠ Ada Deviasi';compTip='Ada penyimpangan dari SOP — perlu diperbaiki/dilengkapi di siklus berikutnya.';}
+      else if(eb.classList.contains('b-perhatian')){comp='dev';compT='◑ Sesuai Parsial';compTip='Sebagian sesuai SOP — ada bagian yang perlu dilengkapi/diperbaiki di siklus berikutnya.';}
       else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Perlu Eskalasi';compTip='Penyimpangan serius — perlu konsultasi ahli.';}}
     var planned=item.classList.contains('status-planned')||item.classList.contains('status-upcoming')||/rencana|akan datang|plan\b/i.test(badge);
     var ck=catKey(title+' '+badge);
