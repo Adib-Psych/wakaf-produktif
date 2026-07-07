@@ -4301,7 +4301,7 @@ function buildStatusBoard() {
 .ll-gtitle{font-size:.8rem;font-weight:700;color:#2E4040;line-height:1.3;margin-bottom:7px}
 .ll-gteaser{font-size:.71rem;color:#55635f;line-height:1.45;margin-bottom:auto}
 .ll-gsop{display:inline-flex;align-items:center;gap:4px;font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:6px;margin:9px 0 7px;align-self:flex-start}
-.ll-gsop.ok{background:#E1F5EE;color:#0F6E56}.ll-gsop.dev{background:#FAEEDA;color:#854F0B}.ll-gsop.na{background:#F1EFE8;color:#5F5E5A}
+.ll-gsop.ok{background:#E1F5EE;color:#0F6E56}.ll-gsop.dev{background:#FAEEDA;color:#854F0B}.ll-gsop.esk{background:#FCEBEB;color:#A32D2D}.ll-gsop.na{background:#F1EFE8;color:#5F5E5A}
 .ll-gmore{border:0;background:transparent;color:#1F5F47;font-weight:700;font-size:.7rem;padding:6px 0 1px;border-top:1px solid #eef2f0;cursor:pointer;display:flex;align-items:center;gap:5px;justify-content:center;width:100%}
 .ll-gmore:hover{color:#c4906a}
 #ll-modal-ov{position:fixed;inset:0;background:rgba(31,44,44,.55);display:none;align-items:flex-start;justify-content:center;padding:34px 16px;overflow-y:auto;z-index:9999}
@@ -4400,7 +4400,7 @@ function buildStatusBoard() {
     var eb=item.querySelector('.eval-badge');var comp='na',compT='—',compTip='';
     if(eb){if(eb.classList.contains('b-sesuai')){comp='ok';compT='✓ Sesuai SOP';compTip='Aktivitas sesuai dengan SOP.';}
       else if(eb.classList.contains('b-perhatian')){comp='dev';compT='◑ Sesuai Parsial';compTip='Sebagian sesuai SOP — ada bagian yang perlu dilengkapi/diperbaiki di siklus berikutnya.';}
-      else if(eb.classList.contains('b-eskalasi')){comp='dev';compT='🔴 Perlu Eskalasi';compTip='Penyimpangan serius — perlu konsultasi ahli.';}}
+      else if(eb.classList.contains('b-eskalasi')){comp='esk';compT='✗ Belum Sesuai';compTip='Belum sesuai SOP — penyimpangan signifikan, perlu konsultasi ahli.';}}
     var planned=item.classList.contains('status-planned')||item.classList.contains('status-upcoming')||/rencana|akan datang|plan\b/i.test(badge);
     var ck=catKey(title+' '+badge);
     var cur=null;for(var key in CURATED){if(title.indexOf(key)>=0){cur=CURATED[key];break;}}
