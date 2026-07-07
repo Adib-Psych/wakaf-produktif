@@ -1850,8 +1850,8 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
         <div class="year-sum-pill lang-en">Phase: <strong>Fruit Set → Pre-Harvest</strong></div>
         <div class="year-sum-pill lang-id">Tim Lapangan: <strong>Wakif + tim internal</strong></div>
         <div class="year-sum-pill lang-en">Field Team: <strong>Wakif + internal team</strong></div>
-        <div class="year-sum-pill lang-id">Rujukan Agronomi: <strong>BRIN Pusat, Serpong (penjajakan kemitraan)</strong></div>
-        <div class="year-sum-pill lang-en">Agronomy Reference: <strong>BRIN Central, Serpong (partnership exploration)</strong></div>
+        <div class="year-sum-pill lang-id">Rujukan Agronomi: <strong>Sintesa SOP Trifecta — SOP Robusta Edisi 2 Kementan (2019)</strong></div>
+        <div class="year-sum-pill lang-en">Agronomy Reference: <strong>SOP Trifecta Synthesis — Robusta SOP 2nd Ed. Kementan (2019)</strong></div>
         <div class="year-sum-pill lang-id">Target Panen: <strong>Jul–Sep 2026 (~366 kg)</strong></div>
         <div class="year-sum-pill lang-en">Harvest Target: <strong>Jul–Sep 2026 (~366 kg)</strong></div>
         <div class="year-sum-pill lang-id">Anggaran: <strong>Rp 71,29 jt (2 siklus)</strong></div>
@@ -4368,6 +4368,14 @@ function buildStatusBoard() {
     'Sistem Pelaporan Harian Digital':{teaser:'Pelaporan lapangan harian via aplikasi → dashboard, transparan mendekati real-time.'},
     'Pengadaan Pupuk Kandang':{teaser:'Rencana beli pupuk kandang di-pivot — stok kompos ayam existing masih mencukupi.'}
   };
+  // Slug folder foto per kartu (Adib taruh 1.jpg/2.jpg/3.jpg di images/livinglab/<slug>/). Auto-load 3 slot; kalau file belum ada → placeholder.
+  var SLUGS={
+    'Terbaca 11%':'terbaca-16pct','Layu Mendadak K3-P01':'k3p01','Strategi Jemur Berlapis':'jemur-berlapis',
+    'Siklus Perawatan Intensif Pre-Panen':'siklus-pra-panen','Sistem Pelaporan Harian Digital':'pelaporan-digital',
+    'Dugaan PBKo':'pbko','Program Perawatan Intensif Pra-Panen':'program-pra-panen','Penjajakan Calon T.A. Pasca-RWI':'ta-pasca-rwi',
+    'Pengocoran Fish Extract':'fish-extract','Pemasangan Meter Air PDAM':'pdam','Penggemburan Tanah':'penggemburan-kompos',
+    'Pemupukan Makro':'pemupukan-makro'
+  };
   function catKey(t){t=(t||'').toLowerCase();
     if(/opt|hama|penyakit|\blayu\b|pbko|penggerek|busuk akar|nematoda|brocap|perangkap/.test(t))return 'opt';
     if(/jemur|sortasi|pascapanen|kadar air|storage|giling|pengeringan|jamur karung|\bsimpan\b/.test(t))return 'pasca';
@@ -4405,10 +4413,13 @@ function buildStatusBoard() {
     var ck=catKey(title+' '+badge);
     var cur=null;for(var key in CURATED){if(title.indexOf(key)>=0){cur=CURATED[key];break;}}
     var teaser=(cur&&cur.teaser)?cur.teaser:firstSentence(narHtml);
+    var slug=null;for(var sk in SLUGS){if(title.indexOf(sk)>=0){slug=SLUGS[sk];break;}}
     var photos=(cur&&cur.photos)?cur.photos:null;
+    var hasReal=!!(photos&&photos.length);
+    if(!photos&&slug){photos=[1,2,3].map(function(n){return {src:'images/livinglab/'+slug+'/'+n+'.jpg',cap:''};});}
     var id='llc'+(seq++);
     STORE[id]={title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,nar:narHtml,theo:theoHtml,ev:evalHtml,photos:photos};
-    return {id:id,ts:parseTs(date,defY),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,teaser:teaser,hasPhotos:!!(photos&&photos.length)};
+    return {id:id,ts:parseTs(date,defY),planned:planned?1:0,title:title,date:date,fase:fase,cat:ck,comp:comp,compT:compT,compTip:compTip,teaser:teaser,hasPhotos:hasReal};
   }
   function cardHtml(c,newest){var C=CAT[c.cat]||CAT.lain;
     return '<div class="ll-gcard'+(newest?' newest':'')+'" style="--gc:'+C.c+';--gbg:'+C.bg+';--gtx:'+C.tx+'" onclick="llOpen(\''+c.id+'\')">'+
@@ -4439,7 +4450,7 @@ function buildStatusBoard() {
   window.llOpen=function(id){var d=STORE[id];if(!d)return;var C=CAT[d.cat]||CAT.lain;
     var photosHtml;
     if(d.photos&&d.photos.length){
-      photosHtml='<div class="ttl">📷 Foto Lapangan</div><div class="llm-prow">'+d.photos.map(function(p){return '<figure class="llm-photo"><img src="'+p.src+'" alt="'+(p.cap||'')+'" onclick="window.open(this.src,\'_blank\')"><figcaption>'+(p.cap||'')+'</figcaption></figure>';}).join('')+'</div>';
+      photosHtml='<div class="ttl">📷 Foto Lapangan</div><div class="llm-prow">'+d.photos.map(function(p){return '<figure class="llm-photo"><img src="'+p.src+'" alt="'+(p.cap||'')+'" onerror="llImgErr(this)" onclick="window.open(this.src,\'_blank\')">'+(p.cap?'<figcaption>'+p.cap+'</figcaption>':'')+'</figure>';}).join('')+'</div>';
     }else{
       photosHtml='<div class="ttl">📷 Foto Lapangan <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#9aaaa4">— belum ada, tambahkan untuk melengkapi narasi</span></div><div class="llm-prow">'+
         '<div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div><div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div></div>';
@@ -4456,6 +4467,7 @@ function buildStatusBoard() {
      '</div>';
     document.getElementById('ll-modal-ov').classList.add('on');document.body.style.overflow='hidden';};
   window.llClose=function(){document.getElementById('ll-modal-ov').classList.remove('on');document.body.style.overflow='';};
+  window.llImgErr=function(img){var f=img.closest('.llm-photo');if(f)f.outerHTML='<div class="llm-slot"><span class="cam">＋</span><span>Tambah foto</span></div>';};
   document.addEventListener('keydown',function(e){if(e.key==='Escape')llClose();});
   document.getElementById('ll-modal-ov').addEventListener('click',function(e){if(e.target===this)llClose();});
   if(document.readyState!=='loading')setTimeout(run,400);else document.addEventListener('DOMContentLoaded',function(){setTimeout(run,400);});
