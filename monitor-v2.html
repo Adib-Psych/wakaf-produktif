@@ -1642,6 +1642,9 @@
           </select>
         </div>
 
+        <!-- ⭐ 9 Jul 2026 (per Wakif) — Worklist Siap Angkat per-SESI: cegah lupa/dobel entry saat sample multi-taking + multi-batch jemur -->
+        <div id="sampling-worklist" style="margin-bottom:12px"></div>
+
         <!-- Sampling Tabel — Multi-batch v1.2 (11 Juni 2026): sesi per pohon, satuan GRAM -->
         <div class="table-wrap freeze-tbl">
           <table style="font-size:11.5px;width:100%">
@@ -8650,6 +8653,7 @@ function renderPanenSamplingTable() {
     <td colspan="5" style="text-align:left;font-size:8.5px;opacity:.85;padding-left:10px">● final · biasa Σ sesi · ~est</td>
   </tr>`;
   tbody.innerHTML = rowsHtml + totalsRow;
+  if(typeof renderSamplingWorklist==='function') renderSamplingWorklist();   // ⭐ 9 Jul: refresh worklist per-sesi
 }
 
 // ⭐ 11 Juni 2026 v1.2 — Multi-batch modal: list existing sessions + add new session form.
@@ -8748,6 +8752,52 @@ function samplingMonitorCell(sessions){
   if(nBelum>0) return `<div style="text-align:center;font-size:9px;color:var(--mute)">— ${nBelum} belum jemur${done?`<div style="font-size:8px">${done}</div>`:''}</div>`;
   if(nKering>0) return `<div style="text-align:center;font-size:9px;color:#15803d;font-weight:700">✅ selesai (${nKering})</div>`;
   return '<span style="color:#bbb">—</span>';
+}
+
+// ⭐ 9 Jul 2026 (per Wakif) — Worklist per-SESI "Belum Ditimbang".
+// Root cause bug 9 Jul: dashboard roll-up per-POHON menyembunyikan sesi ganda (1 pohon banyak take/batch)
+// → cross-check manual capek + K3-P08 110g lolos entry 3 Jul. Fix: daftar SESI individual yg siap angkat
+// (≥18 hr, dried kosong, tak di-cover) + yg 🚩 basah. Tombol → editSamplingSession langsung.
+// Sesi dried terisi = auto DROP-OFF (tak muncul lagi) → tak ada dobel/lupa. Gabungan tetap via dried_covers (same-pohon).
+function renderSamplingWorklist(){
+  const box = document.getElementById('sampling-worklist'); if(!box) return;
+  if(typeof samplingDryStatus!=='function' || typeof PANEN_SAMPLING_DATA==='undefined'){ box.innerHTML=''; return; }
+  const siap=[], basah=[];
+  (PANEN_SAMPLING_DATA||[]).forEach(s=>{
+    if(!s || s.type==='final' || s.dried_covered_by) return;
+    if(s.dried_gram != null) return;                      // sudah ditimbang → keluar dari worklist
+    const st = samplingDryStatus(s);
+    if(st.code==='siap') siap.push(s);
+    else if(st.code==='basah') basah.push(s);
+  });
+  siap.sort((a,b)=>(a.jemur_date||'').localeCompare(b.jemur_date||''));   // tertua dulu (paling lega tempat)
+  if(!siap.length && !basah.length){
+    box.innerHTML = `<div style="background:#F0FDF4;border:1px solid #bbf7d0;border-radius:9px;padding:9px 12px;font-size:11.5px;color:#15803d">✅ Tidak ada sesi menunggu ditimbang — semua yang kering sudah tercatat.</div>`;
+    return;
+  }
+  const row = (s, warn) => {
+    const d = samplingJemurDays(s);
+    const cg = s.cherry_gram!=null ? Math.round(s.cherry_gram).toLocaleString('id-ID')+' g' : '—';
+    const tgl = (typeof formatTglShort==='function'&&s.jemur_date) ? formatTglShort(s.jemur_date) : (s.jemur_date||'?');
+    return `<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:6px 10px;border-bottom:1px solid #eef2ee;font-size:11.5px">
+      <strong style="min-width:64px;color:var(--cherry)">${s.pohon_id}</strong>
+      <span style="min-width:92px;color:var(--mute)">jemur ${tgl}</span>
+      <span style="min-width:46px;font-weight:700;color:${warn?'#b91c1c':'#15803d'}">${d!=null?d+' hr':''}</span>
+      <span style="min-width:52px;text-align:right;color:var(--earth)">${cg}</span>
+      <span style="flex:1"></span>
+      <button onclick="editSamplingSession('${s.pohon_id}','${s.id}')" style="background:${warn?'#FEE2E2':'#DCFCE7'};color:${warn?'#b91c1c':'#15803d'};border:1px solid ${warn?'#fca5a5':'#86efac'};padding:3px 11px;border-radius:6px;font-size:10.5px;font-weight:800;cursor:pointer">${warn?'🚩 Re-jemur / Timbang':'⚖️ Timbang'}</button>
+    </div>`;
+  };
+  let h = `<div style="border:1.5px solid #86efac;border-radius:10px;overflow:hidden;background:#fff">
+    <div style="background:linear-gradient(135deg,#15803d,#166534);color:#fff;padding:8px 12px;font-size:11.5px;font-weight:700;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+      🔔 Worklist Sampel — Belum Ditimbang
+      <span style="background:rgba(255,255,255,.2);border-radius:10px;padding:1px 8px;font-size:10px">${siap.length} siap${basah.length?` · ${basah.length} 🚩`:''}</span>
+      <span style="flex:1"></span><span style="font-size:9px;opacity:.85;font-weight:400">≥${SAMPLING_SAFE_DAYS} hr · isi berat kering → otomatis hilang dari sini</span>
+    </div>`;
+  if(basah.length) h += basah.map(s=>row(s,true)).join('');
+  h += siap.map(s=>row(s,false)).join('');
+  h += `</div>`;
+  box.innerHTML = h;
 }
 
 function openSamplingInput(pohonId) {
@@ -9051,6 +9101,11 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   if (gb && kupas && gb > kupas * 0.40) { if (!confirm(`⚠ GB (${gb} g) > 40% cherry dikupas (${kupas} g) — rendemen GB tak wajar. Tetap simpan?`)) return; }
   else if (gb && !kupas && dried && gb > dried * 0.55) { if (!confirm(`⚠ Green bean (${gb} g) > 55% dried — rendemen tak wajar. Tetap simpan?`)) return; }
   if (gb && !dried && !kupas) { if (!confirm(`📦 Green bean diisi tapi 🌰 dried & 🫘 dikupas kosong. Tetap simpan?`)) return; }
+  // ⭐ 9 Jul 2026 — GUARD DEDUP: cegah timpa berat kering yg sudah tercatat (anti dobel-entry sample multi-batch)
+  if (e.dried_gram != null && dried != null && Math.abs(dried - e.dried_gram) > 0.5) {
+    const _prevTgl = e.edited_at ? new Date(e.edited_at).toLocaleDateString('id-ID') : 'sebelumnya';
+    if (!confirm(`🔒 Sesi ini SUDAH tercatat kering ${Math.round(e.dried_gram)} g (${_prevTgl}). Timpa jadi ${Math.round(dried)} g?`)) return;
+  }
   e.tgl = tgl;
   e.cherry_gram = cherry;
   e.kg = cherry / 1000;
