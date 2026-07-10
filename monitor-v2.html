@@ -8766,6 +8766,7 @@ function renderSamplingWorklist(){
   (PANEN_SAMPLING_DATA||[]).forEach(s=>{
     if(!s || s.type==='final' || s.dried_covered_by) return;
     if(s.dried_gram != null) return;                      // sudah ditimbang → keluar dari worklist
+    if(((s.cherry_gram||0) - (s.cherry_kupas_gram||0)) < 5) return;  // jalur-GB penuh (kupas→GB) → tak ada dried cherry utk ditimbang
     const st = samplingDryStatus(s);
     if(st.code==='siap') siap.push(s);
     else if(st.code==='basah') basah.push(s);
