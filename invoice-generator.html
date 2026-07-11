@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator Invoice — Wakaf Produktif Kebun Kopi Ngantang</title>
+<style>
+  :root{--euc:#2E5A43;--eucL:#5B7553;--euc50:#EAF2ED;--cherry:#A83244;--gold:#C99A17;--ink:#232b25;--mute:#6b7a6f;--line:#e2e8e0;--bg:#F5F2EA;--cream:#FCF5DD}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5;font-size:14px}
+  .wrap{max-width:920px;margin:0 auto;padding:18px 16px 70px}
+  h1,h2,h3{font-family:Georgia,serif;margin:0}
+  header{background:linear-gradient(135deg,var(--euc),#243b30);color:#fff;border-radius:14px;padding:20px 22px;margin-bottom:16px}
+  header h1{font-size:1.3rem}header p{margin:4px 0 0;color:#cfe0d5;font-size:.85rem}
+  .card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+  .card h2{font-size:1.05rem;color:var(--euc);margin-bottom:12px}
+  label{display:block;font-size:.78rem;font-weight:700;color:var(--mute);margin:0 0 3px}
+  input,select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--eucL)}
+  .row{display:grid;gap:12px}
+  .g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:2fr 1fr 1fr}.g4{grid-template-columns:2fr .7fr .8fr 1fr auto}
+  @media(max-width:640px){.g2,.g3,.g4{grid-template-columns:1fr}}
+  table.items{width:100%;border-collapse:collapse;margin-top:6px}
+  .items th{font-size:.72rem;text-transform:uppercase;color:var(--mute);text-align:left;padding:4px 6px}
+  .items td{padding:3px 4px}
+  .items input{padding:6px 8px}
+  .btn{border:none;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
+  .btn-p{background:var(--euc);color:#fff}.btn-p:hover{background:#244634}
+  .btn-s{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .btn-wa{background:#25D366;color:#fff}
+  .btn-x{background:var(--cherry);color:#fff;padding:6px 10px;font-size:12px}
+  .btn-sm{padding:6px 12px;font-size:13px}
+  .tot{text-align:right;font-family:Georgia,serif;font-size:1.15rem;color:var(--euc);font-weight:700}
+  .terbilang{font-style:italic;color:var(--mute);font-size:.82rem;text-align:right}
+  .hint{font-size:.75rem;color:var(--mute);margin-top:4px}
+  .result{display:none}
+  .linkbox{background:var(--euc50);border:1px solid #bcd; border:1px solid var(--eucL);border-radius:9px;padding:12px 14px;margin-bottom:12px;word-break:break-all}
+  .linkbox code{font-size:.82rem;color:var(--euc)}
+  .status{display:inline-block;font-size:.68rem;font-weight:800;padding:2px 9px;border-radius:20px;text-transform:uppercase}
+  .st-sent{background:#FEF3C7;color:#92650e}.st-signed{background:#DCFCE7;color:#15803d}.st-paid{background:#E0E7FF;color:#3730a3}.st-draft{background:#f1f5f9;color:#475569}
+  details.setup{background:#FFFBEB;border:1px solid #f0dca0;border-radius:10px;padding:12px 16px;margin-bottom:16px}
+  details.setup summary{cursor:pointer;font-weight:700;color:#78500e;font-size:.9rem}
+  pre{background:#1e293b;color:#e2e8f0;padding:12px;border-radius:8px;overflow:auto;font-size:11.5px;line-height:1.4}
+  /* invoice preview */
+  .inv{background:#fff;border:1px solid var(--line);border-radius:10px;padding:24px 26px;font-size:13px}
+  .inv .kop{display:flex;justify-content:space-between;border-bottom:2.5px solid var(--euc);padding-bottom:12px;margin-bottom:14px}
+  .inv .kop .org{font-family:Georgia,serif;font-weight:700;color:var(--euc);font-size:1.05rem}
+  .inv .kop .sub{font-size:.75rem;color:var(--mute)}
+  .inv .kop .no{text-align:right;font-size:.8rem}
+  .inv h3{font-size:1rem;letter-spacing:.05em;text-transform:uppercase;color:var(--cherry);text-align:center;margin:6px 0 14px}
+  .inv table{width:100%;border-collapse:collapse;margin:10px 0}
+  .inv table th{background:var(--euc50);font-size:.72rem;text-transform:uppercase;padding:7px 9px;text-align:left;color:var(--euc)}
+  .inv table td{padding:7px 9px;border-bottom:1px solid var(--line)}
+  .inv .r{text-align:right}
+  .inv .sign{margin-top:22px;display:flex;justify-content:flex-end}
+  .inv .sigbox{text-align:center;min-width:200px}
+  .inv .sigbox .frame{height:90px;border:1.5px dashed var(--line);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mute);font-size:.78rem;background:#fafcfa;margin:6px 0}
+  .inv .sigbox img{max-height:84px;max-width:190px}
+  .muted{color:var(--mute)}
+  .invlist-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px;border-bottom:1px solid var(--line);font-size:13px}
+  .invlist-row strong{min-width:150px}
+  .err{color:var(--cherry);font-size:.82rem;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🧾 Generator Invoice · Upah Pekerja Casual</h1>
+    <p>Wakaf Produktif Kebun Kopi Ngantang · buat invoice → kirim link tanda tangan via WhatsApp → arsipkan</p>
+  </header>
+
+  <details class="setup">
+    <summary>⚙️ Setup sekali — paste security rule ini ke Firebase Console (Build → Firestore → Rules)</summary>
+    <p style="font-size:.82rem;color:#5c4b16;margin:10px 0 6px">Tambahkan blok ini di dalam <code>match /databases/{database}/documents { … }</code>, lalu <b>Publish</b>. Tanpa ini, generate akan gagal (permission denied).</p>
+    <pre>match /invoices/{id} {
+  allow read: if true;
+  allow create: if request.resource.data.status == 'sent'
+                && request.resource.data.signature_png == null;
+  allow update: if resource.data.signature_png == null
+                && request.resource.data.diff(resource.data).affectedKeys()
+                     .hasOnly(['signature_png','signed_at','signed_meta','status'])
+                && request.resource.data.status == 'signed';
+  allow delete: if false;
+}</pre>
+  </details>
+
+  <div class="card">
+    <h2>Buat Invoice Baru</h2>
+    <div class="row g2">
+      <div><label>Nama Pekerja *</label><input id="f-nama" placeholder="mis. Pak ..."></div>
+      <div><label>Peran / Jenis Pekerja</label><input id="f-peran" value="Pekerja Casual" ></div>
+    </div>
+    <div class="row g2" style="margin-top:12px">
+      <div><label>Jenis Pekerjaan *</label><input id="f-kerja" placeholder="mis. Petik selektif merah"></div>
+      <div><label>No. HP (opsional, utk WA)</label><input id="f-hp" placeholder="mis. 62812xxxx"></div>
+    </div>
+
+    <label style="margin-top:16px">Rincian Upah *</label>
+    <table class="items">
+      <thead><tr><th>Deskripsi</th><th>Qty</th><th>Satuan</th><th>Tarif (Rp)</th><th></th></tr></thead>
+      <tbody id="items"></tbody>
+    </table>
+    <button class="btn btn-s btn-sm" onclick="addItem()" style="margin-top:6px">➕ Baris</button>
+    <div style="margin-top:10px" class="tot" id="tot">Rp 0</div>
+    <div class="terbilang" id="terbilang">—</div>
+
+    <div class="row g3" style="margin-top:14px">
+      <div><label>Periode / Tanggal Kerja</label><input id="f-periode" placeholder="mis. 5–9 Jul 2026"></div>
+      <div><label>Tanggal Bayar</label><input type="date" id="f-tglbayar"></div>
+      <div><label>Cara Bayar</label><select id="f-cara"><option>Tunai</option><option>Transfer</option></select></div>
+    </div>
+    <div style="margin-top:12px"><label>Catatan (opsional)</label><textarea id="f-catatan" rows="2"></textarea></div>
+
+    <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+      <button class="btn btn-p" id="gen" onclick="generate()">✓ Generate Invoice</button>
+      <span class="muted" style="font-size:.78rem">→ buat record + link tanda tangan</span>
+    </div>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div class="card result" id="result">
+    <h2>✅ Invoice Dibuat</h2>
+    <div class="linkbox">
+      <div style="font-size:.75rem;font-weight:700;color:var(--euc);margin-bottom:4px">🔗 Link Tanda Tangan (kirim ke pekerja):</div>
+      <code id="signlink"></code>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-s btn-sm" onclick="copyLink()">📋 Copy Link</button>
+        <button class="btn btn-wa btn-sm" id="wabtn" onclick="shareWA()">💬 Kirim via WhatsApp</button>
+      </div>
+    </div>
+    <div class="inv" id="preview"></div>
+  </div>
+
+  <div class="card">
+    <h2>📁 Invoice Tersimpan</h2>
+    <div id="invlist"><span class="muted">memuat…</span></div>
+  </div>
+</div>
+
+<script>
+const PROJECT='wakaf-ngantang', KEY='AIzaSyARd7KlzNLaRumTtdqR0j-jOnt6aZHyFKA';
+const BASE=`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/`;
+const SIGN_BASE='https://adib-psych.github.io/wakaf-produktif/invoice-sign.html';
+const ORG='Wakaf Produktif Kebun Kopi Ngantang';
+let LAST=null;
+
+// ---- Firestore encode/decode ----
+function enc(v){
+  if(v===null||v===undefined) return {nullValue:null};
+  if(typeof v==='boolean') return {booleanValue:v};
+  if(typeof v==='number') return Number.isInteger(v)?{integerValue:String(v)}:{doubleValue:v};
+  if(Array.isArray(v)) return {arrayValue:{values:v.map(enc)}};
+  if(typeof v==='object'){const f={};for(const k in v)f[k]=enc(v[k]);return {mapValue:{fields:f}};}
+  return {stringValue:String(v)};
+}
+function encFields(o){const f={};for(const k in o)f[k]=enc(o[k]);return f;}
+function dv(x){if(!x)return null;if('stringValue'in x)return x.stringValue;if('integerValue'in x)return +x.integerValue;if('doubleValue'in x)return x.doubleValue;if('booleanValue'in x)return x.booleanValue;if('nullValue'in x)return null;if('arrayValue'in x)return(x.arrayValue.values||[]).map(dv);if('mapValue'in x){const o={},f=x.mapValue.fields||{};for(const k in f)o[k]=dv(f[k]);return o;}return null;}
+
+// ---- terbilang ----
+function terbilang(n){n=Math.floor(Math.abs(n));const a=['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];
+ function f(x){if(x<12)return a[x];if(x<20)return f(x-10)+' belas';if(x<100)return f(Math.floor(x/10))+' puluh'+(x%10?' '+f(x%10):'');if(x<200)return 'seratus'+(x%100?' '+f(x%100):'');if(x<1000)return f(Math.floor(x/100))+' ratus'+(x%100?' '+f(x%100):'');if(x<2000)return 'seribu'+(x%1000?' '+f(x%1000):'');if(x<1e6)return f(Math.floor(x/1000))+' ribu'+(x%1000?' '+f(x%1000):'');if(x<1e9)return f(Math.floor(x/1e6))+' juta'+(x%1e6?' '+f(x%1e6):'');return f(Math.floor(x/1e9))+' miliar'+(x%1e9?' '+f(x%1e9):'');}
+ if(n===0)return 'nol rupiah';let s=f(n).replace(/\s+/g,' ').trim();return s.charAt(0).toUpperCase()+s.slice(1)+' rupiah';}
+const rp=n=>'Rp '+(n||0).toLocaleString('id-ID');
+
+// ---- line items ----
+function addItem(desc='',qty='',sat='',tarif=''){
+ const tr=document.createElement('tr');
+ tr.innerHTML=`<td><input class="it-desc" value="${desc}" placeholder="mis. Petik hari-1"></td>
+  <td><input class="it-qty" type="number" step="any" value="${qty}" oninput="calc()" style="text-align:right"></td>
+  <td><input class="it-sat" value="${sat}" placeholder="hari/kg"></td>
+  <td><input class="it-tarif" type="number" step="any" value="${tarif}" oninput="calc()" style="text-align:right"></td>
+  <td><button class="btn btn-x" onclick="this.closest('tr').remove();calc()">✕</button></td>`;
+ document.getElementById('items').appendChild(tr);
+}
+function readItems(){return [...document.querySelectorAll('#items tr')].map(tr=>{
+ const q=parseFloat(tr.querySelector('.it-qty').value)||0, t=parseFloat(tr.querySelector('.it-tarif').value)||0;
+ return {desc:tr.querySelector('.it-desc').value.trim(),qty:q,satuan:tr.querySelector('.it-sat').value.trim(),tarif:t,subtotal:Math.round(q*t)};
+}).filter(i=>i.desc||i.subtotal);}
+function calc(){const items=readItems();const tot=items.reduce((a,i)=>a+i.subtotal,0);
+ document.getElementById('tot').textContent=rp(tot);
+ document.getElementById('terbilang').textContent=tot?terbilang(tot):'—';return tot;}
+
+// ---- generate ----
+async function generate(){
+ const err=document.getElementById('err');err.textContent='';
+ const nama=document.getElementById('f-nama').value.trim();
+ const kerja=document.getElementById('f-kerja').value.trim();
+ const items=readItems();const total=calc();
+ if(!nama){err.textContent='Nama pekerja wajib diisi';return;}
+ if(!kerja){err.textContent='Jenis pekerjaan wajib diisi';return;}
+ if(!items.length||!total){err.textContent='Isi minimal 1 rincian upah dengan nominal';return;}
+ const btn=document.getElementById('gen');btn.disabled=true;btn.textContent='Menyimpan…';
+ try{
+  const all=await listInvoices(true);
+  const now=new Date(), ym=now.getFullYear()+String(now.getMonth()+1).padStart(2,'0');
+  const seq=String(all.filter(x=>(x.no_invoice||'').includes('/'+ym.slice(0,4)+'/'+ym.slice(4))).length+1).padStart(3,'0');
+  const id='inv_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  const token=(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):(Date.now().toString(36)+Math.random().toString(36).slice(2)));
+  const obj={
+   no_invoice:`INV/WKF/${now.getFullYear()}/${String(now.getMonth()+1).padStart(2,'0')}/${seq}`,
+   tgl_terbit:now.toISOString().slice(0,10), penerbit:ORG,
+   pekerja:{nama, peran:document.getElementById('f-peran').value.trim()||'Pekerja Casual', hp:document.getElementById('f-hp').value.trim()||null},
+   jenis_kerja:kerja, rincian:items, nominal_total:total, terbilang:terbilang(total),
+   periode_kerja:document.getElementById('f-periode').value.trim()||null,
+   tgl_bayar:document.getElementById('f-tglbayar').value||null,
+   cara_bayar:document.getElementById('f-cara').value, catatan:document.getElementById('f-catatan').value.trim()||null,
+   status:'sent', token, signature_png:null, signed_at:null, signed_meta:null,
+   pdf_storage_path:null, cashbook_id:null, created_at:new Date().toISOString(), created_by:'wakif'
+  };
+  const res=await fetch(`${BASE}invoices/${id}?key=${KEY}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:encFields(obj)})});
+  if(!res.ok){const t=await res.text();throw new Error('Firestore '+res.status+' — '+(res.status===403?'RULE belum di-publish (lihat Setup di atas)':t.slice(0,120)));}
+  obj._id=id; LAST=obj;
+  showResult(obj); renderList();
+ }catch(e){err.textContent='Gagal: '+e.message;}
+ finally{btn.disabled=false;btn.textContent='✓ Generate Invoice';}
+}
+
+function signLink(o){return `${SIGN_BASE}?inv=${o._id}&t=${o.token}`;}
+function showResult(o){
+ document.getElementById('result').style.display='block';
+ document.getElementById('signlink').textContent=signLink(o);
+ document.getElementById('preview').innerHTML=invoiceHTML(o);
+ document.getElementById('result').scrollIntoView({behavior:'smooth'});
+}
+function copyLink(){navigator.clipboard.writeText(signLink(LAST));event.target.textContent='✓ Tercopy';setTimeout(()=>event.target.textContent='📋 Copy Link',1500);}
+function shareWA(){
+ const msg=`Assalamu'alaikum ${LAST.pekerja.nama}. Berikut invoice upah dari ${ORG} (${LAST.no_invoice}, ${rp(LAST.nominal_total)}). Mohon tanda tangan di link berikut: ${signLink(LAST)} · Terima kasih 🙏`;
+ const hp=(LAST.pekerja.hp||'').replace(/[^0-9]/g,'');
+ window.open(`https://wa.me/${hp}?text=`+encodeURIComponent(msg),'_blank');
+}
+
+function invoiceHTML(o){
+ const rows=(o.rincian||[]).map(i=>`<tr><td>${i.desc}</td><td class="r">${i.qty||''}</td><td>${i.satuan||''}</td><td class="r">${rp(i.tarif)}</td><td class="r">${rp(i.subtotal)}</td></tr>`).join('');
+ const sig=o.signature_png?`<img src="${o.signature_png}" alt="ttd">`:`<div class="frame">${o.status==='sent'?'Menunggu tanda tangan…':'—'}</div>`;
+ return `<div class="kop"><div><div class="org">${ORG}</div><div class="sub">Bukti Pembayaran Upah Pekerja</div></div>
+   <div class="no"><div><b>${o.no_invoice}</b></div><div class="sub">Terbit: ${o.tgl_terbit}</div><div>${statusBadge(o.status)}</div></div></div>
+   <h3>Invoice Upah</h3>
+   <table style="width:100%;font-size:12.5px"><tr><td style="width:120px" class="muted">Nama</td><td><b>${o.pekerja.nama}</b> · ${o.pekerja.peran||''}</td></tr>
+   <tr><td class="muted">Pekerjaan</td><td>${o.jenis_kerja}${o.periode_kerja?' · '+o.periode_kerja:''}</td></tr></table>
+   <table><thead><tr><th>Deskripsi</th><th class="r">Qty</th><th>Satuan</th><th class="r">Tarif</th><th class="r">Subtotal</th></tr></thead><tbody>${rows}</tbody>
+   <tfoot><tr><td colspan="4" class="r"><b>TOTAL</b></td><td class="r"><b>${rp(o.nominal_total)}</b></td></tr></tfoot></table>
+   <div class="terbilang" style="text-align:left;margin:2px 0 0">Terbilang: <i>${o.terbilang}</i></div>
+   ${o.catatan?`<div class="muted" style="font-size:.8rem;margin-top:6px">Catatan: ${o.catatan}</div>`:''}
+   <div class="sign"><div class="sigbox"><div class="muted" style="font-size:.75rem">Diterima &amp; disetujui pekerja,</div>${sig}<div><b>${o.pekerja.nama}</b></div>${o.signed_at?`<div class="muted" style="font-size:.7rem">ditandatangani ${new Date(o.signed_at).toLocaleString('id-ID')}</div>`:''}</div></div>`;
+}
+function statusBadge(s){const m={sent:['st-sent','⏳ Menunggu TTD'],signed:['st-signed','✅ Ditandatangani'],paid:['st-paid','💰 Dibayar'],draft:['st-draft','Draft']};const x=m[s]||m.draft;return `<span class="status ${x[0]}">${x[1]}</span>`;}
+
+// ---- list ----
+async function listInvoices(raw){
+ const r=await fetch(`${BASE}invoices?key=${KEY}&pageSize=300&t=`+Date.now());
+ const j=await r.json();
+ const docs=(j.documents||[]).map(d=>{const o={};const f=d.fields||{};for(const k in f)o[k]=dv(f[k]);o._id=d.name.split('/').pop();return o;});
+ docs.sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
+ return docs;
+}
+async function renderList(){
+ const box=document.getElementById('invlist');
+ try{const docs=await listInvoices();
+  if(!docs.length){box.innerHTML='<span class="muted">Belum ada invoice.</span>';return;}
+  box.innerHTML=docs.map(o=>`<div class="invlist-row">
+    <strong>${o.no_invoice||o._id}</strong>
+    <span>${o.pekerja?o.pekerja.nama:'-'}</span>
+    <span>${rp(o.nominal_total)}</span>
+    ${statusBadge(o.status)}
+    <span style="flex:1"></span>
+    <button class="btn btn-s btn-sm" onclick="reopen('${o._id}')">👁️ Lihat</button>
+    <button class="btn btn-s btn-sm" onclick="navigator.clipboard.writeText('${signLink(o)}');this.textContent='✓'">🔗</button>
+   </div>`).join('');
+ }catch(e){box.innerHTML='<span class="err">Gagal memuat: '+e.message+' (kalau 403 → rule belum di-publish, lihat Setup di atas)</span>';}
+}
+async function reopen(id){
+ try{const r=await fetch(`${BASE}invoices/${id}?key=${KEY}&t=`+Date.now());const d=await r.json();
+  const o={};const f=d.fields||{};for(const k in f)o[k]=dv(f[k]);o._id=id;LAST=o;showResult(o);
+ }catch(e){alert('Gagal buka: '+e.message);}
+}
+
+// init
+addItem('Upah','', '', ''); calc();
+document.getElementById('f-tglbayar').value=new Date().toISOString().slice(0,10);
+renderList();
+</script>
+</body>
+</html>
