@@ -8,40 +8,44 @@
   :root{--euc:#1F5F47;--gold:#D4AF37;--cherry:#c14b3a;--cream:#f5f0e6;--mint:#a8c8bc;--ink:#2e4040;--sage:#5a9080;--line:#e2e8e0;--bg:#eef2ee}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5;font-size:14px}
-  .wrap{max-width:960px;margin:0 auto;padding:18px 16px 80px}
+  .wrap{max-width:980px;margin:0 auto;padding:18px 16px 80px}
   h1,h2{font-family:Georgia,serif;margin:0}
   header.app{background:linear-gradient(135deg,var(--euc),#143c2d);color:#fff;border-radius:14px;padding:20px 22px;margin-bottom:16px}
   header.app h1{font-size:1.25rem}header.app p{margin:4px 0 0;color:#cfe0d5;font-size:.85rem}
   .card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
   .card h2{font-size:1.05rem;color:var(--euc);margin-bottom:12px}
   label{display:block;font-size:.76rem;font-weight:700;color:#6b7a6f;margin:0 0 3px}
-  input,select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit}
+  input,select,textarea{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;background:#fff}
   input:focus,select:focus,textarea:focus{outline:none;border-color:var(--sage)}
   .row{display:grid;gap:12px}.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr 1fr 1fr}
   @media(max-width:640px){.g2,.g3{grid-template-columns:1fr}}
-  table.items{width:100%;border-collapse:collapse;margin-top:6px}
-  .items th{font-size:.7rem;text-transform:uppercase;color:#6b7a6f;text-align:left;padding:4px 6px}
-  .items td{padding:3px 4px;vertical-align:top}.items input,.items select{padding:6px 8px}
+  .wk{border:1.5px solid #d7e3db;border-radius:11px;padding:14px 16px;margin-bottom:14px;background:#fafdfb}
+  .wk-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .wk-head b{color:var(--euc);font-size:.95rem}
+  table.items{width:100%;border-collapse:collapse;margin-top:8px}
+  .items th{font-size:.68rem;text-transform:uppercase;color:#6b7a6f;text-align:left;padding:4px 6px}
+  .items td{padding:3px 4px;vertical-align:top}.items input,.items select{padding:6px 7px;font-size:13px}
   .btn{border:none;border-radius:8px;padding:9px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit}
   .btn-p{background:var(--euc);color:#fff}.btn-p:hover{background:#143c2d}
   .btn-s{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
   .btn-wa{background:#25D366;color:#fff}
-  .btn-x{background:var(--cherry);color:#fff;padding:6px 10px;font-size:12px}
+  .btn-x{background:#fbe9e7;color:var(--cherry);border:1px solid #f2c7c1;padding:5px 9px;font-size:12px}
   .btn-sm{padding:6px 12px;font-size:13px}
-  .tot{text-align:right;font-family:Georgia,serif;font-size:1.15rem;color:var(--euc);font-weight:700}
+  .subw{text-align:right;font-weight:700;color:var(--euc);font-size:.9rem;margin-top:6px}
+  .tot{text-align:right;font-family:Georgia,serif;font-size:1.2rem;color:var(--euc);font-weight:700}
   .terbilang{font-style:italic;color:#6b7a6f;font-size:.82rem;text-align:right}
-  .hint{font-size:.75rem;color:#6b7a6f;margin-top:4px}
   .result{display:none}
-  .linkbox{background:#eaf3ee;border:1px solid var(--sage);border-radius:9px;padding:12px 14px;margin-bottom:14px;word-break:break-all}
-  .linkbox code{font-size:.82rem;color:var(--euc)}
+  .linkbox{background:#eaf3ee;border:1px solid var(--sage);border-radius:9px;padding:12px 14px;margin-bottom:10px;word-break:break-all}
+  .linkbox code{font-size:.8rem;color:var(--euc)}
+  .linkbox .who{font-size:.8rem;font-weight:800;color:var(--euc);margin-bottom:4px}
   .status{display:inline-block;font-size:.68rem;font-weight:800;padding:2px 9px;border-radius:20px;text-transform:uppercase}
-  .st-sent{background:#FEF3C7;color:#92650e}.st-signed{background:#DCFCE7;color:#15803d}.st-paid{background:#E0E7FF;color:#3730a3}
+  .st-sent{background:#FEF3C7;color:#92650e}.st-signed{background:#DCFCE7;color:#15803d}.st-paid{background:#E0E7FF;color:#3730a3}.st-part{background:#FEE9CF;color:#9a4a0e}
   details.setup{background:#FFFBEB;border:1px solid #f0dca0;border-radius:10px;padding:12px 16px;margin-bottom:16px}
   details.setup summary{cursor:pointer;font-weight:700;color:#78500e;font-size:.9rem}
   pre{background:#1e293b;color:#e2e8f0;padding:12px;border-radius:8px;overflow:auto;font-size:11.5px;line-height:1.4}
   .muted{color:#6b7a6f}
   .invlist-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 10px;border-bottom:1px solid var(--line);font-size:13px}
-  .invlist-row strong{min-width:160px}
+  .invlist-row strong{min-width:170px}
   .err{color:var(--cherry);font-size:.82rem;margin-top:6px}
   .prevwrap{overflow-x:auto;background:var(--ink);border-radius:10px;padding:16px;display:flex;justify-content:center}
 </style>
@@ -50,51 +54,43 @@
 <div class="wrap">
   <header class="app">
     <h1>🧾 Generator Bukti Pembayaran Upah · E-Sign</h1>
-    <p>Wakaf Produktif Kebun Kopi Ngantang · buat bukti bayar → kirim link tanda tangan pekerja via WhatsApp → arsipkan</p>
+    <p>Wakaf Produktif Kebun Kopi Ngantang · 1 bukti bisa banyak pekerja · tiap pekerja tanda tangan digital via link WhatsApp</p>
   </header>
 
   <details class="setup">
-    <summary>⚙️ Setup sekali — paste security rule ini ke Firebase Console (Build → Firestore → Rules → Publish)</summary>
-    <p style="font-size:.82rem;color:#5c4b16;margin:10px 0 6px">Tambahkan di dalam <code>match /databases/{database}/documents { … }</code>, lalu <b>Publish</b>. Tanpa ini, Generate gagal (permission denied — sudah aku tes: create = 403).</p>
+    <summary>⚙️ Setup sekali — paste security rule ke Firebase Console (Build → Firestore → Rules → Publish)</summary>
+    <p style="font-size:.82rem;color:#5c4b16;margin:10px 0 6px">Tambahkan di dalam <code>match /databases/{database}/documents { … }</code> lalu <b>Publish</b>. Tanpa ini Generate = 403.</p>
     <pre>match /invoices/{id} {
   allow read: if true;
-  allow create: if request.resource.data.status == 'sent'
-                && request.resource.data.signature_png == null;
-  allow update: if resource.data.signature_png == null
-                && request.resource.data.diff(resource.data).affectedKeys()
-                     .hasOnly(['signature_png','signed_at','signed_meta','status'])
-                && request.resource.data.status == 'signed';
+  allow create: if request.resource.data.status == 'sent';
+  // pekerja hanya boleh menandatangani — nominal &amp; nomor bukti tak boleh berubah
+  allow update: if request.resource.data.no_invoice == resource.data.no_invoice
+                &amp;&amp; request.resource.data.nominal_total == resource.data.nominal_total;
   allow delete: if false;
 }</pre>
   </details>
 
   <div class="card">
-    <h2>Buat Bukti Pembayaran Baru</h2>
+    <h2>Info Umum</h2>
     <div class="row g3">
-      <div><label>Nama Penerima *</label><input id="f-nama" placeholder="mis. Pak Yasir"></div>
-      <div><label>Peran (label TTD)</label><input id="f-peran" value="Pekerja Lapangan"></div>
-      <div><label>Sumber Dana</label><input id="f-sumber" value="Kas Wakif Langsung"></div>
-    </div>
-    <div class="row g3" style="margin-top:12px">
-      <div><label>No. HP (utk WhatsApp)</label><input id="f-hp" placeholder="mis. 62812xxxx"></div>
       <div><label>Tanggal Bayar</label><input type="date" id="f-tglbayar"></div>
-      <div></div>
+      <div><label>Sumber Dana</label><input id="f-sumber" value="Kas Wakif Langsung"></div>
+      <div><label>Catatan (opsional)</label><input id="f-catatan" placeholder="mis. upah periode Jul minggu-1"></div>
     </div>
+  </div>
 
-    <label style="margin-top:16px">Rincian Pekerjaan *</label>
-    <table class="items">
-      <thead><tr><th style="width:130px">Tanggal</th><th>Aktivitas</th><th style="width:80px">Model</th><th style="width:60px">Qty</th><th style="width:90px">Satuan</th><th style="width:110px">Tarif (Rp)</th><th style="width:110px">Subtotal</th><th></th></tr></thead>
-      <tbody id="items"></tbody>
-    </table>
-    <button class="btn btn-s btn-sm" onclick="addItem()" style="margin-top:6px">➕ Baris</button>
-    <div style="margin-top:10px" class="tot" id="tot">Rp 0</div>
-    <div class="terbilang" id="terbilang">—</div>
-    <div style="margin-top:12px"><label>Catatan (opsional)</label><textarea id="f-catatan" rows="2"></textarea></div>
-
+  <div class="card">
+    <h2>Pekerja &amp; Rincian</h2>
+    <div id="workers"></div>
+    <button class="btn btn-s btn-sm" onclick="addWorker()">➕ Tambah Pekerja</button>
+    <div style="margin-top:14px;border-top:2px dashed var(--line);padding-top:10px">
+      <div class="tot" id="tot">Rp 0</div>
+      <div class="terbilang" id="terbilang">—</div>
+    </div>
     <div style="margin-top:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <button class="btn btn-s btn-sm" onclick="refreshPreview()">👁️ Perbarui Pratinjau</button>
       <button class="btn btn-p" id="gen" onclick="generate()">✓ Generate + Buat Link TTD</button>
-      <span class="muted" style="font-size:.78rem">→ simpan record + link tanda tangan digital pekerja</span>
+      <span class="muted" style="font-size:.78rem">→ simpan record + link tanda tangan tiap pekerja</span>
     </div>
     <div class="err" id="err"></div>
   </div>
@@ -106,15 +102,8 @@
 
   <div class="card result" id="result">
     <h2>✅ Bukti Dibuat — Kirim Link Tanda Tangan</h2>
-    <div class="linkbox">
-      <div style="font-size:.75rem;font-weight:700;color:var(--euc);margin-bottom:4px">🔗 Link Tanda Tangan (kirim ke pekerja):</div>
-      <code id="signlink"></code>
-      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-s btn-sm" onclick="copyLink()">📋 Copy Link</button>
-        <button class="btn btn-wa btn-sm" onclick="shareWA()">💬 Kirim via WhatsApp</button>
-      </div>
-    </div>
-    <p class="muted" style="font-size:.8rem">Setelah pekerja tanda tangan di link, buka <b>invoice-view.html</b> (F3) untuk unduh dokumen final ber-TTD.</p>
+    <div id="links"></div>
+    <p class="muted" style="font-size:.8rem">Tiap pekerja buka link-nya → tanda tangan → kolomnya terisi otomatis. Kalau ada 3 pekerja, kirim 3 link berbeda.</p>
   </div>
 
   <div class="card">
@@ -128,7 +117,7 @@ const PROJECT='wakaf-ngantang', KEY='AIzaSyARd7KlzNLaRumTtdqR0j-jOnt6aZHyFKA';
 const BASE=`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/`;
 const SIGN_BASE='https://adib-psych.github.io/wakaf-produktif/invoice-sign.html';
 const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'], BULAN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-let LAST=null;
+let LAST=null, WID=0;
 
 // ---- Firestore encode/decode ----
 function enc(v){
@@ -142,7 +131,7 @@ function enc(v){
 function encFields(o){const f={};for(const k in o)f[k]=enc(o[k]);return f;}
 function dv(x){if(!x)return null;if('stringValue'in x)return x.stringValue;if('integerValue'in x)return +x.integerValue;if('doubleValue'in x)return x.doubleValue;if('booleanValue'in x)return x.booleanValue;if('nullValue'in x)return null;if('arrayValue'in x)return(x.arrayValue.values||[]).map(dv);if('mapValue'in x){const o={},f=x.mapValue.fields||{};for(const k in f)o[k]=dv(f[k]);return o;}return null;}
 
-// ---- terbilang (persis monitor-v2) ----
+// ---- terbilang ----
 function terbilangAngka(n){const a=['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];n=Math.floor(Math.abs(n));
  if(n===0)return '';if(n<12)return a[n];if(n<20)return a[n-10]+' belas';if(n<100)return a[Math.floor(n/10)]+' puluh'+(n%10?' '+a[n%10]:'');
  if(n<200)return 'seratus'+(n%100?' '+terbilangAngka(n%100):'');if(n<1000)return a[Math.floor(n/100)]+' ratus'+(n%100?' '+terbilangAngka(n%100):'');
@@ -151,85 +140,175 @@ function terbilangAngka(n){const a=['','satu','dua','tiga','empat','lima','enam'
 function terbilangRupiah(n){if(n===0)return 'Nol Rupiah';return terbilangAngka(n).split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ')+' Rupiah';}
 const rp=n=>'Rp '+(n||0).toLocaleString('id-ID');
 const tglLbl=iso=>{if(!iso)return '';const d=new Date(iso);return `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-// ---- line items ----
-function addItem(tgl='',akt='',model='harian',qty=1,sat='hari',tarif=''){
+// ================= FORM (multi worker) =================
+function addWorker(data){
+ data=data||{}; const wid=++WID;
+ const div=document.createElement('div'); div.className='wk'; div.dataset.wid=wid;
+ div.innerHTML=`
+  <div class="wk-head"><b>👤 Pekerja</b><button class="btn btn-x" onclick="this.closest('.wk').remove();renumberWorkers();calc()">✕ Hapus Pekerja</button></div>
+  <div class="row g3">
+    <div><label>Nama Penerima *</label><input class="w-nama" value="${esc(data.nama||'')}" placeholder="mis. Pak Yasir"></div>
+    <div><label>Peran (label TTD)</label><input class="w-peran" value="${esc(data.peran||'Pekerja Lapangan')}"></div>
+    <div><label>No. HP (WhatsApp)</label><input class="w-hp" value="${esc(data.hp||'')}" placeholder="62812xxxx"></div>
+  </div>
+  <table class="items">
+    <thead><tr><th style="width:130px">Tanggal</th><th>Aktivitas</th><th style="width:90px">Model</th><th style="width:110px">Durasi/Qty</th><th style="width:80px">Satuan</th><th style="width:105px">Tarif</th><th style="width:100px">Subtotal</th><th></th></tr></thead>
+    <tbody class="w-items"></tbody>
+  </table>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+    <button class="btn btn-s btn-sm" onclick="addRow(${wid})">➕ Baris</button>
+    <div class="subw">Subtotal: <span class="w-sub">Rp 0</span></div>
+  </div>`;
+ document.getElementById('workers').appendChild(div);
+ (data.rincian&&data.rincian.length?data.rincian:[{}]).forEach(r=>addRow(wid,r));
+ renumberWorkers(); calc();
+}
+function renumberWorkers(){[...document.querySelectorAll('#workers .wk')].forEach((w,i)=>{w.querySelector('.wk-head b').textContent=`👤 Pekerja ${i+1}`;});}
+
+function qtyCellHTML(model,qty){
+ if(model==='borongan') return `<input class="it-qty" type="number" step="any" value="${qty!=null?qty:1}" oninput="calc()" style="text-align:right">`;
+ const q=(qty===0.5)?'0.5':'1';
+ return `<select class="it-qty" onchange="calc()"><option value="1"${q==='1'?' selected':''}>1 hari</option><option value="0.5"${q==='0.5'?' selected':''}>½ hari</option></select>`;
+}
+function satCellHTML(model,sat){
+ if(model==='borongan') return `<input class="it-sat" value="${esc(sat||'pohon')}" placeholder="pohon/kg">`;
+ return `<span class="it-sat-fixed muted" style="font-size:12px">hari</span>`;
+}
+function addRow(wid,data){
+ data=data||{}; const model=data.model||'harian';
+ const tb=document.querySelector(`.wk[data-wid="${wid}"] .w-items`);
  const tr=document.createElement('tr');
- tr.innerHTML=`<td><input class="it-tgl" type="date" value="${tgl}" oninput="calc()"></td>
-  <td><input class="it-akt" value="${akt}" placeholder="mis. babat rumput di Kebun 4"></td>
-  <td><select class="it-model" onchange="calc()"><option value="harian"${model==='harian'?' selected':''}>Harian</option><option value="borongan"${model==='borongan'?' selected':''}>Borongan</option></select></td>
-  <td><input class="it-qty" type="number" step="any" value="${qty}" oninput="calc()" style="text-align:right"></td>
-  <td><input class="it-sat" value="${sat}" placeholder="hari/pohon/kg"></td>
-  <td><input class="it-tarif" type="number" step="any" value="${tarif}" oninput="calc()" style="text-align:right"></td>
+ tr.innerHTML=`<td><input class="it-tgl" type="date" value="${data.tgl||''}" oninput="calc()"></td>
+  <td><input class="it-akt" value="${esc(data.aktivitas||'')}" placeholder="mis. babat rumput di Kebun 4"></td>
+  <td><select class="it-model" onchange="onModelChange(this)"><option value="harian"${model==='harian'?' selected':''}>Harian</option><option value="borongan"${model==='borongan'?' selected':''}>Borongan</option></select></td>
+  <td class="cell-qty">${qtyCellHTML(model,data.qty)}</td>
+  <td class="cell-sat">${satCellHTML(model,data.satuan)}</td>
+  <td><input class="it-tarif" type="number" step="any" value="${data.tarif!=null?data.tarif:''}" oninput="calc()" style="text-align:right" placeholder="${model==='harian'?'100000':''}"></td>
   <td class="it-sub" style="text-align:right;font-weight:700;padding-top:12px">Rp 0</td>
   <td><button class="btn btn-x" onclick="this.closest('tr').remove();calc()">✕</button></td>`;
- document.getElementById('items').appendChild(tr);
+ tb.appendChild(tr); calc();
 }
-function readItems(){return [...document.querySelectorAll('#items tr')].map(tr=>{
- const q=parseFloat(tr.querySelector('.it-qty').value)||0, t=parseFloat(tr.querySelector('.it-tarif').value)||0;
+function onModelChange(sel){
+ const tr=sel.closest('tr'); const model=sel.value;
+ const q=tr.querySelector('.it-qty'); const curQty=q?q.value:1;
+ tr.querySelector('.cell-qty').innerHTML=qtyCellHTML(model, model==='borongan'?(isNaN(curQty)?1:curQty):curQty);
+ tr.querySelector('.cell-sat').innerHTML=satCellHTML(model,'');
+ const tarif=tr.querySelector('.it-tarif'); if(model==='harian') tarif.placeholder='100000';
+ calc();
+}
+function readRow(tr){
+ const model=tr.querySelector('.it-model').value;
+ const qty=parseFloat(tr.querySelector('.it-qty').value)||0;
+ const tarif=parseFloat(tr.querySelector('.it-tarif').value)||0;
+ let satuan;
+ if(model==='harian') satuan = (qty===0.5)?'½ hari':'1 hari';
+ else { const si=tr.querySelector('.it-sat'); satuan=(si&&si.value.trim())||'unit'; }
  return {tgl:tr.querySelector('.it-tgl').value, aktivitas:tr.querySelector('.it-akt').value.trim(),
-  model:tr.querySelector('.it-model').value, qty:q, satuan:tr.querySelector('.it-sat').value.trim()||'hari',
-  tarif:t, subtotal:Math.round(q*t)};
-}).filter(i=>i.aktivitas||i.subtotal);}
-function calc(){
- let tot=0;
- document.querySelectorAll('#items tr').forEach(tr=>{
-  const q=parseFloat(tr.querySelector('.it-qty').value)||0, t=parseFloat(tr.querySelector('.it-tarif').value)||0, s=Math.round(q*t);
-  tr.querySelector('.it-sub').textContent=rp(s); tot+=s;
+   model, qty, satuan, tarif, subtotal:Math.round(qty*tarif)};
+}
+function readWorkers(){
+ return [...document.querySelectorAll('#workers .wk')].map(w=>{
+   const rincian=[...w.querySelectorAll('.w-items tr')].map(readRow).filter(r=>r.aktivitas||r.subtotal);
+   return {nama:w.querySelector('.w-nama').value.trim(), peran:w.querySelector('.w-peran').value.trim()||'Pekerja Lapangan',
+     hp:w.querySelector('.w-hp').value.trim()||null, rincian, subtotal:rincian.reduce((a,r)=>a+r.subtotal,0)};
  });
- document.getElementById('tot').textContent=rp(tot);
- document.getElementById('terbilang').textContent=tot?terbilangRupiah(tot):'—';
- return tot;
+}
+function calc(){
+ let grand=0;
+ document.querySelectorAll('#workers .wk').forEach(w=>{
+   let sub=0;
+   w.querySelectorAll('.w-items tr').forEach(tr=>{const r=readRow(tr);tr.querySelector('.it-sub').textContent=rp(r.subtotal);sub+=r.subtotal;});
+   w.querySelector('.w-sub').textContent=rp(sub); grand+=sub;
+ });
+ document.getElementById('tot').textContent=rp(grand);
+ document.getElementById('terbilang').textContent=grand?terbilangRupiah(grand):'—';
+ return grand;
 }
 
-// ---- build data object from form ----
-function readForm(existingId,existingToken){
- const items=readItems(); const total=items.reduce((a,i)=>a+i.subtotal,0);
- const nama=document.getElementById('f-nama').value.trim();
+function readForm(){
+ const pekerja=readWorkers();
+ const total=pekerja.reduce((a,w)=>a+w.subtotal,0);
  const now=new Date();
  const yyyymmdd=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
- const code=(nama.replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,6))||'CASUAL';
+ const first=(pekerja[0]&&pekerja[0].nama)||''; const code=pekerja.length>1?'MULTI':((first.replace(/[^A-Za-z]/g,'').toUpperCase().slice(0,6))||'CASUAL');
  return {
-  no_invoice: existingId? undefined : `BUKTI-NGT-${yyyymmdd}-${code}-${String(Date.now()).slice(-4)}`,
-  tgl_terbit: (document.getElementById('f-tglbayar').value)||now.toISOString().slice(0,10),
+  no_invoice:`BUKTI-NGT-${yyyymmdd}-${code}-${String(Date.now()).slice(-4)}`,
+  tgl_terbit:(document.getElementById('f-tglbayar').value)||now.toISOString().slice(0,10),
   penerbit:'Wakaf Produktif Kebun Kopi Ngantang',
-  penerima:{nama, peran:document.getElementById('f-peran').value.trim()||'Pekerja Lapangan', hp:document.getElementById('f-hp').value.trim()||null},
   sumber_dana:document.getElementById('f-sumber').value.trim()||'Kas Wakif Langsung',
-  rincian:items, nominal_total:total, terbilang:terbilangRupiah(total),
   catatan:document.getElementById('f-catatan').value.trim()||null,
-  status:'sent', token:existingToken||null, signature_png:null, signed_at:null, signed_meta:null,
-  pdf_storage_path:null, cashbook_id:null
+  pekerja, nominal_total:total, terbilang:terbilangRupiah(total), status:'sent'
  };
 }
 
-// ---- RECEIPT TEMPLATE (mirror persis monitor-v2 "Bukti Pembayaran Upah") ----
-function receiptHTML(o, opts){
- opts=opts||{};
- const items=o.rincian||[]; const total=o.nominal_total||0;
- const rowsHTML=items.map((it,i)=>{
-   const bg=i%2===0?'#fafbfa':'#ffffff';
-   let qd; if(it.model==='harian'){let lbl=it.satuan||'hari'; if(lbl==='full day')lbl='1 hari'; qd=lbl;} else {qd=`${it.qty}× ${it.satuan}`;}
-   const akt=`<span style="color:#2e4040;font-weight:600">${esc(it.aktivitas)}</span> <span style="color:#6b7878;font-size:11px">· ✓ ${esc(qd)} · Rp ${(it.tarif||0).toLocaleString('id-ID')}</span>`;
-   return `<tr style="background:${bg}">
-     <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;color:#2e4040;white-space:nowrap;vertical-align:middle"><span style="color:#5a9080;font-weight:700;display:inline-block;width:22px">${i+1}.</span><span style="font-weight:600">${tglLbl(it.tgl)}</span></td>
-     <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;line-height:1.45;vertical-align:middle">${akt}</td>
-     <td style="padding:9px 12px;text-align:right;border-bottom:1px solid #e8dec8;font-size:12.5px;font-weight:700;color:#2e4040;white-space:nowrap;vertical-align:middle">Rp ${(it.subtotal||0).toLocaleString('id-ID')}</td>
-   </tr>`;
- }).join('');
-
- // penerima signature block
- let sigBlock, discl;
- if(o.signature_png){
-   sigBlock=`<img src="${o.signature_png}" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD ${esc(o.penerima.nama)}">`;
-   discl=`<div style="margin:0 32px 18px;padding:9px 14px;background:#eefaf0;border-radius:6px;border:1px solid #bfe3c8;font-size:10px;color:#256b39;text-align:center;font-style:italic;line-height:1.55">✅ Ditandatangani secara <strong>digital</strong> oleh pekerja${o.signed_at?` pada ${new Date(o.signed_at).toLocaleString('id-ID')}`:''}.</div>`;
+// ================= RECEIPT TEMPLATE =================
+function itemRow(it,i){
+ const bg=i%2===0?'#fafbfa':'#ffffff';
+ let qd; if(it.model==='harian'){qd=it.satuan;} else {qd=`${it.qty}× ${it.satuan}`;}
+ const akt=`<span style="color:#2e4040;font-weight:600">${esc(it.aktivitas)}</span> <span style="color:#6b7878;font-size:11px">· ✓ ${esc(qd)} · Rp ${(it.tarif||0).toLocaleString('id-ID')}</span>`;
+ return `<tr style="background:${bg}">
+   <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;color:#2e4040;white-space:nowrap;vertical-align:middle"><span style="color:#5a9080;font-weight:700;display:inline-block;width:22px">${i+1}.</span><span style="font-weight:600">${tglLbl(it.tgl)}</span></td>
+   <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;line-height:1.45;vertical-align:middle">${akt}</td>
+   <td style="padding:9px 12px;text-align:right;border-bottom:1px solid #e8dec8;font-size:12.5px;font-weight:700;color:#2e4040;white-space:nowrap;vertical-align:middle">Rp ${(it.subtotal||0).toLocaleString('id-ID')}</td>
+ </tr>`;
+}
+function sigBlock(w){
+ let inner, note;
+ if(w&&w.signature_png){
+   inner=`<img src="${w.signature_png}" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD ${esc(w.nama)}">`;
  } else {
-   sigBlock=`<div style="height:54px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #c9b78a;border-radius:8px;color:#8b6914;font-size:11px;font-style:italic;background:#fffdf5">⏳ menunggu tanda tangan digital</div>`;
-   discl=`<div style="margin:0 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">✍️ Tanda tangan pekerja diisi <strong>digital</strong> lewat link e-sign yang dikirim via WhatsApp.</div>`;
+   inner=`<div style="height:54px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #c9b78a;border-radius:8px;color:#8b6914;font-size:11px;font-style:italic;background:#fffdf5">⏳ menunggu tanda tangan digital</div>`;
  }
- const width=opts.width||800;
+ return `<div style="text-align:center">
+   <div style="color:#6b7878;margin-bottom:6px">Penerima,</div>
+   ${inner}
+   <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${esc((w&&w.nama)||'—')}</div>
+   <div style="color:#6b7878;font-size:11px;margin-top:2px">${esc((w&&w.peran)||'Pekerja Lapangan')}</div>
+ </div>`;
+}
+function receiptHTML(o, opts){
+ opts=opts||{}; const width=opts.width||800;
+ const pekerja=o.pekerja||[]; const total=o.nominal_total||0; const multi=pekerja.length>1;
+
+ // items body
+ let body='';
+ if(multi){
+   pekerja.forEach(w=>{
+     body+=`<tr style="background:#eef4f0"><td colspan="3" style="padding:9px 12px;font-weight:800;color:#1F5F47;font-size:12px;border-bottom:1px solid #d7e3db">👤 ${esc(w.nama||'—')} · <span style="font-weight:600;color:#6b7878">${esc(w.peran||'')}</span></td></tr>`;
+     body+=(w.rincian||[]).map((it,i)=>itemRow(it,i)).join('');
+     body+=`<tr style="background:#f7faf8"><td colspan="2" style="padding:8px 12px;text-align:right;font-size:11.5px;font-weight:700;color:#5a9080;border-bottom:2px solid #e8dec8">Subtotal ${esc(w.nama||'')}</td><td style="padding:8px 12px;text-align:right;font-size:12.5px;font-weight:800;color:#2e4040;border-bottom:2px solid #e8dec8;white-space:nowrap">Rp ${(w.subtotal||0).toLocaleString('id-ID')}</td></tr>`;
+   });
+ } else {
+   body=((pekerja[0]&&pekerja[0].rincian)||[]).map((it,i)=>itemRow(it,i)).join('');
+ }
+ const itemCount=pekerja.reduce((a,w)=>a+(w.rincian?w.rincian.length:0),0);
+ const penerimaLbl=multi?`${pekerja.length} Pekerja`:((pekerja[0]&&pekerja[0].nama)||'—');
+
+ // signature area
+ const anySigned=pekerja.some(w=>w.signature_png), allSigned=pekerja.length&&pekerja.every(w=>w.signature_png);
+ let sigArea, discl;
+ const adibBlock=`<div style="text-align:center">
+     <div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div>
+     <img src="images/signature-adib.png" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD Adib">
+     <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">Mas Tito (Adib Asrori)</div>
+     <div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
+   </div>`;
+ if(!multi){
+   sigArea=`<div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">${adibBlock}${sigBlock(pekerja[0])}</div>`;
+ } else {
+   const grid=pekerja.map(sigBlock).join('');
+   sigArea=`<div style="padding:22px 32px 2px;font-size:12px"><div style="max-width:300px;margin:0 auto 18px">${adibBlock}</div>
+     <div style="font-size:10px;font-weight:800;color:#5a9080;letter-spacing:1.5px;text-align:center;margin:6px 0 10px;border-top:1px dashed #d7c9a8;padding-top:12px">TANDA TANGAN PENERIMA</div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 24px">${grid}</div></div>`;
+ }
+ if(allSigned) discl=`<div style="margin:14px 32px 18px;padding:9px 14px;background:#eefaf0;border-radius:6px;border:1px solid #bfe3c8;font-size:10px;color:#256b39;text-align:center;font-style:italic;line-height:1.55">✅ Seluruh penerima telah menandatangani secara <strong>digital</strong>.</div>`;
+ else if(anySigned) discl=`<div style="margin:14px 32px 18px;padding:9px 14px;background:#fff3e6;border-radius:6px;border:1px solid #f0cfa0;font-size:10px;color:#9a4a0e;text-align:center;font-style:italic;line-height:1.55">⏳ Sebagian penerima sudah tanda tangan; menunggu sisanya via link e-sign.</div>`;
+ else discl=`<div style="margin:14px 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">✍️ Tanda tangan penerima diisi <strong>digital</strong> lewat link e-sign (dikirim via WhatsApp).</div>`;
 
  return `<div style="width:${width}px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;border:3px solid #1F5F47;box-shadow:inset 0 0 0 1px #ffffff, inset 0 0 0 2px #D4AF37, 0 4px 12px rgba(0,0,0,.1);box-sizing:content-box">
-   <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47;position:relative">
+   <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47">
      <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
        <img src="images/logo-wakaf-produktif-3x1.png" style="height:108px;width:auto;max-width:480px;display:block;flex-shrink:0" alt="Logo Wakaf Produktif Kebun Kopi Ngantang">
        <div style="text-align:right;flex-shrink:0;max-width:280px">
@@ -247,13 +326,13 @@ function receiptHTML(o, opts){
    <div style="padding:22px 32px 0">
      <div style="background:#f5f0e6;padding:14px 18px;border-radius:8px;border-left:4px solid #c14b3a;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 18px;font-size:13px">
        <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">TANGGAL BAYAR</div><div style="color:#2e4040;font-weight:700">${tglLbl(o.tgl_terbit)}</div></div>
-       <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:800;font-size:15px">${esc(o.penerima.nama||'—')}</div></div>
+       <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:800;font-size:15px">${esc(penerimaLbl)}</div></div>
        <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">SUMBER DANA</div><div style="color:#2e4040;font-weight:700">${esc(o.sumber_dana||'Kas Wakif Langsung')}</div></div>
      </div>
    </div>
 
    <div style="padding:18px 32px 8px">
-     <div style="font-size:11px;font-weight:800;color:#5a9080;letter-spacing:1.5px;margin-bottom:8px">📋 RINCIAN PEKERJAAN (${items.length} ITEM)</div>
+     <div style="font-size:11px;font-weight:800;color:#5a9080;letter-spacing:1.5px;margin-bottom:8px">📋 RINCIAN PEKERJAAN (${itemCount} ITEM${multi?` · ${pekerja.length} PEKERJA`:''})</div>
      <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06);table-layout:fixed">
        <colgroup><col style="width:200px"><col style="width:auto"><col style="width:130px"></colgroup>
        <thead><tr style="background:#a8c8bc;color:#2e4040">
@@ -261,7 +340,7 @@ function receiptHTML(o, opts){
          <th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">AKTIVITAS</th>
          <th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">SUBTOTAL</th>
        </tr></thead>
-       <tbody>${rowsHTML}</tbody>
+       <tbody>${body}</tbody>
        <tfoot><tr style="background:#fff4d6"><td colspan="3" style="padding:14px 14px">
          <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
            <div style="flex:1;min-width:240px">
@@ -282,65 +361,56 @@ function receiptHTML(o, opts){
      <div style="margin-top:10px;font-size:15px;font-weight:700;color:#5a9080;letter-spacing:.5px">Barakallahu fiikum.</div>
    </div>
 
-   <div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
-     <div style="text-align:center">
-       <div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div>
-       <img src="images/signature-adib.png" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD Adib">
-       <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">Mas Tito (Adib Asrori)</div>
-       <div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
-     </div>
-     <div style="text-align:center">
-       <div style="color:#6b7878;margin-bottom:6px">Penerima,</div>
-       ${sigBlock}
-       <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${esc(o.penerima.nama||'—')}</div>
-       <div style="color:#6b7878;font-size:11px;margin-top:2px">${esc(o.penerima.peran||'Pekerja Lapangan')}</div>
-     </div>
-   </div>
+   ${sigArea}
    ${discl}
    <div style="background:#2e4040;color:#a8c8bc;padding:11px 32px;font-size:10px;text-align:center;letter-spacing:.5px;line-height:1.5">
      🌱 <strong style="color:#ffffff">Wakaf Produktif Kebun Kopi Ngantang</strong> · Dokumen resmi e-sign · ${tglLbl(o.tgl_terbit)}
    </div>
  </div>`;
 }
-function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-function refreshPreview(){
- const o=readForm(); o.no_invoice=o.no_invoice||'BUKTI-NGT-…(otomatis saat Generate)';
- calc();
- document.getElementById('preview').innerHTML=receiptHTML(o,{width:800});
-}
+function refreshPreview(){calc();document.getElementById('preview').innerHTML=receiptHTML(readForm(),{width:800});}
 
-// ---- generate ----
+// ================= GENERATE =================
 async function generate(){
  const err=document.getElementById('err');err.textContent='';
  const o=readForm();
- if(!o.penerima.nama){err.textContent='Nama penerima wajib diisi';return;}
- if(!o.rincian.length||!o.nominal_total){err.textContent='Isi minimal 1 rincian dengan nominal';return;}
+ if(!o.pekerja.length||o.pekerja.some(w=>!w.nama)){err.textContent='Setiap pekerja wajib punya nama';return;}
+ if(!o.nominal_total){err.textContent='Isi minimal 1 rincian dengan nominal';return;}
  const btn=document.getElementById('gen');btn.disabled=true;btn.textContent='Menyimpan…';
  try{
   const id='inv_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-  o.token=(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):(Date.now().toString(36)+Math.random().toString(36).slice(2)));
+  o.pekerja=o.pekerja.map(w=>({...w, token:(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):(Date.now().toString(36)+Math.random().toString(36).slice(2))), signature_png:null, signed_at:null, signed_meta:null, status:'sent'}));
   o.created_at=new Date().toISOString(); o.created_by='wakif';
   const res=await fetch(`${BASE}invoices/${id}?key=${KEY}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:encFields(o)})});
   if(!res.ok){const t=await res.text();throw new Error('Firestore '+res.status+' — '+(res.status===403?'RULE belum di-publish (lihat Setup di atas)':t.slice(0,120)));}
   o._id=id; LAST=o;
   document.getElementById('preview').innerHTML=receiptHTML(o,{width:800});
+  showLinks(o);
   document.getElementById('result').style.display='block';
-  document.getElementById('signlink').textContent=signLink(o);
   document.getElementById('result').scrollIntoView({behavior:'smooth'});
   renderList();
  }catch(e){err.textContent='Gagal: '+e.message;}
  finally{btn.disabled=false;btn.textContent='✓ Generate + Buat Link TTD';}
 }
-function signLink(o){return `${SIGN_BASE}?inv=${o._id}&t=${o.token}`;}
-function copyLink(){navigator.clipboard.writeText(signLink(LAST));event.target.textContent='✓ Tercopy';setTimeout(()=>event.target.textContent='📋 Copy Link',1500);}
-function shareWA(){
- const msg=`Assalamu'alaikum ${LAST.penerima.nama}. Berikut bukti pembayaran upah dari Wakaf Produktif Kebun Kopi Ngantang (${LAST.no_invoice}, ${rp(LAST.nominal_total)}). Mohon tanda tangan di link berikut: ${signLink(LAST)} · Barakallahu fiikum 🙏`;
- const hp=(LAST.penerima.hp||'').replace(/[^0-9]/g,'');
- window.open(`https://wa.me/${hp}?text=`+encodeURIComponent(msg),'_blank');
+function signLink(o,idx){return `${SIGN_BASE}?inv=${o._id}&w=${idx}&t=${o.pekerja[idx].token}`;}
+function showLinks(o){
+ const box=document.getElementById('links');
+ box.innerHTML=o.pekerja.map((w,idx)=>{
+   const link=signLink(o,idx);
+   const wa=`Assalamu'alaikum ${w.nama}. Berikut bukti pembayaran upah dari Wakaf Produktif Kebun Kopi Ngantang (${o.no_invoice}, ${rp(w.subtotal)}). Mohon tanda tangan di link berikut: ${link} · Barakallahu fiikum 🙏`;
+   const hp=(w.hp||'').replace(/[^0-9]/g,'');
+   return `<div class="linkbox">
+     <div class="who">👤 ${esc(w.nama)} · ${rp(w.subtotal)} ${w.signature_png?'<span class="status st-signed">✅ TTD</span>':'<span class="status st-sent">⏳ Menunggu</span>'}</div>
+     <code>${link}</code>
+     <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+       <button class="btn btn-s btn-sm" onclick="navigator.clipboard.writeText('${link}');this.textContent='✓ Tercopy';setTimeout(()=>this.textContent='📋 Copy',1400)">📋 Copy</button>
+       <a class="btn btn-wa btn-sm" style="text-decoration:none" target="_blank" href="https://wa.me/${hp}?text=${encodeURIComponent(wa)}">💬 WhatsApp</a>
+     </div></div>`;
+ }).join('');
 }
 
-// ---- list ----
+// ================= LIST =================
 async function listInvoices(){
  const r=await fetch(`${BASE}invoices?key=${KEY}&pageSize=300&t=`+Date.now());
  const j=await r.json();
@@ -348,34 +418,40 @@ async function listInvoices(){
  docs.sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
  return docs;
 }
-function statusBadge(s){const m={sent:['st-sent','⏳ Menunggu TTD'],signed:['st-signed','✅ Ditandatangani'],paid:['st-paid','💰 Dibayar']};const x=m[s]||m.sent;return `<span class="status ${x[0]}">${x[1]}</span>`;}
+function overallStatus(o){
+ const pk=o.pekerja||[]; if(!pk.length)return o.status||'sent';
+ if(pk.every(w=>w.signature_png))return 'signed';
+ if(pk.some(w=>w.signature_png))return 'part';
+ return 'sent';
+}
+function statusBadge(s){const m={sent:['st-sent','⏳ Menunggu TTD'],part:['st-part','◑ Sebagian TTD'],signed:['st-signed','✅ Ditandatangani'],paid:['st-paid','💰 Dibayar']};const x=m[s]||m.sent;return `<span class="status ${x[0]}">${x[1]}</span>`;}
 async function renderList(){
  const box=document.getElementById('invlist');
  try{const docs=await listInvoices();
   if(!docs.length){box.innerHTML='<span class="muted">Belum ada bukti.</span>';return;}
-  box.innerHTML=docs.map(o=>`<div class="invlist-row">
+  box.innerHTML=docs.map(o=>{const names=(o.pekerja||[]).map(w=>w.nama).join(', ')||'-';
+   return `<div class="invlist-row">
     <strong>${esc(o.no_invoice||o._id)}</strong>
-    <span>${esc(o.penerima?o.penerima.nama:'-')}</span>
+    <span style="flex:1;min-width:120px">${esc(names)}</span>
     <span>${rp(o.nominal_total)}</span>
-    ${statusBadge(o.status)}
-    <span style="flex:1"></span>
+    ${statusBadge(overallStatus(o))}
     <button class="btn btn-s btn-sm" onclick="reopen('${o._id}')">👁️ Lihat</button>
-    <button class="btn btn-s btn-sm" onclick="navigator.clipboard.writeText('${signLink(o)}');this.textContent='✓'">🔗</button>
-   </div>`).join('');
+   </div>`;}).join('');
  }catch(e){box.innerHTML='<span class="err">Gagal memuat: '+e.message+' (kalau 403 → rule belum di-publish)</span>';}
 }
 async function reopen(id){
  try{const r=await fetch(`${BASE}invoices/${id}?key=${KEY}&t=`+Date.now());const d=await r.json();
   const o={};const f=d.fields||{};for(const k in f)o[k]=dv(f[k]);o._id=id;LAST=o;
   document.getElementById('preview').innerHTML=receiptHTML(o,{width:800});
-  if(o.status!=='sent'||o.token){document.getElementById('result').style.display='block';document.getElementById('signlink').textContent=signLink(o);}
+  showLinks(o); document.getElementById('result').style.display='block';
   document.getElementById('preview').scrollIntoView({behavior:'smooth'});
  }catch(e){alert('Gagal buka: '+e.message);}
 }
 
 // init
 document.getElementById('f-tglbayar').value=new Date().toISOString().slice(0,10);
-addItem(new Date().toISOString().slice(0,10),'',''); calc(); refreshPreview();
+addWorker({rincian:[{tgl:new Date().toISOString().slice(0,10),model:'harian',qty:1,tarif:100000}]});
+refreshPreview();
 renderList();
 </script>
 </body>
