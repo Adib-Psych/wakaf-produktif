@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tanda Tangan Bukti Pembayaran — Wakaf Produktif Kebun Kopi Ngantang</title>
+<style>
+  :root{--euc:#1F5F47;--gold:#D4AF37;--cherry:#c14b3a;--cream:#f5f0e6;--mint:#a8c8bc;--ink:#2e4040;--sage:#5a9080;--line:#e2e8e0;--bg:#eef2ee}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.5;font-size:15px}
+  .wrap{max-width:640px;margin:0 auto;padding:14px 12px 60px}
+  header.app{background:linear-gradient(135deg,var(--euc),#143c2d);color:#fff;border-radius:14px;padding:16px 18px;margin-bottom:14px;text-align:center}
+  header.app h1{font-family:Georgia,serif;font-size:1.1rem;margin:0}
+  header.app p{margin:4px 0 0;color:#cfe0d5;font-size:.8rem}
+  .card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.03)}
+  .card h2{font-family:Georgia,serif;font-size:1rem;color:var(--euc);margin:0 0 10px}
+  .sumrow{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px dashed var(--line);font-size:.9rem}
+  .sumrow:last-child{border-bottom:none}
+  .sumrow b{color:var(--ink)}
+  .total{background:#fff4d6;border-radius:9px;padding:12px 14px;margin-top:10px;display:flex;justify-content:space-between;align-items:center}
+  .total .lbl{font-size:.72rem;font-weight:800;color:#8b6914;letter-spacing:.6px}
+  .total .val{font-size:1.4rem;font-weight:800;color:var(--cherry);font-family:Georgia,serif}
+  .padwrap{border:2px dashed #c9b78a;border-radius:12px;background:#fffdf5;position:relative;touch-action:none}
+  #pad{width:100%;height:200px;display:block;border-radius:12px;cursor:crosshair;touch-action:none}
+  .padhint{position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);text-align:center;color:#c9b78a;font-size:.85rem;font-style:italic;pointer-events:none}
+  .padline{position:absolute;left:24px;right:24px;bottom:38px;border-bottom:1.5px solid #d8c9a0;pointer-events:none}
+  .padx{position:absolute;left:24px;bottom:40px;color:#c9b78a;pointer-events:none}
+  .btn{border:none;border-radius:9px;padding:12px 18px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit}
+  .btn-p{background:var(--euc);color:#fff;width:100%}.btn-p:hover{background:#143c2d}.btn-p:disabled{background:#9db3a8;cursor:not-allowed}
+  .btn-s{background:#fff;border:1.5px solid var(--line);color:var(--ink)}
+  .row-btn{display:flex;gap:10px;margin-top:12px;align-items:center}
+  .muted{color:#6b7a6f;font-size:.82rem}
+  .docwrap{overflow:hidden;background:var(--ink);border-radius:10px;padding:10px}
+  #doc{transform-origin:top left}
+  .banner{border-radius:11px;padding:14px 16px;margin-bottom:14px;font-weight:700;text-align:center}
+  .b-ok{background:#eefaf0;border:1px solid #bfe3c8;color:#1c6b39}
+  .b-err{background:#fdecea;border:1px solid #f2c3bd;color:#a02617}
+  .b-info{background:#fff8e6;border:1px solid #f0e0a0;color:#8b6914}
+  .center{text-align:center}
+  .load{text-align:center;color:#6b7a6f;padding:40px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="app">
+    <h1>🖋️ Tanda Tangan Digital</h1>
+    <p>Wakaf Produktif Kebun Kopi Ngantang · Bukti Pembayaran Upah</p>
+  </header>
+  <div id="app"><div class="load">⏳ Memuat bukti pembayaran…</div></div>
+</div>
+
+<script>
+const PROJECT='wakaf-ngantang', KEY='AIzaSyARd7KlzNLaRumTtdqR0j-jOnt6aZHyFKA';
+const BASE=`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/`;
+const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'], BULAN=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const qs=new URLSearchParams(location.search); const INV=qs.get('inv'), TOK=qs.get('t');
+let DOC=null, ctx=null, cv=null, hasInk=false;
+
+function dv(x){if(!x)return null;if('stringValue'in x)return x.stringValue;if('integerValue'in x)return +x.integerValue;if('doubleValue'in x)return x.doubleValue;if('booleanValue'in x)return x.booleanValue;if('nullValue'in x)return null;if('arrayValue'in x)return(x.arrayValue.values||[]).map(dv);if('mapValue'in x){const o={},f=x.mapValue.fields||{};for(const k in f)o[k]=dv(f[k]);return o;}return null;}
+const rp=n=>'Rp '+(n||0).toLocaleString('id-ID');
+const tglLbl=iso=>{if(!iso)return '';const d=new Date(iso);return `${HARI[d.getDay()]}, ${d.getDate()} ${BULAN[d.getMonth()]} ${d.getFullYear()}`;};
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function terbilangAngka(n){const a=['','satu','dua','tiga','empat','lima','enam','tujuh','delapan','sembilan','sepuluh','sebelas'];n=Math.floor(Math.abs(n));
+ if(n===0)return '';if(n<12)return a[n];if(n<20)return a[n-10]+' belas';if(n<100)return a[Math.floor(n/10)]+' puluh'+(n%10?' '+a[n%10]:'');
+ if(n<200)return 'seratus'+(n%100?' '+terbilangAngka(n%100):'');if(n<1000)return a[Math.floor(n/100)]+' ratus'+(n%100?' '+terbilangAngka(n%100):'');
+ if(n<2000)return 'seribu'+(n%1000?' '+terbilangAngka(n%1000):'');if(n<1e6)return terbilangAngka(Math.floor(n/1000))+' ribu'+(n%1000?' '+terbilangAngka(n%1000):'');
+ if(n<1e9)return terbilangAngka(Math.floor(n/1e6))+' juta'+(n%1e6?' '+terbilangAngka(n%1e6):'');return terbilangAngka(Math.floor(n/1e9))+' miliar'+(n%1e9?' '+terbilangAngka(n%1e9):'');}
+function terbilangRupiah(n){if(n===0)return 'Nol Rupiah';return terbilangAngka(n).split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ')+' Rupiah';}
+
+// ---- receipt template (mirror generator) ----
+function itemRow(it,i){
+ const bg=i%2===0?'#fafbfa':'#ffffff';
+ let qd; if(it.model==='harian'){qd=it.satuan;} else {qd=`${it.qty}× ${it.satuan}`;}
+ const akt=`<span style="color:#2e4040;font-weight:600">${esc(it.aktivitas)}</span> <span style="color:#6b7878;font-size:11px">· ✓ ${esc(qd)} · Rp ${(it.tarif||0).toLocaleString('id-ID')}</span>`;
+ return `<tr style="background:${bg}"><td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;color:#2e4040;white-space:nowrap;vertical-align:middle"><span style="color:#5a9080;font-weight:700;display:inline-block;width:22px">${i+1}.</span><span style="font-weight:600">${tglLbl(it.tgl)}</span></td><td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;line-height:1.45;vertical-align:middle">${akt}</td><td style="padding:9px 12px;text-align:right;border-bottom:1px solid #e8dec8;font-size:12.5px;font-weight:700;color:#2e4040;white-space:nowrap;vertical-align:middle">Rp ${(it.subtotal||0).toLocaleString('id-ID')}</td></tr>`;
+}
+function receiptHTML(o){
+ const pekerja=o.pekerja||[]; const total=o.nominal_total||0; const multi=pekerja.length>1;
+ let body='';
+ if(multi){pekerja.forEach(w=>{
+   body+=`<tr style="background:#eef4f0"><td colspan="3" style="padding:9px 12px;font-weight:800;color:#1F5F47;font-size:12px;border-bottom:1px solid #d7e3db">👤 ${esc(w.nama||'—')} · <span style="font-weight:600;color:#6b7878">${esc(w.peran||'')}</span></td></tr>`;
+   body+=(w.rincian||[]).map((it,i)=>itemRow(it,i)).join('');
+   body+=`<tr style="background:#f7faf8"><td colspan="2" style="padding:8px 12px;text-align:right;font-size:11.5px;font-weight:700;color:#5a9080;border-bottom:2px solid #e8dec8">Subtotal ${esc(w.nama||'')}</td><td style="padding:8px 12px;text-align:right;font-size:12.5px;font-weight:800;color:#2e4040;border-bottom:2px solid #e8dec8;white-space:nowrap">Rp ${(w.subtotal||0).toLocaleString('id-ID')}</td></tr>`;
+ });} else { body=((pekerja[0]&&pekerja[0].rincian)||[]).map((it,i)=>itemRow(it,i)).join(''); }
+ const itemCount=pekerja.reduce((a,w)=>a+(w.rincian?w.rincian.length:0),0);
+ const penerimaLbl=multi?`${pekerja.length} Pekerja`:((pekerja[0]&&pekerja[0].nama)||'—');
+ const signed=!!o.signature_png; const signer=o.penandatangan||{nama:(pekerja[0]&&pekerja[0].nama)||'—',peran:'Perwakilan Pekerja'};
+ const penerimaInner=signed?`<img src="${o.signature_png}" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD">`:`<div style="height:54px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #c9b78a;border-radius:8px;color:#8b6914;font-size:11px;font-style:italic;background:#fffdf5">⏳ menunggu tanda tangan</div>`;
+ const discl=signed?`<div style="margin:14px 32px 18px;padding:9px 14px;background:#eefaf0;border-radius:6px;border:1px solid #bfe3c8;font-size:10px;color:#256b39;text-align:center;font-style:italic;line-height:1.55">✅ Ditandatangani secara <strong>digital</strong> oleh perwakilan pekerja${o.signed_at?` pada ${new Date(o.signed_at).toLocaleString('id-ID')}`:''}.</div>`:`<div style="margin:14px 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">✍️ Tanda tangan perwakilan pekerja diisi <strong>digital</strong>.</div>`;
+ return `<div style="width:800px;background:#fff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;border:3px solid #1F5F47;box-shadow:inset 0 0 0 1px #fff,inset 0 0 0 2px #D4AF37,0 4px 12px rgba(0,0,0,.1);box-sizing:content-box">
+   <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47">
+     <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
+       <img src="images/logo-wakaf-produktif-3x1.png" style="height:108px;width:auto;max-width:480px;display:block;flex-shrink:0" alt="Logo">
+       <div style="text-align:right;flex-shrink:0;max-width:280px">
+         <div style="font-size:9px;font-weight:800;color:#1F5F47;letter-spacing:2.5px;margin-bottom:6px">— DOKUMEN RESMI —</div>
+         <div style="font-size:11px;color:#6b7878;line-height:1.55;font-style:italic">Wakaf produktif berbasis kebun kopi<br>untuk amal jariyah berkelanjutan</div>
+         <div style="margin-top:8px;padding-top:6px;border-top:1px solid #d4c8a8;font-size:9px;color:#8b6914;letter-spacing:.5px;font-weight:600">📍 Ngantang, Malang · Jawa Timur</div>
+       </div>
+     </div>
+     <div style="margin-top:14px;padding-top:12px;border-top:2px dashed #D4AF37;display:flex;align-items:center;justify-content:space-between;gap:14px">
+       <div style="font-size:19px;font-weight:800;color:#1F5F47;letter-spacing:1.8px">BUKTI PEMBAYARAN UPAH</div>
+       <div style="font-size:10px;color:#6b7878;letter-spacing:.6px;font-weight:600;text-align:right;line-height:1.4">No. Bukti<br><span style="font-family:'Courier New',monospace;color:#2e4040;font-size:11px;font-weight:700">${esc(o.no_invoice||'—')}</span></div>
+     </div>
+   </div>
+   <div style="padding:22px 32px 0">
+     <div style="background:#f5f0e6;padding:14px 18px;border-radius:8px;border-left:4px solid #c14b3a;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 18px;font-size:13px">
+       <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">TANGGAL BAYAR</div><div style="color:#2e4040;font-weight:700">${tglLbl(o.tgl_terbit)}</div></div>
+       <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:800;font-size:15px">${esc(penerimaLbl)}</div></div>
+       <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">SUMBER DANA</div><div style="color:#2e4040;font-weight:700">${esc(o.sumber_dana||'Kas Wakif Langsung')}</div></div>
+     </div>
+   </div>
+   <div style="padding:18px 32px 8px">
+     <div style="font-size:11px;font-weight:800;color:#5a9080;letter-spacing:1.5px;margin-bottom:8px">📋 RINCIAN PEKERJAAN (${itemCount} ITEM${multi?` · ${pekerja.length} PEKERJA`:''})</div>
+     <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06);table-layout:fixed">
+       <colgroup><col style="width:200px"><col style="width:auto"><col style="width:130px"></colgroup>
+       <thead><tr style="background:#a8c8bc;color:#2e4040"><th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">NO &amp; TANGGAL</th><th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">AKTIVITAS</th><th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">SUBTOTAL</th></tr></thead>
+       <tbody>${body}</tbody>
+       <tfoot><tr style="background:#fff4d6"><td colspan="3" style="padding:14px 14px"><div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap"><div style="flex:1;min-width:240px"><div style="font-size:9px;font-weight:800;color:#8b6914;letter-spacing:1.5px;margin-bottom:3px">— TERBILANG —</div><div style="font-size:12.5px;color:#2e4040;font-style:italic;font-weight:600;line-height:1.45">${esc(o.terbilang||terbilangRupiah(total))}</div></div><div style="text-align:right;flex-shrink:0"><div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">Total Dibayar</div><div style="font-size:22px;font-weight:800;color:#c14b3a;white-space:nowrap;letter-spacing:.3px">Rp ${total.toLocaleString('id-ID')}</div></div></div></td></tr></tfoot>
+     </table>
+   </div>
+   <div style="margin:16px 32px 0;padding:18px 22px;background:#e8f1ec;border-radius:8px;border-left:4px solid #5a9080;text-align:center">
+     <div style="font-size:13px;line-height:1.7;color:#2e4040;font-style:italic">Terima kasih atas kerja keras dan amanahnya. Semoga rezeki ini barakah dan menguatkan keluarga.</div>
+     <div style="margin-top:10px;font-size:15px;font-weight:700;color:#5a9080;letter-spacing:.5px">Barakallahu fiikum.</div>
+   </div>
+   <div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
+     <div style="text-align:center"><div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div><img src="images/signature-adib.png" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD Adib"><div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">Mas Tito (Adib Asrori)</div><div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div></div>
+     <div style="text-align:center"><div style="color:#6b7878;margin-bottom:6px">Penerima${multi?' (perwakilan)':''},</div>${penerimaInner}<div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${esc(signer.nama||'—')}</div><div style="color:#6b7878;font-size:11px;margin-top:2px">${esc(signer.peran||'Perwakilan Pekerja')}${multi?` · mewakili ${pekerja.length} pekerja`:''}</div></div>
+   </div>
+   ${discl}
+   <div style="background:#2e4040;color:#a8c8bc;padding:11px 32px;font-size:10px;text-align:center;letter-spacing:.5px;line-height:1.5">🌱 <strong style="color:#fff">Wakaf Produktif Kebun Kopi Ngantang</strong> · Dokumen resmi e-sign · ${tglLbl(o.tgl_terbit)}</div>
+ </div>`;
+}
+
+function fitDoc(){const doc=document.getElementById('doc');if(!doc)return;const wrap=doc.parentElement;doc.style.transform='none';const w=doc.getBoundingClientRect().width;const avail=wrap.clientWidth-20;const s=Math.min(1,avail/w);doc.style.transform=`scale(${s})`;doc.style.width=w+'px';wrap.style.height=(doc.getBoundingClientRect().height*s)+'px';}
+window.addEventListener('resize',fitDoc);
+
+// ---- signature pad ----
+function initPad(){
+ cv=document.getElementById('pad'); if(!cv)return; ctx=cv.getContext('2d');
+ const ratio=window.devicePixelRatio||1; const r=cv.getBoundingClientRect();
+ cv.width=r.width*ratio; cv.height=r.height*ratio; ctx.scale(ratio,ratio);
+ ctx.lineWidth=2.6; ctx.lineCap='round'; ctx.lineJoin='round'; ctx.strokeStyle='#16233d';
+ let drawing=false,last=null;
+ const pos=e=>{const b=cv.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return {x:t.clientX-b.left,y:t.clientY-b.top};};
+ const start=e=>{drawing=true;last=pos(e);document.getElementById('padhint').style.display='none';e.preventDefault();};
+ const move=e=>{if(!drawing)return;const p=pos(e);ctx.beginPath();ctx.moveTo(last.x,last.y);ctx.lineTo(p.x,p.y);ctx.stroke();last=p;hasInk=true;document.getElementById('btn-submit').disabled=false;e.preventDefault();};
+ const end=()=>{drawing=false;};
+ cv.addEventListener('mousedown',start);cv.addEventListener('mousemove',move);window.addEventListener('mouseup',end);
+ cv.addEventListener('touchstart',start,{passive:false});cv.addEventListener('touchmove',move,{passive:false});cv.addEventListener('touchend',end);
+}
+function clearPad(){if(!ctx||!cv)return;ctx.clearRect(0,0,cv.width,cv.height);hasInk=false;document.getElementById('btn-submit').disabled=true;document.getElementById('padhint').style.display='block';}
+
+async function submitSign(){
+ if(!hasInk){return;}
+ const btn=document.getElementById('btn-submit'); btn.disabled=true; btn.textContent='Menyimpan…';
+ try{
+  const dataUrl=cv.toDataURL('image/png');
+  const signedAt=new Date().toISOString();
+  const url=`${BASE}invoices/${INV}?key=${KEY}&updateMask.fieldPaths=signature_png&updateMask.fieldPaths=signed_at&updateMask.fieldPaths=signed_meta&updateMask.fieldPaths=status`;
+  const body={fields:{
+    signature_png:{stringValue:dataUrl},
+    signed_at:{stringValue:signedAt},
+    signed_meta:{mapValue:{fields:{ua:{stringValue:navigator.userAgent.slice(0,180)},ts:{integerValue:String(Date.now())}}}},
+    status:{stringValue:'signed'}
+  }};
+  const res=await fetch(url,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!res.ok){const t=await res.text();throw new Error('Gagal simpan ('+res.status+') '+(res.status===403?'— link mungkin sudah dipakai / rule belum aktif':t.slice(0,100)));}
+  DOC.signature_png=dataUrl; DOC.signed_at=signedAt; DOC.status='signed';
+  renderSigned();
+ }catch(e){ btn.disabled=false; btn.textContent='✓ Kirim Tanda Tangan'; alert(e.message); }
+}
+
+function summaryCard(o){
+ const pk=o.pekerja||[]; const rows=pk.map(w=>`<div class="sumrow"><span>👤 ${esc(w.nama)} <span class="muted">${esc(w.peran||'')}</span></span><b>${rp(w.subtotal)}</b></div>`).join('');
+ return `<div class="card"><h2>Ringkasan</h2>
+   <div class="sumrow"><span>No. Bukti</span><b style="font-family:monospace;font-size:.8rem">${esc(o.no_invoice)}</b></div>
+   <div class="sumrow"><span>Tanggal</span><b>${tglLbl(o.tgl_terbit)}</b></div>
+   ${rows}
+   <div class="total"><div><div class="lbl">TOTAL DIBAYAR</div><div class="muted" style="font-style:italic;font-size:.75rem">${esc(o.terbilang)}</div></div><div class="val">${rp(o.nominal_total)}</div></div>
+ </div>`;
+}
+function docCard(o){return `<div class="card"><h2>Dokumen Resmi</h2><div class="docwrap"><div id="doc">${receiptHTML(o)}</div></div></div>`;}
+
+function renderSign(o){
+ const signer=o.penandatangan||{};
+ document.getElementById('app').innerHTML=`
+   <div class="banner b-info">Assalamu'alaikum <b>${esc(signer.nama||'')}</b> 🙏<br><span style="font-weight:500;font-size:.85rem">Mohon periksa bukti pembayaran di bawah, lalu tanda tangan.</span></div>
+   ${summaryCard(o)}
+   <div class="card"><h2>✍️ Tanda Tangan Anda</h2>
+     <p class="muted" style="margin-top:-4px">Tanda tangan sebagai <b>${esc(signer.nama||'perwakilan pekerja')}</b> (${esc(signer.peran||'Perwakilan Pekerja')}). Gunakan jari (HP) atau mouse.</p>
+     <div class="padwrap"><canvas id="pad"></canvas><div id="padhint" class="padhint">✍️ tanda tangan di sini</div><div class="padline"></div><div class="padx">✕</div></div>
+     <div class="row-btn"><button class="btn btn-s" onclick="clearPad()">↺ Hapus</button><button class="btn btn-p" id="btn-submit" onclick="submitSign()" disabled>✓ Kirim Tanda Tangan</button></div>
+     <p class="muted center" style="margin-top:10px">Dengan menandatangani, Anda mengonfirmasi telah menerima pembayaran sesuai rincian di atas.</p>
+   </div>
+   ${docCard(o)}`;
+ initPad(); fitDoc();
+}
+function renderSigned(){
+ const o=DOC; const signer=o.penandatangan||{};
+ document.getElementById('app').innerHTML=`
+   <div class="banner b-ok">✅ Alhamdulillah, tanda tangan tersimpan.<br><span style="font-weight:500;font-size:.85rem">Terima kasih, ${esc(signer.nama||'')}. Bukti ini sudah sah. Barakallahu fiikum.</span></div>
+   ${docCard(o)}
+   <p class="muted center">Anda boleh menutup halaman ini. Dokumen final tersimpan otomatis untuk Wakif.</p>`;
+ fitDoc();
+}
+
+async function load(){
+ const app=document.getElementById('app');
+ if(!INV||!TOK){app.innerHTML='<div class="banner b-err">❌ Link tidak lengkap. Minta ulang link tanda tangan ke Wakif.</div>';return;}
+ try{
+  const r=await fetch(`${BASE}invoices/${INV}?key=${KEY}&t=`+Date.now());
+  if(!r.ok){app.innerHTML='<div class="banner b-err">❌ Bukti tidak ditemukan. Link mungkin salah/kadaluarsa.</div>';return;}
+  const d=await r.json(); const o={}; const f=d.fields||{}; for(const k in f)o[k]=dv(f[k]); o._id=INV; DOC=o;
+  if(o.token!==TOK){app.innerHTML='<div class="banner b-err">❌ Token tidak valid. Link ini tidak sah.</div>';return;}
+  if(o.signature_png){renderSigned();return;}
+  renderSign(o);
+ }catch(e){app.innerHTML='<div class="banner b-err">❌ Gagal memuat: '+esc(e.message)+'</div>';}
+}
+load();
+</script>
+</body>
+</html>
