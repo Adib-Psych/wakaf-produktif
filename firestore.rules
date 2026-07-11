@@ -232,7 +232,8 @@ service cloud.firestore {
     // CREATE: hanya draft belum-ttd (status 'sent', signature_png null).
     // UPDATE: HANYA boleh isi tanda tangan — field lain (nominal, nama, rincian) TAK boleh berubah.
     //   Sekali ttd terkunci (resource.data.signature_png == null). Link bocor pun tak bisa ubah nominal.
-    // DELETE: locked (audit trail).
+    // DELETE: open di Phase 1 (Wakif bisa hapus bukti salah/tes dari generator, konsisten pola `laporan`).
+    //   Trade-off: audit trail bukan immutable. Casual worker low-stakes; generator = tool Wakif.
     match /invoices/{id} {
       allow read: if true;
       allow create: if request.resource.data.status == 'sent'
@@ -241,7 +242,7 @@ service cloud.firestore {
                     && request.resource.data.diff(resource.data).affectedKeys()
                          .hasOnly(['signature_png','signed_at','signed_meta','status'])
                     && request.resource.data.status == 'signed';
-      allow delete: if false;
+      allow delete: if true;
     }
 
     // ===== Default deny =====

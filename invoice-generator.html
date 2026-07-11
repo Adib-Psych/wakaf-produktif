@@ -68,7 +68,7 @@
                 &amp;&amp; request.resource.data.diff(resource.data).affectedKeys()
                      .hasOnly(['signature_png','signed_at','signed_meta','status'])
                 &amp;&amp; request.resource.data.status == 'signed';
-  allow delete: if false;
+  allow delete: if true;
 }</pre>
   </details>
 
@@ -488,8 +488,17 @@ async function renderList(){
     <span>${rp(o.nominal_total)}</span>
     ${statusBadge(overallStatus(o))}
     <button class="btn btn-s btn-sm" onclick="reopen('${o._id}')">👁️ Lihat</button>
+    <button class="btn btn-sm" style="background:#fbe9e7;color:#c14b3a;border:1px solid #f2c7c1" onclick="delInvoice('${o._id}',${JSON.stringify(esc(o.no_invoice||o._id))})" title="Hapus bukti">🗑</button>
    </div>`;}).join('');
  }catch(e){box.innerHTML='<span class="err">Gagal memuat: '+e.message+' (kalau 403 → rule belum di-publish)</span>';}
+}
+async function delInvoice(id,no){
+ if(!confirm('Hapus bukti "'+no+'"?\n\nTindakan ini PERMANEN dan tidak bisa dibatalkan.')) return;
+ try{
+  const r=await fetch(`${BASE}invoices/${id}?key=${KEY}`,{method:'DELETE'});
+  if(!r.ok){const t=await r.text();throw new Error(r.status+(r.status===403?' — rule belum mengizinkan hapus. Publish rule terbaru dulu (panel Setup).':' '+t.slice(0,90)));}
+  renderList();
+ }catch(e){alert('Gagal hapus: '+e.message);}
 }
 async function reopen(id){
  try{const r=await fetch(`${BASE}invoices/${id}?key=${KEY}&t=`+Date.now());const d=await r.json();

@@ -131,8 +131,21 @@ function receiptHTML(o){
  </div>`;
 }
 
-function fitDoc(){const doc=document.getElementById('doc');if(!doc)return;const wrap=doc.parentElement;doc.style.transform='none';const w=doc.getBoundingClientRect().width;const avail=wrap.clientWidth-20;const s=Math.min(1,avail/w);doc.style.transform=`scale(${s})`;doc.style.width=w+'px';wrap.style.height=(doc.getBoundingClientRect().height*s)+'px';}
+function fitDoc(){
+ const doc=document.getElementById('doc'); if(!doc) return;
+ const wrap=doc.parentElement;
+ doc.style.transformOrigin='top left';
+ doc.style.transform='none';
+ const rect=doc.getBoundingClientRect();
+ const w=rect.width||872, h=rect.height||1100;
+ const avail=wrap.clientWidth-20;
+ const s=Math.min(1, avail/w);
+ doc.style.transform='scale('+s+')';
+ wrap.style.height=(h*s)+'px';
+}
+function refit(){[0,150,450,1100].forEach(t=>setTimeout(fitDoc,t));}
 window.addEventListener('resize',fitDoc);
+window.addEventListener('load',fitDoc);
 
 // ---- signature pad ----
 function initPad(){
@@ -193,7 +206,7 @@ function renderSign(o){
      <p class="muted center" style="margin-top:10px">Dengan menandatangani, Anda mengonfirmasi telah menerima pembayaran sesuai rincian di atas.</p>
    </div>
    ${docCard(o)}`;
- initPad(); fitDoc();
+ initPad(); refit();
 }
 function renderSigned(){
  const o=DOC; const signer=o.penandatangan||{};
