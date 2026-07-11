@@ -134,12 +134,13 @@ function receiptHTML(o){
 function fitDoc(){
  const doc=document.getElementById('doc'); if(!doc) return;
  const wrap=doc.parentElement;
+ const child=doc.firstElementChild||doc;   // struk 800px sebenarnya (bukan wrapper auto-width)
  doc.style.transformOrigin='top left';
  doc.style.transform='none';
- const rect=doc.getBoundingClientRect();
+ const rect=child.getBoundingClientRect();
  const w=rect.width||872, h=rect.height||1100;
  const avail=wrap.clientWidth-20;
- const s=Math.min(1, avail/w);
+ const s=Math.min(1, (avail-2)/w);
  doc.style.transform='scale('+s+')';
  wrap.style.height=(h*s)+'px';
 }
