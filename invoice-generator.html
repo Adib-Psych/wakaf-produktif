@@ -62,10 +62,12 @@
     <p style="font-size:.82rem;color:#5c4b16;margin:10px 0 6px">Tambahkan di dalam <code>match /databases/{database}/documents { … }</code> lalu <b>Publish</b>. Tanpa ini Generate = 403.</p>
     <pre>match /invoices/{id} {
   allow read: if true;
-  allow create: if request.resource.data.status == 'sent';
-  // pekerja hanya boleh menandatangani — nominal &amp; nomor bukti tak boleh berubah
-  allow update: if request.resource.data.no_invoice == resource.data.no_invoice
-                &amp;&amp; request.resource.data.nominal_total == resource.data.nominal_total;
+  allow create: if request.resource.data.status == 'sent'
+                &amp;&amp; request.resource.data.signature_png == null;
+  allow update: if resource.data.signature_png == null
+                &amp;&amp; request.resource.data.diff(resource.data).affectedKeys()
+                     .hasOnly(['signature_png','signed_at','signed_meta','status'])
+                &amp;&amp; request.resource.data.status == 'signed';
   allow delete: if false;
 }</pre>
   </details>
@@ -76,6 +78,10 @@
       <div><label>Tanggal Bayar</label><input type="date" id="f-tglbayar"></div>
       <div><label>Sumber Dana</label><input id="f-sumber" value="Kas Wakif Langsung"></div>
       <div><label>Catatan (opsional)</label><input id="f-catatan" placeholder="mis. upah periode Jul minggu-1"></div>
+    </div>
+    <div class="row g2" style="margin-top:12px;border-top:1px dashed var(--line);padding-top:12px">
+      <div><label>✍️ Nama Perwakilan Penanda Tangan</label><input id="f-rep-nama" placeholder="kosong = pakai nama pekerja pertama"><div class="muted" style="font-size:.72rem;margin-top:3px">Cukup 1 perwakilan tanda tangan mewakili semua pekerja di bukti ini.</div></div>
+      <div><label>No. HP Perwakilan (WhatsApp)</label><input id="f-rep-hp" placeholder="62812xxxx"></div>
     </div>
   </div>
 
@@ -148,10 +154,9 @@ function addWorker(data){
  const div=document.createElement('div'); div.className='wk'; div.dataset.wid=wid;
  div.innerHTML=`
   <div class="wk-head"><b>👤 Pekerja</b><button class="btn btn-x" onclick="this.closest('.wk').remove();renumberWorkers();calc()">✕ Hapus Pekerja</button></div>
-  <div class="row g3">
-    <div><label>Nama Penerima *</label><input class="w-nama" value="${esc(data.nama||'')}" placeholder="mis. Pak Yasir"></div>
-    <div><label>Peran (label TTD)</label><input class="w-peran" value="${esc(data.peran||'Pekerja Lapangan')}"></div>
-    <div><label>No. HP (WhatsApp)</label><input class="w-hp" value="${esc(data.hp||'')}" placeholder="62812xxxx"></div>
+  <div class="row g2">
+    <div><label>Nama Pekerja *</label><input class="w-nama" value="${esc(data.nama||'')}" placeholder="mis. Pak Yasir"></div>
+    <div><label>Peran</label><input class="w-peran" value="${esc(data.peran||'Pekerja Lapangan')}"></div>
   </div>
   <table class="items">
     <thead><tr><th style="width:130px">Tanggal</th><th>Aktivitas</th><th style="width:90px">Model</th><th style="width:110px">Durasi/Qty</th><th style="width:80px">Satuan</th><th style="width:105px">Tarif</th><th style="width:100px">Subtotal</th><th></th></tr></thead>
@@ -185,7 +190,7 @@ function addRow(wid,data){
   <td><select class="it-model" onchange="onModelChange(this)"><option value="harian"${model==='harian'?' selected':''}>Harian</option><option value="borongan"${model==='borongan'?' selected':''}>Borongan</option></select></td>
   <td class="cell-qty">${qtyCellHTML(model,data.qty)}</td>
   <td class="cell-sat">${satCellHTML(model,data.satuan)}</td>
-  <td><input class="it-tarif" type="number" step="any" value="${data.tarif!=null?data.tarif:''}" oninput="calc()" style="text-align:right" placeholder="${model==='harian'?'100000':''}"></td>
+  <td><input class="it-tarif" type="number" step="any" value="${data.tarif!=null?data.tarif:100000}" oninput="calc()" style="text-align:right" placeholder="100000"></td>
   <td class="it-sub" style="text-align:right;font-weight:700;padding-top:12px">Rp 0</td>
   <td><button class="btn btn-x" onclick="this.closest('tr').remove();calc()">✕</button></td>`;
  tb.appendChild(tr); calc();
@@ -212,7 +217,7 @@ function readWorkers(){
  return [...document.querySelectorAll('#workers .wk')].map(w=>{
    const rincian=[...w.querySelectorAll('.w-items tr')].map(readRow).filter(r=>r.aktivitas||r.subtotal);
    return {nama:w.querySelector('.w-nama').value.trim(), peran:w.querySelector('.w-peran').value.trim()||'Pekerja Lapangan',
-     hp:w.querySelector('.w-hp').value.trim()||null, rincian, subtotal:rincian.reduce((a,r)=>a+r.subtotal,0)};
+     rincian, subtotal:rincian.reduce((a,r)=>a+r.subtotal,0)};
  });
 }
 function calc(){
@@ -239,7 +244,9 @@ function readForm(){
   penerbit:'Wakaf Produktif Kebun Kopi Ngantang',
   sumber_dana:document.getElementById('f-sumber').value.trim()||'Kas Wakif Langsung',
   catatan:document.getElementById('f-catatan').value.trim()||null,
-  pekerja, nominal_total:total, terbilang:terbilangRupiah(total), status:'sent'
+  pekerja, nominal_total:total, terbilang:terbilangRupiah(total),
+  penandatangan:{ nama:(document.getElementById('f-rep-nama').value.trim())||(pekerja[0]&&pekerja[0].nama)||'', peran:'Perwakilan Pekerja', hp:document.getElementById('f-rep-hp').value.trim()||null },
+  signature_png:null, signed_at:null, signed_meta:null, status:'sent'
  };
 }
 
@@ -253,20 +260,6 @@ function itemRow(it,i){
    <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;line-height:1.45;vertical-align:middle">${akt}</td>
    <td style="padding:9px 12px;text-align:right;border-bottom:1px solid #e8dec8;font-size:12.5px;font-weight:700;color:#2e4040;white-space:nowrap;vertical-align:middle">Rp ${(it.subtotal||0).toLocaleString('id-ID')}</td>
  </tr>`;
-}
-function sigBlock(w){
- let inner, note;
- if(w&&w.signature_png){
-   inner=`<img src="${w.signature_png}" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD ${esc(w.nama)}">`;
- } else {
-   inner=`<div style="height:54px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #c9b78a;border-radius:8px;color:#8b6914;font-size:11px;font-style:italic;background:#fffdf5">⏳ menunggu tanda tangan digital</div>`;
- }
- return `<div style="text-align:center">
-   <div style="color:#6b7878;margin-bottom:6px">Penerima,</div>
-   ${inner}
-   <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${esc((w&&w.nama)||'—')}</div>
-   <div style="color:#6b7878;font-size:11px;margin-top:2px">${esc((w&&w.peran)||'Pekerja Lapangan')}</div>
- </div>`;
 }
 function receiptHTML(o, opts){
  opts=opts||{}; const width=opts.width||800;
@@ -286,26 +279,28 @@ function receiptHTML(o, opts){
  const itemCount=pekerja.reduce((a,w)=>a+(w.rincian?w.rincian.length:0),0);
  const penerimaLbl=multi?`${pekerja.length} Pekerja`:((pekerja[0]&&pekerja[0].nama)||'—');
 
- // signature area
- const anySigned=pekerja.some(w=>w.signature_png), allSigned=pekerja.length&&pekerja.every(w=>w.signature_png);
- let sigArea, discl;
+ // signature area — 1 perwakilan penanda tangan (single signer)
+ const signed=!!o.signature_png;
+ const signer=o.penandatangan||{nama:(pekerja[0]&&pekerja[0].nama)||'—', peran:'Perwakilan Pekerja'};
  const adibBlock=`<div style="text-align:center">
      <div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div>
      <img src="images/signature-adib.png" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD Adib">
      <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">Mas Tito (Adib Asrori)</div>
      <div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
    </div>`;
- if(!multi){
-   sigArea=`<div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">${adibBlock}${sigBlock(pekerja[0])}</div>`;
- } else {
-   const grid=pekerja.map(sigBlock).join('');
-   sigArea=`<div style="padding:22px 32px 2px;font-size:12px"><div style="max-width:300px;margin:0 auto 18px">${adibBlock}</div>
-     <div style="font-size:10px;font-weight:800;color:#5a9080;letter-spacing:1.5px;text-align:center;margin:6px 0 10px;border-top:1px dashed #d7c9a8;padding-top:12px">TANDA TANGAN PENERIMA</div>
-     <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px 24px">${grid}</div></div>`;
- }
- if(allSigned) discl=`<div style="margin:14px 32px 18px;padding:9px 14px;background:#eefaf0;border-radius:6px;border:1px solid #bfe3c8;font-size:10px;color:#256b39;text-align:center;font-style:italic;line-height:1.55">✅ Seluruh penerima telah menandatangani secara <strong>digital</strong>.</div>`;
- else if(anySigned) discl=`<div style="margin:14px 32px 18px;padding:9px 14px;background:#fff3e6;border-radius:6px;border:1px solid #f0cfa0;font-size:10px;color:#9a4a0e;text-align:center;font-style:italic;line-height:1.55">⏳ Sebagian penerima sudah tanda tangan; menunggu sisanya via link e-sign.</div>`;
- else discl=`<div style="margin:14px 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">✍️ Tanda tangan penerima diisi <strong>digital</strong> lewat link e-sign (dikirim via WhatsApp).</div>`;
+ const penerimaInner = signed
+   ? `<img src="${o.signature_png}" style="height:54px;width:auto;display:block;margin:0 auto 0" alt="TTD ${esc(signer.nama)}">`
+   : `<div style="height:54px;display:flex;align-items:center;justify-content:center;border:1.5px dashed #c9b78a;border-radius:8px;color:#8b6914;font-size:11px;font-style:italic;background:#fffdf5">⏳ menunggu tanda tangan digital</div>`;
+ const penerimaBlock=`<div style="text-align:center">
+     <div style="color:#6b7878;margin-bottom:6px">Penerima${multi?' (perwakilan)':''},</div>
+     ${penerimaInner}
+     <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${esc(signer.nama||'—')}</div>
+     <div style="color:#6b7878;font-size:11px;margin-top:2px">${esc(signer.peran||'Perwakilan Pekerja')}${multi?` · mewakili ${pekerja.length} pekerja`:''}</div>
+   </div>`;
+ const sigArea=`<div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">${adibBlock}${penerimaBlock}</div>`;
+ const discl = signed
+   ? `<div style="margin:14px 32px 18px;padding:9px 14px;background:#eefaf0;border-radius:6px;border:1px solid #bfe3c8;font-size:10px;color:#256b39;text-align:center;font-style:italic;line-height:1.55">✅ Ditandatangani secara <strong>digital</strong> oleh perwakilan pekerja${o.signed_at?` pada ${new Date(o.signed_at).toLocaleString('id-ID')}`:''}.</div>`
+   : `<div style="margin:14px 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">✍️ Tanda tangan perwakilan pekerja diisi <strong>digital</strong> lewat link e-sign (dikirim via WhatsApp).</div>`;
 
  return `<div style="width:${width}px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;border:3px solid #1F5F47;box-shadow:inset 0 0 0 1px #ffffff, inset 0 0 0 2px #D4AF37, 0 4px 12px rgba(0,0,0,.1);box-sizing:content-box">
    <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47">
@@ -380,7 +375,7 @@ async function generate(){
  const btn=document.getElementById('gen');btn.disabled=true;btn.textContent='Menyimpan…';
  try{
   const id='inv_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
-  o.pekerja=o.pekerja.map(w=>({...w, token:(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):(Date.now().toString(36)+Math.random().toString(36).slice(2))), signature_png:null, signed_at:null, signed_meta:null, status:'sent'}));
+  o.token=(crypto.randomUUID?crypto.randomUUID().replace(/-/g,''):(Date.now().toString(36)+Math.random().toString(36).slice(2)));
   o.created_at=new Date().toISOString(); o.created_by='wakif';
   const res=await fetch(`${BASE}invoices/${id}?key=${KEY}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:encFields(o)})});
   if(!res.ok){const t=await res.text();throw new Error('Firestore '+res.status+' — '+(res.status===403?'RULE belum di-publish (lihat Setup di atas)':t.slice(0,120)));}
@@ -393,21 +388,19 @@ async function generate(){
  }catch(e){err.textContent='Gagal: '+e.message;}
  finally{btn.disabled=false;btn.textContent='✓ Generate + Buat Link TTD';}
 }
-function signLink(o,idx){return `${SIGN_BASE}?inv=${o._id}&w=${idx}&t=${o.pekerja[idx].token}`;}
+function signLink(o){return `${SIGN_BASE}?inv=${o._id}&t=${o.token}`;}
 function showLinks(o){
  const box=document.getElementById('links');
- box.innerHTML=o.pekerja.map((w,idx)=>{
-   const link=signLink(o,idx);
-   const wa=`Assalamu'alaikum ${w.nama}. Berikut bukti pembayaran upah dari Wakaf Produktif Kebun Kopi Ngantang (${o.no_invoice}, ${rp(w.subtotal)}). Mohon tanda tangan di link berikut: ${link} · Barakallahu fiikum 🙏`;
-   const hp=(w.hp||'').replace(/[^0-9]/g,'');
-   return `<div class="linkbox">
-     <div class="who">👤 ${esc(w.nama)} · ${rp(w.subtotal)} ${w.signature_png?'<span class="status st-signed">✅ TTD</span>':'<span class="status st-sent">⏳ Menunggu</span>'}</div>
-     <code>${link}</code>
-     <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-       <button class="btn btn-s btn-sm" onclick="navigator.clipboard.writeText('${link}');this.textContent='✓ Tercopy';setTimeout(()=>this.textContent='📋 Copy',1400)">📋 Copy</button>
-       <a class="btn btn-wa btn-sm" style="text-decoration:none" target="_blank" href="https://wa.me/${hp}?text=${encodeURIComponent(wa)}">💬 WhatsApp</a>
-     </div></div>`;
- }).join('');
+ const s=o.penandatangan||{}; const link=signLink(o);
+ const wa=`Assalamu'alaikum ${s.nama||''}. Berikut bukti pembayaran upah dari Wakaf Produktif Kebun Kopi Ngantang (${o.no_invoice}, ${rp(o.nominal_total)}). Mohon tanda tangan sebagai perwakilan pekerja di link berikut: ${link} · Barakallahu fiikum 🙏`;
+ const hp=(s.hp||'').replace(/[^0-9]/g,'');
+ box.innerHTML=`<div class="linkbox">
+   <div class="who">✍️ Perwakilan: ${esc(s.nama||'—')} · Total ${rp(o.nominal_total)} ${o.signature_png?'<span class="status st-signed">✅ TTD</span>':'<span class="status st-sent">⏳ Menunggu</span>'}</div>
+   <code>${link}</code>
+   <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+     <button class="btn btn-s btn-sm" onclick="navigator.clipboard.writeText('${link}');this.textContent='✓ Tercopy';setTimeout(()=>this.textContent='📋 Copy',1400)">📋 Copy Link</button>
+     <a class="btn btn-wa btn-sm" style="text-decoration:none" target="_blank" href="https://wa.me/${hp}?text=${encodeURIComponent(wa)}">💬 WhatsApp</a>
+   </div></div>`;
 }
 
 // ================= LIST =================
@@ -418,12 +411,7 @@ async function listInvoices(){
  docs.sort((a,b)=>(b.created_at||'').localeCompare(a.created_at||''));
  return docs;
 }
-function overallStatus(o){
- const pk=o.pekerja||[]; if(!pk.length)return o.status||'sent';
- if(pk.every(w=>w.signature_png))return 'signed';
- if(pk.some(w=>w.signature_png))return 'part';
- return 'sent';
-}
+function overallStatus(o){ return o.signature_png ? (o.status==='paid'?'paid':'signed') : 'sent'; }
 function statusBadge(s){const m={sent:['st-sent','⏳ Menunggu TTD'],part:['st-part','◑ Sebagian TTD'],signed:['st-signed','✅ Ditandatangani'],paid:['st-paid','💰 Dibayar']};const x=m[s]||m.sent;return `<span class="status ${x[0]}">${x[1]}</span>`;}
 async function renderList(){
  const box=document.getElementById('invlist');
