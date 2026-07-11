@@ -6,6 +6,9 @@
 // REV 27 Jun 2026: + CHRISTO (kelewat di REV 26 -> "sync 0" sama spt Mak Mis/Harmi, kasus gabungan).
 //   REFACTOR ke SINGLE-SOURCE function isFieldWorker()/isLaporanPelapor() — tambah pekerja baru CUKUP 1 tempat,
 //   bukan 3 array inline terpisah (laporan create + laporan update + workers) yang rawan kelewat.
+// REV 11 Jul 2026: + collection `invoices` untuk sistem Bukti Pembayaran Upah e-sign
+//   (invoice-generator.html + invoice-sign.html). READ open (link capability via token unguessable),
+//   CREATE hanya draft belum-ttd, UPDATE hanya boleh isi tanda tangan (signature-only), DELETE locked.
 //
 // DEPLOY: Paste isi file ini ke Firebase Console:
 //   Firebase Console → Build → Firestore Database → Rules tab → Edit
@@ -220,6 +223,24 @@ service cloud.firestore {
         && request.resource.size() < 1000000;  // 1MB soft limit per Firestore doc
 
       // DELETE: locked — hanya via Firebase Console (preserve audit history)
+      allow delete: if false;
+    }
+
+    // ===== invoices collection (11 Jul 2026) — Bukti Pembayaran Upah E-Sign =====
+    // invoice-generator.html (Wakif buat bukti) + invoice-sign.html (perwakilan pekerja tanda tangan).
+    // Model: token URL unguessable = capability. READ open (perlu tahu id + token untuk buka).
+    // CREATE: hanya draft belum-ttd (status 'sent', signature_png null).
+    // UPDATE: HANYA boleh isi tanda tangan — field lain (nominal, nama, rincian) TAK boleh berubah.
+    //   Sekali ttd terkunci (resource.data.signature_png == null). Link bocor pun tak bisa ubah nominal.
+    // DELETE: locked (audit trail).
+    match /invoices/{id} {
+      allow read: if true;
+      allow create: if request.resource.data.status == 'sent'
+                    && request.resource.data.signature_png == null;
+      allow update: if resource.data.signature_png == null
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                         .hasOnly(['signature_png','signed_at','signed_meta','status'])
+                    && request.resource.data.status == 'signed';
       allow delete: if false;
     }
 
