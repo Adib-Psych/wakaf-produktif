@@ -118,6 +118,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
 const PROJECT='wakaf-ngantang', KEY='AIzaSyARd7KlzNLaRumTtdqR0j-jOnt6aZHyFKA';
 const BASE=`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/`;
@@ -401,6 +402,69 @@ function showLinks(o){
      <button class="btn btn-s btn-sm" onclick="navigator.clipboard.writeText('${link}');this.textContent='✓ Tercopy';setTimeout(()=>this.textContent='📋 Copy',1400)">📋 Copy Link</button>
      <a class="btn btn-wa btn-sm" style="text-decoration:none" target="_blank" href="https://wa.me/${hp}?text=${encodeURIComponent(wa)}">💬 WhatsApp</a>
    </div></div>`;
+ box.insertAdjacentHTML('beforeend', finalActions(o));
+}
+function finalActions(o){
+ if(!o.signature_png) return `<p class="muted" style="font-size:.8rem;margin-top:2px">📄 Setelah pekerja tanda tangan, tombol <b>Unduh PNG</b> &amp; <b>Catat ke Cashbook</b> muncul di sini.</p>`;
+ return `<div style="margin-top:6px;padding:12px 14px;background:#eefaf0;border:1px solid #bfe3c8;border-radius:9px">
+   <div style="font-size:.82rem;font-weight:800;color:#15803d;margin-bottom:8px">✅ Sudah ditandatangani — arsipkan &amp; catat pengeluaran:</div>
+   <div style="display:flex;gap:8px;flex-wrap:wrap">
+     <button class="btn btn-p btn-sm" onclick="downloadPNG()">📥 Unduh PNG (arsip)</button>
+     <button class="btn btn-s btn-sm" id="btn-cash" onclick="postCashbook()">💰 Catat ke Cashbook</button>
+   </div>
+   <p class="muted" style="font-size:.72rem;margin:8px 0 0">Simpan PNG ke <b>Keuangan Kebun Wakaf/Invoices Kebun Wakaf/</b>. "Catat ke Cashbook" menambah pengeluaran <b>bayar upah</b> ke dashboard (idempoten — aman diklik sekali).</p>
+ </div>`;
+}
+async function downloadPNG(){
+ if(!LAST){return;} const nama=(LAST.penandatangan&&LAST.penandatangan.nama)||((LAST.pekerja&&LAST.pekerja[0])?LAST.pekerja[0].nama:'Pekerja');
+ const holder=document.createElement('div'); holder.style.cssText='position:fixed;left:-9999px;top:0;background:#fff'; holder.innerHTML=receiptHTML(LAST,{width:800});
+ document.body.appendChild(holder);
+ const target=holder.firstElementChild;
+ const imgs=[...target.querySelectorAll('img')];
+ await Promise.all(imgs.map(im=>im.complete&&im.naturalWidth>0?0:new Promise(r=>{im.onload=r;im.onerror=r;setTimeout(r,3000);})));
+ await new Promise(r=>setTimeout(r,150));
+ try{
+   const canvas=await html2canvas(target,{backgroundColor:'#ffffff',scale:2,useCORS:true,logging:false});
+   const url=canvas.toDataURL('image/png');
+   const tglStr=(LAST.tgl_terbit||'').split('-').reverse().join(' ');
+   const fn=`Bukti Pembayaran Upah ${nama}_${tglStr}.png`;
+   const a=document.createElement('a'); a.href=url; a.download=fn; document.body.appendChild(a); a.click(); a.remove();
+ }catch(e){ alert('Gagal render PNG: '+e.message); }
+ finally{ holder.remove(); }
+}
+async function postCashbook(){
+ if(!LAST||!LAST.signature_png){ alert('Bukti belum ditandatangani.'); return; }
+ const btn=document.getElementById('btn-cash'); if(btn){btn.disabled=true;btn.textContent='Mencatat…';}
+ try{
+  const cbId='cb_invoice_'+LAST._id;
+  // fetch cashbook/active RAW (jangan decode entri lama — hindari drift)
+  const r=await fetch(`${BASE}cashbook/active?key=${KEY}&t=`+Date.now());
+  if(!r.ok){throw new Error('cashbook/active tak terbaca ('+r.status+')');}
+  const j=await r.json();
+  const dataField=(j.fields&&j.fields.data&&j.fields.data.arrayValue)?j.fields.data.arrayValue:{values:[]};
+  const values=dataField.values||[];
+  // idempotent — cek id sudah ada
+  const exists=values.some(v=>v.mapValue&&v.mapValue.fields&&v.mapValue.fields.id&&v.mapValue.fields.id.stringValue===cbId);
+  if(exists){ alert('✔️ Sudah tercatat di Cashbook sebelumnya (idempoten). Tidak ditambah dobel.'); if(btn){btn.disabled=false;btn.textContent='✔️ Sudah dicatat';} return; }
+  const pekerja=LAST.pekerja||[]; const anyBorongan=pekerja.some(w=>(w.rincian||[]).some(it=>it.model==='borongan'));
+  const kat=anyBorongan?'4.1':'3.2';
+  const names=pekerja.map(w=>w.nama).join(', ')||(LAST.penandatangan&&LAST.penandatangan.nama)||'';
+  const entry={mapValue:{fields:{
+    id:{stringValue:cbId},
+    tgl:{stringValue:LAST.tgl_terbit||new Date().toISOString().slice(0,10)},
+    tipe:{stringValue:'bayar_upah'}, kat:{stringValue:kat},
+    ket:{stringValue:`Upah ${names} — bukti e-sign ${LAST.no_invoice}`},
+    masuk:{integerValue:'0'}, keluar:{integerValue:String(Math.round(LAST.nominal_total||0))},
+    src:{stringValue:'invoice_esign'}, nota:{nullValue:null}, ref:{stringValue:'invoice_'+LAST._id},
+    last_modified_at:{stringValue:new Date().toISOString()}
+  }}};
+  const newValues=values.concat([entry]);
+  // PATCH hanya field data (updateMask) → version & field lain tak tersentuh
+  const pr=await fetch(`${BASE}cashbook/active?key=${KEY}&updateMask.fieldPaths=data`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({fields:{data:{arrayValue:{values:newValues}}}})});
+  if(!pr.ok){const t=await pr.text();throw new Error('PATCH cashbook '+pr.status+' — '+t.slice(0,120));}
+  alert('💰 Tercatat ke Cashbook: pengeluaran '+rp(LAST.nominal_total)+' (bayar upah). Cek dashboard monitor-v2.');
+  if(btn){btn.disabled=false;btn.textContent='✔️ Tercatat';}
+ }catch(e){ alert('Gagal catat cashbook: '+e.message); if(btn){btn.disabled=false;btn.textContent='💰 Catat ke Cashbook';} }
 }
 
 // ================= LIST =================
