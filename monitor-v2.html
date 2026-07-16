@@ -1768,6 +1768,13 @@
         </div>
       </div>
 
+      <!-- ─── LOG CABUT / TEBANG POHON MERAH (NEW 16 Jul 2026) ─── -->
+      <div class="card" style="border-left:5px solid #DC2626">
+        <div class="card-title" style="color:#7F1D1D"><span class="num" style="background:#DC2626">🪓</span>Log Cabut / Tebang Pohon Merah — Progress Peremajaan</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:14px">Catat pohon <span style="background:#FECACA;color:#7F1D1D;padding:1px 6px;border-radius:4px;font-weight:700">🔴 Merah</span> (tidak sehat/mati) yang sudah ditebang, per kebun. Target = jumlah Merah census 29 Mei: K1 <b>24</b> · K2 <b>98</b> · K3 <b>200</b> · K4 <b>60</b> = <b>382</b>. Census H/B/M tetap di-update manual saat re-census/sulaman (log ini terpisah, tak mengubah census).</p>
+        <div id="cabut-log-container" style="font-size:12px;color:var(--mute)">memuat…</div>
+      </div>
+
       <!-- ─── TIMELINE 2023 → 2026 → 2027 (data validated dari xlsx Adib 19 Mei 2026) ─── -->
       <div class="card">
         <div class="card-title"><span class="num">1</span>Timeline Populasi Kopi — Baseline 2023 → Target 2027</div>
@@ -15111,6 +15118,77 @@ function applyCensus() {
 }
 if (typeof window!=='undefined') { window.applyCensus=applyCensus; document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{applyCensus();}catch(e){}},300)); }
 
+// ═══ Log Cabut/Tebang Pohon Merah (16 Jul 2026) ═══
+// Target = Merah census per kebun (single-source KEBUN_CENSUS.M). Log terpisah (tak ubah census).
+// Persist: localStorage + Firestore sop_status/pohon_cabut (Pattern #18 — reuse writable collection, no new rule).
+const CABUT_TARGET = { K1:KEBUN_CENSUS.K1.M, K2:KEBUN_CENSUS.K2.M, K3:KEBUN_CENSUS.K3.M, K4:KEBUN_CENSUS.K4.M };
+const CABUT_KNAME = { K1:'Kebun 1', K2:'Kebun 2', K3:'Kebun 3', K4:'Kebun 4 · R.Wakif' };
+let CABUT_DATA = [];
+const CABUT_LS = 'wkkn_v2_cabut';
+function loadCabutLS(){ try{ const v=JSON.parse(localStorage.getItem(CABUT_LS)||'[]'); if(Array.isArray(v)) CABUT_DATA=v; }catch(e){} }
+function saveCabutLS(){ try{ localStorage.setItem(CABUT_LS, JSON.stringify(CABUT_DATA)); }catch(e){} }
+function cabutByKebun(){ const o={K1:0,K2:0,K3:0,K4:0}; CABUT_DATA.forEach(e=>{ if(o[e.kebun]!=null) o[e.kebun]+=(+e.jumlah||0); }); return o; }
+function renderCabutLog(){
+  const el=document.getElementById('cabut-log-container'); if(!el) return;
+  const done=cabutByKebun(); const KEB=['K1','K2','K3','K4'];
+  const totDone=KEB.reduce((s,k)=>s+done[k],0), totTgt=KEB.reduce((s,k)=>s+CABUT_TARGET[k],0);
+  const bars=KEB.map(k=>{
+    const d=done[k], t=CABUT_TARGET[k], sisa=Math.max(0,t-d), pct=t?Math.min(100,d/t*100):0;
+    const col=pct>=100?'#16A34A':(pct>=50?'#D97706':'#DC2626');
+    return `<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700;color:#7F1D1D">${CABUT_KNAME[k]}</span><span style="color:var(--mute)">ditebang <b style="color:${col}">${d}</b>/${t} · sisa <b>${sisa}</b></span></div><div style="height:14px;background:#FEE2E2;border-radius:7px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${col};border-radius:7px;transition:width .3s"></div></div></div>`;
+  }).join('');
+  const opts=KEB.map(k=>`<option value="${k}">${CABUT_KNAME[k]}</option>`).join('');
+  const fmt = t => (typeof formatTgl==='function'? formatTgl(t): t);
+  const rows=[...CABUT_DATA].sort((a,b)=>(b.tgl||'').localeCompare(a.tgl||'')).map(e=>`<tr><td style="padding:5px 8px">${fmt(e.tgl)}</td><td style="padding:5px 8px;font-weight:700">${CABUT_KNAME[e.kebun]||e.kebun}</td><td style="padding:5px 8px;text-align:right;font-weight:700">${e.jumlah}</td><td style="padding:5px 8px;font-size:11px;color:var(--mute)">${String(e.catatan||e.kondisi||'').replace(/</g,'&lt;')}</td><td style="padding:5px 8px;text-align:center"><button onclick="deleteCabut('${e.id}')" style="background:#fbe9e7;color:#c14b3a;border:1px solid #f2c7c1;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button></td></tr>`).join('');
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+      <div>
+        <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:8px">📊 SISA MERAH PER KEBUN</div>
+        ${bars}
+        <div style="margin-top:8px;padding:8px 12px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#7F1D1D">Total ditebang <b>${totDone}</b> / ${totTgt} Merah · sisa <b>${totTgt-totDone}</b> (${totTgt?Math.round(totDone/totTgt*100):0}%)</div>
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:8px">➕ CATAT CABUT / TEBANG</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Kebun</label><select id="cabut-kebun" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px">${opts}</select></div>
+          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Jumlah pohon</label><input id="cabut-jumlah" type="number" min="1" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
+          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Tanggal</label><input id="cabut-tgl" type="date" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
+          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Kondisi</label><input id="cabut-kondisi" value="Tali Merah (mati/sakit)" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
+        </div>
+        <div style="margin-top:8px"><label style="font-size:10px;color:var(--mute);font-weight:700">Catatan (opsional)</label><input id="cabut-catatan" placeholder="mis. lereng bawah, siap sulaman" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
+        <button onclick="submitCabut()" style="margin-top:10px;background:#DC2626;color:#fff;border:0;border-radius:7px;padding:9px 16px;font-weight:700;cursor:pointer;width:100%">🪓 Catat Cabut</button>
+        <div id="cabut-err" style="color:#c14b3a;font-size:11px;margin-top:6px"></div>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:6px">📜 RIWAYAT CABUT (${CABUT_DATA.length})</div>
+      ${CABUT_DATA.length? `<div class="table-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FEF2F2"><th style="padding:6px 8px;text-align:left">Tanggal</th><th style="padding:6px 8px;text-align:left">Kebun</th><th style="padding:6px 8px;text-align:right">Jumlah</th><th style="padding:6px 8px;text-align:left">Catatan</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div style="color:var(--mute);font-size:12px;font-style:italic">Belum ada catatan cabut. Isi form di atas → tersimpan &amp; sinkron otomatis.</div>'}
+    </div>`;
+  const td=document.getElementById('cabut-tgl'); if(td&&!td.value) td.value=new Date().toISOString().slice(0,10);
+}
+function submitCabut(){
+  const err=document.getElementById('cabut-err'); if(err) err.textContent='';
+  const kebun=(document.getElementById('cabut-kebun')||{}).value;
+  const jumlah=parseInt((document.getElementById('cabut-jumlah')||{}).value)||0;
+  const tgl=(document.getElementById('cabut-tgl')||{}).value;
+  const kondisi=((document.getElementById('cabut-kondisi')||{}).value||'').trim();
+  const catatan=((document.getElementById('cabut-catatan')||{}).value||'').trim();
+  if(!jumlah||jumlah<1){ if(err) err.textContent='Jumlah pohon harus ≥ 1'; return; }
+  if(!tgl){ if(err) err.textContent='Tanggal wajib diisi'; return; }
+  CABUT_DATA.push({ id:'cabut_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), kebun, jumlah, tgl, kondisi, catatan, created_at:new Date().toISOString() });
+  saveCabutLS(); renderCabutLog();
+  if(typeof window.syncCabutToFirestore==='function') window.syncCabutToFirestore();
+  if(typeof showToast==='function') showToast(`🪓 Dicatat: ${jumlah} pohon ditebang di ${CABUT_KNAME[kebun]||kebun}`,'success');
+}
+function deleteCabut(id){
+  if(!confirm('Hapus catatan cabut ini?')) return;
+  CABUT_DATA=CABUT_DATA.filter(e=>e.id!==id);
+  saveCabutLS(); renderCabutLog();
+  if(typeof window.syncCabutToFirestore==='function') window.syncCabutToFirestore();
+}
+if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCabut=deleteCabut; window.renderCabutLog=renderCabutLog;
+  loadCabutLS(); document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{renderCabutLog();}catch(e){}},350)); }
+
 // Multi-kebun helper: return array of bidang indices [0..3] for an entry
 // Handles: kebun_list array, kebun string 'K1+K3', single bidang 'K1' / '1'
 function getKebunIndices(entry) {
@@ -18176,6 +18254,27 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         console.log('[Compliance] ✓ Synced ' + Math.round(pct) + '% → Firestore sop_status/compliance');
       } catch (e) { console.warn('[Compliance] Firestore sync failed:', e && e.message); }
     };
+
+    // ⭐ Log Cabut/Tebang Pohon → Firestore sop_status/pohon_cabut (Pattern #18 reuse — no new rule) — 16 Jul 2026
+    window.syncCabutToFirestore = async () => {
+      try {
+        await setDoc(doc(db, 'sop_status', 'pohon_cabut'), {
+          version: 'cabut-1.0',
+          data: (typeof CABUT_DATA !== 'undefined' ? CABUT_DATA : []),
+          updated_at: serverTimestamp(), updated_by: 'wakif_dashboard', source: 'monitor-v2 Inventarisasi Cabut'
+        });
+        console.log('[Cabut] ✓ synced ' + (typeof CABUT_DATA !== 'undefined' ? CABUT_DATA.length : 0) + ' entries');
+      } catch (e) { console.warn('[Cabut] sync failed:', e && e.message); }
+    };
+    onSnapshot(doc(db, 'sop_status', 'pohon_cabut'), (snap) => {
+      try {
+        if (snap.exists() && Array.isArray(snap.data().data)) {
+          CABUT_DATA = snap.data().data;
+          if (typeof saveCabutLS === 'function') saveCabutLS();
+          if (typeof renderCabutLog === 'function') renderCabutLog();
+        }
+      } catch (e) {}
+    });
 
     const q = query(collection(db, COLLECTIONS.laporan), orderBy('created_at', 'desc'));
 
