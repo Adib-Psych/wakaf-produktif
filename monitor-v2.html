@@ -15238,12 +15238,14 @@ function renderBenchmarkLog(){
     +'<label style="font-size:11px;color:#6b7280">Sumber kebun<br><input id="bn-sumber" placeholder="mis. Kebun Pak X, Ngantang" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:160px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Varietas<br><input id="bn-varietas" placeholder="mis. BP 42 / BP 358" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:110px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Tgl beli<br><input id="bn-tgl" type="date" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px"></label>'
-    +'<label style="font-size:11px;color:#6b7280">Cherry basah (kg)<br><input id="bn-cherry" type="number" step="0.1" min="0" placeholder="100" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:95px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">Cherry basah (kg)<br><input id="bn-cherry" type="number" step="0.1" min="0" placeholder="100" oninput="recomputeBenchmarkDominant()" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:95px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Biaya beli (pribadi, Rp)<br><input id="bn-biaya" type="number" step="1000" min="0" placeholder="opsional" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:120px"></label>'
-    +'<div style="flex:1 1 100%;font-size:11px;color:#6b7280;margin-top:2px">Sortir kualitas petik (kg) — <i>indikator komparasi vs kebun kita yang petik selektif merah</i>:</div>'
-    +'<label style="font-size:11px;color:#6b7280">🟥 Merah (kg)<br><input id="bn-merah" type="number" step="0.1" min="0" placeholder="sortir" style="padding:5px 7px;border:1.5px solid #fca5a5;border-radius:6px;font-size:12px;width:90px"></label>'
-    +'<label style="font-size:11px;color:#6b7280">🟩 Hijau/rutuan (kg)<br><input id="bn-hijau" type="number" step="0.1" min="0" placeholder="campur" style="padding:5px 7px;border:1.5px solid #86efac;border-radius:6px;font-size:12px;width:110px"></label>'
-    +'<label style="font-size:11px;color:#6b7280">🌊 Mengambang (kg)<br><input id="bn-mengambang" type="number" step="0.1" min="0" placeholder="floaters" style="padding:5px 7px;border:1.5px solid #93c5fd;border-radius:6px;font-size:12px;width:110px"></label>'
+    +'<div style="flex:1 1 100%;font-size:11px;color:#6b7280;margin-top:2px">Sortir kualitas petik (kg) — pilih <b>warna dominan</b> → warna itu <b>auto = sisa cherry</b> (spt logika merah-remainder panen kebun). Isi 2 warna lainnya, dominan terhitung sendiri:</div>'
+    +'<label style="font-size:11px;color:#6b7280">Warna dominan<br><select id="bn-dominan" onchange="recomputeBenchmarkDominant()" style="padding:5px 7px;border:1.5px solid #c4b5fd;border-radius:6px;font-size:12px;width:150px"><option value="merah">🟥 Merah (selektif)</option><option value="hijau">🟩 Hijau/rutuan</option><option value="mengambang">🌊 Mengambang</option></select></label>'
+    +'<label style="font-size:11px;color:#6b7280">🟥 Merah (kg)<br><input id="bn-merah" type="number" step="0.1" min="0" placeholder="auto" oninput="recomputeBenchmarkDominant()" style="padding:5px 7px;border:1.5px solid #fca5a5;border-radius:6px;font-size:12px;width:90px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">🟩 Hijau/rutuan (kg)<br><input id="bn-hijau" type="number" step="0.1" min="0" placeholder="0" oninput="recomputeBenchmarkDominant()" style="padding:5px 7px;border:1.5px solid #86efac;border-radius:6px;font-size:12px;width:110px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">🌊 Mengambang (kg)<br><input id="bn-mengambang" type="number" step="0.1" min="0" placeholder="0" oninput="recomputeBenchmarkDominant()" style="padding:5px 7px;border:1.5px solid #93c5fd;border-radius:6px;font-size:12px;width:110px"></label>'
+    +'<div id="bn-sortir-note" style="flex:1 1 100%;font-size:11px;color:#5b21b6;min-height:14px"></div>'
     +'<label style="font-size:11px;color:#6b7280">Dried (kg)<br><input id="bn-dried" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:90px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Green bean (kg)<br><input id="bn-gb" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:90px"></label>'
     +'<label style="font-size:11px;color:#6b7280;flex:1 1 100%">Catatan<br><input id="bn-catatan" placeholder="proses, sortir, dll" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:100%"></label>'
@@ -15272,8 +15274,9 @@ function renderBenchmarkLog(){
       +(function(){ var s=b.sortir||{}; var m=_bn(s.merah),h=_bn(s.hijau),f=_bn(s.mengambang); var tot=m+h+f; if(tot<=0) return '';
           var pm=(m/tot*100), ph=(h/tot*100), pf=(f/tot*100);
           var qual = pm>=70?'🟢 mayoritas merah (selektif, mirip kebun kita)':(pm>=30?'🟡 campur':'🔴 rutuan (merah sedikit)');
+          var domL={merah:'🟥 Merah',hijau:'🟩 Hijau/rutuan',mengambang:'🌊 Mengambang'}[b.dominant_color]||'';
           return '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:11.5px;background:#faf5ff;border-radius:6px;padding:6px 9px">'
-            +'<span style="font-weight:700;color:#5b21b6">Sortir petik:</span>'
+            +'<span style="font-weight:700;color:#5b21b6">Sortir petik'+(domL?(' <span style="font-weight:400;color:#7c3aed">(dominan '+domL+')</span>'):'')+':</span>'
             +'<span>🟥 Merah <b>'+m+'</b> kg ('+pm.toFixed(0)+'%)</span>'
             +'<span>🟩 Hijau/rutuan <b>'+h+'</b> kg ('+ph.toFixed(0)+'%)</span>'
             +'<span>🌊 Mengambang <b>'+f+'</b> kg ('+pf.toFixed(0)+'%)</span>'
@@ -15290,8 +15293,25 @@ function renderBenchmarkLog(){
     +'💡 <b>Acuan kebun (Tugusari):</b> rendemen cherry→dried ≈ 44% (aktual musim ~48%) · cherry→GB kering ≈ 20%. Bandingkan angka pembanding di atas terhadap ini. Flag: 🚩 = di luar 30–55% (cek proses/timbang).</div>';
   c.innerHTML=html;
 }
+function recomputeBenchmarkDominant(){
+  const g=id=>document.getElementById(id);
+  if(!g('bn-cherry')||!g('bn-dominan')) return;
+  const cherry=_bn(g('bn-cherry').value);
+  const dom=g('bn-dominan').value||'merah';
+  const f={merah:g('bn-merah'),hijau:g('bn-hijau'),mengambang:g('bn-mengambang')};
+  Object.keys(f).forEach(k=>{ if(!f[k])return; f[k].readOnly=false; f[k].style.background=''; f[k].style.fontWeight=''; f[k].placeholder='0'; });
+  let others=0; Object.keys(f).forEach(k=>{ if(k!==dom && f[k]) others+=_bn(f[k].value); });
+  const domVal=Math.max(0, cherry-others);
+  if(f[dom]){ f[dom].value = cherry? domVal.toFixed(1):''; f[dom].readOnly=true; f[dom].style.background='#f5f3ff'; f[dom].style.fontWeight='700'; f[dom].placeholder='auto'; }
+  const note=g('bn-sortir-note'); if(!note) return;
+  const dl={merah:'🟥 Merah',hijau:'🟩 Hijau/rutuan',mengambang:'🌊 Mengambang'};
+  if(cherry>0 && others>cherry){ note.innerHTML='⚠️ Total 2 warna lain ('+others+' kg) > cherry ('+cherry+' kg) — cek angka.'; note.style.color='#b91c1c'; }
+  else if(cherry>0){ note.innerHTML='✓ '+dl[dom]+' (dominan) auto = <b>'+domVal.toFixed(1)+' kg</b> (cherry '+cherry+' − '+others+' lainnya). Total selalu = cherry basah.'; note.style.color='#5b21b6'; }
+  else note.innerHTML='';
+}
 function submitBenchmark(){
   const g=id=>document.getElementById(id);
+  if(typeof recomputeBenchmarkDominant==='function') recomputeBenchmarkDominant();
   const sumber=(g('bn-sumber').value||'').trim(), varietas=(g('bn-varietas').value||'').trim();
   const tgl=g('bn-tgl').value, cherry=_bn(g('bn-cherry').value);
   if(!varietas){ alert('Isi varietas pembanding (mis. BP 42)'); return; }
@@ -15300,6 +15320,7 @@ function submitBenchmark(){
   const entry={ id:'bnc_'+Date.now(), sumber, varietas, tgl, cherry_kg:cherry,
     biaya:_bn(g('bn-biaya').value)||null, dana:'pribadi',
     sortir:{ merah:_bn(g('bn-merah').value)||null, hijau:_bn(g('bn-hijau').value)||null, mengambang:_bn(g('bn-mengambang').value)||null },
+    dominant_color:(g('bn-dominan')&&g('bn-dominan').value)||'merah',
     dried_kg:_bn(g('bn-dried').value)||null, gb_kg:_bn(g('bn-gb').value)||null,
     catatan:(g('bn-catatan').value||'').trim(), created_at:new Date().toISOString() };
   BENCHMARK_DATA.push(entry); saveBenchmarkLS(); renderBenchmarkLog();
@@ -15328,7 +15349,7 @@ function deleteBenchmark(id){
   BENCHMARK_DATA=BENCHMARK_DATA.filter(x=>x.id!==id); saveBenchmarkLS(); renderBenchmarkLog();
   if(typeof window.syncBenchmarkToFirestore==='function') window.syncBenchmarkToFirestore();
 }
-if(typeof window!=='undefined'){ window.submitBenchmark=submitBenchmark; window.editBenchmark=editBenchmark; window.deleteBenchmark=deleteBenchmark; window.renderBenchmarkLog=renderBenchmarkLog;
+if(typeof window!=='undefined'){ window.submitBenchmark=submitBenchmark; window.editBenchmark=editBenchmark; window.deleteBenchmark=deleteBenchmark; window.renderBenchmarkLog=renderBenchmarkLog; window.recomputeBenchmarkDominant=recomputeBenchmarkDominant;
   loadBenchmarkLS(); document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{renderBenchmarkLog();}catch(e){}},380)); }
 
 // Multi-kebun helper: return array of bidang indices [0..3] for an entry
