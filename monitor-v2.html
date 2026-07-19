@@ -15240,6 +15240,10 @@ function renderBenchmarkLog(){
     +'<label style="font-size:11px;color:#6b7280">Tgl beli<br><input id="bn-tgl" type="date" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Cherry basah (kg)<br><input id="bn-cherry" type="number" step="0.1" min="0" placeholder="100" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:95px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Biaya beli (pribadi, Rp)<br><input id="bn-biaya" type="number" step="1000" min="0" placeholder="opsional" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:120px"></label>'
+    +'<div style="flex:1 1 100%;font-size:11px;color:#6b7280;margin-top:2px">Sortir kualitas petik (kg) — <i>indikator komparasi vs kebun kita yang petik selektif merah</i>:</div>'
+    +'<label style="font-size:11px;color:#6b7280">🟥 Merah (kg)<br><input id="bn-merah" type="number" step="0.1" min="0" placeholder="sortir" style="padding:5px 7px;border:1.5px solid #fca5a5;border-radius:6px;font-size:12px;width:90px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">🟩 Hijau/rutuan (kg)<br><input id="bn-hijau" type="number" step="0.1" min="0" placeholder="campur" style="padding:5px 7px;border:1.5px solid #86efac;border-radius:6px;font-size:12px;width:110px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">🌊 Mengambang (kg)<br><input id="bn-mengambang" type="number" step="0.1" min="0" placeholder="floaters" style="padding:5px 7px;border:1.5px solid #93c5fd;border-radius:6px;font-size:12px;width:110px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Dried (kg)<br><input id="bn-dried" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:90px"></label>'
     +'<label style="font-size:11px;color:#6b7280">Green bean (kg)<br><input id="bn-gb" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:90px"></label>'
     +'<label style="font-size:11px;color:#6b7280;flex:1 1 100%">Catatan<br><input id="bn-catatan" placeholder="proses, sortir, dll" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:100%"></label>'
@@ -15265,6 +15269,16 @@ function renderBenchmarkLog(){
       +'<span>🫘 GB <b>'+(gb||'—')+'</b> kg</span>'
       +'<span style="color:#5b21b6">Rendemen: cherry→dried <b>'+(dr?rDried.toFixed(0)+'%':'—')+'</b>'+flagD+' · cherry→GB <b>'+(gb?rGB.toFixed(0)+'%':'—')+'</b>'+(rDG?(' · dried→GB '+rDG.toFixed(0)+'%'):'')+'</span>'
       +'</div>'
+      +(function(){ var s=b.sortir||{}; var m=_bn(s.merah),h=_bn(s.hijau),f=_bn(s.mengambang); var tot=m+h+f; if(tot<=0) return '';
+          var pm=(m/tot*100), ph=(h/tot*100), pf=(f/tot*100);
+          var qual = pm>=70?'🟢 mayoritas merah (selektif, mirip kebun kita)':(pm>=30?'🟡 campur':'🔴 rutuan (merah sedikit)');
+          return '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:11.5px;background:#faf5ff;border-radius:6px;padding:6px 9px">'
+            +'<span style="font-weight:700;color:#5b21b6">Sortir petik:</span>'
+            +'<span>🟥 Merah <b>'+m+'</b> kg ('+pm.toFixed(0)+'%)</span>'
+            +'<span>🟩 Hijau/rutuan <b>'+h+'</b> kg ('+ph.toFixed(0)+'%)</span>'
+            +'<span>🌊 Mengambang <b>'+f+'</b> kg ('+pf.toFixed(0)+'%)</span>'
+            +'<span style="margin-left:auto;font-weight:600">'+qual+'</span>'
+            +'</div>'; })()
       +(b.catatan?('<div style="font-size:11px;color:#6b7280;margin-top:5px">📝 '+b.catatan+'</div>'):'')
       +'<div style="margin-top:6px;display:flex;gap:6px">'
       +'<button onclick="editBenchmark(\''+b.id+'\')" style="font-size:11px;padding:3px 10px;border:1px solid #c4b5fd;background:#f5f3ff;color:#5b21b6;border-radius:5px;cursor:pointer">✎ Lengkapi/Edit</button>'
@@ -15285,6 +15299,7 @@ function submitBenchmark(){
   if(!cherry||cherry<=0){ alert('Isi berat cherry basah (kg)'); return; }
   const entry={ id:'bnc_'+Date.now(), sumber, varietas, tgl, cherry_kg:cherry,
     biaya:_bn(g('bn-biaya').value)||null, dana:'pribadi',
+    sortir:{ merah:_bn(g('bn-merah').value)||null, hijau:_bn(g('bn-hijau').value)||null, mengambang:_bn(g('bn-mengambang').value)||null },
     dried_kg:_bn(g('bn-dried').value)||null, gb_kg:_bn(g('bn-gb').value)||null,
     catatan:(g('bn-catatan').value||'').trim(), created_at:new Date().toISOString() };
   BENCHMARK_DATA.push(entry); saveBenchmarkLS(); renderBenchmarkLog();
@@ -15293,9 +15308,15 @@ function submitBenchmark(){
 }
 function editBenchmark(id){
   const b=BENCHMARK_DATA.find(x=>x.id===id); if(!b) return;
-  const dr=prompt('Dried kering (kg) untuk '+b.varietas+' — cherry '+b.cherry_kg+' kg:', b.dried_kg!=null?b.dried_kg:'');
+  const s=b.sortir||{};
+  const mr=prompt('🟥 SORTIR Merah (kg) — '+b.varietas+' (Enter=lewati):', s.merah!=null?s.merah:'');
+  if(mr===null) return;
+  const hj=prompt('🟩 SORTIR Hijau/rutuan (kg):', s.hijau!=null?s.hijau:'');
+  const mg=prompt('🌊 SORTIR Mengambang (kg):', s.mengambang!=null?s.mengambang:'');
+  const dr=prompt('🌰 Dried kering (kg) — cherry '+b.cherry_kg+' kg:', b.dried_kg!=null?b.dried_kg:'');
   if(dr===null) return;
-  const gb=prompt('Green bean (kg) — kosongkan kalau belum:', b.gb_kg!=null?b.gb_kg:'');
+  const gb=prompt('🫘 Green bean (kg) — kosongkan kalau belum:', b.gb_kg!=null?b.gb_kg:'');
+  b.sortir={ merah:_bn(mr)||null, hijau:_bn(hj)||null, mengambang:_bn(mg)||null };
   b.dried_kg=_bn(dr)||null; if(gb!==null) b.gb_kg=_bn(gb)||null;
   b.last_modified_at=new Date().toISOString();
   saveBenchmarkLS(); renderBenchmarkLog();
