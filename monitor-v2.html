@@ -4039,7 +4039,7 @@ async function deleteLaporan(id) {
   ) : [];
   const _lapDetail = getDetailText(lap);
   const msg = `Hapus entry ini?\n\n📅 ${formatTgl(lap.tgl)} · ${lap.pelapor} · Kebun ${lap.bidang} · ${lap.kategori}\n📝 ${_lapDetail.substring(0, 80)}${_lapDetail.length>80?'…':''}\n\n` +
-    (linkedUpah.length > 0 ? `⚠️ Ini juga akan menghapus ${linkedUpah.length} linked UPAH entry (status: ${linkedUpah.filter(u=>u.status==='lunas').length} sudah lunas, ${linkedUpah.filter(u=>u.status==='belum').length} belum dibayar). Cashbook auto-entries yang sudah lunas TIDAK terhapus (audit trail).\n\n` : '') +
+    (linkedUpah.length > 0 ? `⚠️ ATURAN TERPISAH (locked Wakif 19 Jul 2026): ${linkedUpah.length} UPAH terkait TIDAK ikut terhapus (${linkedUpah.filter(u=>u.status==='lunas').length} lunas · ${linkedUpah.filter(u=>u.status==='belum').length} belum). Kelola/hapus upah di tab Upah kalau memang perlu.\n\n` : '') +
     'Lanjut?';
   if (!confirm(msg)) return;
 
@@ -4059,17 +4059,13 @@ async function deleteLaporan(id) {
 
   STATE.laporan = STATE.laporan.filter(l => l.id !== id);
   localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
-  // Cascade delete linked UPAH entries (only belum dibayar — preserve lunas untuk audit)
-  if (typeof UPAH_ITEMS !== 'undefined' && linkedUpah.length > 0) {
-    const idsToRemove = linkedUpah.filter(u => u.status === 'belum').map(u => u.id);
-    UPAH_ITEMS = UPAH_ITEMS.filter(u => !idsToRemove.includes(u.id));
-    if (typeof saveUpah === 'function') saveUpah();
-    if (typeof renderUpahTable === 'function') renderUpahTable();
-    if (typeof renderUpahSummary === 'function') renderUpahSummary();
-  }
+  // ⭐ 19 Jul 2026 — ATURAN TERPISAH (locked Wakif): hapus laporan TIDAK menghapus upah terkait.
+  // Upah = record finansial independen (mungkin sudah dibayar). Kelola upah di tab Upah.
+  // (Sebelumnya: cascade-delete upah 'belum' — dihapus per keputusan Wakif 19 Jul.)
+  // Anti-dup tetap aman: re-entry laporan tgl+pelapor sama → L3 dedup skip create (upah existing dipakai).
   renderLog();
   if (typeof renderDashboard === 'function') renderDashboard();
-  showToast(`🗑️ Entry deleted${isFromFirestore ? ' (Firestore + local)' : ' (local only)'} · ${linkedUpah.filter(u=>u.status==='belum').length} linked UPAH auto-removed`);
+  showToast(`🗑️ Entry deleted${isFromFirestore ? ' (Firestore + local)' : ' (local only)'}${linkedUpah.length ? ` · ${linkedUpah.length} upah terkait DIPERTAHANKAN (aturan terpisah)` : ''}`);
 }
 
 // ===== FORM =====
@@ -4712,15 +4708,23 @@ function submitForm() {
     alert('Field wajib belum lengkap: Pelapor, Kebun (minimal 1), Kategori');
     return;
   }
-  // Comment 2 (16 Mei): Durasi Kerja wajib untuk YIT/KUMPUL (auto-link ke Upah Pekerja).
-  // Mas Anto = sweat equity, durasi opsional (boleh kosong).
-  // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA (data-driven), bukan hardcode YIT/KUMPUL.
-  // Pekerja harian ber-tarif (YIT/KUMPUL/YASIR/KAMTO) wajib durasi → auto-link upah.
-  // Pemanen (MAKMIS/HARNI/CHRISTO) + WAKIF/ANTO = TIDAK di TARIF_PEKERJA → durasi opsional (upah manual / model per-kg masih pending).
+  // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA (data-driven), bukan hardcode.
+  // UPDATE 19 Jul 2026: pemanen MAKMIS/HARNI/CHRISTO kini BER-TARIF (model harian locked Wakif 50K/100K)
+  // → durasi WAJIB juga untuk pemanen (auto-link upah aktif). Hanya WAKIF/ANTO (sweat-equity) durasi opsional.
   if (TARIF_PEKERJA[STATE.pelapor] && !STATE.durasi) {
     const _nm = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor;
     alert('Durasi Kerja wajib diisi untuk ' + _nm + ' (auto-link ke Upah Pekerja).\n\nPilih: 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
     return;
+  }
+  // ⭐ 19 Jul 2026 — ANTI-DUPLIKASI entry laporan (req Wakif, casus dup historis):
+  // Cek entry sama (tgl + pelapor + kategori) yang sudah ada → konfirmasi eksplisit sebelum simpan.
+  // (Skip saat EDIT mode — update existing memang wajar.)
+  if (!CURRENT_EDIT_LAPORAN_ID) {
+    const _dup = (STATE.laporan || []).filter(l => l && l.tgl === tgl && l.pelapor === STATE.pelapor && l.kategori === kategori);
+    if (_dup.length > 0) {
+      const _nm2 = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor;
+      if (!confirm(`⚠️ POTENSI DUPLIKAT!\n\nSudah ada ${_dup.length} entry ${_nm2} · ${kategori} · ${tgl}.\n\nYakin ini entry BARU (bukan dobel input)? Kalau mau koreksi entry lama, pakai tombol Edit di Log Harian.\n\nTetap simpan sebagai entry baru?`)) return;
+    }
   }
   // Compute alerts based on rainfall + kategori
   const climateAlerts = computeRainfallAlerts(kategori, r24, r7d, STATE.cuaca_pagi, STATE.cuaca_siang);
