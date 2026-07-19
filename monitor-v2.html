@@ -4989,12 +4989,12 @@ const TARIF_PEKERJA = {
   KUMPUL: { setengah_hari: 50000, full_day: 100000 },
   YASIR:  { setengah_hari: 50000, full_day: 100000 },   // 27 Jun: pengganti Kumpul (bawah)
   KAMTO:  { setengah_hari: 60000, full_day: 120000 },   // 27 Jun: pengganti Yit (atas)
-  // ⭐ 19 Jul 2026 — MODEL UPAH PEMANEN DIKUNCI WAKIF: HARIAN (½ 25K / full 50K).
+  // ⭐ 19 Jul 2026 — MODEL UPAH PEMANEN DIKUNCI WAKIF: HARIAN (½ 50K / full 100K — koreksi Wakif, bukan 25/50).
   // Auto-upah kini aktif utk pemanen (Pattern #12 #9 — gate data-driven TARIF_PEKERJA).
   // Data per-KG tetap terkumpul via Ledger Output utk evaluasi model tahun depan.
-  MAKMIS:  { setengah_hari: 25000, full_day: 50000 },
-  HARNI:   { setengah_hari: 25000, full_day: 50000 },
-  CHRISTO: { setengah_hari: 25000, full_day: 50000 }
+  MAKMIS:  { setengah_hari: 50000, full_day: 100000 },
+  HARNI:   { setengah_hari: 50000, full_day: 100000 },
+  CHRISTO: { setengah_hari: 50000, full_day: 100000 }
 };
 // Helper untuk legacy code yang masih panggil TARIF[satuan] — default ke Cak Yit (worst case)
 const TARIF = { setengah_hari: 60000, full_day: 120000 };
