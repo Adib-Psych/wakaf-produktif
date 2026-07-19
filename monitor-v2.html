@@ -8245,6 +8245,14 @@ let PANEN_SAMPLING_DATA = [];
       let migrated = 0;
       PANEN_SAMPLING_DATA.forEach(e => {
         if (e.type === 'final') return;  // Fase 4b: skip FINAL marker (no cherry/kg)
+        // ⭐ 18 Jul 2026 — TYPE NORMALIZATION (anti string-concat "81.180 g" bug):
+        // REST writes / legacy bisa simpan angka sbg string → reduce(+) jadi concat teks.
+        // Paksa Number() untuk semua field numerik saat load. (Lesson: REST harus integerValue/doubleValue.)
+        ['cherry_gram','dried_gram','gb_gram','cherry_kupas_gram','kg','cherry_basah_kg'].forEach(k => {
+          if (e[k] != null && typeof e[k] === 'string' && e[k] !== '') {
+            const n = Number(e[k]); if (!isNaN(n)) e[k] = n;
+          }
+        });
         if (e.cherry_gram == null) {
           const kgVal = e.kg || e.cherry_basah_kg;
           if (kgVal != null) {
@@ -18875,6 +18883,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         // Inline migration: setiap entry yang belum punya cherry_gram, auto-convert dari kg field
         let migrated = 0;
         d.forEach(e => {
+          // ⭐ 18 Jul 2026 — TYPE NORMALIZATION cloud-path (anti string-concat "81.180 g" bug, sister LS-loader)
+          ['cherry_gram','dried_gram','gb_gram','cherry_kupas_gram','kg','cherry_basah_kg'].forEach(k => {
+            if (e[k] != null && typeof e[k] === 'string' && e[k] !== '') {
+              const n = Number(e[k]); if (!isNaN(n)) e[k] = n;
+            }
+          });
           if (e.cherry_gram == null) {
             const kgVal = e.kg || e.cherry_basah_kg;
             if (kgVal != null) {
