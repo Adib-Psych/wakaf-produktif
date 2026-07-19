@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lapor-ngt-v2';
+const CACHE_NAME = 'lapor-ngt-v3';  // v3 19 Jul 2026: tarif pemanen 50/100 (SOP P2: bump tiap deploy sentuh PWA)
 const ASSETS = [
   // Paths resolved relative to sw.js location (/demo/)
   '../lapor.html',                                     // PRODUCTION lapor.html at root (FIX 16 Mei 2026)
