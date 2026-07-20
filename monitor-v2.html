@@ -1680,15 +1680,14 @@
           <textarea id="panen-sampling-catatan"></textarea>
         </div>
       </div>
-    </div>
-
-    <!-- ─── BENCHMARK RENDEMEN EKSTERNAL (NEW 19 Jul 2026) — komparasi varietas, di LUAR produksi & keuangan kebun ─── -->
-    <div class="card" style="border-left:5px solid #6d28d9;margin-top:6px">
-      <div class="card-title" style="color:#5b21b6"><span class="num" style="background:#6d28d9">🔬</span>Benchmark Rendemen Eksternal — Tugusari (kebun) vs Pembanding</div>
-      <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:9px 12px;font-size:11.5px;color:#5b21b6;margin-bottom:10px;line-height:1.55">
-        ⚠️ <b>PEMBANDING RISET — BUKAN produksi kebun wakaf.</b> Cherry <b>dibeli</b> dari kebun lain (dana <b>pribadi Wakif</b>) untuk komparasi rendemen antar-varietas. <b>TIDAK</b> masuk total produksi kebun · <b>TIDAK</b> masuk cashbook/keuangan wakaf. Murni data rendemen cherry→dried→green bean.
+      <!-- ─── BENCHMARK RENDEMEN EKSTERNAL (NEW 19 Jul; MOVED inside panel-panen 20 Jul — fix: dulu di luar panel → bocor ke semua tab) ─── -->
+      <div class="card" style="border-left:5px solid #6d28d9;margin-top:6px">
+        <div class="card-title" style="color:#5b21b6"><span class="num" style="background:#6d28d9">🔬</span>Benchmark Rendemen Eksternal — Tugusari (kebun) vs Pembanding</div>
+        <div style="background:#f5f3ff;border:1px solid #ddd6fe;border-radius:8px;padding:9px 12px;font-size:11.5px;color:#5b21b6;margin-bottom:10px;line-height:1.55">
+          ⚠️ <b>PEMBANDING RISET — BUKAN produksi kebun wakaf.</b> Cherry <b>dibeli</b> dari kebun lain (dana <b>pribadi Wakif</b>) untuk komparasi rendemen antar-varietas. <b>TIDAK</b> masuk total produksi kebun · <b>TIDAK</b> masuk cashbook/keuangan wakaf. Murni data rendemen cherry→dried→green bean.
+        </div>
+        <div id="benchmark-eksternal-container">memuat…</div>
       </div>
-      <div id="benchmark-eksternal-container">memuat…</div>
     </div>
 
     <!-- ───────── Modal: Stage 3 Sortir 4-Warna ───────── -->
@@ -4722,7 +4721,9 @@ function submitForm() {
   // → durasi WAJIB juga untuk pemanen (auto-link upah aktif). Hanya WAKIF/ANTO (sweat-equity) durasi opsional.
   if (TARIF_PEKERJA[STATE.pelapor] && !STATE.durasi) {
     const _nm = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor;
-    alert('Durasi Kerja wajib diisi untuk ' + _nm + ' (auto-link ke Upah Pekerja).\n\nPilih: 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
+    // ⭐ 20 Jul 2026 (req Wakif — sering lupa): pesan tegas + konsekuensi jelas + fokuskan field durasi.
+    alert('⚠️ DURASI KERJA BELUM DIPILIH untuk ' + _nm + '.\n\nTanpa durasi, UPAH TIDAK akan terhitung otomatis (bayaran pekerja jadi kosong).\n\nPilih dulu di "Durasi Kerja": 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
+    try { const _fd=document.getElementById('form-durasi'); if(_fd){ _fd.scrollIntoView({behavior:'smooth',block:'center'}); _fd.style.transition='box-shadow .3s'; _fd.style.boxShadow='0 0 0 3px #dc2626'; setTimeout(()=>{ if(_fd) _fd.style.boxShadow=''; }, 2200); } } catch(e){}
     return;
   }
   // ⭐ 19 Jul 2026 — ANTI-DUPLIKASI entry laporan (req Wakif, casus dup historis):
