@@ -7001,10 +7001,11 @@ function resetPanenForm() {
   document.getElementById('panen-cherry-kg').value = '';
   { const _pp=document.getElementById('panen-pekerja'); if(_pp) _pp.value=''; }
   { const _mc=document.getElementById('panen-cherry-mc'); if(_mc) _mc.value=''; }
-  document.getElementById('panen-pct-merah').value = 55;
-  document.getElementById('panen-pct-kuning').value = 25;
-  document.getElementById('panen-pct-hijau').value = 12;
-  document.getElementById('panen-pct-hitam').value = 8;
+  // 20 Jul 2026: komposisi% deprecated (ADR-025) → set 0 (netral), bukan placeholder palsu 55/25/12/8. Sortir riil dari lot.
+  document.getElementById('panen-pct-merah').value = 0;
+  document.getElementById('panen-pct-kuning').value = 0;
+  document.getElementById('panen-pct-hijau').value = 0;
+  document.getElementById('panen-pct-hitam').value = 0;
   document.getElementById('panen-catatan').value = '';
   ['panen-kebun', 'panen-context', 'panen-cuaca'].forEach(id => {
     document.getElementById(id).querySelectorAll('.radio-pill.on').forEach(p => p.classList.remove('on'));
@@ -7034,14 +7035,14 @@ function submitPanenEntry() {
     return;
   }
 
+  // ⭐ 20 Jul 2026 — Warning "Komposisi total X%" DIHAPUS (vestigial): model estimasi komposisi% (merah/kuning/
+  // hijau/hitam=100%) sudah DIPENSIUNKAN 25-26 Jun (ADR-025) → diganti SORTIR AKTUAL (getCherryPerGrade merah-remainder).
+  // Field panen-pct-* kini hidden value=0 → total selalu 0 → popup nongol tiap submit tanpa guna. Cek dihapus.
+  // komposisi ditulis 0/0/0/0 (netral, "tidak ada estimasi") — komposisi riil dari sortir per lot, bukan sini.
   const k_merah = parseFloat(document.getElementById('panen-pct-merah').value) || 0;
   const k_kuning = parseFloat(document.getElementById('panen-pct-kuning').value) || 0;
   const k_hijau = parseFloat(document.getElementById('panen-pct-hijau').value) || 0;
   const k_hitam = parseFloat(document.getElementById('panen-pct-hitam').value) || 0;
-  const total_pct = k_merah + k_kuning + k_hijau + k_hitam;
-  if (Math.abs(total_pct - 100) > 5) {
-    if (!confirm(`Komposisi total ${total_pct}% (bukan 100%). Tetap submit?`)) return;
-  }
 
   const id = 'panen_' + tgl.replace(/-/g, '') + '_' + String(PANEN_DATA.length + 1).padStart(3, '0');
   const entry = {
