@@ -6412,105 +6412,14 @@ function toggleAllPay(checkbox) {
 // pekerja ("mau dibayar sekarang atau dikumpulkan?"), BARU bayar, BARU Bukti Bayar (validasi lunas).
 // BUKAN bukti pembayaran — watermark jelas. Tidak mengubah status/cashbook apa pun (read-only).
 async function generateRekapTagihan() {
-  const checked = document.querySelectorAll('.upah-check:checked');
-  if (checked.length === 0) {
-    alert('📋 Pilih dulu item yang mau direkap.\n\nCara: centang checkbox pada item BELUM dibayar → klik "Rekapan Tagihan (dari Pilihan)".');
-    return;
-  }
-  if (typeof html2canvas === 'undefined') { alert('html2canvas belum ke-load. Refresh halaman + cek internet.'); return; }
-  const items = [];
-  let lunasCount = 0;
-  checked.forEach(c => {
-    const it = UPAH_ITEMS.find(x => x.id === +c.dataset.id);
-    if (it) { items.push(it); if (it.status === 'lunas') lunasCount++; }
-  });
-  if (!items.length) return;
-  if (lunasCount > 0 && !confirm(`ℹ️ ${lunasCount} dari ${items.length} item terpilih SUDAH lunas.\n\nRekapan Tagihan biasanya untuk item BELUM dibayar. Item lunas akan ditandai ✓ di rekap. Lanjut?`)) return;
-  const pelaporSet = [...new Set(items.map(it => it.pelapor))];
-  items.sort((a,b)=>a.tgl.localeCompare(b.tgl));
-  const hariStr=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'], bulanStr=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
-  const today=new Date();
-  const todayLbl=`${hariStr[today.getDay()]}, ${today.getDate()} ${bulanStr[today.getMonth()]} ${today.getFullYear()}`;
-  const yyyymmdd=`${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
-  const pelaporCode=pelaporSet.length===1?pelaporSet[0]:'MULTI';
-  const nm=pelaporSet.length===1?(NAMA_PEKERJA[pelaporSet[0]]||pelaporSet[0]):'Multi-Pekerja';
-  const nomor=`REKAP-NGT-${yyyymmdd}-${pelaporCode}-${String(Date.now()).slice(-4)}`;
-  let total=0;
-  const rowsHTML=items.map((it,i)=>{
-    const sub=calcTotal(it); total+=sub;
-    const t=new Date(it.tgl);
-    const tglS=`${hariStr[t.getDay()].slice(0,3)}, ${t.getDate()} ${bulanStr[t.getMonth()]} ${t.getFullYear()}`;
-    const satL=it.satuan==='setengah_hari'?'½ hari':(it.satuan==='full_day'?'1 hari':(it.satuan_lbl||it.satuan||''));
-    const st=it.status==='lunas'?' <span style="color:#15803d;font-weight:700">✓ lunas</span>':'';
-    return `<tr style="background:${i%2?'#fff':'#fdf9f3'}">
-      <td style="padding:7px 10px;font-size:12px;border-bottom:1px solid #f0e6d8">${tglS}</td>
-      <td style="padding:7px 10px;font-size:12px;border-bottom:1px solid #f0e6d8">${(it.aktivitas||'').replace(/Bidang\s+(\d)/g,'Kebun $1')}${st}</td>
-      <td style="padding:7px 10px;font-size:12px;text-align:center;border-bottom:1px solid #f0e6d8">${satL}</td>
-      <td style="padding:7px 10px;font-size:12px;text-align:right;font-weight:600;border-bottom:1px solid #f0e6d8">Rp ${sub.toLocaleString('id-ID')}</td></tr>`;
-  }).join('');
-  const wrapper=document.createElement('div');
-  wrapper.style.cssText='position:fixed;left:-9999px;top:0';
-  wrapper.innerHTML=`<div id="rekap-capture" style="width:800px;background:#fffdf9;font-family:-apple-system,Segoe UI,Roboto,sans-serif;border:2px solid #d97706;position:relative">
-    <div style="background:linear-gradient(135deg,#92400e,#d97706);color:#fff;padding:20px 26px">
-      <div style="font-size:20px;font-weight:800;letter-spacing:.5px">📋 REKAPAN UPAH — MENUNGGU KONFIRMASI</div>
-      <div style="font-size:12px;opacity:.92;margin-top:4px">Wakaf Produktif Kebun Kopi Ngantang · ${nomor}</div>
-    </div>
-    <div style="position:absolute;top:45%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font-size:44px;font-weight:900;color:rgba(217,119,6,.13);white-space:nowrap;pointer-events:none">BELUM DIBAYAR</div>
-    <div style="padding:18px 26px">
-      <table style="width:100%;font-size:12.5px;margin-bottom:12px"><tr>
-        <td style="padding:3px 0;color:#78716c;width:130px">Pekerja</td><td style="font-weight:700">${nm}</td>
-        <td style="padding:3px 0;color:#78716c;width:120px">Tanggal Rekap</td><td style="font-weight:600">${todayLbl}</td></tr>
-        <tr><td style="color:#78716c">Jumlah Item</td><td style="font-weight:600">${items.length} hari kerja</td>
-        <td style="color:#78716c">Status</td><td style="font-weight:700;color:#b45309">⏳ Menunggu pembayaran</td></tr></table>
-      <table style="width:100%;border-collapse:collapse;border:1px solid #f0e6d8">
-        <thead><tr style="background:#92400e;color:#fff">
-          <th style="padding:8px 10px;font-size:11.5px;text-align:left">Tanggal</th>
-          <th style="padding:8px 10px;font-size:11.5px;text-align:left">Pekerjaan</th>
-          <th style="padding:8px 10px;font-size:11.5px">Durasi</th>
-          <th style="padding:8px 10px;font-size:11.5px;text-align:right">Upah</th></tr></thead>
-        <tbody>${rowsHTML}</tbody>
-        <tfoot><tr style="background:#fef3c7">
-          <td colspan="3" style="padding:10px;font-weight:800;font-size:13px;text-align:right">TOTAL TAGIHAN</td>
-          <td style="padding:10px;font-weight:900;font-size:15px;text-align:right;color:#92400e">Rp ${total.toLocaleString('id-ID')}</td></tr></tfoot>
-      </table>
-      <div style="margin-top:14px;background:#fffbeb;border:1px dashed #d97706;border-radius:8px;padding:10px 14px;font-size:12px;color:#92400e;line-height:1.6">
-        ❓ <b>Mohon konfirmasi:</b> upah mau <b>diambil sekarang</b> atau <b>dikumpulkan dulu</b> (dibayar nanti sekaligus)?<br>
-        ⚠️ Dokumen ini <b>REKAPAN / TAGIHAN</b> — <b>BUKAN bukti pembayaran</b>. Bukti Bayar resmi diterbitkan terpisah setelah upah diserahkan.
-      </div>
-      <div style="margin-top:10px;font-size:10.5px;color:#a8a29e;text-align:center;padding-bottom:14px">Dashboard Wakaf Produktif Kebun Kopi Ngantang · digenerate otomatis ${todayLbl}</div>
-    </div></div>`;
-  document.body.appendChild(wrapper);
-  try {
-    const canvas = await html2canvas(document.getElementById('rekap-capture'), { scale: 2, backgroundColor: '#fffdf9', useCORS: true });
-    const dataUrl = canvas.toDataURL('image/png');
-    const filename = `${nomor}.png`;
-    const waLines = items.map(it=>{
-      const t=new Date(it.tgl);
-      return `• ${t.getDate()} ${bulanStr[t.getMonth()]} — ${(it.aktivitas||'kerja')} (${it.satuan==='setengah_hari'?'½ hari':'1 hari'}): Rp ${calcTotal(it).toLocaleString('id-ID')}`;
-    }).join('\n');
-    const waText = encodeURIComponent(`Assalamu'alaikum ${nm} 🙏\n\nBerikut rekapan upah yang belum dibayar:\n\n${waLines}\n\n*TOTAL: Rp ${total.toLocaleString('id-ID')}*\n\nMau diambil sekarang atau dikumpulkan dulu? Mohon konfirmasinya ya. Matur nuwun 🌱`);
-    const w = window.open('', '_blank');
-    if (w) {
-      w.document.write(`<html><head><title>${filename}</title></head><body style="margin:0;padding:16px;background:#f5f5f4;font-family:sans-serif;text-align:center">
-        <div style="margin-bottom:12px">
-          <a href="${dataUrl}" download="${filename}" style="display:inline-block;background:#b45309;color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none;font-weight:700;margin-right:8px">📥 Download PNG</a>
-          <a href="https://wa.me/?text=${waText}" target="_blank" style="display:inline-block;background:#16a34a;color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none;font-weight:700">💬 Kirim via WhatsApp</a>
-        </div>
-        <img src="${dataUrl}" style="max-width:100%;border:1px solid #ddd;border-radius:8px"/></body></html>`);
-    } else {
-      const a=document.createElement('a'); a.href=dataUrl; a.download=filename; a.click();
-      alert('Popup diblokir — PNG di-download langsung. Utk WA, kirim manual file-nya.');
-    }
-    if (typeof showToast==='function') showToast(`📋 Rekapan ${nm} — ${items.length} item · Rp ${total.toLocaleString('id-ID')}`);
-  } catch(e) {
-    alert('Gagal generate rekapan: '+(e.message||e));
-  } finally {
-    document.body.removeChild(wrapper);
-  }
+  // ⭐ 22 Jul 2026: pakai TEMPLATE SAMA dgn Bukti Bayar (dual-mode) — per Wakif. Watermark BELUM DIBAYAR,
+  // judul REKAPAN UPAH — TAGIHAN, tanpa TTD, box konfirmasi, tombol WA. Read-only.
+  return generateBuktiBayar('rekap');
 }
 
 // ===== BUKTI BAYAR — Generate PNG receipt from selected items (Flow Y) =====
-async function generateBuktiBayar() {
+async function generateBuktiBayar(mode) {
+  const isRekap = (mode === 'rekap');   // ⭐ 22 Jul 2026: dual-mode — template SAMA utk Bukti Bayar & Rekapan Tagihan
   const checked = document.querySelectorAll('.upah-check:checked');
   if (checked.length === 0) {
     alert('📋 Pilih dulu item yang mau dimasukkan ke Bukti Bayar.\n\nCara: centang checkbox di tabel pada item yang sudah Lunas (status ✅).\nLalu klik "Bukti Bayar (dari Pilihan)".');
@@ -6533,8 +6442,11 @@ async function generateBuktiBayar() {
     }
   });
 
-  // Warn if any belum (incomplete)
-  if (belumCount > 0) {
+  // Warn if any belum (incomplete) — SKIP di mode rekap (rekap memang utk item belum)
+  if (isRekap && belumCount < items.length) {
+    if (!confirm(`ℹ️ ${items.length - belumCount} dari ${items.length} item terpilih SUDAH lunas.\n\nRekapan Tagihan biasanya untuk item BELUM dibayar. Lanjut?`)) return;
+  }
+  if (!isRekap && belumCount > 0) {
     if (!confirm(`⚠️ ${belumCount} dari ${items.length} item yang dipilih masih BELUM dibayar.\n\nBukti Bayar idealnya hanya untuk item yang sudah Lunas (sebagai validasi serah-terima ke pekerja).\n\nLanjutkan generate Bukti Bayar dengan item belum? (Tidak direkomendasikan)`)) {
       return;
     }
@@ -6558,7 +6470,7 @@ async function generateBuktiBayar() {
   const todayLbl = `${hariStr[today.getDay()]}, ${today.getDate()} ${bulanStr[today.getMonth()]} ${today.getFullYear()}`;
   const yyyymmdd = `${today.getFullYear()}${String(today.getMonth()+1).padStart(2,'0')}${String(today.getDate()).padStart(2,'0')}`;
   const pelaporCode = pelaporSet.length === 1 ? pelaporSet[0] : 'MULTI';
-  const nomorBukti = `BUKTI-NGT-${yyyymmdd}-${pelaporCode}-${String(Date.now()).slice(-4)}`;
+  const nomorBukti = `${isRekap?'REKAP':'BUKTI'}-NGT-${yyyymmdd}-${pelaporCode}-${String(Date.now()).slice(-4)}`;
   const namaPenerima = pelaporSet.length === 1 ? NAMA_PEKERJA[pelaporSet[0]] : 'Multi-Pekerja';
 
   // Sumber dana inference (kalau semua lunas via anto = petty cash)
@@ -6627,6 +6539,7 @@ async function generateBuktiBayar() {
   // (pakai box-shadow bukan border supaya tidak mempengaruhi internal section width)
   const receiptHTML = `
     <div id="bukti-bayar-render" style="position:fixed;top:0;left:-9999px;width:800px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;border:3px solid #1F5F47;box-shadow:inset 0 0 0 1px #ffffff, inset 0 0 0 2px #D4AF37, 0 4px 12px rgba(0,0,0,.1);box-sizing:content-box">
+      ${isRekap?'<div style="position:absolute;top:46%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font-size:52px;font-weight:900;color:rgba(217,119,6,.13);white-space:nowrap;pointer-events:none;z-index:5">BELUM DIBAYAR</div>':''}
       <!-- HEADER — Professional letterhead style -->
       <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47;position:relative">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
@@ -6638,7 +6551,7 @@ async function generateBuktiBayar() {
           </div>
         </div>
         <div style="margin-top:14px;padding-top:12px;border-top:2px dashed #D4AF37;display:flex;align-items:center;justify-content:space-between;gap:14px">
-          <div style="font-size:19px;font-weight:800;color:#1F5F47;letter-spacing:1.8px">BUKTI PEMBAYARAN UPAH</div>
+          <div style="font-size:19px;font-weight:800;color:${isRekap?'#b45309':'#1F5F47'};letter-spacing:1.8px">${isRekap?'REKAPAN UPAH — TAGIHAN':'BUKTI PEMBAYARAN UPAH'}</div>
           <div style="font-size:10px;color:#6b7878;letter-spacing:.6px;font-weight:600;text-align:right;line-height:1.4">No. Bukti<br><span style="font-family:'Courier New',monospace;color:#2e4040;font-size:11px;font-weight:700">${nomorBukti}</span></div>
         </div>
       </div>
@@ -6646,9 +6559,9 @@ async function generateBuktiBayar() {
       <!-- INFO BOX — 1x3 grid since No. Bukti moved to header -->
       <div style="padding:22px 32px 0">
         <div style="background:#f5f0e6;padding:14px 18px;border-radius:8px;border-left:4px solid #c14b3a;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 18px;font-size:13px">
-          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">TANGGAL BAYAR</div><div style="color:#2e4040;font-weight:700">${todayLbl}</div></div>
+          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">${isRekap?'TANGGAL REKAP':'TANGGAL BAYAR'}</div><div style="color:#2e4040;font-weight:700">${todayLbl}</div></div>
           <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:800;font-size:15px">${namaPenerima}</div></div>
-          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">SUMBER DANA</div><div style="color:#2e4040;font-weight:700">${sumberDana}</div></div>
+          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">${isRekap?'STATUS':'SUMBER DANA'}</div><div style="color:${isRekap?'#b45309':'#2e4040'};font-weight:700">${isRekap?'⏳ Menunggu pembayaran':sumberDana}</div></div>
         </div>
       </div>
 
@@ -6678,7 +6591,7 @@ async function generateBuktiBayar() {
                     <div style="font-size:12.5px;color:#2e4040;font-style:italic;font-weight:600;line-height:1.45">${terbilangRupiah(total)}</div>
                   </div>
                   <div style="text-align:right;flex-shrink:0">
-                    <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">Total Dibayar</div>
+                    <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">${isRekap?'Total Tagihan':'Total Dibayar'}</div>
                     <div style="font-size:22px;font-weight:800;color:#c14b3a;white-space:nowrap;letter-spacing:.3px">Rp ${total.toLocaleString('id-ID')}</div>
                   </div>
                 </div>
@@ -6688,13 +6601,19 @@ async function generateBuktiBayar() {
         </table>
       </div>
 
-      <!-- DOA SECTION -->
+      <!-- DOA (bukti) / KONFIRMASI (rekap) SECTION -->
+      ${isRekap?`
+      <div style="margin:16px 32px 0;padding:16px 22px;background:#fffbeb;border-radius:8px;border:1.5px dashed #d97706;font-size:12.5px;color:#92400e;line-height:1.7">
+        ❓ <b>Mohon konfirmasi:</b> upah mau <b>diambil sekarang</b> atau <b>dikumpulkan dulu</b> (dibayar nanti sekaligus)?<br>
+        ⚠️ Dokumen ini <b>REKAPAN / TAGIHAN — BUKAN bukti pembayaran</b>. Bukti Bayar resmi diterbitkan terpisah setelah upah diserahkan.
+      </div>`:`
       <div style="margin:16px 32px 0;padding:18px 22px;background:#e8f1ec;border-radius:8px;border-left:4px solid #5a9080;text-align:center">
         <div style="font-size:13px;line-height:1.7;color:#2e4040;font-style:italic">Terima kasih atas kerja keras dan amanahnya. Semoga rezeki ini barakah dan menguatkan keluarga.</div>
         <div style="margin-top:10px;font-size:15px;font-weight:700;color:#5a9080;letter-spacing:.5px">Barakallahu fiikum.</div>
-      </div>
+      </div>`}
 
-      <!-- SIGNATURE SECTION — TTD Adib + dummy TTD penerima (auto-generated) -->
+      <!-- SIGNATURE SECTION — TTD Adib + dummy TTD penerima (auto-generated) — SKIP di rekap -->
+      ${isRekap?'<div style="height:14px"></div>':`
       <div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
         <div style="text-align:center">
           <div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div>
@@ -6713,7 +6632,7 @@ async function generateBuktiBayar() {
       <!-- DISCLAIMER auto-generated signature -->
       <div style="margin:0 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">
         ⚠️ Tanda tangan penerima di atas <strong>auto-generated</strong> untuk validasi pembayaran internal/digital saja.
-      </div>
+      </div>`}
 
       <!-- FOOTER -->
       <div style="background:#2e4040;color:#a8c8bc;padding:11px 32px;font-size:10px;text-align:center;letter-spacing:.5px;line-height:1.5">
@@ -6758,7 +6677,8 @@ async function generateBuktiBayar() {
     const filename = `${nomorBukti}.png`;
 
     // Build summary message
-    const summaryMsg = `📊 RINGKASAN BUKTI BAYAR\n\n• No. Bukti: ${nomorBukti}\n• Penerima: ${namaPenerima}\n• Total Item: ${items.length}\n• Total Dibayar: ${fmtRpShort(total)}\n• Sumber Dana: ${sumberDana}\n\n📱 Cara share ke pekerja:\n1. Download/save file ${filename}\n2. Buka WhatsApp → chat pekerja\n3. Attach → Foto/Galeri → pilih file\n4. Send\n\nBarakallahu fiikum.`;
+    const waRekapText = encodeURIComponent(`Assalamu'alaikum ${namaPenerima} 🙏\n\nBerikut rekapan upah yang belum dibayar (${items.length} hari kerja):\n\n`+items.map(it=>{const t=new Date(it.tgl);return `• ${t.getDate()} ${bulanStr[t.getMonth()]} — ${(it.aktivitas||'kerja')} (${it.satuan==='setengah_hari'?'½ hari':'1 hari'}): Rp ${calcTotal(it).toLocaleString('id-ID')}`;}).join('\n')+`\n\n*TOTAL: Rp ${total.toLocaleString('id-ID')}*\n\nMau diambil sekarang atau dikumpulkan dulu? Mohon konfirmasinya ya. Matur nuwun 🌱`);
+    const summaryMsg = `📊 RINGKASAN ${isRekap?'REKAPAN TAGIHAN':'BUKTI BAYAR'}\n\n• No. Bukti: ${nomorBukti}\n• Penerima: ${namaPenerima}\n• Total Item: ${items.length}\n• Total Dibayar: ${fmtRpShort(total)}\n• Sumber Dana: ${sumberDana}\n\n📱 Cara share ke pekerja:\n1. Download/save file ${filename}\n2. Buka WhatsApp → chat pekerja\n3. Attach → Foto/Galeri → pilih file\n4. Send\n\nBarakallahu fiikum.`;
 
     // Open in new window — universal solution that works in Safari + Chrome + Firefox
     // User sees full receipt + explicit Download button + right-click Save option
@@ -6794,9 +6714,9 @@ async function generateBuktiBayar() {
 </head>
 <body>
   <div class="toolbar">
-    <h1>📄 BUKTI PEMBAYARAN UPAH<small>${filename}</small></h1>
+    <h1>${isRekap?'📋 REKAPAN UPAH — TAGIHAN':'📄 BUKTI PEMBAYARAN UPAH'}<small>${filename}</small></h1>
     <div class="actions">
-      <a class="primary" href="${dataUrl}" download="${filename}" id="dl-btn">📥 Download PNG</a>
+      <a class="primary" href="${dataUrl}" download="${filename}" id="dl-btn">📥 Download PNG</a>${isRekap?`<a class="primary" style="background:#16a34a;margin-left:8px" href="https://wa.me/?text=${waRekapText}" target="_blank">💬 Kirim via WhatsApp</a>`:''}
       <button onclick="window.print()">🖨️ Print</button>
       <button onclick="window.close()">✕ Tutup</button>
     </div>
@@ -19000,6 +18920,11 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     // Memory: feedback_pattern10_upah_merge_not_overwrite
     {
       const upahMergeSetter = (d) => {
+        // ⭐ 22 Jul 2026 — TYPE NORMALIZATION (lesson id-string bug): id/tarif/qty numeric-string → Number.
+        // Casus: 25 item backfill REST ber-id string → find(x.id===+dataset.id) strict-fail → item "tak terlihat"
+        // oleh rekapan/bayar/bukti. Data sudah dinumberkan; ini pertahanan utk data masuk berikutnya.
+        if (Array.isArray(d)) d.forEach(e => { if(!e) return; ['id','tarif','qty'].forEach(k => {
+          if (typeof e[k]==='string' && /^\d+$/.test(e[k])) e[k]=Number(e[k]); }); });
         if (typeof UPAH_ITEMS === 'undefined' || !Array.isArray(d)) return;
         // ⭐ 8 Juni 2026 (Task 1 fix): Skip cloud entries yang baru di-delete via audit handler.
         // Mencegah upahMergeSetter resurrect entries yang user intentionally deleted (Cashbook
