@@ -35,8 +35,11 @@ service cloud.firestore {
     // ===== Worker allowlist — SINGLE SOURCE (REV 27 Jun 2026) =====
     // ⭐ Tambah pekerja baru CUKUP di isFieldWorker() di bawah — otomatis berlaku ke laporan + workers.
     //    Lesson 27 Jun: CHRISTO sempat kelewat krn dulu ada 3 array inline terpisah.
+    // ⭐ 22 Jul 2026 — DATA-DRIVEN (req Wakif): pekerja baru dari halaman Tim otomatis diakui rules
+    // via mirror collection worker_tokens/{TOKEN} (exists lookup). List hardcode = fallback veteran.
     function isFieldWorker(tok) {
-      return tok in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS', 'CHRISTO', 'NARDI'];
+      return tok in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS', 'CHRISTO', 'NARDI']
+        || exists(/databases/$(database)/documents/worker_tokens/$(tok));
     }
     function isLaporanPelapor(tok) {
       return isFieldWorker(tok) || tok in ['WAKIF', 'ADIB'];
@@ -243,6 +246,14 @@ service cloud.firestore {
                          .hasOnly(['signature_png','signed_at','signed_meta','status'])
                     && request.resource.data.status == 'signed';
       allow delete: if true;
+    }
+
+    // ===== worker_tokens (22 Jul 2026) — mirror token pekerja utk isFieldWorker() data-driven =====
+    // Ditulis otomatis oleh dashboard (halaman Tim). Phase 2: tighten write ke staff-only.
+    match /worker_tokens/{tok} {
+      allow read: if true;
+      allow create, update: if request.resource.data.nama is string;
+      allow delete: if false;
     }
 
     // ===== Default deny =====

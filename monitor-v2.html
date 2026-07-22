@@ -16949,6 +16949,7 @@ function toggleWorkerActive(token) {
   // override balik flag active saat reload. Fix: persist custom LS + push cloud tiap toggle.
   if (typeof saveCustomWorkerDefsToLS === 'function') saveCustomWorkerDefsToLS();
   if (typeof window.syncWorkerDefsCustomToFirestore === 'function') window.syncWorkerDefsCustomToFirestore();
+  if (typeof window.syncWorkerTokensToFirestore === 'function') window.syncWorkerTokensToFirestore();   // ⭐ rules data-driven mirror
   renderWorkersTab();
   // Re-render Distribusi (PIC badges) + Form Input radio + filter dropdowns
   if (typeof renderDistribusi === 'function') renderDistribusi();
@@ -19184,6 +19185,26 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     {
       const DEFAULT_TOKENS = ['KUMPUL', 'YIT', 'WAKIF', 'ANTO'];
       const WORKER_DEFS_CUSTOM_SCHEMA_VERSION = '1.0';
+
+      // ⭐ 22 Jul 2026 — RULES DATA-DRIVEN (req Wakif: tambah pekerja dari halaman Tim = otomatis tembus rules).
+      // Tiap token WORKER_DEFS di-mirror ke collection worker_tokens/{TOKEN}; firestore.rules pakai exists()
+      // → publish rules SEKALI, setelah itu onboarding pekerja 100% dari UI tanpa sentuh Console lagi.
+      window.syncWorkerTokensToFirestore = async () => {
+        if (typeof WORKER_DEFS === 'undefined') return;
+        try {
+          for (const w of WORKER_DEFS) {
+            if (!w || !w.token) continue;
+            await setDoc(doc(db, 'worker_tokens', w.token), {
+              nama: w.nama || w.token,
+              active: !!w.active,
+              retired: !!w.retired,
+              updated_at: serverTimestamp(), updated_by: 'wakif_dashboard'
+            });
+          }
+          console.log('[WorkerTokens] ✓ mirrored ' + WORKER_DEFS.length + ' tokens');
+        } catch (e) { console.warn('[WorkerTokens] mirror fail (rules blm data-driven? publish dulu):', e.message || e); }
+      };
+      setTimeout(() => { try { window.syncWorkerTokensToFirestore(); } catch(e){} }, 6000);   // ensure on load
 
       window.syncWorkerDefsCustomToFirestore = async () => {
         if (typeof WORKER_DEFS === 'undefined') return;
