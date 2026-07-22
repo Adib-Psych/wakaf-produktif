@@ -6684,8 +6684,16 @@ async function generateBuktiBayar(mode) {
     // User sees full receipt + explicit Download button + right-click Save option
     const win = window.open('', '_blank', 'width=900,height=1200,scrollbars=yes');
     if (!win) {
-      // Popup blocked — fallback to direct download attempt + alert
-      alert('⚠️ Popup terblokir browser.\n\nUntuk fix:\n• Safari: Preferences → Websites → Pop-ups → Allow for site\n• Chrome: Klik ikon popup di address bar → Allow\n\nLalu klik Bukti Bayar lagi.');
+      // Popup blocked — fallback: direct blob download di window utama (22 Jul: blob, bukan data URL)
+      try {
+        const blob = await (await fetch(dataUrl)).blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob); a.download = filename;
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        alert('⚠️ Popup terblokir — PNG di-download langsung sebagai ' + filename + '.\n\n(Izinkan popup utk preview + tombol WA: Chrome → ikon popup di address bar → Allow.)');
+      } catch(e) {
+        alert('⚠️ Popup terblokir & download gagal: ' + (e.message||e) + '\nIzinkan popup lalu coba lagi.');
+      }
       return;
     }
 
@@ -6729,11 +6737,17 @@ async function generateBuktiBayar(mode) {
     <img src="${dataUrl}" alt="Bukti Bayar ${nomorBukti}" id="receipt-img">
   </div>
   <script>
-    // Auto-trigger download (works in most browsers)
-    setTimeout(() => {
+    // ⭐ 22 Jul 2026 FIX download mati: Chrome blokir download anchor data:URL besar (>2MB) SECARA DIAM.
+    // Solusi: konversi data:URL → Blob URL (URL.createObjectURL) → download andal Chrome+Safari, lalu auto-click.
+    (async () => {
       const btn = document.getElementById('dl-btn');
-      if (btn) btn.click();
-    }, 500);
+      try {
+        const img = document.getElementById('receipt-img');
+        const blob = await (await fetch(img.src)).blob();
+        btn.href = URL.createObjectURL(blob);
+      } catch(e) { console.warn('blob convert fail — pakai data URL langsung', e); }
+      setTimeout(() => { if (btn) btn.click(); }, 400);
+    })();
   <\/script>
 </body>
 </html>`;
