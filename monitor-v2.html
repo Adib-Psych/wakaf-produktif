@@ -4895,7 +4895,24 @@ function submitForm() {
   }
   alertSummary += upahMsg;
   alert(alertSummary);
-  resetForm();
+  // ⭐ 22 Jul 2026 (req Wakif) — MULTI-AKTIVITAS chain-add: 1 hari kerja bisa >1 aktivitas
+  // (mis. sambil panen juga babat). Tawarkan tambah aktivitas lain dgn tgl/pekerja/kebun/durasi
+  // DIPERTAHANKAN, hanya kategori+detail+catatan di-reset. Data model tetap 1 entry = 1 kategori
+  // (bersih utk SOP compliance & detail_form); upah TIDAK dobel (L3 dedup 1 upah/hari/pekerja).
+  const _nmChain = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor || 'pekerja';
+  if (confirm('➕ Tambah AKTIVITAS LAIN untuk ' + _nmChain + ' di tanggal yang sama?\n\n(mis. sambil panen juga babat rumput — tanggal/kebun/durasi dipertahankan, tinggal pilih kategori berikutnya. Upah harian TIDAK dobel.)')) {
+    // partial reset: keep pelapor, tgl, kebun, durasi
+    document.getElementById('f-kategori').value = '';
+    STATE.kategori = null;
+    document.getElementById('f-pohon').value = '';
+    document.getElementById('f-catatan').value = '';
+    if (typeof renderKategoriDetail === 'function') { try { renderKategoriDetail(''); } catch(e){} }
+    const _kat = document.getElementById('f-kategori');
+    if (_kat) { _kat.scrollIntoView({behavior:'smooth',block:'center'}); _kat.style.transition='box-shadow .3s'; _kat.style.boxShadow='0 0 0 3px #15803d'; setTimeout(()=>{ _kat.style.boxShadow=''; }, 2000); }
+    if (typeof showToast === 'function') showToast('➕ Pilih kategori aktivitas berikutnya — tanggal/kebun/durasi masih tersimpan');
+  } else {
+    resetForm();
+  }
   renderDashboard(); renderLog();
 }
 

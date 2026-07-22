@@ -2055,8 +2055,19 @@ async function submitForm() {
       successModal.showModal();
     }
 
-    // Reset form
-    resetForm();
+    // ⭐ 22 Jul 2026 (req Wakif) — MULTI-AKTIVITAS: tawarkan tambah aktivitas lain (tgl/kebun/durasi dipertahankan)
+    if (confirm('➕ Tambah aktivitas LAIN untuk hari yang sama?\n(mis. sambil panen juga babat — tinggal pilih kategori berikutnya)')) {
+      const _keep = { kebun: [...(STATE.selected.kebun||[])], durasi: STATE.selected.durasi, tgl: document.getElementById('f-tgl') ? document.getElementById('f-tgl').value : null };
+      resetForm();
+      if (_keep.tgl && document.getElementById('f-tgl')) document.getElementById('f-tgl').value = _keep.tgl;
+      STATE.selected.kebun = _keep.kebun;
+      STATE.selected.durasi = _keep.durasi;
+      document.querySelectorAll('#kebun-chips .chip').forEach(c => { if (_keep.kebun.includes(c.dataset.val)) c.classList.add('active'); });
+      document.querySelectorAll('#durasi-chips .chip').forEach(c => { if (c.dataset.val === _keep.durasi) c.classList.add('active'); });
+      showToast('➕ Pilih kategori berikutnya — tanggal/kebun/durasi masih tersimpan', 'success');
+    } else {
+      resetForm();
+    }
 
   } catch (e) {
     console.error('[Submit] failed', e);
