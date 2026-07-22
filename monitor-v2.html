@@ -584,7 +584,7 @@
               <div class="radio-pill" data-val="full_day" onclick="setRadio('form-durasi',this)">☀️ Full Day</div>
               <div class="radio-pill" data-val="panjat_per_pohon" onclick="setRadio('form-durasi',this)">📦 Borongan</div>
             </div>
-            <div style="font-size:10px;color:var(--mute);margin-top:4px">Wajib diisi untuk Cak Yit / Pak Kumpul (auto-link ke Upah). Borongan = pekerjaan per-output (panjat durian, rorak, lubang lamtoro, dll).</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:4px">Wajib untuk pekerja ber-tarif harian (auto-link ke Upah Pekerja). Borongan = pekerjaan per-output (panjat durian, rorak, lubang lamtoro, dll).</div>
           </div>
           <div class="field">
             <label class="field-lbl">Jumlah Pohon Dikerjakan</label>
@@ -914,7 +914,7 @@
           <div style="background:#fff0f0;padding:12px 14px;border-radius:8px;border-left:3px solid var(--cherry)">
             <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">💵 BAYAR PEKERJA LANGSUNG</div>
             <div style="font-size:17px;font-weight:800;color:var(--cherry);margin-top:4px" id="total-bayar-pekerja-display">Rp. 0,-</div>
-            <div style="font-size:10px;color:var(--mute);margin-top:2px">Upah harian + borongan ke Cak Yit · Pak Kumpul</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:2px">Upah harian + borongan ke tim lapangan aktif</div>
           </div>
           <div style="background:#fef9e7;padding:12px 14px;border-radius:8px;border-left:3px solid #8a6d1f">
             <div style="font-size:10px;color:var(--mute);letter-spacing:.5px;font-weight:700">🛍️ BELANJA LAIN-LAIN</div>
@@ -1117,7 +1117,7 @@
           </div>
           <div>
             <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Pelapor</label>
-            <input type="text" id="opt-obs-pelapor" placeholder="Cth: Adib · Cak Yit · Pak Kumpul" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
+            <input type="text" id="opt-obs-pelapor" placeholder="Cth: Adib · tim lapangan" style="width:100%;padding:10px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;margin-top:4px">
           </div>
         </div>
         <div style="display:flex;gap:10px;justify-content:flex-end;padding:14px 24px;border-top:1px solid #eee;background:#fafbfa;flex-shrink:0">
@@ -1225,7 +1225,7 @@
           <div style="font-size:12px;color:var(--mute)" id="recover-modal-info">Scanning…</div>
         </div>
         <div style="padding:14px 24px;background:#FFF8E5;border-bottom:1px solid #F0E5C5;font-size:11px;color:#8B6914;line-height:1.5">
-          💡 Saya temukan laporan harian Pak Kumpul/Cak Yit yang belum punya entry upah (kemungkinan karena diinput sebelum auto-link aktif). Pilih durasi untuk masing-masing → entry upah akan dibuat otomatis dengan status <b>belum dibayar</b>. Skip kalau bukan kerja berbayar (misal cuma observasi).
+          💡 Saya temukan laporan harian pekerja yang belum punya entry upah (kemungkinan karena diinput sebelum auto-link aktif). Pilih durasi untuk masing-masing → entry upah akan dibuat otomatis dengan status <b>belum dibayar</b>. Skip kalau bukan kerja berbayar (misal cuma observasi).
         </div>
         <div style="flex:1;overflow-y:auto;padding:14px 24px">
           <table style="width:100%;font-size:12px;border-collapse:collapse" id="recover-tbl">
@@ -2366,7 +2366,7 @@
       <div class="card" style="background:linear-gradient(135deg,#2D8466,#1F5F47);color:#fff;border:0">
         <div style="font-size:11px;letter-spacing:1.5px;color:#a8c8bc;font-weight:800;margin-bottom:8px">🎫 SECTION A · WORKER URL MANAGEMENT</div>
         <div style="font-size:18px;font-weight:800;margin-bottom:6px">Manage Worker Tokens & Activity</div>
-        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk Pak Kumpul · Cak Yit. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian.</div>
+        <div style="font-size:12px;color:#c5d8d2;line-height:1.6">Generate/copy/revoke URL untuk semua pekerja aktif. Track last_active timestamp dari Firestore <code style="background:rgba(255,255,255,.15);padding:2px 6px;border-radius:4px;color:#fff">workers/</code> collection. Share URL via WA → worker tap → submit laporan harian.</div>
       </div>
 
       <div class="card">
@@ -2439,7 +2439,7 @@
         <div style="font-size:12px;font-weight:700;color:var(--earth);margin-bottom:6px">📱 Cara Worker Pakai</div>
         <ol style="margin-left:18px;font-size:11.5px;color:var(--mute);line-height:1.7">
           <li>Adib copy URL dari kartu di atas</li>
-          <li>Share via WhatsApp ke worker (e.g., Pak Kumpul)</li>
+          <li>Share via WhatsApp ke pekerja terkait</li>
           <li>Worker tap link di HP → buka lapor.html</li>
           <li>Worker isi form (tanggal, kebun, kategori, durasi, catatan, foto) → submit</li>
           <li>Entry langsung muncul di dashboard &lt;10 detik via Firestore real-time sync</li>
@@ -2470,9 +2470,10 @@
       <div class="card" style="background:var(--cream);border-left:4px solid var(--gold)">
         <div class="card-title" style="color:var(--gold);margin-top:0">📋 Catatan Distribusi</div>
         <div style="font-size:12px;color:#4a4030;line-height:1.7">
-          <p style="margin-bottom:8px"><strong>Cak Yit (Yitno):</strong> spesialis bagian atas pohon — pruning, sambung pucuk Robusta klon unggul, wiwilan. <strong>+ PIC Pupuk (sole owner, locked 19 Mei 2026)</strong>. Tarif Rp 60K ½ hari · Rp 120K full day. Borongan: Rp 20K/pohon untuk panjat durian (insidental).</p>
-          <p style="margin-bottom:8px"><strong>Pak Kumpul:</strong> spesialis bagian bawah + tanaman penaung + konservasi (babat rumput, rorak, composting, lamtoro/jahe Bidang 3). Tarif Rp 50K ½ hari · Rp 100K full day. Plus side project jahe self-financed di Kebun 3 (tidak dibayar dari kas kebun kopi wakaf — biaya & hasil dari panen jahe sendiri).</p>
-          <p style="margin-bottom:0"><strong>Wakif (Adib) + Hendy:</strong> keputusan strategis, anggaran, soil test, infrastruktur, audit transparansi, koordinasi observasi & verifikasi compliance. Tim panen ad-hoc saat Jun-Agu (extra labor + Cak Yit + Pak Kumpul).</p>
+          <p style="margin-bottom:8px"><strong>Pekerja Bagian ATAS Pohon:</strong> pruning, sambung pucuk Robusta klon unggul, wiwilan, + co-executor pemupukan. Pemegang peran & tarif aktual → lihat kartu <strong>Tim Aktif</strong> di atas (role bisa berganti orang seiring transisi tim — desain multi-pekerja).</p>
+          <p style="margin-bottom:8px"><strong>Pekerja Bagian BAWAH Pohon:</strong> babat rumput, pemupukan dasar, rorak, composting, tanaman penaung (lamtoro). Pemegang peran & tarif aktual → kartu Tim Aktif. Borongan (semua pekerja): panjat durian Rp 20K/pohon · rorak Rp 30K/unit · lamtoro Rp 5K/lubang.</p>
+          <p style="margin-bottom:8px"><strong>Pemanen (crew petik):</strong> panen petik selektif merah, penjemuran, sortasi buah — model harian (locked 19 Jul 2026).</p>
+          <p style="margin-bottom:0"><strong>Wakif (Adib) + Hendy:</strong> keputusan strategis, anggaran, soil test, infrastruktur, audit transparansi, koordinasi observasi & verifikasi compliance. Tim panen ad-hoc saat musim (extra labor + tim lapangan aktif).</p>
         </div>
       </div>
     </div>
@@ -4933,15 +4934,15 @@ function addExtraKategori() {
   if (!wrap || !base) return;
   const row = document.createElement('div');
   row.className = 'extra-kategori-row';
-  row.style.cssText = 'display:flex;gap:6px;align-items:center;margin-top:6px';
+  row.style.cssText = 'display:flex;gap:6px;align-items:center;margin-top:6px;width:100%;max-width:100%';
   const sel = base.cloneNode(true);
   sel.id = 'f-kategori-extra-' + Date.now() + '-' + wrap.children.length;
   sel.removeAttribute('onchange');
-  sel.style.cssText = 'flex:1';
+  sel.style.cssText = 'flex:1 1 auto;min-width:0;width:auto';
   sel.value = '';
   const del = document.createElement('button');
   del.type = 'button'; del.textContent = '✕';
-  del.style.cssText = 'padding:4px 10px;border:1px solid #fca5a5;background:#fef2f2;color:#b91c1c;border-radius:6px;cursor:pointer;font-size:12px';
+  del.style.cssText = 'flex-shrink:0;padding:4px 10px;border:1px solid #fca5a5;background:#fef2f2;color:#b91c1c;border-radius:6px;cursor:pointer;font-size:12px';
   del.onclick = () => row.remove();
   row.appendChild(sel); row.appendChild(del);
   wrap.appendChild(row);
