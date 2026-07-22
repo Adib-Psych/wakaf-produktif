@@ -36,7 +36,7 @@ service cloud.firestore {
     // ⭐ Tambah pekerja baru CUKUP di isFieldWorker() di bawah — otomatis berlaku ke laporan + workers.
     //    Lesson 27 Jun: CHRISTO sempat kelewat krn dulu ada 3 array inline terpisah.
     function isFieldWorker(tok) {
-      return tok in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS', 'CHRISTO'];
+      return tok in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS', 'CHRISTO', 'NARDI'];
     }
     function isLaporanPelapor(tok) {
       return isFieldWorker(tok) || tok in ['WAKIF', 'ADIB'];

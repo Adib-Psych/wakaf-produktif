@@ -5009,7 +5009,9 @@ const TARIF_PEKERJA = {
   // Data per-KG tetap terkumpul via Ledger Output utk evaluasi model tahun depan.
   MAKMIS:  { setengah_hari: 50000, full_day: 100000 },
   HARNI:   { setengah_hari: 50000, full_day: 100000 },
-  CHRISTO: { setengah_hari: 50000, full_day: 100000 }
+  CHRISTO: { setengah_hari: 50000, full_day: 100000 },
+  // ⭐ 22 Jul 2026: Lek Nardi diaktifkan kembali Wakif — tarif sesuai tarif_label worker defs (isian Wakif).
+  NARDI:   { setengah_hari: 60000, full_day: 100000 }
 };
 // Helper untuk legacy code yang masih panggil TARIF[satuan] — default ke Cak Yit (worst case)
 const TARIF = { setengah_hari: 60000, full_day: 120000 };
@@ -16942,6 +16944,11 @@ function toggleWorkerActive(token) {
   // Sync to PIC_REGISTRY active flag bila ada entry yang match
   if (PIC_REGISTRY[token]) PIC_REGISTRY[token].active = w.active;
   saveWorkerActiveToLS();
+  // ⭐ 22 Jul 2026 FIX revert-after-refresh (Adib report): pekerja CUSTOM (NARDI/pemanen) hidup di
+  // worker_defs_custom cloud — toggle dulu TIDAK di-persist ke sana → applyCustomWorkers dari cloud
+  // override balik flag active saat reload. Fix: persist custom LS + push cloud tiap toggle.
+  if (typeof saveCustomWorkerDefsToLS === 'function') saveCustomWorkerDefsToLS();
+  if (typeof window.syncWorkerDefsCustomToFirestore === 'function') window.syncWorkerDefsCustomToFirestore();
   renderWorkersTab();
   // Re-render Distribusi (PIC badges) + Form Input radio + filter dropdowns
   if (typeof renderDistribusi === 'function') renderDistribusi();

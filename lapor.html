@@ -810,7 +810,8 @@ const WORKER_MAP = {
   // ⭐ Pemanen / crew petik harian (self-report via PWA, 27 Jun 2026). Tarif Rp 50K/hari (model upah pemanen masih dievaluasi: harian vs per-KG).
   HARNI:  { name: 'Mba Harmi',  tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true },  // 19 Jul: model harian LOCKED, seragam 50/100
   MAKMIS: { name: 'Mak Mis',    tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true },  // 19 Jul
-  CHRISTO:{ name: 'Christo',    tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true }   // 19 Jul
+  CHRISTO:{ name: 'Christo',    tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: true },  // 19 Jul
+  NARDI:  { name: 'Lek Nardi',  tarif: { setengah_hari: 60000, satu_hari: 100000 }, active: true }   // 22 Jul: reaktivasi
 };
 
 // KATEGORI_BY_WORKER — Role-based filter (Notulen 1-2 Mei 2026, updated 16 Mei 2026)
@@ -847,7 +848,8 @@ const KATEGORI_BY_WORKER = {
   // ⭐ Pemanen / crew petik harian (27 Jun 2026) — fokus panen + pascapanen
   HARNI:  ['panen', 'penjemuran', 'sortasi_buah', 'lain'],
   MAKMIS: ['panen', 'penjemuran', 'sortasi_buah', 'lain'],
-  CHRISTO:['panen', 'penjemuran', 'sortasi_buah', 'lain']
+  CHRISTO:['panen', 'penjemuran', 'sortasi_buah', 'lain'],
+  NARDI:  ['panen', 'penjemuran', 'sortasi_buah', 'lain']
 };
 
 const KATEGORI_TOPIK_MAP = {
