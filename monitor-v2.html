@@ -573,6 +573,9 @@
                 <option value="lain">📝 Lainnya (free text)</option>
               </optgroup>
             </select>
+            <!-- ⭐ 22 Jul 2026 (req Wakif) — MULTI-AKTIVITAS INLINE: kategori utama wajib, tambahan opsional -->
+            <div id="extra-kategori-wrap" style="margin-top:8px"></div>
+            <button type="button" onclick="addExtraKategori()" style="margin-top:6px;font-size:11.5px;padding:5px 12px;border:1.5px dashed #15803d;background:#f0fdf4;color:#15803d;border-radius:7px;cursor:pointer;font-weight:600">➕ Tambah Aktivitas Lain (opsional — mis. sambil panen juga babat)</button>
           </div>
           <div class="field">
             <label class="field-lbl">Durasi Kerja <span class="req">*</span></label>
@@ -4893,30 +4896,65 @@ function submitForm() {
       climateAlerts.map((a,i) => `${i+1}. ${a.msg}`).join('\n');
     alertSummary += '\n\nStatus compliance: ' + (hasHighAlert ? 'PARTIAL (deviation karena climate trigger)' : 'COMPLIANT');
   }
+  // ⭐ 22 Jul 2026 v2 (req Wakif — INLINE, bukan popup): entry TAMBAHAN dari dropdown "Tambah Aktivitas Lain".
+  // Tiap extra = laporan entry PENUH (kategori beda, tgl/pekerja/kebun/durasi sama) → terbaca normal oleh
+  // SOP compliance, milestone auto-suggest, Log Harian. Upah TIDAK dobel: blok auto-link upah di atas
+  // jalan 1× per submit (bukan per entry) — 1 upah/hari/pekerja (model harian).
+  const _extras = (typeof collectExtraKategori === 'function') ? collectExtraKategori(kategori) : [];
+  _extras.forEach(katX => {
+    const extraEntry = {
+      ...newEntry,
+      id: 'lap_' + tgl.replace(/-/g,'') + '_' + Math.random().toString(36).substr(2,5),
+      kategori: katX,
+      detail: (catatan ? catatan + ' · ' : '') + '(multi-aktivitas, bersama ' + kategori + ')',
+      detail_form: { _kategoriTitle: 'Multi-aktivitas', _bersama: kategori },
+      created_at: new Date().toISOString(),
+      src: 'wakif_form_multi'
+    };
+    STATE.laporan.unshift(extraEntry);
+    if (typeof window.syncLaporanEntryToFirestore === 'function') {
+      window.syncLaporanEntryToFirestore(extraEntry).catch(e => console.warn('[multi-akt] sync fail:', e));
+    }
+  });
+  if (_extras.length) {
+    localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+    alertSummary += '\n\n➕ ' + _extras.length + ' aktivitas tambahan ikut tercatat: ' + _extras.join(', ') + ' (upah harian tetap 1×).';
+  }
   alertSummary += upahMsg;
   alert(alertSummary);
-  // ⭐ 22 Jul 2026 (req Wakif) — MULTI-AKTIVITAS chain-add: 1 hari kerja bisa >1 aktivitas
-  // (mis. sambil panen juga babat). Tawarkan tambah aktivitas lain dgn tgl/pekerja/kebun/durasi
-  // DIPERTAHANKAN, hanya kategori+detail+catatan di-reset. Data model tetap 1 entry = 1 kategori
-  // (bersih utk SOP compliance & detail_form); upah TIDAK dobel (L3 dedup 1 upah/hari/pekerja).
-  const _nmChain = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor || 'pekerja';
-  if (confirm('➕ Tambah AKTIVITAS LAIN untuk ' + _nmChain + ' di tanggal yang sama?\n\n(mis. sambil panen juga babat rumput — tanggal/kebun/durasi dipertahankan, tinggal pilih kategori berikutnya. Upah harian TIDAK dobel.)')) {
-    // partial reset: keep pelapor, tgl, kebun, durasi
-    document.getElementById('f-kategori').value = '';
-    STATE.kategori = null;
-    document.getElementById('f-pohon').value = '';
-    document.getElementById('f-catatan').value = '';
-    if (typeof renderKategoriDetail === 'function') { try { renderKategoriDetail(''); } catch(e){} }
-    const _kat = document.getElementById('f-kategori');
-    if (_kat) { _kat.scrollIntoView({behavior:'smooth',block:'center'}); _kat.style.transition='box-shadow .3s'; _kat.style.boxShadow='0 0 0 3px #15803d'; setTimeout(()=>{ _kat.style.boxShadow=''; }, 2000); }
-    if (typeof showToast === 'function') showToast('➕ Pilih kategori aktivitas berikutnya — tanggal/kebun/durasi masih tersimpan');
-  } else {
-    resetForm();
-  }
+  resetForm();
   renderDashboard(); renderLog();
 }
 
+// ⭐ 22 Jul 2026 — MULTI-AKTIVITAS INLINE (menggantikan popup chain-add yang ribet utk entry tunggal)
+function addExtraKategori() {
+  const wrap = document.getElementById('extra-kategori-wrap');
+  const base = document.getElementById('f-kategori');
+  if (!wrap || !base) return;
+  const row = document.createElement('div');
+  row.className = 'extra-kategori-row';
+  row.style.cssText = 'display:flex;gap:6px;align-items:center;margin-top:6px';
+  const sel = base.cloneNode(true);
+  sel.id = 'f-kategori-extra-' + Date.now() + '-' + wrap.children.length;
+  sel.removeAttribute('onchange');
+  sel.style.cssText = 'flex:1';
+  sel.value = '';
+  const del = document.createElement('button');
+  del.type = 'button'; del.textContent = '✕';
+  del.style.cssText = 'padding:4px 10px;border:1px solid #fca5a5;background:#fef2f2;color:#b91c1c;border-radius:6px;cursor:pointer;font-size:12px';
+  del.onclick = () => row.remove();
+  row.appendChild(sel); row.appendChild(del);
+  wrap.appendChild(row);
+}
+function collectExtraKategori(primaryKat) {
+  const wrap = document.getElementById('extra-kategori-wrap');
+  if (!wrap) return [];
+  const vals = [...wrap.querySelectorAll('select')].map(x => x.value).filter(Boolean);
+  return [...new Set(vals)].filter(k => k !== primaryKat);   // unik + beda dari kategori utama
+}
+
 function resetForm() {
+  const _ekw = document.getElementById('extra-kategori-wrap'); if (_ekw) _ekw.innerHTML = '';
   document.querySelectorAll('#panel-form input, #panel-form textarea, #panel-form select').forEach(el => {
     if (el.type === 'date') el.value = new Date().toISOString().slice(0,10);
     else el.value = '';
