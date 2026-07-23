@@ -3861,7 +3861,10 @@ function renderLog() {
   };
   const tbody = document.getElementById('log-tbody');
   tbody.innerHTML = data.map(d => {
-    const [name,cls] = roleMap[d.pelapor] || [d.pelapor || '?', 'role-yit'];  // safe fallback untuk pelapor unknown
+    // ⭐ 22 Jul 2026 (Pattern #12 #6): fallback derive dari NAMA_PEKERJA (WORKER_DEFS) — BUKAN token mentah.
+    // Casus: pill Log tampil "HARNI" (token) padahal nama benar "Mba Harmi" (typo lama Adib, display sudah dikoreksi
+    // di worker defs). Token HARNI di DATA sengaja TIDAK diganti (identity key semua record historis — locked).
+    const [name,cls] = roleMap[d.pelapor] || [(typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[d.pelapor]) || d.pelapor || '?', 'role-yit'];
     // Pohon display: prefer top-level d.pohon, fallback ke detail_form sub-field kalau ada (jumlah pohon, qty pohon, dll)
     let pohonDisp = '<span style="color:#bbb">-</span>';
     let pohonTitle = '';
@@ -6309,13 +6312,13 @@ function renderReconcileWhitelist() {
 window.reconcileRevertUpah = function(upahId) {
   const u = UPAH_ITEMS.find(x => x.id === upahId);
   if (!u) { alert('UPAH not found'); return; }
-  if (!confirm(`↺ Revert UPAH ${u.pelapor} ${u.tgl} ke "Belum Dibayar"?\n\nUPAH status: lunas → belum\nbayar_tgl, bayar_source: cleared\n\nBackup dulu! Lanjut?`)) return;
+  if (!confirm(`↺ Revert UPAH ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[u.pelapor])||u.pelapor} ${u.tgl} ke "Belum Dibayar"?\n\nUPAH status: lunas → belum\nbayar_tgl, bayar_source: cleared\n\nBackup dulu! Lanjut?`)) return;
   u.status = 'belum';
   delete u.bayar_tgl;
   delete u.bayar_source;
   u.last_modified_at = new Date().toISOString();
   if (typeof saveUpah === 'function') saveUpah(true);
-  if (typeof showToast === 'function') showToast(`↺ UPAH ${u.pelapor} ${u.tgl} reverted ke belum`);
+  if (typeof showToast === 'function') showToast(`↺ UPAH ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[u.pelapor])||u.pelapor} ${u.tgl} reverted ke belum`);
   runReconciliationAudit();   // refresh matrix
 };
 
@@ -6325,7 +6328,7 @@ window.reconcileCreateCashflow = function(upahId) {
   const total = (typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty);
   const tgl = prompt(`💰 Backfill Cashflow — Tgl pembayaran (YYYY-MM-DD)?\nDefault: ${u.bayar_tgl || u.tgl}`, u.bayar_tgl || u.tgl);
   if (!tgl) return;
-  const ket = prompt(`Keterangan? Default: "Upah ${u.pelapor} backfill — no bukti issued di lapangan"`, `Upah ${u.pelapor} backfill — no bukti issued di lapangan (${u.aktivitas || ''})`);
+  const ket = prompt(`Keterangan? Default: "Upah ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[u.pelapor])||u.pelapor} backfill — no bukti issued di lapangan"`, `Upah ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[u.pelapor])||u.pelapor} backfill — no bukti issued di lapangan (${u.aktivitas || ''})`);
   if (!ket) return;
   const katRAB = u.model === 'borongan' ? '4.1' : (u.pelapor === 'YIT' ? '3.1' : '3.2');
   CASHBOOK.push({
@@ -6337,7 +6340,7 @@ window.reconcileCreateCashflow = function(upahId) {
     backfill_note: 'reconciliation-dashboard-phase1'
   });
   if (typeof saveCashbook === 'function') saveCashbook(true);
-  if (typeof showToast === 'function') showToast(`💰 Cashflow backfilled untuk ${u.pelapor} ${u.tgl}`);
+  if (typeof showToast === 'function') showToast(`💰 Cashflow backfilled untuk ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[u.pelapor])||u.pelapor} ${u.tgl}`);
   runReconciliationAudit();
 };
 
@@ -17871,7 +17874,7 @@ function auditDeleteUpahDup(upahId) {
   const linkedCb = (typeof CASHBOOK !== 'undefined') ? CASHBOOK.filter(t => t.ref === ref) : [];
   const total = (typeof calcTotal === 'function') ? calcTotal(u) : (u.tarif * u.qty);
   const msg = `🗑 Hapus UPAH duplikat?\n\n` +
-              `Pelapor: ${u.pelapor}\n` +
+              `Pelapor: ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[u.pelapor])||u.pelapor}\n` +
               `Tgl: ${u.tgl}\n` +
               `Aktivitas: ${(u.aktivitas || '').substring(0, 60)}\n` +
               `Tarif: ${(typeof fmtRp === 'function') ? fmtRp(total) : total}\n` +
@@ -17914,7 +17917,7 @@ function auditDeleteUpahDup(upahId) {
       console.log('[DeleteUpah] ✓ T+2000ms — delete persisted, no revert');
     }
   }, 2000);
-  if (typeof showToast === 'function') showToast(`🗑 UPAH duplikat ${u.tgl} ${u.pelapor} dihapus · ${linkedCb.length} cashbook cleaned`);
+  if (typeof showToast === 'function') showToast(`🗑 UPAH duplikat ${u.tgl} ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[u.pelapor])||u.pelapor} dihapus · ${linkedCb.length} cashbook cleaned`);
 }
 
 // Bulk merge — keep oldest UPAH, delete all duplicates dgn confirm sekali untuk semua duplicates
