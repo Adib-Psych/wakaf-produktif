@@ -9164,6 +9164,10 @@ function addSamplingSession(pohonId) {
   PANEN_SAMPLING_DATA.push({
     id, tgl, kebun: baseline.kebun, pohon_id: pohonId,
     cherry_gram: gram,
+    // ⭐ 25 Jul 2026 (aturan Wakif LOCKED): jemur_date = tgl petik — habis panen LANGSUNG dijemur
+    // (SOP window ≤12 jam). Auto-isi biar tracker jemur (umur hari + flag ≥18hr siap angkat) akurat
+    // sejak entry; tetap bisa diubah manual via ✏️ Edit Sesi kalau ada kasus jemur tertunda.
+    jemur_date: tgl,
     dried_gram: null,             // Fase 4: diisi belakangan via ✏️ edit sesi (time-delayed)
     gb_gram: null,                // Fase 4: diisi belakangan via ✏️ edit sesi (setelah giling)
     kg: gram / 1000,              // backward compat (legacy reports baca kg)
