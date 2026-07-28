@@ -648,6 +648,15 @@
         <div class="kpi-grid" id="upah-summary-cards"></div>
       </div>
 
+      <!-- ⭐ 28 Jul 2026 — REKONSILIASI HIDUP: Laporan ada tapi upah belum terbentuk.
+           Menangkap 3 penyebab sekaligus: (a) durasi kosong saat entry, (b) listener meleset
+           karena dashboard tertutup, (c) RECONCILIATION_MODE lupa OFF. Lihat Pattern #21. -->
+      <div class="card" id="upah-gap-wrap" style="display:none;border:2px solid #e67e22">
+        <div class="card-title"><span class="num" style="background:#e67e22">!</span>Laporan Belum Jadi Upah</div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Hari kerja ini <strong>sudah tercatat di Log Harian</strong> tapi upahnya belum pernah terbentuk — biasanya karena durasi kerja kosong saat entry, atau dashboard sedang tertutup waktu laporan masuk. Selama masih tampil di sini, <strong>hak upah pekerja belum masuk hitungan</strong>.</p>
+        <div id="upah-gap-body"></div>
+      </div>
+
       <div class="card">
         <div class="card-title"><span class="num">4</span>Itemized Pembayaran — Per Pekerjaan</div>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center">
@@ -5160,10 +5169,125 @@ function calcTotal(item) {
   return item.qty * item.tarif;
 }
 
+// ============================================================================
+// ⭐ REKONSILIASI HIDUP — "Laporan Belum Jadi Upah" (Pattern #21, locked 28 Jul 2026)
+// ----------------------------------------------------------------------------
+// Casus belli 28 Jul: Mak Mis kehilangan 5 hari upah & Mba Harmi 3 hari, tanpa alarm apa pun.
+// 3 penyebab berbeda, satu gejala sama (laporan ada, upah tidak ada, tak ada yang tahu):
+//   (a) durasi kosong saat entry → autoCreateUpahFromEntry return null, TIDAK ada antrian/retry
+//   (b) auto-upah listener-based → laporan PWA masuk saat dashboard TERTUTUP = tak pernah diproses
+//   (c) RECONCILIATION_MODE lupa OFF → reprocessPendingEntries di-skip diam-diam
+// Kartu ini membandingkan laporan vs upah per (pelapor, tgl) → tak bergantung timing/flag/urutan.
+// Aturan: kalau tidak ada nama di sini, berarti semua hari kerja sudah punya upah.
+// ============================================================================
+function renderUpahGap() {
+  const wrap = document.getElementById('upah-gap-wrap');
+  const body = document.getElementById('upah-gap-body');
+  if (!wrap || !body) return;
+  if (typeof STATE === 'undefined' || !Array.isArray(STATE.laporan) || typeof TARIF_PEKERJA === 'undefined') {
+    wrap.style.display = 'none'; return;
+  }
+  const upahKeys = new Set((typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : [])
+    .filter(u => u && !u.voided_duplicate).map(u => `${u.pelapor}|${u.tgl}`));
+  const seen = new Set(); const gaps = [];
+  STATE.laporan.forEach(l => {
+    if (!l || !l.pelapor) return;
+    const tgl = l.tgl || l.tanggal; if (!tgl) return;
+    if (!TARIF_PEKERJA[l.pelapor]) return;          // WAKIF/ANTO sweat-equity = memang tanpa upah
+    const key = `${l.pelapor}|${tgl}`;
+    if (upahKeys.has(key) || seen.has(key)) return;
+    seen.add(key); gaps.push({ l, tgl });
+  });
+  if (!gaps.length) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  gaps.sort((a, b) => String(a.tgl).localeCompare(String(b.tgl)));
+  const nm = t => (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[t]) ? NAMA_PEKERJA[t] : t;
+  const isFullDur = d => (d === 'full_day' || d === '1_hari' || d === 'satu_hari' || d === 'full');
+  let est = 0, siap = 0;
+  gaps.forEach(g => {
+    const tp = TARIF_PEKERJA[g.l.pelapor];
+    if (g.l.durasi) { siap++; est += isFullDur(g.l.durasi) ? tp.full_day : tp.setengah_hari; }
+  });
+  const rows = gaps.map(g => {
+    const l = g.l, uid = `${l.pelapor}-${g.tgl}`.replace(/[^A-Za-z0-9-]/g, '');
+    const kat = String(l.kategori || '-').replace(/_/g, ' ');
+    const keb = (l.bidang || l.kebun) ? `Kebun ${l.bidang || l.kebun}` : '—';
+    const noDur = !l.durasi;
+    const durSel = `<select id="gapdur-${uid}" style="padding:5px 7px;border:1.5px solid ${noDur ? '#e67e22' : '#ddd'};border-radius:5px;font-size:11px">
+        <option value="setengah_hari"${!noDur && !isFullDur(l.durasi) ? ' selected' : ''}>½ hari</option>
+        <option value="full_day"${!noDur && isFullDur(l.durasi) ? ' selected' : ''}>1 hari penuh</option>
+      </select>`;
+    return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:9px 11px;border:1px solid #f0e0cc;border-radius:8px;background:${noDur ? '#fffaf3' : '#fff'};margin-bottom:6px">
+      <span style="font-weight:700;font-size:12px;color:var(--earth);min-width:0">${formatTgl ? formatTgl(g.tgl) : g.tgl}</span>
+      <span style="font-size:12px;font-weight:600">${nm(l.pelapor)}</span>
+      <span style="font-size:11px;color:var(--mute)">${kat} · ${keb}</span>
+      ${noDur ? '<span style="font-size:10px;font-weight:700;color:#b45309;background:#fef3c7;padding:2px 7px;border-radius:99px">⚠️ durasi kosong saat entry</span>' : ''}
+      <span style="margin-left:auto;display:flex;gap:6px;align-items:center">
+        ${durSel}
+        <button class="btn btn-primary" style="padding:5px 11px;font-size:11px" onclick="createUpahFromGap('${l.pelapor}','${g.tgl}','${uid}')">➕ Buat Upah</button>
+      </span>
+    </div>`;
+  }).join('');
+  body.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;padding:9px 12px;background:#fff5e6;border-radius:8px;border:1px solid #f0d0a0">
+      <span style="font-size:12px;font-weight:700;color:#8c4a13">${gaps.length} hari kerja belum berupah</span>
+      <span style="font-size:11px;color:#8c4a13">≈ ${typeof fmtRpShort === 'function' ? fmtRpShort(est) : est} (dari ${siap} yang durasinya sudah terisi)</span>
+      ${siap > 0 ? `<button class="btn btn-primary" style="margin-left:auto;padding:6px 13px;font-size:11px;background:#e67e22" onclick="createAllUpahGaps()">⚡ Buat semua yang durasinya sudah ada (${siap})</button>` : ''}
+    </div>${rows}`;
+}
+
+function createUpahFromGap(pelapor, tgl, uid, silent) {
+  if ((typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : []).some(u => u && !u.voided_duplicate && u.pelapor === pelapor && u.tgl === tgl)) {
+    if (!silent) alert('Upah untuk hari ini sudah ada — kartu akan disegarkan.');
+    renderUpahGap(); return false;
+  }
+  const lap = STATE.laporan.find(l => l && l.pelapor === pelapor && (l.tgl || l.tanggal) === tgl);
+  if (!lap) { if (!silent) alert('Laporan tidak ditemukan.'); return false; }
+  const sel = document.getElementById('gapdur-' + uid);
+  const dur = (sel && sel.value) || lap.durasi;
+  if (!dur) { if (!silent) alert('Pilih durasi kerja dulu.'); return false; }
+  const created = autoCreateUpahFromEntry(Object.assign({}, lap, { tgl: tgl, tanggal: tgl, durasi: dur }));
+  if (!created) { if (!silent) alert('Gagal membuat upah — cek console.'); return false; }
+  created.src = 'gap_reconcile';
+  created.backfill_note = 'Dibuat dari kartu "Laporan Belum Jadi Upah" — laporan ada tapi upah tak terbentuk otomatis.';
+  created.last_modified_at = new Date().toISOString();
+  if (typeof saveUpah === 'function') saveUpah(true);   // force push, jangan tunggu debounce
+  if (!silent) {
+    if (typeof showToast === 'function') showToast(`✅ Upah ${pelapor} ${tgl} dibuat`, 'success');
+    renderUpahGap();
+    if (typeof renderUpahSummary === 'function') renderUpahSummary();
+    if (typeof renderUpahTable === 'function') renderUpahTable();
+  }
+  return true;
+}
+
+function createAllUpahGaps() {
+  const upahKeys = new Set((typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : [])
+    .filter(u => u && !u.voided_duplicate).map(u => `${u.pelapor}|${u.tgl}`));
+  const todo = []; const seen = new Set();
+  STATE.laporan.forEach(l => {
+    if (!l || !l.pelapor || !l.durasi) return;
+    const tgl = l.tgl || l.tanggal; if (!tgl) return;
+    if (!TARIF_PEKERJA[l.pelapor]) return;
+    const key = `${l.pelapor}|${tgl}`;
+    if (upahKeys.has(key) || seen.has(key)) return;
+    seen.add(key); todo.push({ pelapor: l.pelapor, tgl });
+  });
+  if (!todo.length) { alert('Tidak ada yang bisa dibuat otomatis — semua sisanya butuh durasi diisi manual.'); return; }
+  if (!confirm(`Buat ${todo.length} item upah sekaligus?\n\nSemua berstatus BELUM DIBAYAR — tidak ada uang yang berpindah.`)) return;
+  let n = 0;
+  todo.forEach(t => { if (createUpahFromGap(t.pelapor, t.tgl, '', true)) n++; });
+  if (typeof saveUpah === 'function') saveUpah(true);
+  if (typeof showToast === 'function') showToast(`✅ ${n} item upah dibuat`, 'success');
+  renderUpahGap();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+}
+
 function renderUpahSummary() {
   const c = document.getElementById('upah-summary-cards');
   if (!c) return;
   rebuildNamaPekerja();   // 27 Jun: nama semua pekerja fresh dari WORKER_DEFS (bukan stale {YIT,KUMPUL})
+  try { renderUpahGap(); } catch (e) { console.warn('[renderUpahGap]', e); }   // 28 Jul: panggil di AWAL — renderUpahSummary punya early-return saat semua lunas
   const summary = {};
   // Card 3 = view historis upah (FILTER semantics, Pattern #12): SEMUA pekerja yang PUNYA upah item (aktif+arsip),
   // bukan Object.keys(NAMA_PEKERJA) yg dulu stale 2-pekerja → pemanen dgn tunggakan kini muncul.
@@ -5174,6 +5298,8 @@ function renderUpahSummary() {
     // Day counters (only for model='harian')
     harianFull: 0, harianHalf: 0,        // total (belum + lunas)
     harianFullLunas: 0, harianHalfLunas: 0, // lunas only — for breakdown
+    harianLainRp: 0, harianLainCount: 0,           // 28 Jul: item bertarif non-standar (mis. pemanen 25K pra-19 Jul)
+    harianLainRpLunas: 0, harianLainCountLunas: 0,
     boronganCount: 0
   });
   UPAH_ITEMS.forEach(it => {
@@ -5189,8 +5315,29 @@ function renderUpahSummary() {
       // dengan satuan='satu_hari' (lapor.html chip data-val) atau '1_hari' / 'full'.
       // Total Rp tidak terpengaruh (calcTotal pakai tarif × qty), tapi day counter
       // undercount → "7 full day + 2 ½ hari" salah, harusnya "15 full + 2 ½".
-      const isFull = (it.satuan === 'full_day' || it.satuan === '1_hari' || it.satuan === 'satu_hari' || it.satuan === 'full');
-      const isHalf = (it.satuan === 'setengah_hari' || it.satuan === '½_hari' || it.satuan === 'half_day');
+      // ⭐ 28 Jul 2026 FIX: klasifikasi hari WAJIB derive dari TARIF AKTUAL, bukan label `satuan`.
+      // Casus belli: item pemanen pra-19 Jul punya satuan='full_day' dgn tarif Rp 50K (definisi lama
+      // "1 hari" = jam 07–12) → kartu menulis "2 full day" padahal nominalnya setara ½ hari sekarang
+      // → breakdown hari tak pernah cocok dgn rupiah. Nominal lama TETAP BENAR (locked Wakif, tanpa
+      // rapel) — yang diperbaiki hanya LABEL-nya. Tarif non-standar (mis. 25K) masuk bucket "lain".
+      const _tp = (typeof TARIF_PEKERJA !== 'undefined') ? TARIF_PEKERJA[it.pelapor] : null;
+      const _tv = +it.tarif || 0;
+      let isFull, isHalf;
+      if (_tp && _tv > 0) {
+        isFull = (_tv === _tp.full_day);
+        isHalf = (_tv === _tp.setengah_hari);
+        if (!isFull && !isHalf) {
+          summary[it.pelapor].harianLainRp += total;
+          summary[it.pelapor].harianLainCount += qty;
+          if (it.status === 'lunas') {
+            summary[it.pelapor].harianLainRpLunas += total;
+            summary[it.pelapor].harianLainCountLunas += qty;
+          }
+        }
+      } else {
+        isFull = (it.satuan === 'full_day' || it.satuan === '1_hari' || it.satuan === 'satu_hari' || it.satuan === 'full');
+        isHalf = (it.satuan === 'setengah_hari' || it.satuan === '½_hari' || it.satuan === 'half_day');
+      }
       if (isFull) {
         summary[it.pelapor].harianFull += qty;
         if (it.status === 'lunas') summary[it.pelapor].harianFullLunas += qty;
@@ -5207,14 +5354,18 @@ function renderUpahSummary() {
   });
 
   // Helper: format "4 full day + 2 half day = 5 days" — strip empty parts gracefully
-  function formatDaysLine(full, half) {
-    if (full === 0 && half === 0) return '0 days';
-    const eq = full + half * 0.5;
+  // ⭐ 28 Jul 2026: tambah bucket "tarif lama" supaya breakdown SELALU rekonsiliasi dgn nominal.
+  // Ekuivalen hari dihitung dari RUPIAH (lainRp / tarifFull), bukan dari label satuan.
+  function formatDaysLine(full, half, lainRp, lainCount, tarifFull) {
+    lainRp = lainRp || 0; lainCount = lainCount || 0;
+    if (full === 0 && half === 0 && lainCount === 0) return '0 hari';
+    const eq = full + half * 0.5 + ((tarifFull > 0) ? lainRp / tarifFull : 0);
     const parts = [];
     if (full > 0) parts.push(`${full} full day`);
-    if (half > 0) parts.push(`${half} half day`);
-    const eqStr = (eq === Math.floor(eq)) ? eq.toString() : eq.toFixed(1);
-    return `${parts.join(' + ')} = ${eqStr} day${eq === 1 ? '' : 's'}`;
+    if (half > 0) parts.push(`${half} ½ hari`);
+    if (lainCount > 0) parts.push(`${lainCount} tarif lama (${fmtRpShort(lainRp)})`);
+    const eqStr = (eq === Math.floor(eq)) ? eq.toString() : (Math.round(eq * 100) / 100).toString();
+    return `${parts.join(' + ')} ≈ ${eqStr} hari penuh`;
   }
 
   // Card 3 = LIVE tunggakan tracker (27 Jun, Pattern #13): HANYA pekerja dengan belum > 0. Lunas penuh
@@ -5231,8 +5382,9 @@ function renderUpahSummary() {
     const _wd = (typeof WORKER_DEFS!=='undefined') ? WORKER_DEFS.find(x=>x.token===k) : null;
     const ico = (_wd && _wd.icon) ? _wd.icon : '🌱';
     const arsip = (_wd && !_wd.active) ? ' <span style="font-size:9px;color:var(--mute);font-weight:400">(arsip)</span>' : '';
-    const harianDaysLine = formatDaysLine(s.harianFull, s.harianHalf);
-    const lunasDaysLine = formatDaysLine(s.harianFullLunas, s.harianHalfLunas);
+    const _tpc = (typeof TARIF_PEKERJA !== 'undefined' && TARIF_PEKERJA[k]) ? TARIF_PEKERJA[k].full_day : 0;
+    const harianDaysLine = formatDaysLine(s.harianFull, s.harianHalf, s.harianLainRp, s.harianLainCount, _tpc);
+    const lunasDaysLine = formatDaysLine(s.harianFullLunas, s.harianHalfLunas, s.harianLainRpLunas, s.harianLainCountLunas, _tpc);
     return `<div class="kpi ${cls}" style="cursor:pointer" onclick="document.getElementById('filter-bayar-pelapor').value='${k}';renderUpahTable()">
       <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">${ico} ${s.nama}${arsip}</div>
       <div class="kpi-num" style="color:${s.belum>0?'var(--orange)':'var(--green)'};font-size:20px">${fmtRpShort(s.belum)}</div>
@@ -19754,6 +19906,17 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       setTimeout(reprocessPendingEntries, 3000);
     } else {
       console.warn('[Migration] reprocessPendingEntries SKIPPED — RECONCILIATION_MODE active. Toggle OFF di Reconciliation tab saat audit selesai.');
+      // ⭐ 28 Jul 2026: flag ini pernah lupa OFF berminggu-minggu → upah berhenti terbentuk DIAM-DIAM
+      // (Mak Mis 5 hari, Mba Harmi 3 hari hilang). Sekarang wajib terlihat, tidak bisa lolos lagi.
+      try {
+        const _b = document.createElement('div');
+        _b.id = 'recon-mode-banner';
+        _b.style.cssText = 'position:sticky;top:0;z-index:9999;background:#8c2519;color:#fff;padding:10px 16px;font-size:12.5px;font-weight:600;display:flex;flex-wrap:wrap;gap:10px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.25)';
+        _b.innerHTML = '⏸ <span>RECONCILIATION_MODE <b>AKTIF</b> — upah TIDAK terbentuk otomatis dari laporan. Matikan setelah audit selesai.</span>' +
+          '<button onclick="toggleReconciliationMode(false);document.getElementById(\'reconcile-pause-toggle\')&&(document.getElementById(\'reconcile-pause-toggle\').checked=false);this.parentNode.remove();" ' +
+          'style="margin-left:auto;background:#fff;color:#8c2519;border:0;border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer">▶ Matikan sekarang</button>';
+        document.body.insertBefore(_b, document.body.firstChild);
+      } catch (e) { /* non-fatal */ }
     }
 
     // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
