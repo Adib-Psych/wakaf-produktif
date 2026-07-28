@@ -652,8 +652,8 @@
            Menangkap 3 penyebab sekaligus: (a) durasi kosong saat entry, (b) listener meleset
            karena dashboard tertutup, (c) RECONCILIATION_MODE lupa OFF. Lihat Pattern #21. -->
       <div class="card" id="upah-gap-wrap" style="display:none;border:2px solid #e67e22">
-        <div class="card-title"><span class="num" style="background:#e67e22">!</span>Laporan Belum Jadi Upah</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Hari kerja ini <strong>sudah tercatat di Log Harian</strong> tapi upahnya belum pernah terbentuk — biasanya karena durasi kerja kosong saat entry, atau dashboard sedang tertutup waktu laporan masuk. Selama masih tampil di sini, <strong>hak upah pekerja belum masuk hitungan</strong>.</p>
+        <div class="card-title"><span class="num" style="background:#e67e22">!</span>Upah Perlu Perhatian</div>
+        <div id="upah-dup-body"></div>
         <div id="upah-gap-body"></div>
       </div>
 
@@ -5180,12 +5180,72 @@ function calcTotal(item) {
 // Kartu ini membandingkan laporan vs upah per (pelapor, tgl) → tak bergantung timing/flag/urutan.
 // Aturan: kalau tidak ada nama di sini, berarti semua hari kerja sudah punya upah.
 // ============================================================================
+// Detektor duplikat AKTIF (kebalikan dari gap: ini menangkap yang BERLEBIH).
+// Casus belli 28 Jul: backfill REST-ku menabrak 3 item yang masih tersangkut di localStorage Adib
+// (belum ter-push) → begitu dia refresh, dua-duanya mendarat = duplikat. Aturan turunan:
+// SEBELUM backfill upah lewat REST, WAJIB pastikan localStorage device sudah ter-push dulu
+// (minta hard-refresh), atau kecualikan tanggal yang terdeteksi ada di lokal tapi belum di cloud.
+function renderUpahDup() {
+  const body = document.getElementById('upah-dup-body');
+  if (!body) return 0;
+  const items = (typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : []).filter(u => u && !u.voided_duplicate);
+  const g = {};
+  items.forEach(u => { const k = `${u.pelapor}|${u.tgl}`; (g[k] = g[k] || []).push(u); });
+  const dups = Object.entries(g).filter(([, v]) => v.length > 1)
+    .sort((a, b) => String(b[0].split('|')[1]).localeCompare(String(a[0].split('|')[1])));
+  if (!dups.length) { body.innerHTML = ''; return 0; }
+  const nm = t => (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[t]) ? NAMA_PEKERJA[t] : t;
+  const rows = dups.map(([k, v]) => {
+    const [pel, tgl] = k.split('|');
+    const allLunas = v.every(x => x.status === 'lunas');
+    const chips = v.map(x => `<span style="display:inline-flex;gap:6px;align-items:center;padding:4px 8px;border:1px solid #ddd;border-radius:6px;background:#fff;font-size:11px">
+        <b>#${x.id}</b> ${typeof fmtRpShort === 'function' ? fmtRpShort((+x.tarif || 0) * (+x.qty || 1)) : x.tarif}
+        <span style="color:var(--mute)">${x.status}</span>
+        <span style="color:var(--mute);font-size:10px">${x.src || ''}</span>
+        <button onclick="voidUpahDup(${JSON.stringify(String(x.id))})" style="border:0;background:#8c2519;color:#fff;border-radius:4px;padding:2px 7px;font-size:10px;cursor:pointer">void</button>
+      </span>`).join(' ');
+    return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:9px 11px;border:1px solid #f0c8c0;border-radius:8px;background:#fff8f6;margin-bottom:6px">
+      <span style="font-weight:700;font-size:12px;color:var(--earth)">${typeof formatTgl === 'function' ? formatTgl(tgl) : tgl}</span>
+      <span style="font-size:12px;font-weight:600">${nm(pel)}</span>
+      <span style="font-size:10px;font-weight:700;color:#8c2519;background:#fde8e4;padding:2px 7px;border-radius:99px">${v.length}× di hari yang sama</span>
+      ${allLunas ? '<span style="font-size:10px;color:#8c4a13;background:#fef3c7;padding:2px 7px;border-radius:99px">semua LUNAS — cek dulu, mungkin 2 sesi sah</span>' : ''}
+      <span style="margin-left:auto;display:flex;gap:6px;flex-wrap:wrap">${chips}</span>
+    </div>`;
+  }).join('');
+  body.innerHTML = `<div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:800;color:#8c2519;letter-spacing:.5px;margin-bottom:4px">⚠️ DUPLIKAT TERDETEKSI — ${dups.length} hari</div>
+      <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Satu pekerja punya lebih dari satu item upah di tanggal yang sama. Kalau memang kerja 2 sesi (mis. ½ hari pagi + ½ hari sore) ini <strong>sah</strong> — biarkan. Kalau tidak, <strong>void</strong> yang berlebih (void, bukan hapus: item lunas yang dihapus akan muncul lagi).</p>
+      ${rows}
+    </div>`;
+  return dups.length;
+}
+
+function voidUpahDup(id) {
+  const it = (typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : []).find(u => String(u.id) === String(id));
+  if (!it) { alert('Item tidak ditemukan.'); return; }
+  const rp = (+it.tarif || 0) * (+it.qty || 1);
+  const warn = it.status === 'lunas'
+    ? `\n\n⚠️ Item ini berstatus LUNAS. Void akan MENGURANGI total terbayar sebesar ${rp.toLocaleString('id-ID')} — lakukan hanya kalau yakin ini pembayaran dobel.`
+    : '';
+  if (!confirm(`Void item #${it.id} — ${it.pelapor} ${it.tgl} (Rp ${rp.toLocaleString('id-ID')})?\n\nItem tetap tersimpan sebagai jejak audit, nilainya jadi Rp 0.${warn}`)) return;
+  it.tarif = 0; it.qty = 0; it.voided_duplicate = true;
+  it.void_reason = 'Void manual dari kartu Duplikat Terdeteksi — ' + new Date().toISOString().slice(0, 10);
+  if (!String(it.aktivitas || '').startsWith('[DUPLIKAT-void')) it.aktivitas = '[DUPLIKAT-void] ' + (it.aktivitas || '');
+  it.last_modified_at = new Date().toISOString();
+  if (typeof saveUpah === 'function') saveUpah(true);
+  if (typeof showToast === 'function') showToast(`✅ Item #${id} di-void`, 'success');
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderUpahTable === 'function') renderUpahTable();
+}
+
 function renderUpahGap() {
   const wrap = document.getElementById('upah-gap-wrap');
   const body = document.getElementById('upah-gap-body');
   if (!wrap || !body) return;
+  let nDup = 0;
+  try { nDup = renderUpahDup(); } catch (e) { console.warn('[renderUpahDup]', e); }
   if (typeof STATE === 'undefined' || !Array.isArray(STATE.laporan) || typeof TARIF_PEKERJA === 'undefined') {
-    wrap.style.display = 'none'; return;
+    body.innerHTML = ''; wrap.style.display = nDup ? '' : 'none'; return;
   }
   const upahKeys = new Set((typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : [])
     .filter(u => u && !u.voided_duplicate).map(u => `${u.pelapor}|${u.tgl}`));
@@ -5198,7 +5258,7 @@ function renderUpahGap() {
     if (upahKeys.has(key) || seen.has(key)) return;
     seen.add(key); gaps.push({ l, tgl });
   });
-  if (!gaps.length) { wrap.style.display = 'none'; return; }
+  if (!gaps.length) { body.innerHTML = ''; wrap.style.display = nDup ? '' : 'none'; return; }
   wrap.style.display = '';
   gaps.sort((a, b) => String(a.tgl).localeCompare(String(b.tgl)));
   const nm = t => (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[t]) ? NAMA_PEKERJA[t] : t;
@@ -5228,7 +5288,9 @@ function renderUpahGap() {
       </span>
     </div>`;
   }).join('');
-  body.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;padding:9px 12px;background:#fff5e6;border-radius:8px;border:1px solid #f0d0a0">
+  body.innerHTML = `<div style="font-size:12px;font-weight:800;color:#8c4a13;letter-spacing:.5px;margin-bottom:4px">📋 LAPORAN BELUM JADI UPAH — ${gaps.length} hari</div>
+    <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Hari kerja ini <strong>sudah tercatat di Log Harian</strong> tapi upahnya belum pernah terbentuk — biasanya karena durasi kerja kosong saat entry, atau dashboard sedang tertutup waktu laporan masuk. Selama masih tampil di sini, <strong>hak upah pekerja belum masuk hitungan</strong>.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;padding:9px 12px;background:#fff5e6;border-radius:8px;border:1px solid #f0d0a0">
       <span style="font-size:12px;font-weight:700;color:#8c4a13">${gaps.length} hari kerja belum berupah</span>
       <span style="font-size:11px;color:#8c4a13">≈ ${typeof fmtRpShort === 'function' ? fmtRpShort(est) : est} (dari ${siap} yang durasinya sudah terisi)</span>
       ${siap > 0 ? `<button class="btn btn-primary" style="margin-left:auto;padding:6px 13px;font-size:11px;background:#e67e22" onclick="createAllUpahGaps()">⚡ Buat semua yang durasinya sudah ada (${siap})</button>` : ''}
