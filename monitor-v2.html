@@ -7726,23 +7726,22 @@ function submitSortir5Warna() {
   batch.last_modified_at = new Date().toISOString();
   batch.sortir_catatan = document.getElementById('sortir5-catatan').value.trim();
 
-  // ⭐ 28 Jul 2026 — MENGAMBANG SEKARANG IKUT JADI LOT (BUG FIX, temuan QC).
-  // Sebelumnya mengambang SENGAJA di-skip ("defect di parent batch" → asumsi dibuang/kompos),
-  // hanya tersimpan sbg batch.pengapung_kg. Realita lapangan: Wakif MENJEMUR mengambang dan
-  // menjualnya (PANEN_GRADES.mengambang sudah punya harga Rp 15K/kg). Akibat putusnya jalur ini:
-  //   • 23,161 kg mengambang tercatat di pengapung_kg tapi TIDAK pernah masuk daftar batch jemur
-  //   • jemur_event mengambang terpaksa diisi manual → cherry parsial → dried 7,312 kg > cherry
-  //     6,035 kg = 121% (mustahil), grup `dg_meng_fix`
-  // Sekarang mengambang diperlakukan seperti warna lain: punya lot, bisa dijemur, masuk pool.
+  // Create lot child per warna (skip mengambang — mengambang HANYA di batch.pengapung_kg)
+  // 🔒 ATURAN LOCKED 26 Jun 2026 (Panen_Recording_dan_Upah_Ledger.md §7.3): mengambang SELALU
+  // single-source di `pengapung_kg`, JANGAN dibuat lot. Alasannya rumus merah-remainder:
+  //     merah = cherry − pengapung − Σ(lot non-merah)
+  // kalau mengambang juga jadi lot, dia masuk "Σ lot non-merah" → DIKURANGI DUA KALI → merah susut.
+  // ⚠️ 28 Jul 2026: aku sempat menambahkan mengambang ke buckets (commit 2ec5549) dengan asumsi
+  // keliru bahwa mengambang tak bisa dijemur. SALAH — `getBatchGradeKg(batch,'mengambang')` sudah
+  // membaca `batch.pengapung_kg`, jadi jalur jemur mengambang MEMANG SUDAH ADA. Di-revert.
   const [year, month] = batch.tgl.split('-');
   const kebunArr = Array.isArray(batch.kebun) ? batch.kebun : [batch.kebun];
   const kebunStr = kebunArr.includes('mixed') ? 'MIX' : kebunArr.map(kb => 'K' + kb).join('');
   const buckets = [
-    { grade: 'merah',      kg: m },
-    { grade: 'kuning',     kg: k },
-    { grade: 'hijau',      kg: h },
-    { grade: 'hitam',      kg: b },
-    { grade: 'mengambang', kg: meng }
+    { grade: 'merah',  kg: m },
+    { grade: 'kuning', kg: k },
+    { grade: 'hijau',  kg: h },
+    { grade: 'hitam',  kg: b }
   ].filter(bk => bk.kg > 0);
 
   const createdLots = [];
@@ -7776,7 +7775,7 @@ function submitSortir5Warna() {
   savePanenLotsToLS();
   if (typeof showToast === 'function') {
     const msg = `✅ Batch ${batch.id.substring(0,18)}… split: ${createdLots.length} lot child` +
-      (meng > 0 ? ` (termasuk ${meng.toFixed(2)} kg mengambang — kini ikut jadi lot & bisa dijemur)` : '');
+      (meng > 0 ? ` + ${meng.toFixed(2)} kg mengambang (di parent batch, siap dijemur)` : '');
     showToast(msg, 'success');
   }
   resetSortir5Form();
