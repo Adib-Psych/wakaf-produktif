@@ -15629,8 +15629,12 @@ function renderBenchmarkLog(){
     +'<label style="font-size:11px;color:#6b7280">🟩 Hijau/rutuan (kg)<br><input id="bn-hijau" type="number" step="0.1" min="0" placeholder="0" oninput="recomputeBenchmarkDominant()" style="padding:5px 7px;border:1.5px solid #86efac;border-radius:6px;font-size:12px;width:110px"></label>'
     +'<label style="font-size:11px;color:#6b7280">🌊 Mengambang (kg)<br><input id="bn-mengambang" type="number" step="0.1" min="0" placeholder="0" oninput="recomputeBenchmarkDominant()" style="padding:5px 7px;border:1.5px solid #93c5fd;border-radius:6px;font-size:12px;width:110px"></label>'
     +'<div id="bn-sortir-note" style="flex:1 1 100%;font-size:11px;color:#5b21b6;min-height:14px"></div>'
-    +'<label style="font-size:11px;color:#6b7280">Dried (kg)<br><input id="bn-dried" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:90px"></label>'
-    +'<label style="font-size:11px;color:#6b7280">Green bean (kg)<br><input id="bn-gb" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:90px"></label>'
+    +'<div style="flex:1 1 100%;font-size:11px;color:#6b7280;margin-top:4px;border-top:1px dashed #ddd;padding-top:7px">Hasil <b>dried</b> per warna (kg) — isi saat sudah kering. Rendemen dihitung per warna terhadap sortirnya:</div>'
+    +'<label style="font-size:11px;color:#6b7280">🟥 Dried Merah (kg)<br><input id="bn-dried-merah" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #fca5a5;border-radius:6px;font-size:12px;width:110px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">🟩 Dried Hijau (kg)<br><input id="bn-dried-hijau" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #86efac;border-radius:6px;font-size:12px;width:110px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">🌊 Dried Mengambang (kg)<br><input id="bn-dried-mengambang" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #93c5fd;border-radius:6px;font-size:12px;width:140px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">MC % (kadar air)<br><input id="bn-mc" type="number" step="0.1" min="0" max="30" placeholder="mis. 10,5" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:110px"></label>'
+    +'<label style="font-size:11px;color:#6b7280">🫘 Green bean (kg)<br><input id="bn-gb" type="number" step="0.01" min="0" placeholder="nanti" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:110px"></label>'
     +'<label style="font-size:11px;color:#6b7280;flex:1 1 100%">Catatan<br><input id="bn-catatan" placeholder="proses, sortir, dll" style="padding:5px 7px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;width:100%"></label>'
     +'<button onclick="submitBenchmark()" class="btn btn-primary" style="background:#6d28d9;font-size:12px;padding:7px 16px">+ Simpan Batch</button>'
     +'</div></div>';
@@ -15664,6 +15668,19 @@ function renderBenchmarkLog(){
             +'<span>🟩 Hijau/rutuan <b>'+h+'</b> kg ('+ph.toFixed(0)+'%)</span>'
             +'<span>🌊 Mengambang <b>'+f+'</b> kg ('+pf.toFixed(0)+'%)</span>'
             +'<span style="margin-left:auto;font-weight:600">'+qual+'</span>'
+            +'</div>'; })()
+      +(function(){ var d=b.dried||{}; var s2=b.sortir||{};
+          var dm=_bn(d.merah),dh=_bn(d.hijau),dg=_bn(d.mengambang); if(dm+dh+dg<=0) return '';
+          function cell(lbl,dv,sv,col){ if(!dv&&!sv) return '';
+            var r = sv? (dv/sv*100):0;
+            var fl = dv&&sv ? ((r<30||r>55)?' 🚩':((r>=40&&r<=50)?' ✓':'')) : '';
+            return '<span style="color:'+col+'">'+lbl+' <b>'+(dv||'—')+'</b> kg'+(sv?(' <span style="color:#6b7280">/ '+sv+' kg = <b>'+r.toFixed(0)+'%</b>'+fl+'</span>'):'')+'</span>'; }
+          return '<div style="display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:6px;font-size:11.5px;background:#fffbeb;border-radius:6px;padding:6px 9px">'
+            +'<span style="font-weight:700;color:#92400e">Dried per warna:</span>'
+            +cell('🟥 Merah',dm,_bn(s2.merah),'#b91c1c')
+            +cell('🟩 Hijau',dh,_bn(s2.hijau),'#15803d')
+            +cell('🌊 Mengambang',dg,_bn(s2.mengambang),'#0e7490')
+            +(b.mc?('<span style="margin-left:auto;color:#92400e">💧 MC <b>'+b.mc+'%</b></span>'):'')
             +'</div>'; })()
       +(b.catatan?('<div style="font-size:11px;color:#6b7280;margin-top:5px">📝 '+b.catatan+'</div>'):'')
       +'<div style="margin-top:6px;display:flex;gap:6px">'
@@ -15704,7 +15721,9 @@ function submitBenchmark(){
     biaya:_bn(g('bn-biaya').value)||null, dana:'pribadi',
     sortir:{ merah:_bn(g('bn-merah').value)||null, hijau:_bn(g('bn-hijau').value)||null, mengambang:_bn(g('bn-mengambang').value)||null },
     dominant_color:(g('bn-dominan')&&g('bn-dominan').value)||'merah',
-    dried_kg:_bn(g('bn-dried').value)||null, gb_kg:_bn(g('bn-gb').value)||null,
+    dried:{ merah:_bn(g('bn-dried-merah').value)||null, hijau:_bn(g('bn-dried-hijau').value)||null, mengambang:_bn(g('bn-dried-mengambang').value)||null },
+    dried_kg:(_bn(g('bn-dried-merah').value)+_bn(g('bn-dried-hijau').value)+_bn(g('bn-dried-mengambang').value))||null,
+    mc:_bn(g('bn-mc').value)||null, gb_kg:_bn(g('bn-gb').value)||null,
     catatan:(g('bn-catatan').value||'').trim(), created_at:new Date().toISOString() };
   BENCHMARK_DATA.push(entry); saveBenchmarkLS(); renderBenchmarkLog();
   if(typeof window.syncBenchmarkToFirestore==='function') window.syncBenchmarkToFirestore();
@@ -15717,11 +15736,18 @@ function editBenchmark(id){
   if(mr===null) return;
   const hj=prompt('🟩 SORTIR Hijau/rutuan (kg):', s.hijau!=null?s.hijau:'');
   const mg=prompt('🌊 SORTIR Mengambang (kg):', s.mengambang!=null?s.mengambang:'');
-  const dr=prompt('🌰 Dried kering (kg) — cherry '+b.cherry_kg+' kg:', b.dried_kg!=null?b.dried_kg:'');
-  if(dr===null) return;
+  const d0=b.dried||{};
+  const dm=prompt('🌰 DRIED Merah (kg) — sortir merah '+(_bn(mr)||0)+' kg:', d0.merah!=null?d0.merah:(b.dried_kg!=null&&d0.hijau==null?b.dried_kg:''));
+  if(dm===null) return;
+  const dh=prompt('🌰 DRIED Hijau/rutuan (kg):', d0.hijau!=null?d0.hijau:'');
+  const dg=prompt('🌰 DRIED Mengambang (kg):', d0.mengambang!=null?d0.mengambang:'');
+  const mc=prompt('💧 MC % kadar air (kosongkan kalau tak diukur):', b.mc!=null?b.mc:'');
   const gb=prompt('🫘 Green bean (kg) — kosongkan kalau belum:', b.gb_kg!=null?b.gb_kg:'');
   b.sortir={ merah:_bn(mr)||null, hijau:_bn(hj)||null, mengambang:_bn(mg)||null };
-  b.dried_kg=_bn(dr)||null; if(gb!==null) b.gb_kg=_bn(gb)||null;
+  b.dried={ merah:_bn(dm)||null, hijau:_bn(dh)||null, mengambang:_bn(dg)||null };
+  b.dried_kg=(_bn(dm)+_bn(dh)+_bn(dg))||null;
+  if(mc!==null) b.mc=_bn(mc)||null;
+  if(gb!==null) b.gb_kg=_bn(gb)||null;
   b.last_modified_at=new Date().toISOString();
   saveBenchmarkLS(); renderBenchmarkLog();
   if(typeof window.syncBenchmarkToFirestore==='function') window.syncBenchmarkToFirestore();
