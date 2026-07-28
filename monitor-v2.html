@@ -3861,19 +3861,17 @@ function renderLog() {
   // 26 Mei 2026: tambah WAKIF + HENDY supaya entries Adib/Hendy via Form Input render dengan nama yang benar
   // (sebelumnya undefined → crash row). Plus safe fallback untuk pelapor unknown.
   const roleMap = {
-    ANTO:   ['Mas Anto', 'role-anto'],
-    YIT:    ['Cak Yit', 'role-yit'],
-    KUMPUL: ['Pak Kumpul', 'role-kumpul'],
-    WAKIF:  ['📋 Adib (Wakif)', 'role-wakif'],
-    ADIB:   ['📋 Adib (Wakif)', 'role-wakif'],
-    HENDY:  ['🎯 Hendy (Strategic)', 'role-hendy']
+    HENDY:  ['🎯 Hendy (Strategic)', 'role-hendy']   // non-pekerja, tak ada di WORKER_DEFS
   };
   const tbody = document.getElementById('log-tbody');
   tbody.innerHTML = data.map(d => {
     // ⭐ 22 Jul 2026 (Pattern #12 #6): fallback derive dari NAMA_PEKERJA (WORKER_DEFS) — BUKAN token mentah.
     // Casus: pill Log tampil "HARNI" (token) padahal nama benar "Mba Harmi" (typo lama Adib, display sudah dikoreksi
     // di worker defs). Token HARNI di DATA sengaja TIDAK diganti (identity key semua record historis — locked).
-    const [name,cls] = roleMap[d.pelapor] || [(typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[d.pelapor]) || d.pelapor || '?', 'role-yit'];
+    // ⭐ 28 Jul 2026: warna pill derive dari WORKER_DEFS.color (SUMBER SAMA dgn halaman Tim).
+    // Casus Adib: sejak Christo & pemanen masuk, semua pekerja baru jatuh ke fallback 'role-yit'
+    // (oranye Cak Yit) → warna Log ≠ warna kartu Tim = membingungkan. Peta statis 6 veteran DIHAPUS.
+    const _pill = workerPillHtml(d.pelapor, roleMap[d.pelapor] ? roleMap[d.pelapor][0] : null);
     // Pohon display: prefer top-level d.pohon, fallback ke detail_form sub-field kalau ada (jumlah pohon, qty pohon, dll)
     let pohonDisp = '<span style="color:#bbb">-</span>';
     let pohonTitle = '';
@@ -3899,7 +3897,7 @@ function renderLog() {
       : `<button onclick="toggleLaporanArchive('${d.id}')" style="background:#f4f4f0;color:#4a4030;border:1px solid #8B8579;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="Archive laporan ini (UPAH tetap, hanya sembunyi dari Log)">📦</button>`;
     return `<tr style="${rowStyle}">
       <td style="white-space:nowrap">${formatTgl(d.tgl)}${archBadge}</td>
-      <td><span class="pill ${cls}">${name}</span></td>
+      <td>${_pill}</td>
       <td>${Array.isArray(d.kebun_list) && d.kebun_list.length > 1
             ? d.kebun_list.map(k => {
                 const n = String(k).replace(/[KkBb]/g,'');
@@ -5180,6 +5178,27 @@ function calcTotal(item) {
 // Kartu ini membandingkan laporan vs upah per (pelapor, tgl) → tak bergantung timing/flag/urutan.
 // Aturan: kalau tidak ada nama di sini, berarti semua hari kerja sudah punya upah.
 // ============================================================================
+// ============================================================================
+// ⭐ WARNA PILL PEKERJA — SATU SUMBER: WORKER_DEFS.color (Pattern #12 #6, diperluas 28 Jul 2026)
+// ----------------------------------------------------------------------------
+// Casus Adib 28 Jul: "semenjak Christo masuk, warna card pelapor tidak berubah sesuai halaman Tim".
+// Akar: renderLog & tabel Upah pakai peta warna STATIS (6 veteran / tebakan YIT-vs-KUMPUL) →
+// semua pekerja baru jatuh ke fallback 'role-yit' (oranye) atau 'role-kumpul' (ungu), padahal
+// kartu Tim sudah pakai warna masing-masing dari WORKER_DEFS.color.
+// ATURAN: warna & ikon pekerja SELALU derive dari WORKER_DEFS — JANGAN pernah hardcode per token.
+// ============================================================================
+function workerPillHtml(token, nameOverride) {
+  const wd = (typeof WORKER_DEFS !== 'undefined') ? WORKER_DEFS.find(w => w.token === token) : null;
+  const nm = nameOverride
+    || (wd && wd.nama)
+    || (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[token])
+    || token || '?';
+  const ico = (wd && wd.icon) ? wd.icon + ' ' : '';
+  const col = (wd && wd.color) || '#6b7280';
+  const arsip = (wd && !wd.active) ? ' <span style="opacity:.65;font-weight:400">(arsip)</span>' : '';
+  return `<span class="pill" style="background:${col}1f;color:${col};border:1px solid ${col}40" title="${String(nm).replace(/"/g,'')}">${ico}${nm}${arsip}</span>`;
+}
+
 // Detektor duplikat AKTIF (kebalikan dari gap: ini menangkap yang BERLEBIH).
 // Casus belli 28 Jul: backfill REST-ku menabrak 3 item yang masih tersangkut di localStorage Adib
 // (belum ter-push) → begitu dia refresh, dua-duanya mendarat = duplikat. Aturan turunan:
@@ -5494,7 +5513,7 @@ function renderUpahTable() {
   }
   tbody.innerHTML = data.map(it => {
     const total = calcTotal(it);
-    const cls = it.pelapor === 'YIT' ? 'role-yit' : 'role-kumpul';
+    // ⭐ 28 Jul 2026: warna dari WORKER_DEFS (bukan tebakan YIT/KUMPUL) — align dgn halaman Tim & Log Harian
     const isArchived = it.archived === true;
     const isLunas = it.status === 'lunas';
     const modelBadge = it.model === 'harian'
@@ -5523,7 +5542,7 @@ function renderUpahTable() {
     return `<tr style="${rowStyle}">
       <td>${checkbox}</td>
       <td style="font-size:11px;white-space:nowrap">${formatTgl(it.tgl)}</td>
-      <td><span class="pill ${cls}">${NAMA_PEKERJA[it.pelapor]}</span></td>
+      <td>${workerPillHtml(it.pelapor)}</td>
       <td>${modelBadge}</td>
       <td style="font-size:11px;max-width:220px">${it.aktivitas}</td>
       <td><strong>${it.qty}</strong></td>
@@ -9917,7 +9936,17 @@ function submitFinishJemurMulti() {
   const dried = parseDecimalInput((document.getElementById('jf-dried-total')||{}).value||'');
   if (!dried || dried <= 0) return alert('Berat DRIED total harus angka > 0');
   const totalCherry = events.reduce((s,e)=>s+(e.cherry_kg||0),0);
-  if (totalCherry > 0 && dried > totalCherry) { if (!confirm(`⚠ Dried ${dried} kg > cherry terpilih ${totalCherry.toFixed(1)} kg. Cek timbangan. Tetap lanjut?`)) return; }
+  // ⭐ 28 Jul 2026 — SANITY GATE RENDEMEN (QC: ditemukan grup dried>cherry 121% pd warna mengambang).
+  // dried > cherry = MUSTAHIL secara fisik → BLOKIR keras, bukan sekadar confirm.
+  if (totalCherry > 0 && dried > totalCherry) {
+    return alert(`🚫 DITOLAK — Dried ${dried} kg LEBIH BERAT dari cherry basah ${totalCherry.toFixed(2)} kg (${(dried/totalCherry*100).toFixed(0)}%).\n\nSecara fisik mustahil: mengeringkan tidak menambah berat.\n\nKemungkinan: (a) salah ketik, (b) batch yang dicentang kurang — timbangan ini mencakup batch lain yang belum dipilih, (c) satuan tertukar (gram vs kg).\n\nPerbaiki dulu sebelum simpan.`);
+  }
+  if (totalCherry > 0) {
+    const _r = dried / totalCherry * 100;
+    if (_r < 30 || _r > 55) {
+      if (!confirm(`⚠️ Rendemen ${_r.toFixed(1)}% di luar rentang wajar 30–55%.\n\nCherry ${totalCherry.toFixed(2)} kg → dried ${dried} kg\nAnchor kebun: ~44–48%.\n\n• Terlalu RENDAH → mungkin ada batch cherry tercentang yang dried-nya belum masuk\n• Terlalu TINGGI → mungkin masih basah, atau ada batch yang belum dicentang\n\nTetap simpan angka aktual ini?`)) return;
+    }
+  }
   const mc = parseDecimalInput((document.getElementById('jf-mc')||{}).value||'');
   const daysArr = events.map(e => jemurDaysElapsed(e));
   const minDays = Math.min(...daysArr);
