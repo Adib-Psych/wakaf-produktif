@@ -1842,7 +1842,7 @@
       <!-- ─── LOG CABUT / TEBANG POHON MERAH (NEW 16 Jul 2026) ─── -->
       <div class="card" style="border-left:5px solid #DC2626">
         <div class="card-title" style="color:#7F1D1D"><span class="num" style="background:#DC2626">🪓</span>Log Cabut / Tebang Pohon Merah — Progress Peremajaan</div>
-        <p style="font-size:11.5px;color:var(--mute);margin-bottom:14px">Catat pohon <span style="background:#FECACA;color:#7F1D1D;padding:1px 6px;border-radius:4px;font-weight:700">🔴 Merah</span> (tidak sehat/mati) yang sudah ditebang, per kebun. Target = jumlah Merah census 29 Mei: K1 <b>24</b> · K2 <b>98</b> · K3 <b>200</b> · K4 <b>60</b> = <b>382</b>. Census H/B/M tetap di-update manual saat re-census/sulaman (log ini terpisah, tak mengubah census).</p>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:14px">Catat pohon yang sudah <b>dicabut</b> (sampai akar) atau <b>ditebang</b> (akar tinggal), per kebun. Sasaran utama <span style="background:#FECACA;color:#7F1D1D;padding:1px 6px;border-radius:4px;font-weight:700">🔴 Merah</span> — target census 29 Mei: K1 <b>24</b> · K2 <b>98</b> · K3 <b>200</b> · K4 <b>60</b> = <b>382</b>. Tapi pohon bertali <span style="background:#DBEAFE;color:#1E40AF;padding:1px 6px;border-radius:4px;font-weight:700">🔵 Biru</span> / <span style="background:#DCFCE7;color:#14532D;padding:1px 6px;border-radius:4px;font-weight:700">🟢 Hijau</span> yang <em>ternyata mati di lapangan</em> juga dicatat di sini — dihitung terpisah supaya progres Merah tetap jujur. Angka <b>Terkini (live)</b> di Dashboard = sensus Mei − total di kartu ini. Census H/B/M sendiri tetap di-update manual saat re-census/sulaman.</p>
         <div id="cabut-log-container" style="font-size:12px;color:var(--mute)">memuat…</div>
       </div>
 
@@ -3823,6 +3823,13 @@ function renderDashPanenSummary() {
   const cur = (pb.census2026 && pb.census2026.length===4) ? pb.census2026 : (pb.perBidang||[0,0,0,0]);   // TERKINI per kebun: census aktual / est
   const locked = pb.censusLocked || [false,false,false,false];
   const curTot = cur.reduce((s,v)=>s+(v||0),0), srvTot = srv.reduce((s,v)=>s+(v||0),0);
+  // TERKINI (live) = sensus Mei 2026 − pohon yang sudah dicabut/ditebang (Log Inventarisasi).
+  // Sebelum 30 Jul 2026 kolom "Terkini" sebenarnya cuma sensus Mei — bukan angka hidup. (Catch Wakif.)
+  const _KEBK = ['K1','K2','K3','K4'];
+  const rmv = (typeof cabutByKebun === 'function') ? cabutByKebun() : {K1:0,K2:0,K3:0,K4:0};
+  const live = _KEBK.map((k,i) => Math.max(0, (cur[i]||0) - (rmv[k]||0)));
+  const liveTot = live.reduce((s,v)=>s+v,0);
+  const rmvTot = _KEBK.reduce((s,k)=>s+(rmv[k]||0),0);
   const chip = (lbl,val,col) => `<div style="background:#fff;border:1px solid #e8e3d8;border-radius:8px;padding:7px 12px;min-width:84px"><div style="font-size:9px;color:var(--mute);text-transform:uppercase;letter-spacing:.3px">${lbl}</div><div style="font-size:17px;font-weight:800;color:${col}">${val}</div></div>`;
   c.innerHTML = `
     <div style="font-size:11px;color:var(--mute);font-weight:700;margin-bottom:6px">🍒 PANEN SIKLUS 2026 (akumulasi)</div>
@@ -3835,14 +3842,17 @@ function renderDashPanenSummary() {
       ${chip('Hari panen', String(days), '#2E5C4F')}
     </div>
     <div style="font-size:11px;color:var(--mute);font-weight:700;margin-bottom:6px">🌳 JUMLAH POHON KOPI PER KEBUN</div>
-    <div class="table-wrap"><table style="width:100%;font-size:11.5px;border-collapse:collapse;max-width:440px">
-      <thead><tr style="background:var(--earth);color:#fff"><th style="text-align:left;padding:5px 8px">Kebun</th><th style="text-align:right">Survei Okt 2023</th><th style="text-align:right;padding-right:8px">Terkini</th></tr></thead>
+    <div class="table-wrap"><table style="width:100%;font-size:11.5px;border-collapse:collapse;max-width:600px">
+      <thead><tr style="background:var(--earth);color:#fff"><th style="text-align:left;padding:5px 8px">Kebun</th><th style="text-align:right">Survei Okt 2023</th><th style="text-align:right">Sensus Mei 2026</th><th style="text-align:right;padding-right:8px">Terkini <span style="font-weight:400;opacity:.8">(live)</span></th></tr></thead>
       <tbody>
-        ${['K1','K2','K3','K4'].map((k,i)=>`<tr style="border-bottom:1px solid #efe9dd"><td style="padding:5px 8px;font-weight:700">${k}</td><td style="text-align:right;color:var(--mute)">${srv[i]||0}</td><td style="text-align:right;font-weight:700;padding-right:8px;${locked[i]?'':'color:#b45309'}">${cur[i]||0} ${locked[i]?'<span style="color:#16a34a;font-size:9px;font-weight:700">✓</span>':'<span style="font-size:9px;font-weight:600">~est</span>'}</td></tr>`).join('')}
-        <tr style="background:#FAFCFB;font-weight:800;border-top:2px solid #e0d9c8"><td style="padding:5px 8px">TOTAL</td><td style="text-align:right;color:var(--mute)">${srvTot}</td><td style="text-align:right;padding-right:8px">${curTot}</td></tr>
+        ${_KEBK.map((k,i)=>`<tr style="border-bottom:1px solid #efe9dd"><td style="padding:5px 8px;font-weight:700">${k}</td><td style="text-align:right;color:var(--mute)">${srv[i]||0}</td><td style="text-align:right;color:var(--mute);${locked[i]?'':'color:#b45309'}">${cur[i]||0} ${locked[i]?'<span style="color:#16a34a;font-size:9px;font-weight:700">✓</span>':'<span style="font-size:9px;font-weight:600">~est</span>'}</td><td style="text-align:right;font-weight:800;padding-right:8px;color:var(--earth)">${live[i]}${rmv[k]?` <span style="font-size:9px;font-weight:700;color:#DC2626">−${rmv[k]}</span>`:''}</td></tr>`).join('')}
+        <tr style="background:#FAFCFB;font-weight:800;border-top:2px solid #e0d9c8"><td style="padding:5px 8px">TOTAL</td><td style="text-align:right;color:var(--mute)">${srvTot}</td><td style="text-align:right;color:var(--mute)">${curTot}</td><td style="text-align:right;padding-right:8px;color:var(--earth)">${liveTot}${rmvTot?` <span style="font-size:9px;font-weight:700;color:#DC2626">−${rmvTot}</span>`:''}</td></tr>
       </tbody>
     </table></div>
-    <div style="font-size:9.5px;color:var(--mute);margin-top:5px;font-style:italic"><span style="color:#16a34a;font-weight:700">✓</span> census aktual lapangan 28–29 Mei 2026 (sumber: Tab Inventarisasi). Kebun Wakaf K1+K2+K3 = <strong>994</strong> · K4 Rumah Wakif <em>(bukan aset wakaf)</em> = 304 · total fisik 1.298. Angka lama "912" (decay) terlalu agresif vs aktual.</div>`;
+    <div style="font-size:9.5px;color:var(--mute);margin-top:5px;font-style:italic;line-height:1.65">
+      <strong>Sensus Mei 2026</strong> <span style="color:#16a34a;font-weight:700">✓</span> = pendataan lapangan 28–29 Mei 2026 (Tab Inventarisasi). Kebun Wakaf K1+K2+K3 = <strong>994</strong> · K4 Rumah Wakif <em>(bukan aset wakaf)</em> = 304 · total fisik 1.298.<br>
+      <strong>Terkini (live)</strong> = sensus Mei − pohon yang sudah <strong>dicabut/ditebang</strong>, tarikan langsung dari <em>Log Cabut/Tebang</em> di Tab Inventarisasi (saat ini <strong>${rmvTot}</strong> pohon). Berubah otomatis tiap ada catatan baru.
+    </div>`;
 }
 
 function renderDashboard() {
@@ -15791,66 +15801,159 @@ let CABUT_DATA = [];
 const CABUT_LS = 'wkkn_v2_cabut';
 function loadCabutLS(){ try{ const v=JSON.parse(localStorage.getItem(CABUT_LS)||'[]'); if(Array.isArray(v)) CABUT_DATA=v; }catch(e){} }
 function saveCabutLS(){ try{ localStorage.setItem(CABUT_LS, JSON.stringify(CABUT_DATA)); }catch(e){} }
+/* ── Metode & kategori tali (ditambah 30 Jul 2026, permintaan Wakif) ──
+   KENAPA metode WAJIB dibedakan — bukan sekadar istilah:
+   1. Penyakit akar. Pohon yang hanya DITEBANG meninggalkan akarnya di tanah.
+      Untuk pohon yang mati karena busuk akar, akar itu tetap jadi food base dan
+      patogen menular lewat kontak akar ke kopi sehat di sekitarnya — persis
+      mekanisme K3-P01. Menebang pohon sakit = baru separuh pekerjaan.
+   2. Slot tanam. Sulaman tidak bisa ditanam di titik yang tunggak+akarnya masih
+      ada. Jadi "slot siap sulaman" = jumlah yang DICABUT, bukan yang ditebang.
+   3. Tunas ulang. Tunggak kopi yang ditebang biasanya bertunas lagi (itu justru
+      teknik peremajaan/stumping) → ditebang BELUM tentu hilang permanen,
+      sedangkan dicabut = minus satu permanen. Kalau digabung, sensus melenceng.
+   4. Biaya. Mencabut jauh lebih mahal daripada menebang (bandingkan kajian
+      tunggak: triase ±Rp 2,8 jt vs cabut total ±Rp 43 jt).
+   5. Residu. Kayu pohon sehat → biochar; tunggak/akar pohon sakit → aliran 5
+      (dimusnahkan). Metode + status sehat menentukan tujuan residunya. */
+const CABUT_METODE = {
+  tebang: { ikon:'🪓', label:'Ditebang', sub:'tunggak + akar tinggal di tanah', col:'#D97706' },
+  cabut:  { ikon:'⛏️', label:'Dicabut',  sub:'sampai akar terangkat',           col:'#16A34A' }
+};
+const CABUT_TALI = {
+  merah: { ikon:'🔴', label:'Merah', col:'#DC2626' },
+  biru:  { ikon:'🔵', label:'Biru',  col:'#2563EB' },
+  hijau: { ikon:'🟢', label:'Hijau', col:'#16A34A' }
+};
+function cabutTali(e){
+  if (e && e.tali && CABUT_TALI[e.tali]) return e.tali;
+  const k = String((e && e.kondisi) || '');        // entri lama: teks bebas
+  if (/biru/i.test(k))  return 'biru';
+  if (/hijau/i.test(k)) return 'hijau';
+  return 'merah';
+}
 function cabutByKebun(){ const o={K1:0,K2:0,K3:0,K4:0}; CABUT_DATA.forEach(e=>{ if(o[e.kebun]!=null) o[e.kebun]+=(+e.jumlah||0); }); return o; }
+function cabutStats(){
+  const merahPer = {K1:0,K2:0,K3:0,K4:0};
+  let luarMerah=0, dicabut=0, ditebang=0, belumMetode=0, sakitTebang=0;
+  CABUT_DATA.forEach(e=>{
+    const n = +e.jumlah||0, t = cabutTali(e), m = (e && e.metode) || null;
+    if (t === 'merah') { if (merahPer[e.kebun]!=null) merahPer[e.kebun]+=n; } else luarMerah += n;
+    if (m === 'cabut') dicabut += n;
+    else if (m === 'tebang') { ditebang += n; if (e.sakit) sakitTebang += n; }
+    else belumMetode += n;
+  });
+  return { merahPer, luarMerah, dicabut, ditebang, belumMetode, sakitTebang };
+}
+function setCabutMetode(id, val){
+  const e = CABUT_DATA.find(x => x.id === id); if (!e) return;
+  if (val) e.metode = val; else delete e.metode;
+  e.last_modified_at = Date.now();
+  saveCabutLS(); renderCabutLog(); _cabutRefreshDash();
+  if (typeof window.syncCabutToFirestore === 'function') window.syncCabutToFirestore();
+}
+function _cabutRefreshDash(){
+  // angka "Terkini (live)" di Dashboard ikut berubah
+  if (typeof renderDashPanenSummary === 'function') { try { renderDashPanenSummary(); } catch(e){} }
+}
 function renderCabutLog(){
   const el=document.getElementById('cabut-log-container'); if(!el) return;
-  const done=cabutByKebun(); const KEB=['K1','K2','K3','K4'];
+  const KEB=['K1','K2','K3','K4'];
+  const st=cabutStats(), done=st.merahPer;
   const totDone=KEB.reduce((s,k)=>s+done[k],0), totTgt=KEB.reduce((s,k)=>s+CABUT_TARGET[k],0);
+  const perKebun=cabutByKebun();
+  const totalHilang=KEB.reduce((s,k)=>s+(perKebun[k]||0),0);
   const bars=KEB.map(k=>{
     const d=done[k], t=CABUT_TARGET[k], sisa=Math.max(0,t-d), pct=t?Math.min(100,d/t*100):0;
     const col=pct>=100?'#16A34A':(pct>=50?'#D97706':'#DC2626');
-    return `<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700;color:#7F1D1D">${CABUT_KNAME[k]}</span><span style="color:var(--mute)">ditebang <b style="color:${col}">${d}</b>/${t} · sisa <b>${sisa}</b></span></div><div style="height:14px;background:#FEE2E2;border-radius:7px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${col};border-radius:7px;transition:width .3s"></div></div></div>`;
+    return `<div style="margin-bottom:9px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:3px"><span style="font-weight:700;color:#7F1D1D">${CABUT_KNAME[k]}</span><span style="color:var(--mute)">selesai <b style="color:${col}">${d}</b>/${t} · sisa <b>${sisa}</b></span></div><div style="height:14px;background:#FEE2E2;border-radius:7px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${col};border-radius:7px;transition:width .3s"></div></div></div>`;
   }).join('');
   const opts=KEB.map(k=>`<option value="${k}">${CABUT_KNAME[k]}</option>`).join('');
   const fmt = t => (typeof formatTgl==='function'? formatTgl(t): t);
-  const rows=[...CABUT_DATA].sort((a,b)=>(b.tgl||'').localeCompare(a.tgl||'')).map(e=>`<tr><td style="padding:5px 8px">${fmt(e.tgl)}</td><td style="padding:5px 8px;font-weight:700">${CABUT_KNAME[e.kebun]||e.kebun}</td><td style="padding:5px 8px;text-align:right;font-weight:700">${e.jumlah}</td><td style="padding:5px 8px;font-size:11px;color:var(--mute)">${String(e.catatan||e.kondisi||'').replace(/</g,'&lt;')}</td><td style="padding:5px 8px;text-align:center"><button onclick="deleteCabut('${e.id}')" style="background:#fbe9e7;color:#c14b3a;border:1px solid #f2c7c1;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button></td></tr>`).join('');
+  const chipm=(lbl,val,col,sub)=>`<div style="background:#fff;border:1px solid #eee;border-radius:8px;padding:7px 11px;flex:1 1 130px"><div style="font-size:9px;color:var(--mute);text-transform:uppercase;letter-spacing:.3px">${lbl}</div><div style="font-size:17px;font-weight:800;color:${col}">${val}</div>${sub?`<div style="font-size:9.5px;color:var(--mute);line-height:1.35;margin-top:1px">${sub}</div>`:''}</div>`;
+  const metodeCell = e => {
+    const m=e.metode;
+    if(m && CABUT_METODE[m]) return `<span style="color:${CABUT_METODE[m].col};font-weight:700;white-space:nowrap">${CABUT_METODE[m].ikon} ${CABUT_METODE[m].label}</span>`;
+    return `<select onchange="setCabutMetode('${e.id}',this.value)" title="Entri lama — belum ada metode. Pilih supaya ikut terhitung." style="font-size:10.5px;padding:2px 4px;border:1.5px solid #f0c9a0;border-radius:5px;background:#FFFBEB"><option value="">— belum dicatat</option><option value="tebang">🪓 Ditebang</option><option value="cabut">⛏️ Dicabut</option></select>`;
+  };
+  const rows=[...CABUT_DATA].sort((a,b)=>(b.tgl||'').localeCompare(a.tgl||'')).map(e=>{
+    const t=cabutTali(e), T=CABUT_TALI[t];
+    return `<tr><td style="padding:5px 8px;white-space:nowrap">${fmt(e.tgl)}</td><td style="padding:5px 8px;font-weight:700;white-space:nowrap">${CABUT_KNAME[e.kebun]||e.kebun}</td><td style="padding:5px 8px;text-align:right;font-weight:700">${e.jumlah}</td><td style="padding:5px 8px">${metodeCell(e)}</td><td style="padding:5px 8px;white-space:nowrap"><span style="color:${T.col};font-weight:700">${T.ikon} ${T.label}</span>${e.sakit?' <span title="dugaan penyakit akar" style="font-size:9px;background:#FEE2E2;color:#7F1D1D;padding:1px 5px;border-radius:6px;font-weight:700">🦠 sakit</span>':''}</td><td style="padding:5px 8px;font-size:11px;color:var(--mute)">${String(e.catatan||'').replace(/</g,'&lt;')}</td><td style="padding:5px 8px;text-align:center"><button onclick="deleteCabut('${e.id}')" style="background:#fbe9e7;color:#c14b3a;border:1px solid #f2c7c1;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button></td></tr>`;
+  }).join('');
   el.innerHTML=`
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px">
+    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px">
+      ${chipm('Total hilang', totalHilang+' phn', '#7F1D1D', 'dikurangkan dari "Terkini" di Dashboard')}
+      ${chipm('⛏️ Dicabut', st.dicabut+' phn', '#16A34A', 'akar terangkat → slot siap sulaman')}
+      ${chipm('🪓 Ditebang', st.ditebang+' phn', '#D97706', 'akar masih di tanah → slot belum bebas')}
+      ${st.belumMetode?chipm('⚠️ Metode belum dicatat', st.belumMetode+' phn', '#B45309', 'entri lama — set di tabel bawah'):''}
+      ${st.luarMerah?chipm('Di luar Merah', st.luarMerah+' phn', '#2563EB', 'Biru/Hijau yang ternyata mati'):''}
+    </div>
+    ${st.sakitTebang? `<div style="background:#FEF2F2;border-left:5px solid #DC2626;border-radius:0 8px 8px 0;padding:9px 13px;font-size:11.5px;color:#7F1D1D;margin-bottom:14px"><b>🦠 ${st.sakitTebang} pohon sakit hanya DITEBANG</b> — akarnya masih di tanah dan tetap jadi sumber penularan lewat kontak akar. Perlu tindak lanjut: cabut akar, atau potong akar lateral + parit isolasi (lihat kajian Sanitasi Tunggak).</div>`:''}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px">
       <div>
-        <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:8px">📊 SISA MERAH PER KEBUN</div>
+        <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:8px">📊 PROGRES POHON MERAH PER KEBUN</div>
         ${bars}
-        <div style="margin-top:8px;padding:8px 12px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#7F1D1D">Total ditebang <b>${totDone}</b> / ${totTgt} Merah · sisa <b>${totTgt-totDone}</b> (${totTgt?Math.round(totDone/totTgt*100):0}%)</div>
+        <div style="margin-top:8px;padding:8px 12px;background:#FEF2F2;border-radius:8px;font-size:12px;color:#7F1D1D">Merah selesai <b>${totDone}</b> / ${totTgt} · sisa <b>${totTgt-totDone}</b> (${totTgt?Math.round(totDone/totTgt*100):0}%)</div>
+        <div style="margin-top:10px;background:#F8FAFC;border:1px dashed #cbd5e1;border-radius:8px;padding:10px 12px;font-size:11px;color:#475569;line-height:1.6">
+          <b style="color:#334155">Kenapa cabut vs tebang dibedakan?</b><br>
+          <b>1. Penyakit akar.</b> Pohon yang hanya ditebang meninggalkan akarnya. Untuk pohon mati karena busuk akar, akar itu tetap jadi sumber makanan patogen dan menular lewat kontak akar ke kopi sehat — persis kasus K3-P01.<br>
+          <b>2. Slot tanam.</b> Sulaman tidak bisa ditanam di titik yang tunggak &amp; akarnya masih ada → slot siap sulaman = yang <b>dicabut</b> saja.<br>
+          <b>3. Tunas ulang.</b> Tunggak kopi yang ditebang umumnya bertunas lagi (itu teknik peremajaan) → ditebang belum tentu hilang permanen; dicabut = minus satu permanen.<br>
+          <b>4. Biaya &amp; residu.</b> Mencabut jauh lebih mahal, dan tunggak/akar pohon sakit masuk aliran residu yang harus dimusnahkan — bukan dijadikan biochar.
+        </div>
       </div>
       <div>
         <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:8px">➕ CATAT CABUT / TEBANG</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div><label style="font-size:10px;color:var(--mute);font-weight:700">Kebun</label><select id="cabut-kebun" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px">${opts}</select></div>
           <div><label style="font-size:10px;color:var(--mute);font-weight:700">Jumlah pohon</label><input id="cabut-jumlah" type="number" min="1" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
-          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Tanggal</label><input id="cabut-tgl" type="date" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
-          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Kondisi</label><input id="cabut-kondisi" value="Tali Merah (mati/sakit)" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
+          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Metode</label><select id="cabut-metode" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"><option value="tebang">🪓 Ditebang — akar tinggal</option><option value="cabut">⛏️ Dicabut — sampai akar</option></select></div>
+          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Kategori tali</label><select id="cabut-tali" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"><option value="merah">🔴 Merah (default)</option><option value="biru">🔵 Biru — ternyata mati</option><option value="hijau">🟢 Hijau — ternyata mati</option></select></div>
+          <div style="grid-column:1/-1"><label style="font-size:10px;color:var(--mute);font-weight:700">Tanggal</label><input id="cabut-tgl" type="date" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
         </div>
+        <label style="display:flex;align-items:flex-start;gap:7px;margin-top:9px;font-size:11px;color:#7F1D1D;cursor:pointer;background:#FEF2F2;border-radius:7px;padding:7px 10px">
+          <input type="checkbox" id="cabut-sakit" style="margin-top:2px">
+          <span><b>Dugaan penyakit akar</b> — kalau ditebang saja, akar tetap menular. Ditandai untuk tindak lanjut sanitasi.</span>
+        </label>
         <div style="margin-top:8px"><label style="font-size:10px;color:var(--mute);font-weight:700">Catatan (opsional)</label><input id="cabut-catatan" placeholder="mis. lereng bawah, siap sulaman" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
-        <button onclick="submitCabut()" style="margin-top:10px;background:#DC2626;color:#fff;border:0;border-radius:7px;padding:9px 16px;font-weight:700;cursor:pointer;width:100%">🪓 Catat Cabut</button>
+        <button onclick="submitCabut()" style="margin-top:10px;background:#DC2626;color:#fff;border:0;border-radius:7px;padding:9px 16px;font-weight:700;cursor:pointer;width:100%">🪓 Catat</button>
         <div id="cabut-err" style="color:#c14b3a;font-size:11px;margin-top:6px"></div>
       </div>
     </div>
     <div style="margin-top:16px">
-      <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:6px">📜 RIWAYAT CABUT (${CABUT_DATA.length})</div>
-      ${CABUT_DATA.length? `<div class="table-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FEF2F2"><th style="padding:6px 8px;text-align:left">Tanggal</th><th style="padding:6px 8px;text-align:left">Kebun</th><th style="padding:6px 8px;text-align:right">Jumlah</th><th style="padding:6px 8px;text-align:left">Catatan</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div style="color:var(--mute);font-size:12px;font-style:italic">Belum ada catatan cabut. Isi form di atas → tersimpan &amp; sinkron otomatis.</div>'}
+      <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:6px">📜 RIWAYAT CABUT / TEBANG (${CABUT_DATA.length})</div>
+      ${CABUT_DATA.length? `<div class="table-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FEF2F2"><th style="padding:6px 8px;text-align:left">Tanggal</th><th style="padding:6px 8px;text-align:left">Kebun</th><th style="padding:6px 8px;text-align:right">Jumlah</th><th style="padding:6px 8px;text-align:left">Metode</th><th style="padding:6px 8px;text-align:left">Tali</th><th style="padding:6px 8px;text-align:left">Catatan</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div style="color:var(--mute);font-size:12px;font-style:italic">Belum ada catatan. Isi form di atas → tersimpan &amp; sinkron otomatis.</div>'}
     </div>`;
   const td=document.getElementById('cabut-tgl'); if(td&&!td.value) td.value=new Date().toISOString().slice(0,10);
 }
 function submitCabut(){
   const err=document.getElementById('cabut-err'); if(err) err.textContent='';
-  const kebun=(document.getElementById('cabut-kebun')||{}).value;
-  const jumlah=parseInt((document.getElementById('cabut-jumlah')||{}).value)||0;
-  const tgl=(document.getElementById('cabut-tgl')||{}).value;
-  const kondisi=((document.getElementById('cabut-kondisi')||{}).value||'').trim();
-  const catatan=((document.getElementById('cabut-catatan')||{}).value||'').trim();
+  const gv=id=>(document.getElementById(id)||{}).value;
+  const kebun=gv('cabut-kebun');
+  const jumlah=parseInt(gv('cabut-jumlah'))||0;
+  const tgl=gv('cabut-tgl');
+  const metode=gv('cabut-metode')||'tebang';
+  const tali=gv('cabut-tali')||'merah';
+  const sakit=!!(document.getElementById('cabut-sakit')||{}).checked;
+  const catatan=(gv('cabut-catatan')||'').trim();
   if(!jumlah||jumlah<1){ if(err) err.textContent='Jumlah pohon harus ≥ 1'; return; }
   if(!tgl){ if(err) err.textContent='Tanggal wajib diisi'; return; }
-  CABUT_DATA.push({ id:'cabut_'+Date.now()+'_'+Math.random().toString(36).slice(2,6), kebun, jumlah, tgl, kondisi, catatan, created_at:new Date().toISOString() });
-  saveCabutLS(); renderCabutLog();
+  const M=CABUT_METODE[metode], T=CABUT_TALI[tali];
+  CABUT_DATA.push({ id:'cabut_'+Date.now()+'_'+Math.random().toString(36).slice(2,6),
+    kebun, jumlah, tgl, metode, tali, sakit,
+    kondisi:`Tali ${T.label} · ${M.label}`,          // teks ringkas utk kompatibilitas entri lama
+    catatan, created_at:new Date().toISOString() });
+  saveCabutLS(); renderCabutLog(); _cabutRefreshDash();
   if(typeof window.syncCabutToFirestore==='function') window.syncCabutToFirestore();
-  if(typeof showToast==='function') showToast(`🪓 Dicatat: ${jumlah} pohon ditebang di ${CABUT_KNAME[kebun]||kebun}`,'success');
+  if(typeof showToast==='function') showToast(`${M.ikon} Dicatat: ${jumlah} pohon ${M.label.toLowerCase()} (${T.ikon} ${T.label}) di ${CABUT_KNAME[kebun]||kebun}`,'success');
 }
 function deleteCabut(id){
-  if(!confirm('Hapus catatan cabut ini?')) return;
+  if(!confirm('Hapus catatan ini?')) return;
   CABUT_DATA=CABUT_DATA.filter(e=>e.id!==id);
-  saveCabutLS(); renderCabutLog();
+  saveCabutLS(); renderCabutLog(); _cabutRefreshDash();
   if(typeof window.syncCabutToFirestore==='function') window.syncCabutToFirestore();
 }
-if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCabut=deleteCabut; window.renderCabutLog=renderCabutLog;
+if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCabut=deleteCabut; window.renderCabutLog=renderCabutLog; window.setCabutMetode=setCabutMetode; window._cabutRefreshDash=_cabutRefreshDash;
   loadCabutLS(); document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{renderCabutLog();}catch(e){}},350)); }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -19125,6 +19228,8 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           CABUT_DATA = snap.data().data;
           if (typeof saveCabutLS === 'function') saveCabutLS();
           if (typeof renderCabutLog === 'function') renderCabutLog();
+          // angka "Terkini (live)" di Dashboard ikut ter-refresh saat data datang dari device lain
+          if (typeof _cabutRefreshDash === 'function') _cabutRefreshDash();
         }
       } catch (e) {}
     });
