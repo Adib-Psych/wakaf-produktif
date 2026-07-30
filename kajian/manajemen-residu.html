@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Manajemen Residu Kebun — Sisa Tebangan, Wiwilan &amp; Ranting Kering</title>
+<style>
+  @page { size: A4; margin: 10mm; }
+  :root{
+    --earth:#1F5F47; --moss:#2E5C4F; --leaf:#15803d; --leaflt:#dcfce7;
+    --cherry:#8c2519; --cherrylt:#fde8e4; --amber:#b45309; --amberlt:#fef3c7;
+    --cyan:#0e7490; --cyanlt:#cffafe; --violet:#5b21b6; --violetlt:#f5f3ff;
+    --ink:#1f2937; --mute:#6b7280; --line:#e5e7eb; --cream:#FAFCFB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:var(--ink);background:#f3f4f6;font-size:17px;line-height:1.62}
+  .page{max-width:1360px;margin:0 auto;background:#fff;padding:44px 52px 56px;box-shadow:0 2px 22px rgba(0,0,0,.07)}
+
+  h1{margin:0 0 7px;font-size:36px;color:var(--earth);letter-spacing:-.4px;line-height:1.15}
+  .sub{color:var(--mute);font-size:16px;margin-bottom:4px}
+  .rule{height:5px;background:linear-gradient(90deg,var(--earth),var(--leaf),var(--amber));border-radius:3px;margin:22px 0 30px}
+  h2{font-size:23px;color:var(--earth);margin:40px 0 16px;padding-bottom:9px;border-bottom:3px solid var(--line);display:flex;align-items:center;gap:12px}
+  h2 .n{background:var(--earth);color:#fff;width:33px;height:33px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
+  h3{font-size:18px;margin:22px 0 9px;color:var(--moss)}
+
+  .card{border:1px solid var(--line);border-radius:12px;padding:18px 21px;margin-bottom:15px;background:#fff}
+  .card.warn{border-left:7px solid var(--amber);background:#fffdf7}
+  .card.bad{border-left:7px solid var(--cherry);background:#fffaf9}
+  .card.good{border-left:7px solid var(--leaf);background:#fafffb}
+  .card.info{border-left:7px solid var(--cyan);background:#fafeff}
+
+  table{width:100%;border-collapse:collapse;font-size:16px;margin:11px 0 7px}
+  th{background:var(--earth);color:#fff;text-align:left;padding:11px 13px;font-weight:600;font-size:15.5px}
+  td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fbfdfc}
+
+  .flow{display:flex;gap:15px;align-items:stretch;margin:16px 0 7px;flex-wrap:wrap}
+  .step{flex:1 1 300px;border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--cream)}
+  .step .b{width:34px;height:34px;border-radius:50%;background:var(--leaf);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;margin-bottom:11px}
+  .step b{display:block;font-size:18px;margin-bottom:6px;color:var(--earth)}
+  .step span{font-size:15.5px;color:var(--mute);display:block}
+
+  .pill{font-size:14px;padding:5px 14px;border-radius:99px;font-weight:600;display:inline-block}
+  .p-leaf{background:var(--leaflt);color:#14532d}
+  .p-amber{background:var(--amberlt);color:#7c2d12}
+  .p-cherry{background:var(--cherrylt);color:#7f1d1d}
+  .p-cyan{background:var(--cyanlt);color:#164e63}
+
+  blockquote{margin:14px 0;padding:14px 20px;border-left:6px solid var(--leaf);background:var(--cream);border-radius:0 10px 10px 0;font-size:17px}
+  blockquote b{color:var(--earth)}
+  ul,ol{margin:9px 0 9px 22px;padding:0}
+  li{margin-bottom:7px}
+  .foot{margin-top:44px;padding-top:20px;border-top:2px solid var(--line);font-size:14.5px;color:var(--mute);line-height:1.7}
+  code{background:#f3f4f6;padding:2px 7px;border-radius:5px;font-size:14.5px;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+  @media print{
+    body{background:#fff;font-size:11.5px;line-height:1.45}
+    .page{max-width:none;padding:0;box-shadow:none}
+    h1{font-size:22px} h2{font-size:15px;margin:18px 0 9px} h3{font-size:12.5px;margin:12px 0 5px}
+    table{font-size:10.5px} th,td{padding:5px 7px}
+    .card{padding:9px 12px;margin-bottom:8px} .step{padding:10px}
+    h2,.card,table,.flow{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Manajemen Residu Kebun</h1>
+  <div class="sub">Sisa tebangan · wiwilan · ranting kering — Kebun Kopi Wakaf Ngantang</div>
+  <div class="sub"><strong>Locked 29 Juli 2026</strong> · Addendum atas SOP Master Robusta Ngantang — <em>menambah</em>, tidak menggantikan</div>
+  <div class="rule"></div>
+
+  <div class="card info">
+    <strong>Kenapa kajian ini ada.</strong> Dua pemicu: (a) kambium tunggak lama ternyata masih segar — sebagian pohon tebangan masih hidup; (b) pertanyaan Wakif soal apa yang harus dilakukan pada sisa tebangan dan ranting kering di musim kemarau, karena "dibuat pupuk pun susah, sudah telanjur kering".
+  </div>
+
+  <h2><span class="n">1</span> Prinsip inti</h2>
+
+  <blockquote>
+    <b>Segregasi berdasarkan (1) ukuran dan (2) status kesehatan asal.</b><br>
+    Bukan "semua dibakar", bukan pula "semua dikompos".
+  </blockquote>
+
+  <p>Bakar terbuka menghilangkan hampir seluruh nitrogen, sekitar 25% fosfor, dan 5–60% sulfur. Bahan organik tanah tercatat turun dari 15,63 menjadi 11,78 g/kg. Sebaliknya, mulsa pangkasan pada kebun kopi justru <strong>menaikkan C dan N tanah</strong> — pada sistem kopi bernaung tercatat sekitar 65 Mg/ha bahan kering selama 3 tahun membawa ±27,5 Mg/ha karbon dan ±530 kg/ha nitrogen.</p>
+
+  <p>Artinya: membakar semuanya berarti membuang hara yang justru sedang kita beli mahal-mahal dalam bentuk pupuk.</p>
+
+  <h2><span class="n">2</span> Lima aliran residu — aturan terkunci</h2>
+
+  <table>
+    <tr><th style="width:16%">Aliran</th><th style="width:24%">Bahan</th><th style="width:30%">Perlakuan</th><th>Alasan</th></tr>
+    <tr>
+      <td><span class="pill p-leaf">1 · Hijau</span></td>
+      <td>Wiwilan segar, daun, gulma babat</td>
+      <td><strong>Mulsa langsung</strong> di piringan pohon, atau masuk rorak</td>
+      <td>C:N rendah, cepat terurai, menahan erosi &amp; menjaga kelembapan</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-leaf">2 · Ranting kecil</span><br><span style="font-size:14px;color:var(--mute)">&lt; 2 cm</span></td>
+      <td>Ranting pangkasan yang sudah kering</td>
+      <td><strong>Cacah dengan chopper</strong> → mulsa antar-baris, atau kompos + sumber N (pupuk kandang / urea tipis)</td>
+      <td>Chopper sudah menjadi aset kebun sejak kembali ke Wakif, Mei 2026</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-amber">3 · Cabang sedang</span><br><span style="font-size:14px;color:var(--mute)">2–5 cm</span></td>
+      <td>Cabang pangkasan</td>
+      <td>Cacah bila chopper sanggup; bila tidak → <strong>biochar</strong></td>
+      <td>Terlalu keras untuk kompos cepat</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-amber">4 · Kayu besar</span><br><span style="font-size:14px;color:var(--mute)">&gt; 5 cm &amp; bonggol</span></td>
+      <td>Batang, cabang besar, potongan tunggak</td>
+      <td><strong>BIOCHAR — drum kiln</strong></td>
+      <td>Lignin tinggi, bertahun-tahun kalau dibiarkan. Dibakar terbuka = hara hilang percuma</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-cherry">5 · Bahan SAKIT</span></td>
+      <td>Kayu tunggak berjamur, ranting dieback, pohon bertali merah, cabang bergerek</td>
+      <td><strong>Musnahkan dengan api / masuk kiln.</strong> JANGAN dikompos, JANGAN ditumpuk di kebun</td>
+      <td>Ini <strong>inokulum penyakit</strong>, bukan bahan organik</td>
+    </tr>
+  </table>
+
+  <h2><span class="n">3</span> Kenapa jangan menumpuk kayu di kebun</h2>
+
+  <div class="card bad">
+    Tumpukan ranting dan tunggak <strong>menyimpan penyakit sekaligus hama</strong>. Potongan cabang yang terinfestasi penggerek menjadi <strong>reservoir</strong> serangga dewasa yang akan keluar lagi dan menyerang pohon sehat. Untuk bahan yang sudah terinfestasi, membakar adalah solusi yang diakui secara agronomis.
+  </div>
+
+  <p>Ini konsisten dengan validasi Bu Alvi (BRIN) atas tindakan Wakif pada kasus K3-P01: menebang yang terinfeksi, menyingkirkan kayu lapuk, dan memusnahkan sisanya <strong>sudah tepat</strong> untuk mencegah penularan.</p>
+
+  <h2><span class="n">4</span> Biochar — jalan tengah, dan sudah jadi keputusan</h2>
+
+  <p>Membakar <strong>terkendali di dalam drum tertutup</strong> (pirolisis, oksigen minim) berbeda mendasar dari membakar terbuka:</p>
+
+  <table>
+    <tr><th style="width:22%"></th><th>Bakar terbuka</th><th>Drum kiln (biochar)</th></tr>
+    <tr><td><strong>Karbon</strong></td><td>Lepas ke udara</td><td><strong>Terkunci di arang, bertahan puluhan tahun</strong></td></tr>
+    <tr><td><strong>Api</strong></td><td>Menyebar, sulit dikendalikan</td><td><strong>Terkurung di dalam drum</strong></td></tr>
+    <tr><td><strong>Asap</strong></td><td>Pekat</td><td>Jauh lebih sedikit — gasnya ikut terbakar</td></tr>
+    <tr><td><strong>Hasil</strong></td><td>Abu sedikit</td><td><strong>Biochar 25–35% dari berat bahan</strong></td></tr>
+  </table>
+
+  <div class="card good">
+    <strong>Sudah selaras dengan keputusan yang ada.</strong> Inj-1 <em>coffee pulp biochar</em> berstatus <strong>LANJUT</strong> (investasi Rp 1,5–2 jt, ROI tahun 2–3), dan ADR-027 soil amendment sudah dianggarkan. Residu kayu menjadi <strong>bahan baku tambahan yang gratis</strong> untuk program yang sudah berjalan.
+  </div>
+
+  <ul>
+    <li>Teknologi <strong>single drum kiln</strong> dipilih karena mudah diaplikasikan dan murah — cukup drum bekas.</li>
+    <li>Biochar harus <strong>dicuci / di-charge</strong> dulu (rendam air kencing sapi atau kompos cair) sebelum dipakai, agar tidak justru menyerap hara dari tanah.</li>
+  </ul>
+
+  <h2><span class="n">5</span> Aturan api — wajib, khusus musim kemarau</h2>
+
+  <blockquote>
+    Musim kemarau membuat pirolisis <b>efisien</b> — bahan kering, mudah menyala. Tapi musim kemarau juga membuat api terbuka <b>paling berbahaya</b>. Jawabannya bukan menunda pekerjaannya, tapi <b>mengurung apinya</b>.
+  </blockquote>
+
+  <table>
+    <tr><th style="width:9%">#</th><th>Aturan</th></tr>
+    <tr><td><strong>B5.1</strong></td><td><strong>Tidak ada tumpukan bakar terbuka.</strong> Semua pembakaran di dalam drum / kiln.</td></tr>
+    <tr><td><strong>B5.2</strong></td><td>Lokasi kiln: <strong>datar, atau di BAGIAN BAWAH lereng</strong> — api merambat naik, bukan turun.</td></tr>
+    <tr><td><strong>B5.3</strong></td><td>Jarak <strong>≥ 10 m</strong> dari kopi produktif dan dari tumpukan bahan kering lain.</td></tr>
+    <tr><td><strong>B5.4</strong></td><td><strong>Sekat bakar</strong>: tanah kosong / dibersihkan selebar <strong>2 m</strong> mengelilingi titik kiln.</td></tr>
+    <tr><td><strong>B5.5</strong></td><td>Air atau tanah urug <strong>siap di lokasi</strong> sebelum api dinyalakan. Jangan tinggalkan api tanpa penunggu.</td></tr>
+    <tr><td><strong>B5.6</strong></td><td>Waktu: <strong>sore hari</strong> — kelembapan naik, angin mereda. <strong>Batalkan bila angin kencang.</strong></td></tr>
+    <tr><td><strong>B5.7</strong></td><td>Hukum: UU 32/2009 Pasal 69 mengizinkan pembakaran terbatas ≤ 2 ha bagi masyarakat lokal — kebun ini 0,49 ha, jauh di bawah ambang. Namun kebijakan nasional tetap <strong>zero-burning</strong>, maka posisi kita: <strong>kiln tertutup, bukan pembakaran lahan.</strong> Beri tahu tetangga dan perangkat desa sebelum operasi pertama.</td></tr>
+  </table>
+
+  <h2><span class="n">6</span> Menjawab langsung: "kemarau, ranting sudah kering, susah jadi pupuk"</h2>
+
+  <p><strong>Sebagian benar.</strong> Ranting kering punya C:N tinggi dan berlignin, memang lambat terurai. Tapi kesimpulan "kalau begitu bakar saja" melewatkan dua hal:</p>
+
+  <div class="flow">
+    <div class="step">
+      <div class="b">1</div>
+      <b>Bakar terbuka membuang N</b>
+      <span>Justru nitrogen inilah yang sedang kita butuhkan dan kita beli mahal. Hara menguap ke udara, yang tersisa hanya abu.</span>
+    </div>
+    <div class="step">
+      <div class="b">2</div>
+      <b>Kering ≠ tidak berguna</b>
+      <span>Kering justru syarat ideal untuk pirolisis. Bahan basah butuh energi besar untuk menguapkan airnya lebih dulu.</span>
+    </div>
+  </div>
+
+  <div class="card good">
+    <strong>Maka bahan kering bukan masalah — itu peluang.</strong> Di musim kemarau inilah biochar paling murah dan paling mudah dibuat.
+  </div>
+
+  <p>Untuk yang tetap ingin dikompos: cacah dulu (perluas permukaan), tambah sumber N, jaga kelembapan. Tanpa ketiganya, ranting kering memang akan bertahan bertahun-tahun tanpa terurai.</p>
+
+  <h2><span class="n">7</span> Yang perlu dicatat ke dashboard</h2>
+
+  <ul>
+    <li>Volume atau berat residu per aliran (1–5) setiap kegiatan pangkasan</li>
+    <li>Tanggal &amp; lokasi operasi kiln, plus <strong>berat bahan masuk vs biochar keluar</strong> — dari sini kita dapat angka rendemen kebun sendiri</li>
+    <li>Biochar masuk stok → tautkan ke rencana aplikasi ADR-027</li>
+    <li>Bahan aliran 5 (sakit): asal pohon/tunggak mana + tanggal pemusnahan → jejak audit sanitasi</li>
+  </ul>
+
+  <h2><span class="n">8</span> Catatan pelaksana</h2>
+
+  <div class="card warn">
+    <strong>⚠️ Per 29 Juli 2026 kebun tidak punya pekerja lapangan tetap</strong> untuk pekerjaan atas maupun bawah pohon — Mas Kamto dan Pak Yasir sudah <em>retired</em>, dan keduanya tidak pernah benar-benar berjalan. Yang aktif hanya crew panen dan Wakif sendiri.
+    <br><br>
+    Semua pekerjaan dalam addendum ini <strong>belum ada eksekutornya</strong>. Saat menyusun jadwal, hitung ini sebagai kendala nyata — bukan detail administratif. Prioritaskan Tier 1 saja.
+  </div>
+
+  <div class="foot">
+    <strong>Rujukan internal:</strong> <code>project_opt_k3p01_busuk_akar_tunggak_6Jun2026.md</code> · Asesmen Fokus K3 6 Jun 2026 · Kajian Sanitasi Tunggak &amp; KNO₃ 29 Jul 2026 · ADR-027 (soil amendment) · Inj-1 (biochar, LANJUT) · Q8 (rorak Bidang 3) · CLAUDE.md Pattern #22.<br><br>
+    <strong>Rujukan eksternal:</strong> Tawfeeq 2025, <em>Applied and Environmental Soil Science</em> (dampak pembakaran residu) · Youkhana &amp; Idol, <em>Soil Biology &amp; Biochemistry</em> / <em>Agroforestry Systems</em> (mulsa pangkasan menaikkan C &amp; N pada kopi Hawaii) · <em>Scientific Reports</em> 2024 (alternatif pembakaran terbuka) · UC IPM Sanitation (tumpukan brush sebagai reservoir hama) · single drum kiln biochar (pengabdian masyarakat, Indonesia) · UU 32/2009 Pasal 69.<br><br>
+    <strong>Status:</strong> addendum ini <strong>belum</strong> di-encode ke SOP Master DOCX — masuk daftar <em>Pending SOP Updates</em>. Sumber: <code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code>
+  </div>
+
+</div>
+</body>
+</html>

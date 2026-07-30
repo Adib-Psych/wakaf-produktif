@@ -64,6 +64,24 @@
   .sb-tab:hover{background:rgba(255,255,255,.08);color:var(--cream)}
   .sb-tab.active{background:var(--moss);color:#fff;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,.2)}
   .sb-tab.wakif-only::after{content:'🔒';font-size:9px;opacity:.6}
+  /* ---- Nav group collapse/expand/hide (30 Jul 2026) ---- */
+  .nav-grp{margin-top:14px}
+  .nav-bd{display:flex;flex-direction:column;gap:1px}
+  .nav-hd{display:flex;align-items:center;gap:8px;padding:5px 14px 6px;cursor:pointer;font-size:10px;letter-spacing:1.5px;color:var(--moss);font-weight:800;user-select:none;border-radius:6px;transition:background .15s}
+  .nav-hd:hover{background:rgba(255,255,255,.06)}
+  .nav-hd .chv{font-size:9px;width:10px;flex-shrink:0;transition:transform .15s;display:inline-block}
+  .nav-hd .nav-ttl{flex:1}
+  .nav-hd .nav-cnt{font-size:9px;font-weight:700;opacity:0;background:rgba(255,255,255,.14);padding:1px 7px;border-radius:99px;transition:opacity .15s}
+  .nav-grp.collapsed .nav-bd{display:none}
+  .nav-grp.collapsed .nav-cnt{opacity:.75}
+  .nav-grp.collapsed .chv{transform:rotate(-90deg)}
+  .nav-grp.hidden-grp{display:none}
+  .nav-grp[data-grp="wakif"] .nav-hd{color:var(--gold)}
+  .nav-cfg{font-size:10px;color:var(--sage);padding:9px 14px 4px;margin-top:16px;border-top:1px solid rgba(255,255,255,.09);cursor:pointer;opacity:.75;user-select:none}
+  .nav-cfg:hover{opacity:1}
+  .nav-cfg-box{padding:4px 14px 8px;font-size:11px;color:rgba(245,240,230,.8)}
+  .nav-cfg-box label{display:flex;align-items:center;gap:7px;padding:4px 0;cursor:pointer}
+  .kajian-frame{width:100%;height:calc(100vh - 190px);min-height:460px;border:1px solid var(--sand);border-radius:10px;background:#fff;display:block}
 
   .sb-footer{margin-top:auto;padding:14px 16px;border-top:1px solid rgba(168,200,188,.15);font-size:10px;color:var(--sage)}
   .sb-footer button{background:rgba(255,255,255,.1);color:#fff;border:0;padding:7px 12px;border-radius:6px;font-size:11px;cursor:pointer;width:100%;margin-bottom:8px}
@@ -289,38 +307,64 @@
       </div>
     </div>
     <nav class="sb-tabs" id="tabs">
-      <!-- Dashboard (standalone, paling atas) -->
+      <!-- Dashboard (standalone, paling atas — tidak pernah dilipat) -->
       <div class="sb-tab active" data-panel="dashboard"><span class="ico">📊</span><span class="lbl">Dashboard</span></div>
 
-      <div style="height:14px"></div>
+      <!-- ⚡ HARIAN — dibuka hampir tiap hari, default terbuka -->
+      <div class="nav-grp" data-grp="harian">
+        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">⚡ HARIAN</span><span class="nav-cnt">3</span></div>
+        <div class="nav-bd">
+          <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
+          <div class="sb-tab" data-panel="log"><span class="ico">📋</span><span class="lbl">Log Harian</span></div>
+          <div class="sb-tab" data-panel="panen"><span class="ico">☕</span><span class="lbl">Panen 2026</span></div>
+        </div>
+      </div>
+
+      <!-- 🌳 KEBUN — kondisi pohon, OPT, penugasan tim -->
+      <div class="nav-grp" data-grp="kebun">
+        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">🌳 KEBUN</span><span class="nav-cnt">3</span></div>
+        <div class="nav-bd">
+          <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
+          <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
+          <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Tim & Distribusi Tugas</span></div>
+          <!-- Manage Workers (🎫) merged into Distribusi Tugas panel 19 Mei 2026 — reduce sidebar clutter -->
+        </div>
+      </div>
 
       <!-- 📋 SOP — referensi standar operasional -->
-      <div style="font-size:10px;letter-spacing:1.5px;color:var(--moss);padding:4px 14px 6px;font-weight:800">📋 SOP</div>
-      <div class="sb-tab" data-panel="sintesa"><span class="ico">🔬</span><span class="lbl">Sintesa SOP</span></div>
-      <div class="sb-tab" data-panel="kalender"><span class="ico">📅</span><span class="lbl">SOP Kalender</span></div>
-      <div class="sb-tab" data-panel="compliance"><span class="ico">✅</span><span class="lbl">SOP Compliance</span></div>
+      <div class="nav-grp" data-grp="sop">
+        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">📋 SOP</span><span class="nav-cnt">3</span></div>
+        <div class="nav-bd">
+          <div class="sb-tab" data-panel="sintesa"><span class="ico">🔬</span><span class="lbl">Sintesa SOP</span></div>
+          <div class="sb-tab" data-panel="kalender"><span class="ico">📅</span><span class="lbl">SOP Kalender</span></div>
+          <div class="sb-tab" data-panel="compliance"><span class="ico">✅</span><span class="lbl">SOP Compliance</span></div>
+        </div>
+      </div>
 
-      <div style="height:14px"></div>
+      <!-- 📚 KAJIAN & REFERENSI — dokumen kajian, dimuat lazy di dalam panel -->
+      <div class="nav-grp" data-grp="kajian">
+        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">📚 KAJIAN &amp; REFERENSI</span><span class="nav-cnt">3</span></div>
+        <div class="nav-bd">
+          <div class="sb-tab" data-panel="kajian-tunggak"><span class="ico">🪵</span><span class="lbl">Sanitasi Tunggak &amp; KNO₃</span></div>
+          <div class="sb-tab" data-panel="kajian-residu"><span class="ico">🔥</span><span class="lbl">Manajemen Residu Kebun</span></div>
+          <div class="sb-tab" data-panel="kajian-sekam"><span class="ico">🌾</span><span class="lbl">Soil Amendment / Sekam</span></div>
+        </div>
+      </div>
 
-      <!-- 🌳 Implementasi Lapangan — eksekusi harian + observasi -->
-      <div style="font-size:10px;letter-spacing:1.5px;color:var(--moss);padding:4px 14px 6px;font-weight:800">🌳 IMPLEMENTASI LAPANGAN</div>
-      <div class="sb-tab" data-panel="log"><span class="ico">📋</span><span class="lbl">Log Harian</span></div>
-      <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Tim & Distribusi Tugas</span></div>
-      <div class="sb-tab" data-panel="panen"><span class="ico">☕</span><span class="lbl">Panen 2026</span></div>
-      <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
-      <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
-      <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
-      <!-- Manage Workers (🎫) merged into Distribusi Tugas panel 19 Mei 2026 — reduce sidebar clutter -->
+      <!-- 💰 WAKIF — keuangan & publikasi (tier wakif) -->
+      <div class="nav-grp" data-grp="wakif" data-tier="wakif">
+        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">💰 WAKIF</span><span class="nav-cnt">5</span></div>
+        <div class="nav-bd">
+          <div class="sb-tab wakif-only" data-panel="anggaran" data-tier="wakif"><span class="ico">💰</span><span class="lbl">Upah Pekerja</span></div>
+          <div class="sb-tab wakif-only" data-panel="keuangan" data-tier="wakif"><span class="ico">📒</span><span class="lbl">Keuangan / Cashbook</span></div>
+          <div class="sb-tab wakif-only" data-panel="reconcile" data-tier="wakif"><span class="ico">🔍</span><span class="lbl">Reconciliation</span></div>
+          <div class="sb-tab wakif-only" data-panel="rab" data-tier="wakif"><span class="ico">📊</span><span class="lbl">Anggaran (RAB)</span></div>
+          <div class="sb-tab wakif-only" data-panel="milestones" data-tier="wakif"><span class="ico">📜</span><span class="lbl">Milestones Publik</span></div>
+        </div>
+      </div>
 
-      <div style="height:14px"></div>
-
-      <!-- 💰 Wakif — keuangan & publikasi (tier wakif) -->
-      <div style="font-size:10px;letter-spacing:1.5px;color:var(--gold);padding:4px 14px 6px;font-weight:800">💰 WAKIF</div>
-      <div class="sb-tab wakif-only" data-panel="anggaran" data-tier="wakif"><span class="ico">💰</span><span class="lbl">Upah Pekerja</span></div>
-      <div class="sb-tab wakif-only" data-panel="keuangan" data-tier="wakif"><span class="ico">📒</span><span class="lbl">Keuangan / Cashbook</span></div>
-      <div class="sb-tab wakif-only" data-panel="reconcile" data-tier="wakif"><span class="ico">🔍</span><span class="lbl">Reconciliation</span></div>
-      <div class="sb-tab wakif-only" data-panel="rab" data-tier="wakif"><span class="ico">📊</span><span class="lbl">Anggaran (RAB)</span></div>
-      <div class="sb-tab wakif-only" data-panel="milestones" data-tier="wakif"><span class="ico">📜</span><span class="lbl">Milestones Publik</span></div>
+      <div class="nav-cfg" id="nav-cfg-btn">⚙️ ATUR TAMPILAN MENU</div>
+      <div class="nav-cfg-box" id="nav-cfg-box" style="display:none"></div>
     </nav>
     <div class="sb-footer">
       <button onclick="logout()" title="Login dinonaktifkan di review mode">⏏ Login</button>
@@ -3285,6 +3329,44 @@
       </div>
     </div>
 
+    <!-- ===== KAJIAN & REFERENSI (30 Jul 2026) — konten dimuat lazy ke dalam iframe.
+         Iframe dipakai supaya CSS kajian TIDAK bisa bocor & merusak gaya dashboard. ===== -->
+    <div class="panel" id="panel-kajian-tunggak">
+      <div class="card" style="padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:220px">
+          <div style="font-weight:800;color:var(--earth);font-size:15px">🪵 Sanitasi Tunggak &amp; KNO₃</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Kajian 29 Jul 2026 · hexazinone dilarang · KNO₃ tanpa air panas · inokulasi terarah</div>
+        </div>
+        <button class="btn" onclick="printKajian('kajian-tunggak')">🖨 Cetak</button>
+        <button class="btn" onclick="window.open('kajian/sanitasi-tunggak.html','_blank')">↗ Buka penuh</button>
+      </div>
+      <iframe class="kajian-frame" id="frame-kajian-tunggak" data-src="kajian/sanitasi-tunggak.html" title="Kajian Sanitasi Tunggak dan KNO3" loading="lazy"></iframe>
+    </div>
+
+    <div class="panel" id="panel-kajian-residu">
+      <div class="card" style="padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:220px">
+          <div style="font-weight:800;color:var(--earth);font-size:15px">🔥 Manajemen Residu Kebun</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Addendum SOP 29 Jul 2026 · 5 aliran residu · biochar drum kiln · 7 aturan api</div>
+        </div>
+        <button class="btn" onclick="printKajian('kajian-residu')">🖨 Cetak</button>
+        <button class="btn" onclick="window.open('kajian/manajemen-residu.html','_blank')">↗ Buka penuh</button>
+      </div>
+      <iframe class="kajian-frame" id="frame-kajian-residu" data-src="kajian/manajemen-residu.html" title="Kajian Manajemen Residu Kebun" loading="lazy"></iframe>
+    </div>
+
+    <div class="panel" id="panel-kajian-sekam">
+      <div class="card" style="padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:220px">
+          <div style="font-weight:800;color:var(--earth);font-size:15px">🌾 Soil Amendment — 4 Opsi (Sekam Bakar)</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Kajian 9 Jul 2026 · dasar ADR-027 · cocopeat vs semen vs sekam bakar vs kompos</div>
+        </div>
+        <button class="btn" onclick="printKajian('kajian-sekam')">🖨 Cetak</button>
+        <button class="btn" onclick="window.open('kajian/soil-amendment-sekam.html','_blank')">↗ Buka penuh</button>
+      </div>
+      <iframe class="kajian-frame" id="frame-kajian-sekam" data-src="kajian/soil-amendment-sekam.html" title="Kajian Soil Amendment 4 Opsi" loading="lazy"></iframe>
+    </div>
+
   </div>
   <!-- /content-wrap -->
 
@@ -3501,11 +3583,115 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   tab.classList.add('active');
   document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  // buka grup yang memuat tab ini (termasuk saat tab di-klik programatik dari kode lain)
+  openNavGroupOf(tab);
+  // kajian: isi iframe hanya saat pertama kali dibuka (lazy)
+  lazyLoadKajian(tab.dataset.panel);
   // close sidebar on mobile after click
   if (window.innerWidth < 880) toggleSidebar(false);
   // scroll to top of main content
   window.scrollTo({top:0,behavior:'smooth'});
 });
+
+/* ===== NAV GROUP — collapse / expand / hide (30 Jul 2026) =====
+   Murni lapisan tampilan. TIDAK menyentuh data apa pun: satu-satunya key
+   localStorage yang dipakai adalah 'wkkn_nav_groups' (key baru, tidak dipakai
+   modul lain). Tab tetap dicari lewat [data-panel="..."] seperti sebelumnya,
+   jadi semua pemanggilan .click() dari kode lain tetap bekerja. */
+const NAV_GRP_KEY = 'wkkn_nav_groups';
+const NAV_GRP_OPEN_DEFAULT = ['harian'];   // grup lain default terlipat
+
+function navGrpState() {
+  try {
+    const r = JSON.parse(localStorage.getItem(NAV_GRP_KEY));
+    if (r && Array.isArray(r.open)) {
+      return { open: r.open.slice(), hidden: Array.isArray(r.hidden) ? r.hidden.slice() : [] };
+    }
+  } catch (e) { /* korup / kosong → pakai default */ }
+  return { open: NAV_GRP_OPEN_DEFAULT.slice(), hidden: [] };
+}
+function navGrpSave(s) {
+  try { localStorage.setItem(NAV_GRP_KEY, JSON.stringify(s)); } catch (e) {}
+}
+function applyNavGroups() {
+  const s = navGrpState();
+  document.querySelectorAll('#tabs .nav-grp').forEach(g => {
+    const id = g.dataset.grp;
+    g.classList.toggle('collapsed', s.open.indexOf(id) === -1);
+    g.classList.toggle('hidden-grp', s.hidden.indexOf(id) !== -1);
+    const cnt = g.querySelector('.nav-cnt');
+    if (cnt) cnt.textContent = g.querySelectorAll('.sb-tab').length;
+  });
+  renderNavCfg();
+}
+function toggleNavGroup(id) {
+  const s = navGrpState();
+  const i = s.open.indexOf(id);
+  if (i === -1) s.open.push(id); else s.open.splice(i, 1);
+  navGrpSave(s); applyNavGroups();
+}
+function openNavGroupOf(tab) {
+  const g = (tab && tab.closest) ? tab.closest('.nav-grp') : null;
+  if (!g) return;                                   // Dashboard: tanpa grup
+  const s = navGrpState();
+  if (s.hidden.indexOf(g.dataset.grp) !== -1) {     // ter-hide tapi tabnya dipanggil → tampilkan lagi
+    s.hidden.splice(s.hidden.indexOf(g.dataset.grp), 1);
+  }
+  if (s.open.indexOf(g.dataset.grp) === -1) s.open.push(g.dataset.grp);
+  navGrpSave(s); applyNavGroups();
+}
+function setNavGroupHidden(id, hide) {
+  const s = navGrpState();
+  const i = s.hidden.indexOf(id);
+  if (hide && i === -1) s.hidden.push(id);
+  if (!hide && i !== -1) s.hidden.splice(i, 1);
+  navGrpSave(s); applyNavGroups();
+}
+function renderNavCfg() {
+  const box = document.getElementById('nav-cfg-box');
+  if (!box || box.style.display === 'none') return;
+  const s = navGrpState();
+  let h = '<div style="font-size:10px;opacity:.65;margin:2px 0 6px">Hilangkan grup yang tidak dipakai:</div>';
+  document.querySelectorAll('#tabs .nav-grp').forEach(g => {
+    const id = g.dataset.grp;
+    const ttl = (g.querySelector('.nav-ttl') || {}).textContent || id;
+    const on = s.hidden.indexOf(id) === -1;
+    h += '<label><input type="checkbox" ' + (on ? 'checked' : '') +
+         ' onchange="setNavGroupHidden(\'' + id + '\', !this.checked)"><span>' + ttl + '</span></label>';
+  });
+  box.innerHTML = h;
+}
+function toggleNavCfg() {
+  const box = document.getElementById('nav-cfg-box');
+  if (!box) return;
+  box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+  renderNavCfg();
+}
+function lazyLoadKajian(panelId) {
+  if (!panelId || panelId.indexOf('kajian-') !== 0) return;
+  const f = document.getElementById('frame-' + panelId);
+  if (f && !f.getAttribute('src') && f.dataset.src) f.setAttribute('src', f.dataset.src);
+}
+function printKajian(panelId) {
+  const f = document.getElementById('frame-' + panelId);
+  if (!f) return;
+  if (!f.getAttribute('src') && f.dataset.src) { f.setAttribute('src', f.dataset.src); return alert('Dokumen sedang dimuat — coba klik Cetak lagi sebentar lagi.'); }
+  try { f.contentWindow.focus(); f.contentWindow.print(); }
+  catch (e) { window.open(f.dataset.src, '_blank'); }
+}
+document.getElementById('tabs').addEventListener('click', (e) => {
+  const hd = e.target.closest('.nav-hd');
+  if (hd && hd.parentElement && hd.parentElement.classList.contains('nav-grp')) {
+    toggleNavGroup(hd.parentElement.dataset.grp);
+    return;
+  }
+  if (e.target.closest('#nav-cfg-btn')) toggleNavCfg();
+});
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', applyNavGroups);
+} else {
+  applyNavGroups();
+}
 
 // ===== SIDEBAR TOGGLE =====
 function toggleSidebar(force) {

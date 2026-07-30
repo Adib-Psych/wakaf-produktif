@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kajian Soil Amendment — 4 Opsi Pupuk/Pembenah Tanah · Kebun Kopi Wakaf Ngantang · 9 Jul 2026</title>
+<style>
+  :root{
+    --bg:#F4F8F5;--card:#fff;--euc900:#213A2E;--euc700:#2E5A43;--euc500:#4A7C59;--euc300:#8FB89C;--euc50:#EAF2ED;
+    --cherry:#B23A3A;--cherryD:#8E2626;--cherry50:#FBEDED;--amber:#C58A00;--amber50:#FBF3DF;
+    --ink:#1E2A24;--muted:#5C6B62;--line:#DCE6DF;--gold:#B8873B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 70px}
+  h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:var(--euc900);line-height:1.2;margin:0}
+  header.hero{background:linear-gradient(135deg,var(--euc900),var(--euc700));color:#fff;padding:34px 0 30px;border-bottom:5px solid var(--gold)}
+  header.hero .wrap{padding-bottom:0}
+  header.hero h1{color:#fff;font-size:1.85rem;margin-bottom:8px}
+  .kick{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);padding:4px 12px;border-radius:999px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+  header.hero p{color:#DDE9E0;margin:8px 0 0;font-size:.95rem;max-width:760px}
+  .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
+  .meta span{background:rgba(0,0,0,.18);padding:4px 11px;border-radius:6px;font-size:.78rem;color:#EAF2ED}
+  section{margin-top:34px}
+  .sec-h{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+  .sec-h .no{flex:none;width:34px;height:34px;border-radius:8px;background:var(--euc500);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-family:Georgia,serif}
+  .sec-h h2{font-size:1.32rem}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px 22px;box-shadow:0 1px 2px rgba(30,42,36,.04)}
+  .lead{font-size:1.02rem;color:#33463C}
+  /* verdict banner */
+  .verdict{background:linear-gradient(120deg,var(--euc50),#fff);border:1px solid var(--euc300);border-left:6px solid var(--euc500);border-radius:12px;padding:20px 24px;margin-top:26px}
+  .verdict h2{font-size:1.15rem;margin-bottom:8px}
+  .rank-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .pill{display:flex;align-items:center;gap:8px;padding:8px 14px;border-radius:10px;font-weight:600;font-size:.9rem;border:1px solid var(--line)}
+  .pill .n{width:22px;height:22px;border-radius:50%;background:var(--euc700);color:#fff;font-size:.75rem;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif}
+  .pill.win{background:var(--euc50);border-color:var(--euc300)}
+  .pill.rej{background:var(--cherry50);border-color:#E7B7B7;color:var(--cherryD)}
+  .pill.rej .n{background:var(--cherry)}
+  /* soil gauges */
+  .grid{display:grid;gap:14px}
+  .soil-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+  .gauge{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:14px 15px}
+  .gauge .lbl{font-size:.74rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+  .gauge .val{font-family:Georgia,serif;font-size:1.5rem;color:var(--euc900);margin:2px 0 6px}
+  .bar{height:8px;border-radius:6px;background:#EAEFEA;overflow:hidden}
+  .bar > i{display:block;height:100%;border-radius:6px}
+  .tag{display:inline-block;margin-top:8px;font-size:.72rem;font-weight:700;padding:2px 9px;border-radius:20px}
+  .t-low{background:var(--cherry50);color:var(--cherryD)} .t-high{background:var(--amber50);color:#8a6100}
+  .t-ok{background:var(--euc50);color:var(--euc700)}
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:.86rem;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--euc900);color:#fff;font-weight:600;font-size:.78rem;letter-spacing:.02em}
+  tr:last-child td{border-bottom:none}
+  tbody tr:nth-child(even){background:#FAFCFA}
+  .yes{color:var(--euc700);font-weight:700}.no{color:var(--cherry);font-weight:700}.mid{color:#8a6100;font-weight:700}
+  /* option cards */
+  .opt{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff;margin-bottom:16px}
+  .opt-head{padding:14px 18px;display:flex;align-items:center;gap:12px;color:#fff}
+  .opt-head .badge{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700}
+  .opt-head h3{color:#fff;font-size:1.08rem;flex:1}
+  .opt-head .score{font-size:.8rem;background:rgba(0,0,0,.2);padding:4px 10px;border-radius:20px;font-weight:600}
+  .opt-D .opt-head{background:linear-gradient(120deg,#2E5A43,#3f7255)}
+  .opt-C .opt-head{background:linear-gradient(120deg,#3a6b4d,#4A7C59)}
+  .opt-A .opt-head{background:linear-gradient(120deg,#6b7f4a,#869a5e)}
+  .opt-B .opt-head{background:linear-gradient(120deg,#8E2626,#b23a3a)}
+  .opt-body{padding:16px 18px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .opt-body .full{grid-column:1/-1}
+  .kv{font-size:.85rem}
+  .kv b{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:2px}
+  .chem{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.8rem;background:var(--euc50);padding:2px 6px;border-radius:5px;color:var(--euc900)}
+  .ref{font-size:.76rem;color:var(--euc700);text-decoration:none;border-bottom:1px dotted var(--euc300)}
+  .ref:hover{color:var(--cherry)}
+  /* timeline */
+  .tl{position:relative;padding-left:26px;margin-top:8px}
+  .tl::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:3px;background:var(--euc300);border-radius:3px}
+  .tl-item{position:relative;margin-bottom:18px}
+  .tl-item::before{content:"";position:absolute;left:-22px;top:3px;width:14px;height:14px;border-radius:50%;background:var(--euc500);border:3px solid #fff;box-shadow:0 0 0 2px var(--euc300)}
+  .tl-item h4{margin:0 0 3px;color:var(--euc900);font-family:Georgia,serif;font-size:1rem}
+  .tl-when{font-size:.74rem;font-weight:700;color:var(--cherryD);text-transform:uppercase;letter-spacing:.04em}
+  .note{background:var(--amber50);border:1px solid #EAD8A6;border-left:5px solid var(--amber);border-radius:10px;padding:14px 16px;font-size:.88rem;color:#5c4b16}
+  .go{background:var(--euc50);border:1px solid var(--euc300);border-left:5px solid var(--euc500);border-radius:10px;padding:16px 18px}
+  .stop{background:var(--cherry50);border:1px solid #E7B7B7;border-left:5px solid var(--cherry);border-radius:10px;padding:14px 16px;color:#5f2020;font-size:.9rem}
+  ul.tight{margin:6px 0 0;padding-left:18px}ul.tight li{margin-bottom:5px}
+  .refs li{margin-bottom:7px;font-size:.82rem}
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted)}
+  @media(max-width:640px){.opt-body{grid-template-columns:1fr}header.hero h1{font-size:1.4rem}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kick">Kajian SOP + Ilmiah · Wakaf Produktif Kebun Kopi Ngantang</span>
+    <h1>Pupuk &amp; Pembenah Tanah — Kajian 4 Opsi untuk Kondisi N &amp; K Rendah</h1>
+    <p>Review atas rekomendasi BRIN (Adnan Albahry, 9 Jul 2026) + 3 opsi pembanding. Berbasis uji tanah kebun, SOP kopi Robusta locked 16 Mei 2026, dan literatur ilmiah peer-reviewed.</p>
+    <div class="meta">
+      <span>📅 9 Juli 2026</span>
+      <span>🧪 Uji tanah 16 Jun 2026 (app PupukTepat/BRIN)</span>
+      <span>🌱 Robusta · Andisol · 0,49 ha · ±1.000 pohon</span>
+      <span>📚 15 rujukan ilmiah</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- VERDICT -->
+  <div class="verdict">
+    <h2>⚡ Ringkas — Vonis &amp; Peringkat</h2>
+    <p class="lead">Rekomendasi Adnan/BRIN <b>SELARAS dengan SOP</b> (organik + K + NPK-tepat, tanpa pengapuran). Strategi 2-fase Wakif <b>valid secara ilmiah</b>. Solusi terbaik = <b>kombinasi bertahap</b>, bukan satu opsi tunggal. Semen <b>ditolak</b>.</p>
+    <div class="rank-row">
+      <span class="pill win"><span class="n">1</span>D · Kompos Kambing <span style="font-weight:400;color:var(--muted)">— base</span></span>
+      <span class="pill win"><span class="n">2</span>C · Sekam Bakar <span style="font-weight:400;color:var(--muted)">— Si + CEC</span></span>
+      <span class="pill"><span class="n">3</span>A · Kokopit <span style="font-weight:400;color:var(--muted)">— suplemen K</span></span>
+      <span class="pill rej"><span class="n">✕</span>B · Semen <span style="font-weight:400">— TOLAK</span></span>
+    </div>
+    <p style="margin:14px 0 0;font-size:.9rem"><b>Kombinasi optimal:</b> <span class="chem">D (base) → C + KCl + benam pangkasan (targeted) → A opsional</span>. Butuh keputusan struktural baru: <b>ADR-027</b>.</p>
+  </div>
+
+  <!-- SOIL -->
+  <section>
+    <div class="sec-h"><span class="no">1</span><h2>Kondisi Tanah Kebun — Titik Tolak</h2></div>
+    <p class="lead">Uji cepat 16 Jun 2026 (Robusta, Kab. Malang, Jatim). Tiga unsur rendah + bahan organik rendah, tapi <b>pH sudah ideal</b>. Ini kunci seluruh kajian.</p>
+    <div class="grid soil-grid" style="margin-top:14px">
+      <div class="gauge"><div class="lbl">N — Nitrogen</div><div class="val">0,14%</div><div class="bar"><i style="width:22%;background:var(--cherry)"></i></div><span class="tag t-low">RENDAH</span></div>
+      <div class="gauge"><div class="lbl">K — Kalium</div><div class="val">16,4<span style="font-size:.8rem"> mg/100g</span></div><div class="bar"><i style="width:30%;background:var(--cherry)"></i></div><span class="tag t-low">RENDAH</span></div>
+      <div class="gauge"><div class="lbl">C-Organik</div><div class="val">1,90%</div><div class="bar"><i style="width:33%;background:var(--cherry)"></i></div><span class="tag t-low">RENDAH</span></div>
+      <div class="gauge"><div class="lbl">P — Fosfor</div><div class="val">95,5<span style="font-size:.8rem"> mg/100g</span></div><div class="bar"><i style="width:92%;background:var(--amber)"></i></div><span class="tag t-high">TINGGI</span></div>
+      <div class="gauge"><div class="lbl">pH Tanah</div><div class="val">6,2</div><div class="bar"><i style="width:62%;background:var(--euc500)"></i></div><span class="tag t-ok">IDEAL 5,5–6,5</span></div>
+    </div>
+    <div class="note" style="margin-top:14px">
+      <b>Baca cepat:</b> Kebun butuh <b>N, K, dan bahan organik</b> — bukan kapur. Uji tanah BRIN sendiri menuliskan: <i>"pH tanah sudah memadai. Tidak diperlukan pengapuran."</i> Karena pH 6,2 sudah pas untuk Robusta, <b>menaikkan pH (semen/kapur) justru merusak</b>. P tinggi → SP-36 diminimalkan/skip.
+      <br><span style="font-size:.8rem;color:#8a6100">⚠️ Catatan data: metadata koordinat di lembar uji = placeholder (123) &amp; kecamatan tertulis "Kepanjen". Nilai N/P/K/pH tetap dipakai, tapi pastikan sampel memang dari kebun Ngantang saat arsip resmi.</span>
+    </div>
+  </section>
+
+  <!-- LAYER 1: SOP -->
+  <section>
+    <div class="sec-h"><span class="no">2</span><h2>Layer 1 — Kepatuhan SOP (locked 16 Mei 2026)</h2></div>
+    <p class="lead">Rekomendasi Adnan (tambah bahan organik + benam pangkasan + K dari serabut kelapa + NPK tepat, tanpa kapur) diuji terhadap SOP &amp; keputusan yang sudah terkunci.</p>
+    <table style="margin-top:12px">
+      <thead><tr><th>Elemen rekomendasi</th><th>Jangkar SOP / ADR</th><th>Vonis</th></tr></thead>
+      <tbody>
+        <tr><td>Tambah <b>bahan organik</b> (C-organik rendah)</td><td>Q4 kompos in-situ kulit kopi · pupuk kandang 5 kg/phn · Andisol butuh OM</td><td class="yes">✓ SELARAS</td></tr>
+        <tr><td><b>Benam potongan daun/ranting</b> ke tanah</td><td>Composting in-situ · no-burn · siklus hara tertutup</td><td class="yes">✓ SELARAS</td></tr>
+        <tr><td><b>K dari serabut kelapa</b> (organik)</td><td>ADR-001 dosis BRIN (KCl) — coir = suplemen organik, bukan pengganti</td><td class="yes">✓ SELARAS (pelengkap)</td></tr>
+        <tr><td>NPK "tidak cukup sendiri" + presisi</td><td>ADR-001 · Skenario C Hybrid (organik+anorganik)</td><td class="yes">✓ SELARAS</td></tr>
+        <tr><td><b>Tanpa pengapuran</b> (pH aman)</td><td>SOP pH optimal 5,5–6,5 · jaga keasaman Andisol</td><td class="yes">✓ SELARAS</td></tr>
+        <tr><td>P tinggi → SP-36 diturunkan</td><td>RAB konservatif P · koreksi over-alloc</td><td class="yes">✓ SELARAS (refine)</td></tr>
+        <tr><td class="no">Opsi B — campur SEMEN (menaikkan pH)</td><td>SOP jaga pH asam · jalur specialty/organik Bonsari-Nomad</td><td class="no">✕ DEVIASI</td></tr>
+      </tbody>
+    </table>
+    <div class="go" style="margin-top:14px">
+      <b>Vonis Layer 1:</b> Rekomendasi Adnan/BRIN <b>SELARAS penuh dengan SOP</b> → <b>adopt + dokumentasikan</b>. Strategi 2-fase (base organik → NPK targeted) memperkuat, bukan melanggar, SOP. Karena ini menambah <b>lapisan organik + silikon</b> di atas kerangka dosis ADR-001, diusulkan <b>ADR-027</b> untuk mengunci strategi + menolak semen secara formal.
+    </div>
+  </section>
+
+  <!-- LAYER 2: SCIENCE -->
+  <section>
+    <div class="sec-h"><span class="no">3</span><h2>Layer 2 — Kajian Ilmiah 4 Opsi</h2></div>
+
+    <!-- D -->
+    <div class="opt opt-D">
+      <div class="opt-head"><span class="badge">D</span><h3>Kompos Kambing — Base Amendment</h3><span class="score">★★★★★ · Peringkat 1</span></div>
+      <div class="opt-body">
+        <div class="kv"><b>Profil kimia</b>~1,5% N · ~2,7% K₂O · tinggi bahan organik · pH ~6,5–7 (netral, tak ganggu pH 6,2)</div>
+        <div class="kv"><b>Mekanisme</b>Slow-release N &amp; K + naikkan C-organik, KTK, aktivitas mikroba. Fondasi kesuburan broad-spectrum.</div>
+        <div class="kv"><b>Bukti</b>Kompos kambing 5 t/ha ↑ hasil <b>17–23%</b> + perbaiki C-organik, N, P <a class="ref" href="https://consensus.app/papers/details/e45e0b83eb12547d9ce0ceb11a00a4c8/">[Meena 2025]</a>. Manur+NPK (NPKM) &gt; NPK saja, 38-thn <a class="ref" href="https://consensus.app/papers/details/006e0c598e505ac0a17f5156de15ab43/">[Gao 2023]</a>. Goat manure ↑ K-tersedia (187 kg/ha), pH 6,84 <a class="ref" href="https://consensus.app/papers/details/a9e5d461065651f295d0af44e8c4dc25/">[Ghimirey 2025]</a>.</div>
+        <div class="kv"><b>Risiko / catatan</b>Kompos harus <b>matang</b> (mentah → bau, gulma, immobilisasi N sementara). Aman untuk pH.</div>
+        <div class="kv full"><b>Cocok Ngantang?</b> <span class="yes">Sangat.</span> Menyerang 3 kekurangan sekaligus (N, K, C-org) tanpa mengusik pH ideal. Melimpah &amp; murah di Malang. Sesuai SOP pupuk kandang.</div>
+      </div>
+    </div>
+
+    <!-- C -->
+    <div class="opt opt-C">
+      <div class="opt-head"><span class="badge">C</span><h3>Sekam Bakar (Arang Sekam / Rice-Husk Biochar)</h3><span class="score">★★★★☆ · Peringkat 2</span></div>
+      <div class="opt-body">
+        <div class="kv"><b>Profil kimia</b>SiO₂ ~80–90% · K₂O ~1–10% (tergantung pembakaran) · pH ~6,2–8 · KTK tinggi</div>
+        <div class="kv"><b>Mekanisme</b>Pembenah tanah + sumber <b>silikon</b> (ketahanan hama/penyakit) + naikkan KTK (menahan K/hara agar tak tercuci) + imobilisasi logam berat.</div>
+        <div class="kv"><b>Bukti</b>RHB ↑ C-organik, KTK, K-tersedia, mikroba; imobilisasi logam berat <a class="ref" href="https://consensus.app/papers/details/59d4476850b65fdab99380f94978a672/">[Asadi 2021]</a>. Di tanah masam ↓ Al-tukar, ↑ pH/P/KTK/K <a class="ref" href="https://consensus.app/papers/details/2128f135235759b8a42d87a7ad7af465/">[Masulili 2010]</a>. RHB Jatim (Tuban): SiO₂ 80%, K₂O 10,4%, pH 6,23 <a class="ref" href="https://consensus.app/papers/details/0bf19c2f80385dd7b7ac47474daee75c/">[Aisyah 2025]</a>.</div>
+        <div class="kv"><b>Silikon = pertahanan</b>Si menekan penyakit &amp; hama <b>pada kopi</b>, upregulasi gen pertahanan <a class="ref" href="https://consensus.app/papers/details/4060e16daf2e510d92adf93fba5b4a56/">[Yang 2022]</a>; barrier dinding sel + sinyal pertahanan <a class="ref" href="https://consensus.app/papers/details/968630f00aea5ba592509d49663fb4d8/">[Islam 2020]</a>.</div>
+        <div class="kv full"><b>Cocok Ngantang?</b> <span class="yes">Ya, kuat.</span> Sejalan dengan keputusan biochar (Inj-1). Silikon menjawab langsung keluhan Adnan <i>"kurang K → gampang sakit"</i>. Melimpah dari petani padi Malang, murah. Dosis moderat agar pH tak overshoot.</div>
+      </div>
+    </div>
+
+    <!-- A -->
+    <div class="opt opt-A">
+      <div class="opt-head"><span class="badge">A</span><h3>Kokopit / Serabut Kelapa (rekomendasi Adnan)</h3><span class="score">★★★☆☆ · Peringkat 3</span></div>
+      <div class="opt-body">
+        <div class="kv"><b>Profil kimia</b>Organik tinggi · K sedang (organik, slow) · rasio C:N tinggi · ada Na/Cl</div>
+        <div class="kv"><b>Mekanisme</b>Pembenah tanah (retensi air, aerasi, KTK) + sumber K-organik lepas-lambat, aman kimia tanah.</div>
+        <div class="kv"><b>Bukti</b>Kokopit perbaiki sifat fisikokimia tanah &amp; ketersediaan hara — tapi 100% kokopit <b>menghambat</b> (perlu campuran) <a class="ref" href="https://consensus.app/papers/details/d38267fcb2be5e3d91c6d91d9a9bec37/">[Singh 2025]</a>. Ekstraksi K dari coir tergolong <b>modest</b> (K₂O ~0,13% pada pupuk cair) <a class="ref" href="https://consensus.app/papers/details/31d8ecf73edc533cb53004bee0975a35/">[Rismariam 2026]</a>; optimal bila dikombinasi manur <a class="ref" href="https://consensus.app/papers/details/099d3acb336b5d5cb6e69e92320be024/">[Ahmad 2025]</a>.</div>
+        <div class="kv"><b>Risiko / catatan</b>Coir mentah C:N tinggi + Na/Cl → sebaiknya <b>dikomposkan/dibilas dulu</b>. K bukan "juara" — pelengkap, bukan sumber K utama.</div>
+        <div class="kv full"><b>Cocok Ngantang?</b> <span class="mid">Ya, tapi sekunder.</span> Bagus sebagai pembenah + mulsa + tambahan K organik. Effort pengumpulan (dari penjual kelapa muda) = kerja ekstra. Prioritas di bawah D &amp; C.</div>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="opt opt-B">
+      <div class="opt-head"><span class="badge">B</span><h3>Campur Semen (praktik tradisional)</h3><span class="score">🚫 · DITOLAK</span></div>
+      <div class="opt-body">
+        <div class="kv"><b>Profil kimia</b>CaO / Ca(OH)₂ / CaCO₃ (agen penaik pH kuat) · K₂O sangat sedikit · jejak logam berat (Cr, Pb, Cd)</div>
+        <div class="kv"><b>Mekanisme</b>Bukan pupuk K. Efek dominan = <b>menaikkan pH → alkalinitas</b> + potensi salinitas + kontaminasi logam.</div>
+        <div class="kv"><b>Bukti</b>Debu/semen menaikkan alkalinitas, <b>menurunkan pertumbuhan &amp; hasil</b> tanaman <a class="ref" href="https://consensus.app/papers/details/2e774403d44250219d37e6a2ebc67bb4/">[Kholdorov 2021]</a>; risiko <b>salinitas</b> &amp; Cd "berpotensi tidak aman" <a class="ref" href="https://consensus.app/papers/details/1b1e97ab2be85023bc7059fac924c660/">[Morsy 2021]</a>. Studi positif hanya pada <b>tanah pasir + tanaman toleran-alkali (jagung/gandum)</b>, bukan kopi <a class="ref" href="https://consensus.app/papers/details/b3fc59c7a0455787904d499158d76624/">[Hassan 2021]</a>.</div>
+        <div class="kv full"><b>Cocok Ngantang?</b> <span class="no">Tidak.</span> Robusta suka asam-ringan (5,5–6,5) &amp; pH kebun sudah 6,2 ideal — semen mendorong ke arah netral/alkali = <b>kontraproduktif</b>. Tambah risiko logam berat pada jalur specialty/organik (Bonsari/Nomad) &amp; tak menambah bahan organik. <b>Bertentangan dengan uji tanah BRIN sendiri</b> ("tidak diperlukan pengapuran").</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MATRIX -->
+  <section>
+    <div class="sec-h"><span class="no">4</span><h2>Matriks Perbandingan</h2></div>
+    <table>
+      <thead><tr><th>Kriteria</th><th>D · Kompos Kambing</th><th>C · Sekam Bakar</th><th>A · Kokopit</th><th>B · Semen</th></tr></thead>
+      <tbody>
+        <tr><td>Sumber K</td><td class="yes">Sedang–baik (2,7% K₂O)</td><td class="mid">Sedang (var.)</td><td class="mid">Sedang (organik)</td><td class="no">Sangat kecil</td></tr>
+        <tr><td>Tambah C-organik</td><td class="yes">Tinggi</td><td class="yes">Tinggi</td><td class="yes">Tinggi</td><td class="no">Nol</td></tr>
+        <tr><td>Efek pH (target: JAGA 6,2)</td><td class="yes">Netral, aman</td><td class="mid">Naik ringan (moderat OK)</td><td class="yes">Aman</td><td class="no">Naik tajam ✗</td></tr>
+        <tr><td>Bonus ketahanan hama/penyakit</td><td class="mid">Via kesuburan</td><td class="yes">Silikon (kuat)</td><td class="mid">—</td><td class="no">—</td></tr>
+        <tr><td>Risiko kontaminasi</td><td class="yes">Rendah</td><td class="yes">Rendah (imobilisasi logam)</td><td class="mid">Na/Cl bila mentah</td><td class="no">Logam berat (Cd/Cr/Pb)</td></tr>
+        <tr><td>Ketersediaan lokal Malang</td><td class="yes">Melimpah</td><td class="yes">Melimpah (petani padi)</td><td class="mid">Perlu dikumpulkan</td><td class="mid">Ada (tapi ditolak)</td></tr>
+        <tr><td>Kesesuaian SOP</td><td class="yes">✓ Penuh</td><td class="yes">✓ (Inj-1 biochar)</td><td class="yes">✓ Pelengkap</td><td class="no">✕ Deviasi</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- COMBINATION + TIMELINE -->
+  <section>
+    <div class="sec-h"><span class="no">5</span><h2>Rekomendasi: Kombinasi 2-Fase (bukan opsi tunggal)</h2></div>
+    <p class="lead">Bukti terbaik (NPKM — organik + anorganik terpadu) menunjukkan <b>kombinasi mengalahkan opsi tunggal</b> <a class="ref" href="https://consensus.app/papers/details/006e0c598e505ac0a17f5156de15ab43/">[Gao 2023]</a>. Strategi 2-fase Wakif tepat: <b>fondasi organik dulu, koreksi presisi kemudian.</b></p>
+    <div class="card" style="margin-top:14px">
+      <div class="tl">
+        <div class="tl-item">
+          <span class="tl-when">Fase 1 · Base — Agu–Sep 2026 (pasca-panen, pra-hujan)</span>
+          <h4>🐐 Kompos kambing + 🌾 sekam bakar + benam pangkasan</h4>
+          <ul class="tight">
+            <li><b>Kompos kambing matang 3–5 kg/pohon</b> (±3–5 ton total) — sebar di zona tajuk/drip-line, benam ringan.</li>
+            <li><b>Sekam bakar 0,5–1 kg/pohon</b> (±0,5–1 ton) — masukkan ke rorak/lubang, pembenah + silikon.</li>
+            <li><b>Benam potongan daun &amp; ranting</b> (rekomendasi Adnan) ke rorak — C-organik in-situ.</li>
+            <li>Tujuan: bangun C-organik + mikroba + KTK <b>sebelum</b> pupuk kimia masuk, supaya hara tak tercuci.</li>
+          </ul>
+        </div>
+        <div class="tl-item">
+          <span class="tl-when">Jeda ~6–10 minggu (dekomposisi + integrasi mikroba)</span>
+          <h4>⏳ Biarkan base "matang" di tanah</h4>
+          <p style="margin:2px 0 0;font-size:.87rem">Menyambung ke jendela pemupukan SOP (awal MH). Sekam bakar menaikkan KTK → K yang ditambah Fase 2 lebih tertahan.</p>
+        </div>
+        <div class="tl-item">
+          <span class="tl-when">Fase 2 · Targeted — Nov–Des 2026 (awal MH, jendela SOP)</span>
+          <h4>🎯 Koreksi presisi N &amp; K</h4>
+          <ul class="tight">
+            <li><b>KCl 75–100 g/pohon</b> (split) — koreksi K rendah, dukung pembungaan &amp; pengisian biji.</li>
+            <li><b>Urea 100–150 g/pohon</b> (split 2×: awal MH + akhir MH ~Apr) — koreksi N rendah.</li>
+            <li><b>SP-36 50 g/pohon atau SKIP</b> — P tanah tinggi, minimalkan.</li>
+            <li><b>Kokopit (opsional)</b> — K-organik tambahan / mulsa bila suplai kambing terbatas.</li>
+            <li>Pantau C-organik tiap 1–2 musim (instruksi lembar BRIN).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="note" style="margin-top:14px"><b>Sinergi kimia (bukan konflik):</b> Kompos kambing (N, K, C-org, mikroba) + sekam bakar (Si, KTK penahan hara, imobilisasi logam, buffer Al Andisol) + KCl (koreksi K cepat) + benam pangkasan (C-org in-situ) = paket <b>Integrated Nutrient Management</b> yang saling menguatkan. Satu-satunya yang perlu dijaga: sekam bakar <b>dosis moderat</b> agar pH tak naik berlebihan (tak perlu kapur sama sekali).</div>
+  </section>
+
+  <!-- DOSIS + COST -->
+  <section>
+    <div class="sec-h"><span class="no">6</span><h2>Dosis, Biaya &amp; Kebutuhan Total (inventaris aktual — skip pohon Merah)</h2></div>
+    <table>
+      <thead><tr><th>Input</th><th>Dosis / pohon / th</th><th>Total (±1.000 phn)</th><th>Estimasi biaya</th><th>Sumber lokal</th></tr></thead>
+      <tbody>
+        <tr><td><b>Kompos kambing</b> (base)</td><td>3–5 kg</td><td>3–5 ton</td><td>Rp 1,5–2,5 jt</td><td>Peternak kambing Malang</td></tr>
+        <tr><td><b>Sekam bakar</b></td><td>0,5–1 kg</td><td>0,5–1 ton</td><td>Rp 0–0,6 jt (bisa DIY/gratis)</td><td>Petani padi / komersial</td></tr>
+        <tr><td><b>KCl</b> (K rendah)</td><td>75–100 g</td><td>75–100 kg (1,5–2 sak)</td><td>Rp 0,6–0,8 jt</td><td>Toko tani (sudah di RAB)</td></tr>
+        <tr><td><b>Urea</b> (N rendah)</td><td>100–150 g (split 2×)</td><td>100–150 kg</td><td>Rp 0,5–1 jt</td><td>Toko tani / subsidi PPL</td></tr>
+        <tr><td>SP-36 (P tinggi)</td><td class="mid">50 g atau skip</td><td>minimal</td><td>≈ Rp 0</td><td>—</td></tr>
+        <tr><td>Kokopit (opsional)</td><td>1–2 kg (komposkan)</td><td>—</td><td>Gratis (labor)</td><td>Penjual kelapa muda</td></tr>
+        <tr><td class="no">Semen</td><td colspan="4" class="no">TIDAK DIPAKAI</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:10px 2px 0;font-size:.86rem"><b>Total ≈ Rp 3–4,5 jt / siklus</b> — mayoritas bahan lokal &amp; murah, sebagian sudah masuk RAB Final 9 Mei. <b>Effort solo:</b> kompos + sekam = angkut &amp; sebar borongan (jadwalkan bareng tim lapangan); kokopit = kerja ekstra, jadikan opsional.</p>
+
+    <h3 style="margin:26px 0 4px;font-family:Georgia,serif;color:var(--euc900);font-size:1.06rem">📊 Kebutuhan Total — Berdasarkan Inventaris Pohon Aktual</h3>
+    <p style="font-size:.9rem;margin:0 0 12px">Census single-source dashboard (2 Jul 2026). Hanya <b>Hijau + Biru</b> yang dipupuk; <b>382 pohon Merah di-skip</b> (mulai dicabut untuk peremajaan).</p>
+    <table>
+      <thead><tr><th>Kebun</th><th>🟢 Hijau</th><th>🔵 Biru</th><th>🔴 Merah <span style="font-weight:400">(skip)</span></th><th>Dipupuk (H+B)</th></tr></thead>
+      <tbody>
+        <tr><td>K1</td><td>70</td><td>60</td><td style="color:var(--muted)">24</td><td class="yes">130</td></tr>
+        <tr><td>K2</td><td>194</td><td>198</td><td style="color:var(--muted)">98</td><td class="yes">392</td></tr>
+        <tr><td>K3</td><td>62</td><td>88</td><td style="color:var(--muted)">200</td><td class="yes">150</td></tr>
+        <tr style="background:var(--euc50)"><td><b>Subtotal Wakaf (K1–K3)</b></td><td>326</td><td>346</td><td style="color:var(--muted)">322</td><td class="yes"><b>672</b></td></tr>
+        <tr><td>K4 <span style="color:var(--muted)">(Rumah Wakif)</span></td><td>106</td><td>138</td><td style="color:var(--muted)">60</td><td class="mid">244</td></tr>
+        <tr style="background:var(--euc50)"><td><b>TOTAL 4 kebun</b></td><td><b>432</b></td><td><b>484</b></td><td style="color:var(--muted)"><b>382</b></td><td class="yes"><b>916</b></td></tr>
+      </tbody>
+    </table>
+    <table style="margin-top:12px">
+      <thead><tr><th>Input (mid-dose)</th><th>⭐ Wakaf K1–K3 · 672 phn</th><th>+ K4 Rumah Wakif → 4 kebun · 916 phn</th></tr></thead>
+      <tbody>
+        <tr><td>🐐 Kompos kambing</td><td><b>2,0–3,4 ton</b> (50–84 karung)</td><td>2,7–4,6 ton (69–114 karung)</td></tr>
+        <tr><td>🌾 Sekam bakar</td><td><b>340–670 kg</b> (22–45 karung)</td><td>458–916 kg (31–61 karung)</td></tr>
+        <tr><td>🧂 KCl</td><td><b>50–67 kg</b> (1–1,5 sak)</td><td>69–92 kg (1,5–2 sak)</td></tr>
+        <tr><td>🌱 Urea</td><td><b>67–101 kg</b> (1,5–2 sak)</td><td>92–137 kg (2–3 sak)</td></tr>
+        <tr><td>SP-36</td><td class="mid">skip (P tinggi)</td><td class="mid">skip</td></tr>
+        <tr><td><b>Estimasi biaya</b></td><td class="yes"><b>≈ Rp 2,96 jt</b></td><td>≈ Rp 4,03 jt</td></tr>
+      </tbody>
+    </table>
+    <div class="note" style="margin-top:12px"><b>🔐 Pemisahan amanah:</b> K4 = area <b>Rumah Wakif</b> (historis self-financed) → RAB wakaf pakai kolom <b>K1–K3 (672 phn)</b>; kebutuhan K4 didanai terpisah. <b>382 pohon Merah</b> yang dicabut → <b>sulaman bibit muda</b> kelak pakai <b>dosis umur-1</b> (Urea 20 · SP-36 25 · KCl 15 · Kieserit 10 g/phn) — belum termasuk (RAB terpisah saat tanam). Rincian item &amp; harga: <span class="chem">SOP/RAB_Addendum_SoilAmendment_ADR027_9Jul2026.md</span>.</div>
+  </section>
+
+  <!-- RECOMMENDATION -->
+  <section>
+    <div class="sec-h"><span class="no">7</span><h2>Rekomendasi Konkret ke Wakif</h2></div>
+    <div class="go">
+      <ol style="margin:0;padding-left:20px">
+        <li style="margin-bottom:8px"><b>ADOPSI rekomendasi Adnan/BRIN</b> — selaras SOP. Jadikan dasar Fase 2.</li>
+        <li style="margin-bottom:8px"><b>Jalankan strategi 2-fase:</b> <span class="chem">D (kompos kambing base) → C (sekam bakar) + KCl + benam pangkasan → A (kokopit) opsional</span>.</li>
+        <li style="margin-bottom:8px"><b>Prioritas:</b> Kompos kambing #1 (fondasi 3-in-1) → Sekam bakar #2 (silikon anti-penyakit + penahan K) → Kokopit #3 (pelengkap).</li>
+        <li style="margin-bottom:8px"><b>TOLAK semen</b> — merusak pH ideal, risiko logam berat, bertentangan dengan uji tanah BRIN &amp; jalur specialty.</li>
+        <li><b>Formalkan</b> lewat <b>ADR-027</b> + update PROJECT_STATE. Arsipkan lembar uji tanah (konfirmasi lokasi sampel).</li>
+      </ol>
+    </div>
+    <div class="stop" style="margin-top:12px"><b>Kenapa K penting (validasi klaim Adnan "kurang K → gampang sakit"):</b> Literatur mengonfirmasi — mayoritas penyakit bakteri &amp; jamur <b>menurun</b> dengan K cukup <a class="ref" href="https://consensus.app/papers/details/61fb0b372ea559589052ad4663734997/" style="color:#7a2a2a">[Amtmann 2008, 489 sitasi]</a><a class="ref" href="https://consensus.app/papers/details/9a67f454479259d3bdc443f1dd016f1a/" style="color:#7a2a2a">[Ortel 2024]</a>. Jadi koreksi K = investasi kesehatan tanaman, bukan sekadar hasil.</div>
+  </section>
+
+  <!-- CAVEATS -->
+  <section>
+    <div class="sec-h"><span class="no">8</span><h2>Catatan Kehati-hatian</h2></div>
+    <ul class="tight" style="font-size:.9rem">
+      <li><b>Status BRIN = penjajakan.</b> Saran Adnan via WhatsApp + app PupukTepat = masukan teknis berharga, <b>bukan</b> PKS/MoU formal. Mengadopsi rekomendasi = keputusan Wakif, tak menyiratkan kemitraan resmi.</li>
+      <li><b>Kompos wajib matang</b> — kompos kambing mentah bisa immobilisasi N sementara + bawa gulma. Fermentasi/kematangan dulu.</li>
+      <li><b>Sekam bakar dosis moderat</b> — pH-nya agak alkali; berlebihan bisa dorong pH naik. Tak perlu dolomit sama sekali (pH sudah pas).</li>
+      <li><b>Kokopit dibilas/dikomposkan</b> dulu bila dipakai (Na/Cl + C:N tinggi).</li>
+      <li><b>Verifikasi sampel tanah</b> — metadata lembar (koordinat 123, "Kepanjen") generik; konfirmasi sampel dari kebun Ngantang sebelum diarsipkan sebagai baseline resmi.</li>
+    </ul>
+  </section>
+
+  <!-- REFERENCES -->
+  <section>
+    <div class="sec-h"><span class="no">9</span><h2>Rujukan</h2></div>
+    <div class="card">
+      <p style="margin:0 0 8px;font-weight:700;color:var(--euc900)">Ilmiah (peer-reviewed, via Consensus)</p>
+      <ol class="refs" style="margin:0;padding-left:20px">
+        <li>Meena et al. (2025). Organic manures in green gram — GDC 5 t/ha. <i>J. Agriculture &amp; Food Research.</i> <a class="ref" href="https://consensus.app/papers/details/e45e0b83eb12547d9ce0ceb11a00a4c8/">link</a></li>
+        <li>Gao et al. (2023). 38-yr cow manure + NPK (NPKM). <i>J. Integrative Agriculture.</i> <a class="ref" href="https://consensus.app/papers/details/006e0c598e505ac0a17f5156de15ab43/">link</a></li>
+        <li>Ghimirey et al. (2025). Organic fertilizers incl. goat manure (K, pH). <i>Frontiers in Soil Science.</i> <a class="ref" href="https://consensus.app/papers/details/a9e5d461065651f295d0af44e8c4dc25/">link</a></li>
+        <li>Asadi et al. (2021). Rice husk biochar review (147 sitasi). <i>Rice Science.</i> <a class="ref" href="https://consensus.app/papers/details/59d4476850b65fdab99380f94978a672/">link</a></li>
+        <li>Masulili et al. (2010). RHB di tanah masam (361 sitasi). <i>J. Agricultural Science.</i> <a class="ref" href="https://consensus.app/papers/details/2128f135235759b8a42d87a7ad7af465/">link</a></li>
+        <li>Aisyah et al. (2025). RHB bio-silika, Tuban Jatim. <i>BIO Web of Conferences.</i> <a class="ref" href="https://consensus.app/papers/details/0bf19c2f80385dd7b7ac47474daee75c/">link</a></li>
+        <li>Yang et al. (2022). Silikon menekan penyakit/hama pada kopi. <i>Int. J. Molecular Sciences.</i> <a class="ref" href="https://consensus.app/papers/details/4060e16daf2e510d92adf93fba5b4a56/">link</a></li>
+        <li>Islam et al. (2020). Si-mediated plant defense (105 sitasi). <i>Pesticide Biochem. &amp; Physiology.</i> <a class="ref" href="https://consensus.app/papers/details/968630f00aea5ba592509d49663fb4d8/">link</a></li>
+        <li>Ahammed et al. (2021). Mekanisme Si vs jamur. <i>Plant Physiology &amp; Biochemistry.</i> <a class="ref" href="https://consensus.app/papers/details/14309bba62845a17a0bc4d0441d52ec7/">link</a></li>
+        <li>Amtmann et al. (2008). K &amp; ketahanan hama/penyakit (489 sitasi). <i>Physiologia Plantarum.</i> <a class="ref" href="https://consensus.app/papers/details/61fb0b372ea559589052ad4663734997/">link</a></li>
+        <li>Ortel et al. (2024). Interaksi K &amp; pengendalian penyakit. <i>Agrosystems, Geosciences &amp; Env.</i> <a class="ref" href="https://consensus.app/papers/details/9a67f454479259d3bdc443f1dd016f1a/">link</a></li>
+        <li>Huber et al. (2015). Interaksi K dengan penyakit tanaman. <a class="ref" href="https://consensus.app/papers/details/e057c88b1bdb5857ac3ddeb3037f513c/">link</a></li>
+        <li>Singh et al. (2025). Kokopit sebagai amelioran tanah. <i>Int. J. Advanced Research.</i> <a class="ref" href="https://consensus.app/papers/details/d38267fcb2be5e3d91c6d91d9a9bec37/">link</a></li>
+        <li>Rismariam et al. (2026). Pupuk K cair dari serabut kelapa. <i>Jurnal Teknologi.</i> <a class="ref" href="https://consensus.app/papers/details/31d8ecf73edc533cb53004bee0975a35/">link</a></li>
+        <li>Hassan (2021) / Morsy (2021) / Kholdorov (2021). Cement kiln dust &amp; debu semen — alkalinitas, salinitas, logam berat. <a class="ref" href="https://consensus.app/papers/details/2e774403d44250219d37e6a2ebc67bb4/">[Kholdorov]</a> <a class="ref" href="https://consensus.app/papers/details/1b1e97ab2be85023bc7059fac924c660/">[Morsy]</a> <a class="ref" href="https://consensus.app/papers/details/b3fc59c7a0455787904d499158d76624/">[Hassan]</a></li>
+      </ol>
+      <p style="margin:12px 0 0;font-weight:700;color:var(--euc900)">Internal / SOP</p>
+      <p style="margin:4px 0 0;font-size:.82rem;color:var(--muted)">Uji tanah "Rekomendasi Pupuk – PupukTepat_Adib.pdf" (16 Jun 2026) · SOP_Synthesis_Robusta_Ngantang_V2 · DECISIONS_LOG ADR-001 (dosis BRIN) · Inj-1 biochar · Q4 kompos in-situ · Skenario C Hybrid (project_dose_recovery_mei2026).</p>
+    </div>
+  </section>
+
+  <div class="foot">
+    Disusun untuk Adib Asrori, M.Psi (Wakif &amp; Program Director) · Kajian Field-Consultant · 9 Jul 2026 · Wakaf Produktif Kebun Kopi Ngantang.<br>
+    Nilai inti: Produktif · Amanah · Berkah · Transparansi · Pemberdayaan · Ekologis. Semua angka dosis = titik awal berbasis bukti; kalibrasi dengan respons lapangan tiap siklus.
+  </div>
+
+</div>
+</body>
+</html>

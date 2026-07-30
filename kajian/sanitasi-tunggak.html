@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sanitasi Tunggak Pohon X — Kajian & Panduan Lapangan</title>
+<style>
+  @page { size: A4; margin: 10mm; }
+  :root{
+    --earth:#1F5F47; --moss:#2E5C4F; --leaf:#15803d; --leaflt:#dcfce7;
+    --cherry:#8c2519; --cherrylt:#fde8e4; --amber:#b45309; --amberlt:#fef3c7;
+    --cyan:#0e7490; --cyanlt:#cffafe; --violet:#5b21b6; --violetlt:#f5f3ff;
+    --ink:#1f2937; --mute:#6b7280; --line:#e5e7eb; --cream:#FAFCFB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:var(--ink);background:#f3f4f6;font-size:17px;line-height:1.62}
+  .page{max-width:1360px;margin:0 auto;background:#fff;padding:44px 52px 56px;box-shadow:0 2px 22px rgba(0,0,0,.07)}
+
+  h1{margin:0 0 7px;font-size:36px;color:var(--earth);letter-spacing:-.4px;line-height:1.15}
+  .sub{color:var(--mute);font-size:16px;margin-bottom:4px}
+  .rule{height:5px;background:linear-gradient(90deg,var(--earth),var(--leaf),var(--amber));border-radius:3px;margin:22px 0 30px}
+  h2{font-size:23px;color:var(--earth);margin:40px 0 16px;padding-bottom:9px;border-bottom:3px solid var(--line);display:flex;align-items:center;gap:12px}
+  h2 .n{background:var(--earth);color:#fff;width:33px;height:33px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
+  h3{font-size:18px;margin:20px 0 9px;color:var(--moss)}
+
+  .card{border:1px solid var(--line);border-radius:12px;padding:18px 21px;margin-bottom:15px;background:#fff}
+  .card.warn{border-left:7px solid var(--amber);background:#fffdf7}
+  .card.bad{border-left:7px solid var(--cherry);background:#fffaf9}
+  .card.good{border-left:7px solid var(--leaf);background:#fafffb}
+  .card.info{border-left:7px solid var(--cyan);background:#fafeff}
+
+  table{width:100%;border-collapse:collapse;font-size:16px;margin:11px 0 7px}
+  th{background:var(--earth);color:#fff;text-align:left;padding:11px 13px;font-weight:600;font-size:15.5px}
+  td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fbfdfc}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  .flow{display:flex;gap:15px;align-items:stretch;margin:16px 0 7px;flex-wrap:wrap}
+  .step{flex:1 1 300px;border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--cream);position:relative}
+  .step .b{width:34px;height:34px;border-radius:50%;background:var(--leaf);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;margin-bottom:11px}
+  .step b{display:block;font-size:18px;margin-bottom:6px;color:var(--earth)}
+  .step span{font-size:15.5px;color:var(--mute);display:block}
+
+  .kv{display:flex;flex-wrap:wrap;gap:10px 14px;margin:11px 0}
+  .pill{font-size:14px;padding:5px 14px;border-radius:99px;font-weight:600}
+  .p-red{background:var(--cherrylt);color:var(--cherry)}
+  .p-grn{background:var(--leaflt);color:var(--leaf)}
+  .p-amb{background:var(--amberlt);color:var(--amber)}
+  .p-cyn{background:var(--cyanlt);color:var(--cyan)}
+  .p-vio{background:var(--violetlt);color:var(--violet)}
+
+  .big{font-size:30px;font-weight:800;color:var(--earth);line-height:1.18}
+  .lbl{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.9px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+
+  ul{margin:9px 0 9px 24px;padding:0} li{margin-bottom:8px}
+  .foot{margin-top:38px;padding-top:20px;border-top:3px solid var(--line);font-size:13.5px;color:var(--mute);line-height:1.7}
+  .tag{display:inline-block;background:var(--earth);color:#fff;font-size:13px;padding:5px 14px;border-radius:6px;letter-spacing:.9px;margin-bottom:14px;font-weight:600}
+  .hi{background:#fff9c4;padding:1px 5px;border-radius:3px;font-weight:600}
+
+  /* ---- CETAK A4: skala turun otomatis supaya tetap muat ---- */
+  @media print{
+    body{background:#fff;font-size:10.5px;line-height:1.5}
+    .page{max-width:none;padding:0;box-shadow:none}
+    h1{font-size:21px} .sub{font-size:10.5px} h2{font-size:14px;margin:20px 0 9px}
+    h2 .n{width:20px;height:20px;font-size:11px} h3{font-size:12px}
+    .card{padding:10px 12px;margin-bottom:9px;border-radius:8px}
+    .card.warn,.card.bad,.card.good,.card.info{border-left-width:4px}
+    table{font-size:10px} th{padding:5px 7px;font-size:10px} td{padding:5px 7px}
+    .step{padding:10px;flex:1 1 150px} .step b{font-size:12px} .step span{font-size:10.5px}
+    .step .b{width:21px;height:21px;font-size:11px}
+    .pill{font-size:10px;padding:3px 9px} .big{font-size:18px} .lbl{font-size:9.5px}
+    .grid3{grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px}
+    .foot{font-size:9.5px;margin-top:20px}
+    .tag{font-size:9.5px;padding:2px 8px}
+    .rule{height:3px;margin:12px 0 18px}
+    .card{break-inside:avoid} table{break-inside:avoid}
+    .noprint{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <span class="tag">KAJIAN + PANDUAN LAPANGAN</span>
+  <h1>Sanitasi Tunggak "Pohon X" — Mempercepat Pelapukan</h1>
+  <div class="sub">Kebun Kopi Wakaf Ngantang · Rabu, 29 Juli 2026 · disusun untuk Wakif &amp; tenaga lapangan</div>
+  <div class="sub">Konteks: tunggak kayu keras sisa penebangan naungan Oktober 2023 · dugaan sumber busuk akar kasus K3-P01</div>
+  <div class="rule"></div>
+
+  <!-- 1 -->
+  <h2><span class="n">1</span>Temuan yang mengubah rencana</h2>
+  <div class="card warn">
+    <b>Kambium beberapa tunggak masih segar → sebagian tunggak MASIH HIDUP.</b>
+    <div class="kv" style="margin-top:8px">
+      <span class="pill p-grn">✔ Belum jadi food base jamur akar</span>
+      <span class="pill p-amb">✖ Tidak bisa dilapukkan selama masih hidup</span>
+    </div>
+    <p style="margin:8px 0 0">Kayu hidup punya pertahanan: kadar air tinggi, senyawa fenolik, dan kambium yang terus menutup luka. Itulah sebabnya setelah hampir 3 tahun kayunya <b>masih keras</b>.</p>
+    <p style="margin:6px 0 0"><span class="hi">Jamur akar putih (Rigidoporus / Phellinus) menyerang kayu MATI.</span> Jadi ancamannya belum aktif — tapi begitu tunggak mati nanti, seluruh massa kayu jadi food base <b>sekaligus</b>. Itu skenario K3-P01.</p>
+  </div>
+
+  <!-- 2 -->
+  <h2><span class="n">2</span>Urutan yang benar — dua tahap, jangan dibalik</h2>
+  <div class="flow">
+    <div class="step"><div class="b">A</div><b>MATIKAN dulu</b><span>Selama kambium hidup, tak ada jamur pelapuk yang bisa masuk. Justru kambium segar = jalur masuk paling efektif.</span></div>
+    <div class="step"><div class="b">B</div><b>Baru LAPUKKAN</b><span>Setelah mati: pasok nitrogen + masukkan jamur pelapuk pilihan kita.</span></div>
+  </div>
+  <div class="card bad" style="margin-top:8px">
+    <b>🚫 KILLTREE (hexazinone) — JANGAN dipakai di kebun ini</b>
+    <table style="margin-top:6px">
+      <tr><th style="width:38%">Sifat hexazinone</th><th>Akibat di kebun kita</th></tr>
+      <tr><td>Kelarutan air 33.000 mg/L · KOC 38–77 = <b>sangat mobile</b></td><td>Ikut air, tidak menempel di tanah</td></tr>
+      <tr><td><b>Diserap lewat AKAR</b></td><td>Akar kopi dangkal 0–30 cm ada di zona yang sama</td></tr>
+      <tr><td>Menyasar tanaman <b>berdaun lebar</b></td><td>Kopi termasuk golongan rentan</td></tr>
+      <tr><td>Residual lama</td><td>Andisol porous + hujan tinggi + lahan miring = mengalir ke pohon lain</td></tr>
+    </table>
+    <p style="margin:7px 0 0">Yang tepat untuk cut-stump adalah <b>triklopir</b> — terikat tanah, tidak berpindah lewat akar. Alternatif tanpa kimia: <b>potong tunas berulang</b> tiap muncul sampai cadangan pati akar habis (1–2 tahun, butuh disiplin rutin).</p>
+  </div>
+
+  <!-- 3 -->
+  <h2><span class="n">3</span>Pola pengeboran — sarang lebah</h2>
+  <div class="card info">
+    <div class="grid3" style="margin-bottom:8px">
+      <div><div class="lbl">Kedalaman</div><div class="big">20–30 cm</div></div>
+      <div><div class="lbl">Diameter mata bor</div><div class="big">12–20 mm</div></div>
+      <div><div class="lbl">Jarak antar lubang</div><div class="big">8–10 cm</div></div>
+    </div>
+    <svg viewBox="0 0 560 150" style="width:100%;max-width:900px;height:auto;display:block;margin:14px auto">
+      <rect x="20" y="34" width="230" height="96" rx="8" fill="#e7d3b8" stroke="#8b6f4e" stroke-width="2"/>
+      <text x="135" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#1F5F47">TAMPAK ATAS — pola sarang lebah</text>
+      <g fill="#1f2937">
+        <circle cx="55" cy="60" r="5"/><circle cx="90" cy="60" r="5"/><circle cx="125" cy="60" r="5"/><circle cx="160" cy="60" r="5"/><circle cx="195" cy="60" r="5"/><circle cx="228" cy="60" r="5"/>
+        <circle cx="72" cy="88" r="5"/><circle cx="107" cy="88" r="5"/><circle cx="142" cy="88" r="5"/><circle cx="177" cy="88" r="5"/><circle cx="212" cy="88" r="5"/>
+        <circle cx="55" cy="114" r="5"/><circle cx="90" cy="114" r="5"/><circle cx="125" cy="114" r="5"/><circle cx="160" cy="114" r="5"/><circle cx="195" cy="114" r="5"/><circle cx="228" cy="114" r="5"/>
+      </g>
+      <text x="135" y="145" text-anchor="middle" font-size="9.5" fill="#6b7280">baris digeser (zigzag) supaya merata</text>
+
+      <rect x="320" y="52" width="200" height="78" rx="4" fill="#e7d3b8" stroke="#8b6f4e" stroke-width="2"/>
+      <text x="420" y="24" text-anchor="middle" font-size="11" font-weight="700" fill="#1F5F47">TAMPAK SAMPING</text>
+      <text x="420" y="40" text-anchor="middle" font-size="9.5" fill="#6b7280">lubang tegak + menyerong dari sisi</text>
+      <g stroke="#1f2937" stroke-width="3" stroke-linecap="round">
+        <line x1="350" y1="52" x2="350" y2="112"/><line x1="385" y1="52" x2="385" y2="112"/>
+        <line x1="420" y1="52" x2="420" y2="112"/><line x1="455" y1="52" x2="455" y2="112"/>
+        <line x1="490" y1="52" x2="490" y2="112"/>
+      </g>
+      <g stroke="#8c2519" stroke-width="3" stroke-linecap="round">
+        <line x1="320" y1="74" x2="368" y2="100"/><line x1="520" y1="74" x2="472" y2="100"/>
+      </g>
+      <text x="420" y="145" text-anchor="middle" font-size="9.5" fill="#8c2519">merah = lubang serong, menjangkau bagian dalam bonggol</text>
+    </svg>
+    <p style="margin:4px 0 0">Makin banyak saluran, makin luas permukaan yang bisa dijangkau larutan dan jamur → pelapukan lebih merata. Untuk bonggol besar, tambahkan lubang serong dari sisi samping.</p>
+  </div>
+
+  <!-- 4 -->
+  <h2><span class="n">4</span>KNO₃ tanpa air panas — 4 cara praktis untuk kebun jauh</h2>
+  <div class="card good">
+    <p style="margin:0 0 8px"><span class="hi">Air panas hanya MEMPERCEPAT larut — bukan syarat.</span> KNO₃ larut ±316 gram per liter pada air dingin biasa (20 °C). Untuk kebun luas dan jauh dari rumah, pakai salah satu cara di bawah.</p>
+    <table>
+      <tr><th style="width:22%">Cara</th><th>Pelaksanaan</th><th style="width:26%">Cocok kapan</th></tr>
+      <tr>
+        <td><b>① Isi kering,<br>biarkan hujan</b><br><span class="pill p-grn">paling praktis</span></td>
+        <td>Tuang granul kering ke lubang → <b>sumbat dengan lumpur / tanah liat basah</b> → tutup permukaan tunggak dengan karung/mulsa. Hujan Ngantang yang melarutkan. KNO₃ juga higroskopis (menyerap uap air sendiri).</td>
+        <td>Awal–tengah musim hujan. <b>Nol beban angkut air.</b></td>
+      </tr>
+      <tr>
+        <td><b>② Larutkan di rumah,<br>bawa jerigen</b></td>
+        <td>Di rumah: 1 kg KNO₃ + 3–4 liter air <b>dingin biasa</b>, aduk 2–3 menit sampai larut. Bawa jerigen 5–10 L + gayung/botol bekas untuk menuang. 1 jerigen 10 L cukup untuk <b>3–5 tunggak</b>.</td>
+        <td>Musim kemarau, atau saat mau kerja borongan sekali jalan.</td>
+      </tr>
+      <tr>
+        <td><b>③ Sumbat + siram<br>air kebun</b></td>
+        <td>Granul kering + tutup lumpur, lalu siram air apa saja yang ada di kebun (air PDAM kebun, air hujan tampungan, air rorak). Suhu tidak penting.</td>
+        <td>Kalau ada sumber air di kebun.</td>
+      </tr>
+      <tr>
+        <td><b>④ Bertahap,<br>sedikit-sedikit</b></td>
+        <td>Isi ⅓ lubang, tutup. Kunjungan berikutnya isi lagi. Melarut perlahan oleh kelembapan tanah &amp; hujan.</td>
+        <td>Kalau kunjungan kebun rutin tapi waktu tiap kali singkat.</td>
+      </tr>
+    </table>
+    <div class="kv" style="margin-top:9px">
+      <span class="pill p-cyn">Dosis kasar: ± 0,5–1 kg KNO₃ per tunggak besar</span>
+      <span class="pill p-cyn">Bentuk: granul / prill pupuk KNO₃ (13-0-46)</span>
+      <span class="pill p-cyn">Waktu terbaik mulai: awal musim hujan</span>
+    </div>
+    <p style="margin:8px 0 0"><b>Aman untuk kopi:</b> KNO₃ adalah <b>pupuk 13-0-46</b> — nitrogen + kalium, bukan racun. Kalau ada yang tercuci ke akar kopi, itu hara. Dan dari kajian soil amendment, kebun ini justru <b>kekurangan K</b>. Beda kelas dengan hexazinone.</p>
+    <p style="margin:5px 0 0;color:var(--amber)"><b>Catatan:</b> jangan tebar KNO₃ di permukaan tanah dekat leher akar kopi dalam jumlah besar — bisa memicu salt injury lokal. Masukkan <b>ke dalam lubang bor</b> saja, lalu sumbat.</p>
+  </div>
+
+  <!-- 5 -->
+  <h2><span class="n">5</span>Yang benar-benar melumat kayu keras: jamur pelapuk putih</h2>
+  <div class="card">
+    <p style="margin:0 0 7px">Yang membuat kayu keras adalah <b>lignin</b>. Hanya <b>white-rot fungi</b> yang mampu mendegradasinya tuntas. KNO₃ melunakkan dan membuka jalan; jamurlah yang menyelesaikan.</p>
+    <div class="grid3">
+      <div class="card info" style="margin:0">
+        <div class="lbl">Jamur tiram · Pleurotus ostreatus</div>
+        <div style="font-size:12px;margin-top:4px">Kehilangan bobot kayu <b>16,23% dalam 8 minggu</b> pada Eucalyptus. Inokulasi tunggak juga <b>menekan pertumbuhan tunas</b>. Bonus: bisa dipanen.</div>
+      </div>
+      <div class="card good" style="margin:0">
+        <div class="lbl">Trichoderma</div>
+        <div style="font-size:12px;margin-top:4px">Antagonis <i>Rigidoporus</i> — isolat lokal menghambat <b>67–71%</b> (in vitro). Sekaligus melindungi leher akar kopi di sekitar.</div>
+      </div>
+      <div class="card" style="margin:0;border-left:4px solid var(--violet);background:var(--violetlt)">
+        <div class="lbl">Cara masuk</div>
+        <div style="font-size:12px;margin-top:4px">4–8 minggu setelah KNO₃, saat kayu mulai lunak: masukkan bibit ke lubang bor, sumbat lumpur, jaga lembap.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <h2><span class="n">6</span>Kunci strategi — siapa yang melapukkan menentukan segalanya</h2>
+  <div class="card good">
+    <table>
+      <tr><th style="width:44%">Skenario</th><th>Hasil</th></tr>
+      <tr><td>Dibiarkan lapuk <b>alami</b></td><td class="" style="color:var(--cherry)"><b>Siapa pun yang datang lebih dulu</b> — termasuk <i>Rigidoporus</i> / <i>Phellinus</i>. Inilah yang terjadi pada Pohon X di K3-P01.</td></tr>
+      <tr><td>Dilapukkan oleh jamur <b>yang kita pilih</b></td><td style="color:var(--leaf)"><b>Mereka menduduki kayu lebih dulu</b> → patogen tidak dapat tempat (<i>competitive exclusion</i>).</td></tr>
+    </table>
+    <p style="margin:8px 0 0">Jadi mempercepat pelapukan <b>dengan inokulasi terarah</b> bukan menambah risiko — justru strategi ganda: <b>menghabiskan food base sambil menutup pintu bagi patogen</b>. Yang berbahaya adalah membiarkannya lapuk sendiri.</p>
+  </div>
+
+  <!-- 7 -->
+  <h2><span class="n">7</span>Urutan kerja per tunggak</h2>
+  <table>
+    <tr><th style="width:6%">#</th><th style="width:26%">Tindakan</th><th>Rincian</th><th style="width:16%">Jeda</th></tr>
+    <tr><td class="num">1</td><td><b>Matikan</b></td><td>Oles triklopir ke kambium segar (efektif justru karena masih hidup — terbawa ke akar). Atau: potong tunas berulang kalau memilih tanpa kimia.</td><td>—</td></tr>
+    <tr><td class="num">2</td><td><b>Bor</b></td><td>Pola sarang lebah 20–30 cm, jarak 8–10 cm, plus lubang serong dari sisi.</td><td>bisa langsung</td></tr>
+    <tr><td class="num">3</td><td><b>KNO₃</b></td><td>Pilih salah satu dari 4 cara di bagian 4. Sumbat lumpur, tutup karung/mulsa.</td><td>—</td></tr>
+    <tr><td class="num">4</td><td><b>Inokulasi</b></td><td>Bibit jamur tiram dan/atau Trichoderma ke lubang. Sumbat lagi.</td><td>4–8 minggu setelah #3</td></tr>
+    <tr><td class="num">5</td><td><b>Jaga &amp; pantau</b></td><td>Tetap lembap dan tertutup. Cek kekerasan kayu dengan linggis.</td><td>tiap 2 bulan</td></tr>
+    <tr><td class="num">6</td><td><b>Bongkar</b></td><td>Cungkil manual saat sudah lunak — jauh lebih ringan daripada mencabut bonggol keras.</td><td>bertahap</td></tr>
+  </table>
+
+  <!-- 8 -->
+  <h2><span class="n">8</span>Perbandingan biaya &amp; kejujuran bukti</h2>
+  <div class="grid3">
+    <div class="card bad" style="margin:0"><div class="lbl">Cabut total 86 tunggak</div><div class="big" style="color:var(--cherry)">± Rp 43 jt</div><span style="font-size:11px;color:var(--mute)">≈ 60% seluruh RAB 2 siklus. Tidak realistis.</span></div>
+    <div class="card warn" style="margin:0"><div class="lbl">Potong akar lateral + parit</div><div class="big" style="color:var(--amber)">± Rp 19 jt</div><span style="font-size:11px;color:var(--mute)">Semua tunggak, tanpa triase.</span></div>
+    <div class="card good" style="margin:0"><div class="lbl">Triase Tier-1 (5–10 titik)</div><div class="big" style="color:var(--leaf)">± Rp 2,8 jt</div><span style="font-size:11px;color:var(--mute)">Survei Rp 220K dulu → mayoritas tunggak ternyata tak perlu digali.</span></div>
+  </div>
+  <div class="card warn" style="margin-top:10px">
+    <b>⚠️ Kejujuran bukti — jangan over-claim</b>
+    <ul style="margin-top:5px">
+      <li><b>KNO₃ sebagai pemercepat pelapukan = praktik komersial populer, bukti ilmiahnya tidak sekuat kesannya.</b> Riset menunjukkan nitrogen berlebih bisa <i>menaikkan</i> aktivitas selulase tapi <i>menurunkan</i> degradasi lignin. Posisikan KNO₃ sebagai <b>pelunak &amp; pembuka jalan</b>, bukan solusi tunggal.</li>
+      <li>Angka Trichoderma 67–71% berasal dari uji <b>in vitro pada karet</b> (<i>Rigidoporus microporus</i>), bukan lapangan pada kopi. Kopi adalah inang yang diakui dan mekanismenya sama — tapi ini <b>ekstrapolasi terinformasi</b>.</li>
+      <li>Diagnosis busuk akar K3-P01 masih <b>hipotesis kerja</b> — belum ada identifikasi laboratorium.</li>
+      <li>Waktu "4–6 minggu jadi lunak" adalah klaim penjual pada kondisi ideal. Untuk bonggol waru/durian besar, harapkan <b>beberapa bulan hingga setahun</b>.</li>
+    </ul>
+  </div>
+
+  <!-- 9 -->
+  <h2><span class="n">9</span>Yang perlu dicatat ke dashboard</h2>
+  <div class="card info">
+    Supaya ini jadi <b>data</b>, bukan cerita — dan bisa dipakai sebagai bahan "field lab" untuk jalur BRIN:
+    <ul style="margin-top:5px">
+      <li><b>Koordinat GPS</b> tiap tunggak + jenis kayu + apakah kambium masih segar</li>
+      <li><b>Tanggal</b> tiap langkah 1–6 per tunggak</li>
+      <li><b>Uji kekerasan</b> tiap 2 bulan: linggis masuk berapa cm</li>
+      <li><b>Status leher akar kopi</b> radius 5 m: sehat / rhizomorph terlihat / bergejala</li>
+    </ul>
+    <p style="margin:7px 0 0;color:var(--amber)"><b>Catatan tenaga kerja (29 Jul 2026):</b> kebun saat ini <b>tanpa pekerja lapangan tetap</b> untuk pekerjaan atas/bawah pohon. Pekerjaan ini perlu dikerjakan Wakif sendiri atau menunggu tenaga baru — pertimbangkan saat menyusun jadwal.</p>
+  </div>
+
+  <div class="foot">
+    <b>Sumber utama:</b> Pegler 1968 (<i>Rigidoporus</i>, inang kopi) · Saidi 2023, <i>Forest Pathology</i> (WRR karet) · Plants 2023 (biokontrol <i>Trichoderma</i> vs <i>R. microporus</i>) · <i>Bioresource Technology</i> (seleksi jamur untuk percepatan pelapukan tunggak Eucalyptus) · Wood &amp; Fiber Science + Cornell Composting (lignin, C:N, efek nitrogen) · Minnesota DNR &amp; <i>Environmental Advances</i> (mobilitas &amp; leaching hexazinone) · Nufarm Indonesia (triklopir untuk tunggul) · panduan lapangan JAP Ditjenbun / Puslit Karet.<br><br>
+    <b>Rujukan internal:</b> <code>Memory/projects/project_opt_k3p01_busuk_akar_tunggak_6Jun2026.md</code> · <code>R&amp;D Kopi Ngantang/Asesmen Kebun/Asesmen Fokus K3 6Jun2026/</code> · sensus tunggak Pohon X (Waru 28 · Suren 23 · Sengon 8 · Durian 34 = 93; kebun wakaf K1–K3 = 86).<br><br>
+    Disusun 29 Juli 2026 untuk Wakaf Produktif Kebun Kopi Ngantang · status diagnosis: <b>hipotesis kerja</b>, tindakan bersifat <i>no-regret</i>.
+  </div>
+</div>
+</body>
+</html>
