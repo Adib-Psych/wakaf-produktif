@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Inventaris Alat &amp; Sparepart — Kebun Kopi Wakaf Ngantang</title>
+<style>
+  @page { size: A4; margin: 10mm; }
+  :root{
+    --earth:#1F5F47; --moss:#2E5C4F; --leaf:#15803d; --leaflt:#dcfce7;
+    --cherry:#8c2519; --cherrylt:#fde8e4; --amber:#b45309; --amberlt:#fef3c7;
+    --cyan:#0e7490; --cyanlt:#cffafe;
+    --ink:#1f2937; --mute:#6b7280; --line:#e5e7eb; --cream:#FAFCFB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:var(--ink);background:#f3f4f6;font-size:16px;line-height:1.6}
+  .page{max-width:1360px;margin:0 auto;background:#fff;padding:38px 46px 50px;box-shadow:0 2px 22px rgba(0,0,0,.07)}
+  h1{margin:0 0 6px;font-size:33px;color:var(--earth);letter-spacing:-.4px;line-height:1.15}
+  .sub{color:var(--mute);font-size:15px;margin-bottom:3px}
+  .rule{height:5px;background:linear-gradient(90deg,var(--earth),var(--leaf),var(--amber));border-radius:3px;margin:20px 0 26px}
+  h2{font-size:22px;color:var(--earth);margin:38px 0 14px;padding-bottom:8px;border-bottom:3px solid var(--line);display:flex;align-items:center;gap:11px}
+  h2 .n{background:var(--earth);color:#fff;width:31px;height:31px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;flex:0 0 auto}
+  h3{font-size:17px;margin:20px 0 8px;color:var(--moss)}
+
+  .card{border:1px solid var(--line);border-radius:12px;padding:17px 20px;margin-bottom:14px;background:#fff}
+  .card.warn{border-left:7px solid var(--amber);background:#fffdf7}
+  .card.bad{border-left:7px solid var(--cherry);background:#fffaf9}
+  .card.good{border-left:7px solid var(--leaf);background:#fafffb}
+  .card.info{border-left:7px solid var(--cyan);background:#fafeff}
+
+  table{width:100%;border-collapse:collapse;font-size:15px;margin:10px 0 6px}
+  th{background:var(--earth);color:#fff;text-align:left;padding:10px 12px;font-weight:600;font-size:14.5px}
+  td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fbfdfc}
+  .no{background:#fff5f4}
+  .yes{background:#f6fffa}
+
+  .tool{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px;background:#fff}
+  .tool img{width:290px;max-width:100%;border-radius:10px;border:1px solid var(--line);display:block}
+  .tool .body{flex:1 1 380px;min-width:280px}
+  .tool h3{margin-top:0}
+  .kv{width:100%;font-size:14.5px;border-collapse:collapse}
+  .kv td{padding:5px 0;border-bottom:1px dashed #eee;vertical-align:top}
+  .kv td:first-child{color:var(--mute);width:170px;white-space:nowrap}
+
+  .pill{font-size:13px;padding:4px 12px;border-radius:99px;font-weight:600;display:inline-block;margin:2px 3px 2px 0}
+  .p-leaf{background:var(--leaflt);color:#14532d}
+  .p-amber{background:var(--amberlt);color:#7c2d12}
+  .p-cherry{background:var(--cherrylt);color:#7f1d1d}
+  .p-cyan{background:var(--cyanlt);color:#164e63}
+  .p-grey{background:#f1f5f9;color:#475569}
+
+  .spec{background:#111827;color:#fff;border-radius:12px;padding:16px 20px;margin:12px 0;font-size:15px}
+  .spec b{color:#fcd34d;font-size:21px;letter-spacing:.5px;font-family:ui-monospace,Menlo,Consolas,monospace}
+
+  blockquote{margin:12px 0;padding:13px 18px;border-left:6px solid var(--leaf);background:var(--cream);border-radius:0 10px 10px 0}
+  ul,ol{margin:8px 0 8px 20px;padding:0}
+  li{margin-bottom:6px}
+  .foot{margin-top:40px;padding-top:18px;border-top:2px solid var(--line);font-size:14px;color:var(--mute);line-height:1.7}
+  code{background:#f3f4f6;padding:2px 7px;border-radius:5px;font-size:14px;font-family:ui-monospace,Menlo,Consolas,monospace}
+  .todo{border:2px dashed #cbd5e1;border-radius:12px;padding:16px 20px;color:#64748b;background:#f8fafc;margin-bottom:14px}
+
+  @media print{
+    body{background:#fff;font-size:11px;line-height:1.45}
+    .page{max-width:none;padding:0;box-shadow:none}
+    h1{font-size:21px} h2{font-size:14px;margin:16px 0 8px} h3{font-size:12px}
+    table{font-size:10px} th,td{padding:5px 7px}
+    .tool img{width:200px}
+    .spec b{font-size:15px}
+    h2,.card,table,.tool{break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>Inventaris Alat &amp; Sparepart</h1>
+  <div class="sub">Kebun Kopi Wakaf Ngantang — rujukan pembelian sparepart</div>
+  <div class="sub"><strong>Diperbarui 31 Juli 2026</strong></div>
+  <div class="rule"></div>
+
+  <div class="card info">
+    <strong>Untuk apa halaman ini.</strong> Supaya saat beli sparepart tidak salah barang. Setiap alat dicatat berikut foto, spesifikasi, dan <em>angka persis</em> yang harus disebutkan ke penjual.
+    <br><br>
+    <strong>Aturan pertama:</strong> spesifikasi yang dipakai adalah yang <strong>tertera di barang fisik</strong> — stempel di bar, label di bungkus sparepart, plat nama di mesin. <strong>Bukan</strong> yang tertulis di listing marketplace. Pada kasus chainsaw ini, listing penjualnya <strong>terbukti salah</strong> (lihat bagian 2).
+  </div>
+
+  <h2><span class="n">1</span> Alat yang dimiliki</h2>
+
+  <div class="tool">
+    <img src="img/alat-set.jpg" alt="Perangkat kerja di kebun: chainsaw KEELAT, brush cutter, gergaji manual, gunting pangkas">
+    <div class="body">
+      <h3>Perangkat kerja di kebun (foto 31 Jul 2026)</h3>
+      <p style="font-size:14.5px;color:var(--mute);margin:0 0 8px">Satu foto ini memuat empat alat sekaligus. Perlu diperhatikan supaya tidak tertukar saat mencari sparepart:</p>
+      <span class="pill p-amber">🪚 Chainsaw KEELAT — kuning-hitam, baterai</span>
+      <span class="pill p-cyan">🌿 Brush cutter — bodi biru, 2 baterai</span>
+      <span class="pill p-grey">🔪 Gergaji manual INGCO — gagang oranye-hitam</span>
+      <span class="pill p-grey">✂️ Gunting pangkas — gagang oranye polos</span>
+      <div class="card warn" style="margin-top:12px;padding:11px 15px;font-size:14px">
+        <strong>Jangan tertukar:</strong> yang bermerek <strong>INGCO adalah gergaji manual</strong> — bukan chainsaw, bukan gunting pangkas. Chainsaw-nya bermerek <strong>KEELAT</strong>.
+      </div>
+    </div>
+  </div>
+
+  <div class="tool">
+    <img src="img/bar-rantai.jpg" alt="Bar dan rantai chainsaw KEELAT terpasang">
+    <div class="body">
+      <h3>🪚 Chainsaw KEELAT KEC009 — 12″ cordless</h3>
+      <table class="kv">
+        <tr><td>Merek &amp; model</td><td><strong>KEELAT KEC009</strong></td></tr>
+        <tr><td>Tipe</td><td>Gergaji rantai cordless, motor <strong>brushless</strong></td></tr>
+        <tr><td>Tegangan</td><td>20V · baterai Li-Ion, dudukan gaya <strong>LXT</strong></td></tr>
+        <tr><td>Baterai</td><td>2 × 6000 mAh (6.0Ah)</td></tr>
+        <tr><td>Kecepatan</td><td>6000 rpm tanpa beban · rantai 10 m/s</td></tr>
+        <tr><td>Panjang batang</td><td><strong>12″ / 30 cm</strong></td></tr>
+        <tr><td>Berat</td><td>1,73 kg (alat telanjang) · ± 2,4 kg dengan baterai</td></tr>
+        <tr><td>Pelumasan rantai</td><td>Otomatis (auto-oiler) — tersedia</td></tr>
+        <tr><td>Bahan</td><td>ABS + stainless steel</td></tr>
+        <tr><td>Harga beli</td><td>Rp 1.375.460 (paket + 2 baterai + 2 rantai)</td></tr>
+        <tr><td>Kemampuan</td><td>Batang ≤ ± 20–25 cm</td></tr>
+      </table>
+      <div class="card bad" style="margin-top:10px;padding:11px 15px;font-size:14px">
+        ⚠️ Angka <strong>“1340W”</strong> yang beredar di dokumen komparasi <strong>tidak ada di spesifikasi resmi</strong> — itu klaim marketing. Jangan dipakai sebagai rujukan.
+      </div>
+    </div>
+  </div>
+
+  <h2><span class="n">2</span> Sparepart — rantai / mata gergaji</h2>
+
+  <div class="tool">
+    <img src="img/label-rantai.jpg" alt="Label bungkus rantai cadangan bawaan: 1/4LP 043 63E">
+    <div class="body">
+      <h3>Spesifikasi rantai — dibaca dari barang fisik</h3>
+      <p style="font-size:14.5px;margin:0 0 6px">Label pada bungkus <strong>rantai cadangan bawaan</strong> (ikut dalam paket) berbunyi <code>1/4LP&nbsp;&nbsp;043&nbsp;&nbsp;63E</code>. Inilah spesifikasi yang sah.</p>
+      <div class="spec">
+        Sebutkan <strong>ketiga angka ini</strong> saat membeli:<br>
+        <b>1/4″ LP &nbsp;·&nbsp; .043″ &nbsp;·&nbsp; 63 mata</b>
+        <div style="font-size:13.5px;color:#d1d5db;margin-top:8px">pitch &nbsp;·&nbsp; gauge (tebal) &nbsp;·&nbsp; jumlah drive link</div>
+      </div>
+      <div class="card bad" style="padding:11px 15px;font-size:14px">
+        🚫 <strong>Listing marketplace KEELAT SALAH.</strong> Di sana tertulis “Pitch/gigi: 3/8″/45”. Kalau membeli berdasarkan itu, rantai <strong>tidak akan terpasang</strong> — pitch beda, jumlah mata beda. <strong>Barang fisik menang atas listing.</strong>
+      </div>
+    </div>
+  </div>
+
+  <h3>Memahami ketiga angka itu</h3>
+  <table>
+    <tr><th style="width:20%">Istilah</th><th style="width:22%">Nilai kita</th><th>Artinya &amp; kenapa penting</th></tr>
+    <tr><td><strong>Pitch</strong></td><td><strong>1/4″ LP</strong></td><td>Jarak antar mata rantai. <strong>Harus sama persis dengan gir penggeraknya</strong> — kalau beda, rantai tidak akan menggigit gir. Ini syarat paling mutlak.</td></tr>
+    <tr><td><strong>Gauge</strong></td><td><strong>.043″</strong> (1,1 mm)</td><td>Tebal lidah rantai yang masuk ke alur bar. Terlalu tebal = tidak masuk; terlalu tipis = goyang dan cepat aus.</td></tr>
+    <tr><td><strong>Drive link</strong></td><td><strong>63 mata</strong></td><td>Jumlah lidah, dihitung keliling penuh. Menentukan panjang lingkaran rantai. Beda 1–2 mata masih mungkin tertolong penyetel, lebih dari itu tidak.</td></tr>
+  </table>
+
+  <h3>Opsi rantai — mana yang cocok, mana yang tidak</h3>
+  <table>
+    <tr><th style="width:26%">Opsi</th><th style="width:24%">Spesifikasi</th><th style="width:12%">Cocok?</th><th>Catatan</th></tr>
+    <tr class="yes">
+      <td><strong>Bawaan KEELAT</strong><br><span style="font-size:13px;color:var(--mute)">generic, tanpa merek</span></td>
+      <td>1/4″LP · .043″ · 63</td>
+      <td><span class="pill p-leaf">✓ pasti</span></td>
+      <td>Bungkusnya hanya bertulis “SAW CHAIN”, tanpa nama pabrik dan tanpa kode tipe rantai — ciri rantai OEM generik. Paket berisi 2 buah.</td>
+    </tr>
+    <tr class="yes">
+      <td><strong>Stihl 71PM3</strong><br><span style="font-size:13px;color:var(--mute)">Picco Micro 3</span></td>
+      <td>1/4″LP · .043″ · <strong>64</strong></td>
+      <td><span class="pill p-amber">⚠ hampir</span></td>
+      <td><strong>Pitch &amp; gauge cocok persis.</strong> Jumlah mata 64, milik kita 63 — selisih 1. Umumnya masih bisa ditolong penyetel rantai, <strong>tapi tidak dijamin</strong>. Ini rantai untuk Stihl MSA 120/140 C-BQ 12″.</td>
+    </tr>
+    <tr class="yes">
+      <td><strong>Oregon 24AP</strong></td>
+      <td>1/4″LP · .043″ · sesuai pesanan</td>
+      <td><span class="pill p-leaf">✓ terbaik</span></td>
+      <td>Padanan Oregon untuk Stihl 71PM3. Banyak toko gergaji menjual <strong>per rol dan menyambungkan sesuai jumlah mata</strong> — minta dibuatkan <strong>63 mata</strong>, jadi pas tanpa kompromi.</td>
+    </tr>
+    <tr class="no">
+      <td><strong>Stihl 3610.000.0044</strong><br><span style="font-size:13px;color:var(--mute)">untuk HT-75</span></td>
+      <td>3/8″P · .043″ · 44</td>
+      <td><span class="pill p-cherry">✗ TIDAK</span></td>
+      <td><strong>Pitch salah</strong> (3/8″ vs 1/4″) <strong>dan jumlah mata salah</strong> (44 vs 63). Hanya gauge yang kebetulan sama. Meski sama-sama ditulis “12 inch”, rantai ini <strong>tidak akan terpasang.</strong></td>
+    </tr>
+  </table>
+
+  <div class="card warn">
+    <strong>Kenapa dua-duanya ditulis “12 inch” tapi hasilnya beda?</strong> Karena ukuran inci itu panjang <em>bar</em>-nya, bukan spesifikasi rantainya. Bar 12″ bisa memakai pitch 1/4″ maupun 3/8″ tergantung girnya — dan jumlah matanya ikut berubah. <strong>Ukuran inci saja tidak pernah cukup untuk membeli rantai.</strong>
+  </div>
+
+  <h3>Apakah rantai bawaan memang “basic”? — Ya</h3>
+  <blockquote>
+    Bungkusnya hanya bertulis <strong>“SAW CHAIN”</strong>: tidak ada nama pabrik, tidak ada kode tipe rantai seperti <code>71PM3</code> (Stihl) atau <code>24AP</code> (Oregon). Itu ciri rantai OEM generik.
+  </blockquote>
+  <p>Rantai bermerek biasanya unggul pada: <strong>kekerasan &amp; ketebalan lapis krom</strong> pada mata potong (lebih lama tajam), <strong>konsistensi sudut asah</strong> dari pabrik, dan <strong>kualitas paku keling</strong> (rantai tidak cepat molor). Jadi mengganti ke Stihl 71PM3 atau Oregon 24AP <strong>memang peningkatan nyata</strong> — terutama karena kayu di kebun ini keras dan berdebu, kondisi yang cepat menumpulkan rantai murah.</p>
+
+  <div class="card bad">
+    <strong>⚠️ Tapi luruskan harapannya.</strong> Rantai yang lebih baik membuat potongan <strong>lebih halus, lebih cepat, dan lebih awet tajam</strong> — <strong>tidak</strong> membuat mesinnya sanggup memotong kayu yang lebih besar. Batasnya ada di tenaga motor 20V dan bar 12″, bukan di rantainya. Untuk <strong>tunggak kayu keras</strong> (waru, suren, sengon, durian) yang diameternya jauh di atas kemampuan alat ini, jawabannya bukan ganti rantai — melainkan alat yang berbeda kelas.
+  </div>
+
+  <h3>Rekomendasi</h3>
+  <ol>
+    <li><strong>Untuk sekarang:</strong> masih ada 1 rantai cadangan bawaan yang belum terpakai. Pakai dulu sambil mencari yang bermerek.</li>
+    <li><strong>Pilihan terbaik:</strong> minta toko gergaji membuatkan loop <strong>Oregon 24AP, 63 mata</strong> dari rol. Pas, tanpa kompromi.</li>
+    <li><strong>Kalau harus jadi barang siap pakai:</strong> Stihl 71PM3 64 mata — <strong>tanyakan dulu ke penjual</strong> apakah bisa ditukar bila ternyata penyetelnya tidak sampai.</li>
+    <li><strong>Yang juga sangat berpengaruh:</strong> kikir asah 1/4″ (diameter ± 4,0 mm) dan disiplin mengasah tiap beberapa jam kerja. Rantai generik yang rajin diasah mengalahkan rantai mahal yang dibiarkan tumpul.</li>
+  </ol>
+
+  <h2><span class="n">3</span> Alat lain</h2>
+
+  <div class="card">
+    <h3 style="margin-top:0">🔪 Gergaji manual INGCO</h3>
+    <table class="kv">
+      <tr><td>Merek</td><td><strong>INGCO</strong> — terbaca di gagang</td></tr>
+      <tr><td>Ciri</td><td>Gagang oranye-hitam bertekstur, masih bertag</td></tr>
+      <tr><td>Status</td><td>Sudah dibeli, ada di kebun</td></tr>
+      <tr><td>Sparepart</td><td>Mata gergaji pengganti — <em>tipe belum dicatat</em></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">✂️ Gunting pangkas</h3>
+    <table class="kv">
+      <tr><td>Merek</td><td><strong>Belum diketahui</strong> — gagang oranye polos tanpa logo, gaya grip berbeda dari INGCO</td></tr>
+      <tr><td>Ciri</td><td>Dua gagang oranye + sarung hitam</td></tr>
+      <tr><td>Status</td><td>Sudah dibeli, ada di kebun</td></tr>
+      <tr><td>Perlu dilengkapi</td><td>Merek &amp; tipe — cek tag atau kotaknya</td></tr>
+    </table>
+  </div>
+
+  <div class="todo">
+    <strong>🌿 Brush cutter — menunggu data</strong><br>
+    Sudah dibeli dan dipakai di kebun: bodi biru, cordless, 2 baterai. <strong>Merek dan model belum terbaca</strong> dari foto.
+    <br><br>
+    Yang perlu dicatat begitu diketahui: merek &amp; model · tegangan &amp; kapasitas baterai · diameter pisau/kepala · <strong>jenis mata potong</strong> (senar nilon / pisau logam 2–3 mata / pisau gergaji) dan ukurannya · ulir pemasangan pisau.
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">🌾 Chopper pencacah rumput</h3>
+    <table class="kv">
+      <tr><td>Kepemilikan</td><td>Milik Wakif — kembali ke kebun Mei 2026</td></tr>
+      <tr><td>Fungsi di SOP</td><td>Mencacah residu <strong>aliran 2–3</strong>: ranting kering &lt; 2 cm dan cabang 2–5 cm</td></tr>
+    </table>
+  </div>
+
+  <h2><span class="n">4</span> Aturan beli sparepart</h2>
+  <table>
+    <tr><th style="width:6%">#</th><th>Aturan</th></tr>
+    <tr><td><strong>1</strong></td><td><strong>Foto dulu label barangnya</strong> — stempel di bar, bungkus sparepart lama, plat nama mesin. Itu sumber kebenaran.</td></tr>
+    <tr><td><strong>2</strong></td><td><strong>Jangan percaya spesifikasi di listing penjual.</strong> Sudah terbukti salah untuk chainsaw ini.</td></tr>
+    <tr><td><strong>3</strong></td><td><strong>Jangan menyebut ukuran inci saja.</strong> Sebut angka lengkapnya — untuk rantai berarti pitch, gauge, dan jumlah mata.</td></tr>
+    <tr><td><strong>4</strong></td><td><strong>Simpan bungkus sparepart lama.</strong> Label itulah yang menyelamatkan pembelian berikutnya.</td></tr>
+    <tr><td><strong>5</strong></td><td><strong>Catat ke halaman ini</strong> begitu ada alat atau sparepart baru — termasuk harga dan tempat belinya.</td></tr>
+  </table>
+
+  <div class="foot">
+    <strong>Sumber spesifikasi:</strong> label fisik rantai cadangan bawaan (foto 31 Jul 2026) · listing resmi KEELAT untuk spesifikasi mesin (screenshot 31 Jul 2026) · katalog Stihl 71PM3 Picco Micro 3 dan padanan Oregon 24AP · dokumen komparasi internal <code>Digital Platform/Komparasi_Chainsaw_Tebang_Pohon_18Jul2026.html</code> (19 Jul 2026).<br><br>
+    <strong>Foto:</strong> <code>Aset Photos Wakaf/Tools Kebun Wakaf/</code> — IMG_7500 (set alat) · IMG_7508 (bar &amp; rantai) · IMG_7511 (label rantai cadangan).<br><br>
+    Halaman ini bagian dari dashboard Monitor-v2, grup <strong>Kebun</strong>. Diperbarui manual setiap ada alat atau sparepart baru.
+  </div>
+
+</div>
+</body>
+</html>

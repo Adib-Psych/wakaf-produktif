@@ -328,11 +328,12 @@
 
       <!-- 🌳 KEBUN — kondisi pohon, OPT, penugasan tim -->
       <div class="nav-grp" data-grp="kebun">
-        <div class="nav-hd"><span class="chv" aria-hidden="true"></span><span class="nav-ttl">🌳 KEBUN</span><span class="nav-cnt">3</span></div>
+        <div class="nav-hd"><span class="chv" aria-hidden="true"></span><span class="nav-ttl">🌳 KEBUN</span><span class="nav-cnt">4</span></div>
         <div class="nav-bd">
           <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
           <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
           <div class="sb-tab" data-panel="distribusi"><span class="ico">👥</span><span class="lbl">Tim & Distribusi Tugas</span></div>
+          <div class="sb-tab" data-panel="alat"><span class="ico">🧰</span><span class="lbl">Alat &amp; Sparepart</span></div>
           <!-- Manage Workers (🎫) merged into Distribusi Tugas panel 19 Mei 2026 — reduce sidebar clutter -->
         </div>
       </div>
@@ -3335,6 +3336,19 @@
       </div>
     </div>
 
+    <!-- ===== INVENTARIS ALAT & SPAREPART (31 Jul 2026) — rujukan pembelian sparepart ===== -->
+    <div class="panel" id="panel-alat">
+      <div class="card" style="padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:220px">
+          <div style="font-weight:800;color:var(--earth);font-size:15px">🧰 Inventaris Alat &amp; Sparepart</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Foto + spek tiap alat · angka persis untuk beli sparepart · aturan anti-salah-beli</div>
+        </div>
+        <button class="btn" onclick="printKajian('alat')">🖨 Cetak</button>
+        <button class="btn" onclick="window.open('alat/index.html','_blank')">↗ Buka penuh</button>
+      </div>
+      <iframe class="kajian-frame" id="frame-alat" data-src="alat/index.html" title="Inventaris Alat dan Sparepart Kebun" loading="lazy"></iframe>
+    </div>
+
     <!-- ===== KAJIAN & REFERENSI (30 Jul 2026) — konten dimuat lazy ke dalam iframe.
          Iframe dipakai supaya CSS kajian TIDAK bisa bocor & merusak gaya dashboard. ===== -->
     <div class="panel" id="panel-kajian-tunggak">
@@ -3701,7 +3715,9 @@ function toggleNavCfg() {
   renderNavCfg();
 }
 function lazyLoadKajian(panelId) {
-  if (!panelId || panelId.indexOf('kajian-') !== 0) return;
+  // generik: panel APA PUN yang punya <iframe id="frame-<panelId>" data-src="..."> akan dimuat
+  // saat tab-nya pertama kali dibuka. Dipakai grup Kajian + halaman Alat & Sparepart.
+  if (!panelId) return;
   const f = document.getElementById('frame-' + panelId);
   if (f && !f.getAttribute('src') && f.dataset.src) f.setAttribute('src', f.dataset.src);
 }
