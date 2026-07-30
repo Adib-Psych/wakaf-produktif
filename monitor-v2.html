@@ -15845,6 +15845,31 @@ function cabutStats(){
   });
   return { merahPer, luarMerah, dicabut, ditebang, belumMetode, sakitTebang };
 }
+let CABUT_EDIT_ID = null;
+function startEditCabut(id){ CABUT_EDIT_ID = id; renderCabutLog(); }
+function cancelEditCabut(){ CABUT_EDIT_ID = null; renderCabutLog(); }
+function saveEditCabut(id){
+  const e = CABUT_DATA.find(x => x.id === id); if (!e) return;
+  const err = document.getElementById('ce-err'); if (err) err.textContent = '';
+  const gv = i => (document.getElementById(i)||{}).value;
+  const jumlah = parseInt(gv('ce-jumlah'))||0;
+  const tgl = gv('ce-tgl');
+  if (!jumlah || jumlah < 1) { if (err) err.textContent = 'Jumlah pohon harus ≥ 1'; return; }
+  if (!tgl) { if (err) err.textContent = 'Tanggal wajib diisi'; return; }
+  e.kebun   = gv('ce-kebun') || e.kebun;
+  e.jumlah  = jumlah;
+  e.tgl     = tgl;
+  e.metode  = gv('ce-metode') || 'cabut';
+  e.tali    = gv('ce-tali')   || 'merah';
+  e.sakit   = !!(document.getElementById('ce-sakit')||{}).checked;
+  e.catatan = ((gv('ce-catatan'))||'').trim();
+  e.kondisi = `Tali ${CABUT_TALI[e.tali].label} · ${CABUT_METODE[e.metode].label}`;
+  e.last_modified_at = Date.now();
+  CABUT_EDIT_ID = null;
+  saveCabutLS(); renderCabutLog(); _cabutRefreshDash();
+  if (typeof window.syncCabutToFirestore === 'function') window.syncCabutToFirestore();
+  if (typeof showToast === 'function') showToast('✏️ Catatan diperbarui','success');
+}
 function setCabutMetode(id, val){
   const e = CABUT_DATA.find(x => x.id === id); if (!e) return;
   if (val) e.metode = val; else delete e.metode;
@@ -15876,9 +15901,33 @@ function renderCabutLog(){
     if(m && CABUT_METODE[m]) return `<span style="color:${CABUT_METODE[m].col};font-weight:700;white-space:nowrap">${CABUT_METODE[m].ikon} ${CABUT_METODE[m].label}</span>`;
     return `<select onchange="setCabutMetode('${e.id}',this.value)" title="Entri lama — belum ada metode. Pilih supaya ikut terhitung." style="font-size:10.5px;padding:2px 4px;border:1.5px solid #f0c9a0;border-radius:5px;background:#FFFBEB"><option value="">— belum dicatat</option><option value="tebang">🪓 Ditebang</option><option value="cabut">⛏️ Dicabut</option></select>`;
   };
+  const inp='padding:5px 7px;border:1.5px solid #e2d9c4;border-radius:6px;font-size:12px;width:100%';
+  const lbl='font-size:9.5px;color:var(--mute);font-weight:700;display:block;margin-bottom:2px';
+  const sel=(v,cur)=>v===cur?' selected':'';
+  const editRow = e => {
+    const t=cabutTali(e), m=e.metode||'cabut';
+    return `<tr style="background:#FFFBEB"><td colspan="7" style="padding:12px 10px">
+      <div style="font-size:10.5px;font-weight:800;color:#B45309;letter-spacing:.4px;margin-bottom:9px">✏️ EDIT CATATAN</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:9px">
+        <div><label style="${lbl}">Kebun</label><select id="ce-kebun" style="${inp}">${KEB.map(k=>`<option value="${k}"${sel(k,e.kebun)}>${CABUT_KNAME[k]}</option>`).join('')}</select></div>
+        <div><label style="${lbl}">Jumlah pohon</label><input id="ce-jumlah" type="number" min="1" value="${e.jumlah||''}" style="${inp}"></div>
+        <div><label style="${lbl}">Metode</label><select id="ce-metode" style="${inp}"><option value="cabut"${sel('cabut',m)}>⛏️ Dicabut — sampai akar</option><option value="tebang"${sel('tebang',m)}>🪓 Ditebang — akar tinggal</option></select></div>
+        <div><label style="${lbl}">Kategori tali</label><select id="ce-tali" style="${inp}"><option value="merah"${sel('merah',t)}>🔴 Merah</option><option value="biru"${sel('biru',t)}>🔵 Biru</option><option value="hijau"${sel('hijau',t)}>🟢 Hijau</option></select></div>
+        <div><label style="${lbl}">Tanggal</label><input id="ce-tgl" type="date" value="${e.tgl||''}" style="${inp}"></div>
+      </div>
+      <label style="display:flex;align-items:center;gap:7px;margin-top:9px;font-size:11px;color:#7F1D1D;cursor:pointer"><input type="checkbox" id="ce-sakit"${e.sakit?' checked':''}> <span><b>Dugaan penyakit akar</b> — perlu tindak lanjut sanitasi kalau hanya ditebang</span></label>
+      <div style="margin-top:8px"><label style="${lbl}">Catatan</label><input id="ce-catatan" value="${String(e.catatan||'').replace(/"/g,'&quot;')}" placeholder="mis. lereng bawah, siap sulaman" style="${inp}"></div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        <button onclick="saveEditCabut('${e.id}')" style="background:#16A34A;color:#fff;border:0;border-radius:6px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:12px">💾 Simpan</button>
+        <button onclick="cancelEditCabut()" style="background:#fff;color:#6b7878;border:1.5px solid #ddd;border-radius:6px;padding:7px 16px;font-weight:700;cursor:pointer;font-size:12px">Batal</button>
+        <span id="ce-err" style="color:#c14b3a;font-size:11px;align-self:center"></span>
+      </div>
+    </td></tr>`;
+  };
   const rows=[...CABUT_DATA].sort((a,b)=>(b.tgl||'').localeCompare(a.tgl||'')).map(e=>{
+    if (e.id === CABUT_EDIT_ID) return editRow(e);
     const t=cabutTali(e), T=CABUT_TALI[t];
-    return `<tr><td style="padding:5px 8px;white-space:nowrap">${fmt(e.tgl)}</td><td style="padding:5px 8px;font-weight:700;white-space:nowrap">${CABUT_KNAME[e.kebun]||e.kebun}</td><td style="padding:5px 8px;text-align:right;font-weight:700">${e.jumlah}</td><td style="padding:5px 8px">${metodeCell(e)}</td><td style="padding:5px 8px;white-space:nowrap"><span style="color:${T.col};font-weight:700">${T.ikon} ${T.label}</span>${e.sakit?' <span title="dugaan penyakit akar" style="font-size:9px;background:#FEE2E2;color:#7F1D1D;padding:1px 5px;border-radius:6px;font-weight:700">🦠 sakit</span>':''}</td><td style="padding:5px 8px;font-size:11px;color:var(--mute)">${String(e.catatan||'').replace(/</g,'&lt;')}</td><td style="padding:5px 8px;text-align:center"><button onclick="deleteCabut('${e.id}')" style="background:#fbe9e7;color:#c14b3a;border:1px solid #f2c7c1;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button></td></tr>`;
+    return `<tr><td style="padding:5px 8px;white-space:nowrap">${fmt(e.tgl)}</td><td style="padding:5px 8px;font-weight:700;white-space:nowrap">${CABUT_KNAME[e.kebun]||e.kebun}</td><td style="padding:5px 8px;text-align:right;font-weight:700">${e.jumlah}</td><td style="padding:5px 8px">${metodeCell(e)}</td><td style="padding:5px 8px;white-space:nowrap"><span style="color:${T.col};font-weight:700">${T.ikon} ${T.label}</span>${e.sakit?' <span title="dugaan penyakit akar" style="font-size:9px;background:#FEE2E2;color:#7F1D1D;padding:1px 5px;border-radius:6px;font-weight:700">🦠 sakit</span>':''}</td><td style="padding:5px 8px;font-size:11px;color:var(--mute)">${String(e.catatan||'').replace(/</g,'&lt;')}</td><td style="padding:5px 8px;text-align:center;white-space:nowrap"><button onclick="startEditCabut('${e.id}')" title="Edit catatan ini" style="background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px;margin-right:4px">✏️</button><button onclick="deleteCabut('${e.id}')" title="Hapus catatan ini" style="background:#fbe9e7;color:#c14b3a;border:1px solid #f2c7c1;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button></td></tr>`;
   }).join('');
   el.innerHTML=`
     <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px">
@@ -15907,7 +15956,7 @@ function renderCabutLog(){
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
           <div><label style="font-size:10px;color:var(--mute);font-weight:700">Kebun</label><select id="cabut-kebun" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px">${opts}</select></div>
           <div><label style="font-size:10px;color:var(--mute);font-weight:700">Jumlah pohon</label><input id="cabut-jumlah" type="number" min="1" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
-          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Metode</label><select id="cabut-metode" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"><option value="tebang">🪓 Ditebang — akar tinggal</option><option value="cabut">⛏️ Dicabut — sampai akar</option></select></div>
+          <div><label style="font-size:10px;color:var(--mute);font-weight:700">Metode</label><select id="cabut-metode" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"><option value="cabut">⛏️ Dicabut — sampai akar</option><option value="tebang">🪓 Ditebang — akar tinggal</option></select></div>
           <div><label style="font-size:10px;color:var(--mute);font-weight:700">Kategori tali</label><select id="cabut-tali" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"><option value="merah">🔴 Merah (default)</option><option value="biru">🔵 Biru — ternyata mati</option><option value="hijau">🟢 Hijau — ternyata mati</option></select></div>
           <div style="grid-column:1/-1"><label style="font-size:10px;color:var(--mute);font-weight:700">Tanggal</label><input id="cabut-tgl" type="date" style="width:100%;padding:6px;border:1.5px solid #eee;border-radius:6px"></div>
         </div>
@@ -15932,7 +15981,7 @@ function submitCabut(){
   const kebun=gv('cabut-kebun');
   const jumlah=parseInt(gv('cabut-jumlah'))||0;
   const tgl=gv('cabut-tgl');
-  const metode=gv('cabut-metode')||'tebang';
+  const metode=gv('cabut-metode')||'cabut';   // default dicabut (locked Wakif 30 Jul 2026)
   const tali=gv('cabut-tali')||'merah';
   const sakit=!!(document.getElementById('cabut-sakit')||{}).checked;
   const catatan=(gv('cabut-catatan')||'').trim();
@@ -15954,6 +16003,7 @@ function deleteCabut(id){
   if(typeof window.syncCabutToFirestore==='function') window.syncCabutToFirestore();
 }
 if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCabut=deleteCabut; window.renderCabutLog=renderCabutLog; window.setCabutMetode=setCabutMetode; window._cabutRefreshDash=_cabutRefreshDash;
+  window.startEditCabut=startEditCabut; window.cancelEditCabut=cancelEditCabut; window.saveEditCabut=saveEditCabut;
   loadCabutLS(); document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{renderCabutLog();}catch(e){}},350)); }
 
 // ═══════════════════════════════════════════════════════════════════════════
