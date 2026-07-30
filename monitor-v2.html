@@ -93,7 +93,10 @@
 
   /* MAIN CONTENT */
   #main-content{overflow-x:hidden}
-  .content-wrap{max-width:1200px;margin:0 auto;padding:18px 24px}
+  /* 30 Jul 2026: 1200px → 1600px. Layar Wakif ±1900px, sidebar 240px → tersisa ±1660px,
+     jadi 1200px menyisakan ±230px kosong di kiri-kanan dan memaksa kolom tabel berdesakan.
+     box-sizing:border-box → padding 24px sudah termasuk di dalam angka ini. */
+  .content-wrap{max-width:1600px;margin:0 auto;padding:18px 24px}
   .panel{display:none}
   .panel.active{display:block}
 
@@ -4091,7 +4094,7 @@ function renderLog() {
               }).join('')
             : `<span class="pill bidang-${d.bidang}" title="Kebun ${d.bidang}">K${d.bidang}</span>`
           }</td>
-      <td>${d.kategori.replace(/_/g,' ')}${(function(){
+      <td><span style="white-space:nowrap">${d.kategori.replace(/_/g,' ')}</span>${(function(){
             const dz=d.durasi;
             if(dz==='setengah_hari') return ' <span style="font-size:9.5px;background:#fef3c7;color:#92400e;border-radius:8px;padding:1px 6px;white-space:nowrap">🌅 ½ hari</span>';
             if(dz==='full_day') return ' <span style="font-size:9.5px;background:#dcfce7;color:#166534;border-radius:8px;padding:1px 6px;white-space:nowrap">☀️ 1 hari</span>';
@@ -5382,7 +5385,7 @@ function workerPillHtml(token, nameOverride) {
   const ico = (wd && wd.icon) ? wd.icon + ' ' : '';
   const col = (wd && wd.color) || '#6b7280';
   const arsip = (wd && !wd.active) ? ' <span style="opacity:.65;font-weight:400">(arsip)</span>' : '';
-  return `<span class="pill" style="background:${col}1f;color:${col};border:1px solid ${col}40" title="${String(nm).replace(/"/g,'')}">${ico}${nm}${arsip}</span>`;
+  return `<span class="pill" style="background:${col}1f;color:${col};border:1px solid ${col}40;white-space:nowrap" title="${String(nm).replace(/"/g,'')}">${ico}${nm}${arsip}</span>`;
 }
 
 // Detektor duplikat AKTIF (kebalikan dari gap: ini menangkap yang BERLEBIH).
