@@ -69,12 +69,15 @@
   .nav-bd{display:flex;flex-direction:column;gap:1px}
   .nav-hd{display:flex;align-items:center;gap:8px;padding:5px 14px 6px;cursor:pointer;font-size:10px;letter-spacing:1.5px;color:var(--moss);font-weight:800;user-select:none;border-radius:6px;transition:background .15s}
   .nav-hd:hover{background:rgba(255,255,255,.06)}
-  .nav-hd .chv{font-size:9px;width:10px;flex-shrink:0;transition:transform .15s;display:inline-block}
+  /* Panah: karakter DIGANTI (bukan di-rotate) supaya bentuknya selalu tegas terbaca
+     di ukuran kecil — ▼ = grup terbuka · ► = grup tertutup. */
+  .nav-hd .chv{font-size:11px;width:13px;flex-shrink:0;display:inline-block;text-align:center;opacity:.9;line-height:1}
+  .nav-hd .chv::after{content:'▼'}
+  .nav-grp.collapsed .nav-hd .chv::after{content:'►'}
   .nav-hd .nav-ttl{flex:1}
   .nav-hd .nav-cnt{font-size:9px;font-weight:700;opacity:0;background:rgba(255,255,255,.14);padding:1px 7px;border-radius:99px;transition:opacity .15s}
   .nav-grp.collapsed .nav-bd{display:none}
   .nav-grp.collapsed .nav-cnt{opacity:.75}
-  .nav-grp.collapsed .chv{transform:rotate(-90deg)}
   .nav-grp.hidden-grp{display:none}
   .nav-grp[data-grp="wakif"] .nav-hd{color:var(--gold)}
   .nav-cfg{font-size:10px;color:var(--sage);padding:9px 14px 4px;margin-top:16px;border-top:1px solid rgba(255,255,255,.09);cursor:pointer;opacity:.75;user-select:none}
@@ -315,7 +318,7 @@
 
       <!-- ⚡ HARIAN — dibuka hampir tiap hari, default terbuka -->
       <div class="nav-grp" data-grp="harian">
-        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">⚡ HARIAN</span><span class="nav-cnt">3</span></div>
+        <div class="nav-hd"><span class="chv" aria-hidden="true"></span><span class="nav-ttl">⚡ HARIAN</span><span class="nav-cnt">3</span></div>
         <div class="nav-bd">
           <div class="sb-tab" data-panel="form"><span class="ico">✏️</span><span class="lbl">Form Input</span></div>
           <div class="sb-tab" data-panel="log"><span class="ico">📋</span><span class="lbl">Log Harian</span></div>
@@ -325,7 +328,7 @@
 
       <!-- 🌳 KEBUN — kondisi pohon, OPT, penugasan tim -->
       <div class="nav-grp" data-grp="kebun">
-        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">🌳 KEBUN</span><span class="nav-cnt">3</span></div>
+        <div class="nav-hd"><span class="chv" aria-hidden="true"></span><span class="nav-ttl">🌳 KEBUN</span><span class="nav-cnt">3</span></div>
         <div class="nav-bd">
           <div class="sb-tab" data-panel="inventaris"><span class="ico">🌳</span><span class="lbl">Inventarisasi Pohon</span></div>
           <div class="sb-tab" data-panel="opt"><span class="ico">🐛</span><span class="lbl">OPT Heatmap</span></div>
@@ -336,7 +339,7 @@
 
       <!-- 📋 SOP — referensi standar operasional -->
       <div class="nav-grp" data-grp="sop">
-        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">📋 SOP</span><span class="nav-cnt">3</span></div>
+        <div class="nav-hd"><span class="chv" aria-hidden="true"></span><span class="nav-ttl">📋 SOP</span><span class="nav-cnt">3</span></div>
         <div class="nav-bd">
           <div class="sb-tab" data-panel="sintesa"><span class="ico">🔬</span><span class="lbl">Sintesa SOP</span></div>
           <div class="sb-tab" data-panel="kalender"><span class="ico">📅</span><span class="lbl">SOP Kalender</span></div>
@@ -346,7 +349,7 @@
 
       <!-- 📚 KAJIAN & REFERENSI — dokumen kajian, dimuat lazy di dalam panel -->
       <div class="nav-grp" data-grp="kajian">
-        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">📚 KAJIAN &amp; REFERENSI</span><span class="nav-cnt">3</span></div>
+        <div class="nav-hd"><span class="chv" aria-hidden="true"></span><span class="nav-ttl">📚 KAJIAN &amp; REFERENSI</span><span class="nav-cnt">3</span></div>
         <div class="nav-bd">
           <div class="sb-tab" data-panel="kajian-tunggak"><span class="ico">🪵</span><span class="lbl">Sanitasi Tunggak &amp; KNO₃</span></div>
           <div class="sb-tab" data-panel="kajian-residu"><span class="ico">🔥</span><span class="lbl">Manajemen Residu Kebun</span></div>
@@ -356,7 +359,7 @@
 
       <!-- 💰 WAKIF — keuangan & publikasi (tier wakif) -->
       <div class="nav-grp" data-grp="wakif" data-tier="wakif">
-        <div class="nav-hd"><span class="chv">▾</span><span class="nav-ttl">💰 WAKIF</span><span class="nav-cnt">5</span></div>
+        <div class="nav-hd"><span class="chv" aria-hidden="true"></span><span class="nav-ttl">💰 WAKIF</span><span class="nav-cnt">5</span></div>
         <div class="nav-bd">
           <div class="sb-tab wakif-only" data-panel="anggaran" data-tier="wakif"><span class="ico">💰</span><span class="lbl">Upah Pekerja</span></div>
           <div class="sb-tab wakif-only" data-panel="keuangan" data-tier="wakif"><span class="ico">📒</span><span class="lbl">Keuangan / Cashbook</span></div>
@@ -3590,6 +3593,8 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   openNavGroupOf(tab);
   // kajian: isi iframe hanya saat pertama kali dibuka (lazy)
   lazyLoadKajian(tab.dataset.panel);
+  // ingat halaman terakhir (per-tab browser, hilang saat tab ditutup)
+  rememberPanel(tab.dataset.panel);
   // close sidebar on mobile after click
   if (window.innerWidth < 880) toggleSidebar(false);
   // scroll to top of main content
@@ -3690,10 +3695,36 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   }
   if (e.target.closest('#nav-cfg-btn')) toggleNavCfg();
 });
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', applyNavGroups);
-} else {
+/* ===== INGAT HALAMAN TERAKHIR (30 Jul 2026) =====
+   Sengaja pakai sessionStorage, BUKAN localStorage — itulah yang memberi
+   perilaku yang diminta Wakif: bertahan saat REFRESH (sesi tab yang sama),
+   tapi hilang begitu tab DITUTUP → buka baru selalu mendarat di Dashboard.
+   Jangan diganti ke localStorage, nanti Dashboard tak pernah jadi halaman awal. */
+const LAST_PANEL_KEY = 'wkkn_last_panel';
+function rememberPanel(id) {
+  try { if (id) sessionStorage.setItem(LAST_PANEL_KEY, id); } catch (e) {}
+}
+function restoreLastPanel() {
+  let id = null;
+  try { id = sessionStorage.getItem(LAST_PANEL_KEY); } catch (e) {}
+  if (!id || id === 'dashboard') return;                       // sudah default
+  const tab = document.querySelector('.sb-tab[data-panel="' + id + '"]');
+  const panel = document.getElementById('panel-' + id);
+  if (!tab || !panel) return;                                  // tab sudah tak ada → biarkan Dashboard
+  if (tab.style.display === 'none') return;                    // tersembunyi krn tier
+  const grp = tab.closest('.nav-grp');
+  if (grp && grp.style.display === 'none') return;             // grupnya tersembunyi krn tier
+  tab.click();                                                 // lewat jalur normal → semua hook render ikut jalan
+}
+function _navBoot() {
   applyNavGroups();
+  // beri jeda supaya initApp() + listener render tiap tab sudah terpasang
+  setTimeout(restoreLastPanel, 500);
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', _navBoot);
+} else {
+  _navBoot();
 }
 
 // ===== SIDEBAR TOGGLE =====
