@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Biochar — Pupuk Organik dari Limbah Kebun &amp; Cara Membuat Drum Kiln</title>
+<style>
+  @page { size: A4; margin: 10mm; }
+  :root{
+    --earth:#1F5F47; --moss:#2E5C4F; --leaf:#15803d; --leaflt:#dcfce7;
+    --cherry:#8c2519; --cherrylt:#fde8e4; --amber:#b45309; --amberlt:#fef3c7;
+    --cyan:#0e7490; --cyanlt:#cffafe; --violet:#5b21b6; --violetlt:#f5f3ff;
+    --ink:#1f2937; --mute:#6b7280; --line:#e5e7eb; --cream:#FAFCFB;
+    --char:#27272a; --ember:#c2410c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:var(--ink);background:#f3f4f6;font-size:17px;line-height:1.62}
+  .page{max-width:1360px;margin:0 auto;background:#fff;padding:44px 52px 56px;box-shadow:0 2px 22px rgba(0,0,0,.07)}
+
+  h1{margin:0 0 7px;font-size:36px;color:var(--earth);letter-spacing:-.4px;line-height:1.15}
+  .sub{color:var(--mute);font-size:16px;margin-bottom:4px}
+  .rule{height:5px;background:linear-gradient(90deg,var(--char),var(--ember),var(--leaf));border-radius:3px;margin:22px 0 30px}
+  h2{font-size:23px;color:var(--earth);margin:40px 0 16px;padding-bottom:9px;border-bottom:3px solid var(--line);display:flex;align-items:center;gap:12px}
+  h2 .n{background:var(--earth);color:#fff;width:33px;height:33px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
+  h3{font-size:18px;margin:20px 0 9px;color:var(--moss)}
+
+  .card{border:1px solid var(--line);border-radius:12px;padding:18px 21px;margin-bottom:15px;background:#fff}
+  .card.warn{border-left:7px solid var(--amber);background:#fffdf7}
+  .card.bad{border-left:7px solid var(--cherry);background:#fffaf9}
+  .card.good{border-left:7px solid var(--leaf);background:#fafffb}
+  .card.info{border-left:7px solid var(--cyan);background:#fafeff}
+  .card.term{border-left:7px solid var(--violet);background:#fcfbff}
+
+  table{width:100%;border-collapse:collapse;font-size:16px;margin:11px 0 7px}
+  th{background:var(--earth);color:#fff;text-align:left;padding:11px 13px;font-weight:600;font-size:15.5px}
+  td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fbfdfc}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  tr.yes td{background:#f6fdf8}
+  tr.no td{background:#fffafa}
+
+  .flow{display:flex;gap:15px;align-items:stretch;margin:16px 0 7px;flex-wrap:wrap}
+  .step{flex:1 1 300px;border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--cream);position:relative}
+  .step .b{width:34px;height:34px;border-radius:50%;background:var(--ember);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;margin-bottom:11px}
+  .step b{display:block;font-size:18px;margin-bottom:6px;color:var(--earth)}
+  .step span{font-size:15.5px;color:var(--mute);display:block}
+
+  .kv{display:flex;flex-wrap:wrap;gap:10px 14px;margin:11px 0}
+  .pill{font-size:14px;padding:5px 14px;border-radius:99px;font-weight:600}
+  .p-red{background:var(--cherrylt);color:var(--cherry)}
+  .p-grn{background:var(--leaflt);color:var(--leaf)}
+  .p-amb{background:var(--amberlt);color:var(--amber)}
+  .p-cyn{background:var(--cyanlt);color:var(--cyan)}
+  .p-vio{background:var(--violetlt);color:var(--violet)}
+
+  .big{font-size:30px;font-weight:800;color:var(--earth);line-height:1.18}
+  .lbl{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.9px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+  .grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+  .stat{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--cream);text-align:center}
+
+  ul{margin:9px 0 9px 24px;padding:0} li{margin-bottom:8px}
+  .foot{margin-top:38px;padding-top:20px;border-top:3px solid var(--line);font-size:13.5px;color:var(--mute);line-height:1.7}
+  .tag{display:inline-block;background:var(--char);color:#fff;font-size:13px;padding:5px 14px;border-radius:6px;letter-spacing:.9px;margin-bottom:14px;font-weight:600}
+  .hi{background:#fff9c4;padding:1px 5px;border-radius:3px;font-weight:600}
+  code{background:#f1f5f9;padding:2px 7px;border-radius:5px;font-size:15px;font-family:'SF Mono',Menlo,Consolas,monospace}
+
+  .fig{border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#fcfdfc,#f7faf8);padding:20px 18px 14px;margin:18px 0 10px}
+  .fig svg{width:100%;height:auto;display:block}
+  .figcap{font-size:14px;color:var(--mute);text-align:center;margin-top:10px;line-height:1.55}
+  @media print{ body{background:#fff;font-size:12.5px} .page{box-shadow:none;padding:0;max-width:100%} h2{page-break-after:avoid} .fig,.card,table{page-break-inside:avoid} }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <span class="tag">KAJIAN &amp; REFERENSI · SOP PHASE 2 INJECT (Inj-1)</span>
+  <h1>Biochar — Pupuk Organik dari Limbah Kebun</h1>
+  <div class="sub">Panduan lengkap: apa itu biochar, cara membuat <em>drum kiln</em>-nya, dan spesifikasi teknis yang sudah dikunci di SOP</div>
+  <div class="sub">Kebun Kopi Wakaf Ngantang · dirangkum 31 Juli 2026 dari berkas SOP 8–9 Mei 2026</div>
+  <div class="rule"></div>
+
+  <div class="card good">
+    <strong>Status keputusan: SUDAH DIKUNCI, tinggal dijalankan.</strong> Biochar bukan gagasan baru di kebun ini — ia sudah berstatus <strong>LANJUT</strong> sebagai <strong>Inj-1</strong> (Phase 2 SOP Inject, 8 Mei 2026), diperkuat <strong>ADR-027</strong> (strategi soil amendment), dan dikonfirmasi lagi di <strong>SOP Addendum Manajemen Residu bagian B4</strong> (29 Juli 2026) sebagai tujuan akhir kayu pangkasan.
+    <br><br>
+    Yang belum pernah terjadi: <strong>batch pertamanya belum pernah dibuat.</strong> Halaman ini menyatukan seluruh angka yang sudah dikunci supaya tinggal dieksekusi.
+  </div>
+
+  <div class="grid4">
+    <div class="stat"><div class="lbl">Dosis</div><div class="big">1 kg</div><div style="font-size:14px;color:var(--mute)">per pohon</div></div>
+    <div class="stat"><div class="lbl">Suhu target</div><div class="big">300–500°C</div><div style="font-size:14px;color:var(--mute)">2–4 jam</div></div>
+    <div class="stat"><div class="lbl">Hasil per batch</div><div class="big">30–50 kg</div><div style="font-size:14px;color:var(--mute)">25–50% berat bahan</div></div>
+    <div class="stat"><div class="lbl">Balik modal</div><div class="big">2–3 thn</div><div style="font-size:14px;color:var(--mute)">yield +15–30%</div></div>
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">1</span> Apa itu biochar — dan kenapa bukan sekadar arang</h2>
+
+  <div class="card info">
+    <strong>Analogi paling dekat: arang BBQ untuk bakar sate.</strong> Arang itu kayu yang dibakar dengan cara khusus — udaranya dibatasi, jadi kayunya <em>tidak habis menjadi abu</em>, melainkan berubah jadi bongkahan hitam berpori. <strong>Biochar = arang seperti itu, tapi dibuat dari limbah kebun, dan bukan untuk dibakar lagi — melainkan untuk dimakan tanah.</strong>
+  </div>
+
+  <p>Bedanya dengan pupuk kandang atau kompos: kompos habis terurai dalam <strong>6 bulan</strong>. Biochar <strong>bertahan puluhan hingga ratusan tahun</strong> di dalam tanah, karena karbonnya sudah dikunci dalam bentuk yang sangat sulit diurai mikroba. Sekali ditebar, manfaatnya menetap.</p>
+
+  <div class="card term">
+    <strong>📖 Istilah teknis yang perlu Adib kuasai</strong> — supaya bisa bicara setara dengan penjual drum, tukang bengkel las, dan tim BRIN. Istilahnya tetap dipakai, penjelasannya yang disederhanakan.
+    <table>
+      <tr><th style="width:24%">Istilah</th><th style="width:38%">Artinya sederhana</th><th>Kenapa penting</th></tr>
+      <tr><td><strong>Pirolisis</strong> <span style="color:var(--mute)">(pyrolysis)</span></td><td>Membakar dengan udara <em>dibatasi</em> — bukan dipadamkan, bukan pula dibiarkan berkobar</td><td>Ini pembeda antara "bikin biochar" dan "bakar sampah". Sebut istilah ini saat bicara ke BRIN.</td></tr>
+      <tr><td><strong>Drum kiln</strong></td><td>Tungku dari drum bekas</td><td><em>Kiln</em> = tungku pembakaran. Istilah ini yang dipakai di jurnal &amp; SOP.</td></tr>
+      <tr><td><strong>Udara primer / sekunder</strong></td><td>Lubang bawah = udara masuk untuk bara. Lubang tengah = udara tambahan supaya asapnya ikut terbakar</td><td>Menjelaskan kenapa lubangnya ada dua tinggi berbeda, bukan asal bor.</td></tr>
+      <tr><td><strong>Rendemen</strong></td><td>Berapa persen bahan yang jadi produk jadi</td><td>Adib sudah pakai istilah ini di panen (cherry → dried). Sama persis maknanya di sini.</td></tr>
+      <tr><td><strong>Charging biochar</strong> <span style="color:var(--mute)">(pengisian)</span></td><td>Merendam biochar di air pupuk/kompos <em>sebelum</em> ditebar</td><td>Wajib. Kalau dilewati, biochar justru menyedot hara dari tanah. Lihat bagian 6.</td></tr>
+    </table>
+  </div>
+
+  <div class="card warn">
+    <strong>🚨 Tiga istilah yang bunyinya mirip kosakata Adib sehari-hari — hati-hati tertukar:</strong>
+    <ul style="margin-bottom:0">
+      <li><strong>"Charging"</strong> di sini <strong>bukan mengisi daya baterai HP</strong>. Artinya merendam arang di air pupuk supaya pori-porinya penuh hara lebih dulu.</li>
+      <li><strong>"Retensi air"</strong> <strong>bukan retensi memori</strong> dalam psikologi. Artinya kemampuan tanah <em>menahan</em> air supaya tidak langsung lolos ke bawah.</li>
+      <li><strong>"Top-down burn"</strong> <strong>bukan pendekatan top-down</strong> dalam manajemen. Artinya harfiah: apinya dinyalakan <em>dari permukaan atas</em> tumpukan, lalu merambat turun.</li>
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">2</span> Spesifikasi drum — gambar teknis</h2>
+
+  <div class="fig">
+    <svg viewBox="0 0 980 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Potongan melintang drum kiln biochar 200 liter beserta ukuran dan posisi lubang">
+      <defs>
+        <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#b8bfc4"/><stop offset=".18" stop-color="#e8edf0"/>
+          <stop offset=".55" stop-color="#cdd4d9"/><stop offset="1" stop-color="#9aa2a8"/>
+        </linearGradient>
+        <linearGradient id="lidg" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#9aa2a8"/><stop offset=".4" stop-color="#dfe5e9"/><stop offset="1" stop-color="#8b9399"/>
+        </linearGradient>
+        <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+          <path d="M0,0 L9,4.5 L0,9 z" fill="#1F5F47"/>
+        </marker>
+        <marker id="arS" markerWidth="9" markerHeight="9" refX="1" refY="4.5" orient="auto">
+          <path d="M9,0 L0,4.5 L9,9 z" fill="#1F5F47"/>
+        </marker>
+      </defs>
+
+      <!-- ===== DRUM BODY ===== -->
+      <rect x="330" y="112" width="270" height="392" fill="url(#steel)" stroke="#6b7280" stroke-width="2.5"/>
+      <!-- rolling ribs -->
+      <rect x="330" y="212" width="270" height="9" fill="#aab2b8" opacity=".75"/>
+      <rect x="330" y="392" width="270" height="9" fill="#aab2b8" opacity=".75"/>
+
+      <!-- ===== ISI: 3 LAPIS, maks 70% ===== -->
+      <!-- dasar y=504 ; tinggi total 392 ; 70% = 274 -> mulai y=230 -->
+      <rect x="337" y="410" width="256" height="94" fill="#8d6e4a" opacity=".88"/>
+      <rect x="337" y="310" width="256" height="100" fill="#6b3f2a" opacity=".9"/>
+      <rect x="337" y="230" width="256" height="80" fill="#3f6b3a" opacity=".85"/>
+      <text x="465" y="463" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 1 · RANTING</text>
+      <text x="465" y="481" text-anchor="middle" font-size="12.5" fill="#f1e4d6">rongga sirkulasi udara</text>
+      <text x="465" y="356" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 2 · KULIT KOPI</text>
+      <text x="465" y="374" text-anchor="middle" font-size="12.5" fill="#f1e4d6">bahan utama</text>
+      <text x="465" y="268" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 3 · DAUN LAMTORO</text>
+      <text x="465" y="286" text-anchor="middle" font-size="12.5" fill="#e2f0e0">mudah menyala dari atas</text>
+
+      <!-- garis batas 70% -->
+      <line x1="322" y1="230" x2="612" y2="230" stroke="#c2410c" stroke-width="2.5" stroke-dasharray="9 5"/>
+      <text x="620" y="226" font-size="14.5" fill="#c2410c" font-weight="700">batas isi maks 70%</text>
+      <text x="620" y="245" font-size="13" fill="#9a3412">sisa 30% = ruang asap</text>
+
+      <!-- asap -->
+      <path d="M400 200 q10 -22 -6 -40 q-14 -18 4 -34" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".65" stroke-linecap="round"/>
+      <path d="M470 196 q11 -24 -6 -42 q-15 -19 5 -35" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
+      <path d="M535 202 q10 -22 -6 -40 q-13 -17 4 -32" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".4" stroke-linecap="round"/>
+
+      <!-- ===== TUTUP ===== -->
+      <rect x="316" y="92" width="298" height="22" rx="4" fill="url(#lidg)" stroke="#6b7280" stroke-width="2.5"/>
+      <rect x="440" y="76" width="52" height="16" rx="7" fill="none" stroke="#6b7280" stroke-width="3"/>
+      <text x="466" y="70" text-anchor="middle" font-size="13" fill="var(--mute)">handle</text>
+      <!-- 4 vent lubang di tutup -->
+      <circle cx="360" cy="103" r="3" fill="#1f2937"/><circle cx="404" cy="103" r="3" fill="#1f2937"/>
+      <circle cx="528" cy="103" r="3" fill="#1f2937"/><circle cx="572" cy="103" r="3" fill="#1f2937"/>
+
+      <!-- ===== LUBANG SISI ===== -->
+      <!-- mid: 6x Ø5mm, 40 cm dari dasar -->
+      <circle cx="330" cy="330" r="5" fill="#1f2937"/><circle cx="600" cy="330" r="5" fill="#1f2937"/>
+      <circle cx="330" cy="352" r="5" fill="#1f2937" opacity=".45"/><circle cx="600" cy="352" r="5" fill="#1f2937" opacity=".45"/>
+      <!-- bottom: 8x Ø8mm, 8 cm dari dasar -->
+      <circle cx="330" cy="470" r="8" fill="#1f2937"/><circle cx="600" cy="470" r="8" fill="#1f2937"/>
+      <circle cx="382" cy="470" r="8" fill="#1f2937" opacity=".35"/><circle cx="548" cy="470" r="8" fill="#1f2937" opacity=".35"/>
+
+      <!-- ===== PONDASI BATU BATA ===== -->
+      <rect x="336" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
+      <rect x="427" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
+      <rect x="518" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
+      <line x1="288" y1="534" x2="700" y2="534" stroke="#6b7280" stroke-width="3"/>
+      <text x="612" y="524" font-size="13.5" fill="#7c3a26" font-weight="600">4–6 batu bata (pondasi)</text>
+
+      <!-- ===== DIMENSI TINGGI ===== -->
+      <line x1="272" y1="112" x2="272" y2="504" stroke="#1F5F47" stroke-width="2" marker-start="url(#arS)" marker-end="url(#ar)"/>
+      <text x="262" y="316" text-anchor="middle" font-size="16" fill="#1F5F47" font-weight="800" transform="rotate(-90 262 316)">TINGGI 88–90 cm</text>
+
+      <!-- ===== DIMENSI DIAMETER ===== -->
+      <line x1="330" y1="570" x2="600" y2="570" stroke="#1F5F47" stroke-width="2" marker-start="url(#arS)" marker-end="url(#ar)"/>
+      <line x1="330" y1="540" x2="330" y2="576" stroke="#1F5F47" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <line x1="600" y1="540" x2="600" y2="576" stroke="#1F5F47" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="465" y="594" text-anchor="middle" font-size="16" fill="#1F5F47" font-weight="800">DIAMETER Ø 57–60 cm</text>
+
+      <!-- ===== KETERANGAN KIRI ===== -->
+      <g font-size="14.5" fill="#1f2937">
+        <line x1="200" y1="103" x2="352" y2="103" stroke="#0e7490" stroke-width="1.6"/>
+        <circle cx="200" cy="103" r="4" fill="#0e7490"/>
+        <text x="20" y="98" font-weight="700" fill="#0e7490">4 lubang Ø 3 mm</text>
+        <text x="20" y="116" font-size="13" fill="#6b7280">di TUTUP — jalan keluar asap</text>
+      </g>
+      <g font-size="14.5" fill="#1f2937">
+        <line x1="200" y1="330" x2="322" y2="330" stroke="#b45309" stroke-width="1.6"/>
+        <circle cx="200" cy="330" r="4" fill="#b45309"/>
+        <text x="20" y="325" font-weight="700" fill="#b45309">6 lubang Ø 5 mm</text>
+        <text x="20" y="343" font-size="13" fill="#6b7280">40 cm dari dasar — udara sekunder</text>
+      </g>
+      <g font-size="14.5" fill="#1f2937">
+        <line x1="200" y1="470" x2="320" y2="470" stroke="#8c2519" stroke-width="1.6"/>
+        <circle cx="200" cy="470" r="4" fill="#8c2519"/>
+        <text x="20" y="465" font-weight="700" fill="#8c2519">8 lubang Ø 8 mm</text>
+        <text x="20" y="483" font-size="13" fill="#6b7280">8 cm dari dasar — udara primer</text>
+      </g>
+
+      <!-- ===== KETERANGAN KANAN: suhu ===== -->
+      <rect x="700" y="300" width="255" height="120" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+      <text x="827" y="330" text-anchor="middle" font-size="14" fill="#9a3412" font-weight="700">SUHU DI DALAM DRUM</text>
+      <text x="827" y="367" text-anchor="middle" font-size="30" fill="#c2410c" font-weight="800">300–500°C</text>
+      <text x="827" y="392" text-anchor="middle" font-size="14.5" fill="#9a3412">ditahan 2–4 jam</text>
+      <text x="827" y="411" text-anchor="middle" font-size="12.5" fill="#b45309">tutup 80%, sisakan celah asap</text>
+
+      <!-- ===== KETERANGAN KANAN: kapasitas ===== -->
+      <rect x="700" y="440" width="255" height="112" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="827" y="468" text-anchor="middle" font-size="14" fill="#166534" font-weight="700">KAPASITAS 1 DRUM</text>
+      <text x="827" y="497" text-anchor="middle" font-size="22" fill="#15803d" font-weight="800">200 liter</text>
+      <text x="827" y="519" text-anchor="middle" font-size="14" fill="#166534">80–120 kg bahan kering</text>
+      <text x="827" y="539" text-anchor="middle" font-size="13" fill="#15803d">≈ 150–200 kg bahan basah</text>
+
+      <!-- judul kanan atas -->
+      <text x="700" y="130" font-size="15" fill="#1F5F47" font-weight="800">DINDING</text>
+      <text x="700" y="152" font-size="14" fill="#374151">Baja CR, tebal min <tspan font-weight="700">1,2–1,5 mm</tspan></text>
+      <text x="700" y="172" font-size="13.5" fill="#6b7280">(supaya sanggup menahan panas 700°C)</text>
+      <text x="700" y="200" font-size="15" fill="#1F5F47" font-weight="800">UMUR PAKAI</text>
+      <text x="700" y="222" font-size="14" fill="#374151"><tspan font-weight="700">5–10 batch</tspan>, lalu diperiksa</text>
+      <text x="700" y="242" font-size="13.5" fill="#6b7280">cek penyok/melengkung &amp; karat</text>
+    </svg>
+    <div class="figcap"><strong>Gambar 1.</strong> Potongan melintang drum kiln 200 L — ukuran badan drum, tiga baris lubang udara, susunan tiga lapis bahan, dan batas isi 70%.</div>
+  </div>
+
+  <div class="card warn">
+    <strong>⚠️ Tiga angka yang gampang tertukar — perhatikan satuannya.</strong> Ini pelajaran yang sudah pernah kita alami waktu memilih mata bor untuk tunggak: dua angka mirip, satuannya beda, akibatnya salah beli.
+    <table>
+      <tr><th style="width:26%">Yang diukur</th><th style="width:22%">Angkanya</th><th>Perbandingan sehari-hari</th></tr>
+      <tr><td><strong>TINGGI drum</strong></td><td><span class="pill p-grn">88–90 cm</span></td><td>setinggi pinggang orang dewasa</td></tr>
+      <tr><td><strong>LEBAR drum</strong> (diameter)</td><td><span class="pill p-grn">Ø 57–60 cm</span></td><td>selebar rentang dua tangan</td></tr>
+      <tr><td><strong>LEBAR lubang</strong> (mata bor)</td><td><span class="pill p-amb">Ø 3 / 5 / 8 mm</span></td><td>seukuran ujung pensil sampai batang korek</td></tr>
+      <tr><td><strong>TEBAL dinding</strong></td><td><span class="pill p-cyn">1,2–1,5 mm</span></td><td>setipis dua lembar kartu nama</td></tr>
+    </table>
+    <strong>Cara cepat mengingat:</strong> ukuran badan drum dalam <strong>sentimeter</strong>, ukuran lubang dan tebal pelat dalam <strong>milimeter</strong>. Kalau ada angka di bawah 10 dan satuannya cm — kemungkinan besar salah baca.
+  </div>
+
+  <h3>Tabel spesifikasi dasar</h3>
+  <table>
+    <tr><th style="width:28%">Butir</th><th style="width:32%">Spesifikasi terkunci</th><th>Alasannya</th></tr>
+    <tr><td><strong>Material</strong></td><td>Baja CR — drum bekas oli atau cat</td><td>Drum plastik dan drum aluminium tipis tidak boleh: meleleh jauh di bawah suhu kerja.</td></tr>
+    <tr><td><strong>Dimensi</strong></td><td>Ø 57–60 cm × tinggi 88–90 cm</td><td>Ini ukuran standar drum 200 L di pasaran — jadi tinggal cocokkan, bukan dipesan khusus.</td></tr>
+    <tr><td><strong>Kapasitas</strong></td><td>200 L ≈ 80–120 kg bahan kering</td><td>Setara 150–200 kg bahan basah sebelum dijemur.</td></tr>
+    <tr><td><strong>Tebal dinding</strong></td><td>Minimal 1,2–1,5 mm</td><td>Di bawah itu drum akan melengkung dan bocor setelah beberapa kali bakar.</td></tr>
+    <tr><td><strong>Umur pakai</strong></td><td>5–10 batch</td><td>Setelah itu periksa penyok dan karat. Drum bekas memang barang habis pakai.</td></tr>
+    <tr><td><strong>Tutup</strong></td><td>Pelat seng 60 × 60 cm + handle</td><td>Dibuat sendiri kalau tutup asli drum sudah hilang — ini yang paling sering terjadi pada drum loak.</td></tr>
+  </table>
+
+  <!-- ============================================ -->
+  <h2><span class="n">3</span> Modifikasi drum — pola pengeboran</h2>
+
+  <p>Drum bekas <strong>tidak bisa langsung dipakai.</strong> Ia perlu dilubangi di tiga ketinggian berbeda, masing-masing dengan tugasnya sendiri. Inilah satu-satunya pekerjaan bengkel yang diperlukan.</p>
+
+  <div class="fig">
+    <svg viewBox="0 0 980 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Perbandingan tiga ukuran mata bor dan letak lubangnya pada drum">
+      <text x="20" y="30" font-size="17" fill="#1F5F47" font-weight="800">TIGA UKURAN MATA BOR — sebesar apa sebenarnya?</text>
+      <text x="20" y="52" font-size="14" fill="#6b7280">Digambar dalam ukuran sebenarnya secara relatif, supaya tidak tertukar saat membeli.</text>
+
+      <!-- Ø3 -->
+      <circle cx="120" cy="140" r="12" fill="#0e7490"/>
+      <text x="120" y="182" text-anchor="middle" font-size="20" font-weight="800" fill="#0e7490">Ø 3 mm</text>
+      <text x="120" y="204" text-anchor="middle" font-size="14" fill="#374151">4 lubang</text>
+      <text x="120" y="224" text-anchor="middle" font-size="14" fill="#374151">di TUTUP atas</text>
+      <text x="120" y="248" text-anchor="middle" font-size="13" fill="#6b7280">tugas: jalan keluar asap</text>
+      <text x="120" y="272" text-anchor="middle" font-size="12.5" fill="#0e7490">≈ ujung pensil</text>
+
+      <!-- Ø5 -->
+      <circle cx="370" cy="140" r="20" fill="#b45309"/>
+      <text x="370" y="190" text-anchor="middle" font-size="20" font-weight="800" fill="#b45309">Ø 5 mm</text>
+      <text x="370" y="212" text-anchor="middle" font-size="14" fill="#374151">6 lubang</text>
+      <text x="370" y="232" text-anchor="middle" font-size="14" fill="#374151">40 cm dari DASAR</text>
+      <text x="370" y="256" text-anchor="middle" font-size="13" fill="#6b7280">tugas: udara sekunder — membakar asap</text>
+      <text x="370" y="280" text-anchor="middle" font-size="12.5" fill="#b45309">≈ isi pulpen</text>
+
+      <!-- Ø8 -->
+      <circle cx="660" cy="140" r="32" fill="#8c2519"/>
+      <text x="660" y="202" text-anchor="middle" font-size="20" font-weight="800" fill="#8c2519">Ø 8 mm</text>
+      <text x="660" y="224" text-anchor="middle" font-size="14" fill="#374151">8 lubang</text>
+      <text x="660" y="244" text-anchor="middle" font-size="14" fill="#374151">8 cm dari DASAR</text>
+      <text x="660" y="268" text-anchor="middle" font-size="13" fill="#6b7280">tugas: udara primer — menghidupi bara</text>
+      <text x="660" y="292" text-anchor="middle" font-size="12.5" fill="#8c2519">≈ batang korek api</text>
+
+      <!-- catatan -->
+      <rect x="812" y="86" width="152" height="176" rx="12" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="2"/>
+      <text x="888" y="112" text-anchor="middle" font-size="13.5" font-weight="700" fill="#5b21b6">SEMUA LUBANG</text>
+      <text x="888" y="136" text-anchor="middle" font-size="13" fill="#4c1d95">dibor MELINGKAR,</text>
+      <text x="888" y="156" text-anchor="middle" font-size="13" fill="#4c1d95">jarak sama rata</text>
+      <text x="888" y="184" text-anchor="middle" font-size="13" fill="#4c1d95">Pakai mata bor</text>
+      <text x="888" y="204" text-anchor="middle" font-size="13" font-weight="700" fill="#5b21b6">khusus BESI</text>
+      <text x="888" y="228" text-anchor="middle" font-size="12.5" fill="#6d28d9">(bukan bor kayu —</text>
+      <text x="888" y="246" text-anchor="middle" font-size="12.5" fill="#6d28d9">matanya akan tumpul)</text>
+    </svg>
+    <div class="figcap"><strong>Gambar 2.</strong> Tiga ukuran mata bor yang dibutuhkan, digambar dalam perbandingan ukuran sebenarnya.</div>
+  </div>
+
+  <table>
+    <tr><th style="width:16%">Posisi</th><th style="width:20%">Jumlah &amp; ukuran</th><th style="width:20%">Letak</th><th>Fungsi</th></tr>
+    <tr class="yes"><td><strong>Sisi bawah</strong></td><td>8 lubang <strong>Ø 8 mm</strong></td><td><strong>8 cm</strong> dari dasar</td><td><strong>Udara primer</strong> — memasok oksigen ke bara paling bawah supaya nyala tidak mati.</td></tr>
+    <tr class="yes"><td><strong>Sisi tengah</strong></td><td>6 lubang <strong>Ø 5 mm</strong></td><td><strong>40 cm</strong> dari dasar</td><td><strong>Udara sekunder</strong> — membakar asap yang naik, sehingga asap pekat berkurang jauh.</td></tr>
+    <tr class="yes"><td><strong>Tutup atas</strong></td><td>4 lubang <strong>Ø 3 mm</strong></td><td>tersebar di pelat tutup</td><td><strong>Vent</strong> — jalan keluar asap terkendali. Tanpa ini tekanan menumpuk di dalam.</td></tr>
+  </table>
+
+  <div class="card info">
+    <strong>Kalau tutup asli drum sudah hilang</strong> — dan pada drum loak ini hampir selalu terjadi — buat tutup geser dari <strong>pelat seng 60 × 60 cm</strong>, diberi <strong>handle</strong> supaya bisa digeser saat panas tanpa memegang pelatnya. Tutup geser justru lebih praktis: derajat keterbukaannya bisa diatur, dan di langkah 4 kita memang perlu menutup <strong>80% saja</strong>.
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">4</span> Belanja — daftar dan biaya</h2>
+
+  <table>
+    <tr><th style="width:34%">Barang</th><th style="width:22%">Perkiraan biaya</th><th>Catatan</th></tr>
+    <tr><td><strong>Drum bekas 200 L</strong></td><td class="num">Rp 150.000 – 300.000</td><td>Pasar loak <strong>Pujon</strong>. Bekas oli atau cat. Periksa: tidak bocor, tidak penyok parah, dinding tidak tipis.</td></tr>
+    <tr><td><strong>Pelat seng 60 × 60 cm</strong></td><td class="num">Rp 30.000 – 50.000</td><td>Untuk tutup geser.</td></tr>
+    <tr><td><strong>Bor + mata bor besi</strong></td><td class="num">Rp 200.000</td><td>Sekali beli. <strong>Bisa pinjam</strong> — Adib sudah berencana meminjam bor dari saudara untuk pekerjaan tunggak.</td></tr>
+    <tr><td><strong>Batu bata 4–6 buah</strong></td><td class="num">Rp 5.000 – 10.000</td><td>Pondasi, supaya lubang udara bawah tidak tertutup tanah.</td></tr>
+    <tr><td><strong>APD</strong> — masker N95 + sarung tangan</td><td class="num">Rp 100.000 – 150.000</td><td>Bukan opsional. Asap pirolisis mengandung karbon monoksida.</td></tr>
+    <tr><td><strong>Kayu starter</strong></td><td class="num">gratis</td><td>Cabang kering hasil pangkasan.</td></tr>
+  </table>
+
+  <div class="card warn">
+    <strong>⚠️ Ada tiga angka biaya setup yang berbeda di berkas kita — ini perlu Adib putuskan, bukan saya pilih diam-diam.</strong>
+    <table>
+      <tr><th style="width:26%">Angka</th><th style="width:30%">Sumbernya</th><th>Penilaian saya</th></tr>
+      <tr><td><strong>Rp 200–400 ribu</strong></td><td>Infografis A4, 9 Mei 2026</td><td>Paling rendah. Tampaknya belum menghitung bor dan APD.</td></tr>
+      <tr class="yes"><td><strong>Rp 300–550 ribu</strong></td><td>Slide Pyrolysis, 9 Mei 2026</td><td>✅ <strong>Paling bisa dipertanggungjawabkan</strong> — satu-satunya yang itemisasinya rinci per barang.</td></tr>
+      <tr><td><strong>Rp 1,5–2 juta</strong></td><td>Penjelasan Biochar 8 Mei + tabel <em>cost-benefit</em> 5 tahun</td><td>Paling tinggi. Kemungkinan sudah termasuk cadangan, alat bantu, atau lebih dari satu drum — tapi <strong>rinciannya tidak pernah ditulis.</strong></td></tr>
+    </table>
+    <strong>Saran saya:</strong> pakai <strong>Rp 300–550 ribu</strong> sebagai angka belanja nyata (itu yang ada daftarnya), dan tetap simpan <strong>Rp 1,5 juta</strong> sebagai pagu di RAB. Selisihnya jadi cadangan — bukan pemborosan, karena drum bekas kualitasnya tidak seragam dan bisa saja perlu beli dua.
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">5</span> Enam langkah pirolisis</h2>
+
+  <div class="fig">
+    <svg viewBox="0 0 980 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Garis waktu enam langkah pembuatan biochar dari persiapan sampai aplikasi">
+      <text x="20" y="28" font-size="17" fill="#1F5F47" font-weight="800">GARIS WAKTU SATU BATCH — dari bahan sampai ditebar</text>
+
+      <!-- rail -->
+      <line x1="60" y1="110" x2="920" y2="110" stroke="#e5e7eb" stroke-width="12" stroke-linecap="round"/>
+      <line x1="60" y1="110" x2="620" y2="110" stroke="#c2410c" stroke-width="12" stroke-linecap="round" opacity=".85"/>
+      <line x1="620" y1="110" x2="790" y2="110" stroke="#0e7490" stroke-width="12" stroke-linecap="round" opacity=".8"/>
+      <line x1="790" y1="110" x2="920" y2="110" stroke="#15803d" stroke-width="12" stroke-linecap="round" opacity=".85"/>
+
+      <g font-size="13.5" text-anchor="middle">
+        <!-- 1 -->
+        <circle cx="90" cy="110" r="21" fill="#fff" stroke="#c2410c" stroke-width="3.5"/>
+        <text x="90" y="116" font-size="16" font-weight="800" fill="#c2410c">1</text>
+        <text x="90" y="158" font-weight="700" fill="#1f2937">Siapkan</text>
+        <text x="90" y="176" fill="#6b7280">jemur 1–2 minggu</text>
+        <text x="90" y="76" font-size="12.5" fill="#9a3412">sebelum hari-H</text>
+        <!-- 2 -->
+        <circle cx="240" cy="110" r="21" fill="#fff" stroke="#c2410c" stroke-width="3.5"/>
+        <text x="240" y="116" font-size="16" font-weight="800" fill="#c2410c">2</text>
+        <text x="240" y="158" font-weight="700" fill="#1f2937">Susun 3 lapis</text>
+        <text x="240" y="176" fill="#6b7280">isi maks 70%</text>
+        <text x="240" y="76" font-size="12.5" fill="#9a3412">± 30 menit</text>
+        <!-- 3 -->
+        <circle cx="390" cy="110" r="21" fill="#fff" stroke="#c2410c" stroke-width="3.5"/>
+        <text x="390" y="116" font-size="16" font-weight="800" fill="#c2410c">3</text>
+        <text x="390" y="158" font-weight="700" fill="#1f2937">Bakar dari ATAS</text>
+        <text x="390" y="176" fill="#6b7280">bara merata</text>
+        <text x="390" y="76" font-size="12.5" fill="#9a3412">15–20 menit</text>
+        <!-- 4 -->
+        <circle cx="560" cy="110" r="21" fill="#fff" stroke="#c2410c" stroke-width="3.5"/>
+        <text x="560" y="116" font-size="16" font-weight="800" fill="#c2410c">4</text>
+        <text x="560" y="158" font-weight="700" fill="#1f2937">Tutup 80%</text>
+        <text x="560" y="176" fill="#6b7280">300–500°C</text>
+        <text x="560" y="76" font-size="12.5" fill="#9a3412">2–4 jam</text>
+        <!-- 5 -->
+        <circle cx="720" cy="110" r="21" fill="#fff" stroke="#0e7490" stroke-width="3.5"/>
+        <text x="720" y="116" font-size="16" font-weight="800" fill="#0e7490">5</text>
+        <text x="720" y="158" font-weight="700" fill="#1f2937">Dinginkan</text>
+        <text x="720" y="176" fill="#6b7280">tutup RAPAT</text>
+        <text x="720" y="76" font-size="12.5" fill="#155e75">12–24 jam</text>
+        <!-- 6 -->
+        <circle cx="880" cy="110" r="21" fill="#fff" stroke="#15803d" stroke-width="3.5"/>
+        <text x="880" y="116" font-size="16" font-weight="800" fill="#15803d">6</text>
+        <text x="880" y="158" font-weight="700" fill="#1f2937">Charge + tebar</text>
+        <text x="880" y="176" fill="#6b7280">1 kg/pohon</text>
+        <text x="880" y="76" font-size="12.5" fill="#166534">+1 minggu rendam</text>
+      </g>
+
+      <rect x="60" y="204" width="560" height="26" rx="6" fill="#fff7ed" stroke="#fdba74"/>
+      <text x="340" y="222" text-anchor="middle" font-size="13.5" fill="#9a3412" font-weight="600">SATU HARI KERJA — perlu ditunggu, jangan ditinggal</text>
+      <rect x="632" y="204" width="158" height="26" rx="6" fill="#f0f9ff" stroke="#7dd3fc"/>
+      <text x="711" y="222" text-anchor="middle" font-size="13.5" fill="#075985" font-weight="600">bermalam</text>
+      <rect x="802" y="204" width="158" height="26" rx="6" fill="#f0fdf4" stroke="#86efac"/>
+      <text x="881" y="222" text-anchor="middle" font-size="13.5" fill="#166534" font-weight="600">hari berikutnya</text>
+    </svg>
+    <div class="figcap"><strong>Gambar 3.</strong> Satu batch memakan satu hari kerja penuh, ditambah semalam pendinginan.</div>
+  </div>
+
+  <div class="flow">
+    <div class="step"><div class="b">1</div><b>Siapkan bahan — sampai benar-benar kering</b><span>Kumpulkan kulit kopi hasil pulping dan ranting kering. <strong>Jemur 1–2 minggu.</strong> Dua uji sederhana: <strong>ranting harus patah saat ditekuk</strong> (kalau melengkung saja, masih basah), dan <strong>kulit kopi tidak lengket di tangan</strong>. Target kadar air di bawah 20%. Bahan basah = asap tebal, hasil gagal.</span></div>
+    <div class="step"><div class="b">2</div><b>Susun tiga lapis, isi maksimal 70%</b><span><strong>Bawah: ranting</strong> — memberi rongga supaya udara dari lubang bawah bisa naik. <strong>Tengah: kulit kopi</strong> — bahan utama. <strong>Atas: daun lamtoro</strong> — mudah menyala dari atas. Sisakan <strong>30% ruang kosong</strong> untuk asap dan pemuaian panas.</span></div>
+    <div class="step"><div class="b">3</div><b>Bakar dari ATAS, bukan dari bawah</b><span>Nyalakan kayu starter di <strong>permukaan atas</strong> tumpukan <em>(top-down burn)</em>. Api merambat turun pelan-pelan, dan asap yang naik dari bawah ikut terbakar saat melewati bara di atas — <strong>asapnya jauh lebih bersih.</strong> Tunggu <strong>15–20 menit</strong> sampai bara merata di seluruh permukaan.</span></div>
+    <div class="step"><div class="b">4</div><b>Tutup 80% dan tahan 2–4 jam</b><span>Geser tutup sampai menutup sekitar <strong>80%</strong> — sisakan celah untuk asap. Inilah saat oksigen dibatasi dan pirolisis benar-benar terjadi. Suhu naik ke <strong>300–500°C</strong>. <strong>Cara mengecek tanpa alat:</strong> tusukkan tongkat — kalau bahan sudah <strong>renyah seperti arang</strong>, berarti sudah jadi.</span></div>
+    <div class="step"><div class="b">5</div><b>Dinginkan 12–24 jam — tutup RAPAT</b><span>Tutup penuh, lalu <strong>sumbat semua celah dengan pasir basah</strong> untuk mematikan oksigen sepenuhnya. <strong>Jangan dibuka sebelum 12 jam.</strong> Arang panas yang tiba-tiba bertemu udara akan menyala kembali dan habis jadi abu — kerja satu hari hilang dalam beberapa menit.</span></div>
+    <div class="step"><div class="b">6</div><b>Hancurkan, <em>charge</em>, lalu tebar</b><span>Hancurkan jadi butiran kasar dengan palu atau cangkul. <strong>Rendam dulu</strong> (lihat bagian 6). Tebar <strong>1 kg per pohon</strong> di piringan, lalu <strong>campur dengan tanah lapisan atas 10 cm</strong> — jangan hanya ditaruh di permukaan, akan tertiup dan terbawa air. Waktu terbaik: <strong>awal musim hujan (Nov–Des), sebelum pemupukan SOP.</strong></span></div>
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">6</span> Charging — langkah yang paling sering dilewati</h2>
+
+  <div class="card bad">
+    <strong>Kalau satu bagian saja dari halaman ini yang diingat, ingat yang ini.</strong> Biochar yang baru jadi itu <strong>seperti spons kering</strong>: pori-porinya kosong. Kalau langsung ditebar ke tanah, ia justru <strong>menyedot hara dari tanah</strong> untuk mengisi pori-porinya sendiri. Akibatnya di musim pertama pohon bisa terlihat <em>lebih kurang subur</em>, bukan lebih baik — lalu orang menyimpulkan "biochar tidak berhasil", padahal langkahnya yang belum lengkap.
+    <br><br>
+    <strong>Solusinya — pilih salah satu:</strong>
+    <ul style="margin-bottom:0">
+      <li><strong>Rendam 1 minggu</strong> di air pupuk kandang atau air kencing sapi (SOP Addendum B4 menyebut ini eksplisit), <em>atau</em></li>
+      <li><strong>Campur langsung dengan kompos</strong> matang sebelum ditebar — kompos kulit kopi kebun sendiri sudah cukup.</li>
+    </ul>
+  </div>
+
+  <div class="card term">
+    <strong>Istilah yang dipakai di jurnal:</strong> proses ini disebut <strong>charging</strong> atau <strong>inoculation</strong> biochar. Sekali lagi — <strong>bukan mengisi daya baterai.</strong> Analogi yang tepat: seperti merendam spons kering ke dalam air sabun sebelum dipakai mencuci, supaya ia tidak menyerap habis air cucian pertama.
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">7</span> Bahan baku — dan kaitannya dengan aliran residu</h2>
+
+  <p>Biochar tidak memerlukan belanja bahan sama sekali. Seluruh bahannya <strong>sudah ada di kebun</strong>, dan sebagian justru selama ini menjadi masalah karena menumpuk.</p>
+
+  <table>
+    <tr><th style="width:26%">Bahan</th><th style="width:18%">Peran</th><th>Asal &amp; catatan</th></tr>
+    <tr class="yes"><td><strong>Kulit kopi pulping</strong></td><td><span class="pill p-grn">UTAMA</span></td><td>Limbah pasca-panen Jul–Sep. Selama ini terbuang; inilah alasan Inj-1 disebut <em>coffee pulp biochar</em>.</td></tr>
+    <tr><td><strong>Cabang sedang 2–5 cm</strong></td><td>pendukung</td><td><strong>Aliran residu 3</strong> — dicacah kalau chopper kuat; kalau tidak, masuk kiln.</td></tr>
+    <tr><td><strong>Kayu besar &gt; 5 cm &amp; bonggol</strong></td><td>pendukung</td><td><strong>Aliran residu 4</strong> — tujuan akhirnya memang <strong>drum kiln</strong>. Lignin tinggi, kalau dibiarkan bertahun-tahun tidak lapuk.</td></tr>
+    <tr><td><strong>Ranting kering pangkasan</strong></td><td>lapisan bawah + starter</td><td>Memberi rongga udara di dasar drum sekaligus bahan penyala.</td></tr>
+    <tr><td><strong>Daun lamtoro PG 79 kering</strong></td><td>lapisan atas</td><td>Dari pohon penaung. Mudah menyala untuk <em>top-down burn</em>.</td></tr>
+    <tr><td><strong>Sekam padi</strong></td><td>opsional</td><td>Kalau tersedia — menambah porositas. Bersinggungan dengan kajian sekam bakar (ADR-027).</td></tr>
+  </table>
+
+  <div class="card bad">
+    <strong>🔴 Aliran residu 5 — bahan SAKIT: boleh masuk kiln, TAPI hasilnya jangan diperlakukan sama.</strong> Kayu tunggak berjamur, ranting <em>dieback</em>, cabang bergerek, dan pohon bertali merah <strong>wajib dimusnahkan</strong> — tidak boleh dikompos, tidak boleh ditumpuk di kebun, karena itu <strong>inokulum</strong> (sumber penularan), bukan bahan organik biasa.
+    <br><br>
+    Membakarnya di dalam kiln memang cara pemusnahan yang sah dan justru lebih bersih daripada bakar terbuka. Tapi <strong>catat asalnya</strong> (dari pohon/tunggak mana, tanggal berapa) sebagai jejak audit sanitasi — ini permintaan SOP Addendum bagian B7.
+  </div>
+
+  <div class="card good">
+    <strong>Kenapa kiln, bukan bakar terbuka?</strong> Perbedaannya mendasar, dan sudah dikaji di SOP Addendum B4:
+    <table>
+      <tr><th style="width:22%"></th><th style="width:39%">Bakar terbuka</th><th>Drum kiln (pirolisis)</th></tr>
+      <tr><td><strong>Karbon</strong></td><td>Lepas ke udara</td><td><strong>Terkunci di arang, bertahan puluhan tahun</strong></td></tr>
+      <tr><td><strong>Api</strong></td><td>Menyebar, sulit dikendalikan</td><td><strong>Terkurung di dalam drum</strong></td></tr>
+      <tr><td><strong>Asap</strong></td><td>Pekat</td><td>Jauh lebih sedikit — gasnya ikut terbakar</td></tr>
+      <tr><td><strong>Hasil</strong></td><td>Abu sedikit</td><td><strong>Biochar 25–35% dari berat bahan</strong></td></tr>
+    </table>
+    <strong>Dan soal musim kemarau:</strong> kemarau membuat pirolisis <em>efisien</em> (bahan sudah kering sendiri) tapi membuat api terbuka <em>paling berbahaya</em>. Jawabannya bukan menunda — tapi <strong>mengurung apinya di dalam drum.</strong>
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">8</span> Manfaat untuk tanah Andisol Ngantang</h2>
+
+  <p>Tanah kebun ini <strong>Andisol dengan pH 5,0–5,5</strong> — tergolong masam. Robusta masih tumbuh, tapi belum di titik optimalnya. Empat manfaat berikut adalah angka dari <em>Frontiers Soil Science</em> 2024 dan praktik terbaik ICCRI Jember.</p>
+
+  <div class="grid4">
+    <div class="stat"><div class="lbl">pH naik</div><div class="big" style="color:var(--leaf)">+0,4–1,1</div><div style="font-size:14px;color:var(--mute);margin-top:6px">mendekati kisaran optimal Robusta</div></div>
+    <div class="stat"><div class="lbl">Retensi air</div><div class="big" style="color:var(--cyan)">+18%</div><div style="font-size:14px;color:var(--mute);margin-top:6px">penting saat kemarau Jul–Sep</div></div>
+    <div class="stat"><div class="lbl">Hara hilang</div><div class="big" style="color:var(--amber)">−25–40%</div><div style="font-size:14px;color:var(--mute);margin-top:6px">N &amp; P terjebak di pori, tidak tercuci hujan</div></div>
+    <div class="stat"><div class="lbl">Mikrobiom</div><div class="big" style="color:var(--violet)">3–5×</div><div style="font-size:14px;color:var(--mute);margin-top:6px">pori jadi rumah mikoriza &amp; bakteri baik</div></div>
+  </div>
+
+  <div class="card info" style="margin-top:16px">
+    <strong>Cara paling mudah membayangkan manfaatnya:</strong> biochar itu <strong>rumah kos berpori untuk air, hara, dan mikroba.</strong> Tanpa rumah, ketiganya numpang lewat — air lolos ke bawah saat hujan, pupuk ikut hanyut, mikroba tidak punya tempat menetap. Dengan biochar, ketiganya punya tempat tinggal yang bertahan puluhan tahun. Itu sebabnya efeknya <strong>tidak langsung terasa di bulan pertama</strong>, tapi menumpuk dari tahun ke tahun.
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">9</span> Keselamatan kerja</h2>
+
+  <div class="grid3">
+    <div class="card good">
+      <strong>✓ WAJIB DILAKUKAN</strong>
+      <ul style="margin-bottom:0">
+        <li>Bakar di <strong>area terbuka</strong>, jauh dari rumah dan gudang — pastikan asap tidak mengarah ke pemukiman</li>
+        <li><strong>Cek prakiraan BMKG</strong> — hindari hari hujan</li>
+        <li>Pakai <strong>masker N95</strong> dan sarung tangan</li>
+        <li><strong>Minimal 2 orang</strong> (sistem berpasangan) — jangan sendirian</li>
+        <li>Siapkan air atau pasir di dekat lokasi</li>
+      </ul>
+    </div>
+    <div class="card bad">
+      <strong>✗ JANGAN DILAKUKAN</strong>
+      <ul style="margin-bottom:0">
+        <li><strong>Jangan menghirup asap pekat</strong> — mengandung <strong>karbon monoksida</strong>, gas tak berbau yang bisa membuat pingsan</li>
+        <li><strong>Jangan membuka drum sebelum 12 jam</strong> — arang panas + udara = menyala kembali</li>
+        <li><strong>Jangan membakar bahan basah</strong> — asap berlipat, hasil gagal</li>
+        <li><strong>Jangan ditinggal tanpa pengawasan</strong> selama drum masih menyala</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">10</span> Hitungan biaya &amp; manfaat 5 tahun</h2>
+
+  <div class="card warn">
+    <strong>⚠️ Baca angka di bawah ini sebagai kerangka, bukan sebagai anggaran siap pakai.</strong> Tabel aslinya disusun 8 Mei 2026 dengan asumsi <strong>915 pohon</strong>. Sensus kebun sejak itu sudah berubah, dan aturan basis pohon kita (dikunci 9 Juli 2026) mengharuskan tiga koreksi: pakai <strong>census aktual</strong>, <strong>lewati pohon merah</strong>, dan <strong>pisahkan K4 (Rumah Wakif) dari dana wakaf</strong>. Angka rupiahnya perlu dihitung ulang sebelum masuk RAB.
+  </div>
+
+  <table>
+    <tr><th>Komponen</th><th class="num">Thn 1</th><th class="num">Thn 2</th><th class="num">Thn 3</th><th class="num">Thn 4</th><th class="num">Thn 5</th></tr>
+    <tr><td colspan="6" style="background:#fef2f2;font-weight:700;color:var(--cherry)">BIAYA</td></tr>
+    <tr><td>Setup awal (drum + alat)</td><td class="num">1.500.000</td><td class="num">—</td><td class="num">—</td><td class="num">300.000</td><td class="num">—</td></tr>
+    <tr><td>Tenaga produksi (10× ½ hari)</td><td class="num">500.000</td><td class="num">500.000</td><td class="num">500.000</td><td class="num">500.000</td><td class="num">500.000</td></tr>
+    <tr><td><strong>Total biaya</strong></td><td class="num"><strong>2.000.000</strong></td><td class="num"><strong>500.000</strong></td><td class="num"><strong>500.000</strong></td><td class="num"><strong>800.000</strong></td><td class="num"><strong>500.000</strong></td></tr>
+    <tr><td colspan="6" style="background:#f0fdf4;font-weight:700;color:var(--leaf)">MANFAAT</td></tr>
+    <tr><td>Hemat dolomit (−15 kg/thn)</td><td class="num">60.000</td><td class="num">60.000</td><td class="num">60.000</td><td class="num">60.000</td><td class="num">60.000</td></tr>
+    <tr><td>Efisiensi Urea (hara tertahan)</td><td class="num">0</td><td class="num">100.000</td><td class="num">200.000</td><td class="num">200.000</td><td class="num">200.000</td></tr>
+    <tr><td>Kenaikan hasil panen +15–30%</td><td class="num">0</td><td class="num">1.500.000</td><td class="num">3.000.000</td><td class="num">4.500.000</td><td class="num">6.000.000</td></tr>
+    <tr><td>Carbon credit Plan Vivo</td><td class="num">—</td><td class="num">—</td><td class="num">100.000</td><td class="num">200.000</td><td class="num">300.000</td></tr>
+    <tr><td><strong>Total manfaat</strong></td><td class="num"><strong>60.000</strong></td><td class="num"><strong>1.660.000</strong></td><td class="num"><strong>3.360.000</strong></td><td class="num"><strong>4.960.000</strong></td><td class="num"><strong>6.560.000</strong></td></tr>
+    <tr class="yes"><td><strong>NET KUMULATIF</strong></td><td class="num" style="color:var(--cherry)"><strong>−1.940.000</strong></td><td class="num" style="color:var(--cherry)"><strong>−780.000</strong></td><td class="num" style="color:var(--leaf)"><strong>+2.080.000</strong></td><td class="num" style="color:var(--leaf)"><strong>+6.240.000</strong></td><td class="num" style="color:var(--leaf)"><strong>+12.300.000</strong></td></tr>
+  </table>
+
+  <div class="fig">
+    <svg viewBox="0 0 980 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grafik arus kas kumulatif biochar lima tahun, titik impas di tahun ketiga">
+      <text x="20" y="26" font-size="16" fill="#1F5F47" font-weight="800">ARUS KAS KUMULATIF — titik impas di tahun ke-3</text>
+      <!-- garis nol -->
+      <line x1="70" y1="190" x2="940" y2="190" stroke="#9ca3af" stroke-width="2"/>
+      <text x="46" y="195" font-size="13" fill="#6b7280" text-anchor="end">Rp 0</text>
+      <!-- bars: skala 12,3jt -> 130px -->
+      <rect x="110" y="190" width="96" height="21" fill="#8c2519"/>
+      <text x="158" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#8c2519">−1,9 jt</text>
+      <rect x="270" y="190" width="96" height="9" fill="#b45309"/>
+      <text x="318" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#b45309">−780 rb</text>
+      <rect x="430" y="168" width="96" height="22" fill="#4ade80"/>
+      <text x="478" y="158" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">+2,1 jt</text>
+      <rect x="590" y="124" width="96" height="66" fill="#22c55e"/>
+      <text x="638" y="114" text-anchor="middle" font-size="14" font-weight="700" fill="#15803d">+6,2 jt</text>
+      <rect x="750" y="60" width="96" height="130" fill="#15803d"/>
+      <text x="798" y="50" text-anchor="middle" font-size="15" font-weight="800" fill="#15803d">+12,3 jt</text>
+      <!-- labels -->
+      <g font-size="14" fill="#374151" text-anchor="middle">
+        <text x="158" y="256">Tahun 1</text><text x="318" y="256">Tahun 2</text><text x="478" y="256">Tahun 3</text>
+        <text x="638" y="256">Tahun 4</text><text x="798" y="256">Tahun 5</text>
+      </g>
+      <g font-size="12.5" fill="#6b7280" text-anchor="middle">
+        <text x="158" y="276">investasi</text><text x="318" y="276">transisi</text><text x="478" y="276">impas</text>
+        <text x="638" y="276">surplus</text><text x="798" y="276">surplus</text>
+      </g>
+      <!-- garis impas -->
+      <line x1="398" y1="46" x2="398" y2="266" stroke="#15803d" stroke-width="2" stroke-dasharray="7 5"/>
+      <text x="404" y="42" font-size="13.5" fill="#15803d" font-weight="700">titik impas</text>
+    </svg>
+    <div class="figcap"><strong>Gambar 4.</strong> Tahun 1 rugi karena belanja drum, tahun 2 hampir impas, tahun 3 dan seterusnya surplus.</div>
+  </div>
+
+  <div class="card info">
+    <strong>Yang perlu dipahami dari pola ini:</strong> biochar adalah <strong>investasi berjangka, bukan pupuk sekali pakai.</strong> Tahun pertama pasti merugi — kas kebun harus siap menanggung. Justru karena kebun kopi wakaf ini berjangka <strong>15 tahun</strong>, pola seperti inilah yang paling cocok: biaya sekali di depan, manfaat yang menetap puluhan tahun.
+    <br><br>
+    <strong>Asumsi kuncinya</strong> adalah kenaikan hasil panen <strong>15–30%</strong> — sengaja dipasang konservatif. Kasus di Tanzania pada tanah yang sangat masam mencatat 200–300%, jadi masih ada ruang ke atas. <strong>Risikonya:</strong> kalau kenaikan hasil di bawah 10%, titik impas mundur ke tahun 3–4 — tetap positif, hanya lebih lambat.
+  </div>
+
+  <!-- ============================================ -->
+  <h2><span class="n">11</span> Yang masih perlu diputuskan</h2>
+
+  <div class="card warn">
+    <strong>Empat hal berikut ada di berkas lama tapi sudah tidak sesuai keadaan sekarang.</strong> Saya tulis apa adanya, tanpa menambal dengan tebakan.
+    <table>
+      <tr><th style="width:26%">Perkara</th><th style="width:30%">Yang tertulis di berkas 2026</th><th>Keadaan per 31 Juli 2026</th></tr>
+      <tr class="no"><td><strong>Siapa yang mengerjakan</strong></td><td>Pak Kumpul (operator) · Mas Anto (logistik) · Wakif (audit batch pertama)</td><td><strong>Ketiganya sudah tidak aktif.</strong> Kebun saat ini <strong>tanpa pekerja lapangan tetap</strong> — Pak Yasir dan Mas Kamto pun tidak pernah benar-benar berjalan. Ini penghambat nyata: pirolisis butuh orang menunggui drum <strong>satu hari penuh</strong>.</td></tr>
+      <tr class="no"><td><strong>Biaya setup</strong></td><td>Tiga angka berbeda: Rp 200–400 rb · Rp 300–550 rb · Rp 1,5–2 jt</td><td>Perlu satu angka yang dipakai. Saran saya di bagian 4.</td></tr>
+      <tr class="no"><td><strong>Basis jumlah pohon</strong></td><td>915 pohon</td><td>Sudah usang. Aturan basis pohon 9 Juli: pakai <strong>census aktual</strong>, <strong>lewati pohon merah</strong>, <strong>pisahkan K4</strong> dari dana wakaf.</td></tr>
+      <tr class="no"><td><strong>Lokasi batch pertama</strong></td><td>"Bidang 4 Rumah Wakif, target 30 kg"</td><td>K4 adalah <strong>Rumah Wakif</strong> — pendanaannya terpisah dari kebun wakaf. Kalau tetap dipakai sebagai lokasi uji coba, biayanya <strong>jangan diambil dari dana wakaf</strong>.</td></tr>
+    </table>
+  </div>
+
+  <div class="card good">
+    <strong>Yang perlu dicatat ke dashboard begitu batch pertama jalan</strong> (permintaan SOP Addendum B7):
+    <ul style="margin-bottom:0">
+      <li>Berat/volume residu per aliran (1–5) setiap kali ada pangkasan</li>
+      <li>Tanggal &amp; lokasi operasi kiln, plus <strong>berat bahan masuk vs biochar keluar</strong> — dari sinilah kita dapat <strong>angka rendemen kebun sendiri</strong>, bukan lagi memakai 25–35% dari jurnal</li>
+      <li>Biochar masuk stok → tautkan ke rencana aplikasi ADR-027</li>
+      <li>Bahan aliran 5 (sakit): asal pohon/tunggak mana + tanggal pemusnahan → jejak audit sanitasi</li>
+    </ul>
+  </div>
+
+  <!-- ============================================ -->
+  <div class="foot">
+    <strong>Sumber internal:</strong> <code>SOP/03_INFOGRAFIS_POSTER/Biochar_Pyrolysis_Slides.html</code> (spek drum, 9 Mei 2026) · <code>Biochar_Pyrolysis_Infografis_A4.pdf</code> (9 Mei 2026) · <code>Penjelasan_Biochar_CoverCrops_A4.pdf</code> (analogi &amp; <em>cost-benefit</em> 5 tahun, 8 Mei 2026) · <code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code> bagian B2–B7 · Inj-1 (Phase 2 SOP Inject, status LANJUT) · ADR-027 (soil amendment) · Aturan Basis Pohon 9 Juli 2026.
+    <br><br>
+    <strong>Sumber eksternal:</strong> <em>Frontiers in Soil Science</em> 2024 · ICCRI Jember (praktik terbaik) · BRIN Purwodadi (pertemuan awal 5 Mei 2026 — <strong>status penjajakan, belum ada MoU</strong>) · literatur <em>single drum kiln</em> biochar (pengabdian masyarakat, Indonesia).
+    <br><br>
+    Dirangkum 31 Juli 2026 · Kebun Kopi Wakaf Ngantang · halaman ini menyatukan tiga berkas SOP yang sebelumnya terpisah, dan menandai secara jujur bagian mana yang sudah dikunci dan bagian mana yang masih menunggu keputusan Wakif.
+  </div>
+
+</div>
+</body>
+</html>
