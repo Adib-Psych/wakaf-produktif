@@ -127,7 +127,7 @@
   <h2><span class="n">2</span> Spesifikasi drum — gambar teknis</h2>
 
   <div class="fig">
-    <svg viewBox="0 0 980 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Potongan melintang drum kiln biochar 200 liter beserta ukuran dan posisi lubang">
+    <svg viewBox="0 0 1000 672" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Potongan melintang drum kiln biochar 200 liter beserta ukuran dan posisi lubang">
       <defs>
         <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0" stop-color="#b8bfc4"/><stop offset=".18" stop-color="#e8edf0"/>
@@ -144,108 +144,117 @@
         </marker>
       </defs>
 
-      <!-- ===== DRUM BODY ===== -->
-      <rect x="330" y="112" width="270" height="392" fill="url(#steel)" stroke="#6b7280" stroke-width="2.5"/>
-      <!-- rolling ribs -->
-      <rect x="330" y="212" width="270" height="9" fill="#aab2b8" opacity=".75"/>
-      <rect x="330" y="392" width="270" height="9" fill="#aab2b8" opacity=".75"/>
+      <!-- ================= KOLOM TENGAH: DRUM ================= -->
+      <!-- asap keluar dari vent tutup -->
+      <path d="M372 88 q10 -20 -5 -37 q-13 -16 4 -30" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".55" stroke-linecap="round"/>
+      <path d="M578 88 q10 -20 -5 -37 q-13 -16 4 -30" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".4" stroke-linecap="round"/>
 
-      <!-- ===== ISI: 3 LAPIS, maks 70% ===== -->
-      <!-- dasar y=504 ; tinggi total 392 ; 70% = 274 -> mulai y=230 -->
-      <rect x="337" y="410" width="256" height="94" fill="#8d6e4a" opacity=".88"/>
-      <rect x="337" y="310" width="256" height="100" fill="#6b3f2a" opacity=".9"/>
-      <rect x="337" y="230" width="256" height="80" fill="#3f6b3a" opacity=".85"/>
-      <text x="465" y="463" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 1 · RANTING</text>
-      <text x="465" y="481" text-anchor="middle" font-size="12.5" fill="#f1e4d6">rongga sirkulasi udara</text>
-      <text x="465" y="356" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 2 · KULIT KOPI</text>
-      <text x="465" y="374" text-anchor="middle" font-size="12.5" fill="#f1e4d6">bahan utama</text>
-      <text x="465" y="268" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 3 · DAUN LAMTORO</text>
-      <text x="465" y="286" text-anchor="middle" font-size="12.5" fill="#e2f0e0">mudah menyala dari atas</text>
+      <!-- TUTUP -->
+      <rect x="326" y="92" width="298" height="22" rx="4" fill="url(#lidg)" stroke="#6b7280" stroke-width="2.5"/>
+      <rect x="449" y="76" width="52" height="16" rx="7" fill="none" stroke="#6b7280" stroke-width="3"/>
+      <text x="475" y="68" text-anchor="middle" font-size="13" fill="#6b7280">handle</text>
+      <circle cx="370" cy="103" r="3" fill="#1f2937"/><circle cx="414" cy="103" r="3" fill="#1f2937"/>
+      <circle cx="536" cy="103" r="3" fill="#1f2937"/><circle cx="580" cy="103" r="3" fill="#1f2937"/>
+
+      <!-- BADAN DRUM -->
+      <rect x="340" y="114" width="270" height="390" fill="url(#steel)" stroke="#6b7280" stroke-width="2.5"/>
+      <rect x="340" y="182" width="270" height="8" fill="#aab2b8" opacity=".7"/>
+      <rect x="340" y="392" width="270" height="8" fill="#aab2b8" opacity=".7"/>
+
+      <!-- RUANG ASAP 30% (kosong) -->
+      <text x="475" y="160" text-anchor="middle" font-size="14" fill="#7c8085" font-weight="700">RUANG ASAP</text>
+      <text x="475" y="212" text-anchor="middle" font-size="13" fill="#8b9096">30% bagian atas</text>
+      <text x="475" y="228" text-anchor="middle" font-size="12" fill="#9aa0a6">dibiarkan KOSONG</text>
+
+      <!-- ISI 3 LAPIS — batas atas y=232 (=70% dari tinggi 390) -->
+      <rect x="347" y="410" width="256" height="94" fill="#8d6e4a" opacity=".9"/>
+      <rect x="347" y="312" width="256" height="98" fill="#6b3f2a" opacity=".92"/>
+      <rect x="347" y="232" width="256" height="80" fill="#3f6b3a" opacity=".88"/>
+      <text x="475" y="452" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 1 · RANTING</text>
+      <text x="475" y="471" text-anchor="middle" font-size="12.5" fill="#f1e4d6">rongga sirkulasi udara</text>
+      <text x="475" y="355" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 2 · KULIT KOPI</text>
+      <text x="475" y="374" text-anchor="middle" font-size="12.5" fill="#f1e4d6">bahan utama</text>
+      <text x="475" y="266" text-anchor="middle" font-size="15" fill="#fff" font-weight="700">Lapis 3 · DAUN LAMTORO</text>
+      <text x="475" y="285" text-anchor="middle" font-size="12.5" fill="#e2f0e0">mudah menyala dari atas</text>
 
       <!-- garis batas 70% -->
-      <line x1="322" y1="230" x2="612" y2="230" stroke="#c2410c" stroke-width="2.5" stroke-dasharray="9 5"/>
-      <text x="620" y="226" font-size="14.5" fill="#c2410c" font-weight="700">batas isi maks 70%</text>
-      <text x="620" y="245" font-size="13" fill="#9a3412">sisa 30% = ruang asap</text>
+      <line x1="332" y1="232" x2="618" y2="232" stroke="#c2410c" stroke-width="2.5" stroke-dasharray="9 5"/>
 
-      <!-- asap -->
-      <path d="M400 200 q10 -22 -6 -40 q-14 -18 4 -34" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".65" stroke-linecap="round"/>
-      <path d="M470 196 q11 -24 -6 -42 q-15 -19 5 -35" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".5" stroke-linecap="round"/>
-      <path d="M535 202 q10 -22 -6 -40 q-13 -17 4 -32" stroke="#9ca3af" stroke-width="3" fill="none" opacity=".4" stroke-linecap="round"/>
+      <!-- LUBANG SISI -->
+      <circle cx="340" cy="332" r="5" fill="#1f2937"/><circle cx="610" cy="332" r="5" fill="#1f2937"/>
+      <circle cx="340" cy="354" r="5" fill="#1f2937" opacity=".4"/><circle cx="610" cy="354" r="5" fill="#1f2937" opacity=".4"/>
+      <circle cx="340" cy="470" r="8" fill="#1f2937"/><circle cx="610" cy="470" r="8" fill="#1f2937"/>
+      <circle cx="392" cy="470" r="8" fill="#1f2937" opacity=".3"/><circle cx="558" cy="470" r="8" fill="#1f2937" opacity=".3"/>
 
-      <!-- ===== TUTUP ===== -->
-      <rect x="316" y="92" width="298" height="22" rx="4" fill="url(#lidg)" stroke="#6b7280" stroke-width="2.5"/>
-      <rect x="440" y="76" width="52" height="16" rx="7" fill="none" stroke="#6b7280" stroke-width="3"/>
-      <text x="466" y="70" text-anchor="middle" font-size="13" fill="var(--mute)">handle</text>
-      <!-- 4 vent lubang di tutup -->
-      <circle cx="360" cy="103" r="3" fill="#1f2937"/><circle cx="404" cy="103" r="3" fill="#1f2937"/>
-      <circle cx="528" cy="103" r="3" fill="#1f2937"/><circle cx="572" cy="103" r="3" fill="#1f2937"/>
+      <!-- PONDASI BATU BATA -->
+      <rect x="346" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
+      <rect x="437" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
+      <rect x="528" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
+      <line x1="300" y1="534" x2="650" y2="534" stroke="#6b7280" stroke-width="3"/>
+      <text x="475" y="556" text-anchor="middle" font-size="13.5" fill="#7c3a26" font-weight="600">pondasi 4–6 batu bata — supaya lubang udara bawah tidak tertutup tanah</text>
 
-      <!-- ===== LUBANG SISI ===== -->
-      <!-- mid: 6x Ø5mm, 40 cm dari dasar -->
-      <circle cx="330" cy="330" r="5" fill="#1f2937"/><circle cx="600" cy="330" r="5" fill="#1f2937"/>
-      <circle cx="330" cy="352" r="5" fill="#1f2937" opacity=".45"/><circle cx="600" cy="352" r="5" fill="#1f2937" opacity=".45"/>
-      <!-- bottom: 8x Ø8mm, 8 cm dari dasar -->
-      <circle cx="330" cy="470" r="8" fill="#1f2937"/><circle cx="600" cy="470" r="8" fill="#1f2937"/>
-      <circle cx="382" cy="470" r="8" fill="#1f2937" opacity=".35"/><circle cx="548" cy="470" r="8" fill="#1f2937" opacity=".35"/>
+      <!-- DIMENSI TINGGI -->
+      <line x1="284" y1="114" x2="284" y2="504" stroke="#1F5F47" stroke-width="2" marker-start="url(#arS)" marker-end="url(#ar)"/>
+      <text x="272" y="309" text-anchor="middle" font-size="16" fill="#1F5F47" font-weight="800" transform="rotate(-90 272 309)">TINGGI 88–90 cm</text>
 
-      <!-- ===== PONDASI BATU BATA ===== -->
-      <rect x="336" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
-      <rect x="427" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
-      <rect x="518" y="504" width="76" height="30" fill="#a8563c" stroke="#7c3a26" stroke-width="1.6"/>
-      <line x1="288" y1="534" x2="700" y2="534" stroke="#6b7280" stroke-width="3"/>
-      <text x="612" y="524" font-size="13.5" fill="#7c3a26" font-weight="600">4–6 batu bata (pondasi)</text>
+      <!-- DIMENSI DIAMETER -->
+      <line x1="340" y1="592" x2="610" y2="592" stroke="#1F5F47" stroke-width="2" marker-start="url(#arS)" marker-end="url(#ar)"/>
+      <line x1="340" y1="566" x2="340" y2="598" stroke="#1F5F47" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <line x1="610" y1="566" x2="610" y2="598" stroke="#1F5F47" stroke-width="1.2" stroke-dasharray="4 3"/>
+      <text x="475" y="618" text-anchor="middle" font-size="16" fill="#1F5F47" font-weight="800">DIAMETER Ø 57–60 cm</text>
 
-      <!-- ===== DIMENSI TINGGI ===== -->
-      <line x1="272" y1="112" x2="272" y2="504" stroke="#1F5F47" stroke-width="2" marker-start="url(#arS)" marker-end="url(#ar)"/>
-      <text x="262" y="316" text-anchor="middle" font-size="16" fill="#1F5F47" font-weight="800" transform="rotate(-90 262 316)">TINGGI 88–90 cm</text>
-
-      <!-- ===== DIMENSI DIAMETER ===== -->
-      <line x1="330" y1="570" x2="600" y2="570" stroke="#1F5F47" stroke-width="2" marker-start="url(#arS)" marker-end="url(#ar)"/>
-      <line x1="330" y1="540" x2="330" y2="576" stroke="#1F5F47" stroke-width="1.2" stroke-dasharray="4 3"/>
-      <line x1="600" y1="540" x2="600" y2="576" stroke="#1F5F47" stroke-width="1.2" stroke-dasharray="4 3"/>
-      <text x="465" y="594" text-anchor="middle" font-size="16" fill="#1F5F47" font-weight="800">DIAMETER Ø 57–60 cm</text>
-
-      <!-- ===== KETERANGAN KIRI ===== -->
-      <g font-size="14.5" fill="#1f2937">
-        <line x1="200" y1="103" x2="352" y2="103" stroke="#0e7490" stroke-width="1.6"/>
-        <circle cx="200" cy="103" r="4" fill="#0e7490"/>
-        <text x="20" y="98" font-weight="700" fill="#0e7490">4 lubang Ø 3 mm</text>
-        <text x="20" y="116" font-size="13" fill="#6b7280">di TUTUP — jalan keluar asap</text>
+      <!-- ================= KOLOM KIRI: 4 KETERANGAN ================= -->
+      <g>
+        <line x1="212" y1="103" x2="362" y2="103" stroke="#0e7490" stroke-width="1.6"/>
+        <circle cx="212" cy="103" r="4" fill="#0e7490"/>
+        <text x="200" y="98" text-anchor="end" font-size="14.5" font-weight="700" fill="#0e7490">4 lubang Ø 3 mm</text>
+        <text x="200" y="117" text-anchor="end" font-size="13" fill="#6b7280">di TUTUP — jalan keluar asap</text>
       </g>
-      <g font-size="14.5" fill="#1f2937">
-        <line x1="200" y1="330" x2="322" y2="330" stroke="#b45309" stroke-width="1.6"/>
-        <circle cx="200" cy="330" r="4" fill="#b45309"/>
-        <text x="20" y="325" font-weight="700" fill="#b45309">6 lubang Ø 5 mm</text>
-        <text x="20" y="343" font-size="13" fill="#6b7280">40 cm dari dasar — udara sekunder</text>
+      <g>
+        <line x1="212" y1="232" x2="330" y2="232" stroke="#c2410c" stroke-width="1.6"/>
+        <circle cx="212" cy="232" r="4" fill="#c2410c"/>
+        <text x="200" y="227" text-anchor="end" font-size="14.5" font-weight="700" fill="#c2410c">batas isi maks 70%</text>
+        <text x="200" y="246" text-anchor="end" font-size="13" fill="#9a3412">sisa 30% untuk asap &amp; muai panas</text>
       </g>
-      <g font-size="14.5" fill="#1f2937">
-        <line x1="200" y1="470" x2="320" y2="470" stroke="#8c2519" stroke-width="1.6"/>
-        <circle cx="200" cy="470" r="4" fill="#8c2519"/>
-        <text x="20" y="465" font-weight="700" fill="#8c2519">8 lubang Ø 8 mm</text>
-        <text x="20" y="483" font-size="13" fill="#6b7280">8 cm dari dasar — udara primer</text>
+      <g>
+        <line x1="212" y1="332" x2="332" y2="332" stroke="#b45309" stroke-width="1.6"/>
+        <circle cx="212" cy="332" r="4" fill="#b45309"/>
+        <text x="200" y="327" text-anchor="end" font-size="14.5" font-weight="700" fill="#b45309">6 lubang Ø 5 mm</text>
+        <text x="200" y="346" text-anchor="end" font-size="13" fill="#6b7280">40 cm dari dasar — udara sekunder</text>
+      </g>
+      <g>
+        <line x1="212" y1="470" x2="330" y2="470" stroke="#8c2519" stroke-width="1.6"/>
+        <circle cx="212" cy="470" r="4" fill="#8c2519"/>
+        <text x="200" y="465" text-anchor="end" font-size="14.5" font-weight="700" fill="#8c2519">8 lubang Ø 8 mm</text>
+        <text x="200" y="484" text-anchor="end" font-size="13" fill="#6b7280">8 cm dari dasar — udara primer</text>
       </g>
 
-      <!-- ===== KETERANGAN KANAN: suhu ===== -->
-      <rect x="700" y="300" width="255" height="120" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
-      <text x="827" y="330" text-anchor="middle" font-size="14" fill="#9a3412" font-weight="700">SUHU DI DALAM DRUM</text>
-      <text x="827" y="367" text-anchor="middle" font-size="30" fill="#c2410c" font-weight="800">300–500°C</text>
-      <text x="827" y="392" text-anchor="middle" font-size="14.5" fill="#9a3412">ditahan 2–4 jam</text>
-      <text x="827" y="411" text-anchor="middle" font-size="12.5" fill="#b45309">tutup 80%, sisakan celah asap</text>
+      <!-- ================= KOLOM KANAN: 4 BLOK, TIDAK BERTUMPUK ================= -->
+      <!-- blok 1: dinding -->
+      <rect x="682" y="96" width="300" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.6"/>
+      <text x="700" y="122" font-size="14.5" fill="#1F5F47" font-weight="800">DINDING DRUM</text>
+      <text x="700" y="146" font-size="14" fill="#374151">Baja CR · tebal min <tspan font-weight="700">1,2–1,5 mm</tspan></text>
+      <text x="700" y="167" font-size="13" fill="#6b7280">supaya sanggup menahan panas 700°C</text>
 
-      <!-- ===== KETERANGAN KANAN: kapasitas ===== -->
-      <rect x="700" y="440" width="255" height="112" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
-      <text x="827" y="468" text-anchor="middle" font-size="14" fill="#166534" font-weight="700">KAPASITAS 1 DRUM</text>
-      <text x="827" y="497" text-anchor="middle" font-size="22" fill="#15803d" font-weight="800">200 liter</text>
-      <text x="827" y="519" text-anchor="middle" font-size="14" fill="#166534">80–120 kg bahan kering</text>
-      <text x="827" y="539" text-anchor="middle" font-size="13" fill="#15803d">≈ 150–200 kg bahan basah</text>
+      <!-- blok 2: umur pakai -->
+      <rect x="682" y="196" width="300" height="88" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.6"/>
+      <text x="700" y="222" font-size="14.5" fill="#1F5F47" font-weight="800">UMUR PAKAI</text>
+      <text x="700" y="246" font-size="14" fill="#374151"><tspan font-weight="700">5–10 batch</tspan>, lalu diperiksa</text>
+      <text x="700" y="267" font-size="13" fill="#6b7280">cek penyok, melengkung, dan karat</text>
 
-      <!-- judul kanan atas -->
-      <text x="700" y="130" font-size="15" fill="#1F5F47" font-weight="800">DINDING</text>
-      <text x="700" y="152" font-size="14" fill="#374151">Baja CR, tebal min <tspan font-weight="700">1,2–1,5 mm</tspan></text>
-      <text x="700" y="172" font-size="13.5" fill="#6b7280">(supaya sanggup menahan panas 700°C)</text>
-      <text x="700" y="200" font-size="15" fill="#1F5F47" font-weight="800">UMUR PAKAI</text>
-      <text x="700" y="222" font-size="14" fill="#374151"><tspan font-weight="700">5–10 batch</tspan>, lalu diperiksa</text>
-      <text x="700" y="242" font-size="13.5" fill="#6b7280">cek penyok/melengkung &amp; karat</text>
+      <!-- blok 3: suhu -->
+      <rect x="682" y="300" width="300" height="126" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="2"/>
+      <text x="832" y="326" text-anchor="middle" font-size="14" fill="#9a3412" font-weight="700">SUHU DI DALAM DRUM</text>
+      <text x="832" y="368" text-anchor="middle" font-size="31" fill="#c2410c" font-weight="800">300–500°C</text>
+      <text x="832" y="392" text-anchor="middle" font-size="14.5" fill="#9a3412">ditahan 2–4 jam</text>
+      <text x="832" y="413" text-anchor="middle" font-size="12.5" fill="#b45309">tutup 80%, sisakan celah asap</text>
+
+      <!-- blok 4: kapasitas -->
+      <rect x="682" y="442" width="300" height="120" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="832" y="468" text-anchor="middle" font-size="14" fill="#166534" font-weight="700">KAPASITAS 1 DRUM</text>
+      <text x="832" y="500" text-anchor="middle" font-size="24" fill="#15803d" font-weight="800">200 liter</text>
+      <text x="832" y="524" text-anchor="middle" font-size="14" fill="#166534">80–120 kg bahan kering</text>
+      <text x="832" y="545" text-anchor="middle" font-size="13" fill="#15803d">≈ 150–200 kg bahan basah</text>
     </svg>
     <div class="figcap"><strong>Gambar 1.</strong> Potongan melintang drum kiln 200 L — ukuran badan drum, tiga baris lubang udara, susunan tiga lapis bahan, dan batas isi 70%.</div>
   </div>
