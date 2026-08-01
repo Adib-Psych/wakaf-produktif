@@ -61,6 +61,10 @@
     .card{padding:9px 12px;margin-bottom:8px} .step{padding:10px}
     h2,.card,table,.flow{break-inside:avoid}
   }
+  a{color:var(--cyan,#0e7490);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-weight:600}
+  a:hover{color:var(--earth,#1F5F47);border-bottom-color:var(--earth,#1F5F47)}
+  ol{margin:9px 0 9px 26px;padding:0}
+  @media print{ a{color:#1f2937;border-bottom:none} a::after{content:' [' attr(href) ']';font-size:10px;color:#6b7280;word-break:break-all} }
 </style>
 </head>
 <body>
@@ -208,10 +212,77 @@
     Semua pekerjaan dalam addendum ini <strong>belum ada eksekutornya</strong>. Saat menyusun jadwal, hitung ini sebagai kendala nyata — bukan detail administratif. Prioritaskan Tier 1 saja.
   </div>
 
+  <h2><span class="n">9</span> Rujukan</h2>
+
+  <div class="card info">
+    <strong>Tingkat keandalan</strong> — halaman ini rujukan kerja, bukan makalah. Tiap kelompok sumber diberi tanda asal-usulnya:
+    <table style="margin-top:9px">
+      <tr><th style="width:14%">Tanda</th><th style="width:36%">Artinya</th><th>Boleh dipakai untuk apa</th></tr>
+      <tr><td><strong>✅ Tertelusur</strong></td><td>Tautannya bisa dibuka dan diperiksa sendiri</td><td>Boleh dikutip keluar, termasuk ke BRIN</td></tr>
+      <tr><td><strong>⚠️ Internal</strong></td><td>Disebut di berkas kita, <strong>sumber aslinya tidak tercatat</strong></td><td>Boleh dipakai bekerja, <strong>jangan dikutip sebagai temuan ilmiah</strong></td></tr>
+      <tr><td><strong>🔬 Menunggu data</strong></td><td>Akan digantikan hasil pengukuran di kebun sendiri</td><td>Perencanaan kasar saja</td></tr>
+    </table>
+  </div>
+
+  <h3>A. Rujukan luar — sudah ditelusuri ✅</h3>
+
+  <h4 style="margin:15px 0 6px;color:var(--moss)">Mulsa pangkasan (aliran 1–2) — kenapa tidak semuanya dibakar</h4>
+  <ol>
+    <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S003807170900337X" target="_blank" rel="noopener">Youkhana &amp; Idol — Tree pruning mulch increases soil C and N in a shaded coffee agroecosystem in Hawaii</a> — <em>Applied Soil Ecology</em>, 2009. <span style="color:var(--mute)">Inilah rujukan yang dikutip berkas SOP kita. Mendukung: mulsa pangkasan <strong>menaikkan karbon dan nitrogen tanah</strong> pada kebun kopi bernaungan.</span></li>
+    <li><a href="https://link.springer.com/article/10.1007/s10457-015-9857-z" target="_blank" rel="noopener">Leucaena-KX2 mulch additions increase growth, yield and soil C and N in a managed full-sun coffee system in Hawaii</a> — <em>Agroforestry Systems</em>, 2015. <span style="color:var(--mute)">Mulsa pangkasan pohon penaung berperan seperti <strong>pupuk lepas-lambat</strong>.</span></li>
+    <li><a href="https://link.springer.com/chapter/10.1007/978-981-10-7650-3_22" target="_blank" rel="noopener">Cut-and-carry for Sustaining Productivity and Carbon Sequestration in Agroforestry Systems: Coffee-Leucaena Example</a> — Springer, 2018.</li>
+    <li><a href="https://revista.domhelder.edu.br/index.php/veredas/article/view/6921" target="_blank" rel="noopener">Pruning Paradox: why pruning coffee trees enriches soil nitrogen but depletes phosphorus and potassium</a> — <em>Veredas do Direito</em>. <span style="color:var(--mute)">⚠️ <strong>Catatan penting yang belum ada di addendum kita:</strong> mengembalikan pangkasan menaikkan N, <strong>tetapi P dan K justru terkuras</strong> karena ikut terangkut keluar bersama panen. Artinya mulsa <strong>bukan pengganti pemupukan P dan K</strong> — ia melengkapi, bukan menggantikan.</span></li>
+  </ol>
+
+  <h4 style="margin:15px 0 6px;color:var(--moss)">Kiln vs bakar terbuka (aliran 3–5)</h4>
+  <ol start="5">
+    <li><a href="https://www.frontiersin.org/journals/soil-science/articles/10.3389/fsoil.2024.1376159/full" target="_blank" rel="noopener">Biochar – a sustainable soil conditioner for improving soil health, crop production and environment</a> — <em>Frontiers in Soil Science</em>, 2024.</li>
+    <li><a href="https://link.springer.com/article/10.1007/s42773-025-00451-5" target="_blank" rel="noopener">The potential of biochar to mitigate soil acidification: a global meta-analysis</a> — <em>Biochar</em> (Springer), 2025. <span style="color:var(--mute)">Efek mengapur pada tanah masam seperti Andisol kebun kita.</span></li>
+    <li><a href="https://cdn.forestresearch.gov.uk/2022/02/use_of_ash_in_forestry.pdf" target="_blank" rel="noopener">Wood Ash Use in Forestry — A Review of the Environmental Impacts</a> (PDF) — Forest Research, Inggris. <span style="color:var(--mute)">Pembedaan <strong>abu dasar</strong> (relatif aman) versus <strong>abu terbang</strong> (berisiko logam berat).</span></li>
+    <li><a href="https://extension.unh.edu/resource/guide-using-wood-ash-agricultural-soil-amendment" target="_blank" rel="noopener">Guide to Using Wood Ash as an Agricultural Soil Amendment</a> — UNH Extension. <span style="color:var(--mute)">Komposisi abu dan anjuran dosis untuk tanah masam.</span></li>
+  </ol>
+
+  <div class="card info" style="margin-top:14px">
+    📎 Pembahasan penuh soal kiln, spesifikasi drum, dan dampak abu ke tanah ada di halaman kajian tersendiri: <strong>Kajian &amp; Referensi → Biochar &amp; Drum Kiln</strong>.
+  </div>
+
+  <h3>B. Disebut di berkas kita, BELUM bisa ditelusuri ⚠️</h3>
+  <div class="card warn">
+    <strong>Diakui terbuka.</strong> Boleh dipakai bekerja — <strong>jangan dikutip keluar sebagai temuan ilmiah</strong> sebelum sumbernya dilengkapi.
+    <table style="margin-top:9px">
+      <tr><th style="width:38%">Yang dikutip</th><th>Kenapa belum tertelusur</th></tr>
+      <tr><td>Tawfeeq 2025, <em>Applied and Environmental Soil Science</em> (dampak pembakaran residu)</td><td>Tanpa judul artikel maupun DOI.</td></tr>
+      <tr><td><em>Scientific Reports</em> 2024 (alternatif pembakaran terbuka)</td><td>Hanya nama jurnal dan tahun.</td></tr>
+      <tr><td>UC IPM Sanitation (tumpukan ranting sebagai sarang hama)</td><td>Tanpa halaman atau nomor terbitan spesifik. Klaimnya sendiri lazim di pedoman PHT, tapi belum ditautkan.</td></tr>
+      <tr><td>Literatur <em>single drum kiln</em> (pengabdian masyarakat, Indonesia)</td><td>Tanpa judul maupun penulis.</td></tr>
+      <tr><td><strong>UU 32/2009 Pasal 69</strong> (larangan pembakaran lahan)</td><td>Ini <strong>peraturan yang sah dan bisa dikutip dengan nomornya</strong>; hanya saja belum ada tautan resmi yang diverifikasi di sini. Bunyi pasalnya perlu dikutip persis sebelum dipakai di dokumen publik.</td></tr>
+      <tr><td>Batas ukuran aliran residu (&lt; 2 cm · 2–5 cm · &gt; 5 cm) dan rendemen biochar 25–35%</td><td>Angka kerja internal — masuk akal dan lazim, tapi tidak bersumber literatur yang tercatat.</td></tr>
+    </table>
+  </div>
+
+  <h3>C. Menunggu data kebun sendiri 🔬</h3>
+  <ul>
+    <li><strong>Berat residu per aliran (1–5)</strong> tiap pangkasan — akan memberi angka ton per tahun yang sebenarnya</li>
+    <li><strong>Rendemen kiln</strong> — berat bahan masuk vs arang keluar, menggantikan angka 25–35% dari literatur</li>
+    <li><strong>Kapasitas chopper</strong> — sampai diameter berapa ia benar-benar sanggup, yang menentukan batas aliran 2 dan 3</li>
+  </ul>
+
+  <h3>D. Rujukan internal</h3>
+  <ul>
+    <li><code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code> bagian B1–B7</li>
+    <li><code>project_opt_k3p01_busuk_akar_tunggak_6Jun2026.md</code> · Asesmen Fokus K3 6 Jun 2026</li>
+    <li>Kajian <strong>Sanitasi Tunggak &amp; KNO₃</strong> 29 Jul 2026 · Kajian <strong>Biochar &amp; Drum Kiln</strong> 31 Jul 2026</li>
+    <li><strong>ADR-027</strong> (soil amendment) · <strong>Inj-1</strong> (biochar, LANJUT) · <strong>Q8</strong> (rorak Bidang 3) · CLAUDE.md Pattern #22</li>
+  </ul>
+
+  <div class="card bad">
+    <strong>⚠️ Anti-klaim berlebihan.</strong> Status hubungan dengan <strong>BRIN</strong>: <strong>penjajakan — belum ada MoU maupun PKS</strong>. Halaman ini tidak boleh menyebut BRIN sebagai mitra, penjamin, atau pihak yang menyetujui isinya.
+  </div>
+
   <div class="foot">
-    <strong>Rujukan internal:</strong> <code>project_opt_k3p01_busuk_akar_tunggak_6Jun2026.md</code> · Asesmen Fokus K3 6 Jun 2026 · Kajian Sanitasi Tunggak &amp; KNO₃ 29 Jul 2026 · ADR-027 (soil amendment) · Inj-1 (biochar, LANJUT) · Q8 (rorak Bidang 3) · CLAUDE.md Pattern #22.<br><br>
-    <strong>Rujukan eksternal:</strong> Tawfeeq 2025, <em>Applied and Environmental Soil Science</em> (dampak pembakaran residu) · Youkhana &amp; Idol, <em>Soil Biology &amp; Biochemistry</em> / <em>Agroforestry Systems</em> (mulsa pangkasan menaikkan C &amp; N pada kopi Hawaii) · <em>Scientific Reports</em> 2024 (alternatif pembakaran terbuka) · UC IPM Sanitation (tumpukan brush sebagai reservoir hama) · single drum kiln biochar (pengabdian masyarakat, Indonesia) · UU 32/2009 Pasal 69.<br><br>
-    <strong>Status:</strong> addendum ini <strong>belum</strong> di-encode ke SOP Master DOCX — masuk daftar <em>Pending SOP Updates</em>. Sumber: <code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code>
+    Disusun <strong>29 Juli 2026</strong>, bagian Rujukan dilengkapi <strong>31 Juli 2026</strong> · Wakaf Produktif Kebun Kopi Ngantang.
+    <br><br>
+    <strong>Status:</strong> addendum ini <strong>belum</strong> di-encode ke SOP Master DOCX — masuk daftar <em>Pending SOP Updates</em>.
   </div>
 
 </div>

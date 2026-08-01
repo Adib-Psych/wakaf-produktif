@@ -77,6 +77,10 @@
     .card{break-inside:avoid} table{break-inside:avoid}
     .noprint{display:none}
   }
+  a{color:var(--cyan,#0e7490);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-weight:600}
+  a:hover{color:var(--earth,#1F5F47);border-bottom-color:var(--earth,#1F5F47)}
+  ol{margin:9px 0 9px 26px;padding:0}
+  @media print{ a{color:#1f2937;border-bottom:none} a::after{content:' [' attr(href) ']';font-size:10px;color:#6b7280;word-break:break-all} }
 </style>
 </head>
 <body>
@@ -261,10 +265,74 @@
     <p style="margin:7px 0 0;color:var(--amber)"><b>Catatan tenaga kerja (29 Jul 2026):</b> kebun saat ini <b>tanpa pekerja lapangan tetap</b> untuk pekerjaan atas/bawah pohon. Pekerjaan ini perlu dikerjakan Wakif sendiri atau menunggu tenaga baru — pertimbangkan saat menyusun jadwal.</p>
   </div>
 
+  <h2><span class="n">9</span> Rujukan</h2>
+
+  <div class="card info">
+    <strong>Tingkat keandalan</strong> — halaman ini rujukan kerja, bukan makalah. Tiap kelompok sumber diberi tanda asal-usulnya:
+    <table style="margin-top:9px">
+      <tr><th style="width:14%">Tanda</th><th style="width:36%">Artinya</th><th>Boleh dipakai untuk apa</th></tr>
+      <tr><td><b>✅ Tertelusur</b></td><td>Tautannya bisa dibuka dan diperiksa sendiri</td><td>Boleh dikutip keluar, termasuk ke BRIN</td></tr>
+      <tr><td><b>⚠️ Internal</b></td><td>Disebut di berkas kita, <b>sumber aslinya tidak tercatat</b></td><td>Boleh dipakai bekerja, <b>jangan dikutip sebagai temuan ilmiah</b></td></tr>
+      <tr><td><b>🔬 Menunggu data</b></td><td>Akan digantikan hasil pengukuran di kebun sendiri</td><td>Perencanaan kasar saja</td></tr>
+    </table>
+  </div>
+
+  <h3>A. Rujukan luar — sudah ditelusuri ✅</h3>
+
+  <h4 style="margin:15px 0 6px;color:var(--moss)">Jamur akar putih &amp; penularan lewat kontak akar</h4>
+  <ol>
+    <li><a href="https://onlinelibrary.wiley.com/doi/10.1111/efp.12794" target="_blank" rel="noopener">Saidi &amp; Ismail (2023), <i>Rigidoporus microporus</i> and the white root rot disease of rubber</a> — <i>Forest Pathology</i>, Wiley. <span style="color:var(--mute)">Mendukung: penyakit menyebar terutama lewat <b>kontak akar dengan tunggak atau sisa kayu terinfeksi di dalam tanah</b>, dan pembongkaran tunggak saat peremajaan adalah langkah pencegahan kunci. Inilah dasar aturan "target sebenarnya = memutus kontak akar".</span></li>
+    <li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC10004977/" target="_blank" rel="noopener">Exploring the Biocontrol Efficacy of <i>Trichoderma</i> spp. against <i>Rigidoporus microporus</i></a> — <i>Plants</i> (MDPI), 2023. <span style="color:var(--mute)">Dasar opsi biokontrol <i>Trichoderma</i>.</span></li>
+    <li><a href="https://microbiologyjournal.org/an-assay-on-potential-of-local-trichoderma-spp-to-control-white-root-rot-disease-caused-by-rigidoporusmicroporus-in-rubber-plantstump/" target="_blank" rel="noopener">An Assay on Potential of Local <i>Trichoderma</i> spp. to Control White Root Rot in Rubber Plant Stump</a> — <i>Journal of Pure and Applied Microbiology</i>. <span style="color:var(--mute)">Isolat lokal menurunkan intensitas penyakit pada <b>tunggak</b> setelah 60 hari — relevan karena obyeknya memang tunggak, bukan pohon hidup.</span></li>
+    <li><a href="https://plantwiseplusknowledgebank.org/doi/10.1079/pwkb.species.47610" target="_blank" rel="noopener"><i>Rigidoporus microporus</i> — lembar data spesies</a> — PlantwisePlus Knowledge Bank (CABI). <span style="color:var(--mute)">Kisaran inang dan gejala.</span></li>
+  </ol>
+
+  <h4 style="margin:15px 0 6px;color:var(--moss)">Hexazinone — dasar larangan A2.1</h4>
+  <ol start="5">
+    <li><a href="https://files.dnr.state.mn.us/forestry/certification/pesticides/dnr-esra-hexazinone.pdf" target="_blank" rel="noopener">Hexazinone — Environmental &amp; Safety Risk Assessment</a> (PDF) — Minnesota Department of Natural Resources. <span style="color:var(--mute)">Mendukung: kelarutan sangat tinggi, mobilitas tanah tinggi, <b>risiko mencemari air tanah</b> pada tanah lolos air.</span></li>
+    <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S2352009422000013" target="_blank" rel="noopener">Risk of environmental contamination due to hexazinone application in agricultural soils</a> — <i>Environmental Advances</i>, 2022. <span style="color:var(--mute)">Inilah "Environmental Advances" yang dikutip berkas SOP kita.</span></li>
+    <li><a href="https://www.sciencedirect.com/topics/agricultural-and-biological-sciences/hexazinone" target="_blank" rel="noopener">Hexazinone — ringkasan sifat &amp; cara kerja</a> — ScienceDirect Topics. <span style="color:var(--mute)">Diserap <b>lewat akar</b> dan bergerak sistemik — dasar peringatan bahwa kopi di dekatnya bisa ikut terkena.</span></li>
+    <li><a href="https://doi.org/10.3390/toxics12030199" target="_blank" rel="noopener">Herbicide Leaching in Soil with Different Properties</a> — <i>Toxics</i> (MDPI), 2024. <span style="color:var(--mute)">Pencucian meningkat pada tanah lolos air — kondisi Andisol kebun kita.</span></li>
+  </ol>
+
+  <h3>B. Disebut di berkas kita, BELUM bisa ditelusuri ⚠️</h3>
+  <div class="card warn">
+    <strong>Diakui terbuka.</strong> Boleh dipakai bekerja — <b>jangan dikutip keluar sebagai temuan ilmiah</b> sebelum sumbernya dilengkapi.
+    <table style="margin-top:9px">
+      <tr><th style="width:38%">Yang dikutip</th><th>Kenapa belum tertelusur</th></tr>
+      <tr><td><b>Seluruh angka pengeboran KNO₃</b> — dalam 20–30 cm · lebar mata bor 12–20 mm · jarak 8–10 cm · dosis 0,5–1 kg/tunggak</td><td>🚩 <b>Paling penting diakui</b>, karena inilah angka yang benar-benar dipakai bekerja. Berkas asal <b>tidak mencantumkan sumber</b>. Statusnya <b>spesifikasi kerja internal</b>, bukan angka bersumber literatur.</td></tr>
+      <tr><td>Pegler 1968 (<i>Rigidoporus</i>, inang kopi)</td><td>Hanya nama &amp; tahun, tanpa judul lengkap.</td></tr>
+      <tr><td><i>Bioresource Technology</i> — seleksi jamur pelapuk tunggak Eucalyptus</td><td>Tanpa judul, penulis, atau tahun.</td></tr>
+      <tr><td>Wood &amp; Fiber Science + Cornell Composting (lignin, C:N, efek nitrogen)</td><td>Tanpa judul artikel.</td></tr>
+      <tr><td>Nufarm Indonesia (triklopir untuk tunggul)</td><td>Label produk; perlu dicantumkan nomor registrasi Kementan-nya.</td></tr>
+      <tr><td>Panduan lapangan JAP — Ditjenbun / Puslit Karet</td><td>Tanpa judul maupun tahun terbit.</td></tr>
+      <tr><td>Biaya survei ± Rp 220 rb dan triase Tier 1 ± Rp 2,8 jt</td><td>Perkiraan internal, belum ada penawaran nyata.</td></tr>
+    </table>
+  </div>
+
+  <h3>C. Menunggu data kebun sendiri 🔬</h3>
+  <ul>
+    <li><b>Jumlah tunggak Tier 1 sebenarnya</b> — perkiraan 5–10 titik, belum disurvei</li>
+    <li><b>Kecepatan pelapukan</b> — uji linggis tiap 2 bulan akan memberi angka nyata</li>
+    <li><b>Status leher akar kopi radius 5 m</b> — baseline belum diambil</li>
+  </ul>
+
+  <h3>D. Rujukan internal</h3>
+  <ul>
+    <li><code>Memory/projects/project_opt_k3p01_busuk_akar_tunggak_6Jun2026.md</code></li>
+    <li><code>R&amp;D Kopi Ngantang/Asesmen Kebun/Asesmen Fokus K3 6Jun2026/</code></li>
+    <li><code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code> bagian A1–A3</li>
+    <li>Sensus tunggak Pohon X: Waru 28 · Suren 23 · Sengon 8 · Durian 34 = <b>93</b>; kebun wakaf K1–K3 = <b>86</b></li>
+  </ul>
+
+  <div class="card bad">
+    <strong>⚠️ Anti-klaim berlebihan.</strong> Validasi Bu Alvi (BRIN) atas tindakan Wakif pada kasus K3-P01 adalah <b>masukan dalam pertemuan</b>. Status hubungan dengan BRIN: <b>penjajakan — belum ada MoU maupun PKS</b>. Halaman ini tidak boleh menyebut BRIN sebagai mitra, penjamin, atau pihak yang menyetujui isinya.
+  </div>
+
   <div class="foot">
-    <b>Sumber utama:</b> Pegler 1968 (<i>Rigidoporus</i>, inang kopi) · Saidi 2023, <i>Forest Pathology</i> (WRR karet) · Plants 2023 (biokontrol <i>Trichoderma</i> vs <i>R. microporus</i>) · <i>Bioresource Technology</i> (seleksi jamur untuk percepatan pelapukan tunggak Eucalyptus) · Wood &amp; Fiber Science + Cornell Composting (lignin, C:N, efek nitrogen) · Minnesota DNR &amp; <i>Environmental Advances</i> (mobilitas &amp; leaching hexazinone) · Nufarm Indonesia (triklopir untuk tunggul) · panduan lapangan JAP Ditjenbun / Puslit Karet.<br><br>
-    <b>Rujukan internal:</b> <code>Memory/projects/project_opt_k3p01_busuk_akar_tunggak_6Jun2026.md</code> · <code>R&amp;D Kopi Ngantang/Asesmen Kebun/Asesmen Fokus K3 6Jun2026/</code> · sensus tunggak Pohon X (Waru 28 · Suren 23 · Sengon 8 · Durian 34 = 93; kebun wakaf K1–K3 = 86).<br><br>
-    Disusun 29 Juli 2026 untuk Wakaf Produktif Kebun Kopi Ngantang · status diagnosis: <b>hipotesis kerja</b>, tindakan bersifat <i>no-regret</i>.
+    Disusun <b>29 Juli 2026</b>, bagian Rujukan dilengkapi <b>31 Juli 2026</b> · Wakaf Produktif Kebun Kopi Ngantang.
+    <br><br>
+    Status diagnosis: <b>hipotesis kerja</b> — tindakan yang dianjurkan bersifat <i>no-regret</i>, artinya tetap bermanfaat walau dugaan penyebabnya kelak ternyata keliru.
   </div>
 </div>
 </body>
