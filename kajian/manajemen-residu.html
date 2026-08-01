@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Manajemen Residu Kebun — Sisa Tebangan, Wiwilan &amp; Ranting Kering</title>
+<title>Manajemen Residu Kebun — Sisa Pangkasan, Gulma, Tong Bakar &amp; Jalan ke Biochar</title>
 <style>
   @page { size: A4; margin: 10mm; }
   :root{
@@ -22,6 +22,7 @@
   h2{font-size:23px;color:var(--earth);margin:40px 0 16px;padding-bottom:9px;border-bottom:3px solid var(--line);display:flex;align-items:center;gap:12px}
   h2 .n{background:var(--earth);color:#fff;width:33px;height:33px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
   h3{font-size:18px;margin:22px 0 9px;color:var(--moss)}
+  h4{margin:15px 0 6px;color:var(--moss);font-size:16px}
 
   .card{border:1px solid var(--line);border-radius:12px;padding:18px 21px;margin-bottom:15px;background:#fff}
   .card.warn{border-left:7px solid var(--amber);background:#fffdf7}
@@ -33,6 +34,7 @@
   th{background:var(--earth);color:#fff;text-align:left;padding:11px 13px;font-weight:600;font-size:15.5px}
   td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
   tr:nth-child(even) td{background:#fbfdfc}
+  table.plain th{background:var(--moss)}
 
   .flow{display:flex;gap:15px;align-items:stretch;margin:16px 0 7px;flex-wrap:wrap}
   .step{flex:1 1 300px;border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--cream)}
@@ -45,6 +47,9 @@
   .p-amber{background:var(--amberlt);color:#7c2d12}
   .p-cherry{background:var(--cherrylt);color:#7f1d1d}
   .p-cyan{background:var(--cyanlt);color:#164e63}
+  .p-violet{background:var(--violetlt);color:#4c1d95}
+
+  .hand{color:var(--violet);font-weight:700;font-size:15px;white-space:nowrap}
 
   blockquote{margin:14px 0;padding:14px 20px;border-left:6px solid var(--leaf);background:var(--cream);border-radius:0 10px 10px 0;font-size:17px}
   blockquote b{color:var(--earth)}
@@ -52,6 +57,9 @@
   li{margin-bottom:7px}
   .foot{margin-top:44px;padding-top:20px;border-top:2px solid var(--line);font-size:14.5px;color:var(--mute);line-height:1.7}
   code{background:#f3f4f6;padding:2px 7px;border-radius:5px;font-size:14.5px;font-family:ui-monospace,Menlo,Consolas,monospace}
+  figure{margin:18px 0}
+  figcaption{font-size:14.5px;color:var(--mute);margin-top:7px}
+  svg{max-width:100%;height:auto;display:block}
 
   @media print{
     body{background:#fff;font-size:11.5px;line-height:1.45}
@@ -59,7 +67,7 @@
     h1{font-size:22px} h2{font-size:15px;margin:18px 0 9px} h3{font-size:12.5px;margin:12px 0 5px}
     table{font-size:10.5px} th,td{padding:5px 7px}
     .card{padding:9px 12px;margin-bottom:8px} .step{padding:10px}
-    h2,.card,table,.flow{break-inside:avoid}
+    h2,.card,table,.flow,figure{break-inside:avoid}
   }
   a{color:var(--cyan,#0e7490);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-weight:600}
   a:hover{color:var(--earth,#1F5F47);border-bottom-color:var(--earth,#1F5F47)}
@@ -71,148 +79,472 @@
 <div class="page">
 
   <h1>Manajemen Residu Kebun</h1>
-  <div class="sub">Sisa tebangan · wiwilan · ranting kering — Kebun Kopi Wakaf Ngantang</div>
-  <div class="sub"><strong>Locked 29 Juli 2026</strong> · Addendum atas SOP Master Robusta Ngantang — <em>menambah</em>, tidak menggantikan</div>
+  <div class="sub">Sisa pangkasan · gulma · kayu tebangan — dan tong bakar sebagai langkah pertama</div>
+  <div class="sub"><strong>Disusun 29 Juli 2026 · direvisi menyeluruh 1 Agustus 2026</strong> · Addendum atas SOP Master Robusta Ngantang — <em>menambah</em>, tidak menggantikan</div>
   <div class="rule"></div>
 
-  <div class="card info">
-    <strong>Kenapa kajian ini ada.</strong> Dua pemicu: (a) kambium tunggak lama ternyata masih segar — sebagian pohon tebangan masih hidup; (b) pertanyaan Wakif soal apa yang harus dilakukan pada sisa tebangan dan ranting kering di musim kemarau, karena "dibuat pupuk pun susah, sudah telanjur kering".
+  <div class="card warn">
+    <strong>Apa yang berubah pada revisi 1 Agustus 2026 — dan kenapa.</strong>
+    <table style="margin-top:9px">
+      <tr><th style="width:30%">Yang berubah</th><th>Sebabnya</th></tr>
+      <tr>
+        <td><strong>Aturan api soal lereng dibatalkan</strong></td>
+        <td>Kebun ini <strong>datar</strong>, bukan di lereng gunung. Aturan lama "letakkan kiln di bagian bawah lereng" tidak berlaku dan sudah dihapus. Kabar baiknya: di lahan datar bara tidak menggelinding, jadi area bakar justru <strong>lebih mudah dan lebih aman</strong> disiapkan.</td>
+      </tr>
+      <tr>
+        <td><strong>Gulma dipindah dari "mulsa" ke "bakar"</strong></td>
+        <td>Tiga gulma yang mendominasi kebun ini semuanya berkembang biak lewat potongan batang dan akar. Mencacahnya sama dengan menanamnya.</td>
+      </tr>
+      <tr>
+        <td><strong>Biochar dimundurkan jadi tahap 2; tahap 1 adalah tong bakar sederhana</strong></td>
+        <td>Pertimbangan tenaga: kebun hanya dikerjakan Wakif dan Lek Nardi. Drum biochar menuntut penjagaan 2–4 jam per bakar plus pendinginan semalam. Tong bakar tidak. <strong>Drumnya sama</strong> — nanti tinggal ditambah lubang dan tutup.</td>
+      </tr>
+      <tr>
+        <td><strong>Semua ukuran diberi padanan tubuh</strong></td>
+        <td>Supaya bisa dikerjakan di kebun tanpa membawa meteran.</td>
+      </tr>
+    </table>
   </div>
 
   <h2><span class="n">1</span> Prinsip inti</h2>
 
   <blockquote>
-    <b>Segregasi berdasarkan (1) ukuran dan (2) status kesehatan asal.</b><br>
+    <b>Pisahkan berdasarkan tiga hal: ukuran, sehat atau sakit, dan cara ia berkembang biak.</b><br>
     Bukan "semua dibakar", bukan pula "semua dikompos".
   </blockquote>
 
   <p>Bakar terbuka menghilangkan hampir seluruh nitrogen, sekitar 25% fosfor, dan 5–60% sulfur. Bahan organik tanah tercatat turun dari 15,63 menjadi 11,78 g/kg. Sebaliknya, mulsa pangkasan pada kebun kopi justru <strong>menaikkan C dan N tanah</strong> — pada sistem kopi bernaung tercatat sekitar 65 Mg/ha bahan kering selama 3 tahun membawa ±27,5 Mg/ha karbon dan ±530 kg/ha nitrogen.</p>
 
-  <p>Artinya: membakar semuanya berarti membuang hara yang justru sedang kita beli mahal-mahal dalam bentuk pupuk.</p>
+  <p>Artinya membakar semuanya berarti membuang hara yang justru sedang kita beli mahal-mahal dalam bentuk pupuk. <strong>Tapi ada pengecualian yang tidak boleh dilanggar</strong> — bahan yang sakit dan gulma yang berkembang biak lewat potongan. Untuk keduanya, api bukan pemborosan melainkan alat sanitasi.</p>
 
-  <h2><span class="n">2</span> Lima aliran residu — aturan terkunci</h2>
+  <div class="card info">
+    <strong>Satu catatan yang sering terlewat.</strong> Mengembalikan pangkasan memang menaikkan <strong>nitrogen</strong> tanah — tetapi <strong>fosfor dan kalium justru terkuras</strong>, karena keduanya ikut terangkut keluar bersama biji panen. Jadi mulsa <strong>bukan pengganti pemupukan P dan K</strong>; ia melengkapi, bukan menggantikan. <span style="color:var(--mute)">(Pruning Paradox — lihat Rujukan A.4)</span>
+  </div>
+
+  <h2><span class="n">2</span> Ukuran praktis di kebun — tanpa meteran</h2>
+
+  <div class="card info">
+    <strong>Kalibrasi sekali, pakai seterusnya.</strong> Ukur <em>satu kali saja</em> dengan meteran: berapa cm satu jengkal Anda, satu langkah biasa Anda, dan satu hasta Anda. Catat di HP. Angka di bawah adalah rata-rata orang dewasa — milik Anda mungkin meleset 1–2 cm, dan untuk pekerjaan kebun itu tidak masalah.
+  </div>
 
   <table>
-    <tr><th style="width:16%">Aliran</th><th style="width:24%">Bahan</th><th style="width:30%">Perlakuan</th><th>Alasan</th></tr>
+    <tr><th style="width:14%">Ukuran</th><th style="width:40%">Patokan di badan atau alat</th><th>Dipakai untuk</th></tr>
+    <tr><td><strong>1 cm</strong></td><td><span class="hand">setebal jari kelingking</span></td><td>Tebal pita kompos kambing</td></tr>
+    <tr><td><strong>2–3 cm</strong></td><td><span class="hand">satu ruas jari telunjuk</span> — ujung sampai buku pertama</td><td>Tebal tanah penutup akar · batas ranting aliran 2</td></tr>
+    <tr><td><strong>5 cm</strong></td><td><span class="hand">dua ruas jari</span> · atau lingkaran jempol bertemu telunjuk</td><td>Tebal mulsa setelah memampat · batas "kayu besar"</td></tr>
+    <tr><td><strong>8 cm</strong></td><td><span class="hand">empat jari dirapatkan</span></td><td>Tinggi lubang udara bawah pada drum</td></tr>
+    <tr><td><strong>10 cm</strong></td><td><span class="hand">selebar kepalan tangan</span></td><td>Tebal mulsa saat baru ditebar</td></tr>
+    <tr><td><strong>20 cm</strong></td><td><span class="hand">satu jengkal</span> — ibu jari sampai kelingking terentang</td><td>Tebal abu Kelud · jarak mulsa dari batang · lebar pita kompos</td></tr>
+    <tr><td><strong>25 cm</strong></td><td><span class="hand">satu panjang sepatu</span></td><td>Jarak antar-lubang bor pada tunggak</td></tr>
+    <tr><td><strong>40 cm</strong></td><td><span class="hand">dua jengkal</span> · atau sedalam mata cangkul ditancap penuh</td><td>Diameter leher pohon yang dikosongkan · dalam &amp; lebar rorak</td></tr>
+    <tr><td><strong>50 cm</strong></td><td><span class="hand">satu hasta</span> — siku sampai ujung jari · setinggi lutut</td><td>Panjang lubang bor tunggak · tinggi tumpukan bahan</td></tr>
+    <tr><td><strong>90 cm</strong></td><td><span class="hand">setinggi pinggang</span> · sepanjang gagang cangkul</td><td>Tinggi drum 200 liter</td></tr>
+    <tr><td><strong>1 m</strong></td><td><span class="hand">satu langkah lebar</span></td><td>Panjang rorak · jarak aman terdekat</td></tr>
+    <tr><td><strong>3 m</strong></td><td><span class="hand">empat langkah biasa</span></td><td>Jarak antar-baris kopi</td></tr>
+    <tr><td><strong>5 m</strong></td><td><span class="hand">tujuh langkah biasa</span></td><td>Radius bersih di sekeliling area bakar</td></tr>
+    <tr><td><strong>10 m</strong></td><td><span class="hand">empat belas langkah biasa</span></td><td>Jarak area bakar dari batas tetangga</td></tr>
+  </table>
+
+  <h3>Untuk isi dan berat — pakai wadah, bukan timbangan</h3>
+  <table class="plain">
+    <tr><th style="width:30%">Wadah</th><th style="width:20%">Isi</th><th>Setara</th></tr>
+    <tr><td><strong>Ember biasa</strong></td><td>± 10 liter</td><td>± 5 kg kompos kambing matang = <strong>jatah satu pohon</strong></td></tr>
+    <tr><td><strong>Ember cat bekas</strong></td><td>± 20 liter</td><td>± 10 kg kompos = jatah dua pohon</td></tr>
+    <tr><td><strong>Karung pupuk 50 kg</strong></td><td>± 60 liter</td><td>Cukup untuk ± 10 pohon</td></tr>
+    <tr><td><strong>Drum 200 liter</strong></td><td>—</td><td>Sekali isi ± 4 karung penuh ranting kering</td></tr>
+  </table>
+
+  <div class="card good">
+    <strong>Aturan lapangan paling gampang diingat: satu ember, satu pohon.</strong> Tidak perlu menimbang apa pun.
+  </div>
+
+  <h3>Untuk mata bor</h3>
+  <table class="plain">
+    <tr><th style="width:20%">Mata bor</th><th style="width:40%">Sebesar apa</th><th>Untuk</th></tr>
+    <tr><td><strong>Ø 3 mm</strong></td><td><span class="hand">sebesar lidi sapu</span></td><td>Lubang asap di tutup drum <em>(tahap 2)</em></td></tr>
+    <tr><td><strong>Ø 5 mm</strong></td><td><span class="hand">sebesar tusuk sate</span></td><td>Lubang udara tengah drum <em>(tahap 2)</em></td></tr>
+    <tr><td><strong>Ø 8 mm</strong></td><td><span class="hand">sebesar batang pensil</span></td><td>Lubang udara bawah drum</td></tr>
+    <tr><td><strong>Ø 12–20 mm</strong></td><td><span class="hand">sebesar jari kelingking sampai jari telunjuk</span></td><td>Lubang bor pada tunggak</td></tr>
+  </table>
+
+  <h2><span class="n">3</span> Delapan aliran residu — aturan terkunci</h2>
+
+  <table>
+    <tr><th style="width:15%">Aliran</th><th style="width:23%">Bahan</th><th style="width:30%">Perlakuan</th><th>Alasan</th></tr>
     <tr>
       <td><span class="pill p-leaf">1 · Hijau</span></td>
-      <td>Wiwilan segar, daun, gulma babat</td>
-      <td><strong>Mulsa langsung</strong> di piringan pohon, atau masuk rorak</td>
-      <td>C:N rendah, cepat terurai, menahan erosi &amp; menjaga kelembapan</td>
+      <td>Wiwilan segar, daun hijau</td>
+      <td><strong>Mulsa langsung</strong> di piringan, atau masuk alur/rorak</td>
+      <td>C:N rendah, cepat terurai, menjaga kelembapan</td>
     </tr>
     <tr>
-      <td><span class="pill p-leaf">2 · Ranting kecil</span><br><span style="font-size:14px;color:var(--mute)">&lt; 2 cm</span></td>
-      <td>Ranting pangkasan yang sudah kering</td>
-      <td><strong>Cacah dengan chopper</strong> → mulsa antar-baris, atau kompos + sumber N (pupuk kandang / urea tipis)</td>
-      <td>Chopper sudah menjadi aset kebun sejak kembali ke Wakif, Mei 2026</td>
+      <td><span class="pill p-leaf">2 · Ranting kecil</span><br><span style="font-size:14px;color:var(--mute)">&lt; 2 cm — <span class="hand">seruas jari</span></span></td>
+      <td>Ranting pangkasan kering</td>
+      <td><strong>Cacah dengan chopper</strong> → mulsa antar-baris atau isi alur</td>
+      <td>Chopper sudah jadi aset kebun sejak Mei 2026</td>
     </tr>
     <tr>
-      <td><span class="pill p-amber">3 · Cabang sedang</span><br><span style="font-size:14px;color:var(--mute)">2–5 cm</span></td>
+      <td><span class="pill p-amber">3 · Cabang sedang</span><br><span style="font-size:14px;color:var(--mute)">2–5 cm — <span class="hand">sampai lingkaran jempol-telunjuk</span></span></td>
       <td>Cabang pangkasan</td>
-      <td>Cacah bila chopper sanggup; bila tidak → <strong>biochar</strong></td>
-      <td>Terlalu keras untuk kompos cepat</td>
+      <td>Cacah bila chopper sanggup; bila tidak → <strong>tong bakar</strong></td>
+      <td>Terlalu keras untuk terurai cepat</td>
     </tr>
     <tr>
       <td><span class="pill p-amber">4 · Kayu besar</span><br><span style="font-size:14px;color:var(--mute)">&gt; 5 cm &amp; bonggol</span></td>
       <td>Batang, cabang besar, potongan tunggak</td>
-      <td><strong>BIOCHAR — drum kiln</strong></td>
-      <td>Lignin tinggi, bertahun-tahun kalau dibiarkan. Dibakar terbuka = hara hilang percuma</td>
+      <td><strong>Tong bakar</strong> <span style="color:var(--mute)">(tahap 2: drum biochar)</span></td>
+      <td>Lignin tinggi — bertahun-tahun kalau hanya ditumpuk</td>
     </tr>
     <tr>
       <td><span class="pill p-cherry">5 · Bahan SAKIT</span></td>
-      <td>Kayu tunggak berjamur, ranting dieback, pohon bertali merah, cabang bergerek</td>
-      <td><strong>Musnahkan dengan api / masuk kiln.</strong> JANGAN dikompos, JANGAN ditumpuk di kebun</td>
-      <td>Ini <strong>inokulum penyakit</strong>, bukan bahan organik</td>
+      <td>Kayu tunggak berjamur, ranting <em>dieback</em>, pohon bertali merah, cabang bergerek</td>
+      <td><strong>Musnahkan dengan api.</strong> JANGAN dikompos, JANGAN ditumpuk</td>
+      <td>Ini <strong>inokulum penyakit</strong> — sumber penularan, bukan bahan organik</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-cherry">6 · Gulma menjalar</span></td>
+      <td>Sembung rambat · rumput lulangan/torpedo · grinting</td>
+      <td><strong>Keringkan di terpal 3–5 hari → BAKAR.</strong> Jangan dicacah, jangan jadi mulsa, jangan dikompos</td>
+      <td>Berkembang biak dari potongan batang &amp; akar — lihat bagian 4</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-amber">7 · Daun pisang kering</span></td>
+      <td>Pelepah dan daun pisang yang sudah cokelat</td>
+      <td><strong>Bakar</strong> bersama aliran 3–4</td>
+      <td>Bervolume besar, lambat lapuk, dan pisang adalah inang nematoda yang tidak kita inginkan berkembang</td>
+    </tr>
+    <tr>
+      <td><span class="pill p-leaf">8 · Gedebog pisang</span></td>
+      <td>Batang pisang basah setelah ditebang</td>
+      <td><strong>Cacah → kompos langsung di piringan</strong></td>
+      <td>Kadar air &amp; kalium tinggi, cepat lumer jadi bahan organik. <strong>Bonggol dan tunasnya tetap dibongkar tuntas</strong> lalu masuk aliran 6</td>
     </tr>
   </table>
 
-  <h2><span class="n">3</span> Kenapa jangan menumpuk kayu di kebun</h2>
+  <div class="card warn">
+    <strong>Satu-satunya bagian pisang yang tidak boleh dikompos adalah bonggol dan tunasnya.</strong> Sisa bonggol di dalam tanah menjadi tempat bertahan nematoda <em>Pratylenchus coffeae</em> — hama yang menyerang akar kopi. Bongkar sampai tuntas, keringkan, lalu bakar.
+  </div>
+
+  <h2><span class="n">4</span> Kenapa gulma di kebun ini justru harus dibakar</h2>
+
+  <p>Untuk kebanyakan kebun, "gulma dijadikan mulsa" adalah nasihat yang benar. <strong>Di kebun ini tidak</strong> — dan sebabnya spesifik pada jenis yang tumbuh di sini.</p>
+
+  <table>
+    <tr><th style="width:26%">Gulma</th><th style="width:34%">Cara ia berkembang biak</th><th>Akibat kalau dicacah jadi mulsa</th></tr>
+    <tr>
+      <td><strong>Sembung rambat</strong><br><span style="font-size:14px;color:var(--mute)"><em>Mikania micrantha</em></span></td>
+      <td><strong>Setiap buku batang bisa berakar.</strong> Satu potongan sepanjang seruas jari yang punya satu buku sudah cukup jadi tanaman baru</td>
+      <td>Satu gerobak cacahan = ribuan bibit baru ditanam merata di piringan. Ia juga bersifat <em>alelopati</em> — mengeluarkan zat yang menghambat tumbuhan di sekitarnya</td>
+    </tr>
+    <tr>
+      <td><strong>Rumput lulangan / torpedo</strong><br><span style="font-size:14px;color:var(--mute)"><em>Panicum repens</em></span></td>
+      <td><strong>Rimpang bawah tanah</strong> — satu buku rimpang saja tumbuh kembali, dan mampu menembus ke permukaan dari kedalaman <span class="hand">satu hasta</span></td>
+      <td>Mencangkul tanpa membakar sisanya = memperbanyak dan menyebarkan</td>
+    </tr>
+    <tr>
+      <td><strong>Grinting</strong><br><span style="font-size:14px;color:var(--mute)"><em>Cynodon dactylon</em></span></td>
+      <td><strong>Geragih di atas tanah dan rimpang di bawah tanah</strong> sekaligus</td>
+      <td>Menjadi hamparan padat yang bersaing langsung dengan akar dangkal kopi</td>
+    </tr>
+  </table>
+
+  <blockquote>
+    <b>Untuk ketiganya, mencacah bukan membunuh — mencacah adalah menanam.</b>
+  </blockquote>
 
   <div class="card bad">
-    Tumpukan ranting dan tunggak <strong>menyimpan penyakit sekaligus hama</strong>. Potongan cabang yang terinfestasi penggerek menjadi <strong>reservoir</strong> serangga dewasa yang akan keluar lagi dan menyerang pohon sehat. Untuk bahan yang sudah terinfestasi, membakar adalah solusi yang diakui secara agronomis.
+    <strong>Kompos tidak cukup panas untuk membunuhnya.</strong> Menonaktifkan rimpang dan biji gulma menuntut suhu tinggi yang merata di seluruh tumpukan selama beberapa hari — kondisi yang sulit dijamin pada tumpukan kompos kebun berskala kecil. Bagian tepi tumpukan hampir selalu tidak pernah cukup panas. Karena itu untuk aliran 6, jalur yang dipakai adalah <strong>keringkan lalu bakar</strong>, bukan kompos.
+  </div>
+
+  <div class="card warn">
+    <strong>Herbisida tidak menyelesaikan ini.</strong> Herbisida yang dipakai di kebun ini sekitar Mei 2026 bermerek <strong>NOXONE</strong> — bahan aktifnya <strong>parakuat diklorida</strong>, herbisida <em>kontak</em>. Artinya ia hanya mematikan bagian tanaman yang terkena semprotan; <strong>rimpang di bawah tanah tetap hidup</strong> dan akan tumbuh kembali. Parakuat juga terikat kuat pada partikel tanah dan termasuk bahan yang <strong>dilarang</strong> dalam sertifikasi Rainforest Alliance — hal yang perlu diperhatikan mengingat jalur pembeli spesialti kita. <span style="color:var(--mute)">Nomor pendaftaran yang tercatat: RI. 01030120031907. Perlu dibackfill ke Form Input dashboard.</span>
+  </div>
+
+  <h3>Cara mengeringkan yang benar</h3>
+  <div class="flow">
+    <div class="step">
+      <div class="b">1</div>
+      <b>Alasi terpal</b>
+      <span>Jangan menumpuk gulma langsung di atas tanah — buku batang yang menyentuh tanah lembap akan berakar dalam hitungan hari. Terpal, karung bekas, atau lantai semen.</span>
+    </div>
+    <div class="step">
+      <div class="b">2</div>
+      <b>Jemur 3–5 hari</b>
+      <span>Tipis saja, jangan menggunung. Balik sekali. Siap dibakar kalau daunnya sudah remuk saat diremas.</span>
+    </div>
+    <div class="step">
+      <div class="b">3</div>
+      <b>Langsung ke tong</b>
+      <span>Jangan menunda sampai musim hujan datang. Gulma kering yang kehujanan akan hidup kembali dari rimpangnya.</span>
+    </div>
+  </div>
+
+  <h2><span class="n">5</span> Kenapa jangan menumpuk apa pun di pinggir kebun</h2>
+
+  <div class="card bad">
+    Tumpukan ranting dan tunggak <strong>menyimpan penyakit sekaligus hama</strong>. Potongan cabang yang terinfestasi penggerek menjadi <strong>reservoir</strong> serangga dewasa yang akan keluar lagi dan menyerang pohon sehat. Untuk bahan yang sudah terinfestasi, membakar adalah tindakan yang diakui secara agronomis.
   </div>
 
   <p>Ini konsisten dengan validasi Bu Alvi (BRIN) atas tindakan Wakif pada kasus K3-P01: menebang yang terinfeksi, menyingkirkan kayu lapuk, dan memusnahkan sisanya <strong>sudah tepat</strong> untuk mencegah penularan.</p>
 
-  <h2><span class="n">4</span> Biochar — jalan tengah, dan sudah jadi keputusan</h2>
+  <div class="card warn">
+    <strong>Di lahan datar ada satu bahaya tambahan yang tidak ada di lereng: tumpukan membendung air.</strong> Di lereng, air mengalir mengitari tumpukan. Di lahan datar, tumpukan menjadi tanggul kecil yang menahan air hujan sehingga menggenang lebih lama — persis kondisi yang kita duga menyebabkan busuk akar. Karena itu <strong>tumpukan apa pun di pinggir kebun dilarang</strong>, bukan hanya tumpukan kayu.
+  </div>
 
-  <p>Membakar <strong>terkendali di dalam drum tertutup</strong> (pirolisis, oksigen minim) berbeda mendasar dari membakar terbuka:</p>
+  <h2><span class="n">6</span> Tong bakar — desain tahap 1</h2>
 
+  <p>Alat tahap pertama sengaja dibuat sesederhana mungkin: <strong>satu drum bekas 200 liter, tutup atas dibuka penuh, satu pintu di bawah.</strong> Bahan dimasukkan dari atas dan dinyalakan dari bawah lewat pintu. Pintu yang sama dipakai untuk mengeluarkan abu.</p>
+
+  <figure>
+    <svg viewBox="0 0 940 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="tb-t tb-d">
+      <title id="tb-t">Desain tong bakar dari drum bekas 200 liter</title>
+      <desc id="tb-d">Potongan drum 200 liter tanpa tutup atas, dengan pintu di bagian bawah, berdiri di atas tiga batu bata, dan ditutup kawat kasa penahan percikan api di mulut drum.</desc>
+
+      <style>
+        .tl{font:700 13px system-ui,sans-serif;fill:#1F5F47}
+        .tt{font:500 12.5px system-ui,sans-serif;fill:#6b7280}
+        .tb{font:700 12px system-ui,sans-serif;fill:#8c2519}
+        .tg{font:700 12px system-ui,sans-serif;fill:#15803d}
+      </style>
+      <defs>
+        <marker id="mk" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#6b7280"/></marker>
+      </defs>
+
+      <!-- ground -->
+      <rect x="40" y="404" width="480" height="10" fill="#8a6449"/>
+      <rect x="40" y="414" width="480" height="26" fill="#a58a6f"/>
+
+      <!-- bricks -->
+      <rect x="150" y="376" width="46" height="28" rx="2" fill="#9a4b32"/>
+      <rect x="256" y="376" width="46" height="28" rx="2" fill="#9a4b32"/>
+      <rect x="362" y="376" width="46" height="28" rx="2" fill="#9a4b32"/>
+
+      <!-- drum body -->
+      <path d="M150,110 L150,376 L408,376 L408,110 Z" fill="#c8ccd2" stroke="#6b7280" stroke-width="2.5"/>
+      <ellipse cx="279" cy="110" rx="129" ry="22" fill="#e3e6ea" stroke="#6b7280" stroke-width="2.5"/>
+      <!-- ribs -->
+      <path d="M150,190 L408,190 M150,272 L408,272" stroke="#9aa1a9" stroke-width="4"/>
+
+      <!-- contents -->
+      <path d="M158,300 L400,300 L400,368 L158,368 Z" fill="#8a6449" opacity="0.55"/>
+      <g stroke="#5b4130" stroke-width="3" stroke-linecap="round" opacity="0.8">
+        <path d="M168,318 L214,310"/><path d="M228,322 L282,314"/><path d="M296,310 L350,318"/><path d="M360,322 L394,314"/>
+        <path d="M172,344 L226,338"/><path d="M244,346 L300,340"/><path d="M316,338 L380,346"/>
+      </g>
+      <!-- flame -->
+      <path d="M240,300 q14,-40 30,-58 q6,26 20,10 q10,30 -4,48 z" fill="#f59e0b" opacity="0.9"/>
+      <path d="M252,300 q8,-24 18,-34 q4,16 12,6 q6,18 -2,28 z" fill="#fde047" opacity="0.95"/>
+
+      <!-- door -->
+      <rect x="176" y="320" width="66" height="52" rx="3" fill="#8b9199" stroke="#374151" stroke-width="2.5"/>
+      <circle cx="234" cy="346" r="5" fill="#374151"/>
+      <path d="M176,320 L176,372" stroke="#374151" stroke-width="5"/>
+
+      <!-- spark screen -->
+      <ellipse cx="279" cy="96" rx="140" ry="24" fill="none" stroke="#374151" stroke-width="2.5"/>
+      <g stroke="#374151" stroke-width="1.1" opacity="0.85">
+        <path d="M148,92 L410,92 M152,100 L406,100 M160,84 L398,84 M158,108 L400,108"/>
+        <path d="M180,74 L180,118 M220,73 L220,119 M260,72 L260,120 M300,72 L300,120 M340,73 L340,119 M380,75 L380,117"/>
+      </g>
+      <ellipse cx="200" cy="86" rx="16" ry="7" fill="#6b7280"/>
+      <ellipse cx="360" cy="86" rx="16" ry="7" fill="#6b7280"/>
+
+      <!-- labels left -->
+      <path d="M430,96 L470,80" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
+      <text x="476" y="72" class="tl">Kawat kasa penahan percik</text>
+      <text x="476" y="90" class="tt">± 60 × 60 cm, ditindih dua batu.</text>
+      <text x="476" y="107" class="tb">WAJIB selama musim kemarau.</text>
+
+      <path d="M430,140 L470,140" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
+      <text x="476" y="136" class="tl">Tutup atas dibuka penuh</text>
+      <text x="476" y="154" class="tt">Bahan dimasukkan dari sini. Isi maksimal <strong>tiga perempat</strong>.</text>
+
+      <path d="M430,232 L470,220" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
+      <text x="476" y="212" class="tl">Drum bekas 200 liter</text>
+      <text x="476" y="230" class="tt">Ø 57–60 cm <tspan font-weight="700" fill="#5b21b6">(tiga jengkal)</tspan> · tinggi 88–90 cm</text>
+      <text x="476" y="247" class="tt"><tspan font-weight="700" fill="#5b21b6">(setinggi pinggang)</tspan> · dinding min. 1,2 mm</text>
+
+      <path d="M170,392 L470,330" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
+      <text x="476" y="322" class="tl">Pintu bawah — 30 × 25 cm</text>
+      <text x="476" y="340" class="tt">Jarak <strong>8 cm</strong> <tspan font-weight="700" fill="#5b21b6">(empat jari)</tspan> dari dasar.</text>
+      <text x="476" y="357" class="tt">Dua fungsi: menyalakan api, dan mengeluarkan abu.</text>
+      <text x="476" y="374" class="tg">Bor 2–3 lubang Ø 8 mm pada daun pintunya.</text>
+
+      <path d="M300,414 L470,398" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
+      <text x="476" y="404" class="tl">Tiga batu bata — drum terangkat 10 cm</text>
+      <text x="476" y="422" class="tt">Udara masuk dari bawah, tanah tidak ikut terpanggang,</text>
+      <text x="476" y="439" class="tt">dan drum tidak cepat berkarat kena tanah lembap.</text>
+    </svg>
+    <figcaption>Tong bakar tahap 1. Semua ukuran sengaja disamakan dengan drum biochar tahap 2 — supaya drum yang sama bisa dinaikkan kelasnya nanti tanpa beli baru.</figcaption>
+  </figure>
+
+  <h3>Spesifikasi</h3>
   <table>
-    <tr><th style="width:22%"></th><th>Bakar terbuka</th><th>Drum kiln (biochar)</th></tr>
-    <tr><td><strong>Karbon</strong></td><td>Lepas ke udara</td><td><strong>Terkunci di arang, bertahan puluhan tahun</strong></td></tr>
-    <tr><td><strong>Api</strong></td><td>Menyebar, sulit dikendalikan</td><td><strong>Terkurung di dalam drum</strong></td></tr>
-    <tr><td><strong>Asap</strong></td><td>Pekat</td><td>Jauh lebih sedikit — gasnya ikut terbakar</td></tr>
-    <tr><td><strong>Hasil</strong></td><td>Abu sedikit</td><td><strong>Biochar 25–35% dari berat bahan</strong></td></tr>
+    <tr><th style="width:24%">Bagian</th><th style="width:30%">Ukuran</th><th>Catatan</th></tr>
+    <tr><td><strong>Drum</strong></td><td>Bekas 200 liter, baja<br>Ø 57–60 cm · tinggi 88–90 cm<br><span class="hand">tiga jengkal · setinggi pinggang</span></td><td>Tebal dinding minimal 1,2 mm. Umur pakai 5–10 kali bakar sebelum dinding menipis</td></tr>
+    <tr><td><strong>Tutup atas</strong></td><td>Dipotong habis</td><td>Pada tahap 1 memang terbuka. Tutupnya <strong>jangan dibuang</strong> — dipakai lagi di tahap 2</td></tr>
+    <tr><td><strong>Pintu bawah</strong></td><td>30 × 25 cm, sisi bawah<br>ambang bawah <strong>8 cm</strong> dari dasar <span class="hand">(empat jari)</span></td><td>Engsel sederhana atau baut, dikunci kait kawat. Bor 2–3 lubang Ø 8 mm <span class="hand">(sebesar pensil)</span> pada daun pintu supaya udara tetap masuk saat pintu tertutup</td></tr>
+    <tr><td><strong>Dasar</strong></td><td>Dibiarkan utuh</td><td>Abu tertampung, tidak berhamburan. Bor 4–6 lubang Ø 8 mm kalau drum akan kehujanan, supaya air bisa tiris</td></tr>
+    <tr><td><strong>Alas</strong></td><td>3 batu bata / batu kali<br>drum terangkat ± 10 cm <span class="hand">(sekepalan)</span></td><td>Udara masuk dari bawah · tanah tidak terpanggang · drum tidak berkarat kena tanah lembap</td></tr>
+    <tr><td><strong>Penahan percik</strong></td><td>Kawat kasa / ram kawat<br>± 60 × 60 cm, lubang ± 5 mm</td><td><strong>Wajib musim kemarau.</strong> Ditindih dua batu. Inilah yang membedakan tong bakar dari tumpukan bakar terbuka</td></tr>
+    <tr><td><strong>Alat pendamping</strong></td><td>Serok / cangkul kecil bergagang panjang</td><td>Untuk mengeruk abu dari pintu bawah tanpa menggulingkan drum</td></tr>
+  </table>
+
+  <h3>Cara pakai</h3>
+  <table class="plain">
+    <tr><th style="width:8%">#</th><th>Langkah</th></tr>
+    <tr><td><strong>1</strong></td><td>Pastikan bahan sudah <strong>kering</strong>. Bahan basah menghasilkan asap pekat dan mengganggu tetangga.</td></tr>
+    <tr><td><strong>2</strong></td><td>Isi dari atas, <strong>maksimal tiga perempat drum</strong>. Susun longgar — yang padat justru sulit menyala.</td></tr>
+    <tr><td><strong>3</strong></td><td>Nyalakan dari <strong>pintu bawah</strong> dengan sedikit daun kering. Tutup pintunya begitu api menyala stabil.</td></tr>
+    <tr><td><strong>4</strong></td><td>Pasang <strong>kawat kasa</strong> di mulut drum, tindih batu.</td></tr>
+    <tr><td><strong>5</strong></td><td><strong>Tunggui sampai api mati.</strong> Umumnya 40–90 menit untuk satu isi. Jangan ditinggal.</td></tr>
+    <tr><td><strong>6</strong></td><td>Biarkan dingin. <strong>Abu baru dikeruk keesokan harinya</strong> — abu yang tampak dingin di permukaan bisa masih membara di dalam.</td></tr>
+    <tr><td><strong>7</strong></td><td>Catat ke dashboard: tanggal · kebun · aliran residu · perkiraan jumlah karung masuk.</td></tr>
   </table>
 
   <div class="card good">
-    <strong>Sudah selaras dengan keputusan yang ada.</strong> Inj-1 <em>coffee pulp biochar</em> berstatus <strong>LANJUT</strong> (investasi Rp 1,5–2 jt, ROI tahun 2–3), dan ADR-027 soil amendment sudah dianggarkan. Residu kayu menjadi <strong>bahan baku tambahan yang gratis</strong> untuk program yang sudah berjalan.
+    <strong>Kenapa tong bakar dulu, bukan langsung biochar.</strong> Tong bakar butuh penunggu 40–90 menit dan selesai hari itu juga. Drum biochar butuh penjagaan suhu 2–4 jam plus pendinginan tertutup 12–24 jam, dan hasilnya harus di-<em>charge</em> dulu sebelum bisa dipakai. Dengan tenaga yang ada sekarang — Wakif dan Lek Nardi — tahap 1 bisa jalan minggu ini; tahap 2 realistis setelah ada tambahan tenaga. <strong>Drumnya sama, jadi tidak ada uang yang terbuang.</strong>
   </div>
 
-  <ul>
-    <li>Teknologi <strong>single drum kiln</strong> dipilih karena mudah diaplikasikan dan murah — cukup drum bekas.</li>
-    <li>Biochar harus <strong>dicuci / di-charge</strong> dulu (rendam air kencing sapi atau kompos cair) sebelum dipakai, agar tidak justru menyerap hara dari tanah.</li>
-  </ul>
+  <h2><span class="n">7</span> Area bakar tetap — satu titik per kebun</h2>
 
-  <h2><span class="n">5</span> Aturan api — wajib, khusus musim kemarau</h2>
+  <p>Bukan berpindah-pindah. <strong>Satu titik tetap per kebun</strong>, disiapkan sekali, dipakai seterusnya. Ini menyelesaikan tiga hal sekaligus: keamanan, hubungan dengan tetangga, dan pengumpulan abu di satu tempat sehingga mudah ditakar.</p>
+
+  <table>
+    <tr><th style="width:26%">Syarat</th><th style="width:24%">Ukuran</th><th>Alasan</th></tr>
+    <tr><td><strong>Radius bersih</strong></td><td>≥ 5 m <span class="hand">(tujuh langkah)</span></td><td>Tidak ada rumput kering, tumpukan bahan, atau ranting menggantung di dalam radius ini</td></tr>
+    <tr><td><strong>Cincin tanah mineral</strong></td><td>Selebar 2 m <span class="hand">(tiga langkah)</span></td><td>Tanah dikupas sampai tidak ada bahan organik yang bisa merambat. <strong>Tanah kerukan abu vulkanik sangat cocok untuk alas ini</strong> — sekaligus menyelesaikan pertanyaan mau dibuang ke mana</td></tr>
+    <tr><td><strong>Jarak ke kopi produktif</strong></td><td>≥ 5 m <span class="hand">(tujuh langkah)</span></td><td>Panas radiasi menghanguskan daun kopi terdekat — ini sudah pernah terjadi di K4</td></tr>
+    <tr><td><strong>Jarak ke batas tetangga</strong></td><td>≥ 10 m <span class="hand">(empat belas langkah)</span></td><td>Kekhawatiran utama di K1–K3 yang berbatasan langsung. Kalau tidak memungkinkan, pilih titik terjauh yang ada dan beri tahu tetangga sebelum operasi pertama</td></tr>
+    <tr><td><strong>Air atau tanah urug</strong></td><td>1 ember penuh + 1 sekop</td><td>Sudah berada di lokasi <strong>sebelum</strong> api dinyalakan, bukan diambil setelah ada masalah</td></tr>
+    <tr><td><strong>Waktu</strong></td><td>Sore hari</td><td>Kelembapan naik, angin mereda. <strong>Batalkan bila angin kencang</strong> — tanpa perkecualian</td></tr>
+  </table>
+
+  <div class="card good">
+    <strong>Lahan datar justru menguntungkan di sini.</strong> Aturan lama menyuruh meletakkan titik bakar di bagian bawah lereng karena api merambat naik. Di kebun ini persoalan itu tidak ada: <strong>bara tidak menggelinding, api tidak punya arah rambat menanjak, dan alas rata jauh lebih mudah disiapkan.</strong> Yang tetap harus dijaga adalah angin dan jarak — bukan kemiringan.
+  </div>
+
+  <div class="card info">
+    <strong>Area bakar ini kelak menjadi stasiun biochar.</strong> Alas yang sama, cincin tanah yang sama, jarak aman yang sama. Menyiapkannya sekarang berarti tahap 2 tinggal menaruh drum.
+  </div>
+
+  <h2><span class="n">8</span> Aturan api — wajib, terutama musim kemarau</h2>
 
   <blockquote>
-    Musim kemarau membuat pirolisis <b>efisien</b> — bahan kering, mudah menyala. Tapi musim kemarau juga membuat api terbuka <b>paling berbahaya</b>. Jawabannya bukan menunda pekerjaannya, tapi <b>mengurung apinya</b>.
+    Musim kemarau membuat bahan <b>gampang menyala</b> — itu keuntungannya. Musim kemarau juga membuat api terbuka <b>paling berbahaya</b> — itu risikonya. Jawabannya bukan menunda pekerjaannya, tapi <b>mengurung apinya di dalam drum</b>.
   </blockquote>
 
   <table>
     <tr><th style="width:9%">#</th><th>Aturan</th></tr>
-    <tr><td><strong>B5.1</strong></td><td><strong>Tidak ada tumpukan bakar terbuka.</strong> Semua pembakaran di dalam drum / kiln.</td></tr>
-    <tr><td><strong>B5.2</strong></td><td>Lokasi kiln: <strong>datar, atau di BAGIAN BAWAH lereng</strong> — api merambat naik, bukan turun.</td></tr>
-    <tr><td><strong>B5.3</strong></td><td>Jarak <strong>≥ 10 m</strong> dari kopi produktif dan dari tumpukan bahan kering lain.</td></tr>
-    <tr><td><strong>B5.4</strong></td><td><strong>Sekat bakar</strong>: tanah kosong / dibersihkan selebar <strong>2 m</strong> mengelilingi titik kiln.</td></tr>
-    <tr><td><strong>B5.5</strong></td><td>Air atau tanah urug <strong>siap di lokasi</strong> sebelum api dinyalakan. Jangan tinggalkan api tanpa penunggu.</td></tr>
-    <tr><td><strong>B5.6</strong></td><td>Waktu: <strong>sore hari</strong> — kelembapan naik, angin mereda. <strong>Batalkan bila angin kencang.</strong></td></tr>
-    <tr><td><strong>B5.7</strong></td><td>Hukum: UU 32/2009 Pasal 69 mengizinkan pembakaran terbatas ≤ 2 ha bagi masyarakat lokal — kebun ini 0,49 ha, jauh di bawah ambang. Namun kebijakan nasional tetap <strong>zero-burning</strong>, maka posisi kita: <strong>kiln tertutup, bukan pembakaran lahan.</strong> Beri tahu tetangga dan perangkat desa sebelum operasi pertama.</td></tr>
+    <tr><td><strong>B5.1</strong></td><td><strong>Tidak ada tumpukan bakar terbuka.</strong> Semua pembakaran di dalam drum, di area bakar tetap.</td></tr>
+    <tr><td><strong>B5.2</strong></td><td>Lokasi: <strong>area bakar tetap yang sudah disiapkan</strong> (bagian 7). <span style="color:var(--mute)">Aturan lama soal "bagian bawah lereng" dibatalkan — kebun ini datar.</span></td></tr>
+    <tr><td><strong>B5.3</strong></td><td>Jarak <strong>≥ 5 m</strong> <span class="hand">(tujuh langkah)</span> dari kopi produktif dan dari bahan kering lain; <strong>≥ 10 m</strong> <span class="hand">(empat belas langkah)</span> dari batas tetangga.</td></tr>
+    <tr><td><strong>B5.4</strong></td><td><strong>Cincin tanah mineral selebar 2 m</strong> <span class="hand">(tiga langkah)</span> mengelilingi titik bakar.</td></tr>
+    <tr><td><strong>B5.5</strong></td><td><strong>Kawat kasa penahan percik terpasang</strong> setiap kali membakar di musim kemarau. Tanpa kecuali.</td></tr>
+    <tr><td><strong>B5.6</strong></td><td>Air atau tanah urug <strong>siap di lokasi sebelum api dinyalakan.</strong> Jangan tinggalkan api tanpa penunggu.</td></tr>
+    <tr><td><strong>B5.7</strong></td><td>Waktu: <strong>sore hari.</strong> <strong>Batalkan bila angin kencang.</strong></td></tr>
+    <tr><td><strong>B5.8</strong></td><td><strong>Abu dikeruk keesokan harinya</strong>, tidak pada hari yang sama.</td></tr>
+    <tr><td><strong>B5.9</strong></td><td>Hukum: UU 32/2009 Pasal 69 mengatur pembakaran lahan; ada pengecualian terbatas bagi masyarakat lokal dengan luasan tertentu, dan kebun ini hanya 0,49 ha. Namun kebijakan nasional tetap <strong>zero-burning</strong>, sehingga posisi kita adalah <strong>pembakaran terkurung di dalam drum, bukan pembakaran lahan.</strong> Beri tahu tetangga dan perangkat desa sebelum operasi pertama. <span style="color:var(--mute)">Bunyi pasal perlu dikutip persis sebelum dipakai di dokumen publik — lihat Rujukan B.</span></td></tr>
   </table>
 
-  <h2><span class="n">6</span> Menjawab langsung: "kemarau, ranting sudah kering, susah jadi pupuk"</h2>
+  <h2><span class="n">9</span> Abu — berapa yang boleh kembali ke tanah</h2>
 
-  <p><strong>Sebagian benar.</strong> Ranting kering punya C:N tinggi dan berlignin, memang lambat terurai. Tapi kesimpulan "kalau begitu bakar saja" melewatkan dua hal:</p>
+  <div class="card bad">
+    <strong>🚨 Baca ini dulu — di kebun ini abu BUKAN pembenah tanah.</strong> Nasihat umum "abu kayu bagus untuk tanah" berlaku pada <strong>tanah masam</strong>. Kebun ini <strong>tidak masam</strong>: uji tanah 16 Juni 2026 menunjukkan <strong>pH 6,2 — sudah ideal</strong> untuk Robusta, dan catatan uji itu sendiri berbunyi <em>"pH tanah sudah memadai. Tidak diperlukan pengapuran."</em>
+    <br><br>
+    Abu kayu bersifat basa dan bekerja seperti kapur. Menaburkannya di kebun ini berarti <strong>mendorong pH naik melewati batas yang justru sudah pas</strong> — dan pH yang telanjur naik jauh lebih sulit diturunkan daripada dinaikkan.
+  </div>
+
+  <p>Tapi ada tarik-menarik yang jujur harus disebut: abu juga membawa <strong>kalium</strong>, dan kalium kebun ini memang <strong>rendah</strong> (16,4 mg/100g). Jadi satu bahan yang sama membawa satu hal yang kita butuhkan dan satu efek yang tidak kita inginkan.</p>
+
+  <blockquote>
+    <b>Putusannya: ambil kaliumnya lewat jalur lain, jangan lewat abu.</b><br>
+    Kalium sebaiknya datang dari <b>KCl</b> (sudah ada di SOP) dan <b>kompos kambing</b>. Keduanya memberi kalium tanpa mendorong pH naik.
+  </blockquote>
+
+  <table>
+    <tr><th style="width:34%">Aturan</th><th>Alasan</th></tr>
+    <tr><td><strong>Tujuan utama abu: alas area bakar dan jalan setapak kerja</strong> — bukan kebun</td><td>Di situ sifat basanya tidak merugikan siapa pun, dan volumenya terserap habis</td></tr>
+    <tr><td><strong>Kalau tetap masuk kebun: maksimal ± 0,25 kg per pohon per tahun</strong><br><span class="hand">± segenggam penuh, ditabur tipis</span></td><td>Seperempat dari anjuran umum untuk tanah masam, justru karena pH kita sudah pas. Angka ini <strong>sengaja konservatif</strong></td></tr>
+    <tr><td><strong>Lebih aman: campurkan ke tumpukan kompos, jangan tabur langsung</strong></td><td>Bahan organik meredam lonjakan pH, dan kaliumnya tetap terbawa masuk</td></tr>
+    <tr><td><strong>Uji pH ulang sebelum menambah tahun berikutnya</strong></td><td>Ini satu-satunya cara tahu apakah kita sudah kelewatan. Tanpa uji, jangan diulang</td></tr>
+    <tr><td><strong>Tabur di pita tepi tajuk, jangan di leher batang</strong></td><td>Abu bersifat kaustik saat basah; menempel di pangkal batang berisiko melukai kulit</td></tr>
+    <tr><td><strong>Jangan bersamaan dengan Urea atau ZA — beri jeda 2–4 minggu</strong></td><td>Abu bersifat basa; bertemu pupuk amonium, nitrogennya <strong>menguap jadi gas amonia</strong> dan hilang. Pupuk mahal terbuang percuma</td></tr>
+    <tr><td><strong>Sebarkan saat tidak berangin. Pakai masker</strong></td><td>Abu halus mudah tertiup dan mengiritasi mata serta saluran napas</td></tr>
+    <tr><td><strong>Abu dari bahan sakit tetap aman dipakai</strong></td><td>Api menghancurkan patogen. Yang berbahaya adalah kayunya, bukan abunya</td></tr>
+  </table>
+
+  <div class="card warn">
+    <strong>Jangan menabur tebal karena "sayang dibuang".</strong> Itu cara paling cepat merusak pH yang sekarang sudah benar. Kelebihan abu punya tempat yang jelas — alas area bakar dan jalan setapak — dan di sana ia justru berguna.
+  </div>
+
+  <h2><span class="n">10</span> Jalan naik ke biochar — tahap 2</h2>
+
+  <p>Perbedaan antara tong bakar dan drum biochar <strong>hanya pada pengaturan udara</strong>. Tong bakar membiarkan udara masuk bebas sehingga bahan terbakar habis menjadi abu. Drum biochar membatasi udara sehingga bahan hanya terurai oleh panas dan menyisakan arang.</p>
+
+  <table>
+    <tr><th style="width:22%"></th><th style="width:39%">Tong bakar <span class="pill p-amber">tahap 1</span></th><th>Drum biochar <span class="pill p-leaf">tahap 2</span></th></tr>
+    <tr><td><strong>Udara</strong></td><td>Bebas masuk</td><td>Dibatasi lubang tertentu saja</td></tr>
+    <tr><td><strong>Arah nyala</strong></td><td>Dari bawah ke atas</td><td>Dari atas ke bawah <em>(top-down)</em></td></tr>
+    <tr><td><strong>Tutup</strong></td><td>Terbuka + kawat kasa</td><td>Pelat seng menutup ± 80%</td></tr>
+    <tr><td><strong>Lama tunggu</strong></td><td>40–90 menit</td><td>2–4 jam + dingin tertutup 12–24 jam</td></tr>
+    <tr><td><strong>Hasil</strong></td><td>Abu, <strong>2–6%</strong> dari berat bahan</td><td>Arang, <strong>25–50%</strong> dari berat bahan</td></tr>
+    <tr><td><strong>Siap pakai?</strong></td><td>Langsung tabur tipis</td><td>Harus di-<em>charge</em> dulu, kalau tidak justru menyerap hara tanah</td></tr>
+  </table>
+
+  <div class="card good">
+    <strong>Tiga tambahan pada drum yang sama — tidak perlu beli baru:</strong>
+    <ol style="margin-top:10px">
+      <li><strong>Bor 8 lubang Ø 8 mm</strong> <span class="hand">(sebesar pensil)</span> melingkar, <strong>8 cm dari dasar</strong> <span class="hand">(empat jari)</span> — udara primer</li>
+      <li><strong>Bor 6 lubang Ø 5 mm</strong> <span class="hand">(sebesar tusuk sate)</span> melingkar, <strong>40 cm dari dasar</strong> <span class="hand">(dua jengkal)</span> — udara sekunder yang membakar asap</li>
+      <li><strong>Pasang tutup pelat seng ± 60 × 60 cm</strong> dengan <strong>4 lubang Ø 3 mm</strong> <span class="hand">(sebesar lidi)</span> dan satu pegangan</li>
+    </ol>
+    Ditambah satu perubahan cara: <strong>pintu bawah harus disumbat tanah liat saat mode biochar.</strong> Pintu yang bocor membuat udara masuk terus, dan arang yang sudah jadi akan habis terbakar menjadi abu.
+  </div>
+
+  <div class="card info">
+    📎 Spesifikasi lengkap tahap 2 — susunan bahan tiga lapis, suhu dan lama bakar, cara mendinginkan, cara <em>charging</em> tanpa akses air, hitungan biaya, serta apa yang harus dilakukan bila api mati di tengah jalan — ada di halaman tersendiri: <strong>Kajian &amp; Referensi → Biochar &amp; Drum Kiln</strong>.
+  </div>
+
+  <h2><span class="n">11</span> Kalau ranting sudah telanjur kering</h2>
+
+  <p><strong>Kekhawatiran itu benar sebagian.</strong> Ranting kering punya C:N tinggi dan berlignin, memang lambat terurai. Tapi kesimpulan "kalau begitu bakar saja semuanya" melewatkan dua hal:</p>
 
   <div class="flow">
     <div class="step">
       <div class="b">1</div>
-      <b>Bakar terbuka membuang N</b>
-      <span>Justru nitrogen inilah yang sedang kita butuhkan dan kita beli mahal. Hara menguap ke udara, yang tersisa hanya abu.</span>
+      <b>Bakar terbuka membuang nitrogen</b>
+      <span>Justru nitrogen inilah yang sedang kita butuhkan dan kita beli mahal. Hara menguap ke udara, yang tersisa hanya abu — 2–6% dari berat semula.</span>
     </div>
     <div class="step">
       <div class="b">2</div>
-      <b>Kering ≠ tidak berguna</b>
-      <span>Kering justru syarat ideal untuk pirolisis. Bahan basah butuh energi besar untuk menguapkan airnya lebih dulu.</span>
+      <b>Kering bukan berarti tidak berguna</b>
+      <span>Kering justru syarat ideal, baik untuk tong bakar maupun untuk biochar nanti. Bahan basah menghabiskan energi hanya untuk menguapkan airnya lebih dulu.</span>
     </div>
   </div>
 
-  <div class="card good">
-    <strong>Maka bahan kering bukan masalah — itu peluang.</strong> Di musim kemarau inilah biochar paling murah dan paling mudah dibuat.
-  </div>
+  <p>Untuk ranting kering yang tetap ingin dikompos: <strong>cacah dulu</strong> (memperluas permukaan), <strong>tambah sumber nitrogen</strong> (pupuk kandang atau urea tipis), dan <strong>jaga kelembapan</strong>. Tanpa ketiganya, ranting kering memang akan bertahan bertahun-tahun tanpa terurai.</p>
 
-  <p>Untuk yang tetap ingin dikompos: cacah dulu (perluas permukaan), tambah sumber N, jaga kelembapan. Tanpa ketiganya, ranting kering memang akan bertahan bertahun-tahun tanpa terurai.</p>
-
-  <h2><span class="n">7</span> Yang perlu dicatat ke dashboard</h2>
+  <h2><span class="n">12</span> Yang perlu dicatat ke dashboard</h2>
 
   <ul>
-    <li>Volume atau berat residu per aliran (1–5) setiap kegiatan pangkasan</li>
-    <li>Tanggal &amp; lokasi operasi kiln, plus <strong>berat bahan masuk vs biochar keluar</strong> — dari sini kita dapat angka rendemen kebun sendiri</li>
-    <li>Biochar masuk stok → tautkan ke rencana aplikasi ADR-027</li>
-    <li>Bahan aliran 5 (sakit): asal pohon/tunggak mana + tanggal pemusnahan → jejak audit sanitasi</li>
+    <li>Perkiraan volume residu per aliran (1–8) setiap kegiatan pangkasan — <strong>hitung dalam karung, bukan kilogram</strong></li>
+    <li>Tanggal, kebun, dan jumlah isi drum setiap operasi tong bakar</li>
+    <li><strong>Berat bahan masuk vs abu keluar</strong> — dari sini muncul angka rendemen kebun sendiri, yang kelak menggantikan angka 2–6% dari literatur</li>
+    <li>Bahan aliran 5 dan 6: asal pohon atau petak mana, plus tanggal pemusnahan → jejak audit sanitasi</li>
+    <li>Abu yang ditabur: tanggal, kebun, jumlah ember — supaya batas 1 kg/pohon/tahun bisa dijaga</li>
+    <li>Backfill catatan herbisida <strong>NOXONE</strong> (Mei 2026) ke Form Input, lengkap dengan nomor pendaftaran</li>
   </ul>
 
-  <h2><span class="n">8</span> Catatan pelaksana</h2>
+  <h2><span class="n">13</span> Catatan pelaksana</h2>
 
   <div class="card warn">
-    <strong>⚠️ Per 29 Juli 2026 kebun tidak punya pekerja lapangan tetap</strong> untuk pekerjaan atas maupun bawah pohon — Mas Kamto dan Pak Yasir sudah <em>retired</em>, dan keduanya tidak pernah benar-benar berjalan. Yang aktif hanya crew panen dan Wakif sendiri.
+    <strong>⚠️ Per 1 Agustus 2026 kebun tidak punya pekerja lapangan tetap</strong> untuk pekerjaan atas maupun bawah pohon — Mas Kamto dan Pak Yasir sudah <em>retired</em>, dan keduanya tidak pernah benar-benar berjalan. Yang mengerjakan kebun sekarang hanya <strong>Wakif dan Lek Nardi</strong>, ditambah crew panen pada musimnya.
     <br><br>
-    Semua pekerjaan dalam addendum ini <strong>belum ada eksekutornya</strong>. Saat menyusun jadwal, hitung ini sebagai kendala nyata — bukan detail administratif. Prioritaskan Tier 1 saja.
+    Seluruh pekerjaan dalam addendum ini harus dijadwalkan dengan kenyataan itu sebagai batas, bukan sebagai catatan kaki. <strong>Kerjakan Tier 1 lebih dulu:</strong> gulma aliran 6 (karena ia bertambah banyak setiap minggu ditunda) dan bahan sakit aliran 5 (karena ia menular).
   </div>
 
-  <h2><span class="n">9</span> Rujukan</h2>
+  <h2><span class="n">14</span> Rujukan</h2>
 
   <div class="card info">
     <strong>Tingkat keandalan</strong> — halaman ini rujukan kerja, bukan makalah. Tiap kelompok sumber diberi tanda asal-usulnya:
@@ -226,53 +558,64 @@
 
   <h3>A. Rujukan luar — sudah ditelusuri ✅</h3>
 
-  <h4 style="margin:15px 0 6px;color:var(--moss)">Mulsa pangkasan (aliran 1–2) — kenapa tidak semuanya dibakar</h4>
+  <h4>Mulsa pangkasan (aliran 1–2) — kenapa tidak semuanya dibakar</h4>
   <ol>
     <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S003807170900337X" target="_blank" rel="noopener">Youkhana &amp; Idol — Tree pruning mulch increases soil C and N in a shaded coffee agroecosystem in Hawaii</a> — <em>Applied Soil Ecology</em>, 2009. <span style="color:var(--mute)">Inilah rujukan yang dikutip berkas SOP kita. Mendukung: mulsa pangkasan <strong>menaikkan karbon dan nitrogen tanah</strong> pada kebun kopi bernaungan.</span></li>
     <li><a href="https://link.springer.com/article/10.1007/s10457-015-9857-z" target="_blank" rel="noopener">Leucaena-KX2 mulch additions increase growth, yield and soil C and N in a managed full-sun coffee system in Hawaii</a> — <em>Agroforestry Systems</em>, 2015. <span style="color:var(--mute)">Mulsa pangkasan pohon penaung berperan seperti <strong>pupuk lepas-lambat</strong>.</span></li>
     <li><a href="https://link.springer.com/chapter/10.1007/978-981-10-7650-3_22" target="_blank" rel="noopener">Cut-and-carry for Sustaining Productivity and Carbon Sequestration in Agroforestry Systems: Coffee-Leucaena Example</a> — Springer, 2018.</li>
-    <li><a href="https://revista.domhelder.edu.br/index.php/veredas/article/view/6921" target="_blank" rel="noopener">Pruning Paradox: why pruning coffee trees enriches soil nitrogen but depletes phosphorus and potassium</a> — <em>Veredas do Direito</em>. <span style="color:var(--mute)">⚠️ <strong>Catatan penting yang belum ada di addendum kita:</strong> mengembalikan pangkasan menaikkan N, <strong>tetapi P dan K justru terkuras</strong> karena ikut terangkut keluar bersama panen. Artinya mulsa <strong>bukan pengganti pemupukan P dan K</strong> — ia melengkapi, bukan menggantikan.</span></li>
+    <li><a href="https://revista.domhelder.edu.br/index.php/veredas/article/view/6921" target="_blank" rel="noopener">Pruning Paradox: why pruning coffee trees enriches soil nitrogen but depletes phosphorus and potassium</a> — <em>Veredas do Direito</em>. <span style="color:var(--mute)">Mendukung catatan di bagian 1: mulsa menaikkan N <strong>tetapi menguras P dan K</strong> — bukan pengganti pemupukan.</span></li>
   </ol>
 
-  <h4 style="margin:15px 0 6px;color:var(--moss)">Kiln vs bakar terbuka (aliran 3–5)</h4>
+  <h4>Gulma aliran 6 — kenapa dibakar, bukan dijadikan mulsa</h4>
   <ol start="5">
+    <li><a href="https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.34095" target="_blank" rel="noopener">CABI Compendium — <em>Mikania micrantha</em> (bitter vine)</a>. <span style="color:var(--mute)">Mendukung: perbanyakan vegetatif dari <strong>buku batang</strong> dan sifat alelopati.</span></li>
+    <li><a href="https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.38670" target="_blank" rel="noopener">CABI Compendium — <em>Panicum repens</em> (torpedo grass)</a>. <span style="color:var(--mute)">Mendukung: perbanyakan lewat <strong>rimpang</strong>, tumbuh kembali dari potongan buku tunggal.</span></li>
+    <li><a href="https://www.cabidigitallibrary.org/doi/10.1079/cabicompendium.17463" target="_blank" rel="noopener">CABI Compendium — <em>Cynodon dactylon</em> (bermuda grass / grinting)</a>. <span style="color:var(--mute)">Mendukung: geragih dan rimpang sekaligus.</span></li>
+    <li><a href="https://www.rainforest-alliance.org/business/wp-content/uploads/2020/09/2020-sustainable-agriculture-standard-farm-requirements.pdf" target="_blank" rel="noopener">Rainforest Alliance — Sustainable Agriculture Standard, Farm Requirements</a> (PDF), 2020. <span style="color:var(--mute)">Daftar bahan yang dilarang, termasuk <strong>parakuat</strong> — relevan untuk jalur pembeli spesialti.</span></li>
+  </ol>
+
+  <h4>Api, abu, dan kiln (aliran 3–5, 7)</h4>
+  <ol start="9">
+    <li><a href="https://extension.unh.edu/resource/guide-using-wood-ash-agricultural-soil-amendment" target="_blank" rel="noopener">Guide to Using Wood Ash as an Agricultural Soil Amendment</a> — UNH Extension. <span style="color:var(--mute)">Mendukung bagian 9: komposisi abu, efek menaikkan pH, anjuran dosis, dan <strong>peringatan jangan mencampur abu dengan pupuk amonium</strong> karena nitrogen menguap.</span></li>
+    <li><a href="https://cdn.forestresearch.gov.uk/2022/02/use_of_ash_in_forestry.pdf" target="_blank" rel="noopener">Wood Ash Use in Forestry — A Review of the Environmental Impacts</a> (PDF) — Forest Research, Inggris. <span style="color:var(--mute)">Pembedaan <strong>abu dasar</strong> (relatif aman) versus <strong>abu terbang</strong> (berisiko logam berat).</span></li>
     <li><a href="https://www.frontiersin.org/journals/soil-science/articles/10.3389/fsoil.2024.1376159/full" target="_blank" rel="noopener">Biochar – a sustainable soil conditioner for improving soil health, crop production and environment</a> — <em>Frontiers in Soil Science</em>, 2024.</li>
     <li><a href="https://link.springer.com/article/10.1007/s42773-025-00451-5" target="_blank" rel="noopener">The potential of biochar to mitigate soil acidification: a global meta-analysis</a> — <em>Biochar</em> (Springer), 2025. <span style="color:var(--mute)">Efek mengapur pada tanah masam seperti Andisol kebun kita.</span></li>
-    <li><a href="https://cdn.forestresearch.gov.uk/2022/02/use_of_ash_in_forestry.pdf" target="_blank" rel="noopener">Wood Ash Use in Forestry — A Review of the Environmental Impacts</a> (PDF) — Forest Research, Inggris. <span style="color:var(--mute)">Pembedaan <strong>abu dasar</strong> (relatif aman) versus <strong>abu terbang</strong> (berisiko logam berat).</span></li>
-    <li><a href="https://extension.unh.edu/resource/guide-using-wood-ash-agricultural-soil-amendment" target="_blank" rel="noopener">Guide to Using Wood Ash as an Agricultural Soil Amendment</a> — UNH Extension. <span style="color:var(--mute)">Komposisi abu dan anjuran dosis untuk tanah masam.</span></li>
   </ol>
-
-  <div class="card info" style="margin-top:14px">
-    📎 Pembahasan penuh soal kiln, spesifikasi drum, dan dampak abu ke tanah ada di halaman kajian tersendiri: <strong>Kajian &amp; Referensi → Biochar &amp; Drum Kiln</strong>.
-  </div>
 
   <h3>B. Disebut di berkas kita, BELUM bisa ditelusuri ⚠️</h3>
   <div class="card warn">
     <strong>Diakui terbuka.</strong> Boleh dipakai bekerja — <strong>jangan dikutip keluar sebagai temuan ilmiah</strong> sebelum sumbernya dilengkapi.
     <table style="margin-top:9px">
-      <tr><th style="width:38%">Yang dikutip</th><th>Kenapa belum tertelusur</th></tr>
+      <tr><th style="width:40%">Yang dikutip</th><th>Kenapa belum tertelusur</th></tr>
       <tr><td>Tawfeeq 2025, <em>Applied and Environmental Soil Science</em> (dampak pembakaran residu)</td><td>Tanpa judul artikel maupun DOI.</td></tr>
       <tr><td><em>Scientific Reports</em> 2024 (alternatif pembakaran terbuka)</td><td>Hanya nama jurnal dan tahun.</td></tr>
       <tr><td>UC IPM Sanitation (tumpukan ranting sebagai sarang hama)</td><td>Tanpa halaman atau nomor terbitan spesifik. Klaimnya sendiri lazim di pedoman PHT, tapi belum ditautkan.</td></tr>
       <tr><td>Literatur <em>single drum kiln</em> (pengabdian masyarakat, Indonesia)</td><td>Tanpa judul maupun penulis.</td></tr>
-      <tr><td><strong>UU 32/2009 Pasal 69</strong> (larangan pembakaran lahan)</td><td>Ini <strong>peraturan yang sah dan bisa dikutip dengan nomornya</strong>; hanya saja belum ada tautan resmi yang diverifikasi di sini. Bunyi pasalnya perlu dikutip persis sebelum dipakai di dokumen publik.</td></tr>
-      <tr><td>Batas ukuran aliran residu (&lt; 2 cm · 2–5 cm · &gt; 5 cm) dan rendemen biochar 25–35%</td><td>Angka kerja internal — masuk akal dan lazim, tapi tidak bersumber literatur yang tercatat.</td></tr>
+      <tr><td><strong>UU 32/2009 Pasal 69</strong> (pembakaran lahan)</td><td>Ini <strong>peraturan sah yang bisa dikutip dengan nomornya</strong>; hanya saja belum ada tautan resmi yang diverifikasi di sini. Bunyi pasal beserta pengecualiannya perlu dikutip persis sebelum dipakai di dokumen publik.</td></tr>
+      <tr><td><strong>Seluruh spesifikasi tong bakar</strong> — ukuran pintu 30 × 25 cm, tinggi ambang 8 cm, tiga batu bata, kasa 60 × 60 cm, isi maksimal ¾ drum</td><td><strong>Spesifikasi kerja internal</strong>, disusun dari desain yang diusulkan Wakif ditambah praktik umum <em>burn barrel</em>. Bukan angka dari literatur.</td></tr>
+      <tr><td>Batas ukuran aliran residu (&lt; 2 cm · 2–5 cm · &gt; 5 cm)</td><td>Angka kerja internal — masuk akal dan lazim, tapi tidak bersumber literatur yang tercatat.</td></tr>
+      <tr><td>Rendemen abu 2–6% dan biochar 25–50%</td><td>Kisaran umum yang lazim disebut; belum ditautkan ke sumber spesifik, dan akan diganti hasil timbangan kebun sendiri.</td></tr>
+      <tr><td>Lama bakar 40–90 menit per isi drum</td><td>Perkiraan, belum pernah diukur di kebun ini.</td></tr>
+      <tr><td>Batas abu <strong>0,25 kg/pohon/tahun</strong></td><td><strong>Angka konservatif buatan sendiri</strong>, bukan dari literatur. Anjuran umum abu kayu (0,5–1 kg) ditujukan untuk <strong>tanah masam</strong>; karena pH kebun kita sudah 6,2 dan ideal, angka itu dipotong seperempatnya sebagai pengaman. Harus dikoreksi begitu ada uji pH pasca-aplikasi.</td></tr>
     </table>
   </div>
 
   <h3>C. Menunggu data kebun sendiri 🔬</h3>
   <ul>
-    <li><strong>Berat residu per aliran (1–5)</strong> tiap pangkasan — akan memberi angka ton per tahun yang sebenarnya</li>
-    <li><strong>Rendemen kiln</strong> — berat bahan masuk vs arang keluar, menggantikan angka 25–35% dari literatur</li>
-    <li><strong>Kapasitas chopper</strong> — sampai diameter berapa ia benar-benar sanggup, yang menentukan batas aliran 2 dan 3</li>
+    <li><strong>Volume residu per aliran (1–8)</strong> tiap pangkasan — akan memberi angka karung per tahun yang sebenarnya</li>
+    <li><strong>Rendemen tong bakar</strong> — berat bahan masuk vs abu keluar, menggantikan angka 2–6%</li>
+    <li><strong>Lama bakar sebenarnya</strong> per isi drum, untuk merencanakan hari kerja</li>
+    <li><strong>Kapasitas chopper</strong> — sampai diameter berapa ia benar-benar sanggup; inilah yang menentukan batas nyata antara aliran 2 dan 3</li>
+    <li><strong>pH tanah sesudah aplikasi abu</strong> — untuk mengunci dosis yang aman</li>
   </ul>
 
   <h3>D. Rujukan internal</h3>
   <ul>
     <li><code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code> bagian B1–B7</li>
+    <li><code>SOP/DRAFT_Revisi_Manajemen_Residu_dan_Tong_Bakar_31Jul2026.md</code></li>
     <li><code>project_opt_k3p01_busuk_akar_tunggak_6Jun2026.md</code> · Asesmen Fokus K3 6 Jun 2026</li>
-    <li>Kajian <strong>Sanitasi Tunggak &amp; KNO₃</strong> 29 Jul 2026 · Kajian <strong>Biochar &amp; Drum Kiln</strong> 31 Jul 2026</li>
-    <li><strong>ADR-027</strong> (soil amendment) · <strong>Inj-1</strong> (biochar, LANJUT) · <strong>Q8</strong> (rorak Bidang 3) · CLAUDE.md Pattern #22</li>
+    <li>Kajian <strong>Sanitasi Tunggak</strong> · Kajian <strong>Biochar &amp; Drum Kiln</strong> · Kajian <strong>Soil Amendment</strong></li>
+    <li><strong>ADR-027</strong> (soil amendment) · <strong>Inj-1</strong> (biochar, LANJUT) · <strong>Q8</strong> (rorak) · CLAUDE.md bagian <strong>Bentuk Lahan Kebun</strong> (locked 31 Jul 2026) dan Pattern #22</li>
   </ul>
 
   <div class="card bad">
@@ -280,7 +623,7 @@
   </div>
 
   <div class="foot">
-    Disusun <strong>29 Juli 2026</strong>, bagian Rujukan dilengkapi <strong>31 Juli 2026</strong> · Wakaf Produktif Kebun Kopi Ngantang.
+    Disusun <strong>29 Juli 2026</strong> · Rujukan dilengkapi <strong>31 Juli 2026</strong> · <strong>Revisi menyeluruh 1 Agustus 2026</strong> — koreksi bentuk lahan, penambahan aliran gulma dan pisang, desain tong bakar, area bakar tetap, aturan abu, dan padanan ukuran tubuh · Wakaf Produktif Kebun Kopi Ngantang.
     <br><br>
     <strong>Status:</strong> addendum ini <strong>belum</strong> di-encode ke SOP Master DOCX — masuk daftar <em>Pending SOP Updates</em>.
   </div>
