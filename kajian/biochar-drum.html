@@ -60,6 +60,10 @@
   .stat{border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--cream);text-align:center}
 
   ul{margin:9px 0 9px 24px;padding:0} li{margin-bottom:8px}
+  ol{margin:9px 0 9px 26px;padding:0}
+  a{color:var(--cyan);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-weight:600}
+  a:hover{color:var(--earth);border-bottom-color:var(--earth)}
+  @media print{ a{color:var(--ink);border-bottom:none} a::after{content:' [' attr(href) ']';font-size:10px;color:#6b7280;word-break:break-all} }
   .foot{margin-top:38px;padding-top:20px;border-top:3px solid var(--line);font-size:13.5px;color:var(--mute);line-height:1.7}
   .tag{display:inline-block;background:var(--char);color:#fff;font-size:13px;padding:5px 14px;border-radius:6px;letter-spacing:.9px;margin-bottom:14px;font-weight:600}
   .hi{background:#fff9c4;padding:1px 5px;border-radius:3px;font-weight:600}
@@ -1397,12 +1401,81 @@
   </div>
 
   <!-- ============================================ -->
+  <h2><span class="n">12</span> Rujukan</h2>
+
+  <div class="card info">
+    <strong>Tingkat keandalan — dibaca dulu sebelum memakai angka mana pun di halaman ini.</strong> Halaman ini adalah rujukan kerja, bukan makalah. Supaya bisa dipertanggungjawabkan, tiap kelompok angka diberi tanda asal-usulnya:
+    <table>
+      <tr><th style="width:12%">Tanda</th><th style="width:34%">Artinya</th><th>Boleh dipakai untuk apa</th></tr>
+      <tr class="yes"><td><strong>✅ Tertelusur</strong></td><td>Ada sumber luar yang bisa dibuka dan diperiksa sendiri</td><td>Boleh dikutip keluar, termasuk ke BRIN dan mitra</td></tr>
+      <tr><td><strong>⚠️ Internal</strong></td><td>Berasal dari berkas SOP kita sendiri, <strong>sumber aslinya tidak pernah dicatat</strong></td><td>Boleh dipakai bekerja, <strong>jangan dikutip sebagai temuan ilmiah</strong></td></tr>
+      <tr><td><strong>🔬 Menunggu data kebun</strong></td><td>Angka sementara yang akan digantikan hasil pengukuran sendiri</td><td>Perencanaan kasar saja</td></tr>
+    </table>
+  </div>
+
+  <h3>A. Rujukan luar — sudah ditelusuri, tautannya bisa dibuka <span class="pill p-grn">✅ tertelusur</span></h3>
+
+  <h4 style="margin:16px 0 6px;color:var(--moss);font-size:16px">Biochar pada tanah masam — mendukung angka pH, retensi air, hara, dan mikrobiom</h4>
+  <ol style="font-size:15.5px">
+    <li><a href="https://www.frontiersin.org/journals/soil-science/articles/10.3389/fsoil.2024.1376159/full" target="_blank" rel="noopener">Biochar – a sustainable soil conditioner for improving soil health, crop production and environment under changing climate: a review</a> — <em>Frontiers in Soil Science</em>, 2024.<br><span style="color:var(--mute);font-size:14.5px">📌 Berkas SOP kita menyebut <em>"Frontiers Soil Science 2024"</em> <strong>tanpa judul maupun DOI</strong>. Inilah artikel yang paling mungkin dimaksud — tapi <strong>belum bisa dipastikan</strong> bahwa ini rujukan yang sama.</span></li>
+    <li><a href="https://link.springer.com/article/10.1007/s42773-025-00451-5" target="_blank" rel="noopener">The potential of biochar to mitigate soil acidification: a global meta-analysis</a> — <em>Biochar</em> (Springer), 2025. <span style="color:var(--mute);font-size:14.5px">Meta-analisis global efek mengapur biochar pada tanah masam.</span></li>
+    <li><a href="https://www.frontiersin.org/journals/plant-science/articles/10.3389/fpls.2023.1206820/full" target="_blank" rel="noopener">Soil acidification and salinity: the importance of biochar application to agricultural soils</a> — <em>Frontiers in Plant Science</em>, 2023.</li>
+    <li><a href="https://www.frontiersin.org/journals/environmental-science/articles/10.3389/fenvs.2023.1324533/full" target="_blank" rel="noopener">Biochar as a tool for the improvement of soil and environment</a> — <em>Frontiers in Environmental Science</em>, 2023. <span style="color:var(--mute);font-size:14.5px">Retensi air dan hara.</span></li>
+    <li><a href="https://www.frontiersin.org/journals/environmental-science/articles/10.3389/fenvs.2023.1114752/full" target="_blank" rel="noopener">Advances and prospects of biochar in improving soil fertility, biochemical quality, and environmental applications</a> — <em>Frontiers in Environmental Science</em>, 2023.</li>
+    <li><a href="https://www.mdpi.com/2076-3298/12/11/425" target="_blank" rel="noopener">Biochar Amendments for Soil Restoration: Impacts on Nutrient Dynamics and Microbial Activity</a> — <em>Environments</em> (MDPI), 2025. <span style="color:var(--mute);font-size:14.5px">Dasar klaim mikrobiom.</span></li>
+  </ol>
+
+  <h4 style="margin:16px 0 6px;color:var(--moss);font-size:16px">Abu kayu di tanah — mendukung bagian "abu tercampur arang"</h4>
+  <ol start="7" style="font-size:15.5px">
+    <li><a href="https://extension.unh.edu/resource/guide-using-wood-ash-agricultural-soil-amendment" target="_blank" rel="noopener">Guide to Using Wood Ash as an Agricultural Soil Amendment</a> — University of New Hampshire Extension. <span style="color:var(--mute);font-size:14.5px">Sumber komposisi (Ca ± 25%, K ± 5%, P ± 2%, Mg ± 1%) dan anjuran dosis untuk tanah masam.</span></li>
+    <li><a href="https://www.aces.edu/blog/topics/lawn-garden/wood-ashes-for-lime-and-potash/" target="_blank" rel="noopener">Wood Ashes For Lime And Potash</a> — Alabama Cooperative Extension System. <span style="color:var(--mute);font-size:14.5px">Nilai setara kapur 26–59% dan sifat abu yang lebih cepat bereaksi daripada kapur pertanian.</span></li>
+    <li><a href="https://www.sciencedirect.com/science/article/abs/pii/S0045653524007586" target="_blank" rel="noopener">Wood ash application for crop production, amelioration of soil acidity and contaminated environments</a> — <em>Chemosphere</em> / ScienceDirect, 2024.</li>
+    <li><a href="https://cdn.forestresearch.gov.uk/2022/02/use_of_ash_in_forestry.pdf" target="_blank" rel="noopener">Wood Ash Use in Forestry — A Review of the Environmental Impacts</a> (PDF) — Forest Research, Inggris. <span style="color:var(--mute);font-size:14.5px">Dasar pembedaan <strong>abu dasar</strong> (aman) versus <strong>abu terbang</strong> (berisiko logam berat).</span></li>
+    <li><a href="https://www.canr.msu.edu/news/wood_ash_in_the_garden" target="_blank" rel="noopener">Wood ash in the garden</a> — Michigan State University Extension. <span style="color:var(--mute);font-size:14.5px">Peringatan pH kebablasan bila diulang tanpa uji tanah.</span></li>
+  </ol>
+
+  <h3>B. Disebut di berkas kita, tetapi BELUM bisa ditelusuri <span class="pill p-amb">⚠️ internal</span></h3>
+
+  <div class="card warn">
+    <strong>Ini pengakuan yang perlu ada di halaman rujukan.</strong> Empat hal berikut dikutip di berkas SOP kita tanpa keterangan yang cukup untuk ditelusuri kembali. Boleh dipakai bekerja — <strong>jangan dikutip keluar sebagai temuan ilmiah</strong> sampai sumbernya dilengkapi.
+    <table>
+      <tr><th style="width:34%">Yang dikutip</th><th>Kenapa belum tertelusur</th></tr>
+      <tr><td><strong>Seluruh spesifikasi drum</strong> — diameter, tinggi, tebal dinding, pola lubang 8/5/3 mm, suhu 300–500°C, durasi 2–4 jam</td><td>🚩 <strong>Ini yang paling penting diakui,</strong> karena justru angka-angka inilah yang dipakai bekerja. Berkas asal (slide 9 Mei 2026) <strong>tidak mencantumkan sumber sama sekali</strong>. Angkanya masuk akal dan sejalan dengan praktik umum <em>drum kiln</em>, tapi statusnya adalah <strong>spesifikasi kerja internal</strong> — bukan angka yang bersumber literatur.</td></tr>
+      <tr><td><strong>"ICCRI Jember — praktik terbaik"</strong></td><td>Hanya nama lembaga, tanpa judul dokumen, tahun, atau penulis.</td></tr>
+      <tr><td><strong>"Kasus Tanzania: kenaikan hasil 200–300%"</strong></td><td>Muncul di analisis biaya-manfaat 8 Mei 2026 tanpa rujukan apa pun. <strong>Jangan dipakai di dokumen publik</strong> sebelum sumbernya ditemukan.</td></tr>
+      <tr><td><strong>Literatur <em>single drum kiln</em> (pengabdian masyarakat, Indonesia)</strong></td><td>Disebut di SOP Addendum 29 Jul 2026 tanpa judul maupun penulis.</td></tr>
+    </table>
+  </div>
+
+  <h3>C. Angka yang menunggu data kebun sendiri <span class="pill p-cyn">🔬 sementara</span></h3>
+  <ul style="font-size:15.5px">
+    <li><strong>Rendemen kiln 25–50%</strong> — akan digantikan hasil timbang bahan masuk vs arang keluar batch pertama</li>
+    <li><strong>Kandungan abu 10–20%</strong> — dipakai untuk menghitung keamanan dosis; belum pernah diukur untuk bahan kebun ini</li>
+    <li><strong>Kenaikan hasil panen 15–30%</strong> — asumsi konservatif dalam analisis biaya-manfaat, belum diuji di kebun ini</li>
+    <li><strong>Biaya setup Rp 300–550 ribu</strong> — dari daftar belanja 2026, harga pasar perlu dicek ulang</li>
+    <li><strong>Kulit kopi ± 114 kg/tahun</strong> — hitungan dari rendemen kebun sendiri, <strong>bukan penimbangan langsung</strong></li>
+  </ul>
+
+  <h3>D. Rujukan internal</h3>
+  <ul style="font-size:15.5px">
+    <li><code>SOP/03_INFOGRAFIS_POSTER/Biochar_Pyrolysis_Slides.html</code> — spesifikasi drum lengkap, 9 Mei 2026</li>
+    <li><code>SOP/03_INFOGRAFIS_POSTER/Biochar_Pyrolysis_Infografis_A4.pdf</code> — panduan 6 langkah, 9 Mei 2026</li>
+    <li><code>SOP/03_INFOGRAFIS_POSTER/Penjelasan_Biochar_CoverCrops_A4.pdf</code> — analogi &amp; analisis biaya-manfaat 5 tahun, 8 Mei 2026</li>
+    <li><code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code> — bagian B2–B7 (tangga residu, aturan api, pencatatan)</li>
+    <li><strong>Inj-1</strong> — Phase 2 SOP Inject, status LANJUT · <strong>ADR-027</strong> — strategi soil amendment · <strong>Aturan Basis Pohon</strong> 9 Juli 2026 (census aktual, lewati Merah, pisahkan K4)</li>
+    <li>Data panen &amp; rendemen 2026 dari dashboard <code>monitor-v2.html</code> (audit 28 Juli 2026)</li>
+  </ul>
+
+  <div class="card bad">
+    <strong>⚠️ Anti-klaim berlebihan — wajib dipatuhi di semua dokumen publik.</strong> <strong>BRIN Purwodadi</strong> disebut di berkas SOP sebagai sumber masukan pada pertemuan 5 Mei 2026. Status hubungan itu adalah <strong>pertemuan awal dan penjajakan — BELUM ADA MoU maupun PKS.</strong> Halaman ini, dan dokumen mana pun yang mengutipnya, <strong>tidak boleh</strong> menyebut BRIN sebagai mitra, penjamin, atau pihak yang menyetujui isi kajian ini.
+  </div>
+
   <div class="foot">
-    <strong>Sumber internal:</strong> <code>SOP/03_INFOGRAFIS_POSTER/Biochar_Pyrolysis_Slides.html</code> (spek drum, 9 Mei 2026) · <code>Biochar_Pyrolysis_Infografis_A4.pdf</code> (9 Mei 2026) · <code>Penjelasan_Biochar_CoverCrops_A4.pdf</code> (analogi &amp; <em>cost-benefit</em> 5 tahun, 8 Mei 2026) · <code>SOP/00_FINAL/SOP_Addendum_Sanitasi_Tunggak_dan_Manajemen_Residu_29Jul2026.md</code> bagian B2–B7 · Inj-1 (Phase 2 SOP Inject, status LANJUT) · ADR-027 (soil amendment) · Aturan Basis Pohon 9 Juli 2026.
+    Dirangkum <strong>31 Juli 2026</strong> · Wakaf Produktif Kebun Kopi Ngantang.
     <br><br>
-    <strong>Sumber eksternal:</strong> <em>Frontiers in Soil Science</em> 2024 · ICCRI Jember (praktik terbaik) · BRIN Purwodadi (pertemuan awal 5 Mei 2026 — <strong>status penjajakan, belum ada MoU</strong>) · literatur <em>single drum kiln</em> biochar (pengabdian masyarakat, Indonesia).
+    Halaman ini menyatukan tiga berkas SOP yang sebelumnya terpisah (8–9 Mei 2026) dengan SOP Addendum Manajemen Residu (29 Juli 2026), lalu diperluas oleh serangkaian pertanyaan lapangan dari Wakif pada 31 Juli 2026 — cara mengeluarkan arang, usulan pintu bawah, penumpukan abu, api yang mati di tengah jalan, keterbatasan air, ketersediaan bahan sepanjang tahun, dan dampak abu ke tanah.
     <br><br>
-    Dirangkum 31 Juli 2026 · Kebun Kopi Wakaf Ngantang · halaman ini menyatukan tiga berkas SOP yang sebelumnya terpisah, dan menandai secara jujur bagian mana yang sudah dikunci dan bagian mana yang masih menunggu keputusan Wakif.
+    <strong>Jejak penalaran dan koreksi sengaja ditinggalkan di dalam halaman</strong> — termasuk dua kesalahan yang sempat saya buat dan diperbaiki (letak pintu yang mustahil, dan anggapan bahwa spesifikasi drum belum pernah diputuskan). Bagian itulah yang paling berguna bagi orang lain yang kelak menempuh jalan yang sama.
   </div>
 
 </div>
