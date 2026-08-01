@@ -296,86 +296,191 @@
   <p>Alat tahap pertama sengaja dibuat sesederhana mungkin: <strong>satu drum bekas 200 liter, tutup atas dibuka penuh, satu pintu di bawah.</strong> Bahan dimasukkan dari atas dan dinyalakan dari bawah lewat pintu. Pintu yang sama dipakai untuk mengeluarkan abu.</p>
 
   <figure>
-    <svg viewBox="0 0 940 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="tb-t tb-d">
-      <title id="tb-t">Desain tong bakar dari drum bekas 200 liter</title>
-      <desc id="tb-d">Potongan drum 200 liter tanpa tutup atas, dengan pintu di bagian bawah, berdiri di atas tiga batu bata, dan ditutup kawat kasa penahan percikan api di mulut drum.</desc>
+    <svg viewBox="0 0 980 672" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="d-t d-d">
+      <title id="d-t">Tong bakar dari drum bekas 200 liter</title>
+      <desc id="d-d">Ilustrasi drum baja 200 liter berdiri di atas tiga batu bata, tutup atas dibuka penuh dan ditutup kawat kasa penahan percikan yang ditindih dua batu, dengan pintu berengsel di bagian bawah yang terbuka memperlihatkan bara. Di sebelah kanan siluet orang dewasa sebagai pembanding tinggi: mulut drum kira-kira setinggi pinggang.</desc>
 
-      <style>
-        .tl{font:700 13px system-ui,sans-serif;fill:#1F5F47}
-        .tt{font:500 12.5px system-ui,sans-serif;fill:#6b7280}
-        .tb{font:700 12px system-ui,sans-serif;fill:#8c2519}
-        .tg{font:700 12px system-ui,sans-serif;fill:#15803d}
-      </style>
       <defs>
-        <marker id="mk" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#6b7280"/></marker>
+        <linearGradient id="steel" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#4a5158"/><stop offset="9%" stop-color="#79828b"/>
+          <stop offset="26%" stop-color="#b9c0c7"/><stop offset="42%" stop-color="#d9dee3"/>
+          <stop offset="58%" stop-color="#c2c9d0"/><stop offset="76%" stop-color="#8c949c"/>
+          <stop offset="90%" stop-color="#626a72"/><stop offset="100%" stop-color="#414850"/>
+        </linearGradient>
+        <linearGradient id="rim" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#6b737b"/><stop offset="40%" stop-color="#e6eaee"/>
+          <stop offset="70%" stop-color="#aab2ba"/><stop offset="100%" stop-color="#565d65"/>
+        </linearGradient>
+        <radialGradient id="glow" cx="50%" cy="60%" r="60%">
+          <stop offset="0%" stop-color="#fff3b0"/><stop offset="35%" stop-color="#fbbf24"/>
+          <stop offset="70%" stop-color="#ea580c"/><stop offset="100%" stop-color="#7c2d12"/>
+        </radialGradient>
+        <linearGradient id="soil" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#8d7a63"/><stop offset="100%" stop-color="#6a5a48"/>
+        </linearGradient>
+        <linearGradient id="brick" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#b4593c"/><stop offset="100%" stop-color="#8a4029"/>
+        </linearGradient>
+        <clipPath id="meshclip"><ellipse cx="250" cy="238" rx="112" ry="30"/></clipPath>
+        <clipPath id="bodyclip"><path d="M151,250 L151,547 Q250,599 349,547 L349,250 Z"/></clipPath>
+        <style>
+          .cl{font:700 13.5px system-ui,sans-serif;fill:#1F5F47}
+          .cs{font:500 12.5px system-ui,sans-serif;fill:#4b5563}
+          .cw{font:700 12.5px system-ui,sans-serif;fill:#8c2519}
+          .cv{font:700 12.5px system-ui,sans-serif;fill:#5b21b6}
+          .dim{font:700 13px system-ui,sans-serif;fill:#374151}
+        </style>
+        <marker id="ar" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#6b7280"/></marker>
       </defs>
 
       <!-- ground -->
-      <rect x="40" y="404" width="480" height="10" fill="#8a6449"/>
-      <rect x="40" y="414" width="480" height="26" fill="#a58a6f"/>
+      <rect x="0" y="580" width="980" height="92" fill="url(#soil)"/>
+      <g stroke="#5c8a3c" stroke-width="2.4" stroke-linecap="round" opacity="0.75">
+        <path d="M40,580 l-5,-16 M52,580 l3,-14 M64,580 l-4,-18"/>
+        <path d="M560,580 l-5,-15 M572,580 l3,-13 M584,580 l-4,-17"/>
+        <path d="M700,580 l-5,-14 M712,580 l3,-12"/>
+        <path d="M960,580 l-5,-16 M948,580 l4,-13"/>
+      </g>
+      <ellipse cx="250" cy="581" rx="132" ry="15" fill="#3f3529" opacity="0.35"/>
 
       <!-- bricks -->
-      <rect x="150" y="376" width="46" height="28" rx="2" fill="#9a4b32"/>
-      <rect x="256" y="376" width="46" height="28" rx="2" fill="#9a4b32"/>
-      <rect x="362" y="376" width="46" height="28" rx="2" fill="#9a4b32"/>
+      <g>
+        <path d="M156,547 h44 v33 h-44 z" fill="url(#brick)" stroke="#6d321f" stroke-width="1.4"/>
+        <path d="M228,552 h44 v33 h-44 z" fill="url(#brick)" stroke="#6d321f" stroke-width="1.4"/>
+        <path d="M300,547 h44 v33 h-44 z" fill="url(#brick)" stroke="#6d321f" stroke-width="1.4"/>
+        <path d="M156,547 h44 M228,552 h44 M300,547 h44" stroke="#d08b6f" stroke-width="1.6" opacity="0.7"/>
+      </g>
 
       <!-- drum body -->
-      <path d="M150,110 L150,376 L408,376 L408,110 Z" fill="#c8ccd2" stroke="#6b7280" stroke-width="2.5"/>
-      <ellipse cx="279" cy="110" rx="129" ry="22" fill="#e3e6ea" stroke="#6b7280" stroke-width="2.5"/>
-      <!-- ribs -->
-      <path d="M150,190 L408,190 M150,272 L408,272" stroke="#9aa1a9" stroke-width="4"/>
+      <path d="M151,250 L151,547 Q250,599 349,547 L349,250 Z" fill="url(#steel)"/>
 
-      <!-- contents -->
-      <path d="M158,300 L400,300 L400,368 L158,368 Z" fill="#8a6449" opacity="0.55"/>
-      <g stroke="#5b4130" stroke-width="3" stroke-linecap="round" opacity="0.8">
-        <path d="M168,318 L214,310"/><path d="M228,322 L282,314"/><path d="M296,310 L350,318"/><path d="M360,322 L394,314"/>
-        <path d="M172,344 L226,338"/><path d="M244,346 L300,340"/><path d="M316,338 L380,346"/>
+      <g clip-path="url(#bodyclip)">
+        <!-- rust patches -->
+        <g opacity="0.5">
+          <path d="M158,300 q16,-16 34,-4 q12,20 -6,32 q-24,6 -28,-28z" fill="#8a4b28"/>
+          <path d="M300,420 q22,-10 34,8 q4,22 -18,26 q-24,-2 -16,-34z" fill="#7d4522"/>
+          <path d="M200,500 q20,-8 28,6 q2,16 -14,18 q-18,0 -14,-24z" fill="#8a4b28"/>
+          <path d="M330,290 q14,-6 18,10 q0,14 -12,14 q-12,-2 -6,-24z" fill="#6f3d1e"/>
+        </g>
+        <g opacity="0.32">
+          <circle cx="176" cy="360" r="3.5" fill="#5c3418"/><circle cx="188" cy="380" r="2.5" fill="#5c3418"/>
+          <circle cx="284" cy="330" r="3" fill="#5c3418"/><circle cx="318" cy="500" r="3.2" fill="#5c3418"/>
+          <circle cx="240" cy="290" r="2.6" fill="#5c3418"/>
+        </g>
+        <!-- weld seam -->
+        <path d="M296,250 L296,570" stroke="#8d959d" stroke-width="3" opacity="0.55"/>
+        <path d="M296,250 L296,570" stroke="#e8edf1" stroke-width="1" opacity="0.5"/>
+        <!-- specular highlight -->
+        <path d="M214,250 L214,570" stroke="#ffffff" stroke-width="16" opacity="0.20"/>
+        <path d="M208,250 L208,570" stroke="#ffffff" stroke-width="5" opacity="0.30"/>
       </g>
-      <!-- flame -->
-      <path d="M240,300 q14,-40 30,-58 q6,26 20,10 q10,30 -4,48 z" fill="#f59e0b" opacity="0.9"/>
-      <path d="M252,300 q8,-24 18,-34 q4,16 12,6 q6,18 -2,28 z" fill="#fde047" opacity="0.95"/>
 
-      <!-- door -->
-      <rect x="176" y="320" width="66" height="52" rx="3" fill="#8b9199" stroke="#374151" stroke-width="2.5"/>
-      <circle cx="234" cy="346" r="5" fill="#374151"/>
-      <path d="M176,320 L176,372" stroke="#374151" stroke-width="5"/>
-
-      <!-- spark screen -->
-      <ellipse cx="279" cy="96" rx="140" ry="24" fill="none" stroke="#374151" stroke-width="2.5"/>
-      <g stroke="#374151" stroke-width="1.1" opacity="0.85">
-        <path d="M148,92 L410,92 M152,100 L406,100 M160,84 L398,84 M158,108 L400,108"/>
-        <path d="M180,74 L180,118 M220,73 L220,119 M260,72 L260,120 M300,72 L300,120 M340,73 L340,119 M380,75 L380,117"/>
+      <!-- rolling ribs -->
+      <g fill="none">
+        <path d="M151,340 Q250,392 349,340" stroke="#3f464d" stroke-width="8" opacity="0.55"/>
+        <path d="M151,336 Q250,388 349,336" stroke="#e2e7eb" stroke-width="3" opacity="0.7"/>
+        <path d="M151,444 Q250,496 349,444" stroke="#3f464d" stroke-width="8" opacity="0.55"/>
+        <path d="M151,440 Q250,492 349,440" stroke="#e2e7eb" stroke-width="3" opacity="0.7"/>
       </g>
-      <ellipse cx="200" cy="86" rx="16" ry="7" fill="#6b7280"/>
-      <ellipse cx="360" cy="86" rx="16" ry="7" fill="#6b7280"/>
+      <path d="M151,547 Q250,599 349,547" fill="none" stroke="#3a4148" stroke-width="4"/>
 
-      <!-- labels left -->
-      <path d="M430,96 L470,80" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
-      <text x="476" y="72" class="tl">Kawat kasa penahan percik</text>
-      <text x="476" y="90" class="tt">± 60 × 60 cm, ditindih dua batu.</text>
-      <text x="476" y="107" class="tb">WAJIB selama musim kemarau.</text>
+      <!-- ===== DOOR (open) ===== -->
+      <rect x="195" y="439" width="99" height="82" rx="3" fill="#2a1a10"/>
+      <rect x="199" y="443" width="91" height="74" rx="3" fill="url(#glow)" opacity="0.92"/>
+      <g opacity="0.9">
+        <path d="M212,505 q10,-26 20,-38 q4,17 12,6 q7,20 -3,32 z" fill="#fde047"/>
+        <path d="M248,507 q8,-20 16,-30 q3,13 9,5 q6,16 -2,25 z" fill="#fef3c7" opacity="0.9"/>
+      </g>
+      <!-- door leaf swung open -->
+      <path d="M195,439 L134,424 L134,514 L195,521 Z" fill="url(#rim)" stroke="#3a4148" stroke-width="2"/>
+      <path d="M141,431 L141,507" stroke="#8b939b" stroke-width="1.5" opacity="0.8"/>
+      <circle cx="150" cy="452" r="4" fill="#2f3338"/><circle cx="150" cy="486" r="4" fill="#2f3338"/>
+      <!-- hinges -->
+      <rect x="190" y="448" width="12" height="14" rx="2" fill="#31363b"/>
+      <rect x="190" y="498" width="12" height="14" rx="2" fill="#31363b"/>
+      <!-- latch -->
+      <path d="M294,470 q22,4 22,16 q0,10 -14,10" fill="none" stroke="#3a4148" stroke-width="3.4" stroke-linecap="round"/>
 
-      <path d="M430,140 L470,140" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
-      <text x="476" y="136" class="tl">Tutup atas dibuka penuh</text>
-      <text x="476" y="154" class="tt">Bahan dimasukkan dari sini. Isi maksimal <strong>tiga perempat</strong>.</text>
+      <!-- ===== TOP OPENING ===== -->
+      <ellipse cx="250" cy="250" rx="99" ry="26" fill="#241a12"/>
+      <ellipse cx="250" cy="252" rx="86" ry="20" fill="url(#glow)" opacity="0.55"/>
+      <g opacity="0.85">
+        <path d="M226,254 q10,-30 20,-42 q5,19 13,7 q8,22 -3,35 z" fill="#f59e0b"/>
+        <path d="M266,256 q8,-22 16,-32 q4,15 10,5 q6,18 -3,27 z" fill="#fbbf24"/>
+      </g>
+      <path d="M151,250 a99,26 0 0 1 198,0" fill="none" stroke="url(#rim)" stroke-width="9"/>
+      <path d="M151,250 a99,26 0 0 0 198,0" fill="none" stroke="#5a626a" stroke-width="7"/>
+      <path d="M151,250 a99,26 0 0 1 198,0" fill="none" stroke="#f2f5f7" stroke-width="2.4" opacity="0.85"/>
 
-      <path d="M430,232 L470,220" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
-      <text x="476" y="212" class="tl">Drum bekas 200 liter</text>
-      <text x="476" y="230" class="tt">Ø 57–60 cm <tspan font-weight="700" fill="#5b21b6">(tiga jengkal)</tspan> · tinggi 88–90 cm</text>
-      <text x="476" y="247" class="tt"><tspan font-weight="700" fill="#5b21b6">(setinggi pinggang)</tspan> · dinding min. 1,2 mm</text>
+      <!-- ===== SPARK SCREEN ===== -->
+      <g clip-path="url(#meshclip)" opacity="0.92">
+        <g stroke="#3f464d" stroke-width="1.3">
+          <path d="M138,214 L362,214 M138,224 L362,224 M138,234 L362,234 M138,244 L362,244 M138,254 L362,254 M138,264 L362,264"/>
+          <path d="M150,206 L150,272 M170,204 L170,274 M190,203 L190,275 M210,202 L210,276 M230,201 L230,277 M250,201 L250,277 M270,201 L270,277 M290,202 L290,276 M310,203 L310,275 M330,204 L330,274 M350,206 L350,272"/>
+        </g>
+      </g>
+      <ellipse cx="250" cy="238" rx="112" ry="30" fill="none" stroke="#2f353b" stroke-width="3.4"/>
+      <ellipse cx="176" cy="228" rx="21" ry="10" fill="#8d949b" stroke="#5a6169" stroke-width="1.6"/>
+      <ellipse cx="176" cy="225" rx="17" ry="7" fill="#aab1b8"/>
+      <ellipse cx="326" cy="234" rx="19" ry="9" fill="#8d949b" stroke="#5a6169" stroke-width="1.6"/>
+      <ellipse cx="326" cy="231" rx="15" ry="6" fill="#aab1b8"/>
 
-      <path d="M170,392 L470,330" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
-      <text x="476" y="322" class="tl">Pintu bawah — 30 × 25 cm</text>
-      <text x="476" y="340" class="tt">Jarak <strong>8 cm</strong> <tspan font-weight="700" fill="#5b21b6">(empat jari)</tspan> dari dasar.</text>
-      <text x="476" y="357" class="tt">Dua fungsi: menyalakan api, dan mengeluarkan abu.</text>
-      <text x="476" y="374" class="tg">Bor 2–3 lubang Ø 8 mm pada daun pintunya.</text>
+      <!-- smoke -->
+      <g fill="none" stroke="#9ca3af" stroke-linecap="round" opacity="0.42">
+        <path d="M232,196 q-16,-30 6,-52 q22,-22 4,-50" stroke-width="12"/>
+        <path d="M272,198 q14,-26 -4,-48 q-18,-22 2,-44" stroke-width="9"/>
+        <path d="M250,190 q6,-34 -8,-56" stroke-width="7"/>
+      </g>
 
-      <path d="M300,414 L470,398" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mk)"/>
-      <text x="476" y="404" class="tl">Tiga batu bata — drum terangkat 10 cm</text>
-      <text x="476" y="422" class="tt">Udara masuk dari bawah, tanah tidak ikut terpanggang,</text>
-      <text x="476" y="439" class="tt">dan drum tidak cepat berkarat kena tanah lembap.</text>
+      <!-- ===== PERSON (scale) ===== -->
+      <g fill="#94a3b8" opacity="0.85">
+        <circle cx="890" cy="60" r="22"/>
+        <rect x="864" y="86" width="52" height="152" rx="19"/>
+        <rect x="840" y="92" width="17" height="132" rx="8.5"/>
+        <rect x="923" y="92" width="17" height="132" rx="8.5"/>
+        <rect x="868" y="232" width="19" height="348" rx="9.5"/>
+        <rect x="893" y="232" width="19" height="348" rx="9.5"/>
+      </g>
+      <text x="852" y="606" class="cs">orang dewasa ± 165 cm</text>
+
+      <!-- dimension: drum height -->
+      <g stroke="#374151" stroke-width="1.6">
+        <path d="M804,250 L804,580"/>
+        <path d="M796,250 L812,250 M796,580 L812,580"/>
+      </g>
+      <rect x="748" y="396" width="112" height="42" rx="7" fill="#fff" stroke="#374151" stroke-width="1.4"/>
+      <text x="760" y="414" class="dim">90 cm</text>
+      <text x="760" y="431" class="cv">setinggi pinggang</text>
+      <path d="M812,250 L862,250" stroke="#374151" stroke-width="1.2" stroke-dasharray="5 4"/>
+
+      <!-- ===== CALLOUTS ===== -->
+      <path d="M340,222 L404,142" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="412" y="130" class="cl">Kawat kasa penahan percik</text>
+      <text x="412" y="148" class="cs">± 60 × 60 cm, ditindih dua batu.</text>
+      <text x="412" y="166" class="cw">WAJIB selama musim kemarau.</text>
+
+      <path d="M348,262 L404,222" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="412" y="214" class="cl">Tutup atas dipotong habis</text>
+      <text x="412" y="232" class="cs">Bahan dimasukkan dari sini — isi <tspan font-weight="700">maksimal ¾</tspan>.</text>
+      <text x="412" y="250" class="cs">Tutup aslinya <tspan font-weight="700">jangan dibuang</tspan>: dipakai lagi di tahap 2.</text>
+
+      <path d="M350,380 L404,338" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="412" y="330" class="cl">Drum bekas 200 liter, baja</text>
+      <text x="412" y="348" class="cs">Ø 57–60 cm <tspan class="cv">(tiga jengkal)</tspan> · tinggi 88–90 cm</text>
+      <text x="412" y="366" class="cs">Tebal dinding min. 1,2 mm · umur 5–10 kali bakar</text>
+
+      <path d="M300,478 L404,452" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="412" y="444" class="cl">Pintu bawah — 30 × 25 cm</text>
+      <text x="412" y="462" class="cs">Ambang bawah <tspan font-weight="700">8 cm</tspan> <tspan class="cv">(empat jari)</tspan> dari dasar.</text>
+      <text x="412" y="480" class="cs">Dua fungsi: menyalakan api, dan mengeluarkan abu.</text>
+      <text x="412" y="498" class="cs">Bor 2–3 lubang Ø 8 mm <tspan class="cv">(sebesar pensil)</tspan> di daun pintunya.</text>
+
+      <path d="M320,566 L404,544" stroke="#6b7280" stroke-width="1.5" marker-end="url(#ar)"/>
+      <text x="412" y="536" class="cl">Tiga batu bata — drum terangkat 10 cm</text>
+      <text x="412" y="554" class="cs">Udara masuk dari bawah · tanah tidak terpanggang ·</text>
+      <text x="412" y="572" class="cs">drum tidak cepat berkarat kena tanah lembap.</text>
     </svg>
-    <figcaption>Tong bakar tahap 1. Semua ukuran sengaja disamakan dengan drum biochar tahap 2 — supaya drum yang sama bisa dinaikkan kelasnya nanti tanpa beli baru.</figcaption>
+    <figcaption>Tong bakar tahap 1. Ukurannya sengaja disamakan dengan drum biochar tahap 2 — supaya drum yang sama tinggal ditambah lubang dan tutup, tanpa beli baru.</figcaption>
   </figure>
 
   <h3>Spesifikasi</h3>

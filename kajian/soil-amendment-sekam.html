@@ -12,13 +12,13 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1080px;margin:0 auto;padding:0 18px 70px}
+  .wrap{max-width:1360px;margin:0 auto;padding:0 52px 70px}
   h1,h2,h3{font-family:Georgia,"Times New Roman",serif;color:var(--euc900);line-height:1.2;margin:0}
   header.hero{background:linear-gradient(135deg,var(--euc900),var(--euc700));color:#fff;padding:34px 0 30px;border-bottom:5px solid var(--gold)}
   header.hero .wrap{padding-bottom:0}
   header.hero h1{color:#fff;font-size:1.85rem;margin-bottom:8px}
   .kick{display:inline-block;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.32);padding:4px 12px;border-radius:999px;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
-  header.hero p{color:#DDE9E0;margin:8px 0 0;font-size:.95rem;max-width:760px}
+  header.hero p{color:#DDE9E0;margin:8px 0 0;font-size:.95rem;max-width:900px}
   .meta{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px}
   .meta span{background:rgba(0,0,0,.18);padding:4px 11px;border-radius:6px;font-size:.78rem;color:#EAF2ED}
   section{margin-top:34px}
@@ -85,6 +85,10 @@
   .refs li{margin-bottom:7px;font-size:.82rem}
   .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:.78rem;color:var(--muted)}
   @media(max-width:640px){.opt-body{grid-template-columns:1fr}header.hero h1{font-size:1.4rem}}
+  figure{margin:16px 0}
+  figure svg{max-width:100%;height:auto;display:block;margin:0 auto}
+  figcaption{font-size:.84rem;color:var(--muted);margin-top:7px;text-align:center}
+  @media print{figure{break-inside:avoid}}
   a{color:#0e7490;text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-weight:600}
   a:hover{color:var(--euc700);border-bottom-color:var(--euc700)}
   @media print{ a{color:#1E2A24;border-bottom:none} a::after{content:' [' attr(href) ']';font-size:10px;color:#5C6B62;word-break:break-all} }
@@ -173,6 +177,65 @@
 
     <h3 style="margin:26px 0 4px;font-family:Georgia,serif;color:var(--euc900);font-size:1.06rem">Bentuk permukaan tanah yang benar — dan yang salah</h3>
 
+    <figure>
+    <svg viewBox="0 0 980 372" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="p-t p-d">
+      <title id="p-t">Piringan cekung versus punggung kura-kura</title>
+      <desc id="p-d">Dua potongan melintang. Kiri: piringan cekung dengan gundukan tepi membuat air hujan terperangkap mengelilingi batang. Kanan: permukaan tertinggi di batang dan turun terus ke luar sehingga air selalu pergi, lalu ditelan rorak yang menembus kerak abu.</desc>
+      <style>
+        .ph{font:700 13.5px system-ui,sans-serif}
+        .pl{font:600 12px system-ui,sans-serif;fill:#1f2937}
+        .ps{font:500 11.5px system-ui,sans-serif;fill:#6b7280}
+        .pb{font:700 12px system-ui,sans-serif}
+      </style>
+      <defs>
+        <marker id="rd" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#dc2626"/></marker>
+        <marker id="bl" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#0284c7"/></marker>
+        <marker id="lb" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#7dd3fc"/></marker>
+      </defs>
+
+      <!-- PANEL A -->
+      <rect x="6" y="6" width="474" height="358" rx="10" fill="#fffaf9" stroke="#fca5a5" stroke-width="2"/>
+      <text x="24" y="32" class="ph" fill="#b91c1c">✕ SALAH — piringan cekung menampung air</text>
+      <path d="M32,262 L100,262 L128,240 L164,286 L226,290 L240,304 L262,304 L276,290 L338,286 L370,240 L400,262 L462,262 L462,330 L32,330 Z" fill="#8a6449"/>
+      <path d="M32,262 L100,262 L128,240 L164,286 L226,290 L240,304 L262,304 L276,290 L338,286 L370,240 L400,262 L462,262 L462,276 L400,276 L370,254 L338,300 L276,304 L262,318 L240,318 L226,304 L164,300 L128,254 L100,276 L32,276 Z" fill="#b9bfc8" opacity="0.85"/>
+      <path d="M32,262 L100,262 L128,240 L164,286 L226,290 L240,304 L262,304 L276,290 L338,286 L370,240 L400,262 L462,262" fill="none" stroke="#5b4130" stroke-width="2.4"/>
+      <path d="M142,264 L164,286 L226,290 L240,304 L262,304 L276,290 L338,286 L358,264 Z" fill="#3b82f6" opacity="0.55"/>
+      <path d="M142,264 L358,264" stroke="#1d4ed8" stroke-width="2"/>
+      <rect x="243" y="150" width="16" height="156" rx="3" fill="#5b4130"/>
+      <ellipse cx="251" cy="146" rx="54" ry="17" fill="#16a34a" opacity="0.28"/>
+      <path d="M78,220 L118,246" stroke="#dc2626" stroke-width="3" marker-end="url(#rd)"/>
+      <path d="M424,220 L382,246" stroke="#dc2626" stroke-width="3" marker-end="url(#rd)"/>
+      <text x="44" y="214" class="pb" fill="#b91c1c">air masuk</text>
+      <text x="382" y="214" class="pb" fill="#b91c1c">air masuk</text>
+      <text x="168" y="326" class="pb" fill="#1d4ed8">air tinggal mengurung batang</text>
+      <text x="372" y="236" class="ps">gundukan = bendungan</text>
+
+      <!-- PANEL B -->
+      <rect x="500" y="6" width="474" height="358" rx="10" fill="#fafffb" stroke="#86efac" stroke-width="2"/>
+      <text x="518" y="32" class="ph" fill="#15803d">✓ BENAR — punggung kura-kura, air selalu pergi</text>
+      <path d="M522,274 L588,274 L624,266 L684,252 L722,242 L740,241 L760,243 L798,253 L858,266 L894,274 L956,274 L956,330 L522,330 Z" fill="#8a6449"/>
+      <path d="M522,274 L588,274 L624,266 L684,252 L722,242 L740,241 L760,243 L798,253 L858,266 L894,274 L956,274 L956,284 L894,284 L858,276 L798,263 L760,253 L740,251 L722,252 L684,262 L624,276 L588,284 L522,284 Z" fill="#b9bfc8" opacity="0.7"/>
+      <path d="M522,274 L588,274 L624,266 L684,252 L722,242 L740,241 L760,243 L798,253 L858,266 L894,274 L956,274" fill="none" stroke="#5b4130" stroke-width="2.4"/>
+      <g stroke="#a16207" stroke-width="3" stroke-linecap="round">
+        <path d="M628,263 L644,261"/><path d="M652,259 L668,257"/><path d="M676,255 L690,253"/>
+        <path d="M792,254 L806,256"/><path d="M814,258 L830,260"/><path d="M838,262 L854,264"/>
+      </g>
+      <path d="M704,248 L772,248" stroke="#f59e0b" stroke-width="3"/>
+      <text x="676" y="238" class="pb" fill="#b45309">leher batang terbuka</text>
+      <rect x="734" y="150" width="16" height="94" rx="3" fill="#5b4130"/>
+      <ellipse cx="742" cy="146" rx="54" ry="17" fill="#16a34a" opacity="0.28"/>
+      <path d="M692,286 L636,300" stroke="#0284c7" stroke-width="3" marker-end="url(#bl)"/>
+      <path d="M792,286 L850,300" stroke="#0284c7" stroke-width="3" marker-end="url(#bl)"/>
+      <text x="560" y="312" class="pb" fill="#0369a1">air pergi</text>
+      <text x="856" y="312" class="pb" fill="#0369a1">air pergi</text>
+      <rect x="586" y="284" width="26" height="42" rx="3" fill="#0c4a6e" opacity="0.8"/>
+      <path d="M599,302 L599,320" stroke="#7dd3fc" stroke-width="3" marker-end="url(#lb)"/>
+      <text x="522" y="352" class="ps">rorak — pintu air menembus kerak abu</text>
+      <text x="700" y="352" class="ps">mulsa berhenti <tspan font-weight="700" fill="#5b21b6">satu jengkal</tspan> dari batang</text>
+    </svg>
+    <figcaption>Piringan cekung adalah desain <strong>panen air</strong> untuk lahan kering atau miring. Di lahan datar yang berhujan tinggi dan berkerak menolak air, ia membuat kolam di sekeliling pohon.</figcaption>
+  </figure>
+
     <div class="stop">
       <b>⛔ Piringan cekung DIBATALKAN untuk kebun ini.</b> Gambar piringan berbentuk cekungan dengan gundukan di tepinya adalah desain <b>panen air</b>, dibuat untuk lahan kering atau miring supaya air tertahan. Di kebun yang datar, berhujan tinggi, berkerak menolak air, dan sudah diduga bermasalah genangan, desain itu <b>membuat kolam di sekeliling pohon</b>.
       <br><br>
@@ -187,6 +250,77 @@
 
     <h3 style="margin:26px 0 4px;font-family:Georgia,serif;color:var(--euc900);font-size:1.06rem">Berapa tebal boleh menutup akar — angka yang mengikat</h3>
     <p style="font-size:.92rem"><b>Diukur dari permukaan akar yang tampak</b>, bukan dari permukaan abu. Ini yang menentukan bagaimana kompos kambing dan sekam bakar di bagian 7 benar-benar ditaruh di lapangan.</p>
+
+    <figure>
+    <svg viewBox="0 0 980 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="l-t l-d">
+      <title id="l-t">Tebal lapisan di atas permukaan akar</title>
+      <desc id="l-d">Potongan dengan penggaris: nol sentimeter di leher batang, tanah penutup dua sampai tiga sentimeter, kompos satu sentimeter sebagai pita di tepi tajuk, mulsa lima sampai sepuluh sentimeter yang berhenti dua puluh sentimeter dari batang.</desc>
+      <style>
+        .ll{font:700 13px system-ui,sans-serif}
+        .lt{font:500 11.5px system-ui,sans-serif;fill:#6b7280}
+        .lk{font:700 12.5px system-ui,sans-serif;fill:#fff}
+      </style>
+      <defs>
+        <pattern id="cmp2" width="6" height="6" patternUnits="userSpaceOnUse">
+          <rect width="6" height="6" fill="#6b4423"/><circle cx="1.5" cy="1.5" r="1" fill="#4a2f18"/><circle cx="4.5" cy="4.5" r="1" fill="#8a5a30"/>
+        </pattern>
+        <marker id="dn2" markerWidth="8" markerHeight="8" refX="4" refY="7" orient="auto"><path d="M0,0 L8,0 L4,8 Z" fill="#dc2626"/></marker>
+      </defs>
+
+      <rect x="60" y="212" width="700" height="72" fill="#8a6449"/>
+      <text x="74" y="256" class="lt" fill="#f5f0e8">tanah asli — akar serabut ada di 10–30 cm teratas</text>
+      <path d="M60,212 L760,212" stroke="#3f2d20" stroke-width="3"/>
+      <text x="60" y="206" class="ll" fill="#3f2d20">← permukaan akar = titik nol</text>
+      <g stroke="#c9a227" stroke-width="4" fill="none" stroke-linecap="round">
+        <path d="M368,212 Q320,204 266,212"/><path d="M416,212 Q470,204 522,212"/>
+        <path d="M380,212 Q346,222 306,228"/><path d="M404,212 Q448,222 494,228"/>
+      </g>
+      <path d="M120,212 h520 v-12 h-520 z" fill="#9c7b5e"/>
+      <rect x="120" y="192" width="76" height="8" fill="url(#cmp2)"/>
+      <rect x="564" y="192" width="76" height="8" fill="url(#cmp2)"/>
+      <rect x="120" y="160" width="180" height="32" fill="#c9a227" opacity="0.28"/>
+      <rect x="460" y="160" width="180" height="32" fill="#c9a227" opacity="0.28"/>
+      <g stroke="#a16207" stroke-width="2.6" stroke-linecap="round">
+        <path d="M128,168 L160,172"/><path d="M168,178 L202,174"/><path d="M210,166 L242,170"/><path d="M250,180 L286,176"/>
+        <path d="M134,186 L172,182"/><path d="M224,186 L262,184"/>
+        <path d="M468,172 L500,168"/><path d="M508,174 L542,178"/><path d="M550,170 L582,166"/><path d="M590,176 L626,180"/>
+        <path d="M478,182 L516,186"/><path d="M562,184 L600,186"/>
+      </g>
+      <rect x="342" y="196" width="96" height="16" fill="#e8dcc8" opacity="0.55"/>
+      <path d="M342,196 L342,212 M438,196 L438,212" stroke="#b45309" stroke-width="2" stroke-dasharray="3 3"/>
+      <path d="M372,212 L408,212 L404,60 L376,60 Z" fill="#5b4130"/>
+      <path d="M354,212 L426,212 L414,186 L366,186 Z" fill="#6b4f3a"/>
+      <ellipse cx="390" cy="52" rx="70" ry="18" fill="#16a34a" opacity="0.25"/>
+
+      <!-- ruler -->
+      <rect x="714" y="146" width="46" height="66" fill="#fff" stroke="#71717a"/>
+      <g stroke="#71717a" stroke-width="1">
+        <path d="M714,212 L760,212"/><path d="M714,201 L740,201"/><path d="M714,190 L760,190"/>
+        <path d="M714,179 L740,179"/><path d="M714,168 L760,168"/><path d="M714,157 L740,157"/><path d="M714,146 L760,146"/>
+      </g>
+      <text x="764" y="216" class="lt">0</text><text x="764" y="194" class="lt">4</text>
+      <text x="764" y="172" class="lt">8</text><text x="764" y="150" class="lt">12 cm</text>
+
+      <!-- labels -->
+      <rect x="806" y="52" width="166" height="40" rx="6" fill="#9c7b5e"/>
+      <text x="816" y="70" class="lk">TANAH 2–3 cm</text>
+      <text x="816" y="86" class="lt" fill="#f0e6dc">satu ruas jari telunjuk</text>
+      <rect x="806" y="100" width="166" height="40" rx="6" fill="#6b4423"/>
+      <text x="816" y="118" class="lk">KOMPOS ± 1 cm</text>
+      <text x="816" y="134" class="lt" fill="#e8d9c8">pita 20 cm di tepi tajuk</text>
+      <rect x="806" y="148" width="166" height="40" rx="6" fill="#c9a227"/>
+      <text x="816" y="166" class="lk" fill="#3f2d20">MULSA 5–10 cm</text>
+      <text x="816" y="182" class="lt" fill="#5b4130">dua sampai empat ruas jari</text>
+      <rect x="806" y="196" width="166" height="40" rx="6" fill="#fee2e2" stroke="#dc2626"/>
+      <text x="816" y="214" class="ll" fill="#b91c1c">DI LEHER: 0 cm</text>
+      <text x="816" y="230" class="lt" fill="#b91c1c">Ø 40 cm = dua jengkal, bersih</text>
+      <path d="M390,240 L390,218" stroke="#dc2626" stroke-width="2" marker-end="url(#dn2)"/>
+      <rect x="806" y="244" width="166" height="40" rx="6" fill="#1F5F47"/>
+      <text x="816" y="262" class="lk">BATAS KERAS</text>
+      <text x="816" y="278" class="lt" fill="#cfe6db">tanah + kompos ≤ 5 cm sekali kerja</text>
+    </svg>
+    <figcaption>Diukur dari <strong>permukaan akar yang tampak</strong> — bukan dari permukaan abu.</figcaption>
+  </figure>
 
     <table>
       <thead><tr><th style="width:22%">Lapisan</th><th style="width:20%">Tebal</th><th style="width:24%">Patokan tanpa meteran</th><th>Catatan</th></tr></thead>
@@ -223,6 +357,71 @@
 
     <h3 style="margin:26px 0 4px;font-family:Georgia,serif;color:var(--euc900);font-size:1.06rem">Skenario terburuk — kalau abunya ternyata 20 cm merata</h3>
     <p style="font-size:.92rem">Pada ketebalan ini persoalannya berpindah: bukan lagi menata piringan per pohon, melainkan <b>menata jalan air satu petak</b>. Angka di bawah untuk satu petak 20 pohon (4 baris × 5 pohon, 12 × 12,5 m).</p>
+
+    <figure>
+    <svg viewBox="0 0 980 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="k-t k-d">
+      <title id="k-t">Petak 20 pohon: guludan, alur, dan rorak</title>
+      <desc id="k-d">Tampak atas satu petak empat baris kali lima pohon. Baris pohon berdiri di atas guludan; di antara baris ada alur dangkal; dari tiap leher pohon ada talang kecil menuju alur; tiga rorak tersebar di sepanjang alur.</desc>
+      <style>
+        .kl{font:700 12.5px system-ui,sans-serif;fill:#1F5F47}
+        .kt{font:500 11.5px system-ui,sans-serif;fill:#6b7280}
+        .kv{font:700 11.5px system-ui,sans-serif;fill:#5b21b6}
+      </style>
+      <defs>
+        <pattern id="sp2" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+          <rect width="7" height="7" fill="#c8a98d"/><line x1="0" y1="0" x2="0" y2="7" stroke="#a5876b" stroke-width="2"/>
+        </pattern>
+        <marker id="aw2" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#0284c7"/></marker>
+      </defs>
+
+      <rect x="126" y="44" width="264" height="275" fill="#d4d8dd"/>
+      <rect x="126" y="44" width="264" height="275" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-dasharray="5 4"/>
+      <g fill="url(#sp2)"><rect x="139" y="44" width="40" height="275"/><rect x="205" y="44" width="40" height="275"/><rect x="271" y="44" width="40" height="275"/><rect x="337" y="44" width="40" height="275"/></g>
+      <g><rect x="187" y="44" width="10" height="275" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.2"/><rect x="253" y="44" width="10" height="275" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.2"/><rect x="319" y="44" width="10" height="275" fill="#7dd3fc" stroke="#0284c7" stroke-width="1.2"/></g>
+      <g stroke="#0284c7" stroke-width="2" marker-end="url(#aw2)">
+        <path d="M168,72 L185,72"/><path d="M168,127 L185,127"/><path d="M168,182 L185,182"/><path d="M168,237 L185,237"/><path d="M168,292 L185,292"/>
+        <path d="M234,72 L251,72"/><path d="M234,127 L251,127"/><path d="M234,182 L251,182"/><path d="M234,237 L251,237"/><path d="M234,292 L251,292"/>
+        <path d="M300,72 L317,72"/><path d="M300,127 L317,127"/><path d="M300,182 L317,182"/><path d="M300,237 L317,237"/><path d="M300,292 L317,292"/>
+        <path d="M348,72 L331,72"/><path d="M348,127 L331,127"/><path d="M348,182 L331,182"/><path d="M348,237 L331,237"/><path d="M348,292 L331,292"/>
+      </g>
+      <g fill="#0c4a6e"><rect x="185" y="146" width="14" height="32" rx="2"/><rect x="251" y="208" width="14" height="32" rx="2"/><rect x="317" y="84" width="14" height="32" rx="2"/></g>
+      <g fill="#e8dcc8" stroke="#a16207" stroke-width="2" stroke-dasharray="3 3">
+        <circle cx="159" cy="72" r="9"/><circle cx="159" cy="127" r="9"/><circle cx="159" cy="182" r="9"/><circle cx="159" cy="237" r="9"/><circle cx="159" cy="292" r="9"/>
+        <circle cx="225" cy="72" r="9"/><circle cx="225" cy="127" r="9"/><circle cx="225" cy="182" r="9"/><circle cx="225" cy="237" r="9"/><circle cx="225" cy="292" r="9"/>
+        <circle cx="291" cy="72" r="9"/><circle cx="291" cy="127" r="9"/><circle cx="291" cy="182" r="9"/><circle cx="291" cy="237" r="9"/><circle cx="291" cy="292" r="9"/>
+        <circle cx="357" cy="72" r="9"/><circle cx="357" cy="127" r="9"/><circle cx="357" cy="182" r="9"/><circle cx="357" cy="237" r="9"/><circle cx="357" cy="292" r="9"/>
+      </g>
+      <g fill="#5b4130">
+        <circle cx="159" cy="72" r="4"/><circle cx="159" cy="127" r="4"/><circle cx="159" cy="182" r="4"/><circle cx="159" cy="237" r="4"/><circle cx="159" cy="292" r="4"/>
+        <circle cx="225" cy="72" r="4"/><circle cx="225" cy="127" r="4"/><circle cx="225" cy="182" r="4"/><circle cx="225" cy="237" r="4"/><circle cx="225" cy="292" r="4"/>
+        <circle cx="291" cy="72" r="4"/><circle cx="291" cy="127" r="4"/><circle cx="291" cy="182" r="4"/><circle cx="291" cy="237" r="4"/><circle cx="291" cy="292" r="4"/>
+        <circle cx="357" cy="72" r="4"/><circle cx="357" cy="127" r="4"/><circle cx="357" cy="182" r="4"/><circle cx="357" cy="237" r="4"/><circle cx="357" cy="292" r="4"/>
+      </g>
+      <path d="M159,36 L225,36" stroke="#71717a" stroke-width="1"/><path d="M159,32 L159,40 M225,32 L225,40" stroke="#71717a" stroke-width="1"/>
+      <text x="178" y="28" class="kt">3 m</text>
+      <path d="M118,72 L118,127" stroke="#71717a" stroke-width="1"/><path d="M114,72 L122,72 M114,127 L122,127" stroke="#71717a" stroke-width="1"/>
+      <text x="76" y="104" class="kt">2,5 m</text>
+      <text x="126" y="340" class="kl">4 baris × 5 pohon · 12 × 12,5 m</text>
+
+      <!-- legend + numbers -->
+      <g>
+        <rect x="424" y="44" width="18" height="18" fill="url(#sp2)"/><text x="450" y="58" class="kl">Guludan</text><text x="450" y="74" class="kt">gundukan memanjang, naik 5 cm — dari tanah kerukan</text>
+        <rect x="424" y="92" width="18" height="18" fill="#7dd3fc" stroke="#0284c7"/><text x="450" y="106" class="kl">Alur</text><text x="450" y="122" class="kt">35 × 20 cm <tspan class="kv">(satu jengkal dalam)</tspan> · wajib tembus tanah asli</text>
+        <rect x="424" y="140" width="18" height="18" fill="#0c4a6e"/><text x="450" y="154" class="kl">Rorak — 3 titik</text><text x="450" y="170" class="kt">80 × 40 × 40 cm <tspan class="kv">(dua jengkal)</tspan> · penelan air, diisi residu</text>
+        <circle cx="433" cy="197" r="9" fill="#e8dcc8" stroke="#a16207" stroke-width="2" stroke-dasharray="3 3"/><text x="450" y="202" class="kl">Leher dibuka Ø 80 cm</text><text x="450" y="218" class="kt">± 50 L/pohon, melandai — <tspan font-weight="700">jangan jadi sumur</tspan></text>
+      </g>
+
+      <rect x="424" y="240" width="540" height="70" rx="9" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="440" y="264" class="kl" fill="#15803d">Total dipindah: 4 m³ per petak = 200 L per pohon = hanya 13% abu di petak itu</text>
+      <text x="440" y="284" class="kt">4 m³ ÷ 80 m² pita guludan = naik <tspan font-weight="700">5 cm</tspan>. Pas — nol tanah keluar dari petak.</text>
+      <text x="440" y="302" class="kt">Yang TIDAK dilakukan: mengeruk seluruh abu = 30 m³/petak = ± 1.000 m³ sekebun. Abu tidak dibuang — dilewati.</text>
+
+      <rect x="424" y="320" width="540" height="66" rx="9" fill="#eff6ff" stroke="#93c5fd" stroke-width="2"/>
+      <text x="440" y="344" class="kl" fill="#1d4ed8">🔑 Di lahan datar, alur TIDAK memindahkan air — alur MENELAN air</text>
+      <text x="440" y="364" class="kt">Tidak ada tempat lebih rendah untuk dituju. <tspan font-weight="700">Alur = rorak memanjang.</tspan></text>
+      <text x="440" y="380" class="kt">Akibatnya: <tspan font-weight="700">tidak perlu mengatur kemiringan</tspan> — tak butuh waterpass. Syaratnya cuma tembus kerak abu.</text>
+    </svg>
+  </figure>
 
     <table>
       <thead><tr><th style="width:22%">Pekerjaan</th><th style="width:26%">Ukuran</th><th style="width:16%">Volume</th><th>Catatan</th></tr></thead>
