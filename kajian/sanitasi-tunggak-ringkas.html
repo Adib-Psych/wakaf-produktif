@@ -50,7 +50,19 @@
         .bl{font:700 13px system-ui,sans-serif;fill:#1F5F47}
         .bt{font:500 11.5px system-ui,sans-serif;fill:#6b7280}
         .bv{font:700 12px system-ui,sans-serif;fill:#5b21b6}
-      </style>
+        .photo{margin:16px 0}
+  .ph-wrap{position:relative;display:block;line-height:0;border-radius:11px;overflow:hidden;border:1px solid var(--line,#e5e7eb)}
+  .ph-wrap img{width:100%;height:auto;display:block}
+  .mk{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:#8c2519;color:#fff;font:700 14px/1 system-ui,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .mk.g{background:#15803d} .mk.b{background:#0e7490}
+  .ph-fix{position:absolute;transform:translate(-50%,-50%);background:#8c2519;color:#fff;font:700 12px/1.25 system-ui,sans-serif;padding:5px 9px;border-radius:7px;white-space:nowrap;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .ph-leg{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));counter-reset:mk}
+  .ph-leg li{counter-increment:mk;position:relative;padding-left:33px;font-size:14px;line-height:1.5;margin:0}
+  .ph-leg li::before{content:counter(mk);position:absolute;left:0;top:1px;width:23px;height:23px;border-radius:50%;background:#8c2519;color:#fff;font:700 12.5px/23px system-ui,sans-serif;text-align:center}
+  .ai-note{background:#f5f3ff;border-left:6px solid #5b21b6;border-radius:9px;padding:10px 14px;font-size:13px;color:#4c1d95;margin-top:10px;line-height:1.55}
+  .hand{color:#5b21b6;font-weight:700;white-space:nowrap}
+  @media print{.photo,.ph-wrap{break-inside:avoid}}
+</style>
       <defs>
         <marker id="bm" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#6b7280"/></marker>
       </defs>
@@ -104,6 +116,26 @@
       <rect x="560" y="300" width="300" height="0" fill="none"/>
       <text x="560" y="336" class="bt">Mata bor <tspan font-weight="700">Ø 12–20 mm</tspan> <tspan class="bv">(sebesar jari kelingking s/d telunjuk)</tspan> — anjuran 16 mm</text>
     </svg>
+  </figure>
+
+  <figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/bor-tunggak.jpg" alt="Tunggak kayu keras dengan lubang bor berpola sarang lebah di permukaan atas, sebagian berisi butiran putih, dengan bor dan wadah butiran di sampingnya">
+      <span class="mk" style="left:44%;top:39%">1</span>
+      <span class="mk" style="left:24%;top:32%">2</span>
+      <span class="mk" style="left:58%;top:54%">3</span>
+      <span class="mk g" style="left:68%;top:21%">4</span>
+      <span class="mk b" style="left:49%;top:88%">5</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Pola sarang lebah</strong> — berselang-seling menyebar rata, jarak <strong>8–10 cm</strong> <span class="hand">(selebar kepalan tangan)</span></li>
+      <li><strong>Tepi disisakan ± 25 cm</strong> <span class="hand">(satu panjang sepatu)</span> — supaya kayunya tidak pecah</li>
+      <li><strong>KNO₃ butiran</strong> — ± satu genggam <span class="hand">(100 g)</span> per lubang, lalu sumbat lumpur</li>
+      <li><strong>Mata bor Ø 12–20 mm</strong> <span class="hand">(sebesar jari kelingking sampai telunjuk)</span>, anjuran 16 mm. Dalam <strong>20–30 cm</strong> <span class="hand">(satu jengkal s/d satu setengah)</span></li>
+      <li><strong>Lubang serong dari sisi tunggak</strong> — miring ± 45° ke arah tengah, menjangkau bagian yang tak terjangkau dari atas</li>
+    </ol>
+    <figcaption><strong>Matikan tunggaknya dulu.</strong> Selama kambium masih hidup, tidak ada jamur pelapuk yang bisa masuk — dan mengebor pun tidak menolong.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
   </figure>
 
   <h2><span class="n">3</span> KNO₃ — empat cara tanpa air panas</h2>

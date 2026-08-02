@@ -92,6 +92,18 @@
   a{color:#0e7490;text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-weight:600}
   a:hover{color:var(--euc700);border-bottom-color:var(--euc700)}
   @media print{ a{color:#1E2A24;border-bottom:none} a::after{content:' [' attr(href) ']';font-size:10px;color:#5C6B62;word-break:break-all} }
+  .photo{margin:16px 0}
+  .ph-wrap{position:relative;display:block;line-height:0;border-radius:11px;overflow:hidden;border:1px solid var(--line,#e5e7eb)}
+  .ph-wrap img{width:100%;height:auto;display:block}
+  .mk{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:#8c2519;color:#fff;font:700 14px/1 system-ui,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .mk.g{background:#15803d} .mk.b{background:#0e7490}
+  .ph-fix{position:absolute;transform:translate(-50%,-50%);background:#8c2519;color:#fff;font:700 12px/1.25 system-ui,sans-serif;padding:5px 9px;border-radius:7px;white-space:nowrap;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .ph-leg{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));counter-reset:mk}
+  .ph-leg li{counter-increment:mk;position:relative;padding-left:33px;font-size:14px;line-height:1.5;margin:0}
+  .ph-leg li::before{content:counter(mk);position:absolute;left:0;top:1px;width:23px;height:23px;border-radius:50%;background:#8c2519;color:#fff;font:700 12.5px/23px system-ui,sans-serif;text-align:center}
+  .ai-note{background:#f5f3ff;border-left:6px solid #5b21b6;border-radius:9px;padding:10px 14px;font-size:13px;color:#4c1d95;margin-top:10px;line-height:1.55}
+  .hand{color:#5b21b6;font-weight:700;white-space:nowrap}
+  @media print{.photo,.ph-wrap{break-inside:avoid}}
 </style>
 </head>
 <body>
@@ -240,6 +252,44 @@
       <br><br>
       Yang paling berbahaya adalah <b>parit melingkar penuh di leher batang</b>: air terkurung tepat menempel di pangkal batang — jalan tercepat menuju busuk leher.
     </div>
+
+    <figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/piringan-salah.jpg" alt="Potongan tanah memperlihatkan piringan cekung berisi air yang mengurung pangkal batang kopi">
+      <span class="mk" style="left:49%;top:40%">1</span>
+      <span class="mk" style="left:31%;top:47%">2</span>
+      <span class="mk" style="left:19%;top:20%">3</span>
+      <span class="mk" style="left:12%;top:64%">4</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Batang di titik TERENDAH</strong> — inilah kesalahan pokoknya</li>
+      <li><strong>Air mengurung batang</strong> — kulit pangkal terus basah = jalan masuk busuk leher</li>
+      <li><strong>Gundukan tepi</strong> — dimaksudkan menahan air, di lahan datar justru jadi bendungan</li>
+      <li><strong>Lapisan abu pucat ± 20 cm</strong> di atas tanah cokelat — kerak inilah yang menolak air</li>
+    </ol>
+    <figcaption><strong>❌ Jangan ditiru.</strong> Piringan cekung adalah desain <strong>panen air</strong> untuk lahan kering atau miring. Di kebun kita ia membuat kolam.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
+  </figure>
+
+    <figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/piringan-benar.jpg" alt="Potongan tanah memperlihatkan permukaan punggung kura-kura, leher akar terbuka, mulsa berhenti sebelum batang, dan rorak berisi residu yang menembus lapisan abu">
+      <span class="mk g" style="left:49%;top:34%">1</span>
+      <span class="mk g" style="left:24%;top:52%">2</span>
+      <span class="mk g" style="left:88%;top:62%">3</span>
+      <span class="mk b" style="left:12%;top:66%">4</span>
+      <span class="ph-fix" style="left:33%;top:47%">RALAT: mulsa 5–10 cm</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Leher akar terbuka</strong> — pangkal yang melebar harus terlihat. Cincin Ø 40 cm <span class="hand">(dua jengkal)</span> di sekelilingnya bersih total</li>
+      <li><strong>Permukaan turun terus ke luar</strong> — beda tinggi ± 8 cm sepanjang 1,1 m. Landai, tapi jelas menjauh dari batang</li>
+      <li><strong>Rorak 80 × 40 × 40 cm</strong> — diisi residu, <strong>menembus lapisan abu pucat</strong> sampai tanah cokelat di bawahnya</li>
+      <li><strong>Lapisan abu ± 20 cm</strong> — terlihat sebagai pita pucat. Rorak sengaja dipotong menembusnya</li>
+    </ol>
+    <figcaption><strong>✅ Ini yang benar.</strong> Batang di titik tertinggi, air selalu pergi, mulsa berhenti <span class="hand">satu jengkal</span> sebelum batang.
+    <br><span style="color:#8c2519;font-weight:700">⚠️ Satu angka di gambar salah:</span> label mulsa tertulis 20 cm — yang benar <strong>5–10 cm</strong> (memampat jadi ± 5 cm). Angka lain di gambar sudah sesuai spesifikasi kita.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
+  </figure>
 
     <div class="go">
       <b>✅ Bentuk yang benar: tidak boleh ada cekungan tertutup di mana pun.</b> Setiap titik wajib punya jalan keluar. Kerukan di leher batang <b>dibuka ke satu sisi</b>, bukan dibuat melingkar penuh.
@@ -471,6 +521,26 @@
         <tr><td class="no"><b>Yang TIDAK dilakukan</b></td><td colspan="3" class="no">Mengeruk seluruh abu = 30 m³ per petak = ± 1.000 m³ sekebun. Mustahil dengan tenaga yang ada. <b>Abu tidak dibuang — dilewati.</b></td></tr>
       </tbody>
     </table>
+
+    <figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/petak-20-pohon.jpg" alt="Tampak drone miring: barisan kopi berdiri di atas guludan, alur galian di antara baris, dan lubang rorak berisi residu">
+      <span class="mk" style="left:39%;top:54%">1</span>
+      <span class="mk" style="left:51%;top:42%">2</span>
+      <span class="mk" style="left:50%;top:79%">3</span>
+      <span class="mk g" style="left:47%;top:24%">4</span>
+      <span class="mk b" style="left:15%;top:30%">5</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Pohon berdiri di atas guludan</strong> — pita lebar 1,8 m, naik hanya 5 cm. Sedikit, tapi cukup</li>
+      <li><strong>Alur antar-baris 35 × 20 cm</strong> <span class="hand">(satu jengkal dalam)</span> — <strong>kosong, bukan berisi air</strong>. Warnanya lebih gelap karena sudah menembus kerak abu</li>
+      <li><strong>Rorak 80 × 40 × 40 cm</strong> — lebih dalam dan lebih lebar dari alur, diisi cacahan residu</li>
+      <li><strong>Dua pekerja</strong> sebagai pembanding ukuran</li>
+      <li><strong>Permukaan pucat</strong> = kerak abu yang dibiarkan. Hanya 13% yang dipindah — sisanya dilewati, bukan dibuang</li>
+    </ol>
+    <figcaption>Pada abu setebal 20 cm, yang ditata bukan lagi piringan per pohon melainkan <strong>jalan air satu petak</strong>. Pohon di jalur tinggi, alur di jalur rendah.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
+  </figure>
 
     <div class="go">
       <b>🔑 Kunci teknis yang membuat rencana ini bisa dikerjakan: di lahan datar, alur TIDAK memindahkan air — alur MENELAN air.</b> Tidak ada tempat yang lebih rendah untuk dituju. <b>Alur = rorak memanjang.</b>

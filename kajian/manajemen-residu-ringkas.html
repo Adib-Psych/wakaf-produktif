@@ -76,7 +76,19 @@
           .cw{font:700 12.5px system-ui,sans-serif;fill:#8c2519}
           .cv{font:700 12.5px system-ui,sans-serif;fill:#5b21b6}
           .dim{font:700 13px system-ui,sans-serif;fill:#374151}
-        </style>
+          .photo{margin:16px 0}
+  .ph-wrap{position:relative;display:block;line-height:0;border-radius:11px;overflow:hidden;border:1px solid var(--line,#e5e7eb)}
+  .ph-wrap img{width:100%;height:auto;display:block}
+  .mk{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:#8c2519;color:#fff;font:700 14px/1 system-ui,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .mk.g{background:#15803d} .mk.b{background:#0e7490}
+  .ph-fix{position:absolute;transform:translate(-50%,-50%);background:#8c2519;color:#fff;font:700 12px/1.25 system-ui,sans-serif;padding:5px 9px;border-radius:7px;white-space:nowrap;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .ph-leg{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));counter-reset:mk}
+  .ph-leg li{counter-increment:mk;position:relative;padding-left:33px;font-size:14px;line-height:1.5;margin:0}
+  .ph-leg li::before{content:counter(mk);position:absolute;left:0;top:1px;width:23px;height:23px;border-radius:50%;background:#8c2519;color:#fff;font:700 12.5px/23px system-ui,sans-serif;text-align:center}
+  .ai-note{background:#f5f3ff;border-left:6px solid #5b21b6;border-radius:9px;padding:10px 14px;font-size:13px;color:#4c1d95;margin-top:10px;line-height:1.55}
+  .hand{color:#5b21b6;font-weight:700;white-space:nowrap}
+  @media print{.photo,.ph-wrap{break-inside:avoid}}
+</style>
         <marker id="ar" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#6b7280"/></marker>
       </defs>
 
@@ -359,6 +371,52 @@
     <figcaption><strong>Gambar kerja &#8212; bawa halaman ini ke tukang las.</strong> Cetak lewat tombol 🖨 Cetak di atas. <strong>Ambang pintu sengaja hanya 3 cm</strong>, rata dengan lantai dalam drum, supaya abu bisa langsung ditarik keluar tanpa terhalang bibir. Alat: gerinda potong, bor, tang, sarung tangan.</figcaption>
   </figure>
 
+<figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/tong-rakitan.jpg" alt="Urutan rakitan tong bakar: batu penindih, kawat kasa, tutup bundar yang dibuang, badan drum, daun pintu dengan engsel dan kait, tiga batu bata, dan kelompok alat">
+      <span class="mk" style="left:49%;top:8%">1</span>
+      <span class="mk" style="left:49%;top:19%">2</span>
+      <span class="mk" style="left:35%;top:32%">3</span>
+      <span class="mk" style="left:44%;top:52%">4</span>
+      <span class="mk" style="left:57%;top:63%">5</span>
+      <span class="mk" style="left:66%;top:63%">6</span>
+      <span class="mk" style="left:47%;top:91%">7</span>
+      <span class="mk" style="left:76%;top:90%">8</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Dua batu penindih</strong> — sebesar telapak tangan, menahan kasa supaya tidak terbang</li>
+      <li><strong>Kawat kasa penahan percik</strong> — ± 60 × 60 cm, lubang ± 5 mm. WAJIB musim kemarau</li>
+      <li><strong>Tutup bundar DIBUANG</strong> — dipotong habis, tapi <strong>jangan dibuang beneran</strong>: dipakai lagi di tahap biochar</li>
+      <li><strong>Badan drum 200 liter</strong> — Ø 57–60 cm <span class="hand">(tiga jengkal)</span> × tinggi 88–90 cm <span class="hand">(setinggi pinggang)</span>, dinding ≥ 1,2 mm</li>
+      <li><strong>Daun pintu 40 × 25 cm</strong> — ambang bawah hanya <strong>3 cm</strong> <span class="hand">(seruas jari)</span>, rata dengan lantai dalam drum</li>
+      <li><strong>2 engsel + kait kawat</strong> — engsel di sisi kiri, kait di kanan</li>
+      <li><strong>3 batu bata</strong> — drum terangkat ± 10 cm <span class="hand">(sekepalan)</span> supaya udara masuk dari bawah</li>
+      <li><strong>Alat yang dibutuhkan</strong> — gerinda potong, bor, tang, sarung tangan</li>
+    </ol>
+    <figcaption>Urutan rakitan. Perhatikan tutup bundar melayang <strong>ke samping</strong> karena tidak dipakai, sedangkan kasa persegi melayang <strong>di atas mulut drum</strong> karena itulah tempatnya.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
+  </figure>
+
+  <figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/tong-menandai.jpg" alt="Menandai pintu dengan kapur pada drum berkarat sebelum dipotong, dengan meteran mengukur celah dari bibir bawah drum ke garis kapur">
+      <span class="mk" style="left:47%;top:26%">1</span>
+      <span class="mk" style="left:46%;top:80%">2</span>
+      <span class="mk" style="left:69%;top:52%">3</span>
+      <span class="mk" style="left:31%;top:23%">4</span>
+      <span class="mk g" style="left:20%;top:88%">5</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Garis kapur atas</strong> — puncak pintu, 28 cm dari dasar. Harus <strong>berhenti di bawah rusuk gelang</strong> yang ada di 30 cm</li>
+      <li><strong>Garis kapur bawah</strong> — hampir menyentuh bibir drum, hanya <strong>3 cm</strong> <span class="hand">(seruas jari)</span></li>
+      <li><strong>Meteran</strong> — mengukur celah 3 cm itu saja, bukan yang lain</li>
+      <li><strong>Tanda silang di empat sudut</strong> — supaya garis tidak hilang saat kena tangan</li>
+      <li><strong>Kapur dan penggaris besi</strong> — garis lurus jauh lebih penting daripada garis rapi</li>
+    </ol>
+    <figcaption><strong>Ukur dulu, baru gerinda.</strong> Ini langkah yang paling sering dilewati — dan yang paling mahal kalau salah, karena potongan tidak bisa dibatalkan.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
+  </figure>
+
   <h3>Cara pakai — tujuh langkah</h3>
   <div class="steps">
     <div class="stp"><i>1</i><b>Pastikan kering</b><span>Bahan basah = asap pekat, tetangga terganggu</span></div>
@@ -371,6 +429,28 @@
   </div>
 
   <h2><span class="n">3</span> Area bakar tetap — satu titik per kebun</h2>
+
+  <figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/area-bakar.jpg" alt="Tampak atas area bakar tetap: drum di tengah, cincin tanah mineral, zona bersih, barisan kopi di luarnya, dan pagar tetangga">
+      <span class="mk" style="left:50%;top:51%">1</span>
+      <span class="mk" style="left:42%;top:34%">2</span>
+      <span class="mk" style="left:24%;top:20%">3</span>
+      <span class="mk" style="left:12%;top:54%">4</span>
+      <span class="mk" style="left:95%;top:45%">5</span>
+      <span class="mk g" style="left:56%;top:74%">6</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Drum di titik tetap</strong> — satu titik per kebun, disiapkan sekali, dipakai seterusnya</li>
+      <li><strong>Cincin tanah mineral 2 m</strong> <span class="hand">(tiga langkah)</span> — dikupas bersih. Pakai kerukan abu vulkanik untuk alasnya</li>
+      <li><strong>Radius bersih 5 m</strong> <span class="hand">(tujuh langkah)</span> — tanpa rumput kering, tanpa tumpukan bahan</li>
+      <li><strong>Kopi terdekat di luar lingkaran 5 m</strong> — panas radiasi menghanguskan daun; ini sudah pernah terjadi di K4</li>
+      <li><strong>Batas tetangga ≥ 10 m</strong> <span class="hand">(empat belas langkah)</span> — kalau tak memungkinkan, ambil titik terjauh dan beri tahu tetangga lebih dulu</li>
+      <li><strong>Air + sekop sudah di lokasi</strong> — sebelum api dinyalakan, bukan diambil setelah ada masalah</li>
+    </ol>
+    <figcaption>Dua lingkaran, dua fungsi berbeda: <strong>cincin dalam</strong> mencegah api merambat lewat tanah, <strong>lingkaran luar</strong> mencegah panas dan percikan mengenai tanaman.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
+  </figure>
 
   <div class="grid g2" style="align-items:start">
     <figure style="margin:0">

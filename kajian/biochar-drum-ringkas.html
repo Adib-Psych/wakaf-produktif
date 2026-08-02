@@ -41,7 +41,19 @@
         .zt{font:500 11.5px system-ui,sans-serif;fill:#6b7280}
         .zv{font:700 12px system-ui,sans-serif;fill:#5b21b6}
         .zr{font:700 12.5px system-ui,sans-serif;fill:#8c2519}
-      </style>
+        .photo{margin:16px 0}
+  .ph-wrap{position:relative;display:block;line-height:0;border-radius:11px;overflow:hidden;border:1px solid var(--line,#e5e7eb)}
+  .ph-wrap img{width:100%;height:auto;display:block}
+  .mk{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:#8c2519;color:#fff;font:700 14px/1 system-ui,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .mk.g{background:#15803d} .mk.b{background:#0e7490}
+  .ph-fix{position:absolute;transform:translate(-50%,-50%);background:#8c2519;color:#fff;font:700 12px/1.25 system-ui,sans-serif;padding:5px 9px;border-radius:7px;white-space:nowrap;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .ph-leg{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));counter-reset:mk}
+  .ph-leg li{counter-increment:mk;position:relative;padding-left:33px;font-size:14px;line-height:1.5;margin:0}
+  .ph-leg li::before{content:counter(mk);position:absolute;left:0;top:1px;width:23px;height:23px;border-radius:50%;background:#8c2519;color:#fff;font:700 12.5px/23px system-ui,sans-serif;text-align:center}
+  .ai-note{background:#f5f3ff;border-left:6px solid #5b21b6;border-radius:9px;padding:10px 14px;font-size:13px;color:#4c1d95;margin-top:10px;line-height:1.55}
+  .hand{color:#5b21b6;font-weight:700;white-space:nowrap}
+  @media print{.photo,.ph-wrap{break-inside:avoid}}
+</style>
       <defs>
         <linearGradient id="st2" x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stop-color="#5a626b"/><stop offset="30%" stop-color="#cdd3d9"/>
@@ -113,6 +125,28 @@
       <text x="480" y="428" class="zt">habis terbakar menjadi abu. Ini kegagalan paling sering.</text>
     </svg>
     <figcaption>Drum yang sama dengan tong bakar tahap 1 — hanya ditambah tiga hal. Tutup asli drum <strong>jangan dibuang</strong> saat membuat tong bakar.</figcaption>
+  </figure>
+
+<figure class="photo">
+    <div class="ph-wrap">
+      <img src="img/drum-biochar.jpg" alt="Potongan drum biochar memperlihatkan tutup pelat seng, api di permukaan atas, tiga lapis bahan, dua baris lubang udara, dan pintu bawah tersumbat tanah liat">
+      <span class="mk" style="left:49%;top:11%">1</span>
+      <span class="mk" style="left:48%;top:26%">2</span>
+      <span class="mk" style="left:61%;top:51%">3</span>
+      <span class="mk" style="left:44%;top:80%">4</span>
+      <span class="mk" style="left:59%;top:73%">5</span>
+      <span class="ph-fix" style="left:76%;top:49%">RALAT: 40 cm</span>
+    </div>
+    <ol class="ph-leg">
+      <li><strong>Tutup pelat seng 60 × 60 cm</strong> + 4 lubang Ø 3 mm <span class="hand">(sebesar lidi)</span> + pegangan. Menutup ± 80%, bukan rapat total</li>
+      <li><strong>Api hanya di permukaan ATAS</strong> — inilah beda pokoknya dari tong bakar. Api turun pelan, bahan jadi arang bukan abu</li>
+      <li><strong>6 lubang Ø 5 mm</strong> <span class="hand">(sebesar tusuk sate)</span> di ketinggian <strong>40 cm</strong> <span class="hand">(dua jengkal)</span> — udara sekunder, ini yang membakar asapnya</li>
+      <li><strong>8 lubang Ø 8 mm</strong> <span class="hand">(sebesar pensil)</span> di ketinggian <strong>8 cm</strong> <span class="hand">(empat jari)</span> — 6 di dinding + 2 di daun pintu</li>
+      <li><strong>Pintu disumbat tanah liat</strong> — pintu bocor = arang habis jadi abu. Ini kegagalan paling sering</li>
+    </ol>
+    <figcaption>Drum yang <strong>sama persis</strong> dengan tong bakar, hanya ditambah dua baris lubang dan satu tutup.
+    <br><span style="color:#8c2519;font-weight:700">⚠️ Satu label di gambar rusak</span> — tertulis "50 cm", yang benar <strong>40 cm</strong>.</figcaption>
+    <div class="ai-note">🖼️ <strong>Gambar ini dibuat dengan bantuan AI</strong> sebagai alat bantu memahami, bukan foto kebun kita. <strong>Jangan dipakai sebagai bukti kondisi lapangan</strong> — baik ke BRIN, calon mitra, maupun laporan ke umat. Begitu ada foto lapangan yang sebenarnya, foto itu yang menggantikannya. Angka pada penanda berasal dari spesifikasi kita sendiri, bukan dari gambarnya.</div>
   </figure>
 
   <table>
