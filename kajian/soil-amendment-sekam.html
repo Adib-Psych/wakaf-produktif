@@ -104,6 +104,9 @@
   .ai-note{background:#f5f3ff;border-left:6px solid #5b21b6;border-radius:9px;padding:10px 14px;font-size:13px;color:#4c1d95;margin-top:10px;line-height:1.55}
   .hand{color:#5b21b6;font-weight:700;white-space:nowrap}
   @media print{.photo,.ph-wrap{break-inside:avoid}}
+  .srcbar{display:inline-flex;align-items:flex-start;gap:8px;font:700 11.5px/1.45 system-ui,sans-serif;padding:7px 13px;border-radius:10px;margin:0 0 9px;max-width:100%}
+  .src-c{background:#dcfce7;color:#14532d;border:1.5px solid #86efac}
+  .src-ai{background:#f5f3ff;color:#4c1d95;border:1.5px solid #c4b5fd}
 </style>
 </head>
 <body>
@@ -190,7 +193,8 @@
     <h3 style="margin:26px 0 4px;font-family:Georgia,serif;color:var(--euc900);font-size:1.06rem">Bentuk permukaan tanah yang benar — dan yang salah</h3>
 
     <figure>
-      <svg viewBox="0 0 980 396" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="p-t p-d">
+    <div class="srcbar src-c">📐 <span><b>GAMBAR TEKNIK KITA SENDIRI</b> — setiap angka di gambar ini berasal dari spesifikasi yang sudah dikunci. Boleh dicetak dan dibawa ke tukang.</span></div>
+      <svg viewBox="0 0 980 498" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="p-t p-d">
       <title id="p-t">Piringan cekung versus punggung kura-kura</title>
       <desc id="p-d">Dua potongan melintang. Kiri: piringan cekung dengan gundukan tepi membuat air hujan terperangkap mengelilingi batang. Kanan: permukaan tertinggi di batang dan turun terus ke luar sehingga air selalu pergi, lalu ditelan rorak yang menembus kerak abu.</desc>
       <style>
@@ -243,6 +247,21 @@
       <path d="M540,314 L540,334" stroke="#7dd3fc" stroke-width="3" marker-end="url(#lb)"/>
       <text x="518" y="358" class="ps">rorak &#8212; pintu air menembus kerak abu, digali sampai tanah asli</text>
       <text x="518" y="376" class="ps">mulsa berhenti <tspan font-weight="700" fill="#5b21b6">satu jengkal</tspan> dari batang &#183; tidak ada cekungan tertutup</text>
+    
+      <rect x="6" y="402" width="968" height="86" rx="10" fill="#f0fdf4" stroke="#86efac" stroke-width="2"/>
+      <text x="20" y="423" style="font:700 12.5px system-ui,sans-serif;fill:#15803d">📐 UKURAN TERKUNCI — angka ini dari spesifikasi kita, bukan dari gambar</text>
+      <rect x="14" y="432" width="313" height="26" rx="6" fill="#fff" stroke="#bbf7d0"/>
+      <text x="23" y="449" style="font:700 11.5px system-ui,sans-serif;fill:#14532d">Ø piringan<tspan style="font-weight:500;fill:#4b5563"> ± 2,2 m (jari-jari 1,1 m)</tspan></text>
+      <rect x="333" y="432" width="313" height="26" rx="6" fill="#fff" stroke="#bbf7d0"/>
+      <text x="342" y="449" style="font:700 11.5px system-ui,sans-serif;fill:#14532d">Beda tinggi batang → tepi<tspan style="font-weight:500;fill:#4b5563"> 8 cm</tspan></text>
+      <rect x="652" y="432" width="313" height="26" rx="6" fill="#fff" stroke="#bbf7d0"/>
+      <text x="661" y="449" style="font:700 11.5px system-ui,sans-serif;fill:#14532d">Leher bersih<tspan style="font-weight:500;fill:#4b5563"> Ø 40 cm = dua jengkal</tspan></text>
+      <rect x="14" y="462" width="313" height="26" rx="6" fill="#fff" stroke="#bbf7d0"/>
+      <text x="23" y="479" style="font:700 11.5px system-ui,sans-serif;fill:#14532d">Mulsa<tspan style="font-weight:500;fill:#4b5563"> 5–10 cm, berhenti 20 cm dari batang</tspan></text>
+      <rect x="333" y="462" width="313" height="26" rx="6" fill="#fff" stroke="#bbf7d0"/>
+      <text x="342" y="479" style="font:700 11.5px system-ui,sans-serif;fill:#14532d">Rorak<tspan style="font-weight:500;fill:#4b5563"> 80 × 40 × 40 cm</tspan></text>
+      <rect x="652" y="462" width="313" height="26" rx="6" fill="#fff" stroke="#bbf7d0"/>
+      <text x="661" y="479" style="font:700 11.5px system-ui,sans-serif;fill:#14532d">Lapisan abu Kelud<tspan style="font-weight:500;fill:#4b5563"> ± 20 cm = satu jengkal</tspan></text>
     </svg>
     <figcaption>Piringan cekung adalah desain <strong>panen air</strong> — untuk lahan kering atau miring. Di lahan datar yang berhujan tinggi dan berkerak menolak air, ia justru membuat kolam di sekeliling pohon. <strong>Aturan mutlak: tidak boleh ada cekungan tertutup di mana pun</strong> — setiap titik wajib punya jalan keluar.</figcaption>
   </figure>
@@ -254,6 +273,7 @@
     </div>
 
     <figure class="photo">
+    <div class="srcbar src-ai">🖼️ <span><b>GAMBAR BUATAN AI</b> — angka atau tulisan yang tercetak <b>DI DALAM</b> gambar berasal dari AI dan <b>tidak dijamin benar</b>. Yang sah hanyalah <b>bulatan bernomor merah</b> dan daftar ukuran di bawahnya — itu tulisan kita.</span></div>
     <div class="ph-wrap">
       <img src="img/piringan-salah.jpg" alt="Potongan tanah memperlihatkan piringan cekung berisi air yang mengurung pangkal batang kopi">
       <span class="mk" style="left:49%;top:40%">1</span>
@@ -272,6 +292,7 @@
   </figure>
 
     <figure class="photo">
+    <div class="srcbar src-ai">🖼️ <span><b>GAMBAR BUATAN AI</b> — angka atau tulisan yang tercetak <b>DI DALAM</b> gambar berasal dari AI dan <b>tidak dijamin benar</b>. Yang sah hanyalah <b>bulatan bernomor merah</b> dan daftar ukuran di bawahnya — itu tulisan kita.</span></div>
     <div class="ph-wrap">
       <img src="img/piringan-benar.jpg" alt="Potongan tanah memperlihatkan permukaan punggung kura-kura, leher akar terbuka, mulsa berhenti sebelum batang, dan rorak berisi residu yang menembus lapisan abu">
       <span class="mk g" style="left:49%;top:34%">1</span>
@@ -301,6 +322,7 @@
     <p style="font-size:.92rem"><b>Diukur dari permukaan akar yang tampak</b>, bukan dari permukaan abu. Ini yang menentukan bagaimana kompos kambing dan sekam bakar di bagian 7 benar-benar ditaruh di lapangan.</p>
 
     <figure>
+    <div class="srcbar src-c">📐 <span><b>GAMBAR TEKNIK KITA SENDIRI</b> — setiap angka di gambar ini berasal dari spesifikasi yang sudah dikunci. Boleh dicetak dan dibawa ke tukang.</span></div>
       <svg viewBox="0 0 980 372" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="l-t l-d">
       <title id="l-t">Tebal lapisan di atas permukaan akar</title>
       <desc id="l-d">Potongan dengan penggaris: nol sentimeter di leher batang, tanah penutup dua sampai tiga sentimeter, kompos satu sentimeter sebagai pita di tepi tajuk, mulsa lima sampai sepuluh sentimeter yang berhenti dua puluh sentimeter dari batang.</desc>
@@ -425,6 +447,7 @@
     <p style="font-size:.92rem">Pada ketebalan ini persoalannya berpindah: bukan lagi menata piringan per pohon, melainkan <b>menata jalan air satu petak</b>. Angka di bawah untuk satu petak 20 pohon (4 baris × 5 pohon, 12 × 12,5 m).</p>
 
     <figure>
+    <div class="srcbar src-c">📐 <span><b>GAMBAR TEKNIK KITA SENDIRI</b> — setiap angka di gambar ini berasal dari spesifikasi yang sudah dikunci. Boleh dicetak dan dibawa ke tukang.</span></div>
       <svg viewBox="0 0 980 452" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="k-t k-d">
       <title id="k-t">Petak 20 pohon: guludan, alur, dan rorak</title>
       <desc id="k-d">Tampak atas satu petak empat baris kali lima pohon. Baris pohon berdiri di atas guludan; di antara baris ada alur galian; dari tiap leher pohon ada talang kecil menuju alur; tiga rorak tersebar di sepanjang alur.</desc>
@@ -523,6 +546,7 @@
     </table>
 
     <figure class="photo">
+    <div class="srcbar src-ai">🖼️ <span><b>GAMBAR BUATAN AI</b> — angka atau tulisan yang tercetak <b>DI DALAM</b> gambar berasal dari AI dan <b>tidak dijamin benar</b>. Yang sah hanyalah <b>bulatan bernomor merah</b> dan daftar ukuran di bawahnya — itu tulisan kita.</span></div>
     <div class="ph-wrap">
       <img src="img/petak-20-pohon.jpg" alt="Tampak drone miring: barisan kopi berdiri di atas guludan, alur galian di antara baris, dan lubang rorak berisi residu">
       <span class="mk" style="left:39%;top:54%">1</span>
