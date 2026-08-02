@@ -149,7 +149,12 @@ a{color:var(--cyan);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-
 .gal>figure.side{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:16px;align-items:start}
 .gal>figure.side .ph-wrap{width:100%}
 .gal>figure.side .ph-wrap img{max-height:none;width:100%}
-@media(max-width:900px){.gal>figure.w2{grid-column:span 3}}
+/* .solo = gambar sendirian di barisnya, lebarnya sepertiga & DI TENGAH
+   (dipakai untuk gambar melebar yang tidak punya pasangan sebentuk) */
+.gal>figure.solo{grid-column:3 / span 2}
+.gal>figure.solo .ph-leg{grid-template-columns:1fr}
+@media(max-width:900px){.gal>figure.w2{grid-column:span 3}
+  .gal>figure.solo{grid-column:2 / span 4}}
 @media(max-width:720px){.gal>figure.photo,.gal>figure.w3,.gal>figure.w2{grid-column:span 6}
   .gal>figure.side{grid-template-columns:1fr}}
 .gal figure.photo{margin:0}
