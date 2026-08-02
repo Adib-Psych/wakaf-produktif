@@ -3345,7 +3345,7 @@
           <div style="font-size:11px;color:var(--mute);margin-top:2px">Foto + spek tiap alat · angka persis untuk beli sparepart · aturan anti-salah-beli</div>
         </div>
         <button class="btn" onclick="printKajian('alat')">🖨 Cetak</button>
-        <button class="btn" onclick="window.open('alat/index.html','_blank')">↗ Buka penuh</button>
+        <button class="btn" onclick="window.open(kajianUrl('alat/index.html'),'_blank')">↗ Buka penuh</button>
       </div>
       <iframe class="kajian-frame" id="frame-alat" data-src="alat/index.html" title="Inventaris Alat dan Sparepart Kebun" loading="lazy"></iframe>
     </div>
@@ -3359,7 +3359,7 @@
           <div style="font-size:11px;color:var(--mute);margin-top:2px">Kajian 29 Jul 2026 · hexazinone dilarang · KNO₃ tanpa air panas · inokulasi terarah</div>
         </div>
         <button class="btn" onclick="printKajian('kajian-tunggak')">🖨 Cetak</button>
-        <button class="btn" onclick="window.open('kajian/sanitasi-tunggak.html','_blank')">↗ Buka penuh</button>
+        <button class="btn" onclick="window.open(kajianUrl('kajian/sanitasi-tunggak.html'),'_blank')">↗ Buka penuh</button>
       </div>
       <iframe class="kajian-frame" id="frame-kajian-tunggak" data-src="kajian/sanitasi-tunggak-ringkas.html" title="Kajian Sanitasi Tunggak dan KNO3" loading="lazy"></iframe>
     </div>
@@ -3371,7 +3371,7 @@
           <div style="font-size:11px;color:var(--mute);margin-top:2px">Addendum SOP 29 Jul 2026 · 5 aliran residu · biochar drum kiln · 7 aturan api</div>
         </div>
         <button class="btn" onclick="printKajian('kajian-residu')">🖨 Cetak</button>
-        <button class="btn" onclick="window.open('kajian/manajemen-residu.html','_blank')">↗ Buka penuh</button>
+        <button class="btn" onclick="window.open(kajianUrl('kajian/manajemen-residu.html'),'_blank')">↗ Buka penuh</button>
       </div>
       <iframe class="kajian-frame" id="frame-kajian-residu" data-src="kajian/manajemen-residu-ringkas.html" title="Kajian Manajemen Residu Kebun" loading="lazy"></iframe>
     </div>
@@ -3383,7 +3383,7 @@
           <div style="font-size:11px;color:var(--mute);margin-top:2px">Kajian 9 Jul 2026 · dasar ADR-027 · cocopeat vs semen vs sekam bakar vs kompos</div>
         </div>
         <button class="btn" onclick="printKajian('kajian-sekam')">🖨 Cetak</button>
-        <button class="btn" onclick="window.open('kajian/soil-amendment-sekam.html','_blank')">↗ Buka penuh</button>
+        <button class="btn" onclick="window.open(kajianUrl('kajian/soil-amendment-sekam.html'),'_blank')">↗ Buka penuh</button>
       </div>
       <iframe class="kajian-frame" id="frame-kajian-sekam" data-src="kajian/soil-amendment-sekam-ringkas.html" title="Kajian Soil Amendment 4 Opsi" loading="lazy"></iframe>
     </div>
@@ -3395,7 +3395,7 @@
           <div style="font-size:11px;color:var(--mute);margin-top:2px">Inj-1 status LANJUT · spek drum 200 L Ø57–60×88–90 cm · pola bor 8mm/5mm/3mm · 300–500°C 2–4 jam · 1 kg/pohon</div>
         </div>
         <button class="btn" onclick="printKajian('kajian-biochar')">🖨 Cetak</button>
-        <button class="btn" onclick="window.open('kajian/biochar-drum.html','_blank')">↗ Buka penuh</button>
+        <button class="btn" onclick="window.open(kajianUrl('kajian/biochar-drum.html'),'_blank')">↗ Buka penuh</button>
       </div>
       <iframe class="kajian-frame" id="frame-kajian-biochar" data-src="kajian/biochar-drum-ringkas.html" title="Kajian Biochar dan Pembuatan Drum Kiln" loading="lazy"></iframe>
     </div>
@@ -3727,19 +3727,23 @@ function toggleNavCfg() {
   box.style.display = (box.style.display === 'none') ? 'block' : 'none';
   renderNavCfg();
 }
+// 🔖 VERSI HALAMAN KAJIAN — NAIKKAN setiap kali berkas di kajian/ diubah.
+// Tanpa ini, browser (terutama Safari) menyimpan HTML lama dan perubahan tidak pernah terlihat.
+const KAJIAN_VER = '2026-08-02d';
+function kajianUrl(u) { return u ? u + (u.indexOf('?') < 0 ? '?v=' : '&v=') + KAJIAN_VER : u; }
 function lazyLoadKajian(panelId) {
   // generik: panel APA PUN yang punya <iframe id="frame-<panelId>" data-src="..."> akan dimuat
   // saat tab-nya pertama kali dibuka. Dipakai grup Kajian + halaman Alat & Sparepart.
   if (!panelId) return;
   const f = document.getElementById('frame-' + panelId);
-  if (f && !f.getAttribute('src') && f.dataset.src) f.setAttribute('src', f.dataset.src);
+  if (f && !f.getAttribute('src') && f.dataset.src) f.setAttribute('src', kajianUrl(f.dataset.src));
 }
 function printKajian(panelId) {
   const f = document.getElementById('frame-' + panelId);
   if (!f) return;
-  if (!f.getAttribute('src') && f.dataset.src) { f.setAttribute('src', f.dataset.src); return alert('Dokumen sedang dimuat — coba klik Cetak lagi sebentar lagi.'); }
+  if (!f.getAttribute('src') && f.dataset.src) { f.setAttribute('src', kajianUrl(f.dataset.src)); return alert('Dokumen sedang dimuat — coba klik Cetak lagi sebentar lagi.'); }
   try { f.contentWindow.focus(); f.contentWindow.print(); }
-  catch (e) { window.open(f.dataset.src, '_blank'); }
+  catch (e) { window.open(kajianUrl(f.dataset.src), '_blank'); }
 }
 document.getElementById('tabs').addEventListener('click', (e) => {
   const hd = e.target.closest('.nav-hd');
