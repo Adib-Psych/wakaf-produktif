@@ -152,10 +152,10 @@ a{color:var(--cyan);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-
 @media(max-width:720px){.gal>figure.photo,.gal>figure.w3,.gal>figure.w2{grid-column:span 6}
   .gal>figure.side{grid-template-columns:1fr}}
 .gal figure.photo{margin:0}
-.gal .ph-wrap{width:max-content;max-width:100%;margin:0}
-.gal .ph-wrap img{max-height:300px;width:auto;max-width:100%}
-.gal>figure.photo:not(.w3):not(.w2):not(.side) .ph-wrap{max-width:none}
-.gal>figure.photo:not(.w3):not(.w2):not(.side) .ph-wrap img{width:100%;max-height:none}
+/* SEMUA gambar di galeri melebar penuh selebar kolomnya — kiri-kanan sejajar
+   dengan baris kode & legenda di bawahnya. Tingginya ikut bentuk gambar. */
+.gal .ph-wrap,.gal .ph-wrap.narrow{width:100%;max-width:none;margin:0}
+.gal .ph-wrap img{width:100%;height:auto;max-width:none;max-height:none}
 .gal .srcbar{font-size:10px;padding:4px 9px;margin:0 0 5px;line-height:1.35}
 .gal .ph-leg{font-size:11.5px;margin-top:5px}
 .gal .ph-leg li{margin:2px 0}
@@ -174,3 +174,8 @@ a{color:var(--cyan);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-
             padding:9px 13px;margin:12px 0 0;font:400 11.5px/1.5 system-ui,sans-serif;color:#4c1d95}
 .gal>figure.side>.srcbar{grid-column:1/-1}
 .gal>figure.side .gid{margin-top:0}
+
+/* Baris kode gambar (mis. "B1 Drum biochar — pola lubang") DI TENGAH bawah gambar.
+   Legenda bernomor di bawahnya TETAP rata kiri. */
+.gal .gid{justify-content:center;text-align:center}
+.gal>figure.side .gid{justify-content:flex-start;text-align:left}
