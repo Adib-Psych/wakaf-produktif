@@ -151,3 +151,12 @@ a{color:var(--cyan);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-
 .gal .ai-note{font-size:9.5px;padding:5px 8px;margin-top:5px;line-height:1.35}
 .gal .mk{width:21px;height:21px;font-size:11px;box-shadow:0 0 0 2px rgba(255,255,255,.92),0 1px 4px rgba(0,0,0,.35)}
 @media(max-width:720px){.gal{grid-template-columns:1fr}}
+
+/* ===== baris indeks nama gambar ===== */
+.gid{display:flex;align-items:baseline;gap:7px;flex-wrap:wrap;margin:5px 0 0;
+     font:700 11.5px/1.4 system-ui,sans-serif;color:#2d5a45}
+.gid .code{background:#2d5a45;color:#fff;border-radius:4px;padding:1px 7px;font-size:11px;letter-spacing:.3px}
+.gid .ok{background:#dcfce7;color:#14532d;border:1px solid #86efac;border-radius:4px;padding:0 5px;font-size:9.5px;font-weight:700}
+.gid .note{color:#8c2519;font-weight:600;font-size:10.5px}
+.ai-blanket{background:#f5f3ff;border:1px solid #ddd6fe;border-left:4px solid #7c3aed;border-radius:9px;
+            padding:9px 13px;margin:12px 0 0;font:400 11.5px/1.5 system-ui,sans-serif;color:#4c1d95}
