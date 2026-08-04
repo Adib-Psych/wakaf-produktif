@@ -5621,7 +5621,7 @@ function createCashbookFromUpah(upahId, opts) {
   if (cashbookHasUpahRef(u.id)) { if(!silent) alert('Entri kas untuk item ini sudah ada.'); return false; }
   CASHBOOK.push(_buildCashbookRowFromUpah(u));
   if (!silent) {
-    if (typeof saveCashbook === 'function') saveCashbook();
+    if (typeof saveCashbook === 'function') saveCashbook(true);   // force-immediate — persempit jendela balapan vs gema onSnapshot
     if (typeof renderUpahSummary === 'function') renderUpahSummary();
     if (typeof renderCashbook === 'function') renderCashbook();
     if (typeof renderRAB === 'function') renderRAB();
@@ -5639,7 +5639,7 @@ function createAllCashbookFromUpah() {
   if (!confirm('Catat ' + miss.length + ' entri kas keluar, total ' + fmtRp(totalRp) + '?\n\nStatus upah TIDAK berubah — ini hanya melengkapi pencatatan uang keluar.')) return;
   let n = 0;
   miss.forEach(u => { if (createCashbookFromUpah(u.id, {silent:true})) n++; });
-  if (typeof saveCashbook === 'function') saveCashbook();
+  if (typeof saveCashbook === 'function') saveCashbook(true);   // force-immediate — persempit jendela balapan vs gema onSnapshot
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
   if (typeof renderCashbook === 'function') renderCashbook();
   if (typeof renderRAB === 'function') renderRAB();
@@ -19972,7 +19972,20 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         const preserved = [];
         CASHBOOK.forEach(local => {
           const remote = incomingMap.get(local.id);
-          if (!remote) return;
+          if (!remote) {
+            // 🚨 Layer B2 (4 Agt 2026) — ENTRI BARU LOKAL yang belum sempat naik ke cloud.
+            // Casus belli: Wakif klik "Catat semua" (13 entri kas Mba Harmi) → gema onSnapshot
+            // tiba sebelum push selesai → baris ini dulu `return` begitu saja → 13 entri
+            // TERSAPU dari lokal → push berikutnya menulis state yang sudah kosong.
+            // Uang keluar hilang dari pencatatan TANPA galat apa pun.
+            // Aturan: entri lokal yang tidak ada di cloud DAN baru dibuat (≤ 10 menit)
+            // = sedang dalam perjalanan naik, WAJIB dipertahankan + re-sync.
+            // Jendela 10 menit menjaga agar delete sah dari device lain (>10 mnt lalu)
+            // tidak di-resurrect — konsisten dengan semangat intentionalDeletes.
+            const lm = Date.parse(local.last_modified_at || 0);
+            if (lm && (Date.now() - lm) < 600000) preserved.push(local);
+            return;
+          }
           // Compare timestamps — local newer than cloud → preserve local
           if (local.last_modified_at && remote.last_modified_at &&
               local.last_modified_at > remote.last_modified_at) {
