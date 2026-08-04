@@ -707,6 +707,7 @@
         <div class="card-title"><span class="num" style="background:#e67e22">!</span>Upah Perlu Perhatian</div>
         <div id="upah-dup-body"></div>
         <div id="upah-gap-body"></div>
+        <div id="upah-nocb-body"></div>
       </div>
 
       <div class="card">
@@ -738,6 +739,7 @@
           <button class="btn" onclick="upahArchiveSelected()" style="background:#f4f4f0;color:#4a4030;border:1.5px solid #8B8579;font-size:11px" title="Arsipkan upah LUNAS tercentang — disembunyikan dari Tab Upah. Cashbook + audit trail tidak terpengaruh.">📦 Archive Lunas Tercentang</button>
           <button class="btn btn-secondary" onclick="openDlg()">+ Tambah Item</button>
           <button class="btn" onclick="openRecoverDlg()" style="background:#FFF4D6;color:#8B6914;border:1.5px solid #D4AF37">🔄 Recover Entry Lama</button>
+          <button class="btn" onclick="openAuditModal()" style="background:#d4a017;color:#fff;font-weight:700;font-size:11px" title="Buka Audit &amp; Cleanup Sync — cek konsistensi UPAH ↔ Buku Kas: siapa sudah dibayar, duplikat, dan yang lunas tapi kas keluarnya belum tercatat">🔍 Audit Sync</button>
         </div>
         <div class="table-wrap">
           <table>
@@ -5554,12 +5556,106 @@ function voidUpahDup(id) {
   if (typeof renderUpahTable === 'function') renderUpahTable();
 }
 
+// ⭐ 4 Agt 2026 — REKONSILIASI ARAH KETIGA: upah LUNAS tapi kas keluarnya tidak tercatat.
+// Casus belli: 8 item Lek Nardi dibayar 3 Agt, autolink cashbook tidak terbentuk → uang sudah
+// keluar tapi tidak muncul di laporan keuangan, dan baru ketahuan karena Wakif curiga sendiri.
+// Semangatnya sama dgn Pattern #21: JANGAN andalkan event/listener — bandingkan sumber vs turunannya.
+// Pattern #13: baris hilang sendiri begitu beres; nama tidak muncul = sudah sinkron.
+function renderUpahNoCashbook() {
+  const body = document.getElementById('upah-nocb-body');
+  if (!body) return 0;
+  if (typeof UPAH_ITEMS === 'undefined' || typeof CASHBOOK === 'undefined') { body.innerHTML=''; return 0; }
+  // Pekerja era lama dibayar lewat SATU baris cashbook ringkas (cb_upah_<token>_...), bukan per item.
+  // Itu metode pencatatan lama, bukan cacat — jangan ikut dilaporkan, apalagi dibuatkan entri baru.
+  const ringkas = new Set();
+  CASHBOOK.forEach(cb => {
+    const m = cb && typeof cb.id === 'string' ? cb.id.match(/^cb_upah_([a-z]+)_/i) : null;
+    if (m) ringkas.add(m[1].toUpperCase());
+  });
+  const miss = UPAH_ITEMS.filter(u => u && u.status === 'lunas' && !u.voided_duplicate
+      && !ringkas.has(String(u.pelapor).toUpperCase())
+      && !cashbookHasUpahRef(u.id));
+  if (!miss.length) { body.innerHTML=''; return 0; }
+  const nm = t => (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[t]) ? NAMA_PEKERJA[t] : t;
+  const totalRp = miss.reduce((s,u)=> s + calcTotal(u), 0);
+  body.innerHTML =
+    '<div style="margin-top:12px;padding:12px 14px;background:#fde2dc;border-radius:8px">'
+    + '<strong style="color:#8c2519">💸 Sudah dibayar tapi belum tercatat di Buku Kas — ' + miss.length + ' item · ' + fmtRp(totalRp) + '</strong>'
+    + '<div style="font-size:11.5px;color:#6b3b32;margin:6px 0 10px">Upahnya sudah ditandai lunas, tapi <strong>uang keluarnya tidak muncul di Laporan Keuangan</strong> — jadi saldo kas terlihat lebih besar dari yang sebenarnya. Klik untuk mencatatnya. Tidak mengubah status upah apa pun.</div>'
+    + '<div style="display:flex;flex-direction:column;gap:6px">'
+    + miss.map(u => '<div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff;padding:7px 10px;border-radius:6px;font-size:12px">'
+        + '<strong>' + nm(u.pelapor) + '</strong><span style="color:#6b6b6b">' + formatTglShort(u.tgl) + '</span>'
+        + '<span style="color:#6b6b6b">' + String(u.aktivitas||'').substring(0,40) + '</span>'
+        + '<span style="font-weight:700">' + fmtRp(calcTotal(u)) + '</span>'
+        + '<button class="btn" style="margin-left:auto;background:#8c2519;color:#fff;font-size:11px;padding:4px 10px" onclick="createCashbookFromUpah(' + u.id + ')">Catat ke Buku Kas</button>'
+      + '</div>').join('')
+    + '</div>'
+    + '<button class="btn" style="margin-top:10px;background:#8c2519;color:#fff;font-weight:700" onclick="createAllCashbookFromUpah()">Catat semua (' + miss.length + ' item · ' + fmtRp(totalRp) + ')</button>'
+    + '</div>';
+  return miss.length;
+}
+
+// Membuat satu entri kas keluar untuk upah yang sudah lunas — format PERSIS sama dgn autolink
+// di batchPay()/confirmPaid(), supaya modal Audit membacanya sebagai SYNC OK.
+function _buildCashbookRowFromUpah(u) {
+  const katRAB = u.model === 'borongan' ? '4.1' : (u.pelapor === 'YIT' ? '3.1' : '3.2');
+  const nm = (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[u.pelapor]) ? NAMA_PEKERJA[u.pelapor] : u.pelapor;
+  const aktivitasClean = String(u.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
+  return {
+    id: 'cb_pay_' + Date.now() + '_' + u.id,
+    tgl: u.bayar_tgl || new Date().toISOString().slice(0,10),
+    tipe: u.bayar_source === 'anto' ? 'keluar_anto' : 'bayar_upah',
+    kat: katRAB,
+    ket: 'Upah ' + nm + ' — ' + aktivitasClean + ' (' + formatTglShort(u.tgl) + ') [lgs·batch]',
+    masuk: 0, keluar: calcTotal(u),
+    src: 'autolink', nota: null, ref: 'upah_' + u.id,
+    last_modified_at: new Date().toISOString(),
+    backfill_note: 'Dicatat menyusul lewat kartu "Upah Perlu Perhatian" — autolink tidak terbentuk saat pembayaran.'
+  };
+}
+function createCashbookFromUpah(upahId, opts) {
+  const silent = opts && opts.silent;
+  const u = (UPAH_ITEMS||[]).find(x => x.id === upahId);
+  if (!u) { if(!silent) alert('Item upah tidak ditemukan.'); return false; }
+  if (u.status !== 'lunas') { if(!silent) alert('Item ini belum lunas — bayar dulu lewat tombol Bayar.'); return false; }
+  if (cashbookHasUpahRef(u.id)) { if(!silent) alert('Entri kas untuk item ini sudah ada.'); return false; }
+  CASHBOOK.push(_buildCashbookRowFromUpah(u));
+  if (!silent) {
+    if (typeof saveCashbook === 'function') saveCashbook();
+    if (typeof renderUpahSummary === 'function') renderUpahSummary();
+    if (typeof renderCashbook === 'function') renderCashbook();
+    if (typeof renderRAB === 'function') renderRAB();
+    if (typeof showToast === 'function') showToast('✅ 1 entri kas keluar dicatat');
+  }
+  return true;
+}
+function createAllCashbookFromUpah() {
+  const ringkas = new Set();
+  CASHBOOK.forEach(cb => { const m = cb && typeof cb.id === 'string' ? cb.id.match(/^cb_upah_([a-z]+)_/i) : null; if (m) ringkas.add(m[1].toUpperCase()); });
+  const miss = (UPAH_ITEMS||[]).filter(u => u && u.status === 'lunas' && !u.voided_duplicate
+      && !ringkas.has(String(u.pelapor).toUpperCase()) && !cashbookHasUpahRef(u.id));
+  if (!miss.length) { alert('Semua upah lunas sudah punya entri kas.'); return; }
+  const totalRp = miss.reduce((s,u)=> s + calcTotal(u), 0);
+  if (!confirm('Catat ' + miss.length + ' entri kas keluar, total ' + fmtRp(totalRp) + '?\n\nStatus upah TIDAK berubah — ini hanya melengkapi pencatatan uang keluar.')) return;
+  let n = 0;
+  miss.forEach(u => { if (createCashbookFromUpah(u.id, {silent:true})) n++; });
+  if (typeof saveCashbook === 'function') saveCashbook();
+  if (typeof renderUpahSummary === 'function') renderUpahSummary();
+  if (typeof renderCashbook === 'function') renderCashbook();
+  if (typeof renderRAB === 'function') renderRAB();
+  if (typeof showToast === 'function') showToast('✅ ' + n + ' entri kas keluar dicatat');
+  else alert('✅ ' + n + ' entri kas keluar dicatat.');
+}
+
 function renderUpahGap() {
   const wrap = document.getElementById('upah-gap-wrap');
   const body = document.getElementById('upah-gap-body');
   if (!wrap || !body) return;
   let nDup = 0;
   try { nDup = renderUpahDup(); } catch (e) { console.warn('[renderUpahDup]', e); }
+  let nNoCb = 0;
+  try { nNoCb = renderUpahNoCashbook(); } catch (e) { console.warn('[renderUpahNoCashbook]', e); }
+  nDup += nNoCb;   // ikut menyalakan kartu 'Upah Perlu Perhatian'
   if (typeof STATE === 'undefined' || !Array.isArray(STATE.laporan) || typeof TARIF_PEKERJA === 'undefined') {
     body.innerHTML = ''; wrap.style.display = nDup ? '' : 'none'; return;
   }
