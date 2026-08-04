@@ -5996,15 +5996,19 @@ function upahArchiveSelected() {
     if (!it) return;
     if (it.status !== 'lunas') { skipped.belum++; return; }
     if (it.archived) { skipped.already_archived++; return; }
+    // 🚨 4 Agt 2026 — gerbang terakhir sebelum item menghilang dari pandangan:
+    // lunas TANPA entri kas keluar = uang keluar tanpa jejak. Jangan diarsipkan dulu.
+    if (typeof cashbookHasUpahRef === 'function' && !cashbookHasUpahRef(it.id)) { skipped.no_cashbook = (skipped.no_cashbook||0)+1; return; }
     targets.push(it);
   });
   if (targets.length === 0) {
-    alert(`Tidak ada upah eligible untuk archive.\n\nDilewati:\n• ${skipped.belum} upah status BELUM (bayar dulu)\n• ${skipped.already_archived} sudah archived`);
+    alert(`Tidak ada upah eligible untuk archive.\n\nDilewati:\n• ${skipped.belum} upah status BELUM (bayar dulu)\n• ${skipped.already_archived} sudah archived\n• ${skipped.no_cashbook||0} lunas tapi KAS KELUARNYA BELUM TERCATAT — beresi dulu lewat kartu "Upah Perlu Perhatian" di atas`);
     return;
   }
   const msg = `Arsipkan ${targets.length} upah LUNAS tercentang?\n\n` +
     (skipped.belum > 0 ? `⚠️ ${skipped.belum} upah BELUM dibayar akan di-skip (bayar dulu).\n` : '') +
     (skipped.already_archived > 0 ? `⚠️ ${skipped.already_archived} upah sudah archived akan di-skip.\n` : '') +
+    (skipped.no_cashbook > 0 ? `🚨 ${skipped.no_cashbook} upah LUNAS TANPA entri kas keluar di-skip — catat dulu lewat kartu \"Upah Perlu Perhatian\".\n` : '') +
     `\nCashbook + audit trail TIDAK terpengaruh.\n\nLanjut?`;
   if (!confirm(msg)) return;
   const reason = prompt('Alasan archive (optional, applied ke semua):', 'Bulk archive — sudah dibayar & rekap final') || '';
@@ -6030,11 +6034,17 @@ function upahArchiveSelected() {
 // secara internal forward ke modal pattern supaya sync UPAH ↔ Cashbook tetap terjaga.
 function markPaid(id) {
   if (typeof openPaidModalById === 'function') return openPaidModalById(id);
-  console.warn('[markPaid] openPaidModalById not available — falling back to status-only mark (RISK: cashbook orphan)');
+  console.warn('[markPaid] openPaidModalById not available — fallback mark + auto-cashbook (4 Agt 2026: lubang orphan ditutup)');
   const it = UPAH_ITEMS.find(x => x.id === id);
   if (!it) return;
   it.status = 'lunas';
   it.bayar_tgl = new Date().toISOString().slice(0,10);
+  it.bayar_source = it.bayar_source || 'wakif';
+  it.last_modified_at = new Date().toISOString();
+  if (typeof CASHBOOK !== 'undefined' && typeof cashbookHasUpahRef === 'function' && !cashbookHasUpahRef(it.id)) {
+    CASHBOOK.push(_buildCashbookRowFromUpah(it));
+    if (typeof saveCashbook === 'function') saveCashbook(true);
+  }
   saveUpah();
   renderUpahSummary(); renderUpahTable();
 }
@@ -18526,11 +18536,20 @@ function auditDeleteCashbook(cbId) {
 function auditMarkUpahPaid(upahId) {
   const u = UPAH_ITEMS.find(x => x.id === upahId);
   if (!u) { alert('UPAH tidak ditemukan'); return; }
-  if (!confirm(`Tandai UPAH "${u.aktivitas}" (${formatTglShort(u.tgl)}) sebagai LUNAS?\n\nIni akan sync ke laporan keuangan.`)) return;
+  if (!confirm(`Tandai UPAH "${u.aktivitas}" (${formatTglShort(u.tgl)}) sebagai LUNAS?\n\nEntri kas keluar ikut dibuat otomatis.`)) return;
   u.status = 'lunas';
   u.bayar_tgl = new Date().toISOString().slice(0,10);
   u.bayar_source = 'wakif';
   u.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect
+  // 🚨 4 Agt 2026 — TUTUP LUBANG kasus Lek Nardi: fungsi ini dulu menset LUNAS TANPA
+  // membuat entri kas keluar (padahal confirm-nya berjanji "sync ke laporan keuangan").
+  // 8 item dibayar 3 Agt lewat jalur ini → Rp 400K keluar tanpa jejak di cashbook.
+  // ATURAN: SEMUA jalur yang menset status='lunas' WAJIB membuat entri kas (atau memastikan sudah ada).
+  if (typeof CASHBOOK !== 'undefined' && typeof cashbookHasUpahRef === 'function' && !cashbookHasUpahRef(u.id)) {
+    CASHBOOK.push(_buildCashbookRowFromUpah(u));
+    if (typeof saveCashbook === 'function') saveCashbook(true);
+    if (typeof renderCashbook === 'function') renderCashbook();
+  }
   if (typeof saveUpah === 'function') saveUpah(true);
   if (typeof renderUpahTable === 'function') renderUpahTable();
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
