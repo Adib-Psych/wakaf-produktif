@@ -10064,6 +10064,12 @@ const DRIED_GRADES = ['merah','kuning','hijau','hitam','mengambang'];  // Fase 3
 function getDriedEvents() {
   return PANEN_LOTS_DATA.filter(l => l.type === 'jemur_event' || l.type === 'giling_event' || l.type === 'jual_event');
 }
+// 🚨 6 Agt 2026 — TOLERAN STATUS 'jemur' (alias lama dari backfill 28 Jul, id *_bf28jul).
+// 7 event (75,16 kg cherry: merah 20–24 Jul + mengambang) ditulis dengan status:'jemur',
+// bukan 'drying' → tak pernah muncul di panel "Sedang Dijemur" MAUPUN di daftar centang
+// "Selesai Jemur", jadi beratnya MUSTAHIL dimasukkan. Data lengkap, hanya satu kata salah.
+// Helper ini membuat kartu kebal terhadap varian penulisan status, sekarang & nanti.
+function isJemurAktif(l) { return l && l.type === 'jemur_event' && (l.status === 'drying' || l.status === 'jemur'); }
 function getDriedPool() {
   const pool = {}; DRIED_GRADES.forEach(g => pool[g] = 0);
   PANEN_LOTS_DATA.forEach(l => {
@@ -10256,7 +10262,7 @@ function updateJemurCherryTotal() {
 // dibagi proporsional per cherry_kg. Mirror UX "Mulai Jemur". (dulu singular prompt per-batch.)
 function renderJemurDryingList() {
   const el = document.getElementById('je-drying-list'); if (!el) return;
-  const drying = PANEN_LOTS_DATA.filter(l => l.type==='jemur_event' && l.status==='drying')
+  const drying = PANEN_LOTS_DATA.filter(isJemurAktif)
     .sort((a,b)=>(a.tgl_mulai_jemur||'').localeCompare(b.tgl_mulai_jemur||''));
   if (!drying.length) {
     el.innerHTML = `<div style="padding:20px;text-align:center;background:#FFFBEB;border:1px dashed #fcd34d;border-radius:8px;font-size:12px;color:#92400e">🌤️ Belum ada batch yang sedang dijemur.<br><span style="font-size:11px">"Mulai Jemur" dulu — nggak bisa tandai kering sebelum ada batch yang dijemur (sama kayak sortir butuh panen dulu).</span></div>`;
@@ -10441,7 +10447,7 @@ function finishJemurEvent(id) {
 
 // Panel "Sedang Dijemur" — tracking durasi tiap grup jemur aktif
 function renderDryingTrackerHtml() {
-  const drying = PANEN_LOTS_DATA.filter(l => l.type==='jemur_event' && l.status==='drying');
+  const drying = PANEN_LOTS_DATA.filter(isJemurAktif);
   if (!drying.length) return '';
   const rows = drying.sort((a,b)=>(a.tgl_mulai_jemur||'').localeCompare(b.tgl_mulai_jemur||'')).map(ev => {
     const g = PANEN_GRADES[ev.grade] || {label:ev.grade,color:'#888'};
