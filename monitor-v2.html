@@ -7640,8 +7640,18 @@ function renderInventoryKPI() {
 // ============================================================
 // Helper missing (BUGFIX 21 Mei sore — ReferenceError di production):
 // `todayIso` dipanggil di 8 tempat tapi tidak pernah didefine. Define di sini sekali.
+// 🚨 9 Agt 2026 — DULU memakai toISOString() yang mengembalikan tanggal UTC.
+// UTC tertinggal 7 jam dari WIB, jadi antara 00:00-07:00 WIB fungsi ini
+// mengembalikan tanggal KEMARIN — persis jam orang kebun mulai bekerja.
+// lapor.html (PWA pekerja) sejak awal sudah memakai jam lokal; monitor-v2 tidak.
+// Dua halaman, dua jam berbeda. Sekarang keduanya memakai JAM LOKAL PERANGKAT.
+// Dipakai 18+ tempat: tanggal panen, sortir, jual, giling, sampling, mulai jemur,
+// dan tgl_selesai saat menandai batch kering.
 function todayIso() {
-  return new Date().toISOString().slice(0, 10);  // YYYY-MM-DD
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${m}-${dd}`;   // YYYY-MM-DD, jam lokal (WIB)
 }
 const PANEN_SCHEMA_VERSION = '1.1';
 const PANEN_ADDITIVE_VERSIONS = ['1.0', '1.1'];  // backward-compat preserve LS
