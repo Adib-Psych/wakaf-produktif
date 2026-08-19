@@ -15879,10 +15879,21 @@ function getDetailText(d) {
 // ⭐ 2 Jul 2026 — SINGLE SOURCE OF TRUTH census pohon per kebun (H/B/M) — 28-29 Mei 2026.
 // Dipakai OLEH: (a) POHON_BASELINE.census2026 (kartu Dashboard "Terkini") + (b) cards Tab Inventarisasi (via applyCensus()).
 // Edit angka DI SINI SAJA → dashboard + cards + footer auto-sinkron. Semua turunan (total, %, density, delta) di-derive.
+// ⭐ REVISI 20 Agt 2026 (Wakif) — KOREKSI IDENTIFIKASI, bukan penambahan pohon.
+// Sensus Mei 2026 dikerjakan Cak Yit; Wakif memeriksa ulang di lapangan dan menemukan
+// beberapa pohon SALAH DIKELOMPOKKAN: dicatat Biru (masih bisa diperbaiki) padahal
+// sebenarnya Merah (siap peremajaan). Perpindahan kelasnya:
+//     K1  Biru 60→58   Merah 24→26   (2 pohon)
+//     K2  Biru 198→197 Merah 98→99   (1 pohon)
+//     K3  Biru 88→87   Merah 200→201 (1 pohon)
+// TOTAL per kebun TIDAK BERUBAH (154 · 490 · 350 · 304) — ini pindah kelas, bukan tambah.
+// Akibatnya: Merah 382→386 · Biru 484→480 · Hijau tetap 432.
+// ⚠️ Merah naik = daftar peremajaan bertambah 4 pohon, dan 4 pohon itu KELUAR dari
+// rencana perawatan intensif. Konsekuensinya ada di RAB & rencana sulaman, bukan di sini.
 const KEBUN_CENSUS = {
-  K1: { luas_m2:617,  base2023:150, proj2026:99,  H:70,  B:60,  M:24  },
-  K2: { luas_m2:2324, base2023:623, proj2026:411, H:194, B:198, M:98  },
-  K3: { luas_m2:1577, base2023:397, proj2026:262, H:62,  B:88,  M:200 },
+  K1: { luas_m2:617,  base2023:150, proj2026:99,  H:70,  B:58,  M:26  },
+  K2: { luas_m2:2324, base2023:623, proj2026:411, H:194, B:197, M:99  },
+  K3: { luas_m2:1577, base2023:397, proj2026:262, H:62,  B:87,  M:201 },
   K4: { luas_m2:824,  base2023:212, proj2026:140, H:106, B:138, M:60, rumahWakif:true }
 };
 const _kebunTot = k => { const c=KEBUN_CENSUS[k]; return c.H+c.B+c.M; };
@@ -15893,8 +15904,10 @@ const POHON_BASELINE = {
   current: 915,                       // Active baseline — manual update after seleksi
   perBidang: [99, 411, 262, 140],     // 2023 KOPI × decay 2.6yr — LEGACY decay est (terlalu agresif vs aktual census)
   // ⭐ 2 Jul 2026: census2026 = census AKTUAL per kebun (28-29 Mei 2026 · sumber: cards Tab Inventarisasi, per-warna H/B/M).
-  //   K1 154 (70H+60B+24M) · K2 490 (194H+198B+98M) · K3 350 (62H+88B+200M) · K4 304 (106H+138B+60M).
+  //   ⭐ REVISI 20 Agt 2026 (koreksi identifikasi Wakif atas sensus Cak Yit — 4 pohon Biru → Merah):
+  //   K1 154 (70H+58B+26M) · K2 490 (194H+197B+99M) · K3 350 (62H+87B+201M) · K4 304 (106H+138B+60M).
   //   Kebun Wakaf K1+K2+K3 = 994 · K4 Rumah Wakif (BUKAN aset wakaf) = 304 · total fisik 1.298. Semua locked ✓.
+  //   TOTAL tidak berubah — yang berpindah hanya kelasnya. Agregat: H 432 · B 480 (dari 484) · M 386 (dari 382).
   census2026:   [_kebunTot('K1'), _kebunTot('K2'), _kebunTot('K3'), _kebunTot('K4')],  // ⭐ derived dari KEBUN_CENSUS (single source)
   censusLocked: [true, true, true, true],
   baseline2023_kopi: [150, 623, 397, 212],  // Adib survey Oktober 2023 — locked
