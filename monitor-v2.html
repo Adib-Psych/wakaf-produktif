@@ -5603,7 +5603,7 @@ function _buildCashbookRowFromUpah(u) {
   const aktivitasClean = String(u.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
   return {
     id: 'cb_pay_' + Date.now() + '_' + u.id,
-    tgl: u.bayar_tgl || new Date().toISOString().slice(0,10),
+    tgl: u.bayar_tgl || ((typeof todayIso === 'function') ? todayIso() : new Date().toISOString().slice(0,10)),   // ⭐ 19 Agt 2026: jam LOKAL, bukan UTC (Pattern #26)
     tipe: u.bayar_source === 'anto' ? 'keluar_anto' : 'bayar_upah',
     kat: katRAB,
     ket: 'Upah ' + nm + ' — ' + aktivitasClean + ' (' + formatTglShort(u.tgl) + ') [lgs·batch]',
@@ -6038,7 +6038,7 @@ function markPaid(id) {
   const it = UPAH_ITEMS.find(x => x.id === id);
   if (!it) return;
   it.status = 'lunas';
-  it.bayar_tgl = new Date().toISOString().slice(0,10);
+  it.bayar_tgl = (typeof todayIso === 'function') ? todayIso() : new Date().toISOString().slice(0,10);   // ⭐ 19 Agt 2026: jam LOKAL, bukan UTC (Pattern #26)
   it.bayar_source = it.bayar_source || 'wakif';
   it.last_modified_at = new Date().toISOString();
   if (typeof CASHBOOK !== 'undefined' && typeof cashbookHasUpahRef === 'function' && !cashbookHasUpahRef(it.id)) {
@@ -7067,6 +7067,22 @@ console.log('  runReconciliationAudit()          — Build matrix (Source 1+2+3 
 console.log('  RECONCILE_MATRIX                  — Inspect matrix object');
 console.log('  getCakYitWhitelist()              — Show whitelist array');
 
+// ⭐ 19 Agt 2026 (permintaan Wakif) — BAYAR BATCH SEKARANG MEMAKAI MODAL YANG SAMA
+// dengan tombol "💸 Bayar" per baris, supaya TANGGAL BAYAR bisa diisi sendiri.
+// Wakif: "opsi utk mengisi tanggal bayar hanya bs dilakukan kl bayar lewat Bayar yg ada
+// di kanan masing2 row... Aq maunya terapkan yg sama."
+//
+// SEBELUM: batchPay() langsung confirm() lalu memakai TANGGAL HARI INI diam-diam —
+// tak bisa diubah. Padahal upah sering diserahkan di tanggal yang berbeda dari
+// tanggal Wakif membuka dashboard (mis. dibayar di kebun, dicatat malamnya di Malang).
+// 🚨 Dan tanggal itu diambil dari toISOString() = UTC → antara 00:00–07:00 WIB
+// tercatat tanggal KEMARIN (Pattern #26). Dua-duanya ditutup di sini.
+//
+// SEKARANG: batchPay() hanya MENGUMPULKAN item lalu membuka modal. Seluruh penulisan
+// (status, bayar_tgl, bayar_source, baris kas) dikerjakan confirmPaid() — SATU jalur
+// tulis untuk per-baris maupun batch. Ini juga menutup risiko "dua pintu tidak sepakat"
+// yang jadi temuan diagnosis 17 Agt: dulu batchPay & confirmPaid membangun baris kas
+// dengan kode terpisah yang bisa berbeda diam-diam.
 function batchPay() {
   const checked = document.querySelectorAll('.upah-check:checked');
   if (checked.length === 0) {
@@ -7075,55 +7091,21 @@ function batchPay() {
   }
   let total = 0;
   const ids = [];
+  let sudahLunas = 0;
   checked.forEach(c => {
     const id = +c.dataset.id;
     const it = UPAH_ITEMS.find(x => x.id === id);
-    if (it && it.status === 'belum') {
-      total += calcTotal(it);
-      ids.push(id);
-    }
+    if (!it) return;
+    if (it.status === 'belum') { total += calcTotal(it); ids.push(id); }
+    else sudahLunas++;
   });
-  if (!confirm(`Bayar ${ids.length} item, total ${fmtRpShort(total)}?\n\nDari Kas Wakif langsung.`)) return;
-  // Mas Anto OUT permanen 19 Mei 2026 — petty cash Anto option removed dari new payment flow.
-  // Historical bayar_source='anto' di entries lama tetap intact untuk audit trail.
-  const source = 'wakif';
-  const today = new Date().toISOString().slice(0,10);
-  ids.forEach(id => {
-    const it = UPAH_ITEMS.find(x => x.id === id);
-    it.status = 'lunas';
-    it.bayar_tgl = today;
-    it.bayar_source = source;
-    it.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect
-    // Auto-create cashbook entry per item
-    // ⭐ 21 Jul 2026 QC GUARD: skip kalau autolink ref upah ini sudah ada (anti double-count)
-    if (typeof CASHBOOK !== 'undefined' && typeof cashbookHasUpahRef === 'function' && cashbookHasUpahRef(it.id)) {
-      console.warn('[batchPay] cashbook autolink upah_' + it.id + ' sudah ada — skip push (anti dobel)');
-    } else if (typeof CASHBOOK !== 'undefined') {
-      const tipe = source === 'anto' ? 'keluar_anto' : 'bayar_upah';
-      const katRAB = it.model === 'borongan' ? '4.1' : (it.pelapor === 'YIT' ? '3.1' : '3.2');
-      const nm = NAMA_PEKERJA[it.pelapor] || it.pelapor;
-      // Description: auto-rename Bidang → Kebun untuk konsistensi (17 Mei 2026)
-      const aktivitasClean = (it.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
-      CASHBOOK.push({
-        id: 'cb_pay_' + Date.now() + '_' + it.id,
-        tgl: today, tipe, kat: katRAB,
-        ket: `Upah ${nm} — ${aktivitasClean} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto·batch]':'[lgs·batch]'}`,
-        masuk: 0, keluar: calcTotal(it),
-        src: 'autolink', nota: null, ref: 'upah_' + it.id,
-        last_modified_at: new Date().toISOString()   // ⭐ 10 Juni 2026: Pattern #10 merge guard
-      });
-    }
-  });
-  saveUpah();
-  if (typeof saveCashbook === 'function') saveCashbook();
-  renderUpahSummary(); renderUpahTable();
-  if (typeof renderKeuangan === 'function') renderKeuangan();
-  if (typeof renderRAB === 'function') renderRAB();
-  if (typeof showToast === 'function') {
-    showToast(`✅ ${ids.length} item batch-paid (${source==='anto'?'via Anto':'kas wakif'}) — ${fmtRpShort(total)}`);
-  } else {
-    alert(`✅ Batch payment berhasil — ${fmtRpShort(total)} ditandai lunas (${today})`);
+  if (!ids.length) {
+    alert(sudahLunas
+      ? `Semua ${sudahLunas} item tercentang SUDAH lunas — tidak ada yang perlu dibayar.`
+      : 'Tidak ada item "belum dibayar" di antara yang tercentang.');
+    return;
   }
+  openPaidModalForBatch(ids, total, sudahLunas);
 }
 
 function toggleAllPay(checkbox) {
@@ -17298,20 +17280,54 @@ function exportCashbookCSV() {
 
 // ---------- AUTO-LINK: TANDAI DIBAYAR ----------
 let PENDING_PAY_ID = null;
+let PENDING_PAY_IDS = null;   // ⭐ 19 Agt 2026: mode BATCH (array id). null = mode satu item.
+
 function openPaidModalById(id) {
   PENDING_PAY_ID = id;
+  PENDING_PAY_IDS = null;
   const it = UPAH_ITEMS.find(x => x.id === id);
   if (!it) return;
   const total = (typeof calcTotal === 'function') ? calcTotal(it) : it.total;
   const nm = (typeof NAMA_PEKERJA !== 'undefined') ? NAMA_PEKERJA[it.pelapor] : it.pelapor;
   document.getElementById('paid-modal-info').textContent = `${formatTgl(it.tgl)} · ${nm} · ${it.aktivitas} · Total ${fmtRp(total)}`;
-  document.getElementById('paid-tgl').valueAsDate = new Date();
-  document.getElementById('paid-nota').value = '';
+  _prepPaidModalCommon();
+}
+
+// ⭐ 19 Agt 2026 (permintaan Wakif) — modal yang SAMA untuk pembayaran batch dari item tercentang.
+// Ringkasannya menyebut jumlah item, siapa saja pekerjanya, dan rentang tanggal kerjanya —
+// supaya sebelum menekan Konfirmasi, Wakif tahu persis apa yang akan ditandai lunas.
+function openPaidModalForBatch(ids, total, sudahLunas) {
+  PENDING_PAY_ID = null;
+  PENDING_PAY_IDS = ids.slice();
+  const items = ids.map(i => UPAH_ITEMS.find(x => x.id === i)).filter(Boolean);
+  const namaSet = [...new Set(items.map(it =>
+    (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[it.pelapor]) || it.pelapor))];
+  const tgls = items.map(it => it.tgl).filter(Boolean).sort();
+  const rentang = tgls.length
+    ? (tgls[0] === tgls[tgls.length - 1] ? formatTgl(tgls[0])
+       : `${formatTglShort(tgls[0])} – ${formatTglShort(tgls[tgls.length - 1])}`)
+    : '—';
+  const lewat = sudahLunas ? ` · ${sudahLunas} item sudah lunas dilewati` : '';
+  document.getElementById('paid-modal-info').textContent =
+    `${ids.length} item · ${namaSet.join(', ')} · kerja ${rentang} · Total ${fmtRp(total)}${lewat}`;
+  _prepPaidModalCommon();
+}
+
+function _prepPaidModalCommon() {
+  // 🚨 Tanggal bawaan pakai todayIso() = JAM LOKAL (WIB), BUKAN valueAsDate/toISOString
+  // yang memakai UTC. UTC tertinggal 7 jam → antara 00:00–07:00 WIB isian bawaannya
+  // jadi tanggal KEMARIN tanpa ada tanda apa pun (Pattern #26).
+  const el = document.getElementById('paid-tgl');
+  if (el) el.value = (typeof todayIso === 'function') ? todayIso() : new Date().toISOString().slice(0,10);
+  const nota = document.getElementById('paid-nota');
+  if (nota) nota.value = '';
   document.getElementById('paid-modal-overlay').style.display = 'flex';
 }
+
 function closePaidModal() {
   document.getElementById('paid-modal-overlay').style.display = 'none';
   PENDING_PAY_ID = null;
+  PENDING_PAY_IDS = null;
 }
 // ⭐ 21 Jul 2026 (QC anti double-count): cek apakah cashbook SUDAH punya autolink utk upah id ini
 // (cover ref single 'upah_12' maupun batch 'upah_4·5·6'). Dipakai confirmPaid + batchPay.
@@ -17323,54 +17339,91 @@ function cashbookHasUpahRef(upahId) {
     return cb.ref.replace(/^upah_/, '').split('·').map(s => s.trim()).includes(idStr);
   });
 }
-async function confirmPaid() {
-  if (!PENDING_PAY_ID) return;
-  const it = UPAH_ITEMS.find(x => x.id === PENDING_PAY_ID);
-  if (!it) return;
-  // ⭐ 21 Jul 2026 QC GUARD #1: item sudah lunas (double-click / stale table) → JANGAN proses ulang
-  if (it.status === 'lunas') {
-    closePaidModal();
-    if (typeof showToast === 'function') showToast('ℹ️ Item ini SUDAH lunas — tidak diproses ulang (anti dobel).');
-    return;
-  }
-  const tgl = document.getElementById('paid-tgl').value;
-  const source = document.querySelector('input[name="paid-source"]:checked').value;
-  const notaFile = document.getElementById('paid-nota').files[0];
+// ⭐ 19 Agt 2026 — SATU jalur tulis pembayaran, dipakai per-baris MAUPUN batch.
+// Menandai satu item lunas + membuat baris kas pasangannya. Mengembalikan nominalnya
+// (0 kalau dilewati). JANGAN buat jalur tulis kedua di tempat lain — aturan permanen
+// Pattern #21: setiap jalur yang menset status='lunas' WAJIB membuat baris kas.
+function _payOneItem(it, tgl, source, notaId, isBatch) {
+  if (!it || it.status === 'lunas') return 0;
   const total = (typeof calcTotal === 'function') ? calcTotal(it) : it.total;
-  let notaId = null;
-  if (notaFile) notaId = await saveNotaToIDB(notaFile);
-  // Mark paid in UPAH
   it.status = 'lunas';
   it.bayar_tgl = tgl;
   it.bayar_source = source;
   it.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect
-  localStorage.setItem('wkkn_v2_upah', JSON.stringify(UPAH_ITEMS));
   // Auto-create cashbook entry — kategori RAB sesuai pekerja & model
-  const tipe = source === 'anto' ? 'keluar_anto' : 'bayar_upah';
-  const katRAB = it.model === 'borongan' ? '4.1' : (it.pelapor === 'YIT' ? '3.1' : '3.2');
-  const nm = (typeof NAMA_PEKERJA !== 'undefined') ? NAMA_PEKERJA[it.pelapor] : it.pelapor;
-  // Description: auto-rename Bidang → Kebun untuk konsistensi (17 Mei 2026)
-  const aktivitasClean = (it.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
-  // ⭐ 21 Jul 2026 QC GUARD #2: skip push kalau autolink ref upah ini SUDAH ada (anti double-count burn rate)
-  if (cashbookHasUpahRef(it.id)) {
-    console.warn('[confirmPaid] cashbook autolink upah_' + it.id + ' sudah ada — skip push (anti dobel)');
-  } else {
-  CASHBOOK.push({
-    id: 'cb_pay_' + Date.now() + '_' + it.id,
-    tgl, tipe, kat: katRAB,
-    ket: `Upah ${nm} — ${aktivitasClean} (${formatTglShort(it.tgl)}) ${source==='anto'?'[via Anto]':'[lgs]'}`,
-    masuk: 0, keluar: total,
-    src: 'autolink', nota: notaId, ref: 'upah_' + it.id,
-    last_modified_at: new Date().toISOString()   // ⭐ 10 Juni 2026: Pattern #10 merge guard
-  });
+  // ⭐ 21 Jul 2026 QC GUARD: skip push kalau autolink ref upah ini SUDAH ada (anti double-count burn rate)
+  if (typeof cashbookHasUpahRef === 'function' && cashbookHasUpahRef(it.id)) {
+    console.warn('[_payOneItem] cashbook autolink upah_' + it.id + ' sudah ada — skip push (anti dobel)');
+  } else if (typeof CASHBOOK !== 'undefined') {
+    const tipe = source === 'anto' ? 'keluar_anto' : 'bayar_upah';
+    const katRAB = it.model === 'borongan' ? '4.1' : (it.pelapor === 'YIT' ? '3.1' : '3.2');
+    const nm = (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[it.pelapor]) ? NAMA_PEKERJA[it.pelapor] : it.pelapor;
+    // Description: auto-rename Bidang → Kebun untuk konsistensi (17 Mei 2026)
+    const aktivitasClean = (it.aktivitas || '').replace(/Bidang\s+(\d)/g, 'Kebun $1');
+    const tag = source === 'anto' ? (isBatch ? '[via Anto·batch]' : '[via Anto]') : (isBatch ? '[lgs·batch]' : '[lgs]');
+    CASHBOOK.push({
+      id: 'cb_pay_' + Date.now() + '_' + it.id,
+      tgl, tipe, kat: katRAB,
+      ket: `Upah ${nm} — ${aktivitasClean} (${formatTglShort(it.tgl)}) ${tag}`,
+      masuk: 0, keluar: total,
+      src: 'autolink', nota: notaId || null, ref: 'upah_' + it.id,
+      last_modified_at: new Date().toISOString()   // ⭐ 10 Juni 2026: Pattern #10 merge guard
+    });
   }
-  saveCashbook(true);   // ⭐ force-immediate push
+  return total;
+}
+
+async function confirmPaid() {
+  const isBatch = Array.isArray(PENDING_PAY_IDS) && PENDING_PAY_IDS.length > 0;
+  if (!isBatch && !PENDING_PAY_ID) return;
+
+  const tgl = document.getElementById('paid-tgl').value;
+  if (!tgl) { alert('Tanggal bayar wajib diisi.'); return; }   // ⭐ 19 Agt: jangan biarkan kosong
+  const source = document.querySelector('input[name="paid-source"]:checked').value;
+  const notaFile = document.getElementById('paid-nota').files[0];
+  let notaId = null;
+  if (notaFile) notaId = await saveNotaToIDB(notaFile);
+
+  let total = 0, n = 0;
+  if (isBatch) {
+    PENDING_PAY_IDS.forEach(id => {
+      const it = UPAH_ITEMS.find(x => x.id === id);
+      const v = _payOneItem(it, tgl, source, notaId, true);
+      if (v > 0) { total += v; n++; }
+    });
+    if (!n) {
+      closePaidModal();
+      if (typeof showToast === 'function') showToast('ℹ️ Semua item terpilih SUDAH lunas — tidak diproses ulang (anti dobel).');
+      return;
+    }
+  } else {
+    const it = UPAH_ITEMS.find(x => x.id === PENDING_PAY_ID);
+    if (!it) return;
+    // ⭐ 21 Jul 2026 QC GUARD #1: item sudah lunas (double-click / stale table) → JANGAN proses ulang
+    if (it.status === 'lunas') {
+      closePaidModal();
+      if (typeof showToast === 'function') showToast('ℹ️ Item ini SUDAH lunas — tidak diproses ulang (anti dobel).');
+      return;
+    }
+    total = _payOneItem(it, tgl, source, notaId, false);
+    n = 1;
+  }
+
+  // ⭐ 19 Agt 2026: dulu jalur per-baris hanya menulis localStorage langsung sehingga
+  // perubahan status TIDAK terdorong ke cloud saat itu juga. saveUpah(true) menulis
+  // lokal SEKALIGUS mendorong ke Firestore — status bayar terlalu penting untuk menunggu.
+  if (typeof saveUpah === 'function') saveUpah(true);
+  else localStorage.setItem('wkkn_v2_upah', JSON.stringify(UPAH_ITEMS));
+  if (typeof saveCashbook === 'function') saveCashbook(true);   // ⭐ force-immediate push
   closePaidModal();
   if (typeof renderUpahTable === 'function') renderUpahTable();
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
-  renderKeuangan();
-  renderRAB();
-  showToast(`✅ ${fmtRp(total)} tercatat di Cashbook (${source==='anto'?'via Anto':'kas wakif'})`);
+  if (typeof renderKeuangan === 'function') renderKeuangan();
+  if (typeof renderRAB === 'function') renderRAB();
+  const src = source === 'anto' ? 'via Anto' : 'kas wakif';
+  showToast(isBatch
+    ? `✅ ${n} item lunas ${formatTglShort(tgl)} — ${fmtRp(total)} tercatat di Cashbook (${src})`
+    : `✅ ${fmtRp(total)} tercatat di Cashbook (${src})`);
 }
 
 // ============ RECOVER ENTRY LAMA — backfill UPAH dari STATE.laporan ============
@@ -18554,7 +18607,7 @@ function auditMarkUpahPaid(upahId) {
   if (!u) { alert('UPAH tidak ditemukan'); return; }
   if (!confirm(`Tandai UPAH "${u.aktivitas}" (${formatTglShort(u.tgl)}) sebagai LUNAS?\n\nEntri kas keluar ikut dibuat otomatis.`)) return;
   u.status = 'lunas';
-  u.bayar_tgl = new Date().toISOString().slice(0,10);
+  u.bayar_tgl = (typeof todayIso === 'function') ? todayIso() : new Date().toISOString().slice(0,10);   // ⭐ 19 Agt 2026: jam LOKAL, bukan UTC (Pattern #26)
   u.bayar_source = 'wakif';
   u.last_modified_at = new Date().toISOString();   // ⭐ 11 Juni 2026: Layer C preserve detect
   // 🚨 4 Agt 2026 — TUTUP LUBANG kasus Lek Nardi: fungsi ini dulu menset LUNAS TANPA
