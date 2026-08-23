@@ -754,16 +754,55 @@
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">5</span>Riwayat Transaksi Lain (non-upah, legacy view)</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">⚠️ Section legacy. Gunakan tab <strong>Laporan Keuangan</strong> untuk input + tracking transaksi yang lebih lengkap (kategori RAB, upload nota, audit trail, dll).</p>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Tgl</th><th>Jenis</th><th>Kategori</th><th>Keterangan</th><th>Jumlah</th></tr></thead>
-            <tbody>
-              <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--mute);font-style:italic">Belum ada transaksi non-upah dicatat di view ini.<br>Lihat tab <strong>Laporan Keuangan</strong> untuk Cashbook lengkap.</td></tr>
-            </tbody>
-          </table>
+        <div class="card-title"><span class="num">5</span>Kasbon Pekerja <small style="font-weight:400;color:var(--mute);font-size:11px">(uang muka upah — otomatis dipotong saat pembayaran)</small></div>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px;line-height:1.6">
+          Dipakai saat pekerja <strong>meminta sebagian upahnya lebih dulu</strong>, atau menerima uang muka sebelum upahnya dibayarkan.
+          Uang yang keluar hari itu <strong>langsung tercatat di buku kas</strong> sebagai upah, lalu <strong>dipotong otomatis</strong> saat rekap pembayaran —
+          jadi tidak pernah terhitung dua kali. Kalau kasbon lebih besar dari upah yang dibayar saat itu, sisanya jalan terus ke pembayaran berikutnya.
+          <br><strong style="color:#8B6914">Keperluan wajib diisi</strong> — itu yang nanti Adib baca ulang berbulan-bulan kemudian saat bertanya "uang ini dulu untuk apa?".
+        </p>
+
+        <!-- Form isian -->
+        <div style="background:#FFFBEB;border:1.5px solid #F0D98C;border-radius:10px;padding:14px;margin-bottom:14px">
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
+            <div style="flex:0 0 150px">
+              <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Tanggal</label>
+              <input type="date" id="kb-tgl" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+            </div>
+            <div style="flex:0 0 170px">
+              <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Pekerja</label>
+              <select id="kb-pekerja" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px"></select>
+            </div>
+            <div style="flex:0 0 150px">
+              <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Jumlah (Rp)</label>
+              <input type="number" id="kb-jumlah" min="1000" step="1000" placeholder="mis. 200000" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+            </div>
+            <div style="flex:1 1 260px;min-width:220px">
+              <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Keperluan — untuk apa uangnya <span style="color:#C14B3A">*</span></label>
+              <input type="text" id="kb-keperluan" maxlength="120" placeholder="mis. bayar sekolah anak · berobat · kebutuhan hari raya" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+            </div>
+            <div style="flex:1 1 100%">
+              <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Catatan tambahan (opsional)</label>
+              <input type="text" id="kb-catatan" maxlength="200" placeholder="mis. minta dipotong bertahap · janji dikembalikan lewat kerja minggu depan" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+            </div>
+            <div style="flex:0 0 auto">
+              <button class="btn btn-primary" onclick="tambahKasbon()" style="background:#B45309;color:#fff;font-weight:700">💵 Catat Kasbon</button>
+            </div>
+          </div>
+          <div id="kb-err" style="color:#C14B3A;font-size:11px;font-weight:700;margin-top:8px"></div>
+          <div id="kb-hint" style="color:var(--mute);font-size:11px;margin-top:6px"></div>
         </div>
+
+        <!-- Ringkasan tanggungan berjalan per pekerja -->
+        <div id="kasbon-saldo"></div>
+
+        <!-- Riwayat -->
+        <div id="kasbon-tabel"></div>
+
+        <p style="font-size:10px;color:var(--mute);margin-top:14px;padding-top:10px;border-top:1px dashed #ddd;line-height:1.6">
+          📗 Transaksi non-upah lainnya ada di tab <strong>Laporan Keuangan</strong> (kategori RAB, unggah nota, jejak audit).
+          Tiap kasbon di sini otomatis punya barisnya sendiri di sana — ditandai <code>ref: kasbon_&lt;id&gt;</code>.
+        </p>
       </div>
     </div>
 
@@ -1268,6 +1307,10 @@
               </label>
             </div>
           </div>
+          <!-- ⭐ 23 Agt 2026: potongan kasbon. Muncul HANYA kalau pekerja yang dibayar
+               punya kasbon berjalan. Uangnya sudah keluar saat kasbon diberikan, jadi
+               yang tercatat di buku kas hari ini = NETO (anti dobel). -->
+          <div id="paid-kasbon-wrap" style="display:none"></div>
           <div>
             <label style="font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:0.5px">Bukti Bayar (opsional)</label>
             <input type="file" id="paid-nota" accept="image/*,application/pdf" style="width:100%;padding:8px;border:1.5px dashed #ccc;border-radius:6px;font-size:12px;margin-top:4px">
@@ -3817,6 +3860,7 @@ function initApp() {
   renderBudgetChart();
   renderUpahSummary();
   renderUpahTable();
+  if (typeof renderKasbon === 'function') renderKasbon();   // ⭐ 23 Agt 2026 — Kartu 5 Kasbon Pekerja
   renderHeatmap();
   // ENSO climate state (B-Phase 3) — fetch NOAA in background, fallback cached
   if (typeof initEnsoState === 'function') initEnsoState();
@@ -7168,6 +7212,13 @@ async function generateBuktiBayar(mode) {
   // Sort items by date
   items.sort((a, b) => a.tgl.localeCompare(b.tgl));
 
+  // ⭐ 23 Agt 2026 — POTONGAN KASBON di dokumen.
+  //    Bukti Bayar: ambil potongan yang BENAR-BENAR sudah diterapkan pada item ini
+  //    (jejaknya ada di kasbon.potongan[].upah_ids) — jadi angkanya bukan hitungan ulang.
+  //    Rekapan: pakai rencana potongan, supaya pekerja tahu di muka berapa yang akan dipotong.
+  const kasbonInfo = (typeof _kasbonUntukDokumen === 'function')
+    ? _kasbonUntukDokumen(items, isRekap) : {total:0, rincian:[]};
+
   // Build metadata
   const today = new Date();
   const hariStr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
@@ -7296,7 +7347,7 @@ async function generateBuktiBayar(mode) {
                     <div style="font-size:12.5px;color:#2e4040;font-style:italic;font-weight:600;line-height:1.45">${terbilangRupiah(total)}</div>
                   </div>
                   <div style="text-align:right;flex-shrink:0">
-                    <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">${isRekap?'Total Upah':'Total Dibayar'}</div>
+                    <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">${kasbonInfo.total?'Total Hak Upah':(isRekap?'Total Upah':'Total Dibayar')}</div>
                     <div style="font-size:22px;font-weight:800;color:#c14b3a;white-space:nowrap;letter-spacing:.3px">Rp ${total.toLocaleString('id-ID')}</div>
                   </div>
                 </div>
@@ -7305,6 +7356,29 @@ async function generateBuktiBayar(mode) {
           </tfoot>
         </table>
       </div>
+
+      <!-- ⭐ POTONGAN KASBON (23 Agt 2026) — hanya muncul kalau memang ada -->
+      ${kasbonInfo.total?`
+      <div style="margin:14px 32px 0">
+        <div style="font-size:11px;font-weight:800;color:#9a3412;letter-spacing:1.5px;margin-bottom:8px">💵 POTONGAN KASBON (UANG MUKA YANG SUDAH DITERIMA)</div>
+        <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06)">
+          <tbody>
+            ${kasbonInfo.rincian.map(r=>`<tr style="background:#fff7ed">
+              <td style="padding:9px 14px;font-size:12px;color:#7c2d12;border-bottom:1px solid #fde3c7">${formatTgl(r.tgl)}${r.nama?` · <b>${r.nama}</b>`:''}<div style="font-size:11px;color:#9a3412;font-style:italic">${r.keperluan||'—'}</div></td>
+              <td style="padding:9px 14px;font-size:13px;font-weight:700;color:#9a3412;text-align:right;white-space:nowrap;border-bottom:1px solid #fde3c7">− Rp ${r.jumlah.toLocaleString('id-ID')}</td>
+            </tr>`).join('')}
+            <tr style="background:#e8f1ec">
+              <td style="padding:12px 14px;font-size:12px;font-weight:800;color:#2e4040;letter-spacing:.5px">${isRekap?'PERKIRAAN DITERIMA SETELAH POTONGAN':'DITERIMA (SETELAH POTONGAN KASBON)'}</td>
+              <td style="padding:12px 14px;font-size:19px;font-weight:800;color:#166534;text-align:right;white-space:nowrap">Rp ${(total-kasbonInfo.total).toLocaleString('id-ID')}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:7px;font-size:10.5px;color:#6b7878;line-height:1.6;font-style:italic">
+          Kasbon di atas <b>sudah diterima lebih dulu</b> pada tanggal tersebut, jadi tidak diserahkan ulang hari ini.
+          Hak upah panjenengan tetap <b>Rp ${total.toLocaleString('id-ID')}</b> — yang berkurang hanya uang yang diserahkan hari ini.
+          ${kasbonInfo.sisa>0?`<br>Sisa kasbon yang belum tertutup: <b>Rp ${kasbonInfo.sisa.toLocaleString('id-ID')}</b> — akan dipotong dari upah berikutnya.`:''}
+        </div>
+      </div>`:''}
 
       <!-- DOA (bukti) / KONFIRMASI (rekap) SECTION -->
       ${isRekap?`
@@ -17334,6 +17408,9 @@ function _prepPaidModalCommon() {
   if (el) el.value = (typeof todayIso === 'function') ? todayIso() : new Date().toISOString().slice(0,10);
   const nota = document.getElementById('paid-nota');
   if (nota) nota.value = '';
+  // ⭐ 23 Agt 2026: tampilkan potongan kasbon SEBELUM dikonfirmasi — Adib melihat
+  //    hak upah, potongan, dan yang benar-benar diserahkan, bukan angka jadi.
+  if (typeof renderKasbonPreviewModal === 'function') { try { renderKasbonPreviewModal(); } catch(e){ console.warn('[Kasbon] pratinjau gagal:', e && e.message); } }
   document.getElementById('paid-modal-overlay').style.display = 'flex';
 }
 
@@ -17356,6 +17433,323 @@ function cashbookHasUpahRef(upahId) {
 // Menandai satu item lunas + membuat baris kas pasangannya. Mengembalikan nominalnya
 // (0 kalau dilewati). JANGAN buat jalur tulis kedua di tempat lain — aturan permanen
 // Pattern #21: setiap jalur yang menset status='lunas' WAJIB membuat baris kas.
+// ═══════════════════════════════════════════════════════════════════════════════
+// KASBON PEKERJA — uang muka upah (23 Agt 2026, permintaan Wakif)
+// -----------------------------------------------------------------------------
+// Kenapa ada: kadang pekerja belum mau mengambil upahnya, kadang justru minta
+// sebagian lebih dulu. Tanpa wadah, uang itu keluar tanpa jejak dan potongannya
+// dihitung dari ingatan — persis jenis kesalahan yang sudah pernah terjadi
+// (3 Agt 2026: upah lunas tanpa entri kas, Rp 400.000 keluar tanpa jejak).
+//
+// PERLAKUAN BUKU KAS (keputusan Wakif 23 Agt 2026, opsi "langsung jadi upah"):
+//   10 Agt kasbon Rp 200.000 → kas KELUAR Rp 200.000, kategori upah (3.1/3.2)
+//   20 Agt upah Rp 500.000   → kas KELUAR Rp 300.000 saja (NETO)
+//   Total Rp 500.000, nol dobel. Serapan RAB upah naik sejak kasbon diberikan —
+//   memang uangnya sudah keluar untuk upah.
+//
+// Baris kas pembayaran tetap menyimpan `keluar_bruto` + `potong_kasbon`, jadi
+// bisa diaudit DUA ARAH: dari sisi kas (neto) maupun dari sisi hak upah (bruto).
+//
+// Kasbon > upah yang dibayar saat itu → sisanya JALAN TERUS ke pembayaran
+// berikutnya (keputusan Wakif), bukan diblokir.
+//
+// Simpanan: localStorage + Firestore `sop_status/kasbon` — Pattern #18, memakai
+// koleksi yang rules-nya SUDAH mengizinkan tulis, supaya Wakif tak perlu
+// menerbitkan rules baru dari Console.
+// ═══════════════════════════════════════════════════════════════════════════════
+let KASBON_DATA = [];
+const KASBON_LS = 'wkkn_v2_kasbon';
+function loadKasbonLS(){ try{ const v=JSON.parse(localStorage.getItem(KASBON_LS)||'[]'); if(Array.isArray(v)) KASBON_DATA=v; }catch(e){} }
+function saveKasbonLS(){ try{ localStorage.setItem(KASBON_LS, JSON.stringify(KASBON_DATA)); }catch(e){} }
+loadKasbonLS();
+function persistKasbon(){ saveKasbonLS(); if(typeof window.syncKasbonToFirestore==='function') window.syncKasbonToFirestore(); }
+
+function kasbonKatRAB(token){ return token==='YIT' ? '3.1' : '3.2'; }
+function kasbonNama(token){ return (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[token]) ? NAMA_PEKERJA[token] : token; }
+function kasbonSisaEntri(k){ return Math.max(0, (+k.jumlah||0) - (+k.terpotong||0)); }
+function kasbonSisaPekerja(token){ return KASBON_DATA.filter(k=>k.pelapor===token).reduce((s,k)=>s+kasbonSisaEntri(k),0); }
+/** Kasbon yang masih punya sisa, URUT TERTUA DULU (FIFO) — yang paling lama menunggu dipotong duluan. */
+function kasbonAktifPekerja(token){
+  return KASBON_DATA.filter(k=>k.pelapor===token && kasbonSisaEntri(k)>0)
+                    .sort((a,b)=>String(a.tgl||'').localeCompare(String(b.tgl||'')));
+}
+function upahBelumPekerja(token){
+  if (typeof UPAH_ITEMS==='undefined') return 0;
+  return UPAH_ITEMS.filter(u=>u.pelapor===token && u.status==='belum' && !u.archived && !u.voided_duplicate)
+                   .reduce((s,u)=>s+calcTotal(u),0);
+}
+
+/** Rencana potongan untuk sekumpulan item upah — dipakai untuk PRATINJAU di modal
+ *  maupun untuk PENERAPAN saat konfirmasi. Fungsi murni: tidak mengubah apa pun. */
+function hitungPotonganKasbon(ids){
+  const perPekerja = {}; let total = 0;
+  (ids||[]).forEach(id=>{
+    const u = (typeof UPAH_ITEMS!=='undefined') ? UPAH_ITEMS.find(x=>x.id===id) : null;
+    if (!u) return;
+    (perPekerja[u.pelapor] = perPekerja[u.pelapor] || {gross:0, potong:0, rincian:[], ids:[]});
+    perPekerja[u.pelapor].gross += calcTotal(u);
+    perPekerja[u.pelapor].ids.push(id);
+  });
+  Object.keys(perPekerja).forEach(tok=>{
+    const p = perPekerja[tok];
+    let ruang = p.gross;                       // tak boleh memotong lebih dari upah yang dibayar
+    kasbonAktifPekerja(tok).forEach(k=>{
+      if (ruang<=0) return;
+      const ambil = Math.min(kasbonSisaEntri(k), ruang);
+      if (ambil<=0) return;
+      p.rincian.push({id:k.id, tgl:k.tgl, keperluan:k.keperluan||'', ambil:ambil, sisaSebelum:kasbonSisaEntri(k)});
+      p.potong += ambil; ruang -= ambil;
+    });
+    total += p.potong;
+  });
+  return {perPekerja, total};
+}
+
+/** Terapkan potongan: tandai entri kasbon (FIFO) + kurangi baris kas hasil
+ *  pembayaran menjadi NETO. Dipanggil SESUDAH _payOneItem membuat barisnya. */
+function _terapkanPotonganKasbon(paidIds, tgl){
+  const rencana = hitungPotonganKasbon(paidIds);
+  if (!rencana.total) return {total:0, rencana};
+  const now = new Date().toISOString();
+  Object.keys(rencana.perPekerja).forEach(tok=>{
+    const p = rencana.perPekerja[tok];
+    if (!p.potong) return;
+    // (1) tandai di entri kasbon
+    p.rincian.forEach(r=>{
+      const k = KASBON_DATA.find(x=>x.id===r.id); if(!k) return;
+      k.terpotong = (+k.terpotong||0) + r.ambil;
+      k.potongan = Array.isArray(k.potongan) ? k.potongan : [];
+      k.potongan.push({tgl:tgl, jumlah:r.ambil, upah_ids:p.ids.slice()});
+      k.last_modified_at = now;
+    });
+    // (2) kurangi baris kas pembayaran pekerja ini sampai potongan habis
+    let sisa = p.potong;
+    p.ids.forEach(id=>{
+      if (sisa<=0 || typeof CASHBOOK==='undefined') return;
+      // baris TERBARU dengan ref ini = yang baru saja dibuat _payOneItem
+      let row=null;
+      for (let i=CASHBOOK.length-1;i>=0;i--){ if(CASHBOOK[i] && CASHBOOK[i].ref==='upah_'+id){ row=CASHBOOK[i]; break; } }
+      if (!row) return;
+      const ambil = Math.min(+row.keluar||0, sisa);
+      if (ambil<=0) return;
+      if (row.keluar_bruto==null) row.keluar_bruto = +row.keluar||0;
+      row.keluar = (+row.keluar||0) - ambil;
+      row.potong_kasbon = (+row.potong_kasbon||0) + ambil;
+      row.ket = String(row.ket||'') + ' — dipotong kasbon ' + fmtRp(ambil);
+      row.last_modified_at = now;
+      sisa -= ambil;
+    });
+  });
+  persistKasbon();
+  return {total:rencana.total, rencana};
+}
+
+// ── Pratinjau di modal bayar ───────────────────────────────────────────────────
+function renderKasbonPreviewModal(){
+  const wrap = document.getElementById('paid-kasbon-wrap'); if(!wrap) return;
+  const ids = (Array.isArray(PENDING_PAY_IDS)&&PENDING_PAY_IDS.length) ? PENDING_PAY_IDS
+            : (PENDING_PAY_ID!=null ? [PENDING_PAY_ID] : []);
+  const belum = ids.filter(id=>{ const u=UPAH_ITEMS.find(x=>x.id===id); return u && u.status==='belum'; });
+  const r = hitungPotonganKasbon(belum);
+  if (!r.total){ wrap.style.display='none'; wrap.innerHTML=''; return; }
+  const gross = belum.reduce((s,id)=>{const u=UPAH_ITEMS.find(x=>x.id===id); return s+(u?calcTotal(u):0);},0);
+  let baris='';
+  Object.keys(r.perPekerja).forEach(tok=>{
+    const p=r.perPekerja[tok]; if(!p.potong) return;
+    baris += `<div style="margin-top:6px"><div style="font-weight:800;font-size:12px;color:#7C2D12">${kasbonNama(tok)}</div>` +
+      p.rincian.map(x=>`<div style="display:flex;justify-content:space-between;font-size:11px;color:#7C2D12;padding-left:8px">
+        <span>${formatTglShort(x.tgl)} · ${(x.keperluan||'—')}</span><span style="font-weight:700">−${fmtRp(x.ambil)}</span></div>`).join('') +
+      `</div>`;
+  });
+  const sisaTotal = Object.keys(r.perPekerja).reduce((s,t)=>s+kasbonSisaPekerja(t),0) - r.total;
+  wrap.style.display='block';
+  wrap.innerHTML = `<div style="background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:8px;padding:12px">
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#9A3412;cursor:pointer">
+      <input type="checkbox" id="paid-kasbon-apply" checked onchange="renderKasbonPreviewTotals()"> 💵 Potong kasbon dari pembayaran ini
+    </label>
+    ${baris}
+    <div id="paid-kasbon-totals" style="margin-top:10px;padding-top:8px;border-top:1px dashed #FDBA74;font-size:12px"></div>
+    ${sisaTotal>0?`<div style="margin-top:6px;font-size:11px;color:#9A3412;font-style:italic">Sisa kasbon ${fmtRp(sisaTotal)} belum tertutup — jalan terus ke pembayaran berikutnya.</div>`:''}
+    <div style="margin-top:6px;font-size:10px;color:#9A3412;line-height:1.5">Uangnya sudah keluar saat kasbon diberikan, jadi yang tercatat di buku kas hari ini hanya yang <b>benar-benar diserahkan</b>.</div>
+  </div>`;
+  wrap.dataset.gross = String(gross);
+  wrap.dataset.potong = String(r.total);
+  renderKasbonPreviewTotals();
+}
+function renderKasbonPreviewTotals(){
+  const wrap=document.getElementById('paid-kasbon-wrap'); const el=document.getElementById('paid-kasbon-totals');
+  if(!wrap||!el) return;
+  const on=(document.getElementById('paid-kasbon-apply')||{}).checked;
+  const gross=+wrap.dataset.gross||0, potong=on?(+wrap.dataset.potong||0):0;
+  el.innerHTML = `<div style="display:flex;justify-content:space-between"><span>Hak upah</span><span style="font-weight:700">${fmtRp(gross)}</span></div>
+    <div style="display:flex;justify-content:space-between;color:#9A3412"><span>Potong kasbon</span><span style="font-weight:700">−${fmtRp(potong)}</span></div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;padding-top:4px;border-top:1px solid #FDBA74;font-size:13px;font-weight:800;color:#166534"><span>Diserahkan</span><span>${fmtRp(gross-potong)}</span></div>`;
+}
+
+/** Rincian potongan untuk Bukti Bayar / Rekapan Upah.
+ *  BUKTI (item lunas)  → baca JEJAK yang benar-benar terjadi (kasbon.potongan[].upah_ids),
+ *                        bukan menghitung ulang — supaya dokumen mencerminkan kenyataan.
+ *  REKAP (item belum)  → pakai RENCANA potongan, supaya pekerja tahu di muka. */
+function _kasbonUntukDokumen(items, isRekap){
+  const kosong = {total:0, rincian:[], sisa:0};
+  if (!Array.isArray(items) || !items.length || typeof KASBON_DATA==='undefined') return kosong;
+  const ids = items.map(i=>i.id);
+  const tokens = [...new Set(items.map(i=>i.pelapor))];
+  const banyakOrang = tokens.length > 1;
+  const rincian = []; let total = 0;
+
+  if (isRekap) {
+    const r = hitungPotonganKasbon(items.filter(i=>i.status==='belum').map(i=>i.id));
+    Object.keys(r.perPekerja).forEach(tok=>{
+      r.perPekerja[tok].rincian.forEach(x=>{
+        rincian.push({tgl:x.tgl, keperluan:x.keperluan, jumlah:x.ambil, nama: banyakOrang?kasbonNama(tok):''});
+        total += x.ambil;
+      });
+    });
+  } else {
+    KASBON_DATA.forEach(k=>{
+      if (!tokens.includes(k.pelapor)) return;
+      (k.potongan||[]).forEach(p=>{
+        const kena = Array.isArray(p.upah_ids) && p.upah_ids.some(id=>ids.includes(id));
+        if (!kena) return;
+        rincian.push({tgl:k.tgl, keperluan:k.keperluan, jumlah:+p.jumlah||0, nama: banyakOrang?kasbonNama(k.pelapor):''});
+        total += (+p.jumlah||0);
+      });
+    });
+  }
+  rincian.sort((a,b)=>String(a.tgl||'').localeCompare(String(b.tgl||'')));
+  const sisa = tokens.reduce((s,t)=>s+kasbonSisaPekerja(t),0) - (isRekap ? total : 0);
+  return {total, rincian, sisa: Math.max(0, sisa)};
+}
+
+// ── Kartu 5: form, saldo, riwayat ─────────────────────────────────────────────
+function populateKasbonPekerja(){
+  const sel=document.getElementById('kb-pekerja'); if(!sel) return;
+  const aktif = (typeof WORKER_DEFS!=='undefined') ? WORKER_DEFS.filter(w=>w.active && !w.retired) : [];
+  const lama = sel.value;
+  sel.innerHTML = '<option value="">— pilih —</option>' +
+    aktif.map(w=>`<option value="${w.token}">${w.nama}</option>`).join('');
+  if (lama) sel.value = lama;
+}
+function tambahKasbon(){
+  const g = i => (document.getElementById(i)||{}).value;
+  const err = document.getElementById('kb-err'); if(err) err.textContent='';
+  const tgl = g('kb-tgl');
+  const pelapor = g('kb-pekerja');
+  const jumlah = Math.round(parseFloat(String(g('kb-jumlah')||'').replace(/[^\d.-]/g,''))||0);
+  const keperluan = String(g('kb-keperluan')||'').trim();
+  const catatan = String(g('kb-catatan')||'').trim();
+  const setErr = m => { if(err) err.textContent = m; };
+  if (!tgl) return setErr('Tanggal wajib diisi.');
+  if (!pelapor) return setErr('Pilih dulu pekerjanya.');
+  if (!(jumlah>0)) return setErr('Jumlah harus lebih dari nol.');
+  if (keperluan.length<3) return setErr('Keperluan wajib diisi — inilah yang nanti dibaca ulang saat bertanya "uang ini dulu untuk apa?".');
+
+  const belum = upahBelumPekerja(pelapor), sisaLama = kasbonSisaPekerja(pelapor);
+  if (jumlah + sisaLama > belum) {
+    const lebih = jumlah + sisaLama - belum;
+    if (!confirm(`⚠️ Kasbon ini melebihi upah yang sudah terkumpul.\n\n`+
+      `Upah ${kasbonNama(pelapor)} yang belum dibayar : ${fmtRp(belum)}\n`+
+      `Kasbon berjalan sebelumnya                     : ${fmtRp(sisaLama)}\n`+
+      `Kasbon baru ini                                : ${fmtRp(jumlah)}\n`+
+      `Kelebihan                                      : ${fmtRp(lebih)}\n\n`+
+      `Kelebihannya akan tetap tercatat sebagai tanggungan dan dipotong dari upah berikutnya.\n\nLanjut catat?`)) return;
+  }
+
+  const now = new Date().toISOString();
+  const id = 'kb_' + Date.now();
+  KASBON_DATA.push({ id, tgl, pelapor, jumlah, keperluan, catatan,
+                     sumber:'wakif', terpotong:0, potongan:[], created_at:now, last_modified_at:now });
+
+  // ⭐ Uang keluar HARI ITU — wajib punya barisnya sendiri di buku kas.
+  //    Pelajaran 3 Agt 2026: setiap jalur yang mengeluarkan uang harus meninggalkan jejak kas.
+  if (typeof CASHBOOK!=='undefined') {
+    CASHBOOK.push({
+      id: 'cb_kasbon_'+Date.now(), tgl, tipe:'bayar_upah', kat: kasbonKatRAB(pelapor),
+      ket: `Kasbon ${kasbonNama(pelapor)} — ${keperluan} [kasbon]`,
+      masuk:0, keluar:jumlah, src:'autolink', nota:null, ref:'kasbon_'+id,
+      last_modified_at: now
+    });
+    if (typeof saveCashbook==='function') saveCashbook(true);
+  }
+  persistKasbon();
+  ['kb-jumlah','kb-keperluan','kb-catatan'].forEach(i=>{ const e=document.getElementById(i); if(e) e.value=''; });
+  renderKasbon();
+  if (typeof renderKeuangan==='function') renderKeuangan();
+  if (typeof renderRAB==='function') renderRAB();
+  if (typeof showToast==='function') showToast(`✅ Kasbon ${kasbonNama(pelapor)} ${fmtRp(jumlah)} tercatat — kas keluar sudah dibukukan`,'success');
+}
+function hapusKasbon(id){
+  const k = KASBON_DATA.find(x=>x.id===id); if(!k) return;
+  if ((+k.terpotong||0) > 0) {
+    alert(`Kasbon ini sudah pernah dipotong dari upah (${fmtRp(k.terpotong)}), jadi tidak bisa dihapus.\n\n`+
+          `Menghapusnya akan membuat upah yang sudah diserahkan tidak lagi cocok dengan buku kas.`);
+    return;
+  }
+  if (!confirm(`Batalkan kasbon ${kasbonNama(k.pelapor)} ${fmtRp(k.jumlah)} (${k.keperluan})?\n\n`+
+               `Baris kasnya TIDAK dihapus melainkan dinolkan dan ditandai DIBATALKAN — supaya jejaknya tetap ada.`)) return;
+  // VOID, bukan hapus (Pattern #14) — baris lunas/keluar yang dihapus bisa hidup lagi lewat penjaga merge.
+  if (typeof CASHBOOK!=='undefined') {
+    const row = CASHBOOK.find(c=>c && c.ref==='kasbon_'+id);
+    if (row) { row.keluar=0; row.voided_kasbon=true; row.ket='[DIBATALKAN] '+row.ket; row.last_modified_at=new Date().toISOString(); }
+    if (typeof saveCashbook==='function') saveCashbook(true);
+  }
+  KASBON_DATA = KASBON_DATA.filter(x=>x.id!==id);
+  persistKasbon(); renderKasbon();
+  if (typeof renderKeuangan==='function') renderKeuangan();
+  if (typeof showToast==='function') showToast('↩️ Kasbon dibatalkan — baris kas dinolkan, jejaknya tetap ada');
+}
+function renderKasbon(){
+  populateKasbonPekerja();
+  const tglEl=document.getElementById('kb-tgl');
+  if (tglEl && !tglEl.value) tglEl.value = (typeof todayIso==='function') ? todayIso() : '';
+
+  // Saldo per pekerja — LIVE TRACKER (Pattern #13): yang sudah lunas hilang sendiri.
+  const saldoEl=document.getElementById('kasbon-saldo');
+  if (saldoEl) {
+    const tok=[...new Set(KASBON_DATA.map(k=>k.pelapor))].filter(t=>kasbonSisaPekerja(t)>0)
+      .sort((a,b)=>kasbonSisaPekerja(b)-kasbonSisaPekerja(a));
+    saldoEl.innerHTML = tok.length
+      ? `<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">` + tok.map(t=>{
+          const sisa=kasbonSisaPekerja(t), belum=upahBelumPekerja(t);
+          const cukup = belum>=sisa;
+          return `<div style="flex:1 1 200px;min-width:190px;background:${cukup?'#FFF7ED':'#FEF2F2'};border:1.5px solid ${cukup?'#FDBA74':'#FCA5A5'};border-radius:8px;padding:10px">
+            <div style="font-size:12px;font-weight:800;color:#7C2D12">${kasbonNama(t)}</div>
+            <div style="font-size:19px;font-weight:800;color:#9A3412;margin:2px 0">${fmtRp(sisa)}</div>
+            <div style="font-size:10px;color:var(--mute);line-height:1.5">tanggungan berjalan<br>upah belum dibayar: <b>${fmtRp(belum)}</b>${cukup?'':' · <span style="color:#B91C1C;font-weight:800">belum menutup</span>'}</div>
+          </div>`;
+        }).join('') + `</div>`
+      : `<div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:8px;padding:10px;font-size:12px;color:#166534;font-weight:700;margin-bottom:12px">✅ Tidak ada tanggungan kasbon berjalan.</div>`;
+  }
+
+  const el=document.getElementById('kasbon-tabel'); if(!el) return;
+  if (!KASBON_DATA.length) {
+    el.innerHTML = `<div style="text-align:center;padding:22px;color:var(--mute);font-style:italic;font-size:12px">Belum ada kasbon dicatat.</div>`;
+    return;
+  }
+  const urut = KASBON_DATA.slice().sort((a,b)=>String(b.tgl||'').localeCompare(String(a.tgl||'')));
+  el.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>Tgl</th><th>Pekerja</th><th>Keperluan</th><th style="text-align:right">Jumlah</th><th style="text-align:right">Sudah dipotong</th><th style="text-align:right">Sisa</th><th>Status</th><th></th></tr></thead>
+    <tbody>` + urut.map(k=>{
+      const sisa=kasbonSisaEntri(k), lunas=sisa<=0;
+      const rincian=(k.potongan||[]).map(p=>`${formatTglShort(p.tgl)} ${fmtRp(p.jumlah)}`).join(' · ');
+      return `<tr${lunas?' style="opacity:.62"':''}>
+        <td>${formatTglShort(k.tgl)}</td>
+        <td><b>${kasbonNama(k.pelapor)}</b></td>
+        <td style="max-width:280px">${k.keperluan||'—'}${k.catatan?`<div style="font-size:10px;color:var(--mute);font-style:italic">${k.catatan}</div>`:''}${rincian?`<div style="font-size:10px;color:#9A3412">dipotong: ${rincian}</div>`:''}</td>
+        <td style="text-align:right;font-weight:700">${fmtRp(k.jumlah)}</td>
+        <td style="text-align:right;color:#9A3412">${fmtRp(+k.terpotong||0)}</td>
+        <td style="text-align:right;font-weight:800;color:${lunas?'#166534':'#B45309'}">${fmtRp(sisa)}</td>
+        <td>${lunas?'<span style="background:#DCFCE7;color:#166534;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:800">LUNAS</span>':'<span style="background:#FFEDD5;color:#9A3412;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:800">BERJALAN</span>'}</td>
+        <td>${(+k.terpotong||0)===0?`<button class="btn" onclick="hapusKasbon('${k.id}')" style="background:#FEE2E2;color:#B91C1C;border:1px solid #FCA5A5;font-size:10px;padding:3px 8px">Batalkan</button>`:''}</td>
+      </tr>`;
+    }).join('') + `</tbody></table></div>`;
+}
+if (typeof window!=='undefined') {
+  window.tambahKasbon=tambahKasbon; window.hapusKasbon=hapusKasbon; window.renderKasbon=renderKasbon;
+  window.renderKasbonPreviewTotals=renderKasbonPreviewTotals; window.kasbonSisaPekerja=kasbonSisaPekerja;
+}
+
 function _payOneItem(it, tgl, source, notaId, isBatch) {
   if (!it || it.status === 'lunas') return 0;
   const total = (typeof calcTotal === 'function') ? calcTotal(it) : it.total;
@@ -17398,11 +17792,12 @@ async function confirmPaid() {
   if (notaFile) notaId = await saveNotaToIDB(notaFile);
 
   let total = 0, n = 0;
+  const _idsDibayar = [];   // ⭐ 23 Agt: dipakai untuk potongan kasbon sesudah baris kas terbentuk
   if (isBatch) {
     PENDING_PAY_IDS.forEach(id => {
       const it = UPAH_ITEMS.find(x => x.id === id);
       const v = _payOneItem(it, tgl, source, notaId, true);
-      if (v > 0) { total += v; n++; }
+      if (v > 0) { total += v; n++; _idsDibayar.push(id); }
     });
     if (!n) {
       closePaidModal();
@@ -17420,6 +17815,18 @@ async function confirmPaid() {
     }
     total = _payOneItem(it, tgl, source, notaId, false);
     n = 1;
+    if (total > 0) _idsDibayar.push(it.id);
+  }
+
+  // ⭐ POTONGAN KASBON (23 Agt 2026) — dijalankan SESUDAH baris kas terbentuk,
+  //    karena yang dikurangi adalah baris kas itu sendiri menjadi NETO.
+  //    Uang kasbon sudah keluar & sudah dibukukan saat kasbon diberikan; kalau
+  //    baris hari ini ditulis penuh, kas keluar akan terhitung dua kali.
+  let potongKasbon = 0;
+  const _pakaiKasbon = (document.getElementById('paid-kasbon-apply') || {}).checked;
+  if (_pakaiKasbon && _idsDibayar.length && typeof _terapkanPotonganKasbon === 'function') {
+    try { potongKasbon = _terapkanPotonganKasbon(_idsDibayar, tgl).total || 0; }
+    catch (e) { console.warn('[Kasbon] potongan gagal diterapkan:', e && e.message); }
   }
 
   // ⭐ 19 Agt 2026: dulu jalur per-baris hanya menulis localStorage langsung sehingga
@@ -17433,10 +17840,15 @@ async function confirmPaid() {
   if (typeof renderUpahSummary === 'function') renderUpahSummary();
   if (typeof renderKeuangan === 'function') renderKeuangan();
   if (typeof renderRAB === 'function') renderRAB();
+  if (typeof renderKasbon === 'function') renderKasbon();
   const src = source === 'anto' ? 'via Anto' : 'kas wakif';
+  const neto = total - potongKasbon;
+  const ekor = potongKasbon
+    ? ` · dipotong kasbon ${fmtRp(potongKasbon)} → diserahkan ${fmtRp(neto)}`
+    : '';
   showToast(isBatch
-    ? `✅ ${n} item lunas ${formatTglShort(tgl)} — ${fmtRp(total)} tercatat di Cashbook (${src})`
-    : `✅ ${fmtRp(total)} tercatat di Cashbook (${src})`);
+    ? `✅ ${n} item lunas ${formatTglShort(tgl)} — hak upah ${fmtRp(total)}${ekor} (${src})`
+    : `✅ Hak upah ${fmtRp(total)}${ekor} (${src})`);
 }
 
 // ============ RECOVER ENTRY LAMA — backfill UPAH dari STATE.laporan ============
@@ -19510,6 +19922,27 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           if (typeof renderCabutLog === 'function') renderCabutLog();
           // angka "Terkini (live)" di Dashboard ikut ter-refresh saat data datang dari device lain
           if (typeof _cabutRefreshDash === 'function') _cabutRefreshDash();
+        }
+      } catch (e) {}
+    });
+
+    // ⭐ Kasbon Pekerja → Firestore sop_status/kasbon (Pattern #18 reuse — no new rule) — 23 Agt 2026
+    window.syncKasbonToFirestore = async () => {
+      try {
+        await setDoc(doc(db, 'sop_status', 'kasbon'), {
+          version: 'kasbon-1.0',
+          data: (typeof KASBON_DATA !== 'undefined' ? KASBON_DATA : []),
+          updated_at: serverTimestamp(), updated_by: 'wakif_dashboard', source: 'monitor-v2 Upah Kartu 5 Kasbon Pekerja'
+        });
+        console.log('[Kasbon] ✓ synced ' + (typeof KASBON_DATA !== 'undefined' ? KASBON_DATA.length : 0) + ' entri');
+      } catch (e) { console.warn('[Kasbon] sync failed:', e && e.message); }
+    };
+    onSnapshot(doc(db, 'sop_status', 'kasbon'), (snap) => {
+      try {
+        if (snap.exists() && Array.isArray(snap.data().data)) {
+          KASBON_DATA = snap.data().data;
+          if (typeof saveKasbonLS === 'function') saveKasbonLS();
+          if (typeof renderKasbon === 'function') renderKasbon();
         }
       } catch (e) {}
     });
