@@ -767,7 +767,7 @@
           <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end">
             <div style="flex:0 0 150px">
               <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Tanggal</label>
-              <input type="date" id="kb-tgl" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+              <input type="date" id="kb-tgl" onchange="_kasbonHintTgl()" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
             </div>
             <div style="flex:0 0 170px">
               <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Pekerja</label>
@@ -5892,7 +5892,17 @@ function renderUpahSummary() {
   const tunggakanEntries = Object.entries(summary).filter(([k,s]) => s.belum > 0)
     .sort((a,b)=> (b[1].belum - a[1].belum) || (b[1].total - a[1].total));
   if (!tunggakanEntries.length) {
-    c.innerHTML = '<div style="grid-column:1/-1;width:100%;padding:18px 20px;text-align:center;color:var(--green);font-weight:600;font-size:13px;background:#f0f9f4;border:1px solid #cce8d8;border-radius:10px">✅ Semua upah pekerja sudah lunas — tidak ada tunggakan saat ini</div>';
+    // ⭐ 24 Agt 2026: kalau semua upah lunas TAPI masih ada kasbon berjalan, jangan diam —
+    // kasbon itu tetap tanggungan yang akan dipotong dari upah berikutnya.
+    let sisaKb = '';
+    if (typeof KASBON_DATA !== 'undefined' && typeof kasbonSisaPekerja === 'function') {
+      const tok = [...new Set(KASBON_DATA.map(x => x.pelapor))].filter(t => kasbonSisaPekerja(t) > 0);
+      if (tok.length) sisaKb = '<div style="grid-column:1/-1;width:100%;margin-top:8px;padding:12px 16px;background:#FFF7ED;border:1px solid #FDBA74;border-radius:10px;font-size:12px;color:#9A3412;line-height:1.6">'
+        + '💵 <b>Masih ada kasbon berjalan</b> — akan dipotong dari upah berikutnya:<br>'
+        + tok.map(t => `&nbsp;&nbsp;• ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[t])||t} <b>${fmtRpShort(kasbonSisaPekerja(t))}</b>`).join('<br>')
+        + '</div>';
+    }
+    c.innerHTML = '<div style="grid-column:1/-1;width:100%;padding:18px 20px;text-align:center;color:var(--green);font-weight:600;font-size:13px;background:#f0f9f4;border:1px solid #cce8d8;border-radius:10px">✅ Semua upah pekerja sudah lunas — tidak ada tunggakan saat ini</div>' + sisaKb;
     return;
   }
   let html = tunggakanEntries.map(([k,s]) => {
@@ -5903,10 +5913,30 @@ function renderUpahSummary() {
     const _tpc = (typeof TARIF_PEKERJA !== 'undefined' && TARIF_PEKERJA[k]) ? TARIF_PEKERJA[k].full_day : 0;
     const harianDaysLine = formatDaysLine(s.harianFull, s.harianHalf, s.harianLainRp, s.harianLainCount, _tpc);
     const lunasDaysLine = formatDaysLine(s.harianFullLunas, s.harianHalfLunas, s.harianLainRpLunas, s.harianLainCountLunas, _tpc);
+    // ⭐ 24 Agt 2026 — KASBON. Wakif mencatat kasbon lalu bertanya kenapa angka ini tak bergeser.
+    // Jawabannya: dua angka berbeda dan KEDUANYA benar —
+    //   · HAK UPAH belum dibayar  → tidak berkurang oleh kasbon (kerjanya tetap segitu)
+    //   · SISA DISERAHKAN         → berkurang, karena sebagiannya sudah diambil di muka
+    // Yang Wakif cari saat mau membayar adalah yang kedua. Ditampilkan berdampingan,
+    // bukan salah satunya disembunyikan — menyembunyikan hak upah = melukai relasi ke pekerja.
+    const _kb = (typeof kasbonSisaPekerja === 'function') ? kasbonSisaPekerja(k) : 0;
+    const _kbTerpakai = Math.min(_kb, s.belum);
+    const _kbSisaLebih = Math.max(0, _kb - s.belum);
+    const blokKasbon = _kb > 0 ? `
+      <div style="margin-top:7px;padding:7px 9px;background:#FFF7ED;border:1px solid #FDBA74;border-radius:6px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#9A3412;line-height:1.5">
+          <span>💵 Kasbon sudah diambil</span><span style="font-weight:700">−${fmtRpShort(_kbTerpakai)}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:#166534;margin-top:3px;padding-top:3px;border-top:1px solid #FDBA74">
+          <span>Sisa diserahkan</span><span>${fmtRpShort(Math.max(0, s.belum - _kb))}</span>
+        </div>
+        ${_kbSisaLebih > 0 ? `<div style="font-size:9px;color:#B91C1C;margin-top:3px;line-height:1.4">Kasbon ${fmtRpShort(_kbSisaLebih)} melebihi upah terkumpul — jalan terus ke pembayaran berikutnya</div>` : ''}
+      </div>` : '';
     return `<div class="kpi ${cls}" style="cursor:pointer" onclick="document.getElementById('filter-bayar-pelapor').value='${k}';renderUpahTable()">
       <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">${ico} ${s.nama}${arsip}</div>
       <div class="kpi-num" style="color:${s.belum>0?'var(--orange)':'var(--green)'};font-size:20px">${fmtRpShort(s.belum)}</div>
-      <div class="kpi-lbl">${s.belumCount} item belum dibayar</div>
+      <div class="kpi-lbl">${s.belumCount} item belum dibayar${_kb>0?' · hak upah' : ''}</div>
+      ${blokKasbon}
       <div style="font-size:10px;color:var(--mute);margin-top:6px;border-top:1px solid #eee;padding-top:6px;line-height:1.6">
         📅 Harian: ${fmtRpShort(s.harianRp)}<br>
         <span style="display:inline-block;margin-left:14px;color:var(--moss);font-weight:600">${harianDaysLine}</span><br>
@@ -17675,6 +17705,7 @@ function tambahKasbon(){
   persistKasbon();
   ['kb-jumlah','kb-keperluan','kb-catatan'].forEach(i=>{ const e=document.getElementById(i); if(e) e.value=''; });
   renderKasbon();
+  if (typeof renderUpahSummary==='function') renderUpahSummary();   // ⭐ Kartu 3 ikut bergerak (24 Agt 2026)
   if (typeof renderKeuangan==='function') renderKeuangan();
   if (typeof renderRAB==='function') renderRAB();
   if (typeof showToast==='function') showToast(`✅ Kasbon ${kasbonNama(pelapor)} ${fmtRp(jumlah)} tercatat — kas keluar sudah dibukukan`,'success');
@@ -17696,13 +17727,29 @@ function hapusKasbon(id){
   }
   KASBON_DATA = KASBON_DATA.filter(x=>x.id!==id);
   persistKasbon(); renderKasbon();
+  if (typeof renderUpahSummary==='function') renderUpahSummary();
   if (typeof renderKeuangan==='function') renderKeuangan();
   if (typeof showToast==='function') showToast('↩️ Kasbon dibatalkan — baris kas dinolkan, jejaknya tetap ada');
+}
+/** Tanggal bawaan diisi sekali saat halaman dimuat. Kalau tab dibiarkan terbuka
+ *  melewati tengah malam, isian itu jadi tanggal KEMARIN tanpa tanda apa pun —
+ *  persis jenis kesalahan Pattern #26, tapi lewat pintu berbeda. Jadi tanggalnya
+ *  tidak ditimpa diam-diam (Wakif boleh sengaja memundurkan), melainkan DITANDAI. */
+function _kasbonHintTgl(){
+  const el=document.getElementById('kb-tgl'), h=document.getElementById('kb-hint');
+  if(!el||!h) return;
+  const kini=(typeof todayIso==='function')?todayIso():'';
+  if(!el.value){ h.innerHTML=''; return; }
+  const lbl=(typeof formatTgl==='function')?formatTgl(el.value):el.value;
+  h.innerHTML = (kini && el.value < kini)
+    ? `<span style="color:#B45309;font-weight:700">⚠️ ${lbl} — bukan hari ini (${(typeof formatTgl==='function')?formatTgl(kini):kini}). Pastikan tanggalnya memang benar.</span>`
+    : `${lbl}`;
 }
 function renderKasbon(){
   populateKasbonPekerja();
   const tglEl=document.getElementById('kb-tgl');
   if (tglEl && !tglEl.value) tglEl.value = (typeof todayIso==='function') ? todayIso() : '';
+  _kasbonHintTgl();
 
   // Saldo per pekerja — LIVE TRACKER (Pattern #13): yang sudah lunas hilang sendiri.
   const saldoEl=document.getElementById('kasbon-saldo');
@@ -17746,7 +17793,7 @@ function renderKasbon(){
     }).join('') + `</tbody></table></div>`;
 }
 if (typeof window!=='undefined') {
-  window.tambahKasbon=tambahKasbon; window.hapusKasbon=hapusKasbon; window.renderKasbon=renderKasbon;
+  window.tambahKasbon=tambahKasbon; window._kasbonHintTgl=_kasbonHintTgl; window.hapusKasbon=hapusKasbon; window.renderKasbon=renderKasbon;
   window.renderKasbonPreviewTotals=renderKasbonPreviewTotals; window.kasbonSisaPekerja=kasbonSisaPekerja;
 }
 
@@ -19943,6 +19990,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           KASBON_DATA = snap.data().data;
           if (typeof saveKasbonLS === 'function') saveKasbonLS();
           if (typeof renderKasbon === 'function') renderKasbon();
+          if (typeof renderUpahSummary === 'function') renderUpahSummary();   // Kartu 3 ikut segar saat data datang dari perangkat lain
         }
       } catch (e) {}
     });
