@@ -1961,17 +1961,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
             <div class="act-log-meta"><strong>17 Mei – ongoing</strong>2 / 15–25 unit</div>
           </div>
-          <div class="act-log-item">
-            <span class="act-log-status s-ongoing lang-id">⟳ Berjalan</span>
-            <span class="act-log-status s-ongoing lang-en">⟳ Ongoing</span>
-            <div class="act-log-body">
-              <div class="act-log-title lang-id">Sistem Pelaporan Harian Digital Langsung</div>
-              <div class="act-log-title lang-en">Digital Daily Reporting System Live</div>
-              <div class="act-log-detail lang-id">Pada kunjungan 17 Mei 2026, <strong>sistem pelaporan harian digital <code>lapor.html</code></strong> mulai live di lapangan. Ibu (istri tim lapangan) — pelapor pendukung — di-onboarding langsung di lokasi dengan walkthrough form: lokasi kebun (K1/K2/K3/K4), jenis pekerjaan, durasi, hasil, foto opsional. Auto-fill cuaca + GPS otomatis aktif. <strong>Aturan no-show</strong>: tidak ada laporan masuk = pekerja tidak masuk kerja (auto-flag ke dashboard, payroll tidak ter-generate). Arsitektur <em>online-first</em> dengan IndexedDB sebagai safety net untuk genuine offline — pattern ini bisa di-replikasi untuk worker baru ke depan.</div>
-              <div class="act-log-detail lang-en">During the 17 May 2026 visit, the <strong>digital daily reporting system <code>lapor.html</code></strong> went live in the field. Ibu (tim lapangan's wife) — supporting reporter — was onboarded directly on-site with form walkthrough: plot location (K1/K2/K3/K4), work type, duration, results, optional photo. Weather + GPS auto-fill active. <strong>No-show rule</strong>: no report received = worker did not show up (auto-flag to dashboard, payroll not generated). <em>Online-first</em> architecture with IndexedDB as safety net for genuine offline — this pattern can be replicated for future new workers.</div>
-            </div>
-            <div class="act-log-meta"><strong>17 Mei – live</strong>PWA harian</div>
-          </div>
+          
 
           <!-- ════════════════════════════════════════════════════════════════════════
                TRANSITION BOX · 1 Mei 2026 — Self-Managed Phase begins
@@ -2059,29 +2049,9 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             <div class="act-log-meta"><strong>22 Agt 2026</strong>Rendemen & Mutu</div>
           </div>
 
-          <div class="act-log-item">
-            <span class="act-log-status s-done lang-id">📚 Lesson Learned</span>
-            <span class="act-log-status s-done lang-en">📚 Lesson Learned</span>
-            <div class="act-log-body">
-              <div class="act-log-title lang-id">103 Baris Data Panen Nyaris Hilang — dan Tiga Alat yang Lahir Sesudahnya</div>
-              <div class="act-log-title lang-en">103 Rows of Harvest Data Almost Lost — and the Three Tools Born Afterwards</div>
-              <div class="act-log-detail lang-id">Pada <strong>6 Agustus 2026</strong>, sebuah perintah perbaikan data yang dirangkai manual menghapus <strong>103 baris catatan panen</strong> dari basis data. Server membalas "berhasil" — tidak ada pesan galat sama sekali. Data itu pulih karena kebetulan ada salinan yang diambil <strong>20 detik sebelumnya</strong>, termasuk tiga baris yang baru dimasukkan enam menit sebelum kejadian.<br/><br/><strong>Penyebabnya bukan kecerobohan tunggal, melainkan bentuk perintahnya.</strong> Aturan tertulis untuk mencegah hal ini sudah ada sejak Juli — dan tetap kebobolan. Kesimpulannya: aturan yang hanya mengandalkan kedisiplinan akan gagal lagi. Maka aturannya diganti <strong>alat</strong>.<br/><br/><strong>Tiga lapis yang dibangun 6–20 Agustus 2026:</strong><br/>• <strong>Pemeriksa aturan</strong> — 14 uji yang dijalankan sebelum dan sesudah setiap perubahan; hasil "LULUS" yang berubah jadi "GAGAL" langsung menghentikan pekerjaan.<br/>• <strong>Gerbang selisih</strong> — setiap penulisan wajib mendeklarasikan di muka berapa baris akan berubah dan kolom mana yang boleh tersentuh. Kenyataan tidak sama dengan deklarasi → tidak ada yang ditulis sama sekali.<br/>• <strong>Buku riwayat</strong> — mencatat siapa, kapan, dari nilai berapa ke berapa, dan atas alasan apa. Sebelum ini, menjawab "kapan angka ini masuk?" berarti membandingkan empat salinan mingguan satu per satu — ketelitiannya hanya satu minggu.<br/><br/>Penjaganya sendiri diuji dengan <strong>sengaja merusak data</strong>, untuk membuktikan ia benar-benar menolak. Kegagalan ini dicatat terbuka sebagai bagian komitmen Living Lab: pengelolaan aset wakaf tidak boleh bergantung pada ingatan atau kehati-hatian seseorang.</div>
-              <div class="act-log-detail lang-en">On <strong>6 August 2026</strong>, a hand-assembled data-repair command deleted <strong>103 rows of harvest records</strong> from the database. The server replied "success" — no error message at all. The data was recovered only because a copy happened to have been taken <strong>20 seconds earlier</strong>, including three rows entered just six minutes before the incident.<br/><br/><strong>The cause was not a single act of carelessness but the shape of the command itself.</strong> A written rule to prevent exactly this had existed since July — and was breached anyway. The conclusion: a rule that relies on discipline alone will fail again. So the rule was replaced with <strong>tooling</strong>.<br/><br/><strong>Three layers built 6–20 August 2026:</strong><br/>• <strong>Rule checker</strong> — 14 invariant tests run before and after every change; a "PASS" that turns into "FAIL" halts the work immediately.<br/>• <strong>Diff gate</strong> — every write must declare up front how many rows will change and which columns may be touched. Reality not matching the declaration → nothing is written at all.<br/>• <strong>Change ledger</strong> — records who, when, from what value to what value, and for what reason. Before this, answering "when did this figure enter?" meant comparing four weekly backups one by one — with only one week of precision.<br/><br/>The guards themselves were tested by <strong>deliberately corrupting data</strong>, to prove they actually refuse. This failure is documented openly as part of the Living Lab commitment: stewardship of waqf assets must not depend on one person's memory or care.</div>
-            </div>
-            <div class="act-log-meta"><strong>6–20 Agt 2026</strong>Tata Kelola Data</div>
-          </div>
+          
 
-          <div class="act-log-item">
-            <span class="act-log-status s-done lang-id">✓ Selesai</span>
-            <span class="act-log-status s-done lang-en">✓ Done</span>
-            <div class="act-log-body">
-              <div class="act-log-title lang-id">Sensus Pohon Diperiksa Ulang — Empat Pohon Berpindah Kelas</div>
-              <div class="act-log-title lang-en">Tree Census Re-Checked — Four Trees Reclassified</div>
-              <div class="act-log-detail lang-id">Sensus pohon Mei 2026 diperiksa ulang di lapangan. Hasilnya: <strong>empat pohon salah dikelompokkan</strong> — tercatat Biru (kurang sehat, masih bisa dipulihkan) padahal kondisinya Merah (siap peremajaan): K1 dua pohon, K2 satu, K3 satu.<br/><br/><strong>Jumlah pohon per kebun tidak berubah</strong> (K1 154 · K2 490 · K3 350 · K4 304) — yang berubah hanya kelasnya. Tapi konsekuensinya nyata: basis perhitungan pupuk kebun wakaf turun dari <strong>672 menjadi 668 pohon</strong>, dan daftar peremajaan bertambah empat menjadi <strong>386 pohon Merah</strong>.<br/><br/>Selisihnya kecil, arahnya yang penting. Sensus bukan angka yang ditetapkan sekali lalu selesai — setiap kali ia bergeser, seluruh turunannya (kebutuhan pupuk, anggaran, rencana sulaman) wajib dihitung ulang. Aturan itu sekarang tertulis, justru karena kejadian empat pohon ini.</div>
-              <div class="act-log-detail lang-en">The May 2026 tree census was re-checked in the field. The result: <strong>four trees had been misclassified</strong> — recorded as Blue (unhealthy but recoverable) when their actual condition was Red (due for replacement): two in K1, one in K2, one in K3.<br/><br/><strong>Tree counts per block did not change</strong> (K1 154 · K2 490 · K3 350 · K4 304) — only their classification did. But the consequence is real: the fertiliser calculation base for the waqf blocks dropped from <strong>672 to 668 trees</strong>, and the replanting list grew by four to <strong>386 Red trees</strong>.<br/><br/>The difference is small; the direction matters. A census is not a figure set once and finished — every time it shifts, everything derived from it (fertiliser requirements, budget, replanting plans) must be recomputed. That rule is now written down, precisely because of these four trees.</div>
-            </div>
-            <div class="act-log-meta"><strong>20 Agt 2026</strong>Inventarisasi Pohon</div>
-          </div>
+          
 
           <div class="act-log-item">
             <span class="act-log-status s-upcoming lang-id">↗ Akan Datang</span>
@@ -2105,17 +2075,7 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
             </div>
             <div class="act-log-meta"><strong>4 Jun 2026</strong>SOP Locked (ADR-015)</div>
           </div>
-          <div class="act-log-item">
-            <span class="act-log-status s-done lang-id">📚 Lesson Learned</span>
-            <span class="act-log-status s-done lang-en">📚 Lesson Learned</span>
-            <div class="act-log-body">
-              <div class="act-log-title lang-id">Terbaca 11%, Aktualnya 16% — Kasus Jamur Karung & Keterbatasan Alat Ukur Kadar Air Generik</div>
-              <div class="act-log-title lang-en">When 11% Was Actually 16% — Storage Mould Case & Discovery of Generic Moisture Meter Limitations</div>
-              <div class="act-log-detail lang-id">Pada minggu ketiga Juni 2026, tim menemukan sebagian ceri dari batch pertama pengeringan alami — sudah tujuh hari di karung — <strong>berjamur di permukaan</strong>, terkonsentrasi di dasar karung berupa serbuk halus putih; separuh atas masih baik. Dugaan awal: kegagalan protokol penyimpanan (migrasi kadar air, kontak lantai, tanpa palet, tekanan tumpukan). <strong>Investigasi justru menemukan akar yang lebih mendasar: kesalahan pengukuran kadar air (moisture content/MC) saat memutuskan penyimpanan.</strong><br/><br/>Saat mengecek batch lain yang sedang dijemur, terlihat <strong>pembacaan terbalik</strong>: batch yang lebih kering terbaca 19,5%, sementara batch yang lebih basah malah 18,3%. Anomali ini membuka biang keroknya — <strong>alat ukur kadar air generik YieRyi YY1011</strong> dirancang untuk biji-bijian (padi, gandum, jagung, kedelai, kacang tanah), <strong>tanpa kalibrasi khusus kopi</strong>. Pada ceri kopi yang berlapis (kulit, daging buah, kulit tanduk, biji), jarum probe lebih banyak menyentuh rongga udara & kulit permukaan — bukan biji di dalam — sehingga angkanya mencerminkan kontak fisik, bukan kadar air sebenarnya. <strong>Implikasinya</strong>: pembacaan "11–12%" pada batch yang lebih dulu disimpan kemungkinan <em>rendah semu</em> — kadar air aslinya besar kemungkinan di zona bahaya jamur <strong>14–16%</strong>, cocok dengan munculnya jamur <em>Aspergillus</em> dalam tujuh hari.<br/><br/>Pelajaran ini dibagikan terbuka sebagai bagian komitmen transparansi Living Lab — pembelajaran datang bukan hanya dari keberhasilan, tetapi justru dari <strong>kegagalan yang didokumentasikan jujur</strong>, demi manfaat bersama petani kopi rakyat.</div>
-              <div class="act-log-detail lang-en">In the third week of June 2026, the Wakaf Produktif team discovered that a portion of natural-dried cherries from the first batch — stored in sacks for seven days — had developed <strong>surface mould bloom</strong>, concentrated in the bottom half of the sack as fine white powder. Upper half was still good condition, lower half clearly infected. Initial diagnosis: storage protocol failure (moisture migration, floor contact, no pallets, overburden pressure). <strong>Further investigation uncovered a more fundamental root cause: measurement error in the storage decision stage.</strong><br/><br/>While re-evaluating other batches drying, the Waqif noted an <strong>inverted reading pattern</strong>: a drier-looking batch showed 19.5%, while a newer plumper batch read 18.3%. This anomaly triggered an investigation. The <strong>generic YieRyi YY1011 grain moisture meter</strong> in use was designed for cereal grains (paddy, wheat, corn, soybean, peanut) — <strong>without coffee-specific calibration</strong>. On heterogeneous coffee cherries (skin + pulp + parchment + bean), the probe pins mostly contact air gaps and surface skin, NOT the bean interior — readings reflect physical contact dynamics rather than actual MC. <strong>Retroactive implication</strong>: the "11–12%" reading on the batch entering storage was likely <em>false low</em> — actual MC very plausibly in the mould danger zone <strong>14–16%</strong>, consistent with the Aspergillus growth timeline observed within seven days.<br/><br/>This lesson is openly shared as part of the Living Lab transparency commitment — learning happens not only from successes, but precisely from <strong>failures honestly documented</strong> for the collective benefit of smallholder coffee farmers.</div>
-            </div>
-            <div class="act-log-meta"><strong>21 Jun 2026</strong>Storage & QC</div>
-          </div>
+          
         </div>
       </div>
 
@@ -2164,7 +2124,63 @@ p, .page-hero-lead, .section-desc, .section-desc-light,
           </div>
         </div>
       </div>
-    </div>
+    
+      <div class="phase-block">
+        <div class="phase-block-header">
+          <span class="phase-block-icon">🗂️</span>
+          <span class="phase-block-title lang-id">Tata Kelola &amp; Digital</span>
+          <span class="phase-block-title lang-en">Governance &amp; Digital</span>
+          <span class="phase-block-period lang-id">Sepanjang 2026</span>
+          <span class="phase-block-period lang-en">Throughout 2026</span>
+        </div>
+        <div class="act-log-list">
+<div class="act-log-item">
+            <span class="act-log-status s-done lang-id">✓ Selesai</span>
+            <span class="act-log-status s-done lang-en">✓ Done</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Sensus Pohon Diperiksa Ulang — Empat Pohon Berpindah Kelas</div>
+              <div class="act-log-title lang-en">Tree Census Re-Checked — Four Trees Reclassified</div>
+              <div class="act-log-detail lang-id">Sensus pohon Mei 2026 diperiksa ulang di lapangan. Hasilnya: <strong>empat pohon salah dikelompokkan</strong> — tercatat Biru (kurang sehat, masih bisa dipulihkan) padahal kondisinya Merah (siap peremajaan): K1 dua pohon, K2 satu, K3 satu.<br/><br/><strong>Jumlah pohon per kebun tidak berubah</strong> (K1 154 · K2 490 · K3 350 · K4 304) — yang berubah hanya kelasnya. Tapi konsekuensinya nyata: basis perhitungan pupuk kebun wakaf turun dari <strong>672 menjadi 668 pohon</strong>, dan daftar peremajaan bertambah empat menjadi <strong>386 pohon Merah</strong>.<br/><br/>Selisihnya kecil, arahnya yang penting. Sensus bukan angka yang ditetapkan sekali lalu selesai — setiap kali ia bergeser, seluruh turunannya (kebutuhan pupuk, anggaran, rencana sulaman) wajib dihitung ulang. Aturan itu sekarang tertulis, justru karena kejadian empat pohon ini.</div>
+              <div class="act-log-detail lang-en">The May 2026 tree census was re-checked in the field. The result: <strong>four trees had been misclassified</strong> — recorded as Blue (unhealthy but recoverable) when their actual condition was Red (due for replacement): two in K1, one in K2, one in K3.<br/><br/><strong>Tree counts per block did not change</strong> (K1 154 · K2 490 · K3 350 · K4 304) — only their classification did. But the consequence is real: the fertiliser calculation base for the waqf blocks dropped from <strong>672 to 668 trees</strong>, and the replanting list grew by four to <strong>386 Red trees</strong>.<br/><br/>The difference is small; the direction matters. A census is not a figure set once and finished — every time it shifts, everything derived from it (fertiliser requirements, budget, replanting plans) must be recomputed. That rule is now written down, precisely because of these four trees.</div>
+            </div>
+            <div class="act-log-meta"><strong>20 Agt 2026</strong>Inventarisasi Pohon</div>
+          </div>
+<div class="act-log-item">
+            <span class="act-log-status s-done lang-id">📚 Lesson Learned</span>
+            <span class="act-log-status s-done lang-en">📚 Lesson Learned</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">103 Baris Data Panen Nyaris Hilang — dan Tiga Alat yang Lahir Sesudahnya</div>
+              <div class="act-log-title lang-en">103 Rows of Harvest Data Almost Lost — and the Three Tools Born Afterwards</div>
+              <div class="act-log-detail lang-id">Pada <strong>6 Agustus 2026</strong>, sebuah perintah perbaikan data yang dirangkai manual menghapus <strong>103 baris catatan panen</strong> dari basis data. Server membalas "berhasil" — tidak ada pesan galat sama sekali. Data itu pulih karena kebetulan ada salinan yang diambil <strong>20 detik sebelumnya</strong>, termasuk tiga baris yang baru dimasukkan enam menit sebelum kejadian.<br/><br/><strong>Penyebabnya bukan kecerobohan tunggal, melainkan bentuk perintahnya.</strong> Aturan tertulis untuk mencegah hal ini sudah ada sejak Juli — dan tetap kebobolan. Kesimpulannya: aturan yang hanya mengandalkan kedisiplinan akan gagal lagi. Maka aturannya diganti <strong>alat</strong>.<br/><br/><strong>Tiga lapis yang dibangun 6–20 Agustus 2026:</strong><br/>• <strong>Pemeriksa aturan</strong> — 14 uji yang dijalankan sebelum dan sesudah setiap perubahan; hasil "LULUS" yang berubah jadi "GAGAL" langsung menghentikan pekerjaan.<br/>• <strong>Gerbang selisih</strong> — setiap penulisan wajib mendeklarasikan di muka berapa baris akan berubah dan kolom mana yang boleh tersentuh. Kenyataan tidak sama dengan deklarasi → tidak ada yang ditulis sama sekali.<br/>• <strong>Buku riwayat</strong> — mencatat siapa, kapan, dari nilai berapa ke berapa, dan atas alasan apa. Sebelum ini, menjawab "kapan angka ini masuk?" berarti membandingkan empat salinan mingguan satu per satu — ketelitiannya hanya satu minggu.<br/><br/>Penjaganya sendiri diuji dengan <strong>sengaja merusak data</strong>, untuk membuktikan ia benar-benar menolak. Kegagalan ini dicatat terbuka sebagai bagian komitmen Living Lab: pengelolaan aset wakaf tidak boleh bergantung pada ingatan atau kehati-hatian seseorang.</div>
+              <div class="act-log-detail lang-en">On <strong>6 August 2026</strong>, a hand-assembled data-repair command deleted <strong>103 rows of harvest records</strong> from the database. The server replied "success" — no error message at all. The data was recovered only because a copy happened to have been taken <strong>20 seconds earlier</strong>, including three rows entered just six minutes before the incident.<br/><br/><strong>The cause was not a single act of carelessness but the shape of the command itself.</strong> A written rule to prevent exactly this had existed since July — and was breached anyway. The conclusion: a rule that relies on discipline alone will fail again. So the rule was replaced with <strong>tooling</strong>.<br/><br/><strong>Three layers built 6–20 August 2026:</strong><br/>• <strong>Rule checker</strong> — 14 invariant tests run before and after every change; a "PASS" that turns into "FAIL" halts the work immediately.<br/>• <strong>Diff gate</strong> — every write must declare up front how many rows will change and which columns may be touched. Reality not matching the declaration → nothing is written at all.<br/>• <strong>Change ledger</strong> — records who, when, from what value to what value, and for what reason. Before this, answering "when did this figure enter?" meant comparing four weekly backups one by one — with only one week of precision.<br/><br/>The guards themselves were tested by <strong>deliberately corrupting data</strong>, to prove they actually refuse. This failure is documented openly as part of the Living Lab commitment: stewardship of waqf assets must not depend on one person's memory or care.</div>
+            </div>
+            <div class="act-log-meta"><strong>6–20 Agt 2026</strong>Tata Kelola Data</div>
+          </div>
+<div class="act-log-item">
+            <span class="act-log-status s-done lang-id">📚 Lesson Learned</span>
+            <span class="act-log-status s-done lang-en">📚 Lesson Learned</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Terbaca 11%, Aktualnya 16% — Kasus Jamur Karung & Keterbatasan Alat Ukur Kadar Air Generik</div>
+              <div class="act-log-title lang-en">When 11% Was Actually 16% — Storage Mould Case & Discovery of Generic Moisture Meter Limitations</div>
+              <div class="act-log-detail lang-id">Pada minggu ketiga Juni 2026, tim menemukan sebagian ceri dari batch pertama pengeringan alami — sudah tujuh hari di karung — <strong>berjamur di permukaan</strong>, terkonsentrasi di dasar karung berupa serbuk halus putih; separuh atas masih baik. Dugaan awal: kegagalan protokol penyimpanan (migrasi kadar air, kontak lantai, tanpa palet, tekanan tumpukan). <strong>Investigasi justru menemukan akar yang lebih mendasar: kesalahan pengukuran kadar air (moisture content/MC) saat memutuskan penyimpanan.</strong><br/><br/>Saat mengecek batch lain yang sedang dijemur, terlihat <strong>pembacaan terbalik</strong>: batch yang lebih kering terbaca 19,5%, sementara batch yang lebih basah malah 18,3%. Anomali ini membuka biang keroknya — <strong>alat ukur kadar air generik YieRyi YY1011</strong> dirancang untuk biji-bijian (padi, gandum, jagung, kedelai, kacang tanah), <strong>tanpa kalibrasi khusus kopi</strong>. Pada ceri kopi yang berlapis (kulit, daging buah, kulit tanduk, biji), jarum probe lebih banyak menyentuh rongga udara & kulit permukaan — bukan biji di dalam — sehingga angkanya mencerminkan kontak fisik, bukan kadar air sebenarnya. <strong>Implikasinya</strong>: pembacaan "11–12%" pada batch yang lebih dulu disimpan kemungkinan <em>rendah semu</em> — kadar air aslinya besar kemungkinan di zona bahaya jamur <strong>14–16%</strong>, cocok dengan munculnya jamur <em>Aspergillus</em> dalam tujuh hari.<br/><br/>Pelajaran ini dibagikan terbuka sebagai bagian komitmen transparansi Living Lab — pembelajaran datang bukan hanya dari keberhasilan, tetapi justru dari <strong>kegagalan yang didokumentasikan jujur</strong>, demi manfaat bersama petani kopi rakyat.</div>
+              <div class="act-log-detail lang-en">In the third week of June 2026, the Wakaf Produktif team discovered that a portion of natural-dried cherries from the first batch — stored in sacks for seven days — had developed <strong>surface mould bloom</strong>, concentrated in the bottom half of the sack as fine white powder. Upper half was still good condition, lower half clearly infected. Initial diagnosis: storage protocol failure (moisture migration, floor contact, no pallets, overburden pressure). <strong>Further investigation uncovered a more fundamental root cause: measurement error in the storage decision stage.</strong><br/><br/>While re-evaluating other batches drying, the Waqif noted an <strong>inverted reading pattern</strong>: a drier-looking batch showed 19.5%, while a newer plumper batch read 18.3%. This anomaly triggered an investigation. The <strong>generic YieRyi YY1011 grain moisture meter</strong> in use was designed for cereal grains (paddy, wheat, corn, soybean, peanut) — <strong>without coffee-specific calibration</strong>. On heterogeneous coffee cherries (skin + pulp + parchment + bean), the probe pins mostly contact air gaps and surface skin, NOT the bean interior — readings reflect physical contact dynamics rather than actual MC. <strong>Retroactive implication</strong>: the "11–12%" reading on the batch entering storage was likely <em>false low</em> — actual MC very plausibly in the mould danger zone <strong>14–16%</strong>, consistent with the Aspergillus growth timeline observed within seven days.<br/><br/>This lesson is openly shared as part of the Living Lab transparency commitment — learning happens not only from successes, but precisely from <strong>failures honestly documented</strong> for the collective benefit of smallholder coffee farmers.</div>
+            </div>
+            <div class="act-log-meta"><strong>21 Jun 2026</strong>Storage & QC</div>
+          </div>
+<div class="act-log-item">
+            <span class="act-log-status s-ongoing lang-id">⟳ Berjalan</span>
+            <span class="act-log-status s-ongoing lang-en">⟳ Ongoing</span>
+            <div class="act-log-body">
+              <div class="act-log-title lang-id">Sistem Pelaporan Harian Digital Langsung</div>
+              <div class="act-log-title lang-en">Digital Daily Reporting System Live</div>
+              <div class="act-log-detail lang-id">Pada kunjungan 17 Mei 2026, <strong>sistem pelaporan harian digital <code>lapor.html</code></strong> mulai live di lapangan. Ibu (istri tim lapangan) — pelapor pendukung — di-onboarding langsung di lokasi dengan walkthrough form: lokasi kebun (K1/K2/K3/K4), jenis pekerjaan, durasi, hasil, foto opsional. Auto-fill cuaca + GPS otomatis aktif. <strong>Aturan no-show</strong>: tidak ada laporan masuk = pekerja tidak masuk kerja (auto-flag ke dashboard, payroll tidak ter-generate). Arsitektur <em>online-first</em> dengan IndexedDB sebagai safety net untuk genuine offline — pattern ini bisa di-replikasi untuk worker baru ke depan.</div>
+              <div class="act-log-detail lang-en">During the 17 May 2026 visit, the <strong>digital daily reporting system <code>lapor.html</code></strong> went live in the field. Ibu (tim lapangan's wife) — supporting reporter — was onboarded directly on-site with form walkthrough: plot location (K1/K2/K3/K4), work type, duration, results, optional photo. Weather + GPS auto-fill active. <strong>No-show rule</strong>: no report received = worker did not show up (auto-flag to dashboard, payroll not generated). <em>Online-first</em> architecture with IndexedDB as safety net for genuine offline — this pattern can be replicated for future new workers.</div>
+            </div>
+            <div class="act-log-meta"><strong>17 Mei – live</strong>PWA harian</div>
+          </div>
+        </div>
+      </div>
+</div>
 
     <!-- 2025 -->
     <div class="year-content" id="year-2025">
@@ -4427,8 +4443,12 @@ function buildStatusBoard() {
     'Pemupukan Makro':'pemupukan-makro'
   };
   function catKey(t){t=(t||'').toLowerCase();
+    // Tata kelola data & sistem — WAJIB diperiksa PALING AWAL. Judul kartu ini
+    // sering memuat kata 'panen'/'data panen', dan tanpa aturan ini akan
+    // ketiban pil PANEN padahal isinya bukan peristiwa kebun (koreksi 23 Agt 2026).
+    if(/baris data|basis data|tata kelola|riwayat perubahan|gerbang selisih|cadangan data|firestore|dashboard|\bsensus\b/.test(t))return 'infra';
     if(/opt|hama|penyakit|\blayu\b|pbko|penggerek|busuk akar|nematoda|brocap|perangkap/.test(t))return 'opt';
-    if(/jemur|sortasi|pascapanen|kadar air|storage|giling|pengeringan|jamur karung|\bsimpan\b/.test(t))return 'pasca';
+    if(/jemur|sortasi|pascapanen|kadar air|storage|giling|pengeringan|jamur karung|\bsimpan\b|rendemen|dried cherry/.test(t))return 'pasca';
     if(/sampling|riset|baseline|karakterisasi|\bbrin\b|green bean|research|penjajakan/.test(t))return 'riset';
     if(/pupuk|pemupukan|fish extract|kompos|\bza\b|kcl|\bnpk\b|kandang/.test(t))return 'pupuk';
     if(/pangkas|wiwil|peremajaan|sambung|penyiangan|rorak|perawatan|kanopi|pruning|penggemburan|babat|pra-panen|pre-panen/.test(t))return 'rawat';
