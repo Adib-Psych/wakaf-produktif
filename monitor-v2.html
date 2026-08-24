@@ -5922,21 +5922,33 @@ function renderUpahSummary() {
     const _kb = (typeof kasbonSisaPekerja === 'function') ? kasbonSisaPekerja(k) : 0;
     const _kbTerpakai = Math.min(_kb, s.belum);
     const _kbSisaLebih = Math.max(0, _kb - s.belum);
-    const blokKasbon = _kb > 0 ? `
-      <div style="margin-top:7px;padding:7px 9px;background:#FFF7ED;border:1px solid #FDBA74;border-radius:6px">
-        <div style="display:flex;justify-content:space-between;font-size:10px;color:#9A3412;line-height:1.5">
-          <span>💵 Kasbon sudah diambil</span><span style="font-weight:700">−${fmtRpShort(_kbTerpakai)}</span>
+    const _diserahkan = Math.max(0, s.belum - _kb);
+    // ⭐ 24 Agt 2026, per Wakif: angka BESAR = yang benar-benar harus DISERAHKAN
+    // (hak upah dikurangi kasbon). Hak upah utuh + potongannya turun ke bawahnya.
+    // Alasannya praktis: saat Wakif berdiri di depan pekerja hendak membayar, yang
+    // dia butuhkan adalah berapa uang yang harus dikeluarkan dari kantong — bukan
+    // angka hak upah yang sebagian sudah diserahkan minggu lalu.
+    const _angkaBesar = _kb > 0 ? _diserahkan : s.belum;
+    const _rincianKasbon = _kb > 0 ? `
+      <div style="margin-top:7px;padding:8px 10px;background:#FFF7ED;border:1px solid #FDBA74;border-radius:6px;font-size:11px;line-height:1.7">
+        <!-- ⚠️ flex-wrap + min-width:0 WAJIB di sini: .kpi punya overflow:hidden, dan baris
+             flex tanpa keduanya membuat angka di kanan terdorong KELUAR kartu lalu terpotong
+             tanpa galat apa pun (jebakan min-content, Pattern #16). Sudah terjadi 24 Agt 2026. -->
+        <div style="display:flex;flex-wrap:wrap;gap:2px 8px;color:#7C2D12">
+          <span style="min-width:0">Hak upah · ${s.belumCount} item</span>
+          <b style="margin-left:auto;white-space:nowrap">${fmtRpShort(s.belum)}</b>
         </div>
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;color:#166534;margin-top:3px;padding-top:3px;border-top:1px solid #FDBA74">
-          <span>Sisa diserahkan</span><span>${fmtRpShort(Math.max(0, s.belum - _kb))}</span>
+        <div style="display:flex;flex-wrap:wrap;gap:2px 8px;color:#9A3412">
+          <span style="min-width:0">Kasbon diambil</span>
+          <b style="margin-left:auto;white-space:nowrap">− ${fmtRpShort(_kbTerpakai)}</b>
         </div>
-        ${_kbSisaLebih > 0 ? `<div style="font-size:9px;color:#B91C1C;margin-top:3px;line-height:1.4">Kasbon ${fmtRpShort(_kbSisaLebih)} melebihi upah terkumpul — jalan terus ke pembayaran berikutnya</div>` : ''}
+        ${_kbSisaLebih > 0 ? `<div style="font-size:10px;color:#B91C1C;margin-top:3px;line-height:1.45">⚠️ Sisa kasbon ${fmtRpShort(_kbSisaLebih)} belum tertutup — dipotong dari upah berikutnya</div>` : ''}
       </div>` : '';
     return `<div class="kpi ${cls}" style="cursor:pointer" onclick="document.getElementById('filter-bayar-pelapor').value='${k}';renderUpahTable()">
       <div style="font-size:11px;font-weight:700;color:var(--earth);margin-bottom:4px">${ico} ${s.nama}${arsip}</div>
-      <div class="kpi-num" style="color:${s.belum>0?'var(--orange)':'var(--green)'};font-size:20px">${fmtRpShort(s.belum)}</div>
-      <div class="kpi-lbl">${s.belumCount} item belum dibayar${_kb>0?' · hak upah' : ''}</div>
-      ${blokKasbon}
+      <div class="kpi-num" style="color:${_angkaBesar>0?'var(--orange)':'var(--green)'};font-size:20px">${fmtRpShort(_angkaBesar)}</div>
+      <div class="kpi-lbl">${_kb>0 ? 'yang harus diserahkan' : s.belumCount + ' item belum dibayar'}</div>
+      ${_rincianKasbon}
       <div style="font-size:10px;color:var(--mute);margin-top:6px;border-top:1px solid #eee;padding-top:6px;line-height:1.6">
         📅 Harian: ${fmtRpShort(s.harianRp)}<br>
         <span style="display:inline-block;margin-left:14px;color:var(--moss);font-weight:600">${harianDaysLine}</span><br>
