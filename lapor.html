@@ -1680,27 +1680,72 @@ function hookEvents() {
 /* ============================================================
    WEATHER (Open-Meteo)
    ============================================================ */
+/* ⭐ KOORDINAT KEBUN — dikunci 24 Agt 2026.
+   ------------------------------------------------------------------
+   KENAPA ADA: sebelum ini cuaca ditarik dari GPS PERANGKAT. Akibatnya,
+   saat pekerja mengisi laporan dari rumah (mis. Christo dari Sengkaling,
+   ±25 km), yang tersimpan adalah CUACA DI RUMAHNYA — bukan cuaca kebun.
+   Ketahuan 24 Agt 2026 ketika koordinat di laporan dibuka di peta dan
+   ternyata bukan Ngantang. Dari 29 laporan ber-GPS, 6 tercemar begitu.
+
+   SEKARANG: cuaca SELALU ditarik dari koordinat kebun ini, apa pun posisi
+   perangkat. GPS perangkat tetap disimpan terpisah sebagai bukti kehadiran
+   — itu justru informasi jujur, dan tidak lagi mencemari data cuaca.
+
+   Angkanya = MEDIAN dari 23 titik GPS yang benar-benar terekam di kebun
+   (laporan Pak Kumpul & Cak Yit, Mei–Jun 2026). Bukan tebakan peta. */
+const KEBUN_KOORD = { lat: -7.853459, lng: 112.371056, nama: 'Kebun Wakaf Ngantang' };
+
 function attemptWeatherFetch() {
-  if (!navigator.geolocation) {
-    setWeatherUnavailable('GPS tidak didukung');
-    return;
-  }
+  // 1) CUACA — langsung dari koordinat KEBUN, tidak menunggu & tidak bergantung GPS.
+  //    Kalau GPS ditolak/mati, cuaca TETAP terisi benar.
+  fetchOpenMeteo(KEBUN_KOORD.lat, KEBUN_KOORD.lng).catch(e => {
+    console.warn('[Weather] fetch error', e);
+    setWeatherUnavailable('Data cuaca offline');
+  });
+
+  // 2) GPS PERANGKAT — terpisah, hanya untuk bukti kehadiran. Gagal pun tak apa.
+  if (!navigator.geolocation) return;
   navigator.geolocation.getCurrentPosition(
-    async pos => {
+    pos => {
       STATE.gps = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: pos.coords.accuracy };
-      try {
-        await fetchOpenMeteo(STATE.gps.lat, STATE.gps.lng);
-      } catch (e) {
-        console.warn('[Weather] fetch error', e);
-        setWeatherUnavailable('Data cuaca offline');
-      }
+      const km = jarakKeKebun(STATE.gps.lat, STATE.gps.lng);
+      STATE.gps.jarak_km = km;
+      console.log('[GPS] ' + km.toFixed(1) + ' km dari kebun');
+      if (typeof tampilkanJarakKebun === 'function') tampilkanJarakKebun(km);
     },
-    err => {
-      console.warn('[GPS] denied', err);
-      setWeatherUnavailable('GPS belum diizinkan');
-    },
+    err => { console.warn('[GPS] denied', err); },
     { timeout: 8000, enableHighAccuracy: false, maximumAge: 300000 }
   );
+}
+
+/** Jarak lurus ke kebun, dalam km. Dipakai untuk menandai laporan yang
+ *  diisi jauh dari kebun — supaya ketahuan sendiri, tanpa perlu buka peta. */
+function jarakKeKebun(lat, lng) {
+  const R = 6371, rad = x => x * Math.PI / 180;
+  const dLat = rad(lat - KEBUN_KOORD.lat), dLng = rad(lng - KEBUN_KOORD.lng);
+  const a = Math.sin(dLat/2)**2 + Math.cos(rad(lat)) * Math.cos(rad(KEBUN_KOORD.lat)) * Math.sin(dLng/2)**2;
+  return 2 * R * Math.asin(Math.sqrt(a));
+}
+
+/** Tanda kecil di layar: sedang di kebun atau tidak. Tidak menghalangi apa pun. */
+function tampilkanJarakKebun(km) {
+  let el = document.getElementById('tanda-jarak-kebun');
+  if (!el) {
+    const induk = document.querySelector('.weather-box') || document.body;
+    el = document.createElement('div');
+    el.id = 'tanda-jarak-kebun';
+    el.style.cssText = 'font-size:11px;margin-top:6px;padding:5px 8px;border-radius:6px;line-height:1.5';
+    induk.appendChild(el);
+  }
+  const dekat = km <= 3;
+  el.style.background = dekat ? '#E8F5EC' : '#FFF7ED';
+  el.style.color      = dekat ? '#166534' : '#9A3412';
+  el.style.border     = '1px solid ' + (dekat ? '#86EFAC' : '#FDBA74');
+  el.innerHTML = dekat
+    ? '📍 Anda di kebun (' + km.toFixed(1) + ' km) — kehadiran tercatat'
+    : '📍 Anda <b>' + km.toFixed(1) + ' km dari kebun</b>. Laporan tetap tersimpan; '
+      + 'angka cuaca yang dipakai <b>tetap cuaca kebun</b>, bukan cuaca di sini.';
 }
 
 async function fetchOpenMeteo(lat, lng) {
@@ -2001,6 +2046,11 @@ async function submitForm() {
       rain_24h_mm: STATE.weather.rain_24h,
       rain_7d_mm:  STATE.weather.rain_7d,
       weather_source: STATE.override.rain ? 'worker_override' : 'open-meteo',
+      // ⭐ 24 Agt 2026: SIMPAN koordinat yang dipakai untuk menarik cuaca.
+      // Tanpa ini, kekeliruan seperti 24 Agt (cuaca rumah tercatat sebagai cuaca
+      // kebun) hanya bisa ketahuan kalau ada yang iseng membuka peta.
+      weather_coords: `${KEBUN_KOORD.lat},${KEBUN_KOORD.lng}`,
+      weather_lokasi: 'kebun',
 
       // Pekerjaan
       kategori: STATE.kategori,
@@ -2019,6 +2069,10 @@ async function submitForm() {
 
       // Audit
       gps_coords: STATE.gps ? `${STATE.gps.lat.toFixed(6)},${STATE.gps.lng.toFixed(6)}` : null,
+      // Jarak ke kebun — supaya laporan yang diisi dari jauh KETAHUAN SENDIRI,
+      // tanpa perlu ada yang membuka peta satu per satu.
+      gps_jarak_km: (STATE.gps && STATE.gps.jarak_km != null) ? Math.round(STATE.gps.jarak_km * 10) / 10 : null,
+      gps_di_kebun: (STATE.gps && STATE.gps.jarak_km != null) ? (STATE.gps.jarak_km <= 3) : null,
       device_id: shortHashFromBrowser(),
       _filled_by: filledBy
     };
