@@ -1893,6 +1893,35 @@
         <div id="cabut-log-container" style="font-size:12px;color:var(--mute)">memuat…</div>
       </div>
 
+      <!-- ═══ PELACAK KOMPOS / PUPUK — dibangun 24 Agt 2026 atas permintaan Wakif ═══ -->
+      <div class="card" style="border-left:5px solid #B45309">
+        <div class="card-title" style="color:#7C2D12"><span class="num" style="background:#B45309">🐐</span>Kebutuhan &amp; Serapan Kompos per Kebun</div>
+        <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px;line-height:1.65">
+          Kebutuhan dihitung <b>otomatis dari sensus</b> — hanya pohon <b>Hijau + Biru</b>; <b>Merah tidak pernah dipupuk</b> (ADR-027/029).
+          Begitu sensus berubah, angka di sini ikut berubah sendiri. Adib cukup mengisi <b>berapa karung yang sudah benar-benar ditebar</b> di tiap kebun.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:#FFFBEB;border:1.5px solid #F0D98C;border-radius:10px;padding:12px;margin-bottom:14px">
+          <div style="flex:0 0 130px">
+            <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Isi 1 karung (kg)</label>
+            <input type="number" id="pk-karung" min="1" step="1" value="20" onchange="simpanPupukSetting()" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+          </div>
+          <div style="flex:0 0 150px">
+            <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Takaran per pohon (kg)</label>
+            <input type="number" id="pk-dosis" min="0.5" step="0.5" value="6" onchange="simpanPupukSetting()" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+          </div>
+          <div style="flex:0 0 150px">
+            <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Harga per karung (Rp)</label>
+            <input type="number" id="pk-harga" min="0" step="1000" value="30000" onchange="simpanPupukSetting()" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+          </div>
+          <div style="flex:1 1 260px;min-width:220px;font-size:10.5px;color:#8B6914;line-height:1.6">
+            Ubah salah satu angka ini → <b>seluruh tabel di bawah ikut menyesuaikan</b>.
+            Takaran terkunci ADR-029 = 1 ember 10 L ≈ 6 kg; kalau di lapangan ternyata lebih tipis, ubah di sini supaya hitungannya jujur.
+          </div>
+        </div>
+        <div id="pupuk-tabel"></div>
+        <div id="pupuk-catatan" style="margin-top:12px"></div>
+      </div>
+
       <!-- ─── TIMELINE 2023 → 2026 → 2027 (data validated dari xlsx Adib 19 Mei 2026) ─── -->
       <div class="card">
         <div class="card-title"><span class="num">1</span>Timeline Populasi Kopi — Baseline 2023 → Target 2027</div>
@@ -3861,6 +3890,7 @@ function initApp() {
   renderUpahSummary();
   renderUpahTable();
   if (typeof renderKasbon === 'function') renderKasbon();   // ⭐ 23 Agt 2026 — Kartu 5 Kasbon Pekerja
+  if (typeof renderPupuk === 'function') renderPupuk();     // ⭐ 24 Agt 2026 — Kebutuhan & Serapan Kompos
   renderHeatmap();
   // ENSO climate state (B-Phase 3) — fetch NOAA in background, fallback cached
   if (typeof initEnsoState === 'function') initEnsoState();
@@ -16055,8 +16085,129 @@ function applyCensus() {
   // dashboard single-source refresh
   if (typeof POHON_BASELINE!=='undefined') POHON_BASELINE.census2026=['K1','K2','K3','K4'].map(_kebunTot);
   if (typeof renderDashPanenSummary==='function') renderDashPanenSummary();
+  if (typeof renderPupuk==='function') renderPupuk();   // sensus bergeser → kebutuhan kompos ikut
 }
 if (typeof window!=='undefined') { window.applyCensus=applyCensus; document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{applyCensus();}catch(e){}},300)); }
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PELACAK KOMPOS / PUPUK per KEBUN — 24 Agt 2026, permintaan Wakif
+// -----------------------------------------------------------------------------
+// Kenapa ada: Wakif bertanya "berapa kg kebutuhan pupuk?" — dan jawabannya selama
+// ini hanya ada di dokumen ADR, bukan di layar. Akibatnya tiap kali ditanya harus
+// dihitung ulang dari nol, dan sisa kebutuhan tak pernah terlihat.
+//
+// Kebutuhan DIHITUNG dari KEBUN_CENSUS (Pattern #15 — satu sumber), bukan angka
+// hardcode: hanya Hijau + Biru, Merah tidak pernah dipupuk (ADR-027/029).
+// Begitu sensus bergeser (cabut Merah / sulaman), tabel ini berubah sendiri.
+//
+// K4 SELALU dipisah — dana pribadi, bukan dana wakaf.
+//
+// Simpanan: sop_status/pupuk (Pattern #18 — koleksi yang sudah boleh ditulis).
+// ═══════════════════════════════════════════════════════════════════════════════
+let PUPUK_DATA = { kg_karung: 20, kg_pohon: 6, harga_karung: 30000, terpakai: {} };
+const PUPUK_LS = 'wkkn_v2_pupuk';
+function loadPupukLS(){ try{ const v=JSON.parse(localStorage.getItem(PUPUK_LS)||'null'); if(v&&typeof v==='object') PUPUK_DATA=Object.assign(PUPUK_DATA,v); }catch(e){} }
+function savePupukLS(){ try{ localStorage.setItem(PUPUK_LS, JSON.stringify(PUPUK_DATA)); }catch(e){} }
+loadPupukLS();
+function persistPupuk(){ savePupukLS(); if(typeof window.syncPupukToFirestore==='function') window.syncPupukToFirestore(); }
+
+function simpanPupukSetting(){
+  const g = i => parseFloat((document.getElementById(i)||{}).value);
+  const kk=g('pk-karung'), kp=g('pk-dosis'), hg=g('pk-harga');
+  if (kk>0) PUPUK_DATA.kg_karung=kk;
+  if (kp>0) PUPUK_DATA.kg_pohon=kp;
+  if (hg>=0) PUPUK_DATA.harga_karung=hg;
+  persistPupuk(); renderPupuk();
+}
+function setPupukTerpakai(kebun, karung){
+  const n = Math.max(0, parseFloat(karung)||0);
+  PUPUK_DATA.terpakai = PUPUK_DATA.terpakai || {};
+  PUPUK_DATA.terpakai[kebun] = n;
+  persistPupuk(); renderPupuk();
+  if (typeof showToast==='function') showToast(`✅ ${kebun}: ${n} karung tercatat sudah ditebar`);
+}
+/** Pohon yang DIPUPUK = Hijau + Biru. Merah tidak pernah dipupuk. */
+function pupukPohon(k){
+  if (typeof KEBUN_CENSUS==='undefined' || !KEBUN_CENSUS[k]) return 0;
+  return (+KEBUN_CENSUS[k].H||0) + (+KEBUN_CENSUS[k].B||0);
+}
+function renderPupuk(){
+  const el=document.getElementById('pupuk-tabel'); if(!el) return;
+  ['pk-karung','pk-dosis','pk-harga'].forEach((i,n)=>{
+    const e=document.getElementById(i); if(!e) return;
+    e.value = [PUPUK_DATA.kg_karung, PUPUK_DATA.kg_pohon, PUPUK_DATA.harga_karung][n];
+  });
+  const KK=+PUPUK_DATA.kg_karung||20, KP=+PUPUK_DATA.kg_pohon||6, HG=+PUPUK_DATA.harga_karung||0;
+  const NAMA={K1:'Kebun 1',K2:'Kebun 2',K3:'Kebun 3',K4:'Kebun 4 · Rumah Wakif'};
+  let tW={pohon:0,butuh:0,pakai:0}, t4={pohon:0,butuh:0,pakai:0};
+
+  const baris = ['K1','K2','K3','K4'].map(k=>{
+    const pohon=pupukPohon(k), butuh=pohon*KP;
+    const karungPakai=+(PUPUK_DATA.terpakai||{})[k]||0, pakai=karungPakai*KK;
+    const sisa=Math.max(0,butuh-pakai), pct=butuh?Math.min(100,pakai/butuh*100):0;
+    const t=(k==='K4')?t4:tW; t.pohon+=pohon; t.butuh+=butuh; t.pakai+=pakai;
+    const warna = pct>=100?'#16A34A':(pct>=50?'#D97706':'#DC2626');
+    return `<tr${k==='K4'?' style="background:#FAF7F0"':''}>
+      <td><b>${NAMA[k]}</b>${k==='K4'?'<div style="font-size:9.5px;color:#8B6914;font-weight:700">dana pribadi — di luar dana wakaf</div>':''}</td>
+      <td style="text-align:right">${pohon}</td>
+      <td style="text-align:right;font-weight:700">${butuh.toLocaleString('id-ID')} kg</td>
+      <td style="text-align:right;color:var(--mute)">${Math.ceil(butuh/KK)} krg</td>
+      <td style="text-align:center">
+        <input type="number" min="0" step="1" value="${karungPakai}"
+               onchange="setPupukTerpakai('${k}', this.value)"
+               style="width:66px;padding:5px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;text-align:center">
+      </td>
+      <td style="text-align:right">${pakai.toLocaleString('id-ID')} kg</td>
+      <td style="text-align:right;font-weight:800;color:${sisa>0?'#B45309':'#16A34A'}">${sisa.toLocaleString('id-ID')} kg</td>
+      <td style="text-align:right;font-weight:700">${sisa>0?Math.ceil(sisa/KK)+' krg':'—'}</td>
+      <td style="min-width:96px">
+        <div style="height:9px;background:#EEE;border-radius:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${warna}"></div></div>
+        <div style="font-size:9.5px;color:var(--mute);text-align:center;margin-top:2px">${pct.toFixed(0)}%</div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  const sisaW=Math.max(0,tW.butuh-tW.pakai), sisa4=Math.max(0,t4.butuh-t4.pakai);
+  el.innerHTML = `<div class="table-wrap"><table>
+    <thead><tr>
+      <th>Kebun</th><th style="text-align:right">Pohon<br><span style="font-weight:400;font-size:9px">Hijau+Biru</span></th>
+      <th style="text-align:right">Butuh</th><th style="text-align:right">≈ karung</th>
+      <th style="text-align:center">Sudah ditebar<br><span style="font-weight:400;font-size:9px">isi karung</span></th>
+      <th style="text-align:right">= kg</th><th style="text-align:right">KURANG</th><th style="text-align:right">≈ karung</th><th>Capaian</th>
+    </tr></thead>
+    <tbody>${baris}
+      <tr style="background:#E8F1EC;font-weight:800">
+        <td>WAKAF K1–K3</td><td style="text-align:right">${tW.pohon}</td>
+        <td style="text-align:right">${tW.butuh.toLocaleString('id-ID')} kg</td>
+        <td style="text-align:right">${Math.ceil(tW.butuh/KK)} krg</td>
+        <td></td><td style="text-align:right">${tW.pakai.toLocaleString('id-ID')} kg</td>
+        <td style="text-align:right;color:#B45309">${sisaW.toLocaleString('id-ID')} kg</td>
+        <td style="text-align:right">${sisaW>0?Math.ceil(sisaW/KK)+' krg':'—'}</td>
+        <td style="text-align:center;font-size:11px">${tW.butuh?(tW.pakai/tW.butuh*100).toFixed(0):0}%</td>
+      </tr>
+    </tbody></table></div>`;
+
+  const cat=document.getElementById('pupuk-catatan'); if(!cat) return;
+  const biayaW=Math.ceil(sisaW/KK)*HG, biaya4=Math.ceil(sisa4/KK)*HG;
+  cat.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:12px">
+    <div style="flex:1 1 260px;background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:8px;padding:12px">
+      <div style="font-size:10px;font-weight:800;color:#9A3412;letter-spacing:.5px">MASIH KURANG — DANA WAKAF (K1–K3)</div>
+      <div style="font-size:22px;font-weight:800;color:#9A3412;margin:3px 0">${sisaW.toLocaleString('id-ID')} kg</div>
+      <div style="font-size:11px;color:#7C2D12">≈ <b>${Math.ceil(sisaW/KK)} karung</b> · perkiraan <b>${typeof fmtRp==='function'?fmtRp(biayaW):('Rp '+biayaW.toLocaleString('id-ID'))}</b></div>
+    </div>
+    <div style="flex:1 1 260px;background:#FAF7F0;border:1.5px solid #D8CFB8;border-radius:8px;padding:12px">
+      <div style="font-size:10px;font-weight:800;color:#6B5535;letter-spacing:.5px">MASIH KURANG — K4 (DANA PRIBADI)</div>
+      <div style="font-size:22px;font-weight:800;color:#6B5535;margin:3px 0">${sisa4.toLocaleString('id-ID')} kg</div>
+      <div style="font-size:11px;color:#6B5535">≈ <b>${Math.ceil(sisa4/KK)} karung</b> · perkiraan <b>${typeof fmtRp==='function'?fmtRp(biaya4):('Rp '+biaya4.toLocaleString('id-ID'))}</b></div>
+    </div>
+    <div style="flex:1 1 100%;font-size:10.5px;color:var(--mute);line-height:1.65;border-top:1px dashed #ddd;padding-top:9px">
+      ⚠️ <b>Beli bertahap</b> (aturan P13): ambil sebagian dulu sebagai kalibrasi, baru borong setelah mutu &amp; berat karung terbukti.
+      Tenaga hanya 2 orang ≈ 150 pohon/hari — barang yang menumpuk menunggu justru <b>rusak sendiri</b>.
+      Angka pohon di atas ditarik langsung dari sensus; <b>ubah sensus → tabel ini ikut berubah</b>.
+    </div>
+  </div>`;
+}
+if (typeof window!=='undefined'){ window.renderPupuk=renderPupuk; window.simpanPupukSetting=simpanPupukSetting; window.setPupukTerpakai=setPupukTerpakai; }
 
 // ═══ Log Cabut/Tebang Pohon Merah (16 Jul 2026) ═══
 // Target = Merah census per kebun (single-source KEBUN_CENSUS.M). Log terpisah (tak ubah census).
@@ -19981,6 +20132,27 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           if (typeof renderCabutLog === 'function') renderCabutLog();
           // angka "Terkini (live)" di Dashboard ikut ter-refresh saat data datang dari device lain
           if (typeof _cabutRefreshDash === 'function') _cabutRefreshDash();
+        }
+      } catch (e) {}
+    });
+
+    // ⭐ Pelacak Kompos/Pupuk → Firestore sop_status/pupuk (Pattern #18 reuse) — 24 Agt 2026
+    window.syncPupukToFirestore = async () => {
+      try {
+        await setDoc(doc(db, 'sop_status', 'pupuk'), {
+          version: 'pupuk-1.0',
+          data: (typeof PUPUK_DATA !== 'undefined' ? PUPUK_DATA : {}),
+          updated_at: serverTimestamp(), updated_by: 'wakif_dashboard', source: 'monitor-v2 Inventarisasi — Kebutuhan & Serapan Kompos'
+        });
+        console.log('[Pupuk] ✓ synced');
+      } catch (e) { console.warn('[Pupuk] sync failed:', e && e.message); }
+    };
+    onSnapshot(doc(db, 'sop_status', 'pupuk'), (snap) => {
+      try {
+        if (snap.exists() && snap.data().data && typeof snap.data().data === 'object') {
+          PUPUK_DATA = Object.assign({ kg_karung:20, kg_pohon:6, harga_karung:30000, terpakai:{} }, snap.data().data);
+          if (typeof savePupukLS === 'function') savePupukLS();
+          if (typeof renderPupuk === 'function') renderPupuk();
         }
       } catch (e) {}
     });
