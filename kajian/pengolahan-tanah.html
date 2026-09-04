@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pengolahan Tanah — Membuka Jalan Air ke Akar | Kajian & Panduan Lapangan</title>
+<style>
+  @page { size: A4; margin: 10mm; }
+  :root{
+    --earth:#1F5F47; --moss:#2E5C4F; --leaf:#15803d; --leaflt:#dcfce7;
+    --cherry:#8c2519; --cherrylt:#fde8e4; --amber:#b45309; --amberlt:#fef3c7;
+    --cyan:#0e7490; --cyanlt:#cffafe; --violet:#5b21b6; --violetlt:#f5f3ff;
+    --ink:#1f2937; --mute:#6b7280; --line:#e5e7eb; --cream:#FAFCFB;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:var(--ink);background:#f3f4f6;font-size:17px;line-height:1.62}
+  .page{max-width:1360px;margin:0 auto;background:#fff;padding:44px 52px 56px;box-shadow:0 2px 22px rgba(0,0,0,.07)}
+
+  h1{margin:0 0 7px;font-size:36px;color:var(--earth);letter-spacing:-.4px;line-height:1.15}
+  .sub{color:var(--mute);font-size:16px;margin-bottom:4px}
+  .rule{height:5px;background:linear-gradient(90deg,var(--earth),var(--leaf),var(--amber));border-radius:3px;margin:22px 0 30px}
+  h2{font-size:23px;color:var(--earth);margin:40px 0 16px;padding-bottom:9px;border-bottom:3px solid var(--line);display:flex;align-items:center;gap:12px}
+  h2 .n{background:var(--earth);color:#fff;width:33px;height:33px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto}
+  h3{font-size:18px;margin:20px 0 9px;color:var(--moss)}
+
+  .card{border:1px solid var(--line);border-radius:12px;padding:18px 21px;margin-bottom:15px;background:#fff}
+  .card.warn{border-left:7px solid var(--amber);background:#fffdf7}
+  .card.bad{border-left:7px solid var(--cherry);background:#fffaf9}
+  .card.good{border-left:7px solid var(--leaf);background:#fafffb}
+  .card.info{border-left:7px solid var(--cyan);background:#fafeff}
+
+  table{width:100%;border-collapse:collapse;font-size:16px;margin:11px 0 7px}
+  th{background:var(--earth);color:#fff;text-align:left;padding:11px 13px;font-weight:600;font-size:15.5px}
+  td{padding:11px 13px;border-bottom:1px solid var(--line);vertical-align:top}
+  tr:nth-child(even) td{background:#fbfdfc}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+
+  .flow{display:flex;gap:15px;align-items:stretch;margin:16px 0 7px;flex-wrap:wrap}
+  .step{flex:1 1 300px;border:1px solid var(--line);border-radius:12px;padding:18px;background:var(--cream);position:relative}
+  .step .b{width:34px;height:34px;border-radius:50%;background:var(--leaf);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;margin-bottom:11px}
+  .step b{display:block;font-size:18px;margin-bottom:6px;color:var(--earth)}
+  .step span{font-size:15.5px;color:var(--mute);display:block}
+
+  .kv{display:flex;flex-wrap:wrap;gap:10px 14px;margin:11px 0}
+  .pill{font-size:14px;padding:5px 14px;border-radius:99px;font-weight:600}
+  .p-red{background:var(--cherrylt);color:var(--cherry)}
+  .p-grn{background:var(--leaflt);color:var(--leaf)}
+  .p-amb{background:var(--amberlt);color:var(--amber)}
+  .p-cyn{background:var(--cyanlt);color:var(--cyan)}
+  .p-vio{background:var(--violetlt);color:var(--violet)}
+
+  .big{font-size:30px;font-weight:800;color:var(--earth);line-height:1.18}
+  .lbl{font-size:13px;color:var(--mute);text-transform:uppercase;letter-spacing:.9px}
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px}
+
+  ul{margin:9px 0 9px 24px;padding:0} li{margin-bottom:8px}
+  .foot{margin-top:38px;padding-top:20px;border-top:3px solid var(--line);font-size:13.5px;color:var(--mute);line-height:1.7}
+  .tag{display:inline-block;background:var(--earth);color:#fff;font-size:13px;padding:5px 14px;border-radius:6px;letter-spacing:.9px;margin-bottom:14px;font-weight:600}
+  .hi{background:#fff9c4;padding:1px 5px;border-radius:3px;font-weight:600}
+
+  /* ---- CETAK A4: skala turun otomatis supaya tetap muat ---- */
+  @media print{
+    body{background:#fff;font-size:10.5px;line-height:1.5}
+    .page{max-width:none;padding:0;box-shadow:none}
+    h1{font-size:21px} .sub{font-size:10.5px} h2{font-size:14px;margin:20px 0 9px}
+    h2 .n{width:20px;height:20px;font-size:11px} h3{font-size:12px}
+    .card{padding:10px 12px;margin-bottom:9px;border-radius:8px}
+    .card.warn,.card.bad,.card.good,.card.info{border-left-width:4px}
+    table{font-size:10px} th{padding:5px 7px;font-size:10px} td{padding:5px 7px}
+    .step{padding:10px;flex:1 1 150px} .step b{font-size:12px} .step span{font-size:10.5px}
+    .step .b{width:21px;height:21px;font-size:11px}
+    .pill{font-size:10px;padding:3px 9px} .big{font-size:18px} .lbl{font-size:9.5px}
+    .grid3{grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:8px}
+    .foot{font-size:9.5px;margin-top:20px}
+    .tag{font-size:9.5px;padding:2px 8px}
+    .rule{height:3px;margin:12px 0 18px}
+    .card{break-inside:avoid} table{break-inside:avoid}
+    .noprint{display:none}
+  }
+  a{color:var(--cyan,#0e7490);text-decoration:none;border-bottom:1.5px solid #a5e8f5;font-weight:600}
+  a:hover{color:var(--earth,#1F5F47);border-bottom-color:var(--earth,#1F5F47)}
+  ol{margin:9px 0 9px 26px;padding:0}
+  @media print{ a{color:#1f2937;border-bottom:none} a::after{content:' [' attr(href) ']';font-size:10px;color:#6b7280;word-break:break-all} }
+  .photo{margin:16px 0}
+  .ph-wrap{position:relative;display:block;line-height:0;border-radius:11px;overflow:hidden;border:1px solid var(--line,#e5e7eb)}
+  .ph-wrap img{width:100%;height:auto;display:block}
+  .mk{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:#8c2519;color:#fff;font:700 14px/1 system-ui,sans-serif;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .mk.g{background:#15803d} .mk.b{background:#0e7490}
+  .ph-fix{position:absolute;transform:translate(-50%,-50%);background:#8c2519;color:#fff;font:700 12px/1.25 system-ui,sans-serif;padding:5px 9px;border-radius:7px;white-space:nowrap;box-shadow:0 0 0 3px rgba(255,255,255,.92),0 2px 5px rgba(0,0,0,.35)}
+  .ph-leg{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:7px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));counter-reset:mk}
+  .ph-leg li{counter-increment:mk;position:relative;padding-left:33px;font-size:14px;line-height:1.5;margin:0}
+  .ph-leg li::before{content:counter(mk);position:absolute;left:0;top:1px;width:23px;height:23px;border-radius:50%;background:#8c2519;color:#fff;font:700 12.5px/23px system-ui,sans-serif;text-align:center}
+  .ai-note{background:#f5f3ff;border-left:6px solid #5b21b6;border-radius:9px;padding:10px 14px;font-size:13px;color:#4c1d95;margin-top:10px;line-height:1.55}
+  .hand{color:#5b21b6;font-weight:700;white-space:nowrap}
+  @media print{.photo,.ph-wrap{break-inside:avoid}}
+  .srcbar{display:inline-flex;align-items:flex-start;gap:8px;font:700 11.5px/1.45 system-ui,sans-serif;padding:7px 13px;border-radius:10px;margin:0 0 9px;max-width:100%}
+  .src-c{background:#dcfce7;color:#14532d;border:1.5px solid #86efac}
+  .src-ai{background:#f5f3ff;color:#4c1d95;border:1.5px solid #c4b5fd}
+
+.ph-wrap.narrow{max-width:700px;margin-left:auto;margin-right:auto}
+
+.strip.s-warn{background:#fef3c7;color:#78350f;border-left:5px solid #d97706}
+
+.strip{padding:12px 16px;border-radius:11px;font:600 13.5px/1.6 system-ui,sans-serif;margin:14px 0}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <span class="tag">KAJIAN + PANDUAN LAPANGAN</span>
+  <h1>Pengolahan Tanah — Membuka Jalan Air ke Akar</h1>
+  <div class="sub">Kebun Kopi Wakaf Ngantang · disusun 4 September 2026 · untuk Wakif &amp; tenaga lapangan</div>
+  <div class="sub">Isi halaman ini berasal dari pembahasan <b>31 Juli – 1 Agustus 2026</b> yang selama ini hanya tersimpan di percakapan. Dipindahkan jadi berkas tetap.</div>
+  <div class="sub"><b>Pendamping halaman ini:</b> jaringan pipa air (dipasang 4–5 September 2026). Air dan pengolahan tanah adalah <b>satu pekerjaan yang dipecah dua</b> — lihat bagian 10.</div>
+  <div class="rule"></div>
+
+  <div class="card bad">
+    <strong>⚠️ Status halaman ini: rujukan kerja internal, BUKAN kajian bersumber.</strong>
+    Hampir semua angka di sini adalah <b>hitungan kami sendiri</b> — geometri dan aritmetika yang bisa diperiksa ulang, tapi <b>belum dicocokkan dengan literatur mana pun</b>. Rinciannya jujur di bagian <b>12-B</b>. Boleh dipakai bekerja; <b>jangan dikutip keluar</b> — tidak ke BRIN, tidak ke calon mitra, tidak ke laporan umat — sebelum bagian 12-A dilengkapi.
+  </div>
+
+  <!-- 1 -->
+  <h2><span class="n">1</span>Masalahnya bukan kurang air — air tidak bisa masuk</h2>
+  <div class="card warn">
+    <b>Dua keadaan kebun ini bertemu dan saling memperburuk:</b>
+    <div class="kv" style="margin-top:8px">
+      <span class="pill p-amb">Lahan DATAR — bukan lereng</span>
+      <span class="pill p-amb">Permukaan tertutup abu Kelud 2014 yang mengeras &amp; menolak air</span>
+    </div>
+    <p style="margin:8px 0 0">Di lereng, air yang tak meresap akan <b>pergi</b>. Di lahan datar, air yang tak meresap akan <b>tinggal</b> — menggenang di atas kerak, lalu menguap tanpa pernah sampai ke akar. Kopi berakar dangkal dan <b>tidak tahan tergenang</b>.</p>
+    <p style="margin:6px 0 0"><span class="hi">Artinya: memasang pipa air saja tidak menyelesaikan soal.</span> Menyiram di atas kerak yang belum dipecah sama saja membuang air — dan pada musim hujan, kerak yang sama menahan air di permukaan sampai membusukkan akar.</p>
+  </div>
+
+  <!-- 2 -->
+  <h2><span class="n">2</span>Satu aturan lama DIBATALKAN — dan kenapa</h2>
+  <div class="card bad">
+    <strong>❌ DIBATALKAN: piringan cekung + gundukan tepi.</strong>
+    Rancangan itu digambar 31 Juli 2026 dan <b>dibatalkan sehari kemudian</b> setelah Wakif mengaudit: <i>"bukannya gundukan di sekitar pohon membuat air menggenang, karena tanah sekitar lebih tinggi daripada piringan yang sudah kita gali?"</i>
+    <p style="margin:8px 0 0"><b>Beliau benar.</b> Piringan cekung adalah rancangan <b>PANEN AIR</b> untuk lahan kering dan miring. Kebun ini masalahnya justru kebalikannya: datar · hujan tinggi · kerak menolak air · akar dangkal · sudah ada dugaan busuk akar karena genangan. Rancangan itu diimpor mentah tanpa memeriksa apakah masalahnya sama.</p>
+  </div>
+  <div class="card good">
+    <strong>✅ ATURAN PENGGANTI: NOL CEKUNGAN TERTUTUP.</strong> Di mana pun di kebun ini, setiap titik wajib punya <b>jalan keluar</b> untuk airnya.
+    <ul style="margin:8px 0 0">
+      <li><b>Bahaya terbesar: parit melingkar penuh di leher batang.</b> Itu membuat kolam kecil yang persis menempel batang — jalan tercepat menuju busuk leher. Kerukan di pangkal <b>WAJIB dibuka ke satu sisi</b>, jangan pernah melingkar utuh.</li>
+      <li><b>Penahan lembab musim kemarau = MULSA, bukan cekungan.</b> Mulsa tidak berubah jadi kolam saat musim hujan datang; cekungan berubah.</li>
+      <li><b>Parit pemupukan tetap boleh</b> — tapi digali dan ditutup <b>hari yang sama</b>, bukan dibiarkan jadi cekungan permanen.</li>
+    </ul>
+  </div>
+  <div class="card info">
+    <strong>Uji lapangan, tanpa alat apa pun.</strong> Siram <b>satu ember</b> di pangkal pohon.
+    <div class="kv" style="margin-top:8px">
+      <span class="pill p-grn">Habis kurang dari 1 menit → bentuknya sudah benar</span>
+      <span class="pill p-red">Masih menggenang → keruk lagi, arahkan keluar</span>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <h2><span class="n">3</span>Tiga pekerjaan yang sering dikira sama</h2>
+  <p>Ketiganya sering disebut "membalik tanah", padahal hasil dan tenaganya jauh berbeda. Membedakannya menentukan berapa hari kerja yang dibutuhkan.</p>
+  <table>
+    <tr><th style="width:16%">Pekerjaan</th><th style="width:22%">Tanahnya ke mana</th><th style="width:30%">Di mana dikerjakan</th><th>Volume per pohon</th></tr>
+    <tr><td><b>1. KERUK</b></td><td>Tanah <b>PERGI</b> dari titik itu</td><td>Hanya di pangkal batang, sampai leher akar terlihat</td><td>± 12 liter bila abu 10 cm · 19 L bila 15 cm · 25 L bila 20 cm</td></tr>
+    <tr><td><b>2. GEMBURKAN</b></td><td>Tanah <b>TETAP</b> di tempatnya</td><td>Kerak abu dipecah dengan cangkul dangkal</td><td><b>0 liter keluar</b> — memecah kerak <b>bukan</b> mengeruk</td></tr>
+    <tr><td><b>3. TINGGIKAN</b></td><td>Tanah <b>PINDAH kurang dari 1 m</b></td><td>Kikis tipis lalu tumpuk jadi guludan di baris pohon</td><td>± 74 liter</td></tr>
+  </table>
+  <div class="card info" style="margin-top:8px">
+    <strong>Koreksi premis yang penting.</strong> "80% area tertutup abu" <b>tidak</b> berarti 80% harus dikeruk. Yang benar-benar dikeruk hanya zona pangkal radius ± 20 cm = <b>0,126 m²</b> per pohon. Dibagi 7,5 m² jatah ruang tiap pohon (jarak 3 × 2,5 m), itu <b>hanya 1,68% luas kebun</b>.
+    <p style="margin:6px 0 0">Mengeruk <b>seluruh</b> abu = ± 30 m³ per petak = ± 1.000 m³ sekebun. Mustahil dikerjakan dua orang. Yang kita lakukan memindahkan <b>13%</b> abu di dalam petak; <b>87% dibiarkan di tempatnya</b>.</p>
+  </div>
+
+  <!-- 4 -->
+  <h2><span class="n">4</span>Berhenti berpikir per pohon — tata jalan air se-PETAK</h2>
+  <p>Satu petak = <b>4 baris × 5 pohon = 20 pohon</b> = 12 × 12,5 m = <b>150 m²</b>. Di dalam satu petak hanya ada <b>tiga</b> pekerjaan:</p>
+  <div class="flow">
+    <div class="step"><div class="b">A</div><b>Buka leher akar</b><span>Lingkaran Ø 80 cm (± satu hasta ke tiap arah dari batang), ± 50 liter tanah per pohon. <b>Melandai keluar</b>, bukan digali jadi sumur.</span></div>
+    <div class="step"><div class="b">B</div><b>Alur antar-baris</b><span>Lebar ± 35 cm (satu jengkal setengah), dalam ± 20 cm (satu jengkal). Wajib <b>TEMBUS kerak abu sampai tanah asli</b>. ± 2,6 m³ per petak.</span></div>
+    <div class="step"><div class="b">C</div><b>Rorak</b><span>80 × 40 × 40 cm, <b>3 titik per petak</b>, ditaruh di tempat yang paling sering tergenang.</span></div>
+  </div>
+
+  <!-- 5 -->
+  <h2><span class="n">5</span>Kunci teknisnya — di lahan datar, alur MENELAN air</h2>
+  <div class="card good">
+    <strong>Ini yang membuat seluruh rancangan jadi mungkin dikerjakan.</strong>
+    <p style="margin:8px 0 0">Di lahan miring, alur berfungsi <b>memindahkan</b> air ke tempat yang lebih rendah — makanya kemiringannya harus diatur teliti, pakai waterpass atau selang air.</p>
+    <p style="margin:6px 0 0"><span class="hi">Di lahan datar tidak ada tempat yang lebih rendah.</span> Jadi alur di sini <b>tidak memindahkan air — alur MENELAN air.</b> <b>Alur = rorak yang memanjang.</b></p>
+    <div class="kv" style="margin-top:8px">
+      <span class="pill p-grn">✔ Tidak perlu mengatur kemiringan</span>
+      <span class="pill p-grn">✔ Tidak butuh waterpass / selang air</span>
+      <span class="pill p-grn">✔ Syarat tunggalnya: dasarnya TEMBUS kerak abu</span>
+    </div>
+    <p style="margin:8px 0 0"><b>Bonus yang tidak disengaja:</b> alur sekaligus jadi tempat membuang cacahan pangkasan. Manajemen residu dan drainase jadi saling menyelesaikan — satu galian, dua masalah beres.</p>
+  </div>
+
+  <!-- 6 -->
+  <h2><span class="n">6</span>Ke mana tanah kerukannya? Tidak ke mana-mana</h2>
+  <table>
+    <tr><th style="width:52%">Hitungan</th><th>Hasil</th></tr>
+    <tr><td>Tanah keluar dari alur + leher akar, per petak</td><td>± <b>4 m³</b></td></tr>
+    <tr><td>Luas pita guludan di baris pohon</td><td>± <b>80 m²</b></td></tr>
+    <tr><td>4 m³ ÷ 80 m² = kenaikan permukaan guludan</td><td>± <b>5 cm</b></td></tr>
+    <tr><td><b>Tanah yang keluar dari petak</b></td><td><b>NOL</b></td></tr>
+  </table>
+  <div class="card bad" style="margin-top:8px">
+    <strong>🚫 JANGAN menumpuk tanah galian di pinggir kebun.</strong> Tumpukan di pinggir akan (a) menghambat aliran air, (b) jadi persemaian gulma, (c) <b>membendung genangan</b> — justru memperparah masalah yang sedang kita selesaikan, karena lahannya datar.
+    <p style="margin:6px 0 0">Ini kesalahan yang <b>sudah pernah terjadi</b> di kebun ini dengan tumpukan gulma. Jangan diulang dengan tanah.</p>
+  </div>
+  <div class="card info">
+    <strong>Kalau abunya jauh lebih tebal dari perkiraan</strong> dan ada kelebihan tanah, urutan tujuannya:
+    <ol style="margin:8px 0 0">
+      <li><b>Titik yang tergenang</b> — menutup dua masalah sekaligus</li>
+      <li><b>Jalan setapak kerja</b> — pasir vulkanik tidak becek, enak dilewati</li>
+      <li><b>Alas area bakar</b></li>
+      <li><b>Sebar tipis di antara baris</b></li>
+    </ol>
+  </div>
+
+  <!-- 7 -->
+  <h2><span class="n">7</span>Berapa tebal boleh menutup akar</h2>
+  <p>Diukur <b>dari permukaan akar yang tampak</b> — bukan dari permukaan abu.</p>
+  <table>
+    <tr><th style="width:26%">Lapisan</th><th style="width:20%">Tebal</th><th>Aturannya</th></tr>
+    <tr><td><b>Leher batang</b></td><td><b>0 cm</b></td><td>Lingkaran Ø 40 cm (± satu jengkal ke tiap arah) <b>kosong selamanya</b> — tidak ditutup apa pun</td></tr>
+    <tr><td><b>Tanah penutup</b></td><td>2–3 cm</td><td>Setebal dua ruas jari</td></tr>
+    <tr><td><b>Kompos kambing</b></td><td>± 1 cm</td><td>Bukan disebar rata — dipadatkan jadi <b>pita selebar satu jengkal</b> tepat di garis tetesan tajuk</td></tr>
+    <tr><td><b>Mulsa</b></td><td>5–10 cm</td><td>Memampat sendiri jadi ± 5 cm. <b>Berhenti satu jengkal dari batang.</b></td></tr>
+    <tr><td colspan="2"><b>BATAS KERAS — bahan PADAT (tanah + kompos)</b></td><td><b>≤ 5 cm sekali kerja</b></td></tr>
+  </table>
+  <div class="card warn" style="margin-top:8px">
+    <strong>Alasannya penting dipahami, bukan sekadar dihafal.</strong> Yang membunuh akar bukan <b>TEBAL</b>-nya, tapi <b>PADAT</b>-nya. Menimbun akar dengan 10 cm kompos = <b>mengulang persis masalah abu Kelud</b>, hanya warnanya cokelat. Mulsa boleh lebih tebal justru karena <b>berongga</b> — udara masih lewat.
+  </div>
+  <div class="card info">
+    <strong>Kenapa kompos harus jadi pita, bukan disebar rata.</strong> Jatah ± 5 kg per pohon = ± 11 liter. Disebar rata sepiringan 3,7 m² → hanya <b>3 mm</b>, hilang tanpa guna. Dipadatkan ke pita selebar satu jengkal di tepi tajuk → ± <b>1 cm</b>, dan mendarat <b>tepat di akar penyerap</b>.
+    <p style="margin:6px 0 0"><span class="hi">Bukan jumlahnya yang kurang — PENEMPATANnya yang menentukan.</span></p>
+    <p style="margin:6px 0 0">Untuk pembanding: menutup sepiringan penuh setebal 2 cm butuh ± 30 kg per pohon = <b>20 ton</b> untuk 672 pohon. Mustahil.</p>
+    <p style="margin:6px 0 0"><b>Kotoran kambing wajib MATANG</b> — tidak berbau tajam, tidak hangat, gembur. Yang masih segar membakar akar dan membawa biji gulma.</p>
+    <p style="margin:6px 0 0">Kalau setelah 2–3 cm akarnya <b>masih terlihat: biarkan.</b> Kopi memang berakar dangkal. Pelindungnya mulsa, bukan timbunan. <b>Menutup akar ≠ mengubur akar.</b></p>
+  </div>
+
+  <!-- 8 -->
+  <h2><span class="n">8</span>Yang WAJIB diuji sebelum sekop pertama</h2>
+  <div class="card bad">
+    <strong>Abu itu jatuh 12 tahun lalu. Akar kopi kemungkinan sudah tumbuh NAIK ke dalam lapisan abu.</strong>
+    <p style="margin:8px 0 0">Kalau benar, mengeruk dalam-dalam berarti <b>memotong akar yang sedang dipakai pohon</b> — kita merusak sambil mengira memperbaiki.</p>
+    <p style="margin:8px 0 0"><b>Ujinya murah dan cuma sekali:</b> gali <b>satu</b> pohon pelan-pelan <b>pakai tangan</b>, cari akar putih halus di dalam lapisan abu.</p>
+    <div class="kv" style="margin-top:8px">
+      <span class="pill p-red">ADA akar putih di dalam abu → JANGAN keruk dalam. Cukup buka pangkal batang, sisanya serahkan ke alur + rorak.</span>
+      <span class="pill p-grn">TIDAK ada → kerukan boleh sesuai rencana</span>
+    </div>
+    <p style="margin:8px 0 0">Pohon bisa hidup dengan akar di dalam abu — <b>asal tidak tergenang</b>. Itu sebabnya alur dan rorak tetap dikerjakan dalam kedua kemungkinan.</p>
+  </div>
+
+  <!-- 9 -->
+  <h2><span class="n">9</span>Beban tenaga — dan cara memotongnya</h2>
+  <table>
+    <tr><th style="width:52%">Cakupan</th><th>Perkiraan</th></tr>
+    <tr><td>Kebun wakaf K1–K3, pohon yang dirawat</td><td><b>668 pohon</b> ≈ 34 petak</td></tr>
+    <tr><td>Volume galian seluruhnya</td><td>± <b>134 m³</b></td></tr>
+    <tr><td>Hari-orang (perkiraan kasar, <b>belum diuji</b>)</td><td><b>90–135 hari-orang</b></td></tr>
+    <tr><td>Dua orang bekerja penuh</td><td>≈ <b>satu musim kemarau penuh</b></td></tr>
+    <tr><td><b>PEMOTONG: kerjakan 30% area paling sering tergenang lebih dulu</b></td><td>± <b>40 m³</b> = <b>27–40 hari-orang</b></td></tr>
+  </table>
+  <div class="card warn" style="margin-top:8px">
+    <strong>Kenyataan tenaga kerja saat ini: hanya ada dua orang</strong> — Wakif sendiri dan satu tenaga lapangan. Angka 90–135 hari-orang <b>bukan rencana yang bisa langsung dijalankan</b>; ia dicantumkan supaya jelas mengapa pemotongannya wajib.
+    <p style="margin:6px 0 0"><b>Langkah yang masuk akal:</b> buat <b>peta genangan</b> dulu — setelah hujan deras pertama, tandai titik yang airnya masih menggenang lebih dari 1–2 jam. Kerjakan yang itu saja.</p>
+    <p style="margin:6px 0 0"><b>Sebelum menetapkan tarif borongan:</b> kerjakan <b>satu petak</b>, catat jamnya. Tarif muncul dari data, bukan dari tawar-menawar.</p>
+  </div>
+
+  <!-- 10 -->
+  <h2><span class="n">10</span>Kaitan dengan pekerjaan lain</h2>
+  <div class="card good">
+    <strong>💧 Jaringan pipa air (dipasang 4–5 September 2026) — ini pasangan langsung halaman ini.</strong>
+    <p style="margin:8px 0 0">Air dan pengolahan tanah bukan dua pekerjaan, tapi <b>satu pekerjaan yang dipecah dua</b>:</p>
+    <div class="kv" style="margin-top:8px">
+      <span class="pill p-cyn">PIPA menyediakan airnya</span>
+      <span class="pill p-grn">ALUR + RORAK + BAHAN ORGANIK membuat air itu bisa MASUK</span>
+    </div>
+    <p style="margin:8px 0 0">Salah satu saja tanpa yang lain = mubazir. Pipa tanpa kerak yang dipecah = menyiram genangan. Alur tanpa pipa = jalan air yang tak pernah dialiri di musim kemarau.</p>
+  </div>
+  <table style="margin-top:10px">
+    <tr><th style="width:30%">Kajian lain</th><th>Sambungannya</th></tr>
+    <tr><td><b>Soil Amendment &amp; Sekam</b></td><td>Di situlah aturan <b>"Piringan cekung DIBATALKAN"</b> dan gambar <b>piringan salah vs benar</b> sudah tersimpan. Halaman ini melanjutkannya dari skala pohon ke skala petak.</td></tr>
+    <tr><td><b>Manajemen Residu</b></td><td>Cacahan pangkasan dibuang <b>ke dalam alur</b> — dua pekerjaan saling menyelesaikan.</td></tr>
+    <tr><td><b>Biochar &amp; Tong Bakar</b></td><td>Biochar ikut dibenamkan saat alur digali, bukan ditabur di permukaan.</td></tr>
+    <tr><td><b>Sanitasi Tunggak</b></td><td>Lubang bekas bongkaran tunggak <b>wajib diurug</b> — di lahan datar lubang terbuka jadi kolam.</td></tr>
+  </table>
+
+  <!-- 11 -->
+  <h2><span class="n">11</span>Yang perlu dicatat ke dashboard</h2>
+  <ul>
+    <li><b>Peta genangan</b> — setelah hujan deras pertama, tandai titik yang menggenang &gt; 1–2 jam. Tumpang-tindihkan dengan peta pohon bermasalah.</li>
+    <li><b>Hasil uji gali-tangan</b> — ada/tidak akar putih di dalam lapisan abu (menentukan boleh tidaknya mengeruk dalam).</li>
+    <li><b>Jam kerja satu petak percobaan</b> — dasar tarif borongan.</li>
+    <li><b>Tebal abu sebenarnya</b> di beberapa titik — seluruh hitungan volume bergantung angka ini, dan angka 20 cm yang dipakai <b>baru skenario, bukan pengukuran</b>.</li>
+    <li><b>Uji satu ember</b> per pohon yang sudah dikerjakan — habis &lt; 1 menit atau tidak.</li>
+  </ul>
+
+  <!-- 12 -->
+  <h2><span class="n">12</span> Rujukan</h2>
+
+  <div class="card info">
+    <strong>Tingkat keandalan</strong> — halaman ini rujukan kerja, bukan makalah. Tiap kelompok sumber diberi tanda asal-usulnya:
+    <table style="margin-top:9px">
+      <tr><th style="width:14%">Tanda</th><th style="width:36%">Artinya</th><th>Boleh dipakai untuk apa</th></tr>
+      <tr><td><b>✅ Tertelusur</b></td><td>Tautannya bisa dibuka dan diperiksa sendiri</td><td>Boleh dikutip keluar, termasuk ke BRIN</td></tr>
+      <tr><td><b>⚠️ Internal</b></td><td>Disebut di berkas kita, <b>sumber aslinya tidak tercatat</b></td><td>Boleh dipakai bekerja, <b>jangan dikutip sebagai temuan ilmiah</b></td></tr>
+      <tr><td><b>🔬 Menunggu data</b></td><td>Akan digantikan hasil pengukuran di kebun sendiri</td><td>Perencanaan kasar saja</td></tr>
+    </table>
+  </div>
+
+  <h3>A. Rujukan luar — sudah ditelusuri ✅</h3>
+  <div class="card bad">
+    <strong>BELUM ADA. Diakui apa adanya.</strong>
+    <p style="margin:8px 0 0">Berbeda dengan empat halaman kajian lain, halaman ini <b>belum punya satu pun rujukan luar yang tertelusur</b>. Isinya lahir dari pembahasan lapangan dan hitungan sendiri, belum pernah dicocokkan dengan literatur.</p>
+    <p style="margin:8px 0 0"><b>Yang harus dicari, berurutan menurut kepentingannya:</b></p>
+    <ol style="margin:6px 0 0">
+      <li><b>Batas aman menimbun akar pohon</b> (<i>root collar burial</i> / <i>soil over roots</i>) — untuk memberi dasar pada batas "≤ 5 cm bahan padat". Kata kunci: arborikultur, <i>root flare exposure</i>, <i>stem girdling roots</i>.</li>
+      <li><b>Kerak hidrofobik pada tanah abu vulkanik</b> (<i>water repellency in volcanic ash soils</i>, Andisol) — untuk memberi dasar pada seluruh premis halaman ini.</li>
+      <li><b>Rorak / lubang resapan di lahan DATAR</b> — spesifikasi Robusta Edisi 2 disusun untuk lahan miring dan <b>tidak bisa dipakai apa adanya</b> di sini. Perlu sumber untuk lahan datar.</li>
+      <li><b>Toleransi kopi terhadap genangan</b> (<i>waterlogging tolerance Coffea canephora</i>) — untuk mengukur seberapa mendesak masalahnya.</li>
+      <li><b>Kecepatan gali tanah padat per orang per hari</b> — untuk mengganti perkiraan 90–135 hari-orang dengan angka bersumber.</li>
+    </ol>
+  </div>
+
+  <h3>B. Hitungan &amp; asumsi kami sendiri ⚠️</h3>
+  <div class="card warn">
+    <strong>Diakui terbuka.</strong> Semua di bawah ini <b>belum bersumber</b>. Boleh dipakai bekerja — <b>jangan dikutip keluar sebagai temuan.</b>
+    <table style="margin-top:9px">
+      <tr><th style="width:40%">Angka</th><th>Statusnya</th></tr>
+      <tr><td><b>Batas "≤ 5 cm bahan padat"</b></td><td>🚩 <b>Paling penting diakui</b> — inilah angka yang paling menentukan di lapangan, dan sepenuhnya <b>penilaian kami sendiri</b>.</td></tr>
+      <tr><td><b>Ukuran alur 35 × 20 cm</b></td><td>Pilihan kami, belum diuji. Belum diketahui apakah cukup atau berlebihan.</td></tr>
+      <tr><td><b>3 rorak per petak</b></td><td>Spesifikasi rorak Robusta Edisi 2 dibuat untuk <b>lahan miring</b> — jarak "10 m vertikal" tidak punya arti di lahan datar. Angka 3 adalah adaptasi kami.</td></tr>
+      <tr><td><b>90–135 hari-orang · 1–1,5 m³/orang/hari</b></td><td>Perkiraan kasar untuk menggali abu yang memadat. <b>Belum pernah diukur.</b></td></tr>
+      <tr><td><b>Tebal abu 20 cm</b></td><td>⚠️ Ini <b>skenario</b> yang diajukan Wakif untuk dihitung, <b>bukan hasil pengukuran</b>. Seluruh volume di halaman ini bergantung padanya.</td></tr>
+      <tr><td>Volume 12 / 19 / 25 L · 50 L · 2,6 m³ · 4 m³ · guludan 5 cm</td><td><b>Geometri murni</b> — bisa diperiksa ulang dengan kalkulator, tapi hanya sebenar angka tebal abu yang dimasukkan.</td></tr>
+      <tr><td>Petak 20 pohon = 150 m² · jarak 3 × 2,5 m</td><td>Jarak tanam ideal dari rencana kita sendiri; <b>jarak sebenarnya di lapangan belum diukur menyeluruh</b>.</td></tr>
+    </table>
+  </div>
+
+  <h3>C. Menunggu data kebun sendiri 🔬</h3>
+  <ul>
+    <li><b>Tebal abu sebenarnya</b> — di beberapa titik mewakili, per kebun</li>
+    <li><b>Peta genangan</b> setelah hujan deras pertama</li>
+    <li><b>Ada/tidaknya akar kopi di dalam lapisan abu</b> — uji gali tangan satu pohon</li>
+    <li><b>Jam kerja nyata satu petak</b> — dasar tarif borongan</li>
+    <li><b>Beda tinggi jalan → tiap bidang</b> dan <b>debit meteran PDAM</b> — menentukan apakah air bisa mengalir sendiri</li>
+  </ul>
+
+  <h3>D. Rujukan internal</h3>
+  <ul>
+    <li><code>PROJECT_STATE.md</code> baris <b>31 Jul 2026 09:45</b> · <b>1 Agt 2026 04:35</b> dan <b>05:10</b> — asal-usul seluruh isi halaman ini</li>
+    <li><code>kajian/soil-amendment-sekam.html</code> — aturan "Piringan cekung DIBATALKAN" + gambar piringan salah vs benar</li>
+    <li><code>SOP/07_AI_PROMPTS/Prompt_Gemini_Penataan_Piringan_Pohon_31Jul2026.md</code></li>
+    <li><code>Knowledge Wakaf/Denah Kebun/</code> — denah kebun &amp; jaringan pipa air</li>
+    <li>Sensus pohon (20 Agt 2026): dipupuk &amp; dirawat K1–K3 <b>668</b> · K4 <b>244</b> · pohon Merah menunggu peremajaan <b>386</b></li>
+  </ul>
+
+  <div class="card bad">
+    <strong>⚠️ Anti-klaim berlebihan.</strong> Status hubungan dengan BRIN: <b>penjajakan — belum ada MoU maupun PKS</b>. Halaman ini tidak boleh menyebut BRIN sebagai mitra, penjamin, atau pihak yang menyetujui isinya. Tidak ada bagian dari rancangan di halaman ini yang pernah ditinjau BRIN.
+  </div>
+
+  <div class="foot">
+    Disusun <b>4 September 2026</b> dari pembahasan 31 Juli – 1 Agustus 2026 · Wakaf Produktif Kebun Kopi Ngantang.
+    <br><br>
+    Status: <b>rancangan kerja</b> — belum satu petak pun dikerjakan. Angka-angkanya akan diganti hasil pengukuran begitu petak percobaan pertama selesai.
+  </div>
+</div>
+</body>
+</html>

@@ -356,6 +356,7 @@
           <div class="sb-tab" data-panel="kajian-residu"><span class="ico">🔥</span><span class="lbl">Manajemen Residu Kebun</span></div>
           <div class="sb-tab" data-panel="kajian-sekam"><span class="ico">🌾</span><span class="lbl">Soil Amendment / Sekam</span></div>
           <div class="sb-tab" data-panel="kajian-biochar"><span class="ico">🖤</span><span class="lbl">Biochar &amp; Drum Kiln</span></div>
+          <div class="sb-tab" data-panel="kajian-tanah"><span class="ico">⛏️</span><span class="lbl">Pengolahan Tanah &amp; Air</span></div>
         </div>
       </div>
 
@@ -3474,6 +3475,18 @@
       <iframe class="kajian-frame" id="frame-kajian-biochar" data-src="kajian/biochar-drum-ringkas.html" title="Kajian Biochar dan Pembuatan Drum Kiln" loading="lazy"></iframe>
     </div>
 
+    <div class="panel" id="panel-kajian-tanah">
+      <div class="card" style="padding:12px 16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <div style="flex:1;min-width:220px">
+          <div style="font-weight:800;color:var(--earth);font-size:15px">⛏️ Pengolahan Tanah — Membuka Jalan Air ke Akar</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Pasangan instalasi pipa air · NOL cekungan tertutup · petak 20 pohon: leher akar + alur 35×20 cm + 3 rorak · batas timbun ≤5 cm · ⚠️ rujukan luar BELUM ada</div>
+        </div>
+        <button class="btn" onclick="printKajian('kajian-tanah')">🖨 Cetak</button>
+        <button class="btn" onclick="window.open(kajianUrl('kajian/pengolahan-tanah.html'),'_blank')">↗ Buka penuh</button>
+      </div>
+      <iframe class="kajian-frame" id="frame-kajian-tanah" data-src="kajian/pengolahan-tanah-ringkas.html" title="Kajian Pengolahan Tanah dan Jalan Air" loading="lazy"></iframe>
+    </div>
+
   </div>
   <!-- /content-wrap -->
 
@@ -3803,7 +3816,7 @@ function toggleNavCfg() {
 }
 // 🔖 VERSI HALAMAN KAJIAN — NAIKKAN setiap kali berkas di kajian/ diubah.
 // Tanpa ini, browser (terutama Safari) menyimpan HTML lama dan perubahan tidak pernah terlihat.
-const KAJIAN_VER = '2026-08-14a';
+const KAJIAN_VER = '2026-09-04a';
 function kajianUrl(u) { return u ? u + (u.indexOf('?') < 0 ? '?v=' : '&v=') + KAJIAN_VER : u; }
 function lazyLoadKajian(panelId) {
   // generik: panel APA PUN yang punya <iframe id="frame-<panelId>" data-src="..."> akan dimuat
