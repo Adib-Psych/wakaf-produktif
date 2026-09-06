@@ -16131,15 +16131,16 @@ if (typeof window!=='undefined') { window.applyCensus=applyCensus; document.addE
 // "sisa karung" meleset sampai dua kali lipat.
 let PUPUK_DATA = {
   kg_karung: 20, kg_karung_baru: 36, kg_pohon: 6, harga_karung: 30000,
-  terpakai: {}, stok: {}, blokir: {}, kirim: 0
+  terpakai: {}, stok: {}, blokir: {}, catatan: {}, kirim: 0
 };
 const PUPUK_LS = 'wkkn_v2_pupuk';
 // Bibit awal, dipasang SEKALI saja (penanda `seed6sep`). Sesudah itu apa pun yang
 // Wakif isi di layar menang — jangan pernah menimpanya lagi dari kode.
 const PUPUK_SEED_6SEP = {
-  terpakai: { K1:15, K2:3, K3:0 },
-  stok:     { K2:2,  K3:10 },
-  blokir:   { K3:'Tanah belum dibalik — kerak abu Kelud masih menutup' }
+  terpakai: { K1:15, K2:3, K3:0, K4:10 },
+  stok:     { K2:2,  K3:10, K4:0 },
+  blokir:   { K3:'Tanah belum dibalik — kerak abu Kelud masih menutup' },
+  catatan:  { K4:'10 karung HABIS, tapi sebagian dipakai tanaman non-kopi & dibawa ke Malang — angka kg di pohon kopi K4 sebenarnya LEBIH KECIL dari yang tertulis' }
 };
 function loadPupukLS(){ try{ const v=JSON.parse(localStorage.getItem(PUPUK_LS)||'null'); if(v&&typeof v==='object') PUPUK_DATA=Object.assign(PUPUK_DATA,v); }catch(e){} }
 function savePupukLS(){ try{ localStorage.setItem(PUPUK_LS, JSON.stringify(PUPUK_DATA)); }catch(e){} }
@@ -16148,6 +16149,7 @@ function seedPupukSekali(){
   PUPUK_DATA.terpakai = Object.assign({}, PUPUK_SEED_6SEP.terpakai, PUPUK_DATA.terpakai||{});
   PUPUK_DATA.stok     = Object.assign({}, PUPUK_SEED_6SEP.stok,     PUPUK_DATA.stok||{});
   PUPUK_DATA.blokir   = Object.assign({}, PUPUK_SEED_6SEP.blokir,   PUPUK_DATA.blokir||{});
+  PUPUK_DATA.catatan  = Object.assign({}, PUPUK_SEED_6SEP.catatan,  PUPUK_DATA.catatan||{});
   if (!(+PUPUK_DATA.kg_karung_baru>0)) PUPUK_DATA.kg_karung_baru = 36;
   PUPUK_DATA.seed6sep = true;
   return true;
@@ -16225,6 +16227,7 @@ function renderPupuk(){
       <td><b>${NAMA[k]}</b>
         ${k==='K4'?'<div style="font-size:9.5px;color:#8B6914;font-weight:700">dana pribadi — di luar dana wakaf</div>':''}
         ${bl?`<div style="font-size:9.5px;color:#B91C1C;font-weight:800;margin-top:2px">⛔ BELUM BOLEH DIPUPUK</div><div style="font-size:9px;color:#B91C1C">${bl}</div>`:''}
+        ${(PUPUK_DATA.catatan||{})[k]?`<div style="font-size:9px;color:#92400E;margin-top:3px;max-width:230px;line-height:1.4">⚠️ ${(PUPUK_DATA.catatan||{})[k]}</div>`:''}
       </td>
       <td style="text-align:right">${pohon}</td>
       <td style="text-align:right;font-weight:700">${butuh.toLocaleString('id-ID')} kg</td>
@@ -20314,7 +20317,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     onSnapshot(doc(db, 'sop_status', 'pupuk'), (snap) => {
       try {
         if (snap.exists() && snap.data().data && typeof snap.data().data === 'object') {
-          PUPUK_DATA = Object.assign({ kg_karung:20, kg_karung_baru:36, kg_pohon:6, harga_karung:30000, terpakai:{}, stok:{}, blokir:{}, kirim:0 }, snap.data().data);
+          PUPUK_DATA = Object.assign({ kg_karung:20, kg_karung_baru:36, kg_pohon:6, harga_karung:30000, terpakai:{}, stok:{}, blokir:{}, catatan:{}, kirim:0 }, snap.data().data);
           if (typeof seedPupukSekali === 'function' && seedPupukSekali()) savePupukLS();
           if (typeof savePupukLS === 'function') savePupukLS();
           if (typeof renderPupuk === 'function') renderPupuk();
