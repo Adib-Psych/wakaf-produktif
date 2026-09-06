@@ -1899,27 +1899,34 @@
         <div class="card-title" style="color:#7C2D12"><span class="num" style="background:#B45309">🐐</span>Kebutuhan &amp; Serapan Kompos per Kebun</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px;line-height:1.65">
           Kebutuhan dihitung <b>otomatis dari sensus</b> — hanya pohon <b>Hijau + Biru</b>; <b>Merah tidak pernah dipupuk</b> (ADR-027/029).
-          Begitu sensus berubah, angka di sini ikut berubah sendiri. Adib cukup mengisi <b>berapa karung yang sudah benar-benar ditebar</b> di tiap kebun.
+          Begitu sensus berubah, angka di sini ikut berubah sendiri. Adib cukup mengisi <b>berapa karung yang sudah ditebar</b> dan <b>berapa yang masih menumpuk di lokasi</b>.
         </p>
         <div style="display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;background:#FFFBEB;border:1.5px solid #F0D98C;border-radius:10px;padding:12px;margin-bottom:14px">
-          <div style="flex:0 0 130px">
-            <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Isi 1 karung (kg)</label>
+          <div style="flex:0 0 138px">
+            <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Isi karung LAMA (kg)</label>
             <input type="number" id="pk-karung" min="1" step="1" value="20" onchange="simpanPupukSetting()" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
+            <div style="font-size:9px;color:#8B6914;margin-top:2px">stok 9 Agt — sudah ditimbang</div>
           </div>
-          <div style="flex:0 0 150px">
+          <div style="flex:0 0 138px">
+            <label style="font-size:10px;font-weight:800;color:#B45309;letter-spacing:.5px;text-transform:uppercase">Isi karung WAJAK (kg)</label>
+            <input type="number" id="pk-karung-baru" min="1" step="1" value="36" onchange="simpanPupukSetting()" style="width:100%;padding:8px;border:1.5px solid #FDBA74;border-radius:6px;font-size:12px;margin-top:3px;background:#FFF7ED">
+            <div style="font-size:9px;color:#B45309;margin-top:2px;font-weight:700">⚠️ BELUM ditimbang (28–44)</div>
+          </div>
+          <div style="flex:0 0 146px">
             <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Takaran per pohon (kg)</label>
             <input type="number" id="pk-dosis" min="0.5" step="0.5" value="6" onchange="simpanPupukSetting()" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
           </div>
-          <div style="flex:0 0 150px">
+          <div style="flex:0 0 146px">
             <label style="font-size:10px;font-weight:800;color:#8B6914;letter-spacing:.5px;text-transform:uppercase">Harga per karung (Rp)</label>
             <input type="number" id="pk-harga" min="0" step="1000" value="30000" onchange="simpanPupukSetting()" style="width:100%;padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px;margin-top:3px">
           </div>
-          <div style="flex:1 1 260px;min-width:220px;font-size:10.5px;color:#8B6914;line-height:1.6">
-            Ubah salah satu angka ini → <b>seluruh tabel di bawah ikut menyesuaikan</b>.
-            Takaran terkunci ADR-029 = 1 ember 10 L ≈ 6 kg; kalau di lapangan ternyata lebih tipis, ubah di sini supaya hitungannya jujur.
+          <div style="flex:1 1 240px;min-width:210px;font-size:10.5px;color:#8B6914;line-height:1.6">
+            <b>Dua ukuran karung sengaja dipisah.</b> Yang sudah ditebar memakai karung <b>20 kg</b>; yang akan dibeli dari Wajak diklaim <b>±36 kg</b> — belum pernah ditimbang.
+            Timbang 2–3 karung saat kiriman datang, lalu <b>ubah angkanya di sini</b> → seluruh tabel menyesuaikan sendiri (aturan P13).
           </div>
         </div>
         <div id="pupuk-tabel"></div>
+        <div id="pupuk-rencana" style="margin-top:14px"></div>
         <div id="pupuk-catatan" style="margin-top:12px"></div>
       </div>
 
@@ -16117,17 +16124,43 @@ if (typeof window!=='undefined') { window.applyCensus=applyCensus; document.addE
 //
 // Simpanan: sop_status/pupuk (Pattern #18 — koleksi yang sudah boleh ditulis).
 // ═══════════════════════════════════════════════════════════════════════════════
-let PUPUK_DATA = { kg_karung: 20, kg_pohon: 6, harga_karung: 30000, terpakai: {} };
+// ⭐ 6 Sep 2026 — SEBARAN NYATA 40 karung dijelaskan Wakif, lihat CLAUDE.md
+// "Kompos Kambing — Dosis & Sebaran Nyata". Dua ukuran karung sengaja DIPISAH:
+// yang sudah ditebar = karung 20 kg (sudah ditimbang), yang akan dibeli dari Wajak
+// = klaim ±36 kg (BELUM ditimbang, rentang 28–44). Mencampur keduanya membuat
+// "sisa karung" meleset sampai dua kali lipat.
+let PUPUK_DATA = {
+  kg_karung: 20, kg_karung_baru: 36, kg_pohon: 6, harga_karung: 30000,
+  terpakai: {}, stok: {}, blokir: {}, kirim: 0
+};
 const PUPUK_LS = 'wkkn_v2_pupuk';
+// Bibit awal, dipasang SEKALI saja (penanda `seed6sep`). Sesudah itu apa pun yang
+// Wakif isi di layar menang — jangan pernah menimpanya lagi dari kode.
+const PUPUK_SEED_6SEP = {
+  terpakai: { K1:15, K2:3, K3:0 },
+  stok:     { K2:2,  K3:10 },
+  blokir:   { K3:'Tanah belum dibalik — kerak abu Kelud masih menutup' }
+};
 function loadPupukLS(){ try{ const v=JSON.parse(localStorage.getItem(PUPUK_LS)||'null'); if(v&&typeof v==='object') PUPUK_DATA=Object.assign(PUPUK_DATA,v); }catch(e){} }
 function savePupukLS(){ try{ localStorage.setItem(PUPUK_LS, JSON.stringify(PUPUK_DATA)); }catch(e){} }
+function seedPupukSekali(){
+  if (PUPUK_DATA.seed6sep) return false;
+  PUPUK_DATA.terpakai = Object.assign({}, PUPUK_SEED_6SEP.terpakai, PUPUK_DATA.terpakai||{});
+  PUPUK_DATA.stok     = Object.assign({}, PUPUK_SEED_6SEP.stok,     PUPUK_DATA.stok||{});
+  PUPUK_DATA.blokir   = Object.assign({}, PUPUK_SEED_6SEP.blokir,   PUPUK_DATA.blokir||{});
+  if (!(+PUPUK_DATA.kg_karung_baru>0)) PUPUK_DATA.kg_karung_baru = 36;
+  PUPUK_DATA.seed6sep = true;
+  return true;
+}
 loadPupukLS();
+seedPupukSekali();
 function persistPupuk(){ savePupukLS(); if(typeof window.syncPupukToFirestore==='function') window.syncPupukToFirestore(); }
 
 function simpanPupukSetting(){
   const g = i => parseFloat((document.getElementById(i)||{}).value);
-  const kk=g('pk-karung'), kp=g('pk-dosis'), hg=g('pk-harga');
+  const kk=g('pk-karung'), kb=g('pk-karung-baru'), kp=g('pk-dosis'), hg=g('pk-harga');
   if (kk>0) PUPUK_DATA.kg_karung=kk;
+  if (kb>0) PUPUK_DATA.kg_karung_baru=kb;
   if (kp>0) PUPUK_DATA.kg_pohon=kp;
   if (hg>=0) PUPUK_DATA.harga_karung=hg;
   persistPupuk(); renderPupuk();
@@ -16139,6 +16172,24 @@ function setPupukTerpakai(kebun, karung){
   persistPupuk(); renderPupuk();
   if (typeof showToast==='function') showToast(`✅ ${kebun}: ${n} karung tercatat sudah ditebar`);
 }
+/** Karung yang sudah SAMPAI di kebun tapi BELUM ditebar (mis. K3 10 karung utuh). */
+function setPupukStok(kebun, karung){
+  const n = Math.max(0, parseFloat(karung)||0);
+  PUPUK_DATA.stok = PUPUK_DATA.stok || {};
+  PUPUK_DATA.stok[kebun] = n;
+  persistPupuk(); renderPupuk();
+}
+/** Kebun yang belum boleh dipupuk (mis. tanahnya belum dibalik). Kosong = boleh. */
+function setPupukBlokir(kebun, alasan){
+  PUPUK_DATA.blokir = PUPUK_DATA.blokir || {};
+  const a = (alasan||'').trim();
+  if (a) PUPUK_DATA.blokir[kebun] = a; else delete PUPUK_DATA.blokir[kebun];
+  persistPupuk(); renderPupuk();
+}
+function setPupukKirim(n){
+  PUPUK_DATA.kirim = Math.max(0, parseFloat(n)||0);
+  persistPupuk(); renderPupuk();
+}
 /** Pohon yang DIPUPUK = Hijau + Biru. Merah tidak pernah dipupuk. */
 function pupukPohon(k){
   if (typeof KEBUN_CENSUS==='undefined' || !KEBUN_CENSUS[k]) return 0;
@@ -16146,34 +16197,52 @@ function pupukPohon(k){
 }
 function renderPupuk(){
   const el=document.getElementById('pupuk-tabel'); if(!el) return;
-  ['pk-karung','pk-dosis','pk-harga'].forEach((i,n)=>{
+  ['pk-karung','pk-karung-baru','pk-dosis','pk-harga'].forEach((i,n)=>{
     const e=document.getElementById(i); if(!e) return;
-    e.value = [PUPUK_DATA.kg_karung, PUPUK_DATA.kg_pohon, PUPUK_DATA.harga_karung][n];
+    e.value = [PUPUK_DATA.kg_karung, PUPUK_DATA.kg_karung_baru, PUPUK_DATA.kg_pohon, PUPUK_DATA.harga_karung][n];
   });
-  const KK=+PUPUK_DATA.kg_karung||20, KP=+PUPUK_DATA.kg_pohon||6, HG=+PUPUK_DATA.harga_karung||0;
+  // KK  = isi karung LAMA  → dipakai untuk yang SUDAH ditebar & stok di lokasi
+  // KB  = isi karung WAJAK → dipakai untuk yang masih HARUS DIBELI
+  const KK=+PUPUK_DATA.kg_karung||20, KB=+PUPUK_DATA.kg_karung_baru||36,
+        KP=+PUPUK_DATA.kg_pohon||6, HG=+PUPUK_DATA.harga_karung||0;
   const NAMA={K1:'Kebun 1',K2:'Kebun 2',K3:'Kebun 3',K4:'Kebun 4 · Rumah Wakif'};
-  let tW={pohon:0,butuh:0,pakai:0}, t4={pohon:0,butuh:0,pakai:0};
+  const BLOKIR=PUPUK_DATA.blokir||{};
+  let tW={pohon:0,butuh:0,pakai:0,stok:0}, t4={pohon:0,butuh:0,pakai:0,stok:0};
+  const rinci={};
 
   const baris = ['K1','K2','K3','K4'].map(k=>{
     const pohon=pupukPohon(k), butuh=pohon*KP;
     const karungPakai=+(PUPUK_DATA.terpakai||{})[k]||0, pakai=karungPakai*KK;
-    const sisa=Math.max(0,butuh-pakai), pct=butuh?Math.min(100,pakai/butuh*100):0;
-    const t=(k==='K4')?t4:tW; t.pohon+=pohon; t.butuh+=butuh; t.pakai+=pakai;
+    const karungStok=+(PUPUK_DATA.stok||{})[k]||0, stok=karungStok*KK;
+    const sisa=Math.max(0,butuh-pakai);            // kekurangan terhadap dosis penuh
+    const beli=Math.max(0,sisa-stok);              // yang benar-benar harus DIBELI
+    const pct=butuh?Math.min(100,pakai/butuh*100):0;
+    const t=(k==='K4')?t4:tW; t.pohon+=pohon; t.butuh+=butuh; t.pakai+=pakai; t.stok+=stok;
+    rinci[k]={pohon,butuh,pakai,stok,sisa,beli,pct,blokir:BLOKIR[k]||''};
     const warna = pct>=100?'#16A34A':(pct>=50?'#D97706':'#DC2626');
-    return `<tr${k==='K4'?' style="background:#FAF7F0"':''}>
-      <td><b>${NAMA[k]}</b>${k==='K4'?'<div style="font-size:9.5px;color:#8B6914;font-weight:700">dana pribadi — di luar dana wakaf</div>':''}</td>
+    const bl = BLOKIR[k];
+    return `<tr${k==='K4'?' style="background:#FAF7F0"':(bl?' style="background:#FEF2F2"':'')}>
+      <td><b>${NAMA[k]}</b>
+        ${k==='K4'?'<div style="font-size:9.5px;color:#8B6914;font-weight:700">dana pribadi — di luar dana wakaf</div>':''}
+        ${bl?`<div style="font-size:9.5px;color:#B91C1C;font-weight:800;margin-top:2px">⛔ BELUM BOLEH DIPUPUK</div><div style="font-size:9px;color:#B91C1C">${bl}</div>`:''}
+      </td>
       <td style="text-align:right">${pohon}</td>
       <td style="text-align:right;font-weight:700">${butuh.toLocaleString('id-ID')} kg</td>
-      <td style="text-align:right;color:var(--mute)">${Math.ceil(butuh/KK)} krg</td>
       <td style="text-align:center">
         <input type="number" min="0" step="1" value="${karungPakai}"
                onchange="setPupukTerpakai('${k}', this.value)"
-               style="width:66px;padding:5px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;text-align:center">
+               style="width:60px;padding:5px;border:1.5px solid #ddd;border-radius:5px;font-size:12px;text-align:center">
+        <div style="font-size:9px;color:var(--mute);margin-top:1px">${pakai.toLocaleString('id-ID')} kg</div>
       </td>
-      <td style="text-align:right">${pakai.toLocaleString('id-ID')} kg</td>
+      <td style="text-align:center">
+        <input type="number" min="0" step="1" value="${karungStok}"
+               onchange="setPupukStok('${k}', this.value)"
+               style="width:60px;padding:5px;border:1.5px solid #93C5FD;border-radius:5px;font-size:12px;text-align:center;background:#EFF6FF">
+        <div style="font-size:9px;color:var(--mute);margin-top:1px">${stok.toLocaleString('id-ID')} kg</div>
+      </td>
       <td style="text-align:right;font-weight:800;color:${sisa>0?'#B45309':'#16A34A'}">${sisa.toLocaleString('id-ID')} kg</td>
-      <td style="text-align:right;font-weight:700">${sisa>0?Math.ceil(sisa/KK)+' krg':'—'}</td>
-      <td style="min-width:96px">
+      <td style="text-align:right;font-weight:800;color:${beli>0?'#9A3412':'#16A34A'}">${beli>0?beli.toLocaleString('id-ID')+' kg':'—'}<div style="font-size:9px;font-weight:700;color:var(--mute)">${beli>0?Math.ceil(beli/KB)+' krg Wajak':''}</div></td>
+      <td style="min-width:92px">
         <div style="height:9px;background:#EEE;border-radius:5px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${warna}"></div></div>
         <div style="font-size:9.5px;color:var(--mute);text-align:center;margin-top:2px">${pct.toFixed(0)}%</div>
       </td>
@@ -16181,46 +16250,128 @@ function renderPupuk(){
   }).join('');
 
   const sisaW=Math.max(0,tW.butuh-tW.pakai), sisa4=Math.max(0,t4.butuh-t4.pakai);
+  const beliW=Math.max(0,sisaW-tW.stok),     beli4=Math.max(0,sisa4-t4.stok);
   el.innerHTML = `<div class="table-wrap"><table>
     <thead><tr>
       <th>Kebun</th><th style="text-align:right">Pohon<br><span style="font-weight:400;font-size:9px">Hijau+Biru</span></th>
-      <th style="text-align:right">Butuh</th><th style="text-align:right">≈ karung</th>
-      <th style="text-align:center">Sudah ditebar<br><span style="font-weight:400;font-size:9px">isi karung</span></th>
-      <th style="text-align:right">= kg</th><th style="text-align:right">KURANG</th><th style="text-align:right">≈ karung</th><th>Capaian</th>
+      <th style="text-align:right">Butuh<br><span style="font-weight:400;font-size:9px">${KP} kg/pohon</span></th>
+      <th style="text-align:center">Sudah DITEBAR<br><span style="font-weight:400;font-size:9px">karung ${KK} kg</span></th>
+      <th style="text-align:center">Stok DI LOKASI<br><span style="font-weight:400;font-size:9px">belum ditebar</span></th>
+      <th style="text-align:right">KURANG</th>
+      <th style="text-align:right">HARUS DIBELI<br><span style="font-weight:400;font-size:9px">kurang − stok</span></th>
+      <th>Capaian</th>
     </tr></thead>
     <tbody>${baris}
       <tr style="background:#E8F1EC;font-weight:800">
         <td>WAKAF K1–K3</td><td style="text-align:right">${tW.pohon}</td>
         <td style="text-align:right">${tW.butuh.toLocaleString('id-ID')} kg</td>
-        <td style="text-align:right">${Math.ceil(tW.butuh/KK)} krg</td>
-        <td></td><td style="text-align:right">${tW.pakai.toLocaleString('id-ID')} kg</td>
+        <td style="text-align:right">${tW.pakai.toLocaleString('id-ID')} kg</td>
+        <td style="text-align:right">${tW.stok.toLocaleString('id-ID')} kg</td>
         <td style="text-align:right;color:#B45309">${sisaW.toLocaleString('id-ID')} kg</td>
-        <td style="text-align:right">${sisaW>0?Math.ceil(sisaW/KK)+' krg':'—'}</td>
+        <td style="text-align:right;color:#9A3412">${beliW.toLocaleString('id-ID')} kg<div style="font-size:9px">${Math.ceil(beliW/KB)} krg Wajak</div></td>
         <td style="text-align:center;font-size:11px">${tW.butuh?(tW.pakai/tW.butuh*100).toFixed(0):0}%</td>
       </tr>
     </tbody></table></div>`;
 
+  renderPupukRencana(rinci, KK, KB, HG);
+
   const cat=document.getElementById('pupuk-catatan'); if(!cat) return;
-  const biayaW=Math.ceil(sisaW/KK)*HG, biaya4=Math.ceil(sisa4/KK)*HG;
+  const biayaW=Math.ceil(beliW/KB)*HG, biaya4=Math.ceil(beli4/KB)*HG;
   cat.innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:12px">
     <div style="flex:1 1 260px;background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:8px;padding:12px">
-      <div style="font-size:10px;font-weight:800;color:#9A3412;letter-spacing:.5px">MASIH KURANG — DANA WAKAF (K1–K3)</div>
-      <div style="font-size:22px;font-weight:800;color:#9A3412;margin:3px 0">${sisaW.toLocaleString('id-ID')} kg</div>
-      <div style="font-size:11px;color:#7C2D12">≈ <b>${Math.ceil(sisaW/KK)} karung</b> · perkiraan <b>${typeof fmtRp==='function'?fmtRp(biayaW):('Rp '+biayaW.toLocaleString('id-ID'))}</b></div>
+      <div style="font-size:10px;font-weight:800;color:#9A3412;letter-spacing:.5px">HARUS DIBELI — DANA WAKAF (K1–K3)</div>
+      <div style="font-size:22px;font-weight:800;color:#9A3412;margin:3px 0">${beliW.toLocaleString('id-ID')} kg</div>
+      <div style="font-size:11px;color:#7C2D12">≈ <b>${Math.ceil(beliW/KB)} karung Wajak</b> · perkiraan <b>${typeof fmtRp==='function'?fmtRp(biayaW):('Rp '+biayaW.toLocaleString('id-ID'))}</b></div>
+      <div style="font-size:9.5px;color:#7C2D12;margin-top:3px">kurang ${sisaW.toLocaleString('id-ID')} kg − stok di lokasi ${tW.stok.toLocaleString('id-ID')} kg</div>
     </div>
     <div style="flex:1 1 260px;background:#FAF7F0;border:1.5px solid #D8CFB8;border-radius:8px;padding:12px">
-      <div style="font-size:10px;font-weight:800;color:#6B5535;letter-spacing:.5px">MASIH KURANG — K4 (DANA PRIBADI)</div>
-      <div style="font-size:22px;font-weight:800;color:#6B5535;margin:3px 0">${sisa4.toLocaleString('id-ID')} kg</div>
-      <div style="font-size:11px;color:#6B5535">≈ <b>${Math.ceil(sisa4/KK)} karung</b> · perkiraan <b>${typeof fmtRp==='function'?fmtRp(biaya4):('Rp '+biaya4.toLocaleString('id-ID'))}</b></div>
+      <div style="font-size:10px;font-weight:800;color:#6B5535;letter-spacing:.5px">HARUS DIBELI — K4 (DANA PRIBADI)</div>
+      <div style="font-size:22px;font-weight:800;color:#6B5535;margin:3px 0">${beli4.toLocaleString('id-ID')} kg</div>
+      <div style="font-size:11px;color:#6B5535">≈ <b>${Math.ceil(beli4/KB)} karung Wajak</b> · perkiraan <b>${typeof fmtRp==='function'?fmtRp(biaya4):('Rp '+biaya4.toLocaleString('id-ID'))}</b></div>
+      <div style="font-size:9.5px;color:#6B5535;margin-top:3px">dibayar terpisah — jangan digabung ke RAB wakaf</div>
     </div>
     <div style="flex:1 1 100%;font-size:10.5px;color:var(--mute);line-height:1.65;border-top:1px dashed #ddd;padding-top:9px">
       ⚠️ <b>Beli bertahap</b> (aturan P13): ambil sebagian dulu sebagai kalibrasi, baru borong setelah mutu &amp; berat karung terbukti.
       Tenaga hanya 2 orang ≈ 150 pohon/hari — barang yang menumpuk menunggu justru <b>rusak sendiri</b>.
       Angka pohon di atas ditarik langsung dari sensus; <b>ubah sensus → tabel ini ikut berubah</b>.
+      <br>📌 <b>Sebaran nyata 40 karung pertama (9 Agt, dijelaskan Wakif 6 Sep):</b> 10 karung dijatah tiap kebun; K1 mengambil ±5 dari jatah K2 sehingga <b>K1 tuntas ≈ 2,3 kg/pohon</b> — jauh lebih tipis dari takaran 6 kg, dan itulah sebabnya 800 kg tampak menutupi lebih banyak pohon daripada hitungan.
     </div>
   </div>`;
 }
-if (typeof window!=='undefined'){ window.renderPupuk=renderPupuk; window.simpanPupukSetting=simpanPupukSetting; window.setPupukTerpakai=setPupukTerpakai; }
+
+// ─── Rencana bongkar kiriman berikutnya, per kebun ───────────────────────────
+// Kenapa perlu: kiriman datang sekaligus, tapi kebun tidak sama-sama siap.
+// Kebun yang ditandai ⛔ (mis. K3 — tanahnya belum dibalik) DILEWATI, bukan
+// dibagi rata, karena kompos yang ditaruh di atas kerak abu yang belum dibuka
+// tidak akan sampai ke akar dan hanya menumpuk sampai rusak sendiri.
+function renderPupukRencana(rinci, KK, KB, HG){
+  const box=document.getElementById('pupuk-rencana'); if(!box) return;
+  const KIRIM=+PUPUK_DATA.kirim||0;
+  const NAMA={K1:'Kebun 1',K2:'Kebun 2',K3:'Kebun 3',K4:'Kebun 4 · Rumah Wakif'};
+
+  // Urutan bongkar: yang SIAP dulu, di antara yang siap dahulukan yang paling
+  // dekat tuntas — supaya ada kebun yang benar-benar SELESAI, bukan semuanya
+  // setengah jalan. Itu pola yang Wakif sendiri pakai saat menuntaskan K1.
+  const siap = ['K1','K2','K3'].filter(k=>!rinci[k].blokir && rinci[k].beli>0)
+                 .sort((a,b)=> rinci[b].pct - rinci[a].pct);
+  const blokir = ['K1','K2','K3'].filter(k=>rinci[k].blokir);
+  let sisaKarung = KIRIM, alok = {};
+  siap.forEach(k=>{
+    if (sisaKarung<=0) { alok[k]=0; return; }
+    const perlu = Math.ceil(rinci[k].beli / KB);
+    const beri  = Math.min(perlu, sisaKarung);
+    alok[k]=beri; sisaKarung-=beri;
+  });
+  // Sisa setelah K1–K3 tertutup → K4 (dana pribadi, dicatat terpisah)
+  let alok4 = 0;
+  if (sisaKarung>0 && rinci.K4.beli>0 && !rinci.K4.blokir){
+    alok4 = Math.min(Math.ceil(rinci.K4.beli/KB), sisaKarung); sisaKarung-=alok4;
+  }
+
+  const barisAlok = siap.map(k=>{
+    const kg=(alok[k]||0)*KB, tutup=rinci[k].beli>0?Math.min(100,kg/rinci[k].beli*100):100;
+    return `<tr><td><b>${NAMA[k]}</b></td>
+      <td style="text-align:right">${rinci[k].beli.toLocaleString('id-ID')} kg</td>
+      <td style="text-align:right;font-weight:800;color:#166534">${alok[k]||0} karung</td>
+      <td style="text-align:right">${kg.toLocaleString('id-ID')} kg</td>
+      <td style="text-align:right;font-size:11px;color:${tutup>=100?'#16A34A':'#B45309'}">${tutup.toFixed(0)}% tertutup</td></tr>`;
+  }).join('') + (alok4>0?`<tr style="background:#FAF7F0"><td><b>${NAMA.K4}</b><div style="font-size:9px;color:#8B6914;font-weight:700">dana pribadi</div></td>
+      <td style="text-align:right">${rinci.K4.beli.toLocaleString('id-ID')} kg</td>
+      <td style="text-align:right;font-weight:800;color:#6B5535">${alok4} karung</td>
+      <td style="text-align:right">${(alok4*KB).toLocaleString('id-ID')} kg</td>
+      <td style="text-align:right;font-size:11px;color:#6B5535">—</td></tr>`:'');
+
+  box.innerHTML = `
+  <div style="background:#F0FDF4;border:1.5px solid #86EFAC;border-radius:10px;padding:13px">
+    <div style="font-size:12px;font-weight:800;color:#166534;margin-bottom:8px">🚚 Rencana bongkar kiriman berikutnya — per kebun</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:10px">
+      <div style="flex:0 0 170px">
+        <label style="font-size:10px;font-weight:800;color:#166534;letter-spacing:.5px;text-transform:uppercase">Karung yang datang</label>
+        <input type="number" id="pk-kirim" min="0" step="1" value="${KIRIM}" onchange="setPupukKirim(this.value)"
+               style="width:100%;padding:8px;border:1.5px solid #86EFAC;border-radius:6px;font-size:13px;font-weight:700;margin-top:3px">
+      </div>
+      <div style="flex:1 1 240px;font-size:10.5px;color:#166534;line-height:1.6">
+        ${KIRIM>0
+          ? `<b>${KIRIM} karung × ${KB} kg = ${(KIRIM*KB).toLocaleString('id-ID')} kg.</b> Isi angka ini begitu jumlah kiriman pasti — pembagian di bawah menghitung ulang sendiri.`
+          : `Isi jumlah karung yang akan turun, lalu pembagian per kebun muncul di bawah.`}
+      </div>
+    </div>
+    ${KIRIM>0 ? `<div class="table-wrap"><table>
+      <thead><tr><th>Kebun</th><th style="text-align:right">Perlu dibeli</th><th style="text-align:right">Bongkar di sini</th><th style="text-align:right">= kg</th><th style="text-align:right">Menutup</th></tr></thead>
+      <tbody>${barisAlok||'<tr><td colspan="5" style="text-align:center;color:var(--mute)">Semua kebun yang siap sudah tercukupi.</td></tr>'}</tbody>
+    </table></div>
+    ${sisaKarung>0?`<div style="margin-top:8px;font-size:11px;color:#166534;background:#DCFCE7;border-radius:6px;padding:8px"><b>Lebih ${sisaKarung} karung</b> (${(sisaKarung*KB).toLocaleString('id-ID')} kg) — simpan tertutup terpal di tempat teduh, alas tidak becek. Ini cadangan kalau karung Wajak ternyata di bawah ${KB} kg.</div>`:''}` : ''}
+    ${blokir.length?`<div style="margin-top:9px;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:8px;padding:10px">
+      <div style="font-size:11px;font-weight:800;color:#B91C1C">⛔ DILEWATI — belum boleh dipupuk</div>
+      ${blokir.map(k=>`<div style="font-size:11px;color:#B91C1C;margin-top:3px"><b>${NAMA[k]}</b> — ${rinci[k].blokir}.
+        Stok di sana <b>${((PUPUK_DATA.stok||{})[k]||0)} karung</b> sudah cukup untuk ${(((PUPUK_DATA.stok||{})[k]||0)*KK/(+PUPUK_DATA.kg_pohon||6)).toFixed(0)} pohon begitu tanahnya dibuka —
+        <b>jangan kirim tambahan ke sini dulu.</b></div>`).join('')}
+      <div style="font-size:10px;color:#7F1D1D;margin-top:6px;line-height:1.55">Kompos yang ditaruh di atas kerak abu Kelud yang belum dibuka tidak akan turun ke akar — ia hanya menumpuk di permukaan lalu kehilangan mutu.
+      Urutannya: <b>balik tanah dulu → alur/rorak → baru kompos.</b> Lihat tab <b>⛏️ Pengolahan Tanah &amp; Air</b>.</div>
+    </div>`:''}
+  </div>`;
+}
+if (typeof window!=='undefined'){ window.renderPupuk=renderPupuk; window.simpanPupukSetting=simpanPupukSetting; window.setPupukTerpakai=setPupukTerpakai; window.setPupukStok=setPupukStok; window.setPupukBlokir=setPupukBlokir; window.setPupukKirim=setPupukKirim; }
 
 // ═══ Log Cabut/Tebang Pohon Merah (16 Jul 2026) ═══
 // Target = Merah census per kebun (single-source KEBUN_CENSUS.M). Log terpisah (tak ubah census).
@@ -20163,7 +20314,8 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     onSnapshot(doc(db, 'sop_status', 'pupuk'), (snap) => {
       try {
         if (snap.exists() && snap.data().data && typeof snap.data().data === 'object') {
-          PUPUK_DATA = Object.assign({ kg_karung:20, kg_pohon:6, harga_karung:30000, terpakai:{} }, snap.data().data);
+          PUPUK_DATA = Object.assign({ kg_karung:20, kg_karung_baru:36, kg_pohon:6, harga_karung:30000, terpakai:{}, stok:{}, blokir:{}, kirim:0 }, snap.data().data);
+          if (typeof seedPupukSekali === 'function' && seedPupukSekali()) savePupukLS();
           if (typeof savePupukLS === 'function') savePupukLS();
           if (typeof renderPupuk === 'function') renderPupuk();
         }
