@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2e4040">
+<meta name="description" content="Lapor harian borongan cabut pohon — kebun kopi wakaf Ngantang">
+<link rel="icon" type="image/png" href="images/logo-wakaf-produktif-transparan.png">
+<title>Lapor Cabut Pohon — Kebun Wakaf Ngantang</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<!--
+  LAPOR CABUT POHON — BORONGAN (dibuat 20 Sep 2026, permintaan Wakif)
+  Pekerja borongan melapor harian: berapa pohon dicabut, di kebun mana, di bagian mana, + foto.
+  Tulis ke koleksi `laporan` dengan pelapor 'BORONGAN' + kategori 'cabut_borongan'.
+  - pelapor BORONGAN SENGAJA tidak punya TARIF_PEKERJA → dashboard TIDAK membuat upah harian otomatis.
+  - Laporan TIDAK langsung mengubah log cabut. Wakif memverifikasi dulu di dashboard
+    (Inventarisasi → Cabut/Tebang → "Laporan harian borongan") baru masuk ke sop_status/pohon_cabut.
+  - Tanggal = jam LOKAL perangkat (Pattern #26), bukan toISOString.
+-->
+<style>
+:root{--dark:#2e4040;--med:#5a9080;--light:#a8c8bc;--acc:#c4906a;--cream:#e8d5b8;--bg:#f0f5f3;--tint:#e8f4f0;--text:#1e3030;--muted:#5a7878;--merah:#b3261e;--ok:#16A34A}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:17px;padding-bottom:40px}
+header{background:var(--dark);color:#fff;padding:22px 18px 26px}
+header .e{color:var(--cream);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+header h1{font-size:26px;margin-top:6px;line-height:1.2}
+.prog{margin:-14px 14px 0;background:#fff;border-radius:18px;padding:16px 18px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.prog .row{display:flex;justify-content:space-between;align-items:baseline}
+.prog .big{font-size:34px;font-weight:800;color:var(--dark)}
+.prog .of{color:var(--muted);font-size:14px}
+.bar{height:14px;background:var(--tint);border-radius:7px;overflow:hidden;margin-top:10px}
+.bar div{height:100%;background:var(--med);border-radius:7px;width:0}
+.prog .kb{display:flex;gap:8px;margin-top:10px;font-size:13px;color:var(--muted)}
+.prog .kb span{flex:1;background:var(--tint);border-radius:8px;padding:6px;text-align:center}
+.card{margin:16px 14px 0;background:#fff;border-radius:18px;padding:18px}
+.card h2{font-size:15px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+label.t{display:block;font-weight:700;margin:14px 0 6px}
+label.t:first-of-type{margin-top:0}
+input[type=text],input[type=date],textarea{width:100%;font:inherit;padding:12px 14px;border:2px solid #d8eeea;border-radius:12px;background:#fff}
+textarea{min-height:70px;resize:vertical}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.seg button{font:inherit;font-weight:800;font-size:18px;padding:16px 0;border-radius:14px;border:2px solid #d8eeea;background:#fff;color:var(--dark)}
+.seg button.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+.step{display:flex;align-items:center;gap:12px}
+.step button{width:62px;height:62px;border-radius:50%;border:0;background:var(--tint);font-size:32px;font-weight:800;color:var(--dark)}
+.step input{flex:1;text-align:center;font-size:40px;font-weight:800;border:2px solid #d8eeea;border-radius:14px;padding:6px;width:100%;font-family:inherit;color:var(--dark)}
+.hint{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
+.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ph{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--tint)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:0;font-size:15px}
+.add{aspect-ratio:1;border:2px dashed var(--med);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--med);font-weight:700;font-size:13px}
+.add b{font-size:28px}
+.chk{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--tint);margin-top:8px;font-size:15px;line-height:1.35}
+.chk input{width:24px;height:24px;flex:0 0 24px;margin-top:1px;accent-color:var(--dark)}
+.tali{display:inline-block;width:28px;height:9px;border-radius:5px;background:var(--merah);vertical-align:middle;margin-right:4px}
+.gps{font-size:13px;color:var(--muted);margin-top:10px}
+button.kirim{display:block;width:calc(100% - 28px);margin:18px 14px 0;font:inherit;font-weight:800;font-size:19px;padding:18px;border:0;border-radius:16px;background:var(--merah);color:#fff}
+button.kirim:disabled{opacity:.5}
+.err{color:var(--merah);font-weight:700;margin:10px 14px 0;font-size:15px;min-height:1px}
+.done{margin:16px 14px 0;background:#ECFDF5;border:2px solid var(--ok);border-radius:16px;padding:16px;display:none}
+.done b{color:var(--ok)}
+.antri{margin:16px 14px 0;background:#FFFBEB;border:2px solid #F59E0B;border-radius:16px;padding:14px;display:none;font-size:15px}
+.antri button{margin-top:8px;font:inherit;font-weight:700;padding:10px 14px;border-radius:10px;border:0;background:#F59E0B;color:#fff}
+.hist{font-size:14px}
+.hist div{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eef3f1}
+.hist div:last-child{border-bottom:0}
+.st{font-size:12px;font-weight:700;padding:2px 8px;border-radius:8px}
+.st.w{background:#FEF3C7;color:#92400E}.st.v{background:#DCFCE7;color:#166534}
+</style>
+</head>
+<body>
+<header>
+  <div class="e">Kebun Kopi Wakaf Ngantang</div>
+  <h1>Lapor Harian<br>Cabut Pohon Kopi</h1>
+</header>
+
+<div class="prog">
+  <div class="row"><div><span class="big" id="pTot">…</span> <span class="of">pohon sudah dilaporkan</span></div><div class="of">patokan 250</div></div>
+  <div class="bar"><div id="pBar"></div></div>
+  <div class="kb"><span>K1 <b id="pK1">0</b></span><span>K2 <b id="pK2">0</b></span><span>K3 <b id="pK3">0</b></span></div>
+</div>
+
+<div class="card">
+  <h2>1 · Siapa &amp; kapan</h2>
+  <label class="t" for="nama">Nama</label>
+  <input type="text" id="nama" placeholder="Nama Anda" autocomplete="name">
+  <label class="t" for="tgl">Tanggal kerja</label>
+  <input type="date" id="tgl">
+</div>
+
+<div class="card">
+  <h2>2 · Di mana</h2>
+  <label class="t">Kebun</label>
+  <div class="seg" id="kebunSeg">
+    <button type="button" data-k="K1">Kebun 1</button>
+    <button type="button" data-k="K2">Kebun 2</button>
+    <button type="button" data-k="K3">Kebun 3</button>
+  </div>
+  <label class="t" for="lokasi">Di bagian mana?</label>
+  <textarea id="lokasi" placeholder="mis. baris dekat jalan setapak, sebelah pohon durian"></textarea>
+  <div class="gps" id="gpsInfo">📍 Lokasi HP: mencari…</div>
+</div>
+
+<div class="card">
+  <h2>3 · Hasil hari ini</h2>
+  <label class="t">Jumlah pohon yang selesai dicabut</label>
+  <div class="step">
+    <button type="button" id="minus">−</button>
+    <input type="number" id="jumlah" inputmode="numeric" min="1" value="0">
+    <button type="button" id="plus">+</button>
+  </div>
+  <label class="t">Foto (wajib, 1–4 foto)</label>
+  <div class="photos" id="photos"></div>
+  <input type="file" id="fileIn" accept="image/*" capture="environment" multiple hidden>
+  <div class="hint">Foto pohon yang sudah dicabut (akarnya kelihatan) dan bekas lubangnya yang sudah ditutup.</div>
+</div>
+
+<div class="card">
+  <h2>4 · Pastikan</h2>
+  <label class="chk"><input type="checkbox" id="c1"><span>Yang dicabut hanya pohon <span class="tali"></span><b>bertali merah</b></span></label>
+  <label class="chk"><input type="checkbox" id="c2"><span>Dicabut <b>sampai akarnya ikut keluar</b>, bukan ditebang</span></label>
+  <label class="chk"><input type="checkbox" id="c3"><span>Lubang bekas cabutan <b>sudah ditutup tanah</b></span></label>
+</div>
+
+<div class="err" id="err"></div>
+<button class="kirim" id="kirim">Kirim Laporan</button>
+
+<div class="done" id="done"></div>
+<div class="antri" id="antri"></div>
+
+<div class="card">
+  <h2>Laporan terakhir</h2>
+  <div class="hist" id="hist">Memuat…</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { firebaseConfig } from "./firebase-config.js";
+
+const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', PATOKAN = 250, MAX_FOTO = 4;
+const QKEY = 'wkkn_cabut_antri', NKEY = 'wkkn_cabut_nama';
+const db = getFirestore(initializeApp(firebaseConfig));
+const $ = id => document.getElementById(id);
+const S = { kebun: null, foto: [], gps: null };
+
+function todayIso(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+const BL=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
+const tg = s => { const [y,m,d]=String(s).split('-'); return `${+d} ${BL[+m-1]}`; };
+
+$('tgl').value = todayIso();
+try { $('nama').value = localStorage.getItem(NKEY) || ''; } catch(e){}
+
+document.querySelectorAll('#kebunSeg button').forEach(b => b.onclick = () => {
+  S.kebun = b.dataset.k;
+  document.querySelectorAll('#kebunSeg button').forEach(x => x.classList.toggle('on', x === b));
+});
+const J = $('jumlah');
+$('minus').onclick = () => { J.value = Math.max(0, (+J.value||0) - 1); };
+$('plus').onclick  = () => { J.value = (+J.value||0) + 1; };
+
+/* ---- foto: dikecilkan sebelum dikirim (dokumen Firestore maks ~900 KB) ---- */
+function kecilkan(file, maxW, q){
+  return new Promise((res, rej) => {
+    const fr = new FileReader();
+    fr.onload = () => { const im = new Image(); im.onload = () => {
+      const s = Math.min(1, maxW / Math.max(im.width, im.height));
+      const c = document.createElement('canvas'); c.width = Math.round(im.width*s); c.height = Math.round(im.height*s);
+      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', q));
+    }; im.onerror = rej; im.src = fr.result; };
+    fr.onerror = rej; fr.readAsDataURL(file);
+  });
+}
+function gambarFoto(){
+  const tiles = S.foto.map((f,i) => `<div class="ph"><img src="${f}"><button class="x" data-i="${i}">✕</button></div>`).join('');
+  const add = S.foto.length < MAX_FOTO ? `<label class="add" for="fileIn"><b>📷</b>Tambah</label>` : '';
+  $('photos').innerHTML = tiles + add;
+  $('photos').querySelectorAll('.x').forEach(b => b.onclick = () => { S.foto.splice(+b.dataset.i,1); gambarFoto(); });
+}
+$('fileIn').onchange = async e => {
+  for (const f of [...e.target.files]) {
+    if (S.foto.length >= MAX_FOTO) break;
+    try { S.foto.push(await kecilkan(f, 1024, 0.7)); } catch(err) {}
+  }
+  e.target.value = ''; gambarFoto();
+};
+gambarFoto();
+
+/* ---- GPS: bukti kehadiran saja, boleh gagal ---- */
+if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => {
+  S.gps = { lat: +p.coords.latitude.toFixed(6), lng: +p.coords.longitude.toFixed(6), akurasi_m: Math.round(p.coords.accuracy) };
+  $('gpsInfo').textContent = `📍 Lokasi HP tercatat (±${S.gps.akurasi_m} m)`;
+}, () => { $('gpsInfo').textContent = '📍 Lokasi HP tidak diizinkan — laporan tetap bisa dikirim'; }, { enableHighAccuracy:true, timeout:15000 });
+else $('gpsInfo').textContent = '📍 HP tidak mendukung lokasi';
+
+/* ---- kirim ---- */
+async function kirimSatu(entry){ const r = await addDoc(collection(db, 'laporan'), entry); return r.id; }
+function antrian(){ try { return JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch(e){ return []; } }
+function simpanAntrian(a){ try { localStorage.setItem(QKEY, JSON.stringify(a)); } catch(e){} }
+function tampilAntrian(){
+  const a = antrian(), el = $('antri');
+  if (!a.length) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+  el.innerHTML = `⏳ <b>${a.length} laporan belum terkirim</b> (sinyal lemah). Akan dikirim otomatis saat ada sinyal.<br><button id="coba">Kirim sekarang</button>`;
+  $('coba').onclick = kurasAntrian;
+}
+async function kurasAntrian(){
+  const a = antrian(); const sisa = [];
+  for (const e of a) { try { await kirimSatu(e); } catch(err) { sisa.push(e); } }
+  simpanAntrian(sisa); tampilAntrian(); muatRiwayat();
+}
+window.addEventListener('online', kurasAntrian);
+
+$('kirim').onclick = async () => {
+  const err = $('err'); err.textContent = '';
+  const nama = $('nama').value.trim(), tgl = $('tgl').value, jumlah = parseInt(J.value) || 0;
+  const salah = [];
+  if (!nama) salah.push('isi nama');
+  if (!tgl) salah.push('isi tanggal');
+  if (!S.kebun) salah.push('pilih kebun');
+  if (jumlah < 1) salah.push('isi jumlah pohon');
+  if (!$('lokasi').value.trim()) salah.push('tulis di bagian mana');
+  if (!S.foto.length) salah.push('tambah minimal 1 foto');
+  if (!($('c1').checked && $('c2').checked && $('c3').checked)) salah.push('centang ketiga pernyataan');
+  if (salah.length) { err.textContent = 'Belum lengkap: ' + salah.join(', ') + '.'; return; }
+  try { localStorage.setItem(NKEY, nama); } catch(e){}
+
+  let foto = S.foto.slice();
+  let total = foto.reduce((s,f) => s + f.length, 0);
+  if (total > 780000) { err.textContent = 'Foto terlalu besar — kurangi jumlah foto.'; return; }
+
+  const entry = {
+    pelapor: PELAPOR, kategori: KATEGORI,
+    tanggal: tgl, tgl,
+    kebun: S.kebun, kebun_primary: S.kebun, kebun_list_str: S.kebun,
+    jumlah_pohon: jumlah, pekerja_nama: nama, lokasi: $('lokasi').value.trim(),
+    metode: 'cabut', tali: 'merah',
+    checklist: { tali_merah: true, akar_keluar: true, lubang_ditutup: true },
+    gps: S.gps, photos: foto.map((d,i) => ({ id: 'f'+i, data_url: d, size_kb: Math.round(d.length/1024) })),
+    status_verifikasi: 'menunggu',
+    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.0', src: 'lapor_cabut_v1'
+  };
+  const btn = $('kirim'); btn.disabled = true; btn.textContent = 'Mengirim…';
+  let ok = false;
+  try { await kirimSatu(entry); ok = true; }
+  catch (e) { const a = antrian(); a.push(entry); simpanAntrian(a); }
+  btn.disabled = false; btn.textContent = 'Kirim Laporan';
+  const d = $('done'); d.style.display = 'block';
+  d.innerHTML = ok ? `✅ <b>Terkirim.</b> ${jumlah} pohon di Kebun ${S.kebun.slice(1)}, ${tg(tgl)}. Terima kasih!`
+                   : `⏳ <b>Tersimpan di HP</b> — sinyal lemah, akan dikirim otomatis saat ada sinyal.`;
+  // kosongkan untuk laporan berikutnya (nama & tanggal dipertahankan)
+  S.foto = []; gambarFoto(); J.value = 0; $('lokasi').value = '';
+  ['c1','c2','c3'].forEach(i => $(i).checked = false);
+  tampilAntrian(); muatRiwayat();
+  d.scrollIntoView({ behavior: 'smooth' });
+};
+
+/* ---- progres & riwayat (dibaca langsung dari Firestore) ---- */
+async function muatRiwayat(){
+  try {
+    const snap = await getDocs(query(collection(db, 'laporan'), where('kategori', '==', KATEGORI)));
+    const L = snap.docs.map(d => d.data()).sort((a,b) => String(b.created_at).localeCompare(String(a.created_at)));
+    const per = { K1:0, K2:0, K3:0 }; let tot = 0;
+    L.forEach(l => { const n = +l.jumlah_pohon || 0; tot += n; if (per[l.kebun] != null) per[l.kebun] += n; });
+    $('pTot').textContent = tot; $('pBar').style.width = Math.min(100, tot / PATOKAN * 100) + '%';
+    ['K1','K2','K3'].forEach(k => $('p'+k).textContent = per[k]);
+    $('hist').innerHTML = L.length ? L.slice(0, 10).map(l =>
+      `<div><span>${tg(l.tgl)} · K${String(l.kebun).slice(1)} · <b>${l.jumlah_pohon}</b> pohon · ${String(l.pekerja_nama||'').replace(/</g,'&lt;')}</span>
+       <span class="st ${l.status_verifikasi==='masuk_log'?'v':'w'}">${l.status_verifikasi==='masuk_log'?'✓ dicek':'menunggu cek'}</span></div>`).join('')
+      : '<span style="color:var(--muted)">Belum ada laporan.</span>';
+  } catch (e) { $('hist').textContent = 'Riwayat belum bisa dimuat (sinyal?).'; $('pTot').textContent = '–'; }
+}
+tampilAntrian(); muatRiwayat(); if (navigator.onLine) kurasAntrian();
+</script>
+</body>
+</html>

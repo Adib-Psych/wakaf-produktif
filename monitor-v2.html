@@ -16513,7 +16513,7 @@ function renderCabutLog(){
     const t=cabutTali(e), T=CABUT_TALI[t];
     return `<tr><td style="padding:5px 8px;white-space:nowrap">${fmt(e.tgl)}</td><td style="padding:5px 8px;font-weight:700;white-space:nowrap">${CABUT_KNAME[e.kebun]||e.kebun}</td><td style="padding:5px 8px;text-align:right;font-weight:700">${e.jumlah}</td><td style="padding:5px 8px">${metodeCell(e)}</td><td style="padding:5px 8px;white-space:nowrap"><span style="color:${T.col};font-weight:700">${T.ikon} ${T.label}</span>${e.sakit?' <span title="dugaan penyakit akar" style="font-size:9px;background:#FEE2E2;color:#7F1D1D;padding:1px 5px;border-radius:6px;font-weight:700">🦠 sakit</span>':''}</td><td style="padding:5px 8px;font-size:11px;color:var(--mute)">${String(e.catatan||'').replace(/</g,'&lt;')}</td><td style="padding:5px 8px;text-align:center;white-space:nowrap"><button onclick="startEditCabut('${e.id}')" title="Edit catatan ini" style="background:#FEF3C7;color:#92400E;border:1px solid #FCD34D;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px;margin-right:4px">✏️</button><button onclick="deleteCabut('${e.id}')" title="Hapus catatan ini" style="background:#fbe9e7;color:#c14b3a;border:1px solid #f2c7c1;border-radius:5px;padding:2px 8px;cursor:pointer;font-size:11px">✕</button></td></tr>`;
   }).join('');
-  el.innerHTML=`
+  el.innerHTML=renderBoronganPanel()+`
     <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:14px">
       ${chipm('Total hilang', totalHilang+' phn', '#7F1D1D', 'dikurangkan dari "Terkini" di Dashboard')}
       ${chipm('⛏️ Dicabut', st.dicabut+' phn', '#16A34A', 'akar terangkat → slot siap sulaman')}
@@ -16589,6 +16589,86 @@ function deleteCabut(id){
 if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCabut=deleteCabut; window.renderCabutLog=renderCabutLog; window.setCabutMetode=setCabutMetode; window._cabutRefreshDash=_cabutRefreshDash;
   window.startEditCabut=startEditCabut; window.cancelEditCabut=cancelEditCabut; window.saveEditCabut=saveEditCabut;
   loadCabutLS(); document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{renderCabutLog();}catch(e){}},350)); }
+
+
+// ═══ Laporan harian BORONGAN cabut pohon (20 Sep 2026, permintaan Wakif) ═══
+// Pekerja borongan melapor dari HP lewat lapor-cabut.html → koleksi `laporan`
+// (pelapor 'BORONGAN', kategori 'cabut_borongan'). Laporan TIDAK langsung mengubah
+// log cabut: Wakif memeriksa foto dulu, lalu klik "Masukkan ke log" → jalur yang sama
+// dengan form "Catat cabut/tebang" (CABUT_DATA → sop_status/pohon_cabut).
+// Foto SENGAJA tidak disimpan di localStorage (kuota ±5 MB) — hanya di memori tab.
+// Skema bayar (keputusan Wakif 20 Sep): patokan 250 phn = Rp 2.500.000, tidak dikurangi
+// bila kurang; lebih → +Rp 10.000/phn.
+const BORONGAN_PATOKAN = 250, BORONGAN_TARIF = 10000, BORONGAN_NILAI = 2500000;
+const BORONGAN_KEBUN = { lat: -7.853459, lng: 112.371056 };   // KEBUN_KOORD (Pattern #34)
+window.CABUT_BORONGAN = window.CABUT_BORONGAN || [];
+function _boronganJarakKm(g){
+  if (!g || g.lat == null) return null;
+  const R=6371, r=x=>x*Math.PI/180, dLa=r(g.lat-BORONGAN_KEBUN.lat), dLo=r(g.lng-BORONGAN_KEBUN.lng);
+  const a=Math.sin(dLa/2)**2+Math.cos(r(g.lat))*Math.cos(r(BORONGAN_KEBUN.lat))*Math.sin(dLo/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function _boronganSudahMasuk(id){ return CABUT_DATA.some(e => e.src_laporan === id); }
+function renderBoronganPanel(){
+  const L = [...(window.CABUT_BORONGAN||[])].sort((a,b)=>String(b.tgl||'').localeCompare(String(a.tgl||''))||String(b.created_at||'').localeCompare(String(a.created_at||'')));
+  const link = 'lapor-cabut.html';
+  const rp = n => 'Rp ' + Math.round(n).toLocaleString('id-ID');
+  const esc = s => String(s==null?'':s).replace(/[<>&"]/g, c=>({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c]));
+  const tot = L.reduce((s,l)=>s+(+l.jumlah_pohon||0),0);
+  const cek = L.filter(l=>_boronganSudahMasuk(l.id)).reduce((s,l)=>s+(+l.jumlah_pohon||0),0);
+  const tunggu = L.filter(l=>!_boronganSudahMasuk(l.id)).length;
+  const bayar = BORONGAN_NILAI + Math.max(0, cek - BORONGAN_PATOKAN) * BORONGAN_TARIF;
+  const pct = Math.min(100, tot / BORONGAN_PATOKAN * 100);
+  const chip=(lbl,val,col,sub)=>`<div style="background:#fff;border:1px solid #d8eeea;border-radius:8px;padding:7px 11px;flex:1 1 140px"><div style="font-size:9px;color:var(--mute);text-transform:uppercase;letter-spacing:.3px">${lbl}</div><div style="font-size:17px;font-weight:800;color:${col}">${val}</div>${sub?`<div style="font-size:9.5px;color:var(--mute);line-height:1.35;margin-top:1px">${sub}</div>`:''}</div>`;
+  const rows = L.map(l => {
+    const masuk = _boronganSudahMasuk(l.id);
+    const km = _boronganJarakKm(l.gps);
+    const gps = l.gps ? `<a href="https://maps.google.com/?q=${l.gps.lat},${l.gps.lng}" target="_blank" rel="noopener" style="color:${km!=null&&km>1?'#B45309':'#16A34A'};font-weight:700;white-space:nowrap">📍 ${km!=null?(km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km'):''}</a>` : '<span style="color:var(--mute)">—</span>';
+    const foto = (l.photos||[]).map((p,i)=>`<img src="${p.data_url}" onclick="lihatFotoBorongan('${l.id}',${i})" style="width:44px;height:44px;object-fit:cover;border-radius:6px;cursor:zoom-in;margin-right:3px;border:1px solid #d8eeea">`).join('');
+    const aksi = masuk
+      ? '<span style="font-size:11px;font-weight:700;color:#166534;background:#DCFCE7;padding:3px 8px;border-radius:6px;white-space:nowrap">✓ sudah di log</span>'
+      : `<button onclick="verifikasiBorongan('${l.id}')" style="background:#16A34A;color:#fff;border:0;border-radius:6px;padding:5px 10px;font-weight:700;cursor:pointer;font-size:11px;white-space:nowrap">✓ Masukkan ke log</button>`;
+    return `<tr style="border-top:1px solid #eef3f1"><td style="padding:6px 8px;white-space:nowrap">${typeof formatTgl==='function'?formatTgl(l.tgl):esc(l.tgl)}</td><td style="padding:6px 8px;font-weight:700;white-space:nowrap">${CABUT_KNAME[l.kebun]||esc(l.kebun)}</td><td style="padding:6px 8px;text-align:right;font-weight:800">${+l.jumlah_pohon||0}</td><td style="padding:6px 8px">${esc(l.pekerja_nama)}</td><td style="padding:6px 8px;font-size:11px;color:#475569">${esc(l.lokasi)}</td><td style="padding:6px 8px;white-space:nowrap">${foto}</td><td style="padding:6px 8px">${gps}</td><td style="padding:6px 8px;text-align:center">${aksi}</td></tr>`;
+  }).join('');
+  return `<div style="background:#F0F7F4;border:2px solid #5a9080;border-radius:12px;padding:14px 16px;margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;color:#2e4040;letter-spacing:.5px">📲 LAPORAN HARIAN BORONGAN — dari HP pekerja</div>
+      <a href="${link}" target="_blank" rel="noopener" style="font-size:11px;font-weight:700;color:#2e4040;background:#fff;border:1px solid #5a9080;border-radius:6px;padding:4px 10px;text-decoration:none">🔗 Buka halaman lapor pekerja</a>
+    </div>
+    <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px">
+      ${chip('Dilaporkan', tot+' phn', '#2e4040', `patokan ${BORONGAN_PATOKAN} pohon`)}
+      ${chip('Sudah dicek & masuk log', cek+' phn', '#16A34A', 'dasar pembayaran')}
+      ${chip('Menunggu dicek', tunggu+' laporan', tunggu?'#B45309':'#5a7878', 'periksa fotonya dulu')}
+      ${chip('Bayaran borongan', rp(bayar), '#2e4040', `min ${rp(BORONGAN_NILAI)} · +${rp(BORONGAN_TARIF)}/phn di atas ${BORONGAN_PATOKAN}`)}
+    </div>
+    <div style="height:12px;background:#d8eeea;border-radius:6px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:${pct}%;background:#5a9080"></div></div>
+    ${L.length ? `<div class="table-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:8px"><thead><tr style="background:#e8f4f0"><th style="padding:6px 8px;text-align:left">Tanggal</th><th style="padding:6px 8px;text-align:left">Kebun</th><th style="padding:6px 8px;text-align:right">Pohon</th><th style="padding:6px 8px;text-align:left">Pekerja</th><th style="padding:6px 8px;text-align:left">Di bagian mana</th><th style="padding:6px 8px;text-align:left">Foto</th><th style="padding:6px 8px;text-align:left">GPS</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div style="font-size:10.5px;color:var(--mute);margin-top:6px">📍 hijau = dilaporkan dari kebun (≤1 km) · oranye = dilaporkan dari tempat lain. Laporan baru masuk ke progres & "Terkini" setelah diklik <b>Masukkan ke log</b>.</div>`
+      : `<div style="font-size:12px;color:var(--mute);font-style:italic">Belum ada laporan dari pekerja. Kirim tautan halaman lapor ke pekerja borongan.</div>`}
+  </div>`;
+}
+function verifikasiBorongan(id){
+  const l = (window.CABUT_BORONGAN||[]).find(x => x.id === id); if (!l) return;
+  if (_boronganSudahMasuk(id)) { if (typeof showToast==='function') showToast('Laporan ini sudah masuk log','info'); return; }
+  const n = +l.jumlah_pohon || 0;
+  if (!confirm(`Masukkan ke log cabut?\n\n${n} pohon · ${CABUT_KNAME[l.kebun]||l.kebun} · ${l.tgl}\nPekerja: ${l.pekerja_nama||'-'}\n\nPastikan fotonya sudah Anda lihat.`)) return;
+  const cid = 'cabut_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
+  CABUT_DATA.push({ id:cid, kebun:l.kebun, jumlah:n, tgl:l.tgl, metode:'cabut', tali:'merah', sakit:false,
+    kondisi:'Tali Merah · Dicabut', catatan:`Borongan · ${l.pekerja_nama||''} · ${l.lokasi||''}`.trim(),
+    src_laporan:id, created_at:new Date().toISOString() });
+  saveCabutLS(); renderCabutLog(); _cabutRefreshDash();
+  if (typeof window.syncCabutToFirestore==='function') window.syncCabutToFirestore();
+  if (typeof window.tandaiBoronganMasuk==='function') window.tandaiBoronganMasuk(id, cid);
+  if (typeof showToast==='function') showToast(`⛏️ ${n} pohon dari laporan borongan masuk log`,'success');
+}
+function lihatFotoBorongan(id, i){
+  const l = (window.CABUT_BORONGAN||[]).find(x => x.id === id); if (!l || !l.photos || !l.photos[i]) return;
+  const o = document.createElement('div');
+  o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out';
+  o.innerHTML = `<img src="${l.photos[i].data_url}" style="max-width:100%;max-height:100%;border-radius:8px">`;
+  o.onclick = () => o.remove(); document.body.appendChild(o);
+}
+if (typeof window!=='undefined'){ window.verifikasiBorongan=verifikasiBorongan; window.lihatFotoBorongan=lihatFotoBorongan; window.renderBoronganPanel=renderBoronganPanel; }
 
 // ═══════════════════════════════════════════════════════════════════════════
 // BENCHMARK RENDEMEN EKSTERNAL (19 Jul 2026) — komparasi varietas, di LUAR produksi & keuangan kebun.
@@ -20251,7 +20331,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 <!-- Firebase Firestore Listener (Phase 1B) — Real-time sync dari Worker PWA submissions -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc, getDoc, setDoc, serverTimestamp }
+  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc, getDoc, setDoc, serverTimestamp, where, updateDoc }
     from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
@@ -20290,6 +20370,19 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         });
         console.log('[Cabut] ✓ synced ' + (typeof CABUT_DATA !== 'undefined' ? CABUT_DATA.length : 0) + ' entries');
       } catch (e) { console.warn('[Cabut] sync failed:', e && e.message); }
+    };
+    // ⭐ Laporan harian BORONGAN cabut (20 Sep 2026) — dibaca terpisah, TIDAK masuk STATE.laporan
+    //    (foto base64 akan memenuhi localStorage). Lihat renderBoronganPanel().
+    onSnapshot(query(collection(db, COLLECTIONS.laporan), where('kategori', '==', 'cabut_borongan')), (snap) => {
+      try {
+        window.CABUT_BORONGAN = snap.docs.map(d => ({ ...d.data(), id: d.id }));
+        if (typeof renderCabutLog === 'function') renderCabutLog();
+      } catch (e) { console.warn('[Borongan] render gagal:', e && e.message); }
+    }, (e) => console.warn('[Borongan] listener gagal:', e && e.message));
+    window.tandaiBoronganMasuk = async (id, cabutId) => {
+      try {
+        await updateDoc(doc(db, COLLECTIONS.laporan, id), { status_verifikasi: 'masuk_log', cabut_id: cabutId, verified_at: new Date().toISOString() });
+      } catch (e) { console.warn('[Borongan] tandai gagal (log cabut tetap tersimpan):', e && e.message); }
     };
     onSnapshot(doc(db, 'sop_status', 'pohon_cabut'), (snap) => {
       try {
@@ -21573,6 +21666,9 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           }
 
           if (change.type === 'added' || change.type === 'modified') {
+            // ⭐ 20 Sep 2026: laporan borongan cabut punya jalur sendiri (panel Cabut/Tebang) —
+            //    tidak masuk Log Harian, upah otomatis, maupun localStorage (fotonya besar).
+            if ((change.doc.data() || {}).kategori === 'cabut_borongan') continue;
             // Skip if this docId was just locally deleted (race condition — Firestore hasn't propagated yet)
             if (window._deletedTombstones?.has(docId)) {
               console.log('[Listener] Skipping tombstoned entry:', docId);
