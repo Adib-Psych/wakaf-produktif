@@ -253,7 +253,7 @@ $('kirim').onclick = async () => {
   // kosongkan untuk laporan berikutnya (nama & tanggal dipertahankan)
   S.foto = []; gambarFoto(); J.value = 0; $('lokasi').value = '';
   ['c1','c2','c3'].forEach(i => $(i).checked = false);
-  tampilAntrian(); muatRiwayat();
+  tampilAntrian(); muatRiwayat(); setTimeout(muatRiwayat, 2500); setTimeout(muatRiwayat, 7000);
   d.scrollIntoView({ behavior: 'smooth' });
 };
 
