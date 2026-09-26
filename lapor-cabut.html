@@ -11,7 +11,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
 <!--
   LAPOR CABUT POHON — BORONGAN (dibuat 20 Sep 2026, permintaan Wakif)
-  Pekerja borongan melapor harian: berapa pohon dicabut, di kebun mana, di bagian mana, + foto.
+  Pekerja borongan melapor harian: berapa pohon dicabut, di kebun mana, di bagian mana.
+  - Revisi 26 Sep 2026 (permintaan Wakif): FOTO DIHAPUS — pekerja kerepotan; bukti = angka + GPS + verifikasi Wakif
+    di lapangan/dashboard. Field `photos` tetap dikirim sebagai [] agar dashboard (l.photos||[]) tidak berubah.
   Tulis ke koleksi `laporan` dengan pelapor 'BORONGAN' + kategori 'cabut_borongan'.
   - pelapor BORONGAN SENGAJA tidak punya TARIF_PEKERJA → dashboard TIDAK membuat upah harian otomatis.
   - Laporan TIDAK langsung mengubah log cabut. Wakif memverifikasi dulu di dashboard
@@ -46,12 +48,6 @@ textarea{min-height:70px;resize:vertical}
 .step button{width:62px;height:62px;border-radius:50%;border:0;background:var(--tint);font-size:32px;font-weight:800;color:var(--dark)}
 .step input{flex:1;text-align:center;font-size:40px;font-weight:800;border:2px solid #d8eeea;border-radius:14px;padding:6px;width:100%;font-family:inherit;color:var(--dark)}
 .hint{font-size:13px;color:var(--muted);margin-top:6px;line-height:1.4}
-.photos{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.ph{position:relative;aspect-ratio:1;border-radius:12px;overflow:hidden;background:var(--tint)}
-.ph img{width:100%;height:100%;object-fit:cover}
-.ph .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;border:0;font-size:15px}
-.add{aspect-ratio:1;border:2px dashed var(--med);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--med);font-weight:700;font-size:13px}
-.add b{font-size:28px}
 .chk{display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:var(--tint);margin-top:8px;font-size:15px;line-height:1.35}
 .chk input{width:24px;height:24px;flex:0 0 24px;margin-top:1px;accent-color:var(--dark)}
 .tali{display:inline-block;width:28px;height:9px;border-radius:5px;background:var(--merah);vertical-align:middle;margin-right:4px}
@@ -112,10 +108,6 @@ button.kirim:disabled{opacity:.5}
     <input type="number" id="jumlah" inputmode="numeric" min="1" value="0">
     <button type="button" id="plus">+</button>
   </div>
-  <label class="t">Foto (wajib, 1–4 foto)</label>
-  <div class="photos" id="photos"></div>
-  <input type="file" id="fileIn" accept="image/*" capture="environment" multiple hidden>
-  <div class="hint">Foto pohon yang sudah dicabut (akarnya kelihatan) dan bekas lubangnya yang sudah ditutup.</div>
 </div>
 
 <div class="card">
@@ -142,11 +134,11 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
-const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', TARIF = 15000, PLAFON = 250, MAX_FOTO = 4;
+const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', TARIF = 15000, PLAFON = 250;
 const QKEY = 'wkkn_cabut_antri', NKEY = 'wkkn_cabut_nama';
 const db = getFirestore(initializeApp(firebaseConfig));
 const $ = id => document.getElementById(id);
-const S = { kebun: null, foto: [], gps: null };
+const S = { kebun: null, gps: null };
 
 function todayIso(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
 const BL=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
@@ -162,33 +154,6 @@ document.querySelectorAll('#kebunSeg button').forEach(b => b.onclick = () => {
 const J = $('jumlah');
 $('minus').onclick = () => { J.value = Math.max(0, (+J.value||0) - 1); };
 $('plus').onclick  = () => { J.value = (+J.value||0) + 1; };
-
-/* ---- foto: dikecilkan sebelum dikirim (dokumen Firestore maks ~900 KB) ---- */
-function kecilkan(file, maxW, q){
-  return new Promise((res, rej) => {
-    const fr = new FileReader();
-    fr.onload = () => { const im = new Image(); im.onload = () => {
-      const s = Math.min(1, maxW / Math.max(im.width, im.height));
-      const c = document.createElement('canvas'); c.width = Math.round(im.width*s); c.height = Math.round(im.height*s);
-      c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); res(c.toDataURL('image/jpeg', q));
-    }; im.onerror = rej; im.src = fr.result; };
-    fr.onerror = rej; fr.readAsDataURL(file);
-  });
-}
-function gambarFoto(){
-  const tiles = S.foto.map((f,i) => `<div class="ph"><img src="${f}"><button class="x" data-i="${i}">✕</button></div>`).join('');
-  const add = S.foto.length < MAX_FOTO ? `<label class="add" for="fileIn"><b>📷</b>Tambah</label>` : '';
-  $('photos').innerHTML = tiles + add;
-  $('photos').querySelectorAll('.x').forEach(b => b.onclick = () => { S.foto.splice(+b.dataset.i,1); gambarFoto(); });
-}
-$('fileIn').onchange = async e => {
-  for (const f of [...e.target.files]) {
-    if (S.foto.length >= MAX_FOTO) break;
-    try { S.foto.push(await kecilkan(f, 1024, 0.7)); } catch(err) {}
-  }
-  e.target.value = ''; gambarFoto();
-};
-gambarFoto();
 
 /* ---- GPS: bukti kehadiran saja, boleh gagal ---- */
 if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => {
@@ -224,14 +189,9 @@ $('kirim').onclick = async () => {
   if (!S.kebun) salah.push('pilih kebun');
   if (jumlah < 1) salah.push('isi jumlah pohon');
   if (!$('lokasi').value.trim()) salah.push('tulis di bagian mana');
-  if (!S.foto.length) salah.push('tambah minimal 1 foto');
   if (!($('c1').checked && $('c2').checked && $('c3').checked && $('c4').checked)) salah.push('centang keempat pernyataan');
   if (salah.length) { err.textContent = 'Belum lengkap: ' + salah.join(', ') + '.'; return; }
   try { localStorage.setItem(NKEY, nama); } catch(e){}
-
-  let foto = S.foto.slice();
-  let total = foto.reduce((s,f) => s + f.length, 0);
-  if (total > 780000) { err.textContent = 'Foto terlalu besar — kurangi jumlah foto.'; return; }
 
   const entry = {
     pelapor: PELAPOR, kategori: KATEGORI,
@@ -240,9 +200,9 @@ $('kirim').onclick = async () => {
     jumlah_pohon: jumlah, pekerja_nama: nama, lokasi: $('lokasi').value.trim(),
     metode: 'cabut', tali: 'merah',
     checklist: { tali_merah: true, akar_keluar: true, lubang_ditutup: true, kayu_dibawa_keluar: true },
-    gps: S.gps, photos: foto.map((d,i) => ({ id: 'f'+i, data_url: d, size_kb: Math.round(d.length/1024) })),
+    gps: S.gps, photos: [],   // foto dihapus 26 Sep 2026 (permintaan Wakif); dashboard toleran
     status_verifikasi: 'menunggu',
-    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.1', src: 'lapor_cabut_v1'
+    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.2', src: 'lapor_cabut_v2'
   };
   const btn = $('kirim'); btn.disabled = true; btn.textContent = 'Mengirim…';
   let ok = false;
@@ -253,7 +213,7 @@ $('kirim').onclick = async () => {
   d.innerHTML = ok ? `✅ <b>Terkirim.</b> ${jumlah} pohon di Kebun ${S.kebun.slice(1)}, ${tg(tgl)}. Terima kasih!`
                    : `⏳ <b>Tersimpan di HP</b> — sinyal lemah, akan dikirim otomatis saat ada sinyal.`;
   // kosongkan untuk laporan berikutnya (nama & tanggal dipertahankan)
-  S.foto = []; gambarFoto(); J.value = 0; $('lokasi').value = '';
+  J.value = 0; $('lokasi').value = '';
   ['c1','c2','c3','c4'].forEach(i => $(i).checked = false);
   tampilAntrian(); muatRiwayat(); setTimeout(muatRiwayat, 2500); setTimeout(muatRiwayat, 7000);
   d.scrollIntoView({ behavior: 'smooth' });
