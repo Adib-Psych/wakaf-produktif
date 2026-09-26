@@ -18,8 +18,10 @@
     di lapangan/dashboard. Field `photos` tetap dikirim sebagai [] agar dashboard (l.photos||[]) tidak berubah.
   Tulis ke koleksi `laporan` dengan pelapor 'BORONGAN' + kategori 'cabut_borongan'.
   - pelapor BORONGAN SENGAJA tidak punya TARIF_PEKERJA → dashboard TIDAK membuat upah harian otomatis.
-  - Laporan TIDAK langsung mengubah log cabut. Wakif memverifikasi dulu di dashboard
-    (Inventarisasi → Cabut/Tebang → "Laporan harian borongan") baru masuk ke sop_status/pohon_cabut.
+  - Sejak 26 Sep 2026 sore (keputusan Wakif): laporan LANGSUNG masuk log cabut `sop_status/pohon_cabut`
+    lewat arrayUnion (tambah atomik, tidak baca-ubah-tulis → dua HP mengirim bersamaan tidak saling timpa),
+    bertanda `dicek:false` + `src_laporan`. Angka inventaris bergerak seketika; Wakif menandai "Sudah dicek"
+    atau membatalkan dari dashboard. Riwayat 20–26 Sep: menunggu klik "Masukkan ke log".
   - Tanggal = jam LOKAL perangkat (Pattern #26), bukan toISOString.
 -->
 <style>
@@ -134,7 +136,7 @@ button.kirim:disabled{opacity:.5}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, doc, updateDoc, arrayUnion, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
 const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', TARIF = 15000, PLAFON = 250;
@@ -166,7 +168,19 @@ if (navigator.geolocation) navigator.geolocation.getCurrentPosition(p => {
 else $('gpsInfo').textContent = '📍 HP tidak mendukung lokasi';
 
 /* ---- kirim ---- */
-async function kirimSatu(entry){ const r = await addDoc(collection(db, 'laporan'), entry); return r.id; }
+async function kirimSatu(entry){
+  const r = await addDoc(collection(db, 'laporan'), entry);
+  // langsung ke log cabut (keputusan Wakif 26 Sep 2026) — arrayUnion = tambah atomik, aman dari tabrakan dua HP
+  const cid = 'cabut_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  const logEntry = { id: cid, kebun: entry.kebun, jumlah: +entry.jumlah_pohon || 0, tgl: entry.tgl, metode: 'cabut', tali: 'merah', sakit: false,
+    kondisi: 'Tali Merah · Dicabut', catatan: `Borongan · ${entry.pekerja_nama||''} · ${entry.lokasi||''}`.trim(),
+    src_laporan: r.id, dicek: false, pending: entry.pending || [], created_at: new Date().toISOString() };
+  try {
+    await updateDoc(doc(db, 'sop_status', 'pohon_cabut'), { data: arrayUnion(logEntry), updated_at: serverTimestamp(), updated_by: 'lapor_cabut', source: 'lapor-cabut.html arrayUnion' });
+    try { await updateDoc(doc(db, 'laporan', r.id), { status_verifikasi: 'masuk_log_belum_dicek', cabut_id: cid }); } catch(e) {}
+  } catch(e) { console.warn('[cabut] gagal masuk log otomatis — laporan tetap tersimpan, Wakif bisa masukkan manual:', e && e.message); }
+  return r.id;
+}
 function antrian(){ try { return JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch(e){ return []; } }
 function simpanAntrian(a){ try { localStorage.setItem(QKEY, JSON.stringify(a)); } catch(e){} }
 function tampilAntrian(){
@@ -208,7 +222,7 @@ $('kirim').onclick = async () => {
     checklist, pending, pending_label: pending.map(k => CEK[k]),   // centang opsional sejak 26 Sep 2026; yang kosong = pekerjaan tersisa
     gps: S.gps, photos: [],   // foto dihapus 26 Sep 2026 (permintaan Wakif); dashboard toleran
     status_verifikasi: 'menunggu',
-    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.3', src: 'lapor_cabut_v3'
+    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.4', src: 'lapor_cabut_v4'
   };
   const btn = $('kirim'); btn.disabled = true; btn.textContent = 'Mengirim…';
   let ok = false;
@@ -217,7 +231,7 @@ $('kirim').onclick = async () => {
   btn.disabled = false; btn.textContent = 'Kirim Laporan';
   const d = $('done'); d.style.display = 'block';
   const sisa = pending.length ? `<br><span style="color:#b45309">⚠️ Tercatat masih ada pekerjaan tersisa: <b>${pending.map(k => CEK[k]).join(', ')}</b>. Selesaikan sebelum dibayar.</span>` : '';
-  d.innerHTML = (ok ? `✅ <b>Terkirim.</b> ${jumlah} pohon di Kebun ${S.kebun.slice(1)}, ${tg(tgl)}. Terima kasih!`
+  d.innerHTML = (ok ? `✅ <b>Terkirim & sudah masuk catatan kebun.</b> ${jumlah} pohon di Kebun ${S.kebun.slice(1)}, ${tg(tgl)}. Terima kasih!`
                     : `⏳ <b>Tersimpan di HP</b> — sinyal lemah, akan dikirim otomatis saat ada sinyal.`) + sisa;
   // kosongkan untuk laporan berikutnya (nama & tanggal dipertahankan)
   J.value = 0; $('lokasi').value = '';
