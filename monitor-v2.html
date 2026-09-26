@@ -16600,9 +16600,9 @@ if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCa
 // Skema bayar (keputusan Wakif 26 Sep 2026 — FINAL, mengganti skema 20 Sep):
 // Rp 15.000/pohon x JUMLAH AKTUAL yang tercabut. Patokan 250 pohon DIBATALKAN.
 // Sudah termasuk bersih-bersih; kayu/pohon diambil pekerja.
-// BORONGAN_PLAFON = sisa tali merah K1-K3 yang wajar (Merah K1-K3 326 - 46 tercabut per log
-// 19 Sep) — dipakai sebagai batas KEWAJARAN untuk diperiksa, bukan batas bayar.
-const BORONGAN_TARIF = 15000, BORONGAN_PLAFON = 281, BORONGAN_PEKERJA = 2;
+// BORONGAN_PLAFON = estimasi kasar sisa tali merah K1-K3 (keputusan Wakif 26 Sep 2026;
+// sensus memberi ±281, dibulatkan turun) — batas KEWAJARAN untuk diperiksa, bukan batas bayar.
+const BORONGAN_TARIF = 15000, BORONGAN_PLAFON = 250, BORONGAN_PEKERJA = 2;
 const BORONGAN_KEBUN = { lat: -7.853459, lng: 112.371056 };   // KEBUN_KOORD (Pattern #34)
 window.CABUT_BORONGAN = window.CABUT_BORONGAN || [];
 function _boronganJarakKm(g){

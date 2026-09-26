@@ -142,7 +142,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
-const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', TARIF = 15000, PLAFON = 281, MAX_FOTO = 4;
+const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', TARIF = 15000, PLAFON = 250, MAX_FOTO = 4;
 const QKEY = 'wkkn_cabut_antri', NKEY = 'wkkn_cabut_nama';
 const db = getFirestore(initializeApp(firebaseConfig));
 const $ = id => document.getElementById(id);
