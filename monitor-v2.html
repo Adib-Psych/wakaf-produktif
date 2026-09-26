@@ -16597,9 +16597,12 @@ if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCa
 // log cabut: Wakif memeriksa foto dulu, lalu klik "Masukkan ke log" → jalur yang sama
 // dengan form "Catat cabut/tebang" (CABUT_DATA → sop_status/pohon_cabut).
 // Foto SENGAJA tidak disimpan di localStorage (kuota ±5 MB) — hanya di memori tab.
-// Skema bayar (keputusan Wakif 20 Sep): patokan 250 phn = Rp 2.500.000, tidak dikurangi
-// bila kurang; lebih → +Rp 10.000/phn.
-const BORONGAN_PATOKAN = 250, BORONGAN_TARIF = 10000, BORONGAN_NILAI = 2500000;
+// Skema bayar (keputusan Wakif 26 Sep 2026 — FINAL, mengganti skema 20 Sep):
+// Rp 15.000/pohon x JUMLAH AKTUAL yang tercabut. Patokan 250 pohon DIBATALKAN.
+// Sudah termasuk bersih-bersih; kayu/pohon diambil pekerja.
+// BORONGAN_PLAFON = sisa tali merah K1-K3 yang wajar (Merah K1-K3 326 - 46 tercabut per log
+// 19 Sep) — dipakai sebagai batas KEWAJARAN untuk diperiksa, bukan batas bayar.
+const BORONGAN_TARIF = 15000, BORONGAN_PLAFON = 281, BORONGAN_PEKERJA = 2;
 const BORONGAN_KEBUN = { lat: -7.853459, lng: 112.371056 };   // KEBUN_KOORD (Pattern #34)
 window.CABUT_BORONGAN = window.CABUT_BORONGAN || [];
 function _boronganJarakKm(g){
@@ -16617,8 +16620,10 @@ function renderBoronganPanel(){
   const tot = L.reduce((s,l)=>s+(+l.jumlah_pohon||0),0);
   const cek = L.filter(l=>_boronganSudahMasuk(l.id)).reduce((s,l)=>s+(+l.jumlah_pohon||0),0);
   const tunggu = L.filter(l=>!_boronganSudahMasuk(l.id)).length;
-  const bayar = BORONGAN_NILAI + Math.max(0, cek - BORONGAN_PATOKAN) * BORONGAN_TARIF;
-  const pct = Math.min(100, tot / BORONGAN_PATOKAN * 100);
+  const bayar = cek * BORONGAN_TARIF;                 // yang dibayar = yang SUDAH dicek Wakif
+  const bayarSemua = tot * BORONGAN_TARIF;            // bila seluruh laporan nanti lolos cek
+  const pct = Math.min(100, tot / BORONGAN_PLAFON * 100);
+  const lebih = Math.max(0, tot - BORONGAN_PLAFON);
   const chip=(lbl,val,col,sub)=>`<div style="background:#fff;border:1px solid #d8eeea;border-radius:8px;padding:7px 11px;flex:1 1 140px"><div style="font-size:9px;color:var(--mute);text-transform:uppercase;letter-spacing:.3px">${lbl}</div><div style="font-size:17px;font-weight:800;color:${col}">${val}</div>${sub?`<div style="font-size:9.5px;color:var(--mute);line-height:1.35;margin-top:1px">${sub}</div>`:''}</div>`;
   const rows = L.map(l => {
     const masuk = _boronganSudahMasuk(l.id);
@@ -16636,11 +16641,13 @@ function renderBoronganPanel(){
       <a href="${link}" target="_blank" rel="noopener" style="font-size:11px;font-weight:700;color:#2e4040;background:#fff;border:1px solid #5a9080;border-radius:6px;padding:4px 10px;text-decoration:none">🔗 Buka halaman lapor pekerja</a>
     </div>
     <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px">
-      ${chip('Dilaporkan', tot+' phn', '#2e4040', `patokan ${BORONGAN_PATOKAN} pohon`)}
-      ${chip('Sudah dicek & masuk log', cek+' phn', '#16A34A', 'dasar pembayaran')}
+      ${chip('Dilaporkan', tot+' phn', lebih?'#B45309':'#2e4040', `batas wajar ${BORONGAN_PLAFON} phn${lebih?` · <b>lebih ${lebih}</b>`:''}`)}
+      ${chip('Sudah dicek & masuk log', cek+' phn', '#16A34A', 'ini yang dibayar')}
       ${chip('Menunggu dicek', tunggu+' laporan', tunggu?'#B45309':'#5a7878', 'periksa fotonya dulu')}
-      ${chip('Bayaran borongan', rp(bayar), '#2e4040', `min ${rp(BORONGAN_NILAI)} · +${rp(BORONGAN_TARIF)}/phn di atas ${BORONGAN_PATOKAN}`)}
+      ${chip('Bayaran borongan', rp(bayar), '#2e4040', `${rp(BORONGAN_TARIF)}/phn × ${cek} phn dicek · ± ${rp(bayar/BORONGAN_PEKERJA)}/orang`)}
+      ${chip('Bila semua lolos cek', rp(bayarSemua), '#5a7878', `${tot} phn dilaporkan × ${rp(BORONGAN_TARIF)}`)}
     </div>
+    ${lebih ? `<div style="background:#FEF3C7;border:1px solid #B45309;border-radius:8px;padding:8px 11px;margin-bottom:10px;font-size:11.5px;color:#7C2D12"><b>⚠️ Laporan melebihi batas wajar ${BORONGAN_PLAFON} pohon sebanyak ${lebih} pohon.</b> Periksa dulu sebelum membayar — mungkin ada pohon di luar tali merah, atau laporan kembar.</div>` : ''}
     <div style="height:12px;background:#d8eeea;border-radius:6px;overflow:hidden;margin-bottom:10px"><div style="height:100%;width:${pct}%;background:#5a9080"></div></div>
     ${L.length ? `<div class="table-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px;background:#fff;border-radius:8px"><thead><tr style="background:#e8f4f0"><th style="padding:6px 8px;text-align:left">Tanggal</th><th style="padding:6px 8px;text-align:left">Kebun</th><th style="padding:6px 8px;text-align:right">Pohon</th><th style="padding:6px 8px;text-align:left">Pekerja</th><th style="padding:6px 8px;text-align:left">Di bagian mana</th><th style="padding:6px 8px;text-align:left">Foto</th><th style="padding:6px 8px;text-align:left">GPS</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>
       <div style="font-size:10.5px;color:var(--mute);margin-top:6px">📍 hijau = dilaporkan dari kebun (≤1 km) · oranye = dilaporkan dari tempat lain. Laporan baru masuk ke progres & "Terkini" setelah diklik <b>Masukkan ke log</b>.</div>`

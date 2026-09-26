@@ -77,7 +77,7 @@ button.kirim:disabled{opacity:.5}
 </header>
 
 <div class="prog">
-  <div class="row"><div><span class="big" id="pTot">…</span> <span class="of">pohon sudah dilaporkan</span></div><div class="of">patokan 250</div></div>
+  <div class="row"><div><span class="big" id="pTot">…</span> <span class="of">pohon sudah dilaporkan</span></div><div class="of" id="pUpah">Rp 15.000 / pohon</div></div>
   <div class="bar"><div id="pBar"></div></div>
   <div class="kb"><span>K1 <b id="pK1">0</b></span><span>K2 <b id="pK2">0</b></span><span>K3 <b id="pK3">0</b></span></div>
 </div>
@@ -106,6 +106,7 @@ button.kirim:disabled{opacity:.5}
 <div class="card">
   <h2>3 · Hasil hari ini</h2>
   <label class="t">Jumlah pohon yang selesai dicabut</label>
+  <div class="hint" style="margin:0 0 6px"><b>Rp 15.000 per pohon</b> — dihitung dari jumlah yang benar-benar tercabut, bukan perkiraan. Isi apa adanya.</div>
   <div class="step">
     <button type="button" id="minus">−</button>
     <input type="number" id="jumlah" inputmode="numeric" min="1" value="0">
@@ -122,6 +123,7 @@ button.kirim:disabled{opacity:.5}
   <label class="chk"><input type="checkbox" id="c1"><span>Yang dicabut hanya pohon <span class="tali"></span><b>bertali merah</b></span></label>
   <label class="chk"><input type="checkbox" id="c2"><span>Dicabut <b>sampai akarnya ikut keluar</b>, bukan ditebang</span></label>
   <label class="chk"><input type="checkbox" id="c3"><span>Lubang bekas cabutan <b>sudah ditutup tanah</b></span></label>
+  <label class="chk"><input type="checkbox" id="c4"><span>Kayu dan akarnya <b>sudah dibawa keluar kebun</b>, tidak ditumpuk di pinggir lahan</span></label>
 </div>
 
 <div class="err" id="err"></div>
@@ -140,7 +142,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/fireba
 import { getFirestore, collection, addDoc, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
 import { firebaseConfig } from "./firebase-config.js";
 
-const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', PATOKAN = 250, MAX_FOTO = 4;
+const PELAPOR = 'BORONGAN', KATEGORI = 'cabut_borongan', TARIF = 15000, PLAFON = 281, MAX_FOTO = 4;
 const QKEY = 'wkkn_cabut_antri', NKEY = 'wkkn_cabut_nama';
 const db = getFirestore(initializeApp(firebaseConfig));
 const $ = id => document.getElementById(id);
@@ -223,7 +225,7 @@ $('kirim').onclick = async () => {
   if (jumlah < 1) salah.push('isi jumlah pohon');
   if (!$('lokasi').value.trim()) salah.push('tulis di bagian mana');
   if (!S.foto.length) salah.push('tambah minimal 1 foto');
-  if (!($('c1').checked && $('c2').checked && $('c3').checked)) salah.push('centang ketiga pernyataan');
+  if (!($('c1').checked && $('c2').checked && $('c3').checked && $('c4').checked)) salah.push('centang keempat pernyataan');
   if (salah.length) { err.textContent = 'Belum lengkap: ' + salah.join(', ') + '.'; return; }
   try { localStorage.setItem(NKEY, nama); } catch(e){}
 
@@ -237,10 +239,10 @@ $('kirim').onclick = async () => {
     kebun: S.kebun, kebun_primary: S.kebun, kebun_list_str: S.kebun,
     jumlah_pohon: jumlah, pekerja_nama: nama, lokasi: $('lokasi').value.trim(),
     metode: 'cabut', tali: 'merah',
-    checklist: { tali_merah: true, akar_keluar: true, lubang_ditutup: true },
+    checklist: { tali_merah: true, akar_keluar: true, lubang_ditutup: true, kayu_dibawa_keluar: true },
     gps: S.gps, photos: foto.map((d,i) => ({ id: 'f'+i, data_url: d, size_kb: Math.round(d.length/1024) })),
     status_verifikasi: 'menunggu',
-    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.0', src: 'lapor_cabut_v1'
+    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.1', src: 'lapor_cabut_v1'
   };
   const btn = $('kirim'); btn.disabled = true; btn.textContent = 'Mengirim…';
   let ok = false;
@@ -252,7 +254,7 @@ $('kirim').onclick = async () => {
                    : `⏳ <b>Tersimpan di HP</b> — sinyal lemah, akan dikirim otomatis saat ada sinyal.`;
   // kosongkan untuk laporan berikutnya (nama & tanggal dipertahankan)
   S.foto = []; gambarFoto(); J.value = 0; $('lokasi').value = '';
-  ['c1','c2','c3'].forEach(i => $(i).checked = false);
+  ['c1','c2','c3','c4'].forEach(i => $(i).checked = false);
   tampilAntrian(); muatRiwayat(); setTimeout(muatRiwayat, 2500); setTimeout(muatRiwayat, 7000);
   d.scrollIntoView({ behavior: 'smooth' });
 };
@@ -264,7 +266,8 @@ async function muatRiwayat(){
     const L = snap.docs.map(d => d.data()).sort((a,b) => String(b.created_at).localeCompare(String(a.created_at)));
     const per = { K1:0, K2:0, K3:0 }; let tot = 0;
     L.forEach(l => { const n = +l.jumlah_pohon || 0; tot += n; if (per[l.kebun] != null) per[l.kebun] += n; });
-    $('pTot').textContent = tot; $('pBar').style.width = Math.min(100, tot / PATOKAN * 100) + '%';
+    $('pTot').textContent = tot; $('pBar').style.width = Math.min(100, tot / PLAFON * 100) + '%';
+    $('pUpah').innerHTML = tot ? ('≈ <b>Rp ' + (tot*TARIF).toLocaleString('id-ID') + '</b><br>Rp 15.000 / pohon') : 'Rp 15.000 / pohon';
     ['K1','K2','K3'].forEach(k => $('p'+k).textContent = per[k]);
     $('hist').innerHTML = L.length ? L.slice(0, 10).map(l =>
       `<div><span>${tg(l.tgl)} · K${String(l.kebun).slice(1)} · <b>${l.jumlah_pohon}</b> pohon · ${String(l.pekerja_nama||'').replace(/</g,'&lt;')}</span>
