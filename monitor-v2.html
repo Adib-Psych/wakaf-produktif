@@ -16630,10 +16630,11 @@ function renderBoronganPanel(){
     const km = _boronganJarakKm(l.gps);
     const gps = l.gps ? `<a href="https://maps.google.com/?q=${l.gps.lat},${l.gps.lng}" target="_blank" rel="noopener" style="color:${km!=null&&km>1?'#B45309':'#16A34A'};font-weight:700;white-space:nowrap">📍 ${km!=null?(km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km'):''}</a>` : '<span style="color:var(--mute)">—</span>';
     const foto = (l.photos||[]).map((p,i)=>`<img src="${p.data_url}" onclick="lihatFotoBorongan('${l.id}',${i})" style="width:44px;height:44px;object-fit:cover;border-radius:6px;cursor:zoom-in;margin-right:3px;border:1px solid #d8eeea">`).join('');
+    const pend = Array.isArray(l.pending) && l.pending.length ? `<div style="margin-top:3px;font-size:10.5px;font-weight:700;color:#7C2D12;background:#FEF3C7;border:1px solid #F59E0B;border-radius:6px;padding:2px 6px;display:inline-block">⚠️ tersisa: ${esc((l.pending_label||l.pending).join(', '))}</div>` : '';   // centang opsional sejak 26 Sep 2026
     const aksi = masuk
       ? '<span style="font-size:11px;font-weight:700;color:#166534;background:#DCFCE7;padding:3px 8px;border-radius:6px;white-space:nowrap">✓ sudah di log</span>'
       : `<button onclick="verifikasiBorongan('${l.id}')" style="background:#16A34A;color:#fff;border:0;border-radius:6px;padding:5px 10px;font-weight:700;cursor:pointer;font-size:11px;white-space:nowrap">✓ Masukkan ke log</button>`;
-    return `<tr style="border-top:1px solid #eef3f1"><td style="padding:6px 8px;white-space:nowrap">${typeof formatTgl==='function'?formatTgl(l.tgl):esc(l.tgl)}</td><td style="padding:6px 8px;font-weight:700;white-space:nowrap">${CABUT_KNAME[l.kebun]||esc(l.kebun)}</td><td style="padding:6px 8px;text-align:right;font-weight:800">${+l.jumlah_pohon||0}</td><td style="padding:6px 8px">${esc(l.pekerja_nama)}</td><td style="padding:6px 8px;font-size:11px;color:#475569">${esc(l.lokasi)}</td><td style="padding:6px 8px;white-space:nowrap">${foto}</td><td style="padding:6px 8px">${gps}</td><td style="padding:6px 8px;text-align:center">${aksi}</td></tr>`;
+    return `<tr style="border-top:1px solid #eef3f1"><td style="padding:6px 8px;white-space:nowrap">${typeof formatTgl==='function'?formatTgl(l.tgl):esc(l.tgl)}</td><td style="padding:6px 8px;font-weight:700;white-space:nowrap">${CABUT_KNAME[l.kebun]||esc(l.kebun)}</td><td style="padding:6px 8px;text-align:right;font-weight:800">${+l.jumlah_pohon||0}</td><td style="padding:6px 8px">${esc(l.pekerja_nama)}</td><td style="padding:6px 8px;font-size:11px;color:#475569">${esc(l.lokasi)}${pend}</td><td style="padding:6px 8px;white-space:nowrap">${foto}</td><td style="padding:6px 8px">${gps}</td><td style="padding:6px 8px;text-align:center">${aksi}</td></tr>`;
   }).join('');
   return `<div style="background:#F0F7F4;border:2px solid #5a9080;border-radius:12px;padding:14px 16px;margin-bottom:18px">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:10px">
@@ -16643,7 +16644,8 @@ function renderBoronganPanel(){
     <div style="display:flex;gap:9px;flex-wrap:wrap;margin-bottom:10px">
       ${chip('Dilaporkan', tot+' phn', lebih?'#B45309':'#2e4040', `batas wajar ${BORONGAN_PLAFON} phn${lebih?` · <b>lebih ${lebih}</b>`:''}`)}
       ${chip('Sudah dicek & masuk log', cek+' phn', '#16A34A', 'ini yang dibayar')}
-      ${chip('Menunggu dicek', tunggu+' laporan', tunggu?'#B45309':'#5a7878', 'periksa fotonya dulu')}
+      ${chip('Menunggu dicek', tunggu+' laporan', tunggu?'#B45309':'#5a7878', 'cek di lapangan / GPS')}
+      ${(()=>{const p=L.filter(l=>Array.isArray(l.pending)&&l.pending.length&&!_boronganSudahMasuk(l.id)).length; return p?chip('Pekerjaan tersisa', p+' laporan', '#B45309', 'centang belum lengkap — tagih sebelum bayar'):'';})()}
       ${chip('Bayaran borongan', rp(bayar), '#2e4040', `${rp(BORONGAN_TARIF)}/phn × ${cek} phn dicek · ± ${rp(bayar/BORONGAN_PEKERJA)}/orang`)}
       ${chip('Bila semua lolos cek', rp(bayarSemua), '#5a7878', `${tot} phn dilaporkan × ${rp(BORONGAN_TARIF)}`)}
     </div>
@@ -16658,7 +16660,7 @@ function verifikasiBorongan(id){
   const l = (window.CABUT_BORONGAN||[]).find(x => x.id === id); if (!l) return;
   if (_boronganSudahMasuk(id)) { if (typeof showToast==='function') showToast('Laporan ini sudah masuk log','info'); return; }
   const n = +l.jumlah_pohon || 0;
-  if (!confirm(`Masukkan ke log cabut?\n\n${n} pohon · ${CABUT_KNAME[l.kebun]||l.kebun} · ${l.tgl}\nPekerja: ${l.pekerja_nama||'-'}\n\nPastikan fotonya sudah Anda lihat.`)) return;
+  if (!confirm(`Masukkan ke log cabut?\n\n${n} pohon · ${CABUT_KNAME[l.kebun]||l.kebun} · ${l.tgl}\nPekerja: ${l.pekerja_nama||'-'}${Array.isArray(l.pending)&&l.pending.length?`\n\n⚠️ Pekerjaan tersisa menurut pekerja: ${(l.pending_label||l.pending).join(', ')}`:''}\n\nPastikan sudah Anda cek di lapangan.`)) return;
   const cid = 'cabut_'+Date.now()+'_'+Math.random().toString(36).slice(2,6);
   CABUT_DATA.push({ id:cid, kebun:l.kebun, jumlah:n, tgl:l.tgl, metode:'cabut', tali:'merah', sakit:false,
     kondisi:'Tali Merah · Dicabut', catatan:`Borongan · ${l.pekerja_nama||''} · ${l.lokasi||''}`.trim(),

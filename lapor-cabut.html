@@ -12,6 +12,8 @@
 <!--
   LAPOR CABUT POHON — BORONGAN (dibuat 20 Sep 2026, permintaan Wakif)
   Pekerja borongan melapor harian: berapa pohon dicabut, di kebun mana, di bagian mana.
+  - Revisi 26 Sep 2026 sore (permintaan Wakif): 4 centang "Pastikan" jadi OPSIONAL — yang tidak dicentang dikirim
+    sebagai `pending[]` (+ `pending_label[]`) dan `checklist{}` berisi nilai sebenarnya; dashboard menandai "pekerjaan tersisa".
   - Revisi 26 Sep 2026 (permintaan Wakif): FOTO DIHAPUS — pekerja kerepotan; bukti = angka + GPS + verifikasi Wakif
     di lapangan/dashboard. Field `photos` tetap dikirim sebagai [] agar dashboard (l.photos||[]) tidak berubah.
   Tulis ke koleksi `laporan` dengan pelapor 'BORONGAN' + kategori 'cabut_borongan'.
@@ -112,6 +114,7 @@ button.kirim:disabled{opacity:.5}
 
 <div class="card">
   <h2>4 · Pastikan</h2>
+  <div class="hint" style="margin:0 0 4px">Centang yang <b>sudah</b> dikerjakan hari ini. Yang belum dicentang tidak menghalangi kirim — tetapi akan tercatat sebagai <b>pekerjaan yang masih tersisa</b> untuk Mas Adib.</div>
   <label class="chk"><input type="checkbox" id="c1"><span>Yang dicabut hanya pohon <span class="tali"></span><b>bertali merah</b></span></label>
   <label class="chk"><input type="checkbox" id="c2"><span>Dicabut <b>sampai akarnya ikut keluar</b>, bukan ditebang</span></label>
   <label class="chk"><input type="checkbox" id="c3"><span>Lubang bekas cabutan <b>sudah ditutup tanah</b></span></label>
@@ -189,9 +192,12 @@ $('kirim').onclick = async () => {
   if (!S.kebun) salah.push('pilih kebun');
   if (jumlah < 1) salah.push('isi jumlah pohon');
   if (!$('lokasi').value.trim()) salah.push('tulis di bagian mana');
-  if (!($('c1').checked && $('c2').checked && $('c3').checked && $('c4').checked)) salah.push('centang keempat pernyataan');
   if (salah.length) { err.textContent = 'Belum lengkap: ' + salah.join(', ') + '.'; return; }
   try { localStorage.setItem(NKEY, nama); } catch(e){}
+
+  const CEK = { tali_merah: 'hanya pohon bertali merah', akar_keluar: 'dicabut sampai akar', lubang_ditutup: 'lubang ditutup tanah', kayu_dibawa_keluar: 'kayu & akar dibawa keluar kebun' };
+  const checklist = { tali_merah: $('c1').checked, akar_keluar: $('c2').checked, lubang_ditutup: $('c3').checked, kayu_dibawa_keluar: $('c4').checked };
+  const pending = Object.keys(CEK).filter(k => !checklist[k]);
 
   const entry = {
     pelapor: PELAPOR, kategori: KATEGORI,
@@ -199,10 +205,10 @@ $('kirim').onclick = async () => {
     kebun: S.kebun, kebun_primary: S.kebun, kebun_list_str: S.kebun,
     jumlah_pohon: jumlah, pekerja_nama: nama, lokasi: $('lokasi').value.trim(),
     metode: 'cabut', tali: 'merah',
-    checklist: { tali_merah: true, akar_keluar: true, lubang_ditutup: true, kayu_dibawa_keluar: true },
+    checklist, pending, pending_label: pending.map(k => CEK[k]),   // centang opsional sejak 26 Sep 2026; yang kosong = pekerjaan tersisa
     gps: S.gps, photos: [],   // foto dihapus 26 Sep 2026 (permintaan Wakif); dashboard toleran
     status_verifikasi: 'menunggu',
-    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.2', src: 'lapor_cabut_v2'
+    created_at: new Date().toISOString(), schema_version: 'cabut-borongan-1.3', src: 'lapor_cabut_v3'
   };
   const btn = $('kirim'); btn.disabled = true; btn.textContent = 'Mengirim…';
   let ok = false;
@@ -210,8 +216,9 @@ $('kirim').onclick = async () => {
   catch (e) { const a = antrian(); a.push(entry); simpanAntrian(a); }
   btn.disabled = false; btn.textContent = 'Kirim Laporan';
   const d = $('done'); d.style.display = 'block';
-  d.innerHTML = ok ? `✅ <b>Terkirim.</b> ${jumlah} pohon di Kebun ${S.kebun.slice(1)}, ${tg(tgl)}. Terima kasih!`
-                   : `⏳ <b>Tersimpan di HP</b> — sinyal lemah, akan dikirim otomatis saat ada sinyal.`;
+  const sisa = pending.length ? `<br><span style="color:#b45309">⚠️ Tercatat masih ada pekerjaan tersisa: <b>${pending.map(k => CEK[k]).join(', ')}</b>. Selesaikan sebelum dibayar.</span>` : '';
+  d.innerHTML = (ok ? `✅ <b>Terkirim.</b> ${jumlah} pohon di Kebun ${S.kebun.slice(1)}, ${tg(tgl)}. Terima kasih!`
+                    : `⏳ <b>Tersimpan di HP</b> — sinyal lemah, akan dikirim otomatis saat ada sinyal.`) + sisa;
   // kosongkan untuk laporan berikutnya (nama & tanggal dipertahankan)
   J.value = 0; $('lokasi').value = '';
   ['c1','c2','c3','c4'].forEach(i => $(i).checked = false);
