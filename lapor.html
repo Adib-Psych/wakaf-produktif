@@ -1237,7 +1237,41 @@ async function getPending() {
   });
 }
 
-async function markSynced(id) {
+// Canonical submitted content, independent of object key order. Arrays retain order.
+function workerReportContent(value) {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return '[' + value.map(workerReportContent).join(',') + ']';
+  return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + workerReportContent(value[key])).join(',') + '}';
+}
+
+async function prepareQueuedSubmission(id) {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readwrite');
+  const store = tx.objectStore(DB_STORE);
+  let prepared;
+  return new Promise((resolve, reject) => {
+    const req = store.get(id);
+    req.onsuccess = () => {
+      try {
+        const entry = req.result;
+        if (!entry || entry.status !== 'pending' || !entry.data) throw new Error('Laporan pending tidak ditemukan');
+        if (entry.data.id == null || entry.data.id === '') {
+          // Never derive cloud identity from a device-local integer or timestamp.
+          if (typeof crypto.randomUUID !== 'function') throw new Error('ID aman belum tersedia; laporan tetap pending');
+          entry.data.id = 'lap_' + crypto.randomUUID();
+          store.put(entry);
+        }
+        if (typeof entry.data.id !== 'string' || entry.data.id.includes('/')) throw new Error('Identitas laporan tidak valid');
+        prepared = entry;
+      } catch(e) { tx.abort(); reject(e); }
+    };
+    req.onerror = () => reject(req.error);
+    tx.oncomplete = () => resolve(prepared);
+    tx.onabort = tx.onerror = () => reject(tx.error || new Error('Identitas laporan belum tersimpan di HP'));
+  });
+}
+
+async function markSynced(id, submittedData) {
   const db = await openDB();
   const tx = db.transaction(DB_STORE, 'readwrite');
   const store = tx.objectStore(DB_STORE);
@@ -1246,6 +1280,10 @@ async function markSynced(id) {
     getReq.onsuccess = () => {
       const entry = getReq.result;
       if (entry) {
+        if (workerReportContent(entry.data) !== workerReportContent(submittedData)) {
+          reject(new Error('Isi laporan lokal berubah; tetap pending'));
+          return;
+        }
         entry.status = 'synced';
         entry.synced_at = new Date().toISOString();
         const putReq = store.put(entry);
@@ -2220,11 +2258,11 @@ async function drainWorkerQueue() {
     const pending = await getPending();
     for (const item of pending) {
       try {
-        const expectedId = item.data?.id || (item.id != null ? 'lap_local_' + String(item.id) : null);
-        if (typeof expectedId !== 'string' || !expectedId || expectedId.includes('/')) throw new Error('Identitas laporan tidak valid');
-        const ack = await window.firestorePush(item.data, item.id);
+        const prepared = await prepareQueuedSubmission(item.id);
+        const expectedId = prepared.data.id;
+        const ack = await window.firestorePush(prepared.data, item.id);
         if (ack !== expectedId) throw new Error('Server belum mengonfirmasi ID laporan');
-        await markSynced(item.id);
+        await markSynced(item.id, prepared.data);
         result.syncedIds.push(item.id);
       } catch(e) {
         result.failed++;
@@ -2309,14 +2347,17 @@ document.addEventListener('DOMContentLoaded', init);
     window.firestoreDB = db;
 
     window.firestorePush = async (entryData, localId) => {
-      const docId = entryData.id || (localId != null ? 'lap_local_' + String(localId) : null);
+      const docId = entryData.id;
       if (typeof docId !== 'string' || !docId || docId.includes('/')) throw new Error('Identitas laporan tidak valid');
       const docRef = doc(db, COLLECTIONS.laporan, docId);
       await runTransaction(db, async tx => {
         const existing = await tx.get(docRef);
         if (existing.exists()) {
           const old = existing.data();
-          if (old.id !== entryData.id || old.created_at !== entryData.created_at) throw new Error('Konflik identitas laporan');
+          const { synced_at, sync_source, ...submitted } = old;
+          if (workerReportContent(submitted) !== workerReportContent(entryData)) throw new Error('Konflik isi laporan; tetap pending');
+          // Exact submitted content only: uncertain/edited legacy records stay pending.
+          // Never overwrite remote edits to force an acknowledgement.
           return;
         }
         tx.set(docRef, { ...entryData, synced_at: serverTimestamp(), sync_source: 'lapor_pwa_v1' });

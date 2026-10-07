@@ -99,6 +99,26 @@ test('known workers can retain last_active tracking (not worker definitions)', a
   await assertSucceeds(setDoc(doc(db,'workers','ANTO'),{last_active:'synthetic-iso'}));
   await assertFails(deleteDoc(doc(db,'workers','ANTO')));
 });
+test('worker heartbeat cannot replace name token or role (reviewer novel reproduction)', async () => {
+  const original={last_active:'old',nama:'SYNTHETIC ORIGINAL',token:'original',role:'entry'};
+  await env.withSecurityRulesDisabled(ctx=>setDoc(doc(ctx.firestore(),'workers','KUMPUL'),original));
+  await assertFails(setDoc(doc(db,'workers','KUMPUL'),{last_active:'synthetic',nama:'SYNTHETIC REPLACEMENT',token:'replaced',role:'privileged'}));
+  assert.deepEqual((await getDoc(doc(db,'workers','KUMPUL'))).data(),original);
+});
+for (const field of ['nama','name','token','role','id','paid','published']) test(`heartbeat creation rejects ${field}`,async()=>{
+  await assertFails(setDoc(doc(db,'workers','YIT'),{last_active:'synthetic', [field]:'forbidden'}));
+});
+test('existing heartbeat merge preserves all definitions; replacement removing them is denied',async()=>{
+  const original={last_active:'old',nama:'Synthetic',token:'preserve',role:'entry',legacy:42};
+  await env.withSecurityRulesDisabled(ctx=>setDoc(doc(ctx.firestore(),'workers','KUMPUL'),original));
+  await assertSucceeds(setDoc(doc(db,'workers','KUMPUL'),{last_active:'new'},{merge:true}));
+  assert.deepEqual((await getDoc(doc(db,'workers','KUMPUL'))).data(),{...original,last_active:'new'});
+  await assertFails(setDoc(doc(db,'workers','KUMPUL'),{last_active:'replace'}));
+});
+test('unknown token and invalid heartbeat timestamp are denied',async()=>{
+  await assertFails(setDoc(doc(db,'workers','UNKNOWN'),{last_active:'test'}));
+  for (const value of [null,42]) await assertFails(setDoc(doc(db,'workers','YIT'),{last_active:value}));
+});
 test('append-only audit create remains compatible; edits/deletes denied', async () => {
   await assertSucceeds(setDoc(doc(db,'audit_log','new'),{action:'synthetic',timestamp:'synthetic'}));
   await assertFails(updateDoc(doc(db,'audit_log','existing'),{action:'altered'}));

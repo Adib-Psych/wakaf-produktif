@@ -93,8 +93,12 @@ service cloud.firestore {
     }
     match /workers/{id} {
       allow read: if true;
-      // Retain last_active compatibility only; worker defs/tokens remain frozen.
-      allow create, update: if isFieldWorker(id) && request.resource.data.last_active is string;
+      // Heartbeat-only compatibility, NOT authentication. Actual dashboard worker
+      // registration sends definitions + null last_active and stays deliberately denied.
+      allow create: if isFieldWorker(id) && request.resource.data.last_active is string
+        && request.resource.data.keys().hasOnly(['last_active']);
+      allow update: if isFieldWorker(id) && request.resource.data.last_active is string
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['last_active']);
       allow delete: if false;
     }
     match /audit_log/{id} {

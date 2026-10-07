@@ -24,6 +24,7 @@ function laporHarness(options = {}) {
   Object.assign(window, options.window || {});
   const context = vm.createContext({ window, navigator: { onLine: true }, console: silent,
     getPending: async () => clone(items.filter(e => e.status === 'pending')),
+    prepareQueuedSubmission: async id => clone(items.find(e => e.id === id)),
     markSynced: async id => { marked.push(id); items.find(e => e.id === id).status = 'synced'; },
     refreshQueueBadge: async () => {}, renderQueueList: async () => {},
     showToast: (message, type) => toasts.push({ message, type }) });
@@ -40,6 +41,7 @@ function pushHarness(setDoc = async () => {}) {
     serverTimestamp: () => 'synthetic-time' });
   const code = lapor.match(/window\.firestorePush = async \(entryData, localId\) => \{[\s\S]*?\n    \};/);
   assert.ok(code, 'extract actual SDK push function');
+  vm.runInContext(fn(lapor, 'workerReportContent'), context);
   vm.runInContext(code[0], context);
   return context.window.firestorePush;
 }
@@ -116,9 +118,10 @@ test('lapor: lost ACK reuses same persisted document ID', async () => {
   h.window.firestorePush = pushHarness(async ref => { ids.add(ref.id); if (lost) { lost = false; throw Error('synthetic lost ACK'); } });
   await h.context.maybeAutoSync(); assert.equal(h.items[0].status, 'pending'); await h.context.maybeAutoSync(); assert.equal(h.items[0].status, 'synced'); assert.deepEqual([...ids], ['lap_synthetic_1']);
 });
-test('lapor: legacy local-only ID is namespaced string', async () => {
-  const refs = [], push = pushHarness(async ref => refs.push(ref)); const id = await push({}, 42);
-  assert.equal(typeof refs[0].id, 'string'); assert.equal(id, refs[0].id); assert.notEqual(id, '42');
+test('lapor: SDK rejects legacy local-only identity until queue migration commits', async () => {
+  const refs = [], push = pushHarness(async ref => refs.push(ref));
+  await assert.rejects(push({},42), /Identitas/);
+  assert.equal(refs.length,0);
 });
 test('lapor: push rejects entry without stable identity', async () => {
   const push = pushHarness(); await assert.rejects(() => push({}, undefined));
@@ -205,6 +208,7 @@ test('lapor: synced acknowledgement waits for IndexedDB commit', async () => {
   const getReq = {}, putReq = {}, record = { id: 1, status: 'pending' };
   const tx = { objectStore: () => ({ get: () => getReq, put: () => putReq }) };
   const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic' });
+  vm.runInContext(fn(lapor, 'workerReportContent'), context);
   vm.runInContext(fn(lapor, 'markSynced'), context); let settled = false;
   const result = context.markSynced(1).then(() => { settled = true; });
   await new Promise(r => setImmediate(r)); getReq.result = record; getReq.onsuccess(); putReq.onsuccess();
@@ -212,7 +216,7 @@ test('lapor: synced acknowledgement waits for IndexedDB commit', async () => {
 });
 test('lapor: aborted synced transaction does not acknowledge delivery', async () => {
   const getReq = {}, putReq = {}, tx = { error: Error('synthetic sync abort'), objectStore: () => ({ get: () => getReq, put: () => putReq }) };
-  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic' }); vm.runInContext(fn(lapor, 'markSynced'), context);
+  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic' }); vm.runInContext(fn(lapor, 'workerReportContent'), context); vm.runInContext(fn(lapor, 'markSynced'), context);
   const result = context.markSynced(1); await new Promise(r => setImmediate(r)); getReq.result = { id: 1 }; getReq.onsuccess(); putReq.onsuccess();
   if (tx.onabort) tx.onabort(); await assert.rejects(result, /synthetic sync abort/);
 });
