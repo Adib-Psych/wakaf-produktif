@@ -1,0 +1,122 @@
+// NOT DEPLOYED — bounded entry-safe containment candidate; no migration/auth rollout.
+// Legacy READ compatibility is intentional, NOT privacy protection: public get/list
+// still exposes reports, financial state, invoices, worker definitions and tokens.
+// Worker names/tokens are an UNAUTHENTICATED allowlist, not proof of identity.
+// Anyone knowing a veteran token, WAKIF/ADIB, or an existing mirror token can
+// impersonate it and create reports. BORONGAN is public cabut-only. No anti-spam,
+// physical-work verification, rate limiting, or reliable client-time provenance.
+// Freeze token mirror mutations: preserve existing URLs/tokens, never rotate here.
+// Singleton writes (including missing-document seed, invoices signing/deletion,
+// publication, pay and dashboard edits) are frozen except the exact cabut append.
+// Admin SDK/Console bypass rules; this candidate does NOT constrain privileged writes.
+// Cabut requires an existing singleton with list data. Missing/malformed/full logs
+// fail closed and require separately reviewed operator intervention, not client seed.
+// Rules validate resultant documents, not the SDK primitive: an exact concat is
+// indistinguishable from arrayUnion and safe; stale replacements are rejected.
+// Tests: cd recovery && npm install --ignore-scripts --package-lock=false --no-audit --no-fund
+//        npm run test:rules:red  (expected nonzero against unchanged legacy rules)
+//        npm run test:rules      (candidate, demo-entry-safe loopback emulator only)
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isFieldWorker(tok) {
+      return tok is string && (tok in
+        ['KUMPUL','YIT','ANTO','YASIR','KAMTO','HARNI','MAKMIS','CHRISTO','NARDI']
+        || exists(/databases/$(database)/documents/worker_tokens/$(tok)));
+    }
+    function baselineReport(r) {
+      return r.pelapor is string && r.kategori is string
+        && ((r.pelapor != 'BORONGAN' && (isFieldWorker(r.pelapor) || r.pelapor in ['WAKIF','ADIB']))
+          || (r.pelapor == 'BORONGAN' && r.kategori == 'cabut_borongan'))
+        && r.tanggal is string && r.created_at is string && r.schema_version is string;
+    }
+    function validCabutReport(r, id) {
+      return baselineReport(r)
+        && r.keys().hasOnly(['id','pelapor','kategori','tanggal','tgl','kebun','kebun_primary',
+          'kebun_list_str','jumlah_pohon','pekerja_nama','lokasi','metode','tali','checklist',
+          'pending','pending_label','gps','photos','status_verifikasi','created_at',
+          'schema_version','src','cabut_id'])
+        && r.id == id && r.cabut_id == 'cabut_' + id
+        && r.pelapor == 'BORONGAN' && r.kategori == 'cabut_borongan'
+        && r.status_verifikasi == 'masuk_log_belum_dicek'
+        && r.kebun in ['K1','K2','K3'] && r.tgl == r.tanggal
+        && r.jumlah_pohon is int && r.jumlah_pohon > 0
+        && r.pekerja_nama is string && r.lokasi is string
+        && r.metode == 'cabut' && r.tali == 'merah'
+        && r.pending is list && r.pending.size() <= 4
+        && r.pending.hasOnly(['tali_merah','akar_keluar','lubang_ditutup','kayu_dibawa_keluar']);
+    }
+    function validLog(l, r) {
+      return l is map
+        && l.keys().hasAll(['id','kebun','jumlah','tgl','metode','tali','sakit','kondisi',
+          'catatan','src_laporan','dicek','pending','created_at'])
+        && l.keys().hasOnly(['id','kebun','jumlah','tgl','metode','tali','sakit','kondisi',
+          'catatan','src_laporan','dicek','pending','created_at'])
+        && l.id == 'cabut_' + l.src_laporan && l.id == r.cabut_id
+        && l.kebun == r.kebun && l.jumlah == r.jumlah_pohon && l.tgl == r.tgl
+        && l.metode == 'cabut' && l.tali == 'merah' && l.sakit == false
+        && l.kondisi == 'Tali Merah · Dicabut' && l.catatan is string
+        && l.dicek == false && l.pending == r.pending && l.created_at == r.created_at;
+    }
+    function associatedNewReport(l) {
+      let reportPath = /databases/$(database)/documents/laporan/$(l.src_laporan);
+      let r = getAfter(reportPath).data;
+      return l.src_laporan is string && l.src_laporan.size() > 0
+        && !exists(reportPath) && validCabutReport(r, l.src_laporan) && validLog(l, r);
+    }
+    function cabutAppend(old, next) {
+      // Exact list equality preserves order, duplicates AND all historical row values.
+      // hasAll/toSet/removeAll would not prove this, so they are not used.
+      let l = next.data[old.data.size()];
+      return old.data is list && next.data is list
+        && next.data.size() == old.data.size() + 1
+        && next.data == old.data.concat([l])
+        && next.diff(old).affectedKeys().hasOnly(['data','updated_at','updated_by','source'])
+        && next.updated_at == request.time
+        && next.updated_by == 'lapor_cabut'
+        && next.source == 'lapor-cabut.html arrayUnion'
+        && associatedNewReport(l);
+    }
+    function markedReportHasAtomicLog(id) {
+      let p = /databases/$(database)/documents/sop_status/pohon_cabut;
+      let old = get(p).data;
+      let next = getAfter(p).data;
+      return exists(p) && cabutAppend(old, next)
+        && next.data[old.data.size()].src_laporan == id;
+    }
+    match /laporan/{id} {
+      allow read: if true;
+      allow create: if baselineReport(request.resource.data)
+        && request.resource.size() < 900000
+        && (!('cabut_id' in request.resource.data) || markedReportHasAtomicLog(id));
+      allow update, delete: if false;
+    }
+    match /workers/{id} {
+      allow read: if true;
+      // Retain last_active compatibility only; worker defs/tokens remain frozen.
+      allow create, update: if isFieldWorker(id) && request.resource.data.last_active is string;
+      allow delete: if false;
+    }
+    match /audit_log/{id} {
+      allow read: if false;
+      allow create: if request.resource.data.action is string
+        && request.resource.data.timestamp is string && request.resource.size() < 100000;
+      allow update, delete: if false;
+    }
+    match /sop_status/{id} {
+      allow read: if true;
+      allow create, delete: if false;
+      allow update: if id == 'pohon_cabut' && request.resource.size() < 1000000
+        && cabutAppend(resource.data, request.resource.data);
+    }
+    // Explicit read-only legacy collections. Unknown panen*/opt*/sop*/distribusi*
+    // collections also have no write grant (default deny); do not broaden reads.
+    match /{collection}/{id} {
+      allow read: if collection in ['upah','cashbook','opt_observations','panen_data',
+        'panen_lots','panen_sampling','distribusi_pic','sop_master','worker_defs_custom',
+        'milestones','invoices','worker_tokens'];
+      allow write: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
