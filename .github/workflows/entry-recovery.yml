@@ -25,4 +25,10 @@ jobs:
         run: npm install --ignore-scripts --package-lock=false --no-audit --no-fund
       - name: Verify containment candidate (demo project only)
         working-directory: recovery
+        env:
+          TMPDIR: ${{ runner.temp }}
         run: npm run test:rules
+      - name: Isolated browser smoke (production network blocked)
+        run: |
+          recovery/node_modules/.bin/playwright install --with-deps chromium
+          CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-smoke.cjs
