@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monitor v2 — Wakaf Produktif Kebun Kopi Ngantang</title>
+<script src="recovery/entry-recovery.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -5135,6 +5136,7 @@ function harvestDetailForm() {
 }
 
 function submitForm() {
+  if (CURRENT_EDIT_LAPORAN_ID) { alert('Edit dinonaktifkan selama pemulihan.'); return; }
   const tgl = document.getElementById('f-tgl').value;
   const kategori = document.getElementById('f-kategori').value;
   const pohon = document.getElementById('f-pohon').value;
@@ -5248,112 +5250,20 @@ function submitForm() {
     schema_version: '3.5',
     src: 'wakif_form'              // distinguish dari lapor_pwa (worker PWA)
   };
-  STATE.laporan.unshift(newEntry);
-  localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
-
-  // ⭐ Pattern #10 Firestore push (locked 23 Mei 2026) — fire-and-forget, no block UI
-  if (typeof window.syncLaporanEntryToFirestore === 'function') {
-    window.syncLaporanEntryToFirestore(newEntry).catch(e => {
-      console.warn('[submitForm] Firestore sync failed (local saved):', e);
-    });
-  }
-
-  // ===== AUTO-LINK ke UPAH_ITEMS (Yit/Kumpul saja, ANTO = sweat equity) =====
-  let upahMsg = '';
-  if (TARIF_PEKERJA[STATE.pelapor] && STATE.durasi && typeof UPAH_ITEMS !== 'undefined') {
-    const tarif = TARIF_PEKERJA[STATE.pelapor];
-    let satuan = STATE.durasi;
-    let satuanLbl = '';
-    let model = 'harian';
-    let tarifVal = 0;
-    let qty = 1;
-    // Multi-kebun aware aktivitas label (locked 26 Mei 2026)
-    const kebunLabel = STATE.bidang_list.length > 1
-      ? `Kebun ${STATE.bidang_list.join('+')}`
-      : `Kebun ${STATE.bidang}`;
-    let aktivitasLbl = `${kategori.replace(/_/g,' ')} di ${kebunLabel}` + (pohon ? ` (${pohon} phn)` : '');
-
-    if (STATE.durasi === 'setengah_hari') {
-      satuanLbl = '½ hari';
-      tarifVal = tarif.setengah_hari;
-    } else if (STATE.durasi === 'full_day') {
-      satuanLbl = 'full day';
-      tarifVal = tarif.full_day;
-    } else if (STATE.durasi === 'panjat_per_pohon') {
-      // Track 2 (16 Mei): "panjat_per_pohon" data-val tetap utk backward compat localStorage,
-      // tapi labeling sekarang generic "Borongan" — Wakif tentukan satuan & tarif manual
-      // via tab Upah Pekerja (default fallback ke panjat durian Rp 20K/pohon).
-      satuan = 'borongan_generic';
-      satuanLbl = 'borongan (set tarif manual)';
-      tarifVal = BORONGAN_PRESETS.panjat_durian || 20000;
-      model = 'borongan';
-      qty = +pohon || 1;
-    }
-
-    if (tarifVal > 0) {
-      const newId = (UPAH_ITEMS.length > 0 ? Math.max(...UPAH_ITEMS.map(it => +it.id || 0)) : 0) + 1;
-      const upahEntry = {
-        id: newId,
-        tgl,
-        pelapor: STATE.pelapor,
-        aktivitas: aktivitasLbl,
-        model,
-        satuan,
-        satuan_lbl: satuanLbl,
-        qty,
-        tarif: tarifVal,
-        status: 'belum',
-        src: 'auto_form'  // tag: created via Form Input
-      };
-      UPAH_ITEMS.push(upahEntry);
-      saveUpah();
-      const total = qty * tarifVal;
-      upahMsg = `\n\n💰 Auto-create entry upah: ${NAMA_PEKERJA[STATE.pelapor]} · ${satuanLbl} · ${fmtRpShort(total)} (status: belum dibayar)\n→ Cek tab Upah Pekerja untuk konfirmasi pembayaran`;
-      // Refresh upah views kalau function ada
-      if (typeof renderUpahTable === 'function') renderUpahTable();
-      if (typeof renderUpahSummary === 'function') renderUpahSummary();
-    }
-  } else if (STATE.pelapor === 'ANTO') {
-    upahMsg = `\n\n📝 Mas Anto = sweat equity (pro-bono per Notulen 1-2 Mei) — tidak masuk timeline upah harian. Kontribusi tetap tercatat untuk bagi hasil pasca-BEP.`;
-  }
-
-  // 26 Mei 2026: Message updated — entry SUDAH auto-sync ke Firestore via syncLaporanEntryToFirestore
-  // (fire-and-forget di line 4363). Cross-browser live <2 detik. Pesan sebelumnya "tersimpan ke localStorage"
-  // misleading karena cuma reflect step 1 dari 2-step persistence.
-  let alertSummary = '✅ Laporan tersimpan + auto-sync ke Firestore (cross-browser live <2 detik)';
-  if (climateAlerts.length > 0) {
-    alertSummary += `\n\n⚡ ${climateAlerts.length} climate alert(s) terdeteksi:\n` +
-      climateAlerts.map((a,i) => `${i+1}. ${a.msg}`).join('\n');
-    alertSummary += '\n\nStatus compliance: ' + (hasHighAlert ? 'PARTIAL (deviation karena climate trigger)' : 'COMPLIANT');
-  }
-  // ⭐ 22 Jul 2026 v2 (req Wakif — INLINE, bukan popup): entry TAMBAHAN dari dropdown "Tambah Aktivitas Lain".
-  // Tiap extra = laporan entry PENUH (kategori beda, tgl/pekerja/kebun/durasi sama) → terbaca normal oleh
-  // SOP compliance, milestone auto-suggest, Log Harian. Upah TIDAK dobel: blok auto-link upah di atas
-  // jalan 1× per submit (bukan per entry) — 1 upah/hari/pekerja (model harian).
-  const _extras = (typeof collectExtraKategori === 'function') ? collectExtraKategori(kategori) : [];
-  _extras.forEach(katX => {
-    const extraEntry = {
-      ...newEntry,
-      id: 'lap_' + tgl.replace(/-/g,'') + '_' + Math.random().toString(36).substr(2,5),
-      kategori: katX,
-      detail: (catatan ? catatan + ' · ' : '') + '(multi-aktivitas, bersama ' + kategori + ')',
-      detail_form: { _kategoriTitle: 'Multi-aktivitas', _bersama: kategori },
-      created_at: new Date().toISOString(),
-      src: 'wakif_form_multi'
-    };
-    STATE.laporan.unshift(extraEntry);
-    if (typeof window.syncLaporanEntryToFirestore === 'function') {
-      window.syncLaporanEntryToFirestore(extraEntry).catch(e => console.warn('[multi-akt] sync fail:', e));
-    }
-  });
-  if (_extras.length) {
-    localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
-    alertSummary += '\n\n➕ ' + _extras.length + ' aktivitas tambahan ikut tercatat: ' + _extras.join(', ') + ' (upah harian tetap 1×).';
-  }
-  alertSummary += upahMsg;
-  alert(alertSummary);
-  resetForm();
-  renderDashboard(); renderLog();
+  const recoveryExtras = (typeof collectExtraKategori === 'function') ? collectExtraKategori(kategori) : [];
+  const recoveryEntries = [newEntry, ...recoveryExtras.map(kat => ({ ...newEntry,
+    id: 'lap_' + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '_' + Math.random().toString(36).slice(2)),
+    kategori: kat, src: 'wakif_form_multi' }))];
+  try { window.entryRecovery.enqueue(recoveryEntries); }
+  catch (e) { alert('Antrian gagal disimpan; form tetap tersedia. ' + e.message); return; }
+  STATE.laporan.unshift(...recoveryEntries);
+  try { localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan)); } catch(e) { console.warn(e); }
+  alert('Laporan disimpan di antrian browser ini, belum dikonfirmasi cloud. Upah/bayar tidak dibuat. Jangan hapus data browser.');
+  window.entryRecovery.drain().then(ids => {
+    if (recoveryEntries.every(e => ids.includes(e.id)) && typeof showToast === 'function') showToast('Laporan dikonfirmasi cloud.', 'success');
+  }).catch(console.warn);
+  resetForm(); renderDashboard(); renderLog();
+  return;
 }
 
 // ⭐ 22 Jul 2026 — MULTI-AKTIVITAS INLINE (menggantikan popup chain-add yang ribet utk entry tunggal)
@@ -5522,7 +5432,7 @@ function rebuildNamaPekerja() {
 const UPAH_SCHEMA_VERSION = '3.0';
 const storedVer = localStorage.getItem('wkkn_v2_upah_ver');
 if (storedVer !== UPAH_SCHEMA_VERSION) {
-  localStorage.removeItem('wkkn_v2_upah');
+  console.warn('[Recovery] Upah cache preserved; migration disabled.');
   localStorage.setItem('wkkn_v2_upah_ver', UPAH_SCHEMA_VERSION);
 }
 let UPAH_ITEMS = JSON.parse(localStorage.getItem('wkkn_v2_upah') || '[]');
@@ -11878,7 +11788,7 @@ const msStoredVer = localStorage.getItem('wkkn_v2_ms_ver');
 const msIsAdditiveUpgrade = msStoredVer && MILESTONE_ADDITIVE_VERSIONS.includes(msStoredVer);
 if (msStoredVer !== MILESTONE_SCHEMA_VERSION && !msIsAdditiveUpgrade) {
   // Breaking change → destructive reset
-  localStorage.removeItem('wkkn_v2_milestones');
+  console.warn('[Recovery] Milestones cache preserved; migration disabled.');
 }
 if (msStoredVer !== MILESTONE_SCHEMA_VERSION) {
   localStorage.setItem('wkkn_v2_ms_ver', MILESTONE_SCHEMA_VERSION);
@@ -13592,7 +13502,7 @@ if (sopStoredVer !== SOP_STATUS_VERSION) {
   const isAdditiveUpgrade = sopStoredVer && SOP_STATUS_ADDITIVE_VERSIONS.includes(sopStoredVer);
   if (!isAdditiveUpgrade) {
     // Genuinely breaking — clear LS
-    localStorage.removeItem('wkkn_sop_status_v1');
+    console.warn('[Recovery] SOP cache preserved; migration disabled.');
     console.log(`[SOP_STATUS] Schema reset: ${sopStoredVer || 'none'} → ${SOP_STATUS_VERSION} (breaking)`);
   } else {
     console.log(`[SOP_STATUS] Schema upgrade additive: ${sopStoredVer} → ${SOP_STATUS_VERSION} (LS preserved)`);
@@ -15879,10 +15789,8 @@ let CURRENT_CYCLE = '2026';
 // ---------- CASHBOOK STATE (production: empty starter) ----------
 const CASHBOOK_SCHEMA_VERSION = '1.1';
 const cbStoredVer = localStorage.getItem('wkkn_v2_cashbook_ver');
-if (cbStoredVer !== CASHBOOK_SCHEMA_VERSION) {
-  localStorage.removeItem('wkkn_v2_cashbook');
-  localStorage.setItem('wkkn_v2_cashbook_ver', CASHBOOK_SCHEMA_VERSION);
-}
+// Recovery: schema changes never erase the last browser copy.
+// Cloud remains authoritative; migration requires separately reconciled approval.
 let CASHBOOK = JSON.parse(localStorage.getItem('wkkn_v2_cashbook') || '[]');
 // PRODUCTION: empty default — diisi via Form Input + Tambah Transaksi di tab Laporan Keuangan
 // ⭐ 6 Juni 2026: Debounce Firestore push (mirror saveUpah pattern, prevent storm dari batch ops)
@@ -15932,7 +15840,9 @@ const PANEN_2025_SEED_IDS = [
 ];
 const storedBackfillVer = localStorage.getItem('wkkn_v2_panen2025_backfill_ver');
 
-if (storedBackfillVer !== PANEN_2025_BACKFILL_VERSION) {
+// Retained for historical review only; never invoked at startup or allowed to write.
+function reviewOnlyPanen2025Migration() {
+  throw new Error('Migrasi keuangan dinonaktifkan selama pemulihan; perlu rekonsiliasi terpisah.');
   // Cleanup: remove old v1/v2/v3 entries to prevent duplication
   CASHBOOK = CASHBOOK.filter(t => !PANEN_2025_SEED_IDS.includes(t.id));
 
@@ -19880,7 +19790,7 @@ function loadOptObs() {
     const v = localStorage.getItem('wkkn_v2_opt_obs_version');
     if (v !== OPT_OBS_SCHEMA_VERSION) {
       // schema bump → clear
-      localStorage.removeItem('wkkn_v2_opt_obs');
+      console.warn('[Recovery] OPT cache preserved; migration disabled.');
       localStorage.setItem('wkkn_v2_opt_obs_version', OPT_OBS_SCHEMA_VERSION);
       OPT_OBSERVATIONS = [];
       return;
@@ -20365,13 +20275,31 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 <!-- Firebase Firestore Listener (Phase 1B) — Real-time sync dari Worker PWA submissions -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc, getDoc, setDoc, serverTimestamp, where, updateDoc }
+  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc as sdkDeleteDoc, getDoc, setDoc as sdkSetDoc, serverTimestamp, where, updateDoc as sdkUpdateDoc, runTransaction }
     from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
   try {
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);
+    // Fail closed for every existing dashboard write door, including startup hooks.
+    function blockedWrite() { throw new Error('Mode pemulihan: perubahan data bersama, bayar, hapus dan publikasi dinonaktifkan.'); }
+    function updateDoc() { return Promise.reject(new Error('Mode pemulihan: edit dinonaktifkan.')); }
+    function deleteDoc() { return Promise.reject(new Error('Mode pemulihan: hapus dinonaktifkan.')); }
+    async function setDoc(ref, payload) {
+      if (!ref.path.startsWith('laporan/')) return blockedWrite();
+      if (!payload.id || !payload.created_at) throw new Error('Identitas laporan wajib');
+      await runTransaction(db, async tx => {
+        const existing = await tx.get(ref);
+        if (existing.exists()) {
+          const old = existing.data();
+          if (old.id !== payload.id || old.created_at !== payload.created_at) throw new Error('Konflik identitas laporan');
+          return; // Lost ACK retry must never overwrite later dashboard edits.
+        }
+        tx.set(ref, payload);
+      });
+      return payload.id;
+    }
 
     // ⭐ Publish SOP Compliance YTD → Firestore sop_status/compliance (dibaca Living Lab kartu Live Apr–Kini) — locked 5 Jul 2026
     // NB (6 Jul): reuse collection `sop_status` yg rules-nya SUDAH mengizinkan write (butuh field `version:string`),
@@ -21373,14 +21301,16 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         payload.last_synced_at = new Date().toISOString();
 
         await setDoc(doc(db, 'laporan', payload.id), payload);
-        console.log(`[Laporan] ✓ Pushed entry ${payload.id} to Firestore (${payload.tanggal} · ${payload.pelapor} · ${payload.kategori})`);
-        return true;
+        console.log(`[Laporan] Confirmed entry ${payload.id}`);
+        return payload.id;
       } catch (e) {
         console.error('[Laporan] Firestore push failed:', e);
         if (typeof showToast === 'function') showToast('⚠ Sync laporan ke cloud gagal — tetap tersimpan lokal', 'warning');
         return false;
       }
     };
+
+    if (window.entryRecovery) window.entryRecovery.drain().catch(console.warn);
 
     // Note: deleteLaporan() sudah pakai window.firestoreDelete() existing.
     // Yang perlu adjust: isFromFirestore check di deleteLaporan harus include src='wakif_form'.

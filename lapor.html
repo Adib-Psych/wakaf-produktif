@@ -1210,8 +1210,11 @@ async function queueSubmission(data) {
   };
   return new Promise((resolve, reject) => {
     const req = tx.objectStore(DB_STORE).add(entry);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror  = () => reject(req.error);
+    let localId;
+    req.onsuccess = () => { localId = req.result; };
+    req.onerror = () => reject(req.error);
+    tx.oncomplete = () => resolve(localId);
+    tx.onabort = tx.onerror = () => reject(tx.error || new Error('Gagal menyimpan antrian di HP'));
   });
 }
 
@@ -1234,7 +1237,41 @@ async function getPending() {
   });
 }
 
-async function markSynced(id) {
+// Canonical submitted content, independent of object key order. Arrays retain order.
+function workerReportContent(value) {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return '[' + value.map(workerReportContent).join(',') + ']';
+  return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + workerReportContent(value[key])).join(',') + '}';
+}
+
+async function prepareQueuedSubmission(id) {
+  const db = await openDB();
+  const tx = db.transaction(DB_STORE, 'readwrite');
+  const store = tx.objectStore(DB_STORE);
+  let prepared;
+  return new Promise((resolve, reject) => {
+    const req = store.get(id);
+    req.onsuccess = () => {
+      try {
+        const entry = req.result;
+        if (!entry || entry.status !== 'pending' || !entry.data) throw new Error('Laporan pending tidak ditemukan');
+        if (entry.data.id == null || entry.data.id === '') {
+          // Never derive cloud identity from a device-local integer or timestamp.
+          if (typeof crypto.randomUUID !== 'function') throw new Error('ID aman belum tersedia; laporan tetap pending');
+          entry.data.id = 'lap_' + crypto.randomUUID();
+          store.put(entry);
+        }
+        if (typeof entry.data.id !== 'string' || entry.data.id.includes('/')) throw new Error('Identitas laporan tidak valid');
+        prepared = entry;
+      } catch(e) { tx.abort(); reject(e); }
+    };
+    req.onerror = () => reject(req.error);
+    tx.oncomplete = () => resolve(prepared);
+    tx.onabort = tx.onerror = () => reject(tx.error || new Error('Identitas laporan belum tersimpan di HP'));
+  });
+}
+
+async function markSynced(id, submittedData) {
   const db = await openDB();
   const tx = db.transaction(DB_STORE, 'readwrite');
   const store = tx.objectStore(DB_STORE);
@@ -1243,14 +1280,20 @@ async function markSynced(id) {
     getReq.onsuccess = () => {
       const entry = getReq.result;
       if (entry) {
+        if (workerReportContent(entry.data) !== workerReportContent(submittedData)) {
+          reject(new Error('Isi laporan lokal berubah; tetap pending'));
+          return;
+        }
         entry.status = 'synced';
         entry.synced_at = new Date().toISOString();
         const putReq = store.put(entry);
-        putReq.onsuccess = () => resolve();
-        putReq.onerror  = () => reject(putReq.error);
-      } else resolve();
+        putReq.onsuccess = () => {};
+        putReq.onerror = () => reject(putReq.error);
+      } else reject(new Error('Laporan lokal tidak ditemukan'));
     };
     getReq.onerror = () => reject(getReq.error);
+    tx.oncomplete = () => resolve();
+    tx.onabort = tx.onerror = () => reject(tx.error || new Error('Status laporan belum tersimpan di HP'));
   });
 }
 
@@ -2085,29 +2128,14 @@ async function submitForm() {
     await refreshQueueBadge();
 
     let directSyncOk = false;
-    if (navigator.onLine && window.firestoreDB && typeof window.firestorePush === 'function') {
-      try {
-        submitBtn.innerHTML = '🔄 Mengirim ke dashboard...';
-        await window.firestorePush(entry, localId);
-        await markSynced(localId);
-        await refreshQueueBadge();
-        directSyncOk = true;
-        console.log('[Submit] ✓ Direct Firestore push success — entry should appear di dashboard <5s');
-      } catch (pushErr) {
-        console.warn('[Submit] Firestore direct push failed, fallback to queue:', pushErr);
-        showToast('⚠️ Sinyal lemah — laporan tersimpan, sync nanti otomatis', 'warning');
-      }
+    try {
+      submitBtn.innerHTML = '🔄 Mengirim ke dashboard...';
+      const delivery = await drainWorkerQueue();
+      directSyncOk = delivery.syncedIds.includes(localId);
+    } catch (pushErr) {
+      console.warn('[Submit] laporan tetap di antrian:', pushErr);
     }
-
-    // Success modal — beda message based on sync status
-    const successModal = document.getElementById('successModal');
-    if (successModal) {
-      const titleEl = successModal.querySelector('.success-title, h2, h3, [data-success-title]');
-      const msgEl = successModal.querySelector('.success-msg, p, [data-success-msg]');
-      if (directSyncOk && titleEl) titleEl.textContent = '✅ Terkirim ke Dashboard!';
-      if (directSyncOk && msgEl) msgEl.textContent = 'Laporan langsung masuk ke monitor Adib. Barakallahu fiik.';
-      successModal.showModal();
-    }
+    showDeliveryAcknowledgement(directSyncOk);
 
     // Reset form (22 Jul: popup chain-add DIHAPUS per Wakif — ribet utk entry tunggal; PWA tetap simple 1 entry)
     resetForm();
@@ -2205,45 +2233,63 @@ async function renderQueueList() {
   }).join('');
 }
 
-async function manualSync() {
-  if (!navigator.onLine) {
-    showToast('Tidak ada sinyal — coba lagi nanti', 'error');
+function showDeliveryAcknowledgement(confirmed) {
+  const successModal = document.getElementById('successModal');
+  if (!successModal) {
+    showToast(confirmed ? '✅ Laporan diterima server' : '⏳ Tersimpan di HP — belum dikonfirmasi server', confirmed ? 'success' : 'warning');
     return;
   }
-  const pending = await getPending();
-  if (!pending.length) {
-    showToast('Tidak ada pending laporan', '');
-    return;
-  }
-  // Phase 1B: real Firestore push
-  if (window.firestoreDB) {
-    let success = 0, failed = 0;
+  const titleEl = successModal.querySelector('.success-title, h2, h3, [data-success-title]');
+  const msgEl = successModal.querySelector('.success-msg, p, [data-success-msg]');
+  if (titleEl) titleEl.textContent = confirmed ? '✅ Terkirim ke Dashboard!' : '⏳ Tersimpan di HP';
+  if (msgEl) msgEl.textContent = confirmed ? 'Server sudah menerima laporan. Barakallahu fiik.' : 'Belum dikonfirmasi server. Laporan tetap pending dan akan dicoba lagi saat pengiriman tersedia.';
+  successModal.showModal();
+}
+
+let workerDrainPromise = null;
+async function drainWorkerQueue() {
+  if (workerDrainPromise) return workerDrainPromise;
+  workerDrainPromise = (async () => {
+    const result = { syncedIds: [], failed: 0, unavailable: false };
+    if (!navigator.onLine || !window.firestoreDB || typeof window.firestorePush !== 'function') {
+      result.unavailable = true;
+      return result;
+    }
+    const pending = await getPending();
     for (const item of pending) {
       try {
-        await window.firestorePush(item.data, item.id);
-        await markSynced(item.id);
-        success++;
-      } catch (e) {
-        console.error('[Firestore push fail]', e);
-        failed++;
+        const prepared = await prepareQueuedSubmission(item.id);
+        const expectedId = prepared.data.id;
+        const ack = await window.firestorePush(prepared.data, item.id);
+        if (ack !== expectedId) throw new Error('Server belum mengonfirmasi ID laporan');
+        await markSynced(item.id, prepared.data);
+        result.syncedIds.push(item.id);
+      } catch(e) {
+        result.failed++;
+        console.warn('[WorkerQueue] laporan tetap pending:', e);
       }
     }
     await refreshQueueBadge();
     await renderQueueList();
-    if (failed === 0) {
-      showToast(`✅ ${success} laporan terkirim ke dashboard Adib`, 'success');
+    return result;
+  })();
+  try { return await workerDrainPromise; }
+  finally { workerDrainPromise = null; }
+}
+
+async function manualSync() {
+  try {
+    const result = await drainWorkerQueue();
+    if (result.unavailable) {
+      showToast('Pengiriman belum tersedia — laporan tetap pending di HP', 'warning');
+    } else if (result.failed) {
+      showToast(`${result.syncedIds.length} dikonfirmasi, ${result.failed} masih pending — coba lagi`, 'warning');
+    } else if (result.syncedIds.length) {
+      showToast(`✅ ${result.syncedIds.length} laporan dikonfirmasi server`, 'success');
     } else {
-      showToast(`${success} terkirim, ${failed} gagal — coba lagi`, failed > 0 ? 'error' : 'success');
+      showToast('Tidak ada pending laporan', '');
     }
-    return;
-  }
-  // Fallback Phase 1A simulation kalau Firebase tidak available
-  for (const item of pending) {
-    await markSynced(item.id);
-  }
-  await refreshQueueBadge();
-  await renderQueueList();
-  showToast(`${pending.length} laporan ditandai terkirim (offline mode)`, 'success');
+  } catch(e) { showToast('Antrian belum bisa dikirim — jangan hapus data di HP', 'error'); }
 }
 
 async function exportToWA() {
@@ -2268,21 +2314,8 @@ async function exportToWA() {
 }
 
 async function maybeAutoSync() {
-  if (!navigator.onLine || !window.firestoreDB) return;
-  const pending = await getPending();
-  if (!pending.length) return;
-  console.log('[AutoSync] Online + Firebase ready — pushing', pending.length, 'pending entries');
-  for (const item of pending) {
-    try {
-      await window.firestorePush(item.data, item.id);
-      await markSynced(item.id);
-    } catch (e) {
-      console.error('[AutoSync fail]', e);
-      break; // Stop on first failure, will retry next online event
-    }
-  }
-  await refreshQueueBadge();
-  await renderQueueList();
+  try { return await drainWorkerQueue(); }
+  catch(e) { console.warn('[AutoSync] laporan tetap di HP:', e); }
 }
 
 /* ============================================================
@@ -2305,7 +2338,7 @@ document.addEventListener('DOMContentLoaded', init);
 <!-- Firebase SDK + Firestore push (Phase 1B) -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
+  import { getFirestore, doc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
   try {
@@ -2314,12 +2347,20 @@ document.addEventListener('DOMContentLoaded', init);
     window.firestoreDB = db;
 
     window.firestorePush = async (entryData, localId) => {
-      const docId = entryData.id || localId;
+      const docId = entryData.id;
+      if (typeof docId !== 'string' || !docId || docId.includes('/')) throw new Error('Identitas laporan tidak valid');
       const docRef = doc(db, COLLECTIONS.laporan, docId);
-      await setDoc(docRef, {
-        ...entryData,
-        synced_at: serverTimestamp(),
-        sync_source: 'lapor_pwa_v1'
+      await runTransaction(db, async tx => {
+        const existing = await tx.get(docRef);
+        if (existing.exists()) {
+          const old = existing.data();
+          const { synced_at, sync_source, ...submitted } = old;
+          if (workerReportContent(submitted) !== workerReportContent(entryData)) throw new Error('Konflik isi laporan; tetap pending');
+          // Exact submitted content only: uncertain/edited legacy records stay pending.
+          // Never overwrite remote edits to force an acknowledgement.
+          return;
+        }
+        tx.set(docRef, { ...entryData, synced_at: serverTimestamp(), sync_source: 'lapor_pwa_v1' });
       });
       return docId;
     };

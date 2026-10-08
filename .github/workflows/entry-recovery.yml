@@ -1,0 +1,35 @@
+name: Entry recovery regression
+on:
+  pull_request:
+  push:
+    branches: [fix/entry-recovery-t6f78fa93]
+permissions:
+  contents: read
+jobs:
+  entry-recovery:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Offline source regressions
+        run: node --test tests/*.test.cjs
+      - name: Install isolated emulator test dependencies
+        working-directory: recovery
+        run: npm install --ignore-scripts --package-lock=false --no-audit --no-fund
+      - name: Verify containment candidate (demo project only)
+        working-directory: recovery
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: npm run test:rules
+      - name: Isolated browser smoke (production network blocked)
+        run: |
+          recovery/node_modules/.bin/playwright install --with-deps chromium
+          CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-smoke.cjs
+          CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-correction.cjs
