@@ -47,6 +47,11 @@
   #app{display:grid;grid-template-columns:240px 1fr;min-height:100vh;position:relative}
 
   /* SIDEBAR */
+  /* Recovery controls stay in normal flow: fixed mobile navigation must remain reachable. */
+#entry-recovery-banner{position:relative!important;z-index:1!important}
+#report-session-controls{position:relative!important;z-index:auto!important}
+@media(max-width:879px){#entry-recovery-banner{padding-left:64px!important}}
+
   #sidebar{background:linear-gradient(180deg,var(--earth) 0%,#1a3030 100%);color:var(--cream);padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50;box-shadow:2px 0 12px rgba(0,0,0,.12)}
   .sb-header{padding:18px 16px 14px;border-bottom:1px solid rgba(168,200,188,.15)}
   .sb-brand{font-size:9px;font-weight:700;letter-spacing:1.8px;color:var(--sage);margin-bottom:5px}
@@ -20286,6 +20291,11 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     function blockedWrite() { throw new Error('Mode pemulihan: perubahan data bersama, bayar, hapus dan publikasi dinonaktifkan.'); }
     function updateDoc() { return Promise.reject(new Error('Mode pemulihan: edit dinonaktifkan.')); }
     function deleteDoc() { return Promise.reject(new Error('Mode pemulihan: hapus dinonaktifkan.')); }
+    function workerReportContent(value) {
+  if (value === null || typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return '[' + value.map(workerReportContent).join(',') + ']';
+  return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + workerReportContent(value[key])).join(',') + '}';
+}
     async function setDoc(ref, payload) {
       if (!ref.path.startsWith('laporan/')) return blockedWrite();
       if (!payload.id || !payload.created_at) throw new Error('Identitas laporan wajib');
@@ -20294,7 +20304,11 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         if (existing.exists()) {
           const old = existing.data();
           if (old.id !== payload.id || old.created_at !== payload.created_at) throw new Error('Konflik identitas laporan');
-          return; // Lost ACK retry must never overwrite later dashboard edits.
+          // Transport timestamp is not submitted business content.
+          const { last_synced_at: oldSync, ...oldContent } = old;
+          const { last_synced_at: newSync, ...submittedContent } = payload;
+          if (workerReportContent(oldContent) !== workerReportContent(submittedContent)) throw new Error('Konflik isi laporan; tetap pending');
+          return; // Exact retry only; never overwrite divergent cloud content.
         }
         tx.set(ref, payload);
       });
@@ -21381,7 +21395,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 
     // Normalize incoming Firestore data — bridge field naming between lapor.html (worker PWA) ↔ monitor-v2 (dashboard)
     function normalizeWorkerEntry(data) {
-      const normalized = { ...data };
+      const normalized = JSON.parse(JSON.stringify(data||{}));
       // lapor.html pakai 'jumlah_pohon' → dashboard pakai 'pohon'
       if (normalized.jumlah_pohon !== undefined && normalized.pohon === undefined) {
         normalized.pohon = +normalized.jumlah_pohon || 0;
