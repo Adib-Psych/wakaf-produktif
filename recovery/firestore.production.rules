@@ -6,7 +6,7 @@ service cloud.firestore { match /databases/{database}/documents {
  function policy(){return get(/databases/$(database)/documents/entry_policy/active).data;}
  function grant(){return get(/databases/$(database)/documents/entry_grants/$(request.auth.uid)).data;}
  function authority(p,g){
- return request.auth != null && p.keys().hasOnly(['paused','writer_epoch']) && p.paused is bool && p.paused == false && p.writer_epoch is int && p.writer_epoch>0 && g.keys().size()==6 && g.keys().hasOnly(['uid','enabled','role','worker_token','writer_epoch','grant_epoch']) && g.grant_epoch is int && g.grant_epoch>0 && g.worker_token is string && g.uid == request.auth.uid && g.enabled == true && g.writer_epoch == p.writer_epoch && g.role in ['staff','worker'];
+ return request.auth != null && p.keys().hasOnly(['paused','writer_epoch']) && p.paused is bool && p.paused == false && p.writer_epoch is int && p.writer_epoch>0 && g.keys().size()==6 && g.keys().hasOnly(['uid','enabled','role','worker_token','writer_epoch','grant_epoch']) && g.grant_epoch is int && g.grant_epoch>0 && g.worker_token is string && g.uid == request.auth.uid && g.enabled == true && g.writer_epoch == p.writer_epoch && g.role in ['staff','worker','staff_entry'];
  }
  function live(){return request.auth!=null && authority(policy(),grant());}
  function calendar(d){return d is string && (d.matches('^[0-9]{4}-((01|03|05|07|08|10|12)-(0[1-9]|[12][0-9]|3[01])|(04|06|09|11)-(0[1-9]|[12][0-9]|30)|02-(0[1-9]|1[0-9]|2[0-8]))$') || d.matches('^([0-9]{2}(0[48]|[2468][048]|[13579][26])|([02468][048]|[13579][26])00)-02-29$'));}
@@ -67,7 +67,7 @@ service cloud.firestore { match /databases/{database}/documents {
  function staffDetail(category,d){return d==null || (category=="pemupukan_organik"?staff0(d):(category=="pemupukan_kimia"?staff1(d):(category=="pemangkasan"?staff2(d):(category=="babat_rumput"?staff3(d):(category=="penyemprotan"?staff4(d):(category=="panen"?staff5(d):(category=="sortasi_buah"?staff6(d):(category=="penjemuran"?staff7(d):(category=="build_rorak"?staff8(d):(category=="kompos_kulit_kopi"?staff9(d):(category=="tanam_penaung"?staff10(d):(category=="inventarisasi_pohon"?staff11(d):(category=="opt_monitoring"?staff12(d):(category=="brocap_management"?staff13(d):(category=="soil_test"?staff14(d):(category=="topgraft_robusta"?staff15(d):(category=="bokashi_production"?staff16(d):(category=="arachis_management"?staff17(d):(category=="biochar_pyrolysis"?staff18(d):(category=="pisang_management"?staff19(d):(category=="komunikasi_stakeholder"?staff20(d):(category=="lain"?staff21(d):false))))))))))))))))))))));}
 // END STAFF DOM CONTRACT
  function body(b,g){return b is map && b.id is string && b.id.matches('^lap_[A-Za-z0-9_-]{1,96}$') && b.kategori in ["pemupukan_kimia","pemupukan_organik","pemangkasan","panen","penyemprotan","build_rorak","pisang_management","inventarisasi_pohon","tanam_penaung","kompos_kulit_kopi","babat_rumput","sortasi_buah","penjemuran","opt_monitoring","brocap_management","topgraft_robusta","soil_test","bokashi_production","komunikasi_stakeholder","arachis_management","biochar_pyrolysis","lain"] && b.created_at is string && calendar(b.tanggal)
-  && (g.role == 'staff' ? ( b.schema_version == '3.5' && b.src in ['wakif_form','wakif_form_multi'] && b.tgl==b.tanggal && b.pelapor is string && b.bidang is string && b.kebun_list is list && b.kebun_list.hasOnly(['K1','K2','K3','K4']) && (b.kebun_primary==null || b.kebun_primary is string) && b.kebun_list_str is string && b.pohon is number && b.pohon>=0 && b.detail is string && (b.durasi==null || b.durasi is string) && staffDetail(b.kategori,b.detail_form) && b.rainfall_24h is number && b.rainfall_24h>=0 && b.rainfall_7d is number && b.rainfall_7d>=0 && b.compliance is string && b.alerts is list && b.keys().size()==20
+  && (g.role in ['staff','staff_entry'] ? ( b.schema_version == '3.5' && b.src in ['wakif_form','wakif_form_multi'] && b.tgl==b.tanggal && b.pelapor is string && b.bidang is string && b.kebun_list is list && b.kebun_list.hasOnly(['K1','K2','K3','K4']) && (b.kebun_primary==null || b.kebun_primary is string) && b.kebun_list_str is string && b.pohon is number && b.pohon>=0 && b.detail is string && (b.durasi==null || b.durasi is string) && staffDetail(b.kategori,b.detail_form) && b.rainfall_24h is number && b.rainfall_24h>=0 && b.rainfall_7d is number && b.rainfall_7d>=0 && b.compliance is string && b.alerts is list && b.keys().size()==20
     && b.keys().toSet()==['id','tgl','pelapor','bidang','kategori','kebun_list','kebun_primary','kebun_list_str','pohon','detail','durasi','detail_form','rainfall_24h','rainfall_7d','compliance','alerts','created_at','tanggal','schema_version','src'].toSet())
    : (g.role == 'worker' && categoryDetail(b.kategori,b.detail) && b.schema_version == '1.1' && b.pelapor == g.worker_token && b.pelapor_name is string && b.compliance is string && b.kebun is list && b.kebun.hasOnly(['K1','K2','K3','K4']) && (b.kebun_primary==null || b.kebun_primary is string) && b.kebun_list_str is string && (b.blok==null || b.blok is string) && (b.cuaca_pagi==null || b.cuaca_pagi is string) && (b.cuaca_siang==null || b.cuaca_siang is string) && (b.rain_24h_mm==null || (b.rain_24h_mm is number && b.rain_24h_mm>=0)) && (b.rain_7d_mm==null || (b.rain_7d_mm is number && b.rain_7d_mm>=0)) && b.weather_source is string && b.weather_coords is string && b.weather_lokasi is string && (b.topik_v2==null || b.topik_v2 is string) && (b.durasi==null || b.durasi is string) && b.jumlah_pekerja is int && b.jumlah_pekerja>0 && b.jumlah_pohon is int && b.jumlah_pohon>=0 && b.detail is map && (b.catatan==null || b.catatan is string) && (b.gps_coords==null || b.gps_coords is string) && (b.gps_jarak_km==null || b.gps_jarak_km is number) && (b.gps_di_kebun==null || b.gps_di_kebun is bool) && b.device_id is string && b._filled_by is map && b.keys().size()==32
     && b.keys().toSet()==['id','created_at','compliance','schema_version','pelapor','pelapor_name','tanggal','kebun','kebun_primary','kebun_list_str','blok','cuaca_pagi','cuaca_siang','rain_24h_mm','rain_7d_mm','weather_source','weather_coords','weather_lokasi','kategori','topik_v2','durasi','jumlah_pekerja','jumlah_pohon','detail','catatan','voice_notes','photos','gps_coords','gps_jarak_km','gps_di_kebun','device_id','_filled_by'].toSet()));}
@@ -77,7 +77,7 @@ service cloud.firestore { match /databases/{database}/documents {
  match /entry_grants/{uid}{allow get:if request.auth!=null && request.auth.uid==uid;allow write,list:if false;}
  match /laporan/{rid}{
   allow get:if live() && (!exists(/databases/$(database)/documents/laporan/$(rid)) || grant().role=='staff' || resource.data.owner_uid==request.auth.uid);
-  allow list:if live() && grant().role=='staff';
+  allow list:if live() && (grant().role=='staff' || (grant().role=='staff_entry' && resource.data.owner_uid==request.auth.uid));
   allow create:if body(request.resource.data.submitted_body,grant()) && valid(request.resource.data,rid) && !exists(/databases/$(database)/documents/entry_receipts/$(rid)) && getAfter(/databases/$(database)/documents/entry_receipts/$(rid)).data==request.resource.data;
   allow update,delete:if false;
  }
@@ -101,20 +101,20 @@ service cloud.firestore { match /databases/{database}/documents {
  function nextHead(d){let h=getAfter(headPath(d.operation)).data;return h.revision==d.revision && h.command_id==d.operation.command_id && h.owner_uid==request.auth.uid && h.body==d.operation.body;}
  match /operation_policy/{kind}{allow get:if request.auth!=null;allow list,write:if false;}
  match /operation_events/{cid}{
-  allow get:if live() && (grant().role=='staff' || !exists(/databases/$(database)/documents/operation_events/$(cid)) || resource.data.owner_uid==request.auth.uid);
+  allow get:if live() && grant().role!='staff_entry' && (grant().role=='staff' || !exists(/databases/$(database)/documents/operation_events/$(cid)) || resource.data.owner_uid==request.auth.uid);
   allow list:if live() && grant().role=='staff';
   allow create:if opRow(request.resource.data,cid) && !exists(/databases/$(database)/documents/operation_receipts/$(cid)) && getAfter(/databases/$(database)/documents/operation_receipts/$(cid)).data==request.resource.data && nextHead(request.resource.data);
   allow update,delete:if false;
  }
  match /operation_receipts/{cid}{
-  allow get:if live() && (!exists(/databases/$(database)/documents/operation_receipts/$(cid)) || resource.data.owner_uid==request.auth.uid || grant().role=='staff');
+  allow get:if live() && grant().role!='staff_entry' && (!exists(/databases/$(database)/documents/operation_receipts/$(cid)) || resource.data.owner_uid==request.auth.uid || grant().role=='staff');
   allow create:if request.auth!=null && !exists(/databases/$(database)/documents/operation_events/$(cid)) && getAfter(/databases/$(database)/documents/operation_events/$(cid)).data==request.resource.data && opPayload(request.resource.data.operation);
   allow list,update,delete:if false;
  }
  function linkedHead(d,kind,target){let event=getAfter(/databases/$(database)/documents/operation_events/$(d.command_id)).data;return !exists(/databases/$(database)/documents/operation_events/$(d.command_id)) && event.operation.kind==kind && event.operation.target==target && event.revision==d.revision && event.owner_uid==request.auth.uid && event.operation.body==d.body && d.owner_uid==request.auth.uid;}
  match /report_heads/{target}{
-  allow get:if live() && grant().role=='staff';
-  allow list:if live() && grant().role=='staff';
+  allow get:if live() && (grant().role=='staff' || (grant().role=='staff_entry' && (!exists(/databases/$(database)/documents/report_heads/$(target)) || resource.data.owner_uid==request.auth.uid)));
+  allow list:if live() && (grant().role=='staff' || (grant().role=='staff_entry' && resource.data.owner_uid==request.auth.uid));
   allow create,update:if request.resource.data.keys().hasOnly(['revision','command_id','owner_uid','body']) && request.resource.data.keys().size()==4 && linkedHead(request.resource.data,'correction',target);
   allow delete:if false;
  }
@@ -123,6 +123,8 @@ service cloud.firestore { match /databases/{database}/documents {
   allow update:if target in ['active','staff_log'] && request.resource.data.keys().hasOnly(['revision','command_id','owner_uid','body','total_pohon']) && request.resource.data.keys().size()==5 && request.resource.data.total_pohon==resource.data.total_pohon+(target=='active'?request.resource.data.body.jumlah_pohon:request.resource.data.body.jumlah) && linkedHead(request.resource.data,target=='active'?'cabut':'cabut_log',target);
   allow create,delete,list:if false;
  }
+
+ match /worker_defs_custom/active {allow get:if live() && grant().role=='staff_entry';allow write,list:if false;}
 
  // Explicit recovery/read-only grants. Provision only exact owner-approved UID bindings.
  // Static public pages remain independent; do not expose raw documents for client filtering.

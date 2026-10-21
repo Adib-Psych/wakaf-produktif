@@ -85,7 +85,7 @@ export function createAuthorizedReports({app,db,storage=localStorage}) {
   try{p=(await getDocFromServer(doc(db,'reader_policy','active'))).data();g=(await getDocFromServer(doc(db,'reader_grants',s.uid))).data();same(s);}
   catch(e){same(s);}
   // Preserve the existing unpaused staff read contract, never reinterpret paused as live.
-  if(!p||!g){const w=await permissionStatus();same(s);if(w.role!=='staff')fail('permission-denied');return Object.freeze({uid:s.uid,role:'staff',readerEpoch:null,writerEpoch:w.writerEpoch,grantEpoch:w.grantEpoch,collections:Object.freeze(['laporan','operation_events','report_heads','cabut_state','entry_receipts','operation_receipts']),write:false,finance:false,payment:false});}
+  if(!p||!g){const w=await permissionStatus();same(s);if(!['staff','staff_entry'].includes(w.role))fail('permission-denied');if(w.role==='staff_entry')return Object.freeze({uid:s.uid,role:'staff_entry',readerEpoch:null,writerEpoch:w.writerEpoch,grantEpoch:w.grantEpoch,collections:Object.freeze(['laporan','report_heads','worker_defs_custom','entry_receipts']),ownReports:true,write:true,finance:false,payment:false});return Object.freeze({uid:s.uid,role:'staff',readerEpoch:null,writerEpoch:w.writerEpoch,grantEpoch:w.grantEpoch,collections:Object.freeze(['laporan','operation_events','report_heads','cabut_state','entry_receipts','operation_receipts']),write:false,finance:false,payment:false});}
   const allowed='upah cashbook opt_observations panen_data panen_lots panen_sampling distribusi_pic sop_master worker_defs_custom milestones invoices worker_tokens workers sop_status laporan operation_events operation_receipts report_heads cabut_state entry_receipts'.split(' ');
   if(!keys(p,['reader_epoch'])||!Number.isSafeInteger(p.reader_epoch)||p.reader_epoch<1||!keys(g,['uid','enabled','reader_epoch','collections'])||g.uid!==s.uid||g.enabled!==true||g.reader_epoch!==p.reader_epoch||!Array.isArray(g.collections)||!g.collections.length||g.collections.length>20||new Set(g.collections).size!==g.collections.length||!g.collections.every(c=>allowed.includes(c)))fail('permission-denied');
   return Object.freeze({uid:s.uid,readerEpoch:p.reader_epoch,collections:Object.freeze([...g.collections]),write:false,finance:false,payment:false});
@@ -96,7 +96,7 @@ export function createAuthorizedReports({app,db,storage=localStorage}) {
  }
  const current=()=>{if(stopped||!user||auth.currentUser?.uid!==user.uid)fail('sign-in-required');return {uid:user.uid,generation};};
  function same(s){if(stopped||!user||s.uid!==user.uid||s.generation!==generation||auth.currentUser?.uid!==s.uid)fail('session-changed');}
- function authorized(p,g,s){if(!p||!g||p.paused!==false||g.enabled!==true||g.uid!==s.uid||!['staff','worker'].includes(g.role)||g.writer_epoch!==p.writer_epoch||!Number.isSafeInteger(p.writer_epoch)||p.writer_epoch<1||!Number.isSafeInteger(g.grant_epoch)||g.grant_epoch<1)fail('permission-denied');}
+ function authorized(p,g,s){if(!keys(p,['paused','writer_epoch'])||!keys(g,['uid','enabled','role','worker_token','writer_epoch','grant_epoch'])||p.paused!==false||g.enabled!==true||g.uid!==s.uid||typeof g.worker_token!=='string'||!['staff','worker','staff_entry'].includes(g.role)||g.writer_epoch!==p.writer_epoch||!Number.isSafeInteger(p.writer_epoch)||p.writer_epoch<1||!Number.isSafeInteger(g.grant_epoch)||g.grant_epoch<1)fail('permission-denied');}
  function verified(r,c,s,e){if(!r||!c||!exact(r,c)||r.owner_uid!==s.uid||r.committed_revision!==1||!(r.committed_at instanceof Timestamp))fail('entry-conflict');const {owner_uid,committed_revision,committed_at,...saved}=r;if(!exact(saved,e))fail('entry-conflict');}
  async function send(body){
   if(!globalThis.navigator?.locks?.request)fail('exclusive-browser-lock-unavailable');
@@ -109,7 +109,7 @@ export function createAuthorizedReports({app,db,storage=localStorage}) {
   const frozen=clone(body);if(!exact(body,frozen))fail('unsupported-entry');
   const pr=doc(db,'entry_policy','active'),gr=doc(db,'entry_grants',s.uid);
   const p=await getDocFromServer(pr),g=await getDocFromServer(gr);same(s);authorized(p.data(),g.data(),s);
-  const grant=g.data();if((grant.role==='staff'&&!['wakif_form','wakif_form_multi'].includes(body.src))||(grant.role==='worker'&&body.schema_version!=='1.1')||(grant.role==='worker'&&body.pelapor!==grant.worker_token))fail('permission-denied');
+  const grant=g.data();if((['staff','staff_entry'].includes(grant.role)&&!['wakif_form','wakif_form_multi'].includes(body.src))||(grant.role==='worker'&&body.schema_version!=='1.1')||(grant.role==='worker'&&body.pelapor!==grant.worker_token))fail('permission-denied');
   const env={contract_version:1,report_id:body.id,command_id:body.id,writer_epoch:p.data().writer_epoch,grant_epoch:grant.grant_epoch,submitted_body:frozen};
   const raw=storage.getItem(key),items=JSON.parse(raw===null?'[]':raw);if(!Array.isArray(items))fail('envelope-corrupt');
   const seen=new Set();
@@ -134,7 +134,7 @@ export function mountReportSessionControls(api,host=document.body){
  const exit=document.createElement('button');exit.type='button';exit.id='report-signout';exit.textContent='Keluar akun laporan';
  let serial=0;
  api.observeSession(uid=>{const n=++serial;status.textContent=uid?'Memeriksa izin server…':'Paket perbaikan terpasang. Entry/pembayaran dijeda; masuk akun yang disahkan untuk memeriksa lingkup baca. Pending tetap di pemilik semula.';
-  if(uid)void api.readPermissionStatus().then(p=>{if(n!==serial)return;status.textContent=`Baca privat: ${p.collections.join(", ")}; hanya-baca. Entry/operasi mengikuti izin server terpisah; bayar/publikasi tidak tersedia.`;}).catch(()=>{if(n===serial){status.textContent='Akun belum memiliki izin baca yang disahkan atau entry sedang dijeda. Tidak ada grant otomatis; draft/pending tetap utuh.';}});
+  if(uid)void api.readPermissionStatus().then(p=>{if(n!==serial)return;status.textContent=p.ownReports===true&&p.write===true?'Entry laporan staf diizinkan server untuk akun ini; daftar pekerja harus selesai terverifikasi. Riwayat/ekspor hanya laporan akun ini. Pembayaran, keuangan dan operasi lain tetap ditahan.':`Baca privat: ${p.collections.join(", ")}; hanya-baca. Entry/operasi mengikuti izin server terpisah; bayar/publikasi tidak tersedia.`;}).catch(()=>{if(n===serial){status.textContent='Akun belum memiliki izin baca yang disahkan atau entry sedang dijeda. Tidak ada grant otomatis; draft/pending tetap utuh.';}});
  });
  login.onclick=()=>{void api.signInSession().catch(()=>{status.textContent='Masuk belum berhasil atau digantikan keluar akun. Gunakan alur provider; tidak ada perubahan izin.';});};
  exit.onclick=()=>{void api.signOutSession().catch(()=>{status.textContent='Keluar provider belum selesai; tampilan dan pengiriman tetap ditahan.';});};
