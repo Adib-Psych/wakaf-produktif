@@ -1,0 +1,811 @@
+{
+  "source_registry_sha256": "673712dc22a0787d299de229740c424200f31b80325fc888f665f5149ea0857f",
+  "categories": {
+    "pemupukan_kimia": {
+      "fields": {
+        "jenis_pupuk": {
+          "type": "select",
+          "options": [
+            "Urea (pupuk putih)",
+            "SP-36 (pupuk fosfor)",
+            "KCl (pupuk merah)",
+            "Dolomit (kapur)",
+            "Kieserit (Mg+S)",
+            "Phonska / NPK subsidi",
+            "Phonska Plus (NPK + S + Zn)",
+            "NPK Yara biru (16-16-16)",
+            "Lain (catat di catatan)"
+          ]
+        },
+        "dosis_gpohon": {
+          "type": "number",
+          "options": []
+        },
+        "jml_pohon_aplikasi": {
+          "type": "number",
+          "options": []
+        },
+        "metode_aplikasi": {
+          "type": "select",
+          "options": [
+            "Parit lingkar (alur keliling pohon)",
+            "Disebar / ditabur (broadcast)",
+            "Dipendam di rorak",
+            "Pupuk cair (fertigation)"
+          ]
+        },
+        "jarak_batang_cm": {
+          "type": "number",
+          "options": []
+        },
+        "kedalaman_parit_cm": {
+          "type": "number",
+          "options": []
+        },
+        "time_gap_hujan_hari": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": [
+        "subsidi_rdkk"
+      ]
+    },
+    "pemupukan_organik": {
+      "fields": {
+        "sumber_kompos": {
+          "type": "select",
+          "options": [
+            "Kulit kopi sisa kupasan",
+            "Daun lamtoro kering",
+            "Daun kopi kering",
+            "Pupuk kandang kambing / tletong",
+            "Pupuk kandang ayam",
+            "Bokashi"
+          ]
+        },
+        "volume_per_pohon": {
+          "type": "number",
+          "options": []
+        },
+        "total_kg": {
+          "type": "number",
+          "options": []
+        },
+        "kondisi_fermentasi": {
+          "type": "select",
+          "options": [
+            "Sudah jadi (matang)",
+            "Setengah matang",
+            "Masih mentah"
+          ]
+        },
+        "lokasi_aplikasi": {
+          "type": "select",
+          "options": [
+            "Piringan (lingkar pohon)",
+            "Rorak (lubang resapan)",
+            "Bedeng / lainnya"
+          ]
+        }
+      },
+      "null_stubs": []
+    },
+    "pemangkasan": {
+      "fields": {
+        "tipe_pemangkasan": {
+          "type": "select",
+          "options": [
+            "Pangkas berat (total)",
+            "Pangkas ringan rutin",
+            "Wiwilan (tunas liar)",
+            "Pangkas bentuk pohon muda",
+            "Pangkas pohon naungan",
+            "Peremajaan (potong batang bawah)"
+          ]
+        },
+        "tinggi_pre_cm": {
+          "type": "number",
+          "options": []
+        },
+        "tinggi_post_cm": {
+          "type": "number",
+          "options": []
+        },
+        "cabang_dipertahankan": {
+          "type": "multi",
+          "options": [
+            "Cabang gemuk yang berbuah lebat",
+            "Cabang yang kena matahari banyak",
+            "Cabang utama / primer produktif"
+          ]
+        },
+        "cabang_dibuang": {
+          "type": "multi",
+          "options": [
+            "Cabang ke dalam / cabang balik",
+            "Cabang mati / kering",
+            "Cabang sakit kena penyakit",
+            "Cabang gak kena matahari",
+            "Tunas air (wiwilan)",
+            "Cabang ada hama (OPT)"
+          ]
+        }
+      },
+      "null_stubs": []
+    },
+    "panen": {
+      "fields": {
+        "metode_petik": {
+          "type": "select",
+          "options": [
+            "Petik merah (selektif)",
+            "Petik separo merah",
+            "Borongan (semua warna)",
+            "Lelesan (mungut bawah)"
+          ]
+        },
+        "jam_mulai": {
+          "type": "time",
+          "options": []
+        },
+        "jam_selesai": {
+          "type": "time",
+          "options": []
+        },
+        "kg_merah": {
+          "type": "number",
+          "options": []
+        },
+        "kg_kuning": {
+          "type": "number",
+          "options": []
+        },
+        "kg_hijau": {
+          "type": "number",
+          "options": []
+        },
+        "kg_hitam": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": [
+        "lot_id",
+        "processing_partner"
+      ]
+    },
+    "penyemprotan": {
+      "fields": {
+        "produk_pestisida": {
+          "type": "text",
+          "options": []
+        },
+        "target_opt": {
+          "type": "select",
+          "options": [
+            "Bubuk buah (PBKo)",
+            "Bercak daun (Cercospora)",
+            "Karat daun",
+            "Kutu putih",
+            "Penggerek batang",
+            "Gulma rumput",
+            "Lain"
+          ]
+        },
+        "volume_total_l": {
+          "type": "number",
+          "options": []
+        },
+        "persen_bawah_daun": {
+          "type": "number",
+          "options": []
+        },
+        "pakai_surfaktan": {
+          "type": "select",
+          "options": [
+            "Ya",
+            "Tidak"
+          ]
+        },
+        "campur_pupuk": {
+          "type": "select",
+          "options": [
+            "Tidak",
+            "Ya (sebutkan di catatan)"
+          ]
+        }
+      },
+      "null_stubs": []
+    },
+    "build_rorak": {
+      "fields": {
+        "panjang_m": {
+          "type": "number",
+          "options": []
+        },
+        "lebar_m": {
+          "type": "number",
+          "options": []
+        },
+        "kedalaman_m": {
+          "type": "number",
+          "options": []
+        },
+        "isi_serasah_kg": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    },
+    "pisang_management": {
+      "fields": {
+        "aksi": {
+          "type": "select",
+          "options": [
+            "Panen oleh MWC NU",
+            "Tebang pohon pisang",
+            "Bongkar tunas (rhizoma)",
+            "Lain"
+          ]
+        },
+        "jml_rumpun": {
+          "type": "number",
+          "options": []
+        },
+        "petugas_panen": {
+          "type": "select",
+          "options": [
+            "MWC NU",
+            "Ust. Fauzan / TPQ",
+            "Tim Wakaf",
+            "Lain"
+          ]
+        },
+        "catatan_amanah": {
+          "type": "textarea",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    },
+    "inventarisasi_pohon": {
+      "fields": {
+        "pohon_id": {
+          "type": "text",
+          "options": []
+        },
+        "kondisi": {
+          "type": "select",
+          "options": [
+            "Produktif",
+            "Belum produktif (muda)",
+            "Rusak / perlu sulam",
+            "Mati / kosong"
+          ]
+        },
+        "umur_thn": {
+          "type": "number",
+          "options": []
+        },
+        "batang_bawah": {
+          "type": "select",
+          "options": [
+            "Excelsa",
+            "Robusta",
+            "Belum jelas"
+          ]
+        },
+        "batang_atas": {
+          "type": "select",
+          "options": [
+            "Robusta klon unggul",
+            "Robusta lama",
+            "Arabika sambungan lama",
+            "Belum jelas"
+          ]
+        },
+        "tinggi_cm": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": [
+        "klon_id"
+      ]
+    },
+    "tanam_penaung": {
+      "fields": {
+        "spesies": {
+          "type": "select",
+          "options": [
+            "Lamtoro PG 79",
+            "Gamal",
+            "Durian",
+            "Sengon",
+            "Petai"
+          ]
+        },
+        "jml_pohon": {
+          "type": "number",
+          "options": []
+        },
+        "jarak_tanam": {
+          "type": "text",
+          "options": []
+        },
+        "ukuran_lubang_cm": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    },
+    "kompos_kulit_kopi": {
+      "fields": {
+        "sumber": {
+          "type": "select",
+          "options": [
+            "Pulping Bonsari",
+            "Pulping di kebun",
+            "Lain"
+          ]
+        },
+        "lokasi_kompos": {
+          "type": "select",
+          "options": [
+            "Rorak",
+            "Piringan pohon",
+            "Bedeng kompos terpisah"
+          ]
+        },
+        "rorak_id_target": {
+          "type": "text",
+          "options": []
+        },
+        "volume_input_kg": {
+          "type": "number",
+          "options": []
+        },
+        "tgl_mulai": {
+          "type": "date",
+          "options": []
+        },
+        "est_tgl_jadi": {
+          "type": "date",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    },
+    "babat_rumput": {
+      "fields": {
+        "method": {
+          "type": "chip-method",
+          "options": [
+            {
+              "val": "sabit",
+              "label": "Sabit / arit"
+            },
+            {
+              "val": "brushcutter",
+              "label": "Sengkreng / mesin babat"
+            },
+            {
+              "val": "cover_crops",
+              "label": "Kacang hias (cover)"
+            },
+            {
+              "val": "herbisida",
+              "label": "Obat rumput",
+              "off_sop": true
+            }
+          ]
+        },
+        "area_m2": {
+          "type": "number",
+          "options": []
+        },
+        "tinggi_gulma_pre_cm": {
+          "type": "number",
+          "options": []
+        },
+        "status_mulsa": {
+          "type": "select",
+          "options": [
+            "Disebar piringan (mulsa)",
+            "Dikumpul jadi kompos",
+            "Dibakar 🚫 (off-SOP)",
+            "Dibiarkan"
+          ]
+        },
+        "bahan_habis_rp": {
+          "type": "number",
+          "options": []
+        },
+        "sumber_tenaga": {
+          "type": "select",
+          "options": [
+            "Sendiri",
+            "Gotong royong",
+            "Bantuan tim"
+          ]
+        }
+      },
+      "null_stubs": []
+    },
+    "sortasi_buah": {
+      "fields": {
+        "total_sortir_kg": {
+          "type": "number",
+          "options": []
+        },
+        "sink_kg": {
+          "type": "number",
+          "options": []
+        },
+        "float_kg": {
+          "type": "number",
+          "options": []
+        },
+        "persen_defect": {
+          "type": "number",
+          "options": []
+        },
+        "buang_compost": {
+          "type": "select",
+          "options": [
+            "Ya",
+            "Tidak"
+          ]
+        }
+      },
+      "null_stubs": [
+        "lot_id_ref",
+        "lanjut_ke_partner"
+      ]
+    },
+    "penjemuran": {
+      "fields": {
+        "tahap": {
+          "type": "select",
+          "options": [
+            "Mulai jemur",
+            "Pembalikan",
+            "Tutup (terpal)",
+            "Angkat (selesai)"
+          ]
+        },
+        "tempat_jemur": {
+          "type": "select",
+          "options": [
+            "Para-para bambu",
+            "Lantai semen",
+            "Terpal / klemar",
+            "Bedeng tinggi"
+          ]
+        },
+        "ketebalan_cm": {
+          "type": "number",
+          "options": []
+        },
+        "frek_balik_jam": {
+          "type": "number",
+          "options": []
+        },
+        "moisture_persen": {
+          "type": "number",
+          "options": []
+        },
+        "jam_total": {
+          "type": "number",
+          "options": []
+        },
+        "hasil_kg": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": [
+        "lot_id_ref"
+      ]
+    },
+    "opt_monitoring": {
+      "fields": {
+        "method": {
+          "type": "select",
+          "options": [
+            "5-pohon-diagonal",
+            "Walking transect",
+            "Spot check"
+          ]
+        },
+        "jml_pohon_sampling": {
+          "type": "number",
+          "options": []
+        },
+        "opt_target": {
+          "type": "select",
+          "options": [
+            "Bubuk buah (PBKo)",
+            "Bercak daun (Cercospora)",
+            "Karat daun",
+            "Jamur akar",
+            "Penggerek batang",
+            "Kutu putih",
+            "Lain"
+          ]
+        },
+        "intensitas_persen": {
+          "type": "number",
+          "options": []
+        },
+        "distribusi": {
+          "type": "select",
+          "options": [
+            "Merata",
+            "Spot / kantong",
+            "Pinggir kebun",
+            "Tengah kebun"
+          ]
+        }
+      },
+      "null_stubs": []
+    },
+    "brocap_management": {
+      "fields": {
+        "aksi": {
+          "type": "select",
+          "options": [
+            "Pasang baru",
+            "Cek tangkapan",
+            "Refill atraktan",
+            "Lepas / pindah"
+          ]
+        },
+        "jml_trap": {
+          "type": "number",
+          "options": []
+        },
+        "ketinggian_m": {
+          "type": "number",
+          "options": []
+        },
+        "tangkapan_pbko": {
+          "type": "number",
+          "options": []
+        },
+        "tipe_trap": {
+          "type": "select",
+          "options": [
+            "Komersial (pabrik)",
+            "DIY botol aqua",
+            "Mix"
+          ]
+        }
+      },
+      "null_stubs": []
+    },
+    "topgraft_robusta": {
+      "fields": {
+        "pohon_target_id": {
+          "type": "text",
+          "options": []
+        },
+        "diameter_batang_bawah_cm": {
+          "type": "number",
+          "options": []
+        },
+        "tinggi_cut_stump_cm": {
+          "type": "number",
+          "options": []
+        },
+        "jml_pucuk_per_pohon": {
+          "type": "number",
+          "options": []
+        },
+        "cek_kambium": {
+          "type": "select",
+          "options": [
+            "Ya — basah / lengket",
+            "Tidak — kering",
+            "Belum cek"
+          ]
+        },
+        "window_aplikasi": {
+          "type": "select",
+          "options": [
+            "Sep-Des (optimal)",
+            "Lain bulan"
+          ]
+        }
+      },
+      "null_stubs": [
+        "klon_atas"
+      ]
+    },
+    "soil_test": {
+      "fields": {
+        "method_sampling": {
+          "type": "select",
+          "options": [
+            "Diagonal 5 titik",
+            "Walking transect",
+            "Spot"
+          ]
+        },
+        "jml_sample": {
+          "type": "number",
+          "options": []
+        },
+        "kedalaman_cm": {
+          "type": "number",
+          "options": []
+        },
+        "tgl_kirim_lab": {
+          "type": "date",
+          "options": []
+        },
+        "estimasi_hasil": {
+          "type": "date",
+          "options": []
+        }
+      },
+      "null_stubs": [
+        "lab_tujuan",
+        "parameter_diuji"
+      ]
+    },
+    "bokashi_production": {
+      "fields": {
+        "tahap": {
+          "type": "select",
+          "options": [
+            "Mixing batch",
+            "Fermentasi (tutup)",
+            "Cek suhu",
+            "Angkat (jadi)"
+          ]
+        },
+        "komposisi_kg": {
+          "type": "number",
+          "options": []
+        },
+        "em4_l": {
+          "type": "number",
+          "options": []
+        },
+        "volume_akhir_kg": {
+          "type": "number",
+          "options": []
+        },
+        "suhu_celcius": {
+          "type": "number",
+          "options": []
+        },
+        "dosis_kg_per_pohon": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    },
+    "komunikasi_stakeholder": {
+      "fields": {
+        "stakeholder": {
+          "type": "select",
+          "options": [
+            "Ust. Fauzan",
+            "MWC NU",
+            "Bonsari Coffee",
+            "Nomad Coffee",
+            "BRIN",
+            "Tetangga / komunitas",
+            "Lain"
+          ]
+        },
+        "channel": {
+          "type": "select",
+          "options": [
+            "WhatsApp",
+            "Telepon",
+            "Kunjungan langsung"
+          ]
+        },
+        "topik_utama": {
+          "type": "text",
+          "options": []
+        },
+        "status_hasil": {
+          "type": "select",
+          "options": [
+            "Selesai (resolved)",
+            "Perlu eskalasi ke Pak Adib",
+            "Follow-up nanti"
+          ]
+        },
+        "detail_pembicaraan": {
+          "type": "textarea",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    },
+    "arachis_management": {
+      "fields": {
+        "aksi": {
+          "type": "select",
+          "options": [
+            "Tanam stek",
+            "Monitoring survival",
+            "Cek coverage",
+            "Pemangkasan"
+          ]
+        },
+        "jml_stek": {
+          "type": "number",
+          "options": []
+        },
+        "jarak_tanam": {
+          "type": "text",
+          "options": []
+        },
+        "survival_persen": {
+          "type": "number",
+          "options": []
+        },
+        "coverage_persen": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": [
+        "sumber_bibit"
+      ]
+    },
+    "biochar_pyrolysis": {
+      "fields": {
+        "tahap": {
+          "type": "select",
+          "options": [
+            "Siapkan bahan baku",
+            "Pyrolysis aktif",
+            "Pendinginan",
+            "Aplikasi ke pohon"
+          ]
+        },
+        "bahan_kg": {
+          "type": "number",
+          "options": []
+        },
+        "suhu_celcius": {
+          "type": "number",
+          "options": []
+        },
+        "durasi_jam": {
+          "type": "number",
+          "options": []
+        },
+        "hasil_kg": {
+          "type": "number",
+          "options": []
+        },
+        "dosis_kg_per_pohon": {
+          "type": "number",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    },
+    "lain": {
+      "fields": {
+        "deskripsi_kerja": {
+          "type": "textarea",
+          "options": []
+        }
+      },
+      "null_stubs": []
+    }
+  }
+}

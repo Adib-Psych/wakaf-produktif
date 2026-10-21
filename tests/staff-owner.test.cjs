@@ -1,0 +1,5 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm');
+test('staff pending original owner is bound separately; account transition cannot send it',async()=>{
+ let uid='A',sends=0;const data=new Map();const c={window:{addEventListener(){},authorizedReports:{sessionOwner:()=>uid},syncLaporanEntryToFirestore:async b=>{sends++;return b.id;}},document:{addEventListener(){}},localStorage:{getItem:k=>data.get(k)??null,setItem:(k,v)=>data.set(k,v)},console};c.navigator={locks:{request:async(_k,fn)=>fn()}};vm.createContext(c);vm.runInContext(fs.readFileSync('recovery/report-content.js','utf8'),c);vm.runInContext(fs.readFileSync('recovery/entry-recovery.js','utf8'),c);
+ c.window.entryRecovery.enqueue([{id:'lap_A',created_at:'2000',detail:'draft'}]);const before=data.get('wkkn_recovery_staff_pending_v1');uid='B';await c.window.entryRecovery.drain();assert.equal(sends,0);assert.equal(data.get('wkkn_recovery_staff_pending_v1'),before);uid='A';await c.window.entryRecovery.drain();assert.equal(sends,1);assert.equal(c.window.entryRecovery.pending().length,0);
+});

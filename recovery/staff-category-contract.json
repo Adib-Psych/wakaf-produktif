@@ -1,0 +1,1162 @@
+{
+  "pemupukan_organik": {
+    "title": "🌱Detail Pemupukan Organik (Q4 — Composting In-Situ)",
+    "fields": [
+      {
+        "label": "Sumber",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "kulit_kopi_pulping (rekomendasi)",
+          "serasah_daun_lamtoro",
+          "serasah_daun_kopi",
+          "kandang_kambing",
+          "campuran"
+        ]
+      },
+      {
+        "label": "Volume per Pohon (L)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Total kg",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Kondisi Fermentasi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "kompos_jadi",
+          "setengah",
+          "penuh",
+          "mentah"
+        ]
+      },
+      {
+        "label": "Lokasi Aplikasi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "piringan_pohon",
+          "rorak",
+          "bedeng_kompos"
+        ]
+      }
+    ]
+  },
+  "pemupukan_kimia": {
+    "title": "⚗️Detail Pemupukan Anorganik (BRIN dosis 5-10 thn)",
+    "fields": [
+      {
+        "label": "Jenis Pupuk",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "Urea Pusri",
+          "SP-36 Petrokimia",
+          "KCl Mahkota",
+          "Dolomit (lime correction)",
+          "Kieserit (Mg+S)",
+          "Phonska 15-15-15 (subsidi)",
+          "Phonska Plus",
+          "NPK 16-16-16 Yaramila"
+        ]
+      },
+      {
+        "label": "Dosis (g/pohon) — sesuai BRIN tabel",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Jumlah Pohon Aplikasi",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Total kg",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Metode Aplikasi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "parit_lingkar (rekomendasi SOP)",
+          "broadcast",
+          "benam_rorak",
+          "fertigation"
+        ]
+      },
+      {
+        "label": "Jarak dari Batang (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Kedalaman Parit (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Time Gap dari Hujan Terakhir (hari)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Subsidi RDKK?",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "Ya (HET)",
+          "Tidak (non-subsidi)"
+        ]
+      }
+    ]
+  },
+  "pemangkasan": {
+    "title": "✂️Detail Pemangkasan",
+    "fields": [
+      {
+        "label": "Tipe Pemangkasan",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "pruning_berat",
+          "pruning_ringan",
+          "bentuk_tbm",
+          "peremajaan",
+          "penaung"
+        ]
+      },
+      {
+        "label": "Tinggi Pohon Pre (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Tinggi Pohon Post (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Cabang Dipertahankan (multi-pilih)",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "cabang_gemuk_berbuah",
+          "cabang_kena_sinar",
+          "cabang_primer_produktif"
+        ]
+      },
+      {
+        "label": "Cabang Dibuang (multi-pilih)",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "wiwilan",
+          "cabang_balik",
+          "cabang_kering",
+          "cabang_dalam",
+          "terserang_OPT"
+        ]
+      }
+    ]
+  },
+  "babat_rumput": {
+    "title": "🌾Detail Babat Rumput / Sanitasi Gulma",
+    "fields": [
+      {
+        "label": "Method",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "manual_sabit",
+          "brushcutter_sewa (mesin babat — cost-effective)",
+          "sengkreng_manual_cangkul (lokal Ngantang — bersih sampai akar, tahan lama)",
+          "cover_crops_arachis (Phase 2 — Arachis pintoi)",
+          "mulsa_tebal_pruning (cost-effective)",
+          "obat_rumput_herbisida (glifosat / 2,4-D — off-SOP, regen lambat)",
+          "kombinasi_sabit_sengkreng",
+          "kombinasi_brushcutter_obat_rumput",
+          "kombinasi_lainnya"
+        ]
+      },
+      {
+        "label": "Area Dibersihkan (m²)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Tinggi Gulma Pre (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Status Mulsa Pasca-Babat",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "spread_di_piringan_pohon (rekomendasi)",
+          "dikumpulkan_kompos",
+          "dibakar (❌ avoid)",
+          "dibiarkan"
+        ]
+      },
+      {
+        "label": "Bahan Habis Pakai (Rp)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Sumber Tenaga",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "pekerja_internal (Pak Kumpul)",
+          "borongan_per_area",
+          "gotong_royong_komunitas"
+        ]
+      }
+    ]
+  },
+  "penyemprotan": {
+    "title": "💨Detail Penyemprotan (sesuai BRIN 5 Mei)",
+    "fields": [
+      {
+        "label": "Produk Pestisida",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Target OPT",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "PBKo",
+          "kutu_putih",
+          "cercospora_bercak_daun",
+          "jamur_upas",
+          "nematoda"
+        ]
+      },
+      {
+        "label": "Volume Total (L)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "% Volume ke Bawah Daun (target 70%)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Surfaktan?",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "Ya",
+          "Tidak"
+        ]
+      },
+      {
+        "label": "Campur dengan Pupuk?",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "Ya (⚠️ alert)",
+          "Tidak"
+        ]
+      }
+    ]
+  },
+  "panen": {
+    "title": "🍒Detail Panen (Q6 — Petik Merah Default)",
+    "fields": [
+      {
+        "label": "Metode Petik",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "selektif_merah",
+          "setengah_selektif",
+          "lelesan",
+          "borongan"
+        ]
+      },
+      {
+        "label": "Lot ID",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Jam Petik Mulai",
+        "kind": "string",
+        "type": "time",
+        "options": []
+      },
+      {
+        "label": "Jam Petik Selesai",
+        "kind": "string",
+        "type": "time",
+        "options": []
+      },
+      {
+        "label": "Buah Merah (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Buah Kuning (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Buah Hijau (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Buah Hitam Overripe (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Processing Partner",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "kebun_inhouse_ngt",
+          "bonsari_coffee (specialty)"
+        ]
+      }
+    ]
+  },
+  "sortasi_buah": {
+    "title": "🫘Detail Sortasi Buah Pre-Pulping (SOP hal 230)",
+    "fields": [
+      {
+        "label": "Lot ID Reference (Kebun)",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "",
+          "kebun_1",
+          "kebun_2",
+          "kebun_3",
+          "kebun_4"
+        ]
+      },
+      {
+        "label": "Total Buah Sortir (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Sortasi Air — Tenggelam/Sink (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Sortasi Air — Mengapung/Float (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "% Defect Visual (PBKo, busuk, hitam)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Buang ke Composting?",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "Ya (kulit + reject)",
+          "Tidak"
+        ]
+      },
+      {
+        "label": "Lanjut ke (Processing Partner)",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "bonsari_coffee_specialty",
+          "penggilingan_lokal_pujon",
+          "simpan_jemur_inhouse"
+        ]
+      }
+    ]
+  },
+  "penjemuran": {
+    "title": "☀️Detail Penjemuran / Drying (SOP hal 235 + SNI 01-2907-2008)",
+    "fields": [
+      {
+        "label": "Lot ID Reference (Kebun)",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "",
+          "kebun_1",
+          "kebun_2",
+          "kebun_3",
+          "kebun_4"
+        ]
+      },
+      {
+        "label": "Tahap",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "mulai_jemur",
+          "balik_pertama",
+          "balik_rutin",
+          "tutup_hujan",
+          "angkat_selesai"
+        ]
+      },
+      {
+        "label": "Tempat Jemur",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "para_para_bambu",
+          "terpal_lantai",
+          "bedeng_tinggi"
+        ]
+      },
+      {
+        "label": "Ketebalan Tumpukan (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Frekuensi Pembalikan (jam)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Moisture Reading (%) — kalau ada",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Jam Total Jemur (kumulatif)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Hasil Berat (kg) — kalau angkat selesai",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      }
+    ]
+  },
+  "build_rorak": {
+    "title": "🚜Detail Build Rorak (Q8)",
+    "fields": [
+      {
+        "label": "Rorak ID",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Panjang (m)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Lebar (m)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Kedalaman (m)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Isi Serasah Awal (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "GPS (auto / manual)",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      }
+    ]
+  },
+  "kompos_kulit_kopi": {
+    "title": "♻️Detail Kompos Kulit Kopi (Q4)",
+    "fields": [
+      {
+        "label": "Sumber",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "kulit_pulping_panen",
+          "serasah_pemangkasan",
+          "campuran"
+        ]
+      },
+      {
+        "label": "Lokasi Kompos",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "rorak",
+          "bedeng_kompos",
+          "piringan_pohon"
+        ]
+      },
+      {
+        "label": "Rorak ID Target",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Volume Input (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Tgl Mulai Kompos",
+        "kind": "string",
+        "type": "date",
+        "options": []
+      },
+      {
+        "label": "Est. Tgl Jadi",
+        "kind": "string",
+        "type": "date",
+        "options": []
+      }
+    ]
+  },
+  "tanam_penaung": {
+    "title": "🌳Detail Tanam Penaung (Q7 — Lamtoro PG 79)",
+    "fields": [
+      {
+        "label": "Spesies",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "lamtoro_PG79 (rekomendasi)",
+          "gamal_gliricidia",
+          "durian (10×10 m)",
+          "sengon",
+          "petai"
+        ]
+      },
+      {
+        "label": "Jumlah Pohon",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Jarak Tanam (m × m)",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Ukuran Lubang (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      }
+    ]
+  },
+  "inventarisasi_pohon": {
+    "title": "🔍Detail Inventarisasi Pohon (PIC: Wakif + Cak Yit · post-19 Mei 2026)",
+    "fields": [
+      {
+        "label": "Pohon ID",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Kondisi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "produktif",
+          "belum_produktif",
+          "rusak",
+          "perlu_sulam",
+          "kosong_titik_potensi"
+        ]
+      },
+      {
+        "label": "Estimasi Umur (tahun)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Batang Bawah",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "Excelsa (default per BRIN)",
+          "Robusta",
+          "unknown"
+        ]
+      },
+      {
+        "label": "Batang Atas",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "Robusta",
+          "unknown"
+        ]
+      },
+      {
+        "label": "Klon ID",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Tinggi (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      }
+    ]
+  },
+  "opt_monitoring": {
+    "title": "🐛Detail OPT Monitoring (BRIN: 5-pohon-diagonal mingguan)",
+    "fields": [
+      {
+        "label": "Method",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "5_pohon_diagonal (BRIN rekomendasi)",
+          "random_sampling",
+          "full_inspection"
+        ]
+      },
+      {
+        "label": "Jumlah Pohon Disampling",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "OPT Target Utama",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "PBKo (Hypothenemus hampei)",
+          "Cercospora bercak daun",
+          "Karat Daun (Hemileia vastatrix)",
+          "Penggerek batang (Xylosandrus)",
+          "Kutu putih",
+          "Nematoda Pratylenchus",
+          "Jamur akar Rigidoporus"
+        ]
+      },
+      {
+        "label": "Intensitas Serangan (%)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Distribusi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "terlokalisasi_1_titik",
+          "menyebar_1_bidang",
+          "menyebar_multi_bidang",
+          "endemik"
+        ]
+      },
+      {
+        "label": "Action Triggered?",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "Penyemprotan Beauveria",
+          "Sanitasi buah jatuh",
+          "Pasang Brocap tambahan",
+          "Tunggu observasi minggu depan"
+        ]
+      }
+    ]
+  },
+  "brocap_management": {
+    "title": "🪤Detail Brocap Trap Management (Wiryadiputra & Cilas 2009)",
+    "fields": [
+      {
+        "label": "Aksi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "pasang_baru_pilot_kebun_4 (Mei 2026)",
+          "pasang_full_deploy_kebun_1_3 (Nov-Des 2026)",
+          "cek_isi_tangkapan",
+          "ganti_atraktan_kapsul",
+          "maintenance_botol"
+        ]
+      },
+      {
+        "label": "Kebun",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "1",
+          "2",
+          "3",
+          "4 (Rumah Wakif - pilot)"
+        ]
+      },
+      {
+        "label": "Jumlah Trap",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Ketinggian Pasang (m)",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "0.6 (Tanzania study optimal)",
+          "1.2 (klasik)",
+          "mix_0.6_dan_1.2"
+        ]
+      },
+      {
+        "label": "Tangkapan PBKo (jika cek)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Tipe Trap",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "commercial_brocap_official",
+          "DIY_botol_aqua_bekas (cost-effective)",
+          "kombinasi"
+        ]
+      }
+    ]
+  },
+  "soil_test": {
+    "title": "🧪Detail Soil Test / Sampling Tanah (Q9 — Lab UB Brawijaya)",
+    "fields": [
+      {
+        "label": "Method Sampling",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "diagonal_5_titik (BRIN rekomendasi)",
+          "random",
+          "per_bidang_grid"
+        ]
+      },
+      {
+        "label": "Jumlah Sample",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Kedalaman Sampling (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Lab Tujuan",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "Lab UB Brawijaya (Q9 vendor)",
+          "BPSI Tanah Bogor",
+          "lab_lokal_lainnya"
+        ]
+      },
+      {
+        "label": "Parameter Diuji",
+        "kind": "string",
+        "type": "select-multiple",
+        "options": [
+          "pH",
+          "NPK",
+          "EC (electrical conductivity)",
+          "OC (organic carbon)",
+          "Mg, Ca, S",
+          "tekstur tanah",
+          "CEC"
+        ]
+      },
+      {
+        "label": "Tgl Kirim ke Lab",
+        "kind": "string",
+        "type": "date",
+        "options": []
+      },
+      {
+        "label": "Estimasi Hasil",
+        "kind": "string",
+        "type": "date",
+        "options": []
+      }
+    ]
+  },
+  "topgraft_robusta": {
+    "title": "🌳Detail Top-Graft Robusta Klon Unggul (Q2)",
+    "fields": [
+      {
+        "label": "Klon Atas (sesuai keputusan: STOP Arabika)",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "BP 358 (rekomendasi)",
+          "SA 237 (rekomendasi)",
+          "BP 409",
+          "BP 939"
+        ]
+      },
+      {
+        "label": "Pohon Target ID",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Diameter Batang Bawah (cm)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Tinggi Cut Stump (cm dari tanah)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Jumlah Pucuk per Pohon",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Cek Kambium Aktif?",
+        "kind": "string-or-list",
+        "type": null,
+        "options": [
+          "Ya (basah/lengket)",
+          "Tidak (kering)"
+        ]
+      },
+      {
+        "label": "Window Aplikasi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "Sep-Des (musim hujan, kambium aktif)",
+          "off-season (risk)"
+        ]
+      }
+    ]
+  },
+  "bokashi_production": {
+    "title": "🌾Detail Bokashi Production (Phase 2 cost-effective)",
+    "fields": [
+      {
+        "label": "Tahap",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "mulai_fermentasi",
+          "cek_tengah (1-2 minggu)",
+          "panen_jadi (3 minggu)",
+          "aplikasi_ke_pohon"
+        ]
+      },
+      {
+        "label": "Komposisi Batch (kg)",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "EM4 Activator (L)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Volume Akhir (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Suhu Fermentasi (°C)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Aplikasi Dosis (kg/pohon)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      }
+    ]
+  },
+  "arachis_management": {
+    "title": "🪴Detail Cover Crops Arachis pintoi (Phase 2)",
+    "fields": [
+      {
+        "label": "Aksi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "tanam_pilot_bidang_4 (Nov 2026)",
+          "cek_survival_rate",
+          "perbanyak_stek_sendiri",
+          "ekspansi_bidang_1_2 (post-pilot)",
+          "pruning_kontrol"
+        ]
+      },
+      {
+        "label": "Jumlah Stek",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Jarak Tanam (cm × cm)",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Survival Rate (%) — kalau monitor",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Coverage (%) — penutupan tanah",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Sumber Bibit",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "self_propagation_pilot_bidang_4",
+          "nursery_lokal_pujon",
+          "BRIN Purwodadi"
+        ]
+      }
+    ]
+  },
+  "biochar_pyrolysis": {
+    "title": "🔥Detail Biochar Pyrolysis (Phase 2 — Frontiers Soil Science 2024)",
+    "fields": [
+      {
+        "label": "Tahap",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "siap_bahan_baku",
+          "mulai_pyrolysis",
+          "cooling",
+          "panen_biochar",
+          "aplikasi_piringan"
+        ]
+      },
+      {
+        "label": "Bahan Baku (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Suhu Pyrolysis (°C)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Durasi Pyrolysis (jam)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Hasil Biochar (kg)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Aplikasi Dosis (kg/pohon)",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      }
+    ]
+  },
+  "pisang_management": {
+    "title": "🍌Detail Pisang Management (Q3 — Amanah MWC NU)",
+    "fields": [
+      {
+        "label": "Aksi",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "panen_oleh_MWC_NU",
+          "tebang_pohon_pasca_panen",
+          "bongkar_tunas",
+          "monitoring_regrowth",
+          "konfirmasi_tidak_tanam_baru"
+        ]
+      },
+      {
+        "label": "Jumlah Rumpun",
+        "kind": "string",
+        "type": "number",
+        "options": []
+      },
+      {
+        "label": "Petugas Panen",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "MWC_NU",
+          "Ust_Fauzan",
+          "tim_kebun_ngt"
+        ]
+      },
+      {
+        "label": "Catatan Amanah (audit trail)",
+        "kind": "string",
+        "type": "textarea",
+        "options": []
+      }
+    ]
+  },
+  "komunikasi_stakeholder": {
+    "title": "☎️Komunikasi Stakeholder (Audit Trail Amanah)",
+    "fields": [
+      {
+        "label": "Stakeholder",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "Bonsari Coffee (specialty offtaker)",
+          "Nomad Coffee (specialty offtaker)",
+          "BRIN Purwodadi (rujukan agronomi)",
+          "Ust. Fauzan (pengawas syariah + TPQ Darul Mujtaba)",
+          "TPQ Darul Mujtaba (mauquf alaih)",
+          "MWC NU (panen pisang)",
+          "UB Brawijaya (lab + magang)",
+          "Lab UB Soil Test",
+          "Gapoktan Ngantang (Kartu Tani)",
+          "Penjajakan kemitraan strategis baru",
+          "Lainnya"
+        ]
+      },
+      {
+        "label": "Channel",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "kunjungan_langsung",
+          "WhatsApp/chat",
+          "telepon",
+          "email",
+          "meeting_formal"
+        ]
+      },
+      {
+        "label": "Topik Utama",
+        "kind": "string",
+        "type": "text",
+        "options": []
+      },
+      {
+        "label": "Status Hasil",
+        "kind": "string",
+        "type": "select-one",
+        "options": [
+          "resolved_kesepakatan",
+          "pending_followup",
+          "perlu_eskalasi_wakif",
+          "info_only"
+        ]
+      },
+      {
+        "label": "Detail Pembicaraan",
+        "kind": "string",
+        "type": "textarea",
+        "options": []
+      }
+    ]
+  },
+  "lain": {
+    "title": "📝 Detail Aktivitas Lain",
+    "fields": []
+  }
+}

@@ -1,265 +1,145 @@
-// ============================================================
-// Firestore Security Rules — Wakaf Ngantang
-// Updated 17 Mei 2026 — Phase 1 production rules
-// REV 26 Jun 2026: + worker baru YASIR/KAMTO/HARNI/MAKMIS ke allowlist laporan (create+update) + workers.
-//   Casus: laporan Mak Mis(MAKMIS)/Mba Harmi(HARNI) ditolak ("sync 0") krn pelapor tak ada di allowlist lama.
-// REV 27 Jun 2026: + CHRISTO (kelewat di REV 26 -> "sync 0" sama spt Mak Mis/Harmi, kasus gabungan).
-//   REFACTOR ke SINGLE-SOURCE function isFieldWorker()/isLaporanPelapor() — tambah pekerja baru CUKUP 1 tempat,
-//   bukan 3 array inline terpisah (laporan create + laporan update + workers) yang rawan kelewat.
-// REV 11 Jul 2026: + collection `invoices` untuk sistem Bukti Pembayaran Upah e-sign
-//   (invoice-generator.html + invoice-sign.html). READ open (link capability via token unguessable),
-//   CREATE hanya draft belum-ttd, UPDATE hanya boleh isi tanda tangan (signature-only), DELETE locked.
-//
-// DEPLOY: Paste isi file ini ke Firebase Console:
-//   Firebase Console → Build → Firestore Database → Rules tab → Edit
-//   Click "Publish" untuk apply.
-//
-// Phase 1 strategy (locked 17 Mei 2026):
-//   - Worker tokens (KUMPUL/YIT/ANTO) bertindak sebagai shared key
-//     untuk CREATE laporan. Tidak ada Firebase Auth dulu — keep simple.
-//   - Anybody bisa READ collection laporan (Wakif dashboard butuh, dan
-//     Living Lab future fetch akan butuh). Privacy NOT enforced di Phase 1.
-//   - UPDATE/DELETE locked — hanya bisa via Firebase Console (Wakif manual).
-//   - Schema validation: pelapor harus salah satu dari 3 worker valid +
-//     created_at + tanggal wajib + size limit.
-//
-// Phase 2 (later, when Adib ready): migrate ke Firebase Auth + custom claims
-// untuk role-based access (wakif full, worker scoped, public limited).
-// ============================================================
-
+// UNCOMMISSIONED production-compatible candidate. No production deployment or identity approval implied.
+// No anonymous raw-private reads. Public pages use existing static projection/fallback.
+// Entry and operation policies must remain paused/disabled until separate reopening authority.
 rules_version = '2';
+service cloud.firestore { match /databases/{database}/documents {
+ function policy(){return get(/databases/$(database)/documents/entry_policy/active).data;}
+ function grant(){return get(/databases/$(database)/documents/entry_grants/$(request.auth.uid)).data;}
+ function authority(p,g){
+ return request.auth != null && p.keys().hasOnly(['paused','writer_epoch']) && p.paused is bool && p.paused == false && p.writer_epoch is int && p.writer_epoch>0 && g.keys().size()==6 && g.keys().hasOnly(['uid','enabled','role','worker_token','writer_epoch','grant_epoch']) && g.grant_epoch is int && g.grant_epoch>0 && g.worker_token is string && g.uid == request.auth.uid && g.enabled == true && g.writer_epoch == p.writer_epoch && g.role in ['staff','worker'];
+ }
+ function live(){return request.auth!=null && authority(policy(),grant());}
+ function calendar(d){return d is string && (d.matches('^[0-9]{4}-((01|03|05|07|08|10|12)-(0[1-9]|[12][0-9]|3[01])|(04|06|09|11)-(0[1-9]|[12][0-9]|30)|02-(0[1-9]|1[0-9]|2[0-8]))$') || d.matches('^([0-9]{2}(0[48]|[2468][048]|[13579][26])|([02468][048]|[13579][26])00)-02-29$'));}
 
-service cloud.firestore {
-  match /databases/{database}/documents {
+// BEGIN GENERATED WORKER CATEGORY RULES
+ function category0(d){return d is map && d.keys().hasOnly(["jenis_pupuk","dosis_gpohon","jml_pohon_aplikasi","metode_aplikasi","jarak_batang_cm","kedalaman_parit_cm","time_gap_hujan_hari","subsidi_rdkk"]) && (!("jenis_pupuk" in d)||(d["jenis_pupuk"] in ["","Urea (pupuk putih)","SP-36 (pupuk fosfor)","KCl (pupuk merah)","Dolomit (kapur)","Kieserit (Mg+S)","Phonska / NPK subsidi","Phonska Plus (NPK + S + Zn)","NPK Yara biru (16-16-16)","Lain (catat di catatan)"])) && (!("dosis_gpohon" in d)||(d["dosis_gpohon"] is string)) && (!("jml_pohon_aplikasi" in d)||(d["jml_pohon_aplikasi"] is string)) && (!("metode_aplikasi" in d)||(d["metode_aplikasi"] in ["","Parit lingkar (alur keliling pohon)","Disebar / ditabur (broadcast)","Dipendam di rorak","Pupuk cair (fertigation)"])) && (!("jarak_batang_cm" in d)||(d["jarak_batang_cm"] is string)) && (!("kedalaman_parit_cm" in d)||(d["kedalaman_parit_cm"] is string)) && (!("time_gap_hujan_hari" in d)||(d["time_gap_hujan_hari"] is string)) && (!("subsidi_rdkk" in d)||d["subsidi_rdkk"]==null);}
+ function category1(d){return d is map && d.keys().hasOnly(["sumber_kompos","volume_per_pohon","total_kg","kondisi_fermentasi","lokasi_aplikasi"]) && (!("sumber_kompos" in d)||(d["sumber_kompos"] in ["","Kulit kopi sisa kupasan","Daun lamtoro kering","Daun kopi kering","Pupuk kandang kambing / tletong","Pupuk kandang ayam","Bokashi"])) && (!("volume_per_pohon" in d)||(d["volume_per_pohon"] is string)) && (!("total_kg" in d)||(d["total_kg"] is string)) && (!("kondisi_fermentasi" in d)||(d["kondisi_fermentasi"] in ["","Sudah jadi (matang)","Setengah matang","Masih mentah"])) && (!("lokasi_aplikasi" in d)||(d["lokasi_aplikasi"] in ["","Piringan (lingkar pohon)","Rorak (lubang resapan)","Bedeng / lainnya"]));}
+ function category2(d){return d is map && d.keys().hasOnly(["tipe_pemangkasan","tinggi_pre_cm","tinggi_post_cm","cabang_dipertahankan","cabang_dibuang"]) && (!("tipe_pemangkasan" in d)||(d["tipe_pemangkasan"] in ["","Pangkas berat (total)","Pangkas ringan rutin","Wiwilan (tunas liar)","Pangkas bentuk pohon muda","Pangkas pohon naungan","Peremajaan (potong batang bawah)"])) && (!("tinggi_pre_cm" in d)||(d["tinggi_pre_cm"] is string)) && (!("tinggi_post_cm" in d)||(d["tinggi_post_cm"] is string)) && (!("cabang_dipertahankan" in d)||(d["cabang_dipertahankan"] is list && d["cabang_dipertahankan"].hasOnly(["Cabang gemuk yang berbuah lebat","Cabang yang kena matahari banyak","Cabang utama / primer produktif"]))) && (!("cabang_dibuang" in d)||(d["cabang_dibuang"] is list && d["cabang_dibuang"].hasOnly(["Cabang ke dalam / cabang balik","Cabang mati / kering","Cabang sakit kena penyakit","Cabang gak kena matahari","Tunas air (wiwilan)","Cabang ada hama (OPT)"])));}
+ function category3(d){return d is map && d.keys().hasOnly(["metode_petik","jam_mulai","jam_selesai","kg_merah","kg_kuning","kg_hijau","kg_hitam","lot_id","processing_partner"]) && (!("metode_petik" in d)||(d["metode_petik"] in ["","Petik merah (selektif)","Petik separo merah","Borongan (semua warna)","Lelesan (mungut bawah)"])) && (!("jam_mulai" in d)||(d["jam_mulai"] is string)) && (!("jam_selesai" in d)||(d["jam_selesai"] is string)) && (!("kg_merah" in d)||(d["kg_merah"] is string)) && (!("kg_kuning" in d)||(d["kg_kuning"] is string)) && (!("kg_hijau" in d)||(d["kg_hijau"] is string)) && (!("kg_hitam" in d)||(d["kg_hitam"] is string)) && (!("lot_id" in d)||d["lot_id"]==null) && (!("processing_partner" in d)||d["processing_partner"]==null);}
+ function category4(d){return d is map && d.keys().hasOnly(["produk_pestisida","target_opt","volume_total_l","persen_bawah_daun","pakai_surfaktan","campur_pupuk"]) && (!("produk_pestisida" in d)||(d["produk_pestisida"] is string)) && (!("target_opt" in d)||(d["target_opt"] in ["","Bubuk buah (PBKo)","Bercak daun (Cercospora)","Karat daun","Kutu putih","Penggerek batang","Gulma rumput","Lain"])) && (!("volume_total_l" in d)||(d["volume_total_l"] is string)) && (!("persen_bawah_daun" in d)||(d["persen_bawah_daun"] is string)) && (!("pakai_surfaktan" in d)||(d["pakai_surfaktan"] in ["","Ya","Tidak"])) && (!("campur_pupuk" in d)||(d["campur_pupuk"] in ["","Tidak","Ya (sebutkan di catatan)"]));}
+ function category5(d){return d is map && d.keys().hasOnly(["panjang_m","lebar_m","kedalaman_m","isi_serasah_kg"]) && (!("panjang_m" in d)||(d["panjang_m"] is string)) && (!("lebar_m" in d)||(d["lebar_m"] is string)) && (!("kedalaman_m" in d)||(d["kedalaman_m"] is string)) && (!("isi_serasah_kg" in d)||(d["isi_serasah_kg"] is string));}
+ function category6(d){return d is map && d.keys().hasOnly(["aksi","jml_rumpun","petugas_panen","catatan_amanah"]) && (!("aksi" in d)||(d["aksi"] in ["","Panen oleh MWC NU","Tebang pohon pisang","Bongkar tunas (rhizoma)","Lain"])) && (!("jml_rumpun" in d)||(d["jml_rumpun"] is string)) && (!("petugas_panen" in d)||(d["petugas_panen"] in ["","MWC NU","Ust. Fauzan / TPQ","Tim Wakaf","Lain"])) && (!("catatan_amanah" in d)||(d["catatan_amanah"] is string));}
+ function category7(d){return d is map && d.keys().hasOnly(["pohon_id","kondisi","umur_thn","batang_bawah","batang_atas","tinggi_cm","klon_id"]) && (!("pohon_id" in d)||(d["pohon_id"] is string)) && (!("kondisi" in d)||(d["kondisi"] in ["","Produktif","Belum produktif (muda)","Rusak / perlu sulam","Mati / kosong"])) && (!("umur_thn" in d)||(d["umur_thn"] is string)) && (!("batang_bawah" in d)||(d["batang_bawah"] in ["","Excelsa","Robusta","Belum jelas"])) && (!("batang_atas" in d)||(d["batang_atas"] in ["","Robusta klon unggul","Robusta lama","Arabika sambungan lama","Belum jelas"])) && (!("tinggi_cm" in d)||(d["tinggi_cm"] is string)) && (!("klon_id" in d)||d["klon_id"]==null);}
+ function category8(d){return d is map && d.keys().hasOnly(["spesies","jml_pohon","jarak_tanam","ukuran_lubang_cm"]) && (!("spesies" in d)||(d["spesies"] in ["","Lamtoro PG 79","Gamal","Durian","Sengon","Petai"])) && (!("jml_pohon" in d)||(d["jml_pohon"] is string)) && (!("jarak_tanam" in d)||(d["jarak_tanam"] is string)) && (!("ukuran_lubang_cm" in d)||(d["ukuran_lubang_cm"] is string));}
+ function category9(d){return d is map && d.keys().hasOnly(["sumber","lokasi_kompos","rorak_id_target","volume_input_kg","tgl_mulai","est_tgl_jadi"]) && (!("sumber" in d)||(d["sumber"] in ["","Pulping Bonsari","Pulping di kebun","Lain"])) && (!("lokasi_kompos" in d)||(d["lokasi_kompos"] in ["","Rorak","Piringan pohon","Bedeng kompos terpisah"])) && (!("rorak_id_target" in d)||(d["rorak_id_target"] is string)) && (!("volume_input_kg" in d)||(d["volume_input_kg"] is string)) && (!("tgl_mulai" in d)||(d["tgl_mulai"] is string)) && (!("est_tgl_jadi" in d)||(d["est_tgl_jadi"] is string));}
+ function category10(d){return d is map && d.keys().hasOnly(["method","area_m2","tinggi_gulma_pre_cm","status_mulsa","bahan_habis_rp","sumber_tenaga"]) && (!("method" in d)||(d["method"] in ["sabit","brushcutter","cover_crops","herbisida"])) && (!("area_m2" in d)||(d["area_m2"] is string)) && (!("tinggi_gulma_pre_cm" in d)||(d["tinggi_gulma_pre_cm"] is string)) && (!("status_mulsa" in d)||(d["status_mulsa"] in ["","Disebar piringan (mulsa)","Dikumpul jadi kompos","Dibakar 🚫 (off-SOP)","Dibiarkan"])) && (!("bahan_habis_rp" in d)||(d["bahan_habis_rp"] is string)) && (!("sumber_tenaga" in d)||(d["sumber_tenaga"] in ["","Sendiri","Gotong royong","Bantuan tim"]));}
+ function category11(d){return d is map && d.keys().hasOnly(["total_sortir_kg","sink_kg","float_kg","persen_defect","buang_compost","lot_id_ref","lanjut_ke_partner"]) && (!("total_sortir_kg" in d)||(d["total_sortir_kg"] is string)) && (!("sink_kg" in d)||(d["sink_kg"] is string)) && (!("float_kg" in d)||(d["float_kg"] is string)) && (!("persen_defect" in d)||(d["persen_defect"] is string)) && (!("buang_compost" in d)||(d["buang_compost"] in ["","Ya","Tidak"])) && (!("lot_id_ref" in d)||d["lot_id_ref"]==null) && (!("lanjut_ke_partner" in d)||d["lanjut_ke_partner"]==null);}
+ function category12(d){return d is map && d.keys().hasOnly(["tahap","tempat_jemur","ketebalan_cm","frek_balik_jam","moisture_persen","jam_total","hasil_kg","lot_id_ref"]) && (!("tahap" in d)||(d["tahap"] in ["","Mulai jemur","Pembalikan","Tutup (terpal)","Angkat (selesai)"])) && (!("tempat_jemur" in d)||(d["tempat_jemur"] in ["","Para-para bambu","Lantai semen","Terpal / klemar","Bedeng tinggi"])) && (!("ketebalan_cm" in d)||(d["ketebalan_cm"] is string)) && (!("frek_balik_jam" in d)||(d["frek_balik_jam"] is string)) && (!("moisture_persen" in d)||(d["moisture_persen"] is string)) && (!("jam_total" in d)||(d["jam_total"] is string)) && (!("hasil_kg" in d)||(d["hasil_kg"] is string)) && (!("lot_id_ref" in d)||d["lot_id_ref"]==null);}
+ function category13(d){return d is map && d.keys().hasOnly(["method","jml_pohon_sampling","opt_target","intensitas_persen","distribusi"]) && (!("method" in d)||(d["method"] in ["","5-pohon-diagonal","Walking transect","Spot check"])) && (!("jml_pohon_sampling" in d)||(d["jml_pohon_sampling"] is string)) && (!("opt_target" in d)||(d["opt_target"] in ["","Bubuk buah (PBKo)","Bercak daun (Cercospora)","Karat daun","Jamur akar","Penggerek batang","Kutu putih","Lain"])) && (!("intensitas_persen" in d)||(d["intensitas_persen"] is string)) && (!("distribusi" in d)||(d["distribusi"] in ["","Merata","Spot / kantong","Pinggir kebun","Tengah kebun"]));}
+ function category14(d){return d is map && d.keys().hasOnly(["aksi","jml_trap","ketinggian_m","tangkapan_pbko","tipe_trap"]) && (!("aksi" in d)||(d["aksi"] in ["","Pasang baru","Cek tangkapan","Refill atraktan","Lepas / pindah"])) && (!("jml_trap" in d)||(d["jml_trap"] is string)) && (!("ketinggian_m" in d)||(d["ketinggian_m"] is string)) && (!("tangkapan_pbko" in d)||(d["tangkapan_pbko"] is string)) && (!("tipe_trap" in d)||(d["tipe_trap"] in ["","Komersial (pabrik)","DIY botol aqua","Mix"]));}
+ function category15(d){return d is map && d.keys().hasOnly(["pohon_target_id","diameter_batang_bawah_cm","tinggi_cut_stump_cm","jml_pucuk_per_pohon","cek_kambium","window_aplikasi","klon_atas"]) && (!("pohon_target_id" in d)||(d["pohon_target_id"] is string)) && (!("diameter_batang_bawah_cm" in d)||(d["diameter_batang_bawah_cm"] is string)) && (!("tinggi_cut_stump_cm" in d)||(d["tinggi_cut_stump_cm"] is string)) && (!("jml_pucuk_per_pohon" in d)||(d["jml_pucuk_per_pohon"] is string)) && (!("cek_kambium" in d)||(d["cek_kambium"] in ["","Ya — basah / lengket","Tidak — kering","Belum cek"])) && (!("window_aplikasi" in d)||(d["window_aplikasi"] in ["","Sep-Des (optimal)","Lain bulan"])) && (!("klon_atas" in d)||d["klon_atas"]==null);}
+ function category16(d){return d is map && d.keys().hasOnly(["method_sampling","jml_sample","kedalaman_cm","tgl_kirim_lab","estimasi_hasil","lab_tujuan","parameter_diuji"]) && (!("method_sampling" in d)||(d["method_sampling"] in ["","Diagonal 5 titik","Walking transect","Spot"])) && (!("jml_sample" in d)||(d["jml_sample"] is string)) && (!("kedalaman_cm" in d)||(d["kedalaman_cm"] is string)) && (!("tgl_kirim_lab" in d)||(d["tgl_kirim_lab"] is string)) && (!("estimasi_hasil" in d)||(d["estimasi_hasil"] is string)) && (!("lab_tujuan" in d)||d["lab_tujuan"]==null) && (!("parameter_diuji" in d)||d["parameter_diuji"]==null);}
+ function category17(d){return d is map && d.keys().hasOnly(["tahap","komposisi_kg","em4_l","volume_akhir_kg","suhu_celcius","dosis_kg_per_pohon"]) && (!("tahap" in d)||(d["tahap"] in ["","Mixing batch","Fermentasi (tutup)","Cek suhu","Angkat (jadi)"])) && (!("komposisi_kg" in d)||(d["komposisi_kg"] is string)) && (!("em4_l" in d)||(d["em4_l"] is string)) && (!("volume_akhir_kg" in d)||(d["volume_akhir_kg"] is string)) && (!("suhu_celcius" in d)||(d["suhu_celcius"] is string)) && (!("dosis_kg_per_pohon" in d)||(d["dosis_kg_per_pohon"] is string));}
+ function category18(d){return d is map && d.keys().hasOnly(["stakeholder","channel","topik_utama","status_hasil","detail_pembicaraan"]) && (!("stakeholder" in d)||(d["stakeholder"] in ["","Ust. Fauzan","MWC NU","Bonsari Coffee","Nomad Coffee","BRIN","Tetangga / komunitas","Lain"])) && (!("channel" in d)||(d["channel"] in ["","WhatsApp","Telepon","Kunjungan langsung"])) && (!("topik_utama" in d)||(d["topik_utama"] is string)) && (!("status_hasil" in d)||(d["status_hasil"] in ["","Selesai (resolved)","Perlu eskalasi ke Pak Adib","Follow-up nanti"])) && (!("detail_pembicaraan" in d)||(d["detail_pembicaraan"] is string));}
+ function category19(d){return d is map && d.keys().hasOnly(["aksi","jml_stek","jarak_tanam","survival_persen","coverage_persen","sumber_bibit"]) && (!("aksi" in d)||(d["aksi"] in ["","Tanam stek","Monitoring survival","Cek coverage","Pemangkasan"])) && (!("jml_stek" in d)||(d["jml_stek"] is string)) && (!("jarak_tanam" in d)||(d["jarak_tanam"] is string)) && (!("survival_persen" in d)||(d["survival_persen"] is string)) && (!("coverage_persen" in d)||(d["coverage_persen"] is string)) && (!("sumber_bibit" in d)||d["sumber_bibit"]==null);}
+ function category20(d){return d is map && d.keys().hasOnly(["tahap","bahan_kg","suhu_celcius","durasi_jam","hasil_kg","dosis_kg_per_pohon"]) && (!("tahap" in d)||(d["tahap"] in ["","Siapkan bahan baku","Pyrolysis aktif","Pendinginan","Aplikasi ke pohon"])) && (!("bahan_kg" in d)||(d["bahan_kg"] is string)) && (!("suhu_celcius" in d)||(d["suhu_celcius"] is string)) && (!("durasi_jam" in d)||(d["durasi_jam"] is string)) && (!("hasil_kg" in d)||(d["hasil_kg"] is string)) && (!("dosis_kg_per_pohon" in d)||(d["dosis_kg_per_pohon"] is string));}
+ function category21(d){return d is map && d.keys().hasOnly(["deskripsi_kerja"]) && (!("deskripsi_kerja" in d)||(d["deskripsi_kerja"] is string));}
+ function categoryDetail(category,d){return (category=="pemupukan_kimia"?category0(d):(category=="pemupukan_organik"?category1(d):(category=="pemangkasan"?category2(d):(category=="panen"?category3(d):(category=="penyemprotan"?category4(d):(category=="build_rorak"?category5(d):(category=="pisang_management"?category6(d):(category=="inventarisasi_pohon"?category7(d):(category=="tanam_penaung"?category8(d):(category=="kompos_kulit_kopi"?category9(d):(category=="babat_rumput"?category10(d):(category=="sortasi_buah"?category11(d):(category=="penjemuran"?category12(d):(category=="opt_monitoring"?category13(d):(category=="brocap_management"?category14(d):(category=="topgraft_robusta"?category15(d):(category=="soil_test"?category16(d):(category=="bokashi_production"?category17(d):(category=="komunikasi_stakeholder"?category18(d):(category=="arachis_management"?category19(d):(category=="biochar_pyrolysis"?category20(d):(category=="lain"?category21(d):false))))))))))))))))))))));}
+// END GENERATED WORKER CATEGORY RULES
+ function photo(x){return x is map && x.keys().hasOnly(['id','data_url','size_kb']) && x.keys().size()==3 && x.id is string && x.data_url is string && x.data_url.size()<=100000 && x.size_kb is number && x.size_kb>=0;}
+ function voice(x){return x is map && x.keys().hasOnly(['id','duration_sec','blob_b64']) && x.keys().size()==3 && x.id is string && x.blob_b64 is string && x.blob_b64.size()<=100000 && x.duration_sec is number && x.duration_sec>=0;}
+ function photos(a){return a is list && a.size()<=3 && (a.size()<1||photo(a[0])) && (a.size()<2||photo(a[1])) && (a.size()<3||photo(a[2]));}
+ function voices(a){return a is list && a.size()<=3 && (a.size()<1||voice(a[0])) && (a.size()<2||voice(a[1])) && (a.size()<3||voice(a[2]));}
 
-    // ===== Worker allowlist — SINGLE SOURCE (REV 27 Jun 2026) =====
-    // ⭐ Tambah pekerja baru CUKUP di isFieldWorker() di bawah — otomatis berlaku ke laporan + workers.
-    //    Lesson 27 Jun: CHRISTO sempat kelewat krn dulu ada 3 array inline terpisah.
-    // ⭐ 22 Jul 2026 — DATA-DRIVEN (req Wakif): pekerja baru dari halaman Tim otomatis diakui rules
-    // via mirror collection worker_tokens/{TOKEN} (exists lookup). List hardcode = fallback veteran.
-    function isFieldWorker(tok) {
-      return tok in ['KUMPUL', 'YIT', 'ANTO', 'YASIR', 'KAMTO', 'HARNI', 'MAKMIS', 'CHRISTO', 'NARDI']
-        || exists(/databases/$(database)/documents/worker_tokens/$(tok));
-    }
-    function isLaporanPelapor(tok) {
-      return isFieldWorker(tok) || tok in ['WAKIF', 'ADIB'];
-    }
+// BEGIN STAFF DOM CONTRACT
+ function staff0(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Sumber","Volume per Pohon (L)","Total kg","Kondisi Fermentasi","Lokasi Aplikasi"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🌱Detail Pemupukan Organik (Q4 — Composting In-Situ)") && (!("Sumber" in d)||(d["Sumber"] in ["kulit_kopi_pulping (rekomendasi)","serasah_daun_lamtoro","serasah_daun_kopi","kandang_kambing","campuran"])) && (!("Volume per Pohon (L)" in d)||(d["Volume per Pohon (L)"] is string)) && (!("Total kg" in d)||(d["Total kg"] is string)) && (!("Kondisi Fermentasi" in d)||(d["Kondisi Fermentasi"] in ["kompos_jadi","setengah","penuh","mentah"])) && (!("Lokasi Aplikasi" in d)||(d["Lokasi Aplikasi"] in ["piringan_pohon","rorak","bedeng_kompos"]));}
+ function staff1(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Jenis Pupuk","Dosis (g/pohon) — sesuai BRIN tabel","Jumlah Pohon Aplikasi","Total kg","Metode Aplikasi","Jarak dari Batang (cm)","Kedalaman Parit (cm)","Time Gap dari Hujan Terakhir (hari)","Subsidi RDKK?"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="⚗️Detail Pemupukan Anorganik (BRIN dosis 5-10 thn)") && (!("Jenis Pupuk" in d)||(d["Jenis Pupuk"] in ["Urea Pusri","SP-36 Petrokimia","KCl Mahkota","Dolomit (lime correction)","Kieserit (Mg+S)","Phonska 15-15-15 (subsidi)","Phonska Plus","NPK 16-16-16 Yaramila"])) && (!("Dosis (g/pohon) — sesuai BRIN tabel" in d)||(d["Dosis (g/pohon) — sesuai BRIN tabel"] is string)) && (!("Jumlah Pohon Aplikasi" in d)||(d["Jumlah Pohon Aplikasi"] is string)) && (!("Total kg" in d)||(d["Total kg"] is string)) && (!("Metode Aplikasi" in d)||(d["Metode Aplikasi"] in ["parit_lingkar (rekomendasi SOP)","broadcast","benam_rorak","fertigation"])) && (!("Jarak dari Batang (cm)" in d)||(d["Jarak dari Batang (cm)"] is string)) && (!("Kedalaman Parit (cm)" in d)||(d["Kedalaman Parit (cm)"] is string)) && (!("Time Gap dari Hujan Terakhir (hari)" in d)||(d["Time Gap dari Hujan Terakhir (hari)"] is string)) && (!("Subsidi RDKK?" in d)||((d["Subsidi RDKK?"] in ["Ya (HET)","Tidak (non-subsidi)"] || (d["Subsidi RDKK?"] is list && d["Subsidi RDKK?"].hasOnly(["Ya (HET)","Tidak (non-subsidi)"])))));}
+ function staff2(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Tipe Pemangkasan","Tinggi Pohon Pre (cm)","Tinggi Pohon Post (cm)","Cabang Dipertahankan (multi-pilih)","Cabang Dibuang (multi-pilih)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="✂️Detail Pemangkasan") && (!("Tipe Pemangkasan" in d)||(d["Tipe Pemangkasan"] in ["pruning_berat","pruning_ringan","bentuk_tbm","peremajaan","penaung"])) && (!("Tinggi Pohon Pre (cm)" in d)||(d["Tinggi Pohon Pre (cm)"] is string)) && (!("Tinggi Pohon Post (cm)" in d)||(d["Tinggi Pohon Post (cm)"] is string)) && (!("Cabang Dipertahankan (multi-pilih)" in d)||((d["Cabang Dipertahankan (multi-pilih)"] in ["cabang_gemuk_berbuah","cabang_kena_sinar","cabang_primer_produktif"] || (d["Cabang Dipertahankan (multi-pilih)"] is list && d["Cabang Dipertahankan (multi-pilih)"].hasOnly(["cabang_gemuk_berbuah","cabang_kena_sinar","cabang_primer_produktif"]))))) && (!("Cabang Dibuang (multi-pilih)" in d)||((d["Cabang Dibuang (multi-pilih)"] in ["wiwilan","cabang_balik","cabang_kering","cabang_dalam","terserang_OPT"] || (d["Cabang Dibuang (multi-pilih)"] is list && d["Cabang Dibuang (multi-pilih)"].hasOnly(["wiwilan","cabang_balik","cabang_kering","cabang_dalam","terserang_OPT"])))));}
+ function staff3(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Method","Area Dibersihkan (m²)","Tinggi Gulma Pre (cm)","Status Mulsa Pasca-Babat","Bahan Habis Pakai (Rp)","Sumber Tenaga"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🌾Detail Babat Rumput / Sanitasi Gulma") && (!("Method" in d)||(d["Method"] in ["manual_sabit","brushcutter_sewa (mesin babat — cost-effective)","sengkreng_manual_cangkul (lokal Ngantang — bersih sampai akar, tahan lama)","cover_crops_arachis (Phase 2 — Arachis pintoi)","mulsa_tebal_pruning (cost-effective)","obat_rumput_herbisida (glifosat / 2,4-D — off-SOP, regen lambat)","kombinasi_sabit_sengkreng","kombinasi_brushcutter_obat_rumput","kombinasi_lainnya"])) && (!("Area Dibersihkan (m²)" in d)||(d["Area Dibersihkan (m²)"] is string)) && (!("Tinggi Gulma Pre (cm)" in d)||(d["Tinggi Gulma Pre (cm)"] is string)) && (!("Status Mulsa Pasca-Babat" in d)||(d["Status Mulsa Pasca-Babat"] in ["spread_di_piringan_pohon (rekomendasi)","dikumpulkan_kompos","dibakar (❌ avoid)","dibiarkan"])) && (!("Bahan Habis Pakai (Rp)" in d)||(d["Bahan Habis Pakai (Rp)"] is string)) && (!("Sumber Tenaga" in d)||(d["Sumber Tenaga"] in ["pekerja_internal (Pak Kumpul)","borongan_per_area","gotong_royong_komunitas"]));}
+ function staff4(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Produk Pestisida","Target OPT","Volume Total (L)","% Volume ke Bawah Daun (target 70%)","Surfaktan?","Campur dengan Pupuk?"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="💨Detail Penyemprotan (sesuai BRIN 5 Mei)") && (!("Produk Pestisida" in d)||(d["Produk Pestisida"] is string)) && (!("Target OPT" in d)||(d["Target OPT"] in ["PBKo","kutu_putih","cercospora_bercak_daun","jamur_upas","nematoda"])) && (!("Volume Total (L)" in d)||(d["Volume Total (L)"] is string)) && (!("% Volume ke Bawah Daun (target 70%)" in d)||(d["% Volume ke Bawah Daun (target 70%)"] is string)) && (!("Surfaktan?" in d)||((d["Surfaktan?"] in ["Ya","Tidak"] || (d["Surfaktan?"] is list && d["Surfaktan?"].hasOnly(["Ya","Tidak"]))))) && (!("Campur dengan Pupuk?" in d)||((d["Campur dengan Pupuk?"] in ["Ya (⚠️ alert)","Tidak"] || (d["Campur dengan Pupuk?"] is list && d["Campur dengan Pupuk?"].hasOnly(["Ya (⚠️ alert)","Tidak"])))));}
+ function staff5(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Metode Petik","Lot ID","Jam Petik Mulai","Jam Petik Selesai","Buah Merah (kg)","Buah Kuning (kg)","Buah Hijau (kg)","Buah Hitam Overripe (kg)","Processing Partner"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🍒Detail Panen (Q6 — Petik Merah Default)") && (!("Metode Petik" in d)||(d["Metode Petik"] in ["selektif_merah","setengah_selektif","lelesan","borongan"])) && (!("Lot ID" in d)||(d["Lot ID"] is string)) && (!("Jam Petik Mulai" in d)||(d["Jam Petik Mulai"] is string)) && (!("Jam Petik Selesai" in d)||(d["Jam Petik Selesai"] is string)) && (!("Buah Merah (kg)" in d)||(d["Buah Merah (kg)"] is string)) && (!("Buah Kuning (kg)" in d)||(d["Buah Kuning (kg)"] is string)) && (!("Buah Hijau (kg)" in d)||(d["Buah Hijau (kg)"] is string)) && (!("Buah Hitam Overripe (kg)" in d)||(d["Buah Hitam Overripe (kg)"] is string)) && (!("Processing Partner" in d)||(d["Processing Partner"] in ["kebun_inhouse_ngt","bonsari_coffee (specialty)"]));}
+ function staff6(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Lot ID Reference (Kebun)","Total Buah Sortir (kg)","Sortasi Air — Tenggelam/Sink (kg)","Sortasi Air — Mengapung/Float (kg)","% Defect Visual (PBKo, busuk, hitam)","Buang ke Composting?","Lanjut ke (Processing Partner)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🫘Detail Sortasi Buah Pre-Pulping (SOP hal 230)") && (!("Lot ID Reference (Kebun)" in d)||(d["Lot ID Reference (Kebun)"] in ["","kebun_1","kebun_2","kebun_3","kebun_4"])) && (!("Total Buah Sortir (kg)" in d)||(d["Total Buah Sortir (kg)"] is string)) && (!("Sortasi Air — Tenggelam/Sink (kg)" in d)||(d["Sortasi Air — Tenggelam/Sink (kg)"] is string)) && (!("Sortasi Air — Mengapung/Float (kg)" in d)||(d["Sortasi Air — Mengapung/Float (kg)"] is string)) && (!("% Defect Visual (PBKo, busuk, hitam)" in d)||(d["% Defect Visual (PBKo, busuk, hitam)"] is string)) && (!("Buang ke Composting?" in d)||((d["Buang ke Composting?"] in ["Ya (kulit + reject)","Tidak"] || (d["Buang ke Composting?"] is list && d["Buang ke Composting?"].hasOnly(["Ya (kulit + reject)","Tidak"]))))) && (!("Lanjut ke (Processing Partner)" in d)||(d["Lanjut ke (Processing Partner)"] in ["bonsari_coffee_specialty","penggilingan_lokal_pujon","simpan_jemur_inhouse"]));}
+ function staff7(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Lot ID Reference (Kebun)","Tahap","Tempat Jemur","Ketebalan Tumpukan (cm)","Frekuensi Pembalikan (jam)","Moisture Reading (%) — kalau ada","Jam Total Jemur (kumulatif)","Hasil Berat (kg) — kalau angkat selesai"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="☀️Detail Penjemuran / Drying (SOP hal 235 + SNI 01-2907-2008)") && (!("Lot ID Reference (Kebun)" in d)||(d["Lot ID Reference (Kebun)"] in ["","kebun_1","kebun_2","kebun_3","kebun_4"])) && (!("Tahap" in d)||(d["Tahap"] in ["mulai_jemur","balik_pertama","balik_rutin","tutup_hujan","angkat_selesai"])) && (!("Tempat Jemur" in d)||(d["Tempat Jemur"] in ["para_para_bambu","terpal_lantai","bedeng_tinggi"])) && (!("Ketebalan Tumpukan (cm)" in d)||(d["Ketebalan Tumpukan (cm)"] is string)) && (!("Frekuensi Pembalikan (jam)" in d)||(d["Frekuensi Pembalikan (jam)"] is string)) && (!("Moisture Reading (%) — kalau ada" in d)||(d["Moisture Reading (%) — kalau ada"] is string)) && (!("Jam Total Jemur (kumulatif)" in d)||(d["Jam Total Jemur (kumulatif)"] is string)) && (!("Hasil Berat (kg) — kalau angkat selesai" in d)||(d["Hasil Berat (kg) — kalau angkat selesai"] is string));}
+ function staff8(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Rorak ID","Panjang (m)","Lebar (m)","Kedalaman (m)","Isi Serasah Awal (kg)","GPS (auto / manual)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🚜Detail Build Rorak (Q8)") && (!("Rorak ID" in d)||(d["Rorak ID"] is string)) && (!("Panjang (m)" in d)||(d["Panjang (m)"] is string)) && (!("Lebar (m)" in d)||(d["Lebar (m)"] is string)) && (!("Kedalaman (m)" in d)||(d["Kedalaman (m)"] is string)) && (!("Isi Serasah Awal (kg)" in d)||(d["Isi Serasah Awal (kg)"] is string)) && (!("GPS (auto / manual)" in d)||(d["GPS (auto / manual)"] is string));}
+ function staff9(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Sumber","Lokasi Kompos","Rorak ID Target","Volume Input (kg)","Tgl Mulai Kompos","Est. Tgl Jadi"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="♻️Detail Kompos Kulit Kopi (Q4)") && (!("Sumber" in d)||(d["Sumber"] in ["kulit_pulping_panen","serasah_pemangkasan","campuran"])) && (!("Lokasi Kompos" in d)||(d["Lokasi Kompos"] in ["rorak","bedeng_kompos","piringan_pohon"])) && (!("Rorak ID Target" in d)||(d["Rorak ID Target"] is string)) && (!("Volume Input (kg)" in d)||(d["Volume Input (kg)"] is string)) && (!("Tgl Mulai Kompos" in d)||(d["Tgl Mulai Kompos"] is string)) && (!("Est. Tgl Jadi" in d)||(d["Est. Tgl Jadi"] is string));}
+ function staff10(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Spesies","Jumlah Pohon","Jarak Tanam (m × m)","Ukuran Lubang (cm)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🌳Detail Tanam Penaung (Q7 — Lamtoro PG 79)") && (!("Spesies" in d)||(d["Spesies"] in ["lamtoro_PG79 (rekomendasi)","gamal_gliricidia","durian (10×10 m)","sengon","petai"])) && (!("Jumlah Pohon" in d)||(d["Jumlah Pohon"] is string)) && (!("Jarak Tanam (m × m)" in d)||(d["Jarak Tanam (m × m)"] is string)) && (!("Ukuran Lubang (cm)" in d)||(d["Ukuran Lubang (cm)"] is string));}
+ function staff11(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Pohon ID","Kondisi","Estimasi Umur (tahun)","Batang Bawah","Batang Atas","Klon ID","Tinggi (cm)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🔍Detail Inventarisasi Pohon (PIC: Wakif + Cak Yit · post-19 Mei 2026)") && (!("Pohon ID" in d)||(d["Pohon ID"] is string)) && (!("Kondisi" in d)||(d["Kondisi"] in ["produktif","belum_produktif","rusak","perlu_sulam","kosong_titik_potensi"])) && (!("Estimasi Umur (tahun)" in d)||(d["Estimasi Umur (tahun)"] is string)) && (!("Batang Bawah" in d)||(d["Batang Bawah"] in ["Excelsa (default per BRIN)","Robusta","unknown"])) && (!("Batang Atas" in d)||(d["Batang Atas"] in ["Robusta","unknown"])) && (!("Klon ID" in d)||(d["Klon ID"] is string)) && (!("Tinggi (cm)" in d)||(d["Tinggi (cm)"] is string));}
+ function staff12(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Method","Jumlah Pohon Disampling","OPT Target Utama","Intensitas Serangan (%)","Distribusi","Action Triggered?"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🐛Detail OPT Monitoring (BRIN: 5-pohon-diagonal mingguan)") && (!("Method" in d)||(d["Method"] in ["5_pohon_diagonal (BRIN rekomendasi)","random_sampling","full_inspection"])) && (!("Jumlah Pohon Disampling" in d)||(d["Jumlah Pohon Disampling"] is string)) && (!("OPT Target Utama" in d)||(d["OPT Target Utama"] in ["PBKo (Hypothenemus hampei)","Cercospora bercak daun","Karat Daun (Hemileia vastatrix)","Penggerek batang (Xylosandrus)","Kutu putih","Nematoda Pratylenchus","Jamur akar Rigidoporus"])) && (!("Intensitas Serangan (%)" in d)||(d["Intensitas Serangan (%)"] is string)) && (!("Distribusi" in d)||(d["Distribusi"] in ["terlokalisasi_1_titik","menyebar_1_bidang","menyebar_multi_bidang","endemik"])) && (!("Action Triggered?" in d)||((d["Action Triggered?"] in ["Penyemprotan Beauveria","Sanitasi buah jatuh","Pasang Brocap tambahan","Tunggu observasi minggu depan"] || (d["Action Triggered?"] is list && d["Action Triggered?"].hasOnly(["Penyemprotan Beauveria","Sanitasi buah jatuh","Pasang Brocap tambahan","Tunggu observasi minggu depan"])))));}
+ function staff13(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Aksi","Kebun","Jumlah Trap","Ketinggian Pasang (m)","Tangkapan PBKo (jika cek)","Tipe Trap"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🪤Detail Brocap Trap Management (Wiryadiputra & Cilas 2009)") && (!("Aksi" in d)||(d["Aksi"] in ["pasang_baru_pilot_kebun_4 (Mei 2026)","pasang_full_deploy_kebun_1_3 (Nov-Des 2026)","cek_isi_tangkapan","ganti_atraktan_kapsul","maintenance_botol"])) && (!("Kebun" in d)||(d["Kebun"] in ["1","2","3","4 (Rumah Wakif - pilot)"])) && (!("Jumlah Trap" in d)||(d["Jumlah Trap"] is string)) && (!("Ketinggian Pasang (m)" in d)||(d["Ketinggian Pasang (m)"] in ["0.6 (Tanzania study optimal)","1.2 (klasik)","mix_0.6_dan_1.2"])) && (!("Tangkapan PBKo (jika cek)" in d)||(d["Tangkapan PBKo (jika cek)"] is string)) && (!("Tipe Trap" in d)||(d["Tipe Trap"] in ["commercial_brocap_official","DIY_botol_aqua_bekas (cost-effective)","kombinasi"]));}
+ function staff14(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Method Sampling","Jumlah Sample","Kedalaman Sampling (cm)","Lab Tujuan","Parameter Diuji","Tgl Kirim ke Lab","Estimasi Hasil"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🧪Detail Soil Test / Sampling Tanah (Q9 — Lab UB Brawijaya)") && (!("Method Sampling" in d)||(d["Method Sampling"] in ["diagonal_5_titik (BRIN rekomendasi)","random","per_bidang_grid"])) && (!("Jumlah Sample" in d)||(d["Jumlah Sample"] is string)) && (!("Kedalaman Sampling (cm)" in d)||(d["Kedalaman Sampling (cm)"] is string)) && (!("Lab Tujuan" in d)||(d["Lab Tujuan"] in ["Lab UB Brawijaya (Q9 vendor)","BPSI Tanah Bogor","lab_lokal_lainnya"])) && (!("Parameter Diuji" in d)||(d["Parameter Diuji"] in ["pH","NPK","EC (electrical conductivity)","OC (organic carbon)","Mg, Ca, S","tekstur tanah","CEC"])) && (!("Tgl Kirim ke Lab" in d)||(d["Tgl Kirim ke Lab"] is string)) && (!("Estimasi Hasil" in d)||(d["Estimasi Hasil"] is string));}
+ function staff15(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Klon Atas (sesuai keputusan: STOP Arabika)","Pohon Target ID","Diameter Batang Bawah (cm)","Tinggi Cut Stump (cm dari tanah)","Jumlah Pucuk per Pohon","Cek Kambium Aktif?","Window Aplikasi"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🌳Detail Top-Graft Robusta Klon Unggul (Q2)") && (!("Klon Atas (sesuai keputusan: STOP Arabika)" in d)||(d["Klon Atas (sesuai keputusan: STOP Arabika)"] in ["BP 358 (rekomendasi)","SA 237 (rekomendasi)","BP 409","BP 939"])) && (!("Pohon Target ID" in d)||(d["Pohon Target ID"] is string)) && (!("Diameter Batang Bawah (cm)" in d)||(d["Diameter Batang Bawah (cm)"] is string)) && (!("Tinggi Cut Stump (cm dari tanah)" in d)||(d["Tinggi Cut Stump (cm dari tanah)"] is string)) && (!("Jumlah Pucuk per Pohon" in d)||(d["Jumlah Pucuk per Pohon"] is string)) && (!("Cek Kambium Aktif?" in d)||((d["Cek Kambium Aktif?"] in ["Ya (basah/lengket)","Tidak (kering)"] || (d["Cek Kambium Aktif?"] is list && d["Cek Kambium Aktif?"].hasOnly(["Ya (basah/lengket)","Tidak (kering)"]))))) && (!("Window Aplikasi" in d)||(d["Window Aplikasi"] in ["Sep-Des (musim hujan, kambium aktif)","off-season (risk)"]));}
+ function staff16(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Tahap","Komposisi Batch (kg)","EM4 Activator (L)","Volume Akhir (kg)","Suhu Fermentasi (°C)","Aplikasi Dosis (kg/pohon)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🌾Detail Bokashi Production (Phase 2 cost-effective)") && (!("Tahap" in d)||(d["Tahap"] in ["mulai_fermentasi","cek_tengah (1-2 minggu)","panen_jadi (3 minggu)","aplikasi_ke_pohon"])) && (!("Komposisi Batch (kg)" in d)||(d["Komposisi Batch (kg)"] is string)) && (!("EM4 Activator (L)" in d)||(d["EM4 Activator (L)"] is string)) && (!("Volume Akhir (kg)" in d)||(d["Volume Akhir (kg)"] is string)) && (!("Suhu Fermentasi (°C)" in d)||(d["Suhu Fermentasi (°C)"] is string)) && (!("Aplikasi Dosis (kg/pohon)" in d)||(d["Aplikasi Dosis (kg/pohon)"] is string));}
+ function staff17(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Aksi","Jumlah Stek","Jarak Tanam (cm × cm)","Survival Rate (%) — kalau monitor","Coverage (%) — penutupan tanah","Sumber Bibit"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🪴Detail Cover Crops Arachis pintoi (Phase 2)") && (!("Aksi" in d)||(d["Aksi"] in ["tanam_pilot_bidang_4 (Nov 2026)","cek_survival_rate","perbanyak_stek_sendiri","ekspansi_bidang_1_2 (post-pilot)","pruning_kontrol"])) && (!("Jumlah Stek" in d)||(d["Jumlah Stek"] is string)) && (!("Jarak Tanam (cm × cm)" in d)||(d["Jarak Tanam (cm × cm)"] is string)) && (!("Survival Rate (%) — kalau monitor" in d)||(d["Survival Rate (%) — kalau monitor"] is string)) && (!("Coverage (%) — penutupan tanah" in d)||(d["Coverage (%) — penutupan tanah"] is string)) && (!("Sumber Bibit" in d)||(d["Sumber Bibit"] in ["self_propagation_pilot_bidang_4","nursery_lokal_pujon","BRIN Purwodadi"]));}
+ function staff18(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Tahap","Bahan Baku (kg)","Suhu Pyrolysis (°C)","Durasi Pyrolysis (jam)","Hasil Biochar (kg)","Aplikasi Dosis (kg/pohon)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🔥Detail Biochar Pyrolysis (Phase 2 — Frontiers Soil Science 2024)") && (!("Tahap" in d)||(d["Tahap"] in ["siap_bahan_baku","mulai_pyrolysis","cooling","panen_biochar","aplikasi_piringan"])) && (!("Bahan Baku (kg)" in d)||(d["Bahan Baku (kg)"] is string)) && (!("Suhu Pyrolysis (°C)" in d)||(d["Suhu Pyrolysis (°C)"] is string)) && (!("Durasi Pyrolysis (jam)" in d)||(d["Durasi Pyrolysis (jam)"] is string)) && (!("Hasil Biochar (kg)" in d)||(d["Hasil Biochar (kg)"] is string)) && (!("Aplikasi Dosis (kg/pohon)" in d)||(d["Aplikasi Dosis (kg/pohon)"] is string));}
+ function staff19(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Aksi","Jumlah Rumpun","Petugas Panen","Catatan Amanah (audit trail)"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="🍌Detail Pisang Management (Q3 — Amanah MWC NU)") && (!("Aksi" in d)||(d["Aksi"] in ["panen_oleh_MWC_NU","tebang_pohon_pasca_panen","bongkar_tunas","monitoring_regrowth","konfirmasi_tidak_tanam_baru"])) && (!("Jumlah Rumpun" in d)||(d["Jumlah Rumpun"] is string)) && (!("Petugas Panen" in d)||(d["Petugas Panen"] in ["MWC_NU","Ust_Fauzan","tim_kebun_ngt"])) && (!("Catatan Amanah (audit trail)" in d)||(d["Catatan Amanah (audit trail)"] is string));}
+ function staff20(d){return d is map && d.keys().hasOnly(["_kategoriTitle","Stakeholder","Channel","Topik Utama","Status Hasil","Detail Pembicaraan"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="☎️Komunikasi Stakeholder (Audit Trail Amanah)") && (!("Stakeholder" in d)||(d["Stakeholder"] in ["Bonsari Coffee (specialty offtaker)","Nomad Coffee (specialty offtaker)","BRIN Purwodadi (rujukan agronomi)","Ust. Fauzan (pengawas syariah + TPQ Darul Mujtaba)","TPQ Darul Mujtaba (mauquf alaih)","MWC NU (panen pisang)","UB Brawijaya (lab + magang)","Lab UB Soil Test","Gapoktan Ngantang (Kartu Tani)","Penjajakan kemitraan strategis baru","Lainnya"])) && (!("Channel" in d)||(d["Channel"] in ["kunjungan_langsung","WhatsApp/chat","telepon","email","meeting_formal"])) && (!("Topik Utama" in d)||(d["Topik Utama"] is string)) && (!("Status Hasil" in d)||(d["Status Hasil"] in ["resolved_kesepakatan","pending_followup","perlu_eskalasi_wakif","info_only"])) && (!("Detail Pembicaraan" in d)||(d["Detail Pembicaraan"] is string));}
+ function staff21(d){return d is map && d.keys().hasOnly(["_kategoriTitle"]) && (!('_kategoriTitle' in d)||d._kategoriTitle=="📝 Detail Aktivitas Lain");}
+ function staffDetail(category,d){return d==null || (category=="pemupukan_organik"?staff0(d):(category=="pemupukan_kimia"?staff1(d):(category=="pemangkasan"?staff2(d):(category=="babat_rumput"?staff3(d):(category=="penyemprotan"?staff4(d):(category=="panen"?staff5(d):(category=="sortasi_buah"?staff6(d):(category=="penjemuran"?staff7(d):(category=="build_rorak"?staff8(d):(category=="kompos_kulit_kopi"?staff9(d):(category=="tanam_penaung"?staff10(d):(category=="inventarisasi_pohon"?staff11(d):(category=="opt_monitoring"?staff12(d):(category=="brocap_management"?staff13(d):(category=="soil_test"?staff14(d):(category=="topgraft_robusta"?staff15(d):(category=="bokashi_production"?staff16(d):(category=="arachis_management"?staff17(d):(category=="biochar_pyrolysis"?staff18(d):(category=="pisang_management"?staff19(d):(category=="komunikasi_stakeholder"?staff20(d):(category=="lain"?staff21(d):false))))))))))))))))))))));}
+// END STAFF DOM CONTRACT
+ function body(b,g){return b is map && b.id is string && b.id.matches('^lap_[A-Za-z0-9_-]{1,96}$') && b.kategori in ["pemupukan_kimia","pemupukan_organik","pemangkasan","panen","penyemprotan","build_rorak","pisang_management","inventarisasi_pohon","tanam_penaung","kompos_kulit_kopi","babat_rumput","sortasi_buah","penjemuran","opt_monitoring","brocap_management","topgraft_robusta","soil_test","bokashi_production","komunikasi_stakeholder","arachis_management","biochar_pyrolysis","lain"] && b.created_at is string && calendar(b.tanggal)
+  && (g.role == 'staff' ? ( b.schema_version == '3.5' && b.src in ['wakif_form','wakif_form_multi'] && b.tgl==b.tanggal && b.pelapor is string && b.bidang is string && b.kebun_list is list && b.kebun_list.hasOnly(['K1','K2','K3','K4']) && (b.kebun_primary==null || b.kebun_primary is string) && b.kebun_list_str is string && b.pohon is number && b.pohon>=0 && b.detail is string && (b.durasi==null || b.durasi is string) && staffDetail(b.kategori,b.detail_form) && b.rainfall_24h is number && b.rainfall_24h>=0 && b.rainfall_7d is number && b.rainfall_7d>=0 && b.compliance is string && b.alerts is list && b.keys().size()==20
+    && b.keys().toSet()==['id','tgl','pelapor','bidang','kategori','kebun_list','kebun_primary','kebun_list_str','pohon','detail','durasi','detail_form','rainfall_24h','rainfall_7d','compliance','alerts','created_at','tanggal','schema_version','src'].toSet())
+   : (g.role == 'worker' && categoryDetail(b.kategori,b.detail) && b.schema_version == '1.1' && b.pelapor == g.worker_token && b.pelapor_name is string && b.compliance is string && b.kebun is list && b.kebun.hasOnly(['K1','K2','K3','K4']) && (b.kebun_primary==null || b.kebun_primary is string) && b.kebun_list_str is string && (b.blok==null || b.blok is string) && (b.cuaca_pagi==null || b.cuaca_pagi is string) && (b.cuaca_siang==null || b.cuaca_siang is string) && (b.rain_24h_mm==null || (b.rain_24h_mm is number && b.rain_24h_mm>=0)) && (b.rain_7d_mm==null || (b.rain_7d_mm is number && b.rain_7d_mm>=0)) && b.weather_source is string && b.weather_coords is string && b.weather_lokasi is string && (b.topik_v2==null || b.topik_v2 is string) && (b.durasi==null || b.durasi is string) && b.jumlah_pekerja is int && b.jumlah_pekerja>0 && b.jumlah_pohon is int && b.jumlah_pohon>=0 && b.detail is map && (b.catatan==null || b.catatan is string) && (b.gps_coords==null || b.gps_coords is string) && (b.gps_jarak_km==null || b.gps_jarak_km is number) && (b.gps_di_kebun==null || b.gps_di_kebun is bool) && b.device_id is string && b._filled_by is map && b.keys().size()==32
+    && b.keys().toSet()==['id','created_at','compliance','schema_version','pelapor','pelapor_name','tanggal','kebun','kebun_primary','kebun_list_str','blok','cuaca_pagi','cuaca_siang','rain_24h_mm','rain_7d_mm','weather_source','weather_coords','weather_lokasi','kategori','topik_v2','durasi','jumlah_pekerja','jumlah_pohon','detail','catatan','voice_notes','photos','gps_coords','gps_jarak_km','gps_di_kebun','device_id','_filled_by'].toSet()));}
+ function valid(d,rid){let g=grant();let p=policy();return request.auth!=null && authority(p,g) && d.keys().toSet()==['contract_version','report_id','command_id','writer_epoch','grant_epoch','submitted_body','owner_uid','committed_revision','committed_at'].toSet() && d.keys().size()==9 && d.contract_version is int && d.contract_version==1 && d.writer_epoch is int && d.grant_epoch is int && d.committed_revision is int && d.report_id==rid && d.command_id==rid && d.owner_uid==request.auth.uid && d.writer_epoch==p.writer_epoch && d.grant_epoch==g.grant_epoch && d.committed_revision==1 && d.committed_at==request.time && d.submitted_body.id==rid ;}
+ function pairedMedia(b){return grant().role!='worker' || (voices(b.voice_notes) && photos(b.photos));}
+ match /entry_policy/active {allow get: if request.auth!=null;allow write,list:if false;}
+ match /entry_grants/{uid}{allow get:if request.auth!=null && request.auth.uid==uid;allow write,list:if false;}
+ match /laporan/{rid}{
+  allow get:if live() && (!exists(/databases/$(database)/documents/laporan/$(rid)) || grant().role=='staff' || resource.data.owner_uid==request.auth.uid);
+  allow list:if live() && grant().role=='staff';
+  allow create:if body(request.resource.data.submitted_body,grant()) && valid(request.resource.data,rid) && !exists(/databases/$(database)/documents/entry_receipts/$(rid)) && getAfter(/databases/$(database)/documents/entry_receipts/$(rid)).data==request.resource.data;
+  allow update,delete:if false;
+ }
+ match /entry_receipts/{rid}{
+  allow get:if live() && (!exists(/databases/$(database)/documents/entry_receipts/$(rid)) || grant().role=='staff' || resource.data.owner_uid==request.auth.uid);
+  allow create:if request.auth!=null && !exists(/databases/$(database)/documents/laporan/$(rid)) && getAfter(/databases/$(database)/documents/laporan/$(rid)).data==request.resource.data && pairedMedia(request.resource.data.submitted_body);
+  allow list,update,delete:if false;
+ }
 
-    // ===== laporan collection =====
-    // Worker submissions dari lapor.html + Wakif input dari monitor-v2.
-    match /laporan/{laporanId} {
+ // Staging only; operation_policy is server-controlled and absent-by-default.
+ function opEnabled(kind){return get(/databases/$(database)/documents/operation_policy/$(kind)).data.enabled==true;}
+ function headPath(o){return o.kind!='correction' ? /databases/$(database)/documents/cabut_state/$(o.target) : /databases/$(database)/documents/report_heads/$(o.target);}
+ function pendingWork(b){let labels={'tali_merah':'hanya pohon bertali merah','akar_keluar':'dicabut sampai akar','lubang_ditutup':'lubang ditutup tanah','kayu_dibawa_keluar':'kayu & akar dibawa keluar kebun'};return b.pending.size()==b.pending.toSet().size() && ('tali_merah' in b.pending)==!b.checklist.tali_merah && ('akar_keluar' in b.pending)==!b.checklist.akar_keluar && ('lubang_ditutup' in b.pending)==!b.checklist.lubang_ditutup && ('kayu_dibawa_keluar' in b.pending)==!b.checklist.kayu_dibawa_keluar && b.pending_label.size()==b.pending.size() && (b.pending.size()<1||b.pending_label[0]==labels[b.pending[0]]) && (b.pending.size()<2||b.pending_label[1]==labels[b.pending[1]]) && (b.pending.size()<3||b.pending_label[2]==labels[b.pending[2]]) && (b.pending.size()<4||b.pending_label[3]==labels[b.pending[3]]);}
+ function cabutBody(b){return b is map && b.keys().hasOnly(['id','pelapor','kategori','tanggal','tgl','kebun','kebun_primary','kebun_list_str','jumlah_pohon','pekerja_nama','lokasi','metode','tali','checklist','pending','pending_label','gps','photos','status_verifikasi','created_at','schema_version','src']) && b.keys().size()==22 && b.pelapor=='BORONGAN' && b.kategori=='cabut_borongan' && b.tgl==b.tanggal && b.kebun_primary==b.kebun && b.kebun_list_str==b.kebun && b.metode=='cabut' && b.tali=='merah' && b.status_verifikasi=='menunggu' && b.created_at is string && b.schema_version=='cabut-borongan-1.4' && b.src=='lapor_cabut_v4' && b.photos is list && b.photos.size()==0 && b.pending is list && b.pending.hasOnly(['tali_merah','akar_keluar','lubang_ditutup','kayu_dibawa_keluar']) && b.pending_label is list && b.pending_label.size()<=4 && b.pending_label.size()==b.pending.size() && (b.pending_label.size()<1 || b.pending_label[0] is string) && (b.pending_label.size()<2 || b.pending_label[1] is string) && (b.pending_label.size()<3 || b.pending_label[2] is string) && (b.pending_label.size()<4 || b.pending_label[3] is string) && (b.gps==null || (b.gps is map && b.gps.keys().hasOnly(['lat','lng','akurasi_m']) && b.gps.keys().size()==3 && b.gps.lat is number && b.gps.lng is number && b.gps.akurasi_m is number)) && b.id is string && b.id.matches('^lap_cabut_[A-Za-z0-9_-]{1,96}$') && calendar(b.tanggal) && b.kebun in ['K1','K2','K3','K4'] && b.jumlah_pohon is int && b.jumlah_pohon>0 && b.pekerja_nama is string && b.lokasi is string && b.checklist is map && b.checklist.keys().hasOnly(['tali_merah','akar_keluar','lubang_ditutup','kayu_dibawa_keluar']) && b.checklist.keys().size()==4 && b.checklist.tali_merah is bool && b.checklist.akar_keluar is bool && b.checklist.lubang_ditutup is bool && b.checklist.kayu_dibawa_keluar is bool && pendingWork(b);}
+ function correctionOwner(o){return grant().role=='staff' && get(/databases/$(database)/documents/laporan/$(o.target)).data.owner_uid==request.auth.uid && get(/databases/$(database)/documents/laporan/$(o.target)).data.submitted_body.schema_version=='3.5';}
+ function opShape(o,cid){return o is map && o.keys().hasOnly(['kind','command_id','target','expected_revision','predecessor','reason','body']) && o.keys().size()==7 && o.kind in ['correction','cabut','cabut_log'] && o.command_id==cid && cid.matches('^cmd_[A-Za-z0-9_-]{1,96}$') && o.target is string && o.target.matches('^[A-Za-z0-9_-]{1,100}$') && o.expected_revision is int && o.expected_revision>0 && o.predecessor is string && o.predecessor.size()>0 && o.reason is string && o.reason.size()>0 && o.reason.size()<=500;}
+ function staffCabut(b){return b is map && b.keys().hasOnly(['id','kebun','jumlah','tgl','metode','tali','sakit','kondisi','catatan','created_at']) && b.keys().size()==10 && b.id is string && b.id.matches('^cabut_[A-Za-z0-9_-]{1,80}$') && b.kebun in ['K1','K2','K3','K4'] && b.jumlah is int && b.jumlah>0 && calendar(b.tgl) && b.metode in ['cabut','tebang'] && b.tali in ['merah','biru','hijau'] && b.sakit is bool && b.kondisi is string && b.catatan is string && b.created_at is string;}
+ function opPayload(o){return o.kind=='correction' ? (correctionOwner(o) && o.body.id==o.target && body(o.body,grant())) : (grant().role=='staff' && o.command_id=='cmd_'+o.body.id && (o.kind=='cabut' ? (o.target=='active' && cabutBody(o.body)) : (o.target=='staff_log' && staffCabut(o.body))));}
+ function predecessor(o){return exists(headPath(o)) ? (get(headPath(o)).data.revision==o.expected_revision && get(headPath(o)).data.command_id==o.predecessor) : (o.kind=='correction' && o.expected_revision==1 && o.predecessor==o.target);}
+ function opRow(d,cid){return live() && d.keys().hasOnly(['operation','owner_uid','writer_epoch','grant_epoch','revision','committed_at']) && d.keys().size()==6 && d.owner_uid==request.auth.uid && d.writer_epoch==policy().writer_epoch && d.grant_epoch==grant().grant_epoch && d.committed_at==request.time && d.revision==d.operation.expected_revision+1 && opShape(d.operation,cid) && opEnabled(d.operation.kind) && predecessor(d.operation);}
+ function nextHead(d){let h=getAfter(headPath(d.operation)).data;return h.revision==d.revision && h.command_id==d.operation.command_id && h.owner_uid==request.auth.uid && h.body==d.operation.body;}
+ match /operation_policy/{kind}{allow get:if request.auth!=null;allow list,write:if false;}
+ match /operation_events/{cid}{
+  allow get:if live() && (grant().role=='staff' || !exists(/databases/$(database)/documents/operation_events/$(cid)) || resource.data.owner_uid==request.auth.uid);
+  allow list:if live() && grant().role=='staff';
+  allow create:if opRow(request.resource.data,cid) && !exists(/databases/$(database)/documents/operation_receipts/$(cid)) && getAfter(/databases/$(database)/documents/operation_receipts/$(cid)).data==request.resource.data && nextHead(request.resource.data);
+  allow update,delete:if false;
+ }
+ match /operation_receipts/{cid}{
+  allow get:if live() && (!exists(/databases/$(database)/documents/operation_receipts/$(cid)) || resource.data.owner_uid==request.auth.uid || grant().role=='staff');
+  allow create:if request.auth!=null && !exists(/databases/$(database)/documents/operation_events/$(cid)) && getAfter(/databases/$(database)/documents/operation_events/$(cid)).data==request.resource.data && opPayload(request.resource.data.operation);
+  allow list,update,delete:if false;
+ }
+ function linkedHead(d,kind,target){let event=getAfter(/databases/$(database)/documents/operation_events/$(d.command_id)).data;return !exists(/databases/$(database)/documents/operation_events/$(d.command_id)) && event.operation.kind==kind && event.operation.target==target && event.revision==d.revision && event.owner_uid==request.auth.uid && event.operation.body==d.body && d.owner_uid==request.auth.uid;}
+ match /report_heads/{target}{
+  allow get:if live() && grant().role=='staff';
+  allow list:if live() && grant().role=='staff';
+  allow create,update:if request.resource.data.keys().hasOnly(['revision','command_id','owner_uid','body']) && request.resource.data.keys().size()==4 && linkedHead(request.resource.data,'correction',target);
+  allow delete:if false;
+ }
+ match /cabut_state/{target}{
+  allow get:if live() && grant().role=='staff' && target in ['active','staff_log'];
+  allow update:if target in ['active','staff_log'] && request.resource.data.keys().hasOnly(['revision','command_id','owner_uid','body','total_pohon']) && request.resource.data.keys().size()==5 && request.resource.data.total_pohon==resource.data.total_pohon+(target=='active'?request.resource.data.body.jumlah_pohon:request.resource.data.body.jumlah) && linkedHead(request.resource.data,target=='active'?'cabut':'cabut_log',target);
+  allow create,delete,list:if false;
+ }
 
-      // READ: terbuka untuk semua (dashboard butuh listener, Living Lab future fetch)
-      // Privacy enforcement bisa di-tighten di Phase 2 dengan Auth.
-      allow read: if true;
-
-      // CREATE: validasi minimal — mencegah spam + struktur baseline.
-      allow create: if
-        // Worker valid (atau Wakif via monitor-v2 dengan pelapor='WAKIF') — single-source isLaporanPelapor()
-        isLaporanPelapor(request.resource.data.pelapor)
-        // Wajib ada tanggal entry
-        && request.resource.data.tanggal is string
-        // Wajib ada kategori aktivitas
-        && request.resource.data.kategori is string
-        // Wajib ada created_at (client-side ISO string)
-        && request.resource.data.created_at is string
-        // Schema version control
-        && request.resource.data.schema_version is string
-        // Size limit — max ~1 MB per entry (Firestore hard limit) — soft limit untuk warning di app
-        && request.resource.size() < 900000;
-
-      // UPDATE: open di Phase 1 (locked 23 Mei 2026 untuk support Wakif Form Edit cross-browser sync).
-      // Casus: Wakif edit entry di monitor-v2 → harus push Firestore supaya sync ke device lain.
-      // Validation: pelapor tetap di allowed list + tanggal masih string.
-      // Phase 2 (post-Firebase-Auth): tighten ke Wakif role-only via custom claims.
-      allow update: if
-        isLaporanPelapor(request.resource.data.pelapor)
-        && request.resource.data.tanggal is string
-        && request.resource.size() < 900000;
-
-      // DELETE: open di Phase 1 (locked 23 Mei 2026 untuk support Wakif Form Delete + cross-browser propagation).
-      // Casus: Wakif delete entry di monitor-v2 → harus deleteDoc dari Firestore supaya tidak re-emerge via listener.
-      // Phase 2: tighten ke Wakif role-only.
-      allow delete: if true;
-    }
-
-    // ===== workers collection (last_active tracking) =====
-    match /workers/{workerId} {
-      // READ open (Wakif dashboard display)
-      allow read: if true;
-
-      // CREATE/UPDATE: hanya kalau workerId match pelapor valid
-      allow create, update: if
-        isFieldWorker(workerId)
-        && request.resource.data.last_active is string;
-
-      // DELETE: locked
-      allow delete: if false;
-    }
-
-    // ===== audit_log collection (append-only) =====
-    match /audit_log/{logId} {
-      // READ: locked di Phase 1 (Wakif harus check via Firebase Console)
-      // Phase 2: open untuk Wakif role
-      allow read: if false;
-
-      // CREATE: open untuk audit trail dari lapor.html / monitor-v2
-      allow create: if
-        request.resource.data.action is string
-        && request.resource.data.timestamp is string
-        && request.resource.size() < 100000;
-
-      // UPDATE/DELETE: forever locked — audit log harus immutable
-      allow update, delete: if false;
-    }
-
-    // ===== LAYER 1 SYSTEMATIC SYNC (24 Mei 2026) — 7 collections singleton =====
-    // Apply Pattern #10 ke semua Wakif state. Public READ + open WRITE Phase 1,
-    // DELETE locked (preserve audit history). Phase 2 (post-Auth): tighten role-based.
-    // Collections: upah, cashbook, opt_observations, panen_data, panen_lots,
-    //              panen_sampling, sop_status.
-
-    match /upah/{docId} {
-      allow read: if true;
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /cashbook/{docId} {
-      allow read: if true;
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /opt_observations/{docId} {
-      allow read: if true;
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /panen_data/{docId} {
-      allow read: if true;
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /panen_lots/{docId} {
-      allow read: if true;
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /panen_sampling/{docId} {
-      allow read: if true;
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /sop_status/{docId} {
-      allow read: if true;
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    // ===== Collections shipped Mei-Juni 2026 (missing from previous rules update) =====
-    // Distribusi PIC singleton (Pattern #10), SOP Master, Worker Defs Custom cross-device sync
-    match /distribusi_pic/{docId} {
-      allow read: if true;
-      allow create, update: if request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /sop_master/{docId} {
-      allow read: if true;
-      allow create, update: if request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    match /worker_defs_custom/{docId} {
-      allow read: if true;
-      allow create, update: if request.resource.size() < 1000000;
-      allow delete: if false;
-    }
-
-    // ===== SOP Compliance bridge (6 Jul 2026) — NOTE penting =====
-    // Angka compliance live (Apr–Kini) dari dashboard TIDAK pakai collection `compliance/*` sendiri
-    // (butuh publish rule baru di Console — dihindari). Sebagai gantinya di-REUSE doc
-    // `sop_status/compliance` (rule sop_status di atas SUDAH mengizinkan write asalkan ada
-    // field `version:string`). Dashboard syncComplianceToFirestore() → setDoc(sop_status/compliance,
-    // {version:'compliance-1.0', year, ytd_pct, ...}); Living Lab kartu Live fetch dari doc yang sama.
-    // Jadi TIDAK perlu blok rule `compliance/*` terpisah.
-
-    // ===== milestones collection (singleton pattern, locked 23 Mei 2026) =====
-    // Curated milestones by Wakif via Tab Milestones Publik di monitor-v2.html.
-    // Pattern #10 Firestore Sync Global Variable (sync `MILESTONES` array <-> Firestore).
-    //
-    // Migration trigger: localStorage MILESTONES per-browser tidak cross-sync —
-    // Wakif publish di Safari hilang dari Chrome dashboard. Fix: cloud source of truth.
-    //
-    // Living Lab strategy B (locked 23 Mei): fetch langsung dari Firestore (real-time),
-    // fallback ke data/aktivitas-publik.json kalau Firestore offline.
-    match /milestones/{milestoneDocId} {
-
-      // READ open: Living Lab public fetch + Wakif dashboard onSnapshot listener
-      allow read: if true;
-
-      // CREATE/UPDATE: open di Phase 1 (konsisten dengan pattern distribusi_pic + sop_master)
-      // Phase 2 (post-Firebase-Auth): tighten ke Wakif role-only via custom claims.
-      allow create, update: if
-        request.resource.data.version is string
-        && request.resource.data.data is list
-        && request.resource.data.updated_at != null
-        && request.resource.size() < 1000000;  // 1MB soft limit per Firestore doc
-
-      // DELETE: locked — hanya via Firebase Console (preserve audit history)
-      allow delete: if false;
-    }
-
-    // ===== invoices collection (11 Jul 2026) — Bukti Pembayaran Upah E-Sign =====
-    // invoice-generator.html (Wakif buat bukti) + invoice-sign.html (perwakilan pekerja tanda tangan).
-    // Model: token URL unguessable = capability. READ open (perlu tahu id + token untuk buka).
-    // CREATE: hanya draft belum-ttd (status 'sent', signature_png null).
-    // UPDATE: HANYA boleh isi tanda tangan — field lain (nominal, nama, rincian) TAK boleh berubah.
-    //   Sekali ttd terkunci (resource.data.signature_png == null). Link bocor pun tak bisa ubah nominal.
-    // DELETE: open di Phase 1 (Wakif bisa hapus bukti salah/tes dari generator, konsisten pola `laporan`).
-    //   Trade-off: audit trail bukan immutable. Casual worker low-stakes; generator = tool Wakif.
-    match /invoices/{id} {
-      allow read: if true;
-      allow create: if request.resource.data.status == 'sent'
-                    && request.resource.data.signature_png == null;
-      allow update: if resource.data.signature_png == null
-                    && request.resource.data.diff(resource.data).affectedKeys()
-                         .hasOnly(['signature_png','signed_at','signed_meta','status'])
-                    && request.resource.data.status == 'signed';
-      allow delete: if true;
-    }
-
-    // ===== worker_tokens (22 Jul 2026) — mirror token pekerja utk isFieldWorker() data-driven =====
-    // Ditulis otomatis oleh dashboard (halaman Tim). Phase 2: tighten write ke staff-only.
-    match /worker_tokens/{tok} {
-      allow read: if true;
-      allow create, update: if request.resource.data.nama is string;
-      allow delete: if false;
-    }
-
-    // ===== Default deny =====
-    // Collection lain yang belum di-define → deny semuanya
-    match /{document=**} {
-      allow read, write: if false;
-    }
-  }
-}
+ // Explicit recovery/read-only grants. Provision only exact owner-approved UID bindings.
+ // Static public pages remain independent; do not expose raw documents for client filtering.
+ function readerPolicy(){return get(/databases/$(database)/documents/reader_policy/active).data;}
+ function readerGrant(){return get(/databases/$(database)/documents/reader_grants/$(request.auth.uid)).data;}
+ function allowedPrivateRead(collection){
+  let p=readerPolicy();let g=readerGrant();
+  return request.auth!=null && p.keys().hasOnly(['reader_epoch']) && p.keys().size()==1 && p.reader_epoch is int && p.reader_epoch>0
+   && g.keys().hasOnly(['uid','enabled','reader_epoch','collections']) && g.keys().size()==4
+   && g.uid==request.auth.uid && g.enabled==true && g.enabled is bool
+   && g.reader_epoch is int && g.reader_epoch==p.reader_epoch && g.collections is list
+   && g.collections.size()>0 && g.collections.size()<=20
+   && g.collections.toSet().size()==g.collections.size()
+   && g.collections.hasOnly(["upah","cashbook","opt_observations","panen_data","panen_lots","panen_sampling","distribusi_pic","sop_master","worker_defs_custom","milestones","invoices","worker_tokens","workers","sop_status","laporan","operation_events","operation_receipts","report_heads","cabut_state","entry_receipts"]) && collection in g.collections;
+ }
+ match /reader_policy/active {allow get:if request.auth!=null;allow list,write:if false;}
+ match /reader_grants/{uid} {allow get:if request.auth!=null && request.auth.uid==uid;allow list,write:if false;}
+ match /{collection}/{id} {allow read:if collection in ["upah","cashbook","opt_observations","panen_data","panen_lots","panen_sampling","distribusi_pic","sop_master","worker_defs_custom","milestones","invoices","worker_tokens","workers","sop_status","laporan","operation_events","operation_receipts","report_heads","cabut_state","entry_receipts"] && allowedPrivateRead(collection);allow write:if false;}
+ match /{document=**}{allow read,write:if false;}
+}}

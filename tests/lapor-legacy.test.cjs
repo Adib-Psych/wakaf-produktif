@@ -4,10 +4,11 @@ const html=fs.readFileSync(require('node:path').join(__dirname,'../lapor.html'),
 function fn(name){const start=html.search(new RegExp(`(?:async )?function ${name}\\(`)); assert.notEqual(start,-1,`${name} exists`);const tail=html.slice(start);return tail.slice(0,tail.indexOf('\n}')+2);}
 const clone=x=>JSON.parse(JSON.stringify(x));
 function device(record){let saved=clone(record),writes=0; const txs=[];
- const c=vm.createContext({crypto,console:{warn(){}},DB_STORE:'synthetic',window:{firestoreDB:{}},navigator:{onLine:true},
+ const c=vm.createContext({crypto,console:{warn(){}},DB_STORE:'synthetic',window:{firestoreDB:{},authorizedReports:{sessionOwner:()=> 'synthetic-owner'}},navigator:{onLine:true},
  openDB:async()=>({transaction:()=>{const tx={objectStore:()=>({get:()=>{const req={};tx.req=req;return req;},put:value=>{tx.staged=clone(value);writes++;return {};}})};txs.push(tx);return tx;}}),
  refreshQueueBadge:async()=>{},renderQueueList:async()=>{},getPending:async()=>saved.status==='pending'?[clone(saved)]:[]});
- for(const name of ['workerReportContent','prepareQueuedSubmission','markSynced','drainWorkerQueue']) if(html.includes(`function ${name}(`))vm.runInContext(fn(name),c);
+ vm.runInContext(fs.readFileSync(require('node:path').join(__dirname,'../recovery/report-content.js'),'utf8'),c);
+ for(const name of ['prepareQueuedSubmission','markSynced','drainWorkerQueue']) if(html.includes(`function ${name}(`))vm.runInContext(fn(name),c);
  assert.equal(typeof c.prepareQueuedSubmission,'function','queue must persist identity before send');
  vm.runInContext('let workerDrainPromise=null;',c);
  async function tick(){await new Promise(r=>setImmediate(r));}
@@ -15,7 +16,7 @@ function device(record){let saved=clone(record),writes=0; const txs=[];
  function commit(tx){if(tx.staged)saved=tx.staged;tx.oncomplete();}
  return {c,txs,tick,read,commit,get saved(){return saved},set saved(v){saved=clone(v)},get writes(){return writes}};
 }
-const legacy=()=>({id:42,status:'pending',data:{pelapor:'KUMPUL',created_at:'same-time',catatan:'SYNTHETIC A',nested:{b:2,a:[1,2]}}});
+const legacy=()=>({id:42,owner_uid:'synthetic-owner',status:'pending',data:{pelapor:'KUMPUL',created_at:'same-time',catatan:'SYNTHETIC A',nested:{b:2,a:[1,2]}}});
 test('legacy migration commits globally unique identity before network, retaining both device reports',async()=>{
  const a=device(legacy()),b=device({...legacy(),data:{...legacy().data,catatan:'SYNTHETIC B'}}),sent=[];
  for(const d of [a,b]){

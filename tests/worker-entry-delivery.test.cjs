@@ -18,9 +18,9 @@ function fn(source, name) {
 function deferred() { let resolve; const promise = new Promise(r => resolve = r); return { promise, resolve }; }
 function clone(value) { return JSON.parse(JSON.stringify(value)); }
 function laporHarness(options = {}) {
-  const items = [{ id: 1, status: 'pending', data: { id: 'lap_synthetic_1' } }];
+  const items = [{ id: 1, owner_uid:'synthetic-owner', status: 'pending', data: { id: 'lap_synthetic_1' } }];
   const writes = [], toasts = [], marked = [];
-  const window = { firestoreDB: {}, firestorePush: async data => { writes.push(clone(data)); return data.id; } };
+  const window = { authorizedReports:{sessionOwner:()=> 'synthetic-owner'}, firestoreDB: {}, firestorePush: async data => { writes.push(clone(data)); return data.id; } };
   Object.assign(window, options.window || {});
   const context = vm.createContext({ window, navigator: { onLine: true }, console: silent,
     getPending: async () => clone(items.filter(e => e.status === 'pending')),
@@ -35,15 +35,9 @@ function laporHarness(options = {}) {
   return { context, items, writes, toasts, marked, window };
 }
 function pushHarness(setDoc = async () => {}) {
-  const context = vm.createContext({ window: {}, db: {}, COLLECTIONS: { laporan: 'laporan' },
-    doc: (_db, collection, id) => ({ collection, id }), setDoc,
-    runTransaction: async (_db, fn) => { const staged=[]; await fn({get:async()=>({exists:()=>false}),set:(ref,data)=>staged.push([ref,data])}); for(const [ref,data] of staged) await setDoc(ref,data); },
-    serverTimestamp: () => 'synthetic-time' });
-  const code = lapor.match(/window\.firestorePush = async \(entryData, localId\) => \{[\s\S]*?\n    \};/);
-  assert.ok(code, 'extract actual SDK push function');
-  vm.runInContext(fn(lapor, 'workerReportContent'), context);
-  vm.runInContext(code[0], context);
-  return context.window.firestorePush;
+  const {harness,fixture}=require('./authorized-report-harness.cjs');
+  const x=harness({onWrite:setDoc});const context=vm.createContext({window:{},authorizedReports:{send:body=>x.send(body.id?fixture('worker',body):body)}});
+  const code=lapor.match(/window\.firestorePush = entryData => authorizedReports\.send\(entryData\);/);assert.ok(code,'extract actual SDK push function');vm.runInContext(code[0],context);return context.window.firestorePush;
 }
 function cabutHarness() {
   let storage = '[]', storageFailure = false, fail = null;
@@ -51,7 +45,7 @@ function cabutHarness() {
   const element = id => { if (!elements.has(id)) elements.set(id, { style: {}, textContent: '', innerHTML: '', value: '', checked: false, scrollIntoView() {} }); return elements.get(id); };
   const context = vm.createContext({ console: silent, db: {}, QKEY: 'synthetic-queue', NKEY: 'synthetic-name',
     PELAPOR: 'BORONGAN', KATEGORI: 'cabut_borongan', S: { kebun: 'K1', gps: null }, J: element('jumlah'),
-    $: element, navigator: { onLine: true }, window: { addEventListener() {} },
+    cabutSession:{sessionOwner:()=> 'synthetic-owner',sessionTicket:()=>({uid:'synthetic-owner'}),sessionMatches:t=>t.uid==='synthetic-owner'}, $: element, navigator: { onLine: true,locks:{request:async(_k,fn)=>fn()} }, window: { addEventListener() {} },
     crypto: { randomUUID: () => 'synthetic-' + calls.length + '-' + Math.random().toString(36).slice(2) },
     localStorage: { getItem: key => key === 'synthetic-queue' ? storage : 'SYNTHETIC', setItem: (key, value) => { if (storageFailure) throw Error('synthetic storage full'); if (key === 'synthetic-queue') storage = value; } },
     muatRiwayat: async () => {}, tg: value => value, setTimeout() {},
@@ -70,13 +64,24 @@ function cabutHarness() {
       if (fail === 'lost-ack') { fail = null; throw Error('synthetic committed but ACK lost'); }
       return result;
     } });
+  // VM adapter models immutable event/receipt delivery. Native Rules/SDK tested separately.
+  context.cabutOperations={prepare:async(_k,_t,body)=>({command_id:'cmd_'+body.id,body:clone(body)}),send:async op=>{
+    if(!reports.has(op.body.id)){
+      if(fail==='log')throw Error('synthetic log denied');
+      reports.set(op.body.id,clone(op.body));logs.set('event_'+op.body.id,{id:'cabut_'+op.body.id,src_laporan:op.body.id,created_at:op.body.created_at});
+      if(fail==='lost-ack'){fail=null;throw Error('synthetic committed but ACK lost');}
+    }else if(!logs.size)throw Error('conflicting orphan');
+    return{command_id:op.command_id};
+  }};
+  context.workerReportContent=v=>JSON.stringify(v);
   const code = cabut.slice(cabut.indexOf('/* ---- kirim ---- */'), cabut.indexOf('/* ---- progres & riwayat'));
   vm.runInContext(code, context);
+  const actualSend=context.kirimSatu;context.kirimSatu=async e=>{if(!JSON.parse(storage).some(x=>x.id===e.id))storage=JSON.stringify([...JSON.parse(storage),e]);return actualSend(e);};
   element('nama').value = 'SYNTHETIC'; element('tgl').value = '2000-01-01'; element('jumlah').value = '3'; element('lokasi').value = 'synthetic block';
   return { context, reports, logs, calls, element, get queue() { return JSON.parse(storage); },
     set queue(value) { storage = JSON.stringify(value); }, fail: value => { fail = value; }, storageFailure: value => { storageFailure = value; } };
 }
-const entry = () => ({ id: 'synthetic-cabut-1', created_at: '2000-01-01T00:00:00.000Z', kebun: 'K1', jumlah_pohon: 3, tgl: '2000-01-01', pekerja_nama: 'SYNTHETIC', lokasi: 'synthetic block', pending: [] });
+const entry = () => ({ owner_uid:'synthetic-owner',checklist:{tali_merah:false,akar_keluar:false,lubang_ditutup:false,kayu_dibawa_keluar:false},id: 'synthetic-cabut-1', created_at: '2000-01-01T00:00:00.000Z', kebun: 'K1', jumlah_pohon: 3, tgl: '2000-01-01', pekerja_nama: 'SYNTHETIC', lokasi: 'synthetic block', pending: [] });
 
 test('lapor: absent SDK never marks pending as synced or claims success', async () => {
   const h = laporHarness({ window: { firestoreDB: null, firestorePush: undefined } });
@@ -120,7 +125,7 @@ test('lapor: lost ACK reuses same persisted document ID', async () => {
 });
 test('lapor: SDK rejects legacy local-only identity until queue migration commits', async () => {
   const refs = [], push = pushHarness(async ref => refs.push(ref));
-  await assert.rejects(push({},42), /Identitas/);
+  await assert.rejects(push({},42), /unsupported-entry/);
   assert.equal(refs.length,0);
 });
 test('lapor: push rejects entry without stable identity', async () => {
@@ -134,7 +139,7 @@ test('lapor: success text is reset for each acknowledgement including offline', 
 });
 test('lapor: IndexedDB queue acknowledgement waits for transaction commit', async () => {
   const request = {}, tx = { objectStore: () => ({ add: () => request }) };
-  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic' });
+  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic',window:{} });
   vm.runInContext(fn(lapor, 'queueSubmission'), context); let settled = false;
   const result = context.queueSubmission({ id: 'synthetic' }).then(value => { settled = true; return value; });
   await new Promise(r => setImmediate(r)); request.result = 9; request.onsuccess(); await Promise.resolve(); assert.equal(settled, false);
@@ -142,7 +147,7 @@ test('lapor: IndexedDB queue acknowledgement waits for transaction commit', asyn
 });
 test('lapor: IndexedDB queue abort never acknowledges local save', async () => {
   const request = {}, tx = { error: Error('synthetic abort'), objectStore: () => ({ add: () => request }) };
-  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic' }); vm.runInContext(fn(lapor, 'queueSubmission'), context);
+  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic',window:{} }); vm.runInContext(fn(lapor, 'queueSubmission'), context);
   const result = context.queueSubmission({ id: 'synthetic' }); await new Promise(r => setImmediate(r)); request.result = 9; request.onsuccess();
   if (tx.onabort) tx.onabort(); await assert.rejects(result, /synthetic abort/);
 });
@@ -165,10 +170,10 @@ test('cabut: log identity, timestamp and report reference derive from persisted 
   assert.equal(log.id, 'cabut_' + e.id); assert.equal(log.src_laporan, e.id); assert.equal(log.created_at, e.created_at);
 });
 test('cabut: missing SDK keeps existing pending entries', async () => {
-  const h = cabutHarness(); h.queue = [entry()]; h.context.db = null; await h.context.kurasAntrian(); assert.equal(h.queue.length, 1); assert.equal(h.reports.size, 0);
+  const h = cabutHarness(); h.queue = [entry()]; h.context.db = null; h.context.cabutOperations=null; await h.context.kurasAntrian(); assert.equal(h.queue.length, 1); assert.equal(h.reports.size, 0);
 });
 test('cabut: missing SDK submission saves locally without false remote success', async () => {
-  const h = cabutHarness(); h.context.db = null; await h.element('kirim').onclick(); assert.equal(h.queue.length, 1); assert.ok(h.queue[0].id);
+  const h = cabutHarness(); h.context.db = null; h.context.cabutOperations=null; await h.element('kirim').onclick(); assert.equal(h.queue.length, 1); assert.ok(h.queue[0].id);
   assert.match(h.element('done').innerHTML, /Tersimpan di HP/); assert.equal(h.reports.size, 0);
 });
 test('cabut: initial SDK load failure does not prevent local form handlers', () => {
@@ -177,15 +182,12 @@ test('cabut: initial SDK load failure does not prevent local form handlers', () 
 });
 test('cabut: persist identity before first remote write', async () => {
   const h = cabutHarness(); let captured;
-  h.context.runTransaction = async (_db, callback) => { captured = h.queue; throw Error('synthetic denied'); };
+  h.context.cabutOperations.prepare = async () => { captured = h.queue; throw Error('synthetic denied'); };
   h.context.addDoc = async () => { captured = h.queue; throw Error('synthetic denied'); };
   await h.element('kirim').onclick(); assert.equal(captured.length, 1); assert.ok(captured[0].id); assert.equal(h.queue[0].id, captured[0].id);
 });
-test('cabut: legacy queue gets identity persisted before retry', async () => {
-  const h = cabutHarness(), e = entry(); delete e.id; h.queue = [e]; let captured;
-  h.context.runTransaction = async () => { captured = h.queue; throw Error('synthetic denied'); };
-  h.context.addDoc = async () => { captured = h.queue; throw Error('synthetic denied'); };
-  await h.context.kurasAntrian(); assert.ok(captured[0].id); assert.equal(h.queue[0].id, captured[0].id);
+test('cabut: legacy unbound queue remains byte-identical without adoption', async () => {
+  const h=cabutHarness(),e=entry();delete e.id;delete e.owner_uid;h.queue=[e];const before=JSON.stringify(h.queue);await h.context.kurasAntrian();assert.equal(JSON.stringify(h.queue),before);assert.equal(h.reports.size,0);
 });
 test('cabut: append during drain survives acknowledgement', async () => {
   const h = cabutHarness(), gate = deferred(); h.queue = [entry()]; h.context.kirimSatu = async e => { await gate.promise; return e.id; };
@@ -207,8 +209,8 @@ test('cabut: storage failure keeps form and never claims local save', async () =
 test('lapor: synced acknowledgement waits for IndexedDB commit', async () => {
   const getReq = {}, putReq = {}, record = { id: 1, status: 'pending' };
   const tx = { objectStore: () => ({ get: () => getReq, put: () => putReq }) };
-  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic' });
-  vm.runInContext(fn(lapor, 'workerReportContent'), context);
+  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic',window:{} });
+  vm.runInContext(fs.readFileSync(require('node:path').join(__dirname, '../recovery/report-content.js'), 'utf8'), context);
   vm.runInContext(fn(lapor, 'markSynced'), context); let settled = false;
   const result = context.markSynced(1).then(() => { settled = true; });
   await new Promise(r => setImmediate(r)); getReq.result = record; getReq.onsuccess(); putReq.onsuccess();
@@ -216,7 +218,7 @@ test('lapor: synced acknowledgement waits for IndexedDB commit', async () => {
 });
 test('lapor: aborted synced transaction does not acknowledge delivery', async () => {
   const getReq = {}, putReq = {}, tx = { error: Error('synthetic sync abort'), objectStore: () => ({ get: () => getReq, put: () => putReq }) };
-  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic' }); vm.runInContext(fn(lapor, 'workerReportContent'), context); vm.runInContext(fn(lapor, 'markSynced'), context);
+  const context = vm.createContext({ openDB: async () => ({ transaction: () => tx }), DB_STORE: 'synthetic',window:{} }); vm.runInContext(fs.readFileSync(require('node:path').join(__dirname, '../recovery/report-content.js'), 'utf8'), context); vm.runInContext(fn(lapor, 'markSynced'), context);
   const result = context.markSynced(1); await new Promise(r => setImmediate(r)); getReq.result = { id: 1 }; getReq.onsuccess(); putReq.onsuccess();
   if (tx.onabort) tx.onabort(); await assert.rejects(result, /synthetic sync abort/);
 });
