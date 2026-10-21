@@ -4426,22 +4426,31 @@ function setRadioByValue(group, val) {
 // Replaces hardcoded 3-pill HTML (Anto-out, ANTO active:false di WORKER_DEFS).
 // Custom workers (Task C3 "+ Tambah Pekerja Baru") otomatis appear post-Firestore sync.
 // Preserves current STATE.pelapor selection bila pill yang sama masih ada setelah re-populate.
-function populateFormPelaporRadio() {
-  const container = document.getElementById('form-pelapor');
-  if (!container || typeof WORKER_DEFS === 'undefined') return;
-  const currentSelection = STATE && STATE.pelapor ? STATE.pelapor : null;
-  const activeWorkers = WORKER_DEFS.filter(w => w.active);
-  container.innerHTML = activeWorkers.map(w => {
-    const icon = w.icon || '👷';
-    // Sanitize nama untuk attribute-safe insertion
-    const safeName = (w.nama || w.token || '').replace(/"/g, '&quot;').replace(/'/g, "&#39;").replace(/</g, '&lt;');
-    return `<div class="radio-pill" data-val="${w.token}" onclick="setRadio('form-pelapor',this)">${icon} ${safeName}</div>`;
-  }).join('');
-  // Restore selection kalau pelapor sebelumnya masih active
-  if (currentSelection && activeWorkers.some(w => w.token === currentSelection)) {
-    setRadioByValue('form-pelapor', currentSelection);
-  }
+// Historical WORKER_DEFS labels are never current-entry authority.
+const entryRoster={status:'unavailable',rows:[],generation:0,ticket:null};
+function holdEntryRoster(status='unavailable'){
+ entryRoster.status=status;entryRoster.rows=[];entryRoster.ticket=null;entryRoster.generation++;
+ populateFormPelaporRadio();
 }
+function validEntryRoster(data){
+ if(!data||data.version!=='1.0'||!Array.isArray(data.data)||data.data.length>200)throw Error('roster-schema');
+ const seen=new Set();return data.data.map(w=>{
+  if(!w||typeof w!=='object'||typeof w.token!=='string'||!/^[A-Z][A-Z0-9_-]{0,63}$/.test(w.token)||seen.has(w.token)||typeof w.nama!=='string'||!w.nama.trim()||w.nama.length>160||typeof w.active!=='boolean'||('retired' in w&&typeof w.retired!=='boolean'))throw Error('roster-schema');
+  seen.add(w.token);return {...w};
+ });
+}
+function entryRosterAllows(token){return entryRoster.status==='ready'&&window.privateReader?.matches(entryRoster.ticket)&&entryRoster.rows.some(w=>w.token===token&&w.active===true&&w.retired!==true);}
+function populateFormPelaporRadio() {
+ const container=document.getElementById('form-pelapor');if(!container)return;
+ container.replaceChildren();let status=document.getElementById('entry-roster-status');
+ if(!status){status=document.createElement('p');status.id='entry-roster-status';status.setAttribute('role','status');container.after(status);const retry=document.createElement('button');retry.id='entry-roster-retry';retry.type='button';retry.textContent='Muat ulang daftar pekerja';retry.onclick=()=>{if(typeof window.loadWorkerDefsCustomFromFirestore==='function')void window.loadWorkerDefsCustomFromFirestore();else holdEntryRoster();};status.after(retry);}
+ const ready=entryRoster.status==='ready'&&window.privateReader?.matches(entryRoster.ticket);
+ const rows=ready?entryRoster.rows.filter(w=>w.active===true&&w.retired!==true):[];
+ status.textContent=ready?(rows.length?'Daftar pekerja dari server untuk sesi ini.':'Daftar server terverifikasi tidak memiliki pekerja aktif; entry ditahan.'):(entryRoster.status==='loading'?'Memuat daftar pekerja dari server…':'Daftar pekerja terkini belum tersedia/izin belum disahkan. Entry ditahan; draft dan pending tidak dihapus.');
+ if(ready&&STATE.pelapor&&!rows.some(w=>w.token===STATE.pelapor))status.textContent+=' Pilihan draft sebelumnya tidak aktif/tidak tersedia; pilih pekerja yang disahkan sebelum entry baru.';
+ for(const w of rows){const button=document.createElement('div');button.className='radio-pill';button.dataset.val=w.token;button.textContent=(w.icon||'👷')+' '+w.nama;button.onclick=()=>{if(entryRosterAllows(w.token))setRadio('form-pelapor',button);};if(STATE.pelapor===w.token)button.classList.add('on');container.append(button);}
+}
+window.addEventListener('private-reader-stopped',()=>holdEntryRoster());
 
 // Populate on DOMContentLoaded (initial render) — WORKER_DEFS already hydrated dari localStorage
 document.addEventListener('DOMContentLoaded', () => {
@@ -5155,6 +5164,7 @@ function harvestDetailForm() {
 
 async function submitForm() {
   if(CURRENT_EDIT_LAPORAN_ID){if(typeof window.submitReportCorrection==='function')return window.submitReportCorrection();alert('Koreksi belum tersedia; editor dipertahankan.');return;}
+  if(!entryRosterAllows(STATE.pelapor)){alert('Daftar pekerja belum terverifikasi atau pilihan tidak aktif. Entry ditahan; draft/pending tetap utuh.');return;}
   const tgl = document.getElementById('f-tgl').value;
   const kategori = document.getElementById('f-kategori').value;
   const pohon = document.getElementById('f-pohon').value;
@@ -21312,63 +21322,32 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         }
       };
 
-      const applyCustomWorkers = (customList) => {
-        if (!Array.isArray(customList)) return;
-        let added = 0, updated = 0;
-        customList.forEach(cw => {
-          if (!cw || !cw.token || DEFAULT_TOKENS.includes(cw.token)) return;
-          const existing = WORKER_DEFS.findIndex(w => w.token === cw.token);
-          if (existing >= 0) {
-            WORKER_DEFS[existing] = { ...WORKER_DEFS[existing], ...cw };
-            updated++;
-          } else {
-            WORKER_DEFS.push(cw);
-            added++;
-          }
-        });
-        // Persist localStorage cache
-        /* Session read model only; historical cache preserved. */
-        // Re-render UI yang depend on WORKER_DEFS
-        if (typeof renderWorkersTab === 'function') renderWorkersTab();
-        if (typeof renderDistribusi === 'function') renderDistribusi();
-        if (typeof populatePelaporSelects === 'function') populatePelaporSelects();
-        if (typeof populateFormPelaporRadio === 'function') populateFormPelaporRadio();   // ⭐ refresh Form Input radio
-        if (added > 0 || updated > 0) {
-          console.log(`[WorkerDefsCustom] Merged: ${added} added, ${updated} updated`);
-        }
+      let rosterReadIntent=0;
+      const applyCustomWorkers=(data,ticket)=>{
+        const rows=validEntryRoster(data);
+        if(!privateReader.matches(ticket))return;
+        // Keep aliases and retired history; entry choices are a separate exact server population.
+        for(const cw of rows){const at=WORKER_DEFS.findIndex(w=>w.token===cw.token);if(at>=0)WORKER_DEFS[at]={...WORKER_DEFS[at],...cw};else WORKER_DEFS.push({...cw});}
+        entryRoster.status='ready';entryRoster.rows=rows;entryRoster.ticket=ticket;entryRoster.generation++;
+        if(typeof populatePelaporSelects==='function')populatePelaporSelects();
+        populateFormPelaporRadio();
       };
-
-      window.loadWorkerDefsCustomFromFirestore = async () => {
-        try {
-          const ticket=privateReader.ticket();const snap = await getDoc(doc(db, 'worker_defs_custom', 'active'));if(!privateReader.matches(ticket))return null;
-          if (!snap.exists()) {
-            console.log('[WorkerDefsCustom] Firestore doc empty (no custom workers yet)');
-            return;
-          }
-          const data = snap.data();
-          if (!Array.isArray(data.data)) return;
-          console.log(`[WorkerDefsCustom] ✓ Loaded from Firestore (${data.data.length} custom entries)`);
-          applyCustomWorkers(data.data);
-        } catch (e) {
-          console.warn('[WorkerDefsCustom] Firestore load fail:', e.message || e);
-        }
+      window.loadWorkerDefsCustomFromFirestore=async()=>{
+        const ticket=privateReader.ticket(),intent=++rosterReadIntent;
+        if(!privateReader.allowed('worker_defs_custom')){holdEntryRoster();return;}
+        holdEntryRoster('loading');
+        try{const snap=await getDoc(doc(db,'worker_defs_custom','active'));
+          if(intent!==rosterReadIntent||!privateReader.matches(ticket))return;
+          if(!snap.exists())throw Error('roster-missing');
+          applyCustomWorkers(snap.data(),ticket);
+        }catch(e){if(intent===rosterReadIntent&&privateReader.matches(ticket))holdEntryRoster();}
       };
-
-      const subscribeWorkerDefsCustom = () => {
-        try {
-          onSnapshot(doc(db, 'worker_defs_custom', 'active'), (snap) => {
-            if (!snap.exists()) return;
-            const data = snap.data();
-            if (!Array.isArray(data.data)) return;
-            const origin = data.updated_by || 'unknown';
-            console.log(`[WorkerDefsCustom] 🔄 onSnapshot update — ${data.data.length} custom entries (origin: ${origin})`);
-            applyCustomWorkers(data.data);
-          }, (err) => {
-            console.warn('[WorkerDefsCustom] onSnapshot error:', err.message || err);
-          });
-        } catch (e) {
-          console.warn('[WorkerDefsCustom] subscribe fail:', e.message || e);
-        }
+      const subscribeWorkerDefsCustom=()=>{
+        onSnapshot(doc(db,'worker_defs_custom','active'),snap=>{
+          ++rosterReadIntent;const ticket=privateReader.ticket();
+          try{if(!snap.exists())throw Error('roster-missing');applyCustomWorkers(snap.data(),ticket);}
+          catch(e){if(privateReader.matches(ticket))holdEntryRoster();}
+        },()=>{++rosterReadIntent;holdEntryRoster();});
       };
 
       setTimeout(() => window.loadWorkerDefsCustomFromFirestore(), 4400);

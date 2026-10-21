@@ -12,10 +12,11 @@ function harness(options = {}) {
   const fields = {'f-tgl': '2026-01-01', 'f-kategori': 'lain', 'f-catatan': 'synthetic body'};
   const c = vm.createContext({
     navigator:{locks:{request:async(_k,fn)=>fn()}},
-    window: {validateStaffReport:()=>true,addEventListener() {},authorizedReports:{sessionOwner:()=> 'synthetic-owner'}}, document: {querySelectorAll:()=>[{value:'lain'},{value:'panen'}],addEventListener() {}, getElementById: id => ({value: fields[id] || ''})},
+    window: {validateStaffReport:()=>true,addEventListener() {},privateReader:{matches:()=>true},authorizedReports:{sessionOwner:()=> 'synthetic-owner'}}, document: {querySelectorAll:()=>[{value:'lain'},{value:'panen'}],addEventListener() {}, getElementById: id => ({value: fields[id] || ''})},
     localStorage: {getItem: k => storage.get(k) ?? null, setItem: (k, v) => {calls.writes.push({k, v}); if (options.storageFailure && k === key) throw Error('synthetic disk full'); storage.set(k, v);}},
     console: {warn() {}}, alert: s => calls.alerts.push(s), confirm: () => true,
     crypto: options.noCrypto ? undefined : {randomUUID: () => {calls.uuid++; if (calls.uuid === options.throwAt) throw Error('synthetic entropy failure'); return options.uuid || randomUUID();}},
+    entryRoster:{status:'ready',ticket:{uid:'synthetic-owner'},rows:[{token:'SYNTHETIC',active:true,retired:false}]},
     CURRENT_EDIT_LAPORAN_ID: null, TARIF_PEKERJA: {},
     STATE: {pelapor: 'SYNTHETIC', bidang: '1', bidang_list: ['1'], laporan: [], durasi: null},
     computeRainfallAlerts: () => [], harvestDetailForm: () => null,
@@ -23,7 +24,8 @@ function harness(options = {}) {
     resetForm: () => calls.resets++, renderDashboard() {}, renderLog() {}
   });
   for (const file of ['report-content.js', 'entry-recovery.js']) vm.runInContext(fs.readFileSync(path.join(__dirname, '../recovery', file), 'utf8'), c);
-  vm.runInContext(submit, c);
+  const start=html.indexOf('function entryRosterAllows('),end=html.indexOf('\nfunction populateFormPelaporRadio',start);
+  vm.runInContext(html.slice(start,end)+'\n'+submit,c);
   c.window.syncLaporanEntryToFirestore = async e => {
     calls.transport.push({entry: JSON.parse(JSON.stringify(e)), durable: storage.get(key)});
     throw Error('synthetic lost ACK');
@@ -117,3 +119,5 @@ for (const legacy of [false, true]) for (const throwAt of [1, 2]) test('STAFF UU
   assert.equal(h.calls.alerts.length, 1);
   assert.match(h.calls.alerts[0], /laporan belum disimpan; form tetap tersedia/);
 });
+
+test('STAFF unverified or removed roster selection refuses before IDs, enqueue or transport',async()=>{for(const status of ['unavailable','loading','ready']){const h=harness();h.c.entryRoster.status=status;h.c.entryRoster.rows=[];const before=JSON.stringify(h.c.STATE),pending=h.storage.get(key);await h.submit();assert.equal(JSON.stringify(h.c.STATE),before);assert.equal(h.storage.get(key),pending);assert.equal(h.calls.uuid,0);assert.equal(h.calls.enqueue,0);assert.equal(h.calls.transport.length,0);assert.equal(h.calls.resets,0);assert.match(h.calls.alerts.join(' '),/pekerja/);}});
