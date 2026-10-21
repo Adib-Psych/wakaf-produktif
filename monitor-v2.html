@@ -464,19 +464,30 @@ function privateViewLater(fn,ms,...args){const epoch=window.privateViewEpoch,tic
             <option value="4">Kebun 4 (belakang Rumah)</option>
           </select>
           <select id="filter-kategori" onchange="renderLog()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px">
-            <option value="">Semua Kategori</option>
-            <option value="pemupukan_organik">Pemupukan Organik</option>
-            <option value="pemupukan_kimia">Pemupukan Kimia</option>
-            <option value="pemangkasan">Pemangkasan</option>
-            <option value="panen">Panen</option>
-            <option value="penyemprotan">Penyemprotan</option>
-            <option value="babat_rumput">Babat Rumput</option>
-            <option value="build_rorak">Build Rorak</option>
-            <option value="kompos_kulit_kopi">Kompos Kulit Kopi</option>
-            <option value="tanam_penaung">Tanam Penaung</option>
-            <option value="pisang_management">Pisang Management</option>
-            <option value="inventarisasi_pohon">Inventarisasi</option>
-          </select>
+<option value="">Semua Kategori</option>
+<option value="pemupukan_organik">🌱 Pemupukan Organik (kompos kulit kopi)</option>
+<option value="pemupukan_kimia">⚗️ Pemupukan Anorganik (Urea/SP36/KCl/Dolomit/Kieserit)</option>
+<option value="pemangkasan">✂️ Pemangkasan</option>
+<option value="babat_rumput">🌾 Babat Rumput / Sanitasi Gulma</option>
+<option value="penyemprotan">💨 Penyemprotan (Beauveria/surfaktan/fungisida)</option>
+<option value="panen">🍒 Panen (Petik Selektif)</option>
+<option value="sortasi_buah">🫘 Sortasi Buah Pre-Pulping</option>
+<option value="penjemuran">☀️ Penjemuran / Drying</option>
+<option value="build_rorak">🚜 Build Rorak (Q8)</option>
+<option value="kompos_kulit_kopi">♻️ Kompos Kulit Kopi (Q4)</option>
+<option value="tanam_penaung">🌳 Tanam Penaung (lamtoro/durian)</option>
+<option value="inventarisasi_pohon">🔍 Inventarisasi Pohon</option>
+<option value="opt_monitoring">🐛 OPT Monitoring (5-pohon-diagonal)</option>
+<option value="brocap_management">🪤 Brocap Trap Management</option>
+<option value="soil_test">🧪 Sampling Tanah / Soil Test (Q9)</option>
+<option value="topgraft_robusta">🌳 Top-Graft Robusta Klon Unggul (Q2)</option>
+<option value="bokashi_production">🌾 Bokashi Production (cost-effective)</option>
+<option value="arachis_management">🪴 Cover Crops Arachis Management</option>
+<option value="biochar_pyrolysis">🔥 Biochar Pyrolysis Batch</option>
+<option value="pisang_management">🍌 Pisang Management (Q3 — MWC NU)</option>
+<option value="komunikasi_stakeholder">☎️ Komunikasi Stakeholder (audit trail)</option>
+<option value="lain">📝 Lainnya (free text)</option>
+</select>
           <select id="filter-log-archive" onchange="renderLog()" style="padding:8px;border:1.5px solid #ddd;border-radius:6px;font-size:12px" title="Default: Active only — Archived laporan disembunyikan">
             <option value="active">📂 Active Only (default)</option>
             <option value="archived">📦 Archived Only</option>
