@@ -3,7 +3,7 @@ const repo=path.resolve(__dirname,'..'),workspace=process.env.BROWSER_EVIDENCE_D
 const {chromium}=require(path.join(repo,'recovery/node_modules/playwright'));
 (async()=>{
  const fixture=fs.mkdtempSync(path.join(workspace,'qa-fixture-'));
- const files=['monitor-v2.html','lapor.html','lapor-cabut.html','firebase-config.js','recovery/entry-recovery.js'];
+ const files=['monitor-v2.html','lapor.html','lapor-cabut.html','firebase-config.js','recovery/entry-recovery.js','recovery/report-content.js'];
  for(const file of files){const dst=path.join(fixture,file);fs.mkdirSync(path.dirname(dst),{recursive:true});fs.copyFileSync(path.join(repo,file),dst);}
  const nonce=crypto.randomUUID();let base,browser;
  const server=http.createServer((req,res)=>{const url=new URL(req.url,base);if(url.pathname==='/qa-nonce'){res.end(nonce);return;}const rel=decodeURIComponent(url.pathname).slice(1);if(!files.includes(rel)){res.writeHead(404);res.end();return;}res.setHeader('Content-Type',rel.endsWith('.js')?'application/javascript':'text/html');res.end(fs.readFileSync(path.join(fixture,rel)));});
@@ -41,6 +41,32 @@ const {chromium}=require(path.join(repo,'recovery/node_modules/playwright'));
   await page.goto(base+'/monitor-v2.html',{waitUntil:'domcontentloaded'});await page.waitForSelector('#entry-recovery-banner');
   const staff=await page.evaluate(async()=>{STATE.pelapor='WAKIF';STATE.bidang='1';STATE.bidang_list=['1'];document.getElementById('f-tgl').value='2000-01-01';document.getElementById('f-kategori').value=document.getElementById('f-kategori').options[1].value;submitForm();await entryRecovery.drain();return {pending:entryRecovery.pending().length,cashbook:CASHBOOK.length,banner:document.getElementById('entry-recovery-banner').textContent};});
   assert.equal(staff.pending,1);assert.equal(staff.cashbook,0);assert.match(staff.banner,/bayar, edit\/hapus dan publikasi dinonaktifkan/);result.checks.push({path:'monitor-v2.html',case:'actual staff submit, missing SDK, anti-startup-seed',pending:1,cashbook:0});
+  // Run exact lexical staff writer against synthetic in-browser transaction storage.
+  const staffWriter = fs.readFileSync(path.join(repo,'monitor-v2.html'),'utf8');
+  const writerStart = staffWriter.indexOf('    function blockedWrite()');
+  const writerCode = staffWriter.slice(writerStart,staffWriter.indexOf('\n    // ⭐ Publish SOP',writerStart));
+  const delivery=await page.evaluate(async code=>{
+    let cloud={id:'browser-staff',created_at:'same-time',detail:'cloud-original'},writes=0;
+    const db={},runTransaction=async(_,work)=>work({get:async()=>({exists:()=>!!cloud,data:()=>cloud}),set:(_,body)=>{cloud=body;writes++;}});
+    const send=new Function('db','runTransaction',code+'\nreturn setDoc;')(db,runTransaction);
+    const key='wkkn_recovery_staff_pending_v1';
+    localStorage.setItem(key,'[]');
+    entryRecovery.enqueue([{id:'browser-staff',created_at:'same-time',detail:'divergent'}]);
+    window.syncLaporanEntryToFirestore=e=>send({path:'laporan/'+e.id},e);
+    await entryRecovery.drain();
+    const conflictPending=entryRecovery.pending().length;
+    localStorage.setItem(key,'[]');
+    const original={id:'browser-staff',created_at:'same-time',detail:'cloud-original'};
+    entryRecovery.enqueue([original]);
+    let release;const gate=new Promise(r=>release=r);
+    window.syncLaporanEntryToFirestore=async e=>{const ack=await send({path:'laporan/'+e.id},e);await gate;return ack;};
+    const flight=entryRecovery.drain();
+    localStorage.setItem(key,JSON.stringify([{...original,detail:'edited-while-flight'},{...original,id:'appended'}]));
+    release();await flight;
+    return {conflictPending,pending:entryRecovery.pending(),writes,cloud};
+  },writerCode);
+  assert.equal(delivery.conflictPending,1);assert.equal(delivery.writes,0);assert.equal(delivery.cloud.detail,'cloud-original');assert.equal(delivery.pending.length,2);assert.equal(delivery.pending[0].detail,'edited-while-flight');
+  result.checks.push({path:'monitor-v2.html',case:'staff exact writer refuses divergent ACK; real localStorage changed-body and append survive in-flight original ACK',pending:2,writes:0});
   const restriction=await page.evaluate(()=>{const p=document.createElement('div');p.id='panel-financial-qa';const b=document.createElement('button');b.setAttribute('onclick','window.qaPaymentExecuted=true');p.append(b);document.body.append(p);window.qaPaymentExecuted=false;b.click();return window.qaPaymentExecuted;});assert.equal(restriction,false);result.checks.push({path:'monitor-v2.html',case:'financial panel capture guard, synthetic control',executed:false});
   await page.goto(base+'/lapor-cabut.html',{waitUntil:'domcontentloaded'});await page.locator('#nama').fill('SYNTHETIC');await page.locator('#jumlah').fill('2');await page.locator('#lokasi').fill('synthetic block');await page.locator('#kebunSeg button').first().click();await page.locator('#kirim').click();
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('wkkn_cabut_antri')||'[]').length===1);const cabut=await page.evaluate(()=>({queue:JSON.parse(localStorage.getItem('wkkn_cabut_antri')),message:document.getElementById('done').textContent}));assert.match(cabut.message,/HP/);assert.ok(cabut.queue[0].id);result.checks.push({path:'lapor-cabut.html',case:'actual submit with rejected SDK',pending:1,stableID:!!cabut.queue[0].id});

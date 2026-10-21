@@ -1,0 +1,3 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),{harness,fixture}=require('./authorized-report-harness.cjs');
+const contract=JSON.parse(fs.readFileSync('recovery/staff-category-contract.json','utf8'));
+for(const [cat,spec] of Object.entries(contract))test('staff constructor detail schema '+cat,async()=>{const detail={_kategoriTitle:spec.title};for(const f of spec.fields)detail[f.label]=f.options.length?f.options[0]:'1';const h=harness({role:'staff'}),b=fixture('staff',{id:'lap_staff_'+cat,kategori:cat,detail_form:detail});assert.equal(await h.send(b),b.id);await assert.rejects(h.send({...b,id:'lap_invalid_'+cat,detail_form:{...detail,paid:true}}),/unsupported-entry/);});

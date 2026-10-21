@@ -1,0 +1,5 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm');
+test('worker history projection hides other-owner and legacy-unbound rows without deletion',()=>{
+ const s=fs.readFileSync('lapor.html','utf8');assert(s.includes('function ownedSubmissions('),'missing owner-bound UI projection');const a=s.indexOf('function ownedSubmissions('),b=s.indexOf('\n}',a)+2;let uid='A';const c={window:{authorizedReports:{sessionOwner:()=>uid}}};vm.createContext(c);vm.runInContext(s.slice(a,b),c);const rows=[{owner_uid:'A',data:{id:'a'}},{owner_uid:'B',data:{id:'b'}},{data:{id:'legacy'}}],original=JSON.stringify(rows);assert.equal(c.ownedSubmissions(rows).length,1);uid='B';assert.equal(c.ownedSubmissions(rows)[0].data.id,'b');uid=null;assert.equal(c.ownedSubmissions(rows).length,0);assert.equal(JSON.stringify(rows),original);
+ assert.match(s,/const all = ownedSubmissions\(await getAllSubmissions\(\)\)/);assert.match(s,/const pending = ownedSubmissions\(await getPending\(\)\)/);
+});

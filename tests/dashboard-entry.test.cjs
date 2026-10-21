@@ -11,7 +11,8 @@ test('startup never purges mismatched cashbook cache or invokes financial migrat
  vm.createContext(ctx);
  vm.runInContext(section('// ---------- CASHBOOK STATE','// ---------- COMPUTE SALDO')+'\nglobalThis.result=CASHBOOK;',ctx);
  timers.forEach(f=>f());
- assert.deepEqual(JSON.parse(JSON.stringify(ctx.result)),[{id:'synthetic-original'}]);
+ assert.deepEqual(JSON.parse(JSON.stringify(ctx.result)),[]);
+ assert.equal(cache.get('wkkn_v2_cashbook'),JSON.stringify([{id:'synthetic-original'}]),'historical bytes retained, not silently adopted by current account');
  assert.equal(pushes,0);
  assert.equal(cache.get('wkkn_v2_cashbook_ver'),'old');
 });

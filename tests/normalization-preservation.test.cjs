@@ -1,0 +1,4 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs'),vm=require('vm');
+test('actual normalization preserves source detail bytes and unknown rainfall without compliant invention',()=>{
+ const s=fs.readFileSync('monitor-v2.html','utf8'),a=s.indexOf('    function normalizeWorkerEntry('),b=s.indexOf('\n    // Migration:',a),c={console,computeRainfallAlerts:()=>[]};vm.createContext(c);vm.runInContext(s.slice(a,b),c);const input={id:'lap_x',kategori:'pemangkasan',tanggal:'2000-01-02',jumlah_pohon:0,detail:{tipe_pemangkasan:'Wiwilan (tunas liar)'},rain_24h_mm:null,rain_7d_mm:null,compliance:'pending'},before=JSON.stringify(input);const result=c.normalizeWorkerEntry(input);assert.equal(JSON.stringify(input),before);assert.equal(result.rainfall_24h,null);assert.equal(result.rainfall_7d,null);assert.equal(result.compliance,'pending');
+});

@@ -1,7 +1,9 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
 const h=fs.readFileSync(require('node:path').join(__dirname,'../lapor.html'),'utf8');
-const body=h.slice(h.indexOf('    window.firestorePush = async'),h.indexOf('\n    console.log',h.indexOf('    window.firestorePush = async')));
-function setup(existing){let writes=0;const context={window:{},db:{},COLLECTIONS:{laporan:'laporan'},doc:(_db,c,id)=>({path:c+'/'+id}),serverTimestamp:()=>123,setDoc:async()=>{writes++;},runTransaction:async(_db,fn)=>fn({get:async()=>({exists:()=>!!existing,data:()=>existing}),set:()=>{writes++;}})};vm.createContext(context);vm.runInContext(h.match(/function workerReportContent\(value\) \{[\s\S]*?\n\}/)[0],context);vm.runInContext(body,context);return {push:context.window.firestorePush,writes:()=>writes};}
-test('worker retry rejects divergent body despite matching id and created_at',async()=>{const s=setup({id:'one',created_at:'t',detail:'different'});await assert.rejects(s.push({id:'one',created_at:'t',detail:'original'}),/Konflik/);assert.equal(s.writes(),0);});
-test('worker ID collision fails closed',async()=>{const s=setup({id:'one',created_at:'different'});await assert.rejects(s.push({id:'one',created_at:'t'}));assert.equal(s.writes(),0);});
-test('new worker report still creates',async()=>{const s=setup(null);assert.equal(await s.push({id:'one',created_at:'t'}),'one');assert.equal(s.writes(),1);});
+const {harness,fixture}=require('./authorized-report-harness.cjs');
+const body=h.match(/window\.firestorePush = entryData => authorizedReports\.send\(entryData\);/)[0];
+const entry=patch=>fixture('worker',{id:'lap_one',...patch});
+function setup(existing){const x=harness({existing});const context={window:{},authorizedReports:{send:x.send}};vm.createContext(context);vm.runInContext(body,context);return {push:context.window.firestorePush,writes:()=>x.commits};}
+test('worker retry rejects divergent body despite matching id and created_at',async()=>{const s=setup(entry({catatan:'different'}));await assert.rejects(s.push(entry({catatan:'original'})),/conflict/);assert.equal(s.writes(),0);});
+test('worker ID collision fails closed',async()=>{const s=setup(entry({created_at:'different'}));await assert.rejects(s.push(entry()));assert.equal(s.writes(),0);});
+test('new worker report still creates',async()=>{const s=setup(null);assert.equal(await s.push(entry()),'lap_one');assert.equal(s.writes(),1);});

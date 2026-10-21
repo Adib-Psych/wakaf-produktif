@@ -3965,41 +3965,8 @@ function escapeHTML(str) {
 // FALLBACK 2: Hardcoded HTML in #year-2026 (always present, never fails)
 (async function loadMilestonesWithFallback() {
 
-  // ─── TIER 1: Firestore (PRIMARY) ───
-  try {
-    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
-    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
-    const { firebaseConfig } = await import('./firebase-config.js');
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const docSnap = await getDoc(doc(db, 'milestones', 'active'));
-    if (docSnap.exists()) {
-      const cloud = docSnap.data();
-      const allMilestones = cloud.data || [];
-      // Filter: only published (locked 25 Mei 2026 Track A3 per Adib decision 2b)
-      // Archive flag does NOT affect Living Lab visibility — only Dashboard view.
-      // Archived milestone yang masih published TETAP tampil di Living Lab.
-      const milestones = allMilestones.filter(m => m.published === true);
-      const archivedPublishedCount = allMilestones.filter(m => m.archived === true && m.published === true).length;
-      const draftCount = allMilestones.filter(m => m.published !== true).length;
-      const data = {
-        schema_version: cloud.version || '3.1',
-        generated_at: (cloud.updated_at && cloud.updated_at.toDate) ? cloud.updated_at.toDate().toISOString() : new Date().toISOString(),
-        generated_by: cloud.updated_by || 'wakif_dashboard',
-        total_published: milestones.length,
-        milestones: milestones,
-        source: 'firestore'
-      };
-      if (renderDynamicMilestones(data)) {
-        console.log(`[Living Lab] ✅ Milestones from Firestore: ${milestones.length} published (incl ${archivedPublishedCount} archived-but-still-published) · filtered ${draftCount} drafts — origin: ${data.generated_by}`);
-        return;
-      }
-    }
-    console.warn('[Living Lab] Firestore doc empty, fallback to JSON file');
-  } catch (firestoreErr) {
-    console.warn('[Living Lab] Firestore fetch failed, fallback to JSON file:', firestoreErr.message || firestoreErr);
-  }
-
+  // Held activation release: public content uses committed approved projection only.
+  // Raw private milestones are never fetched for client-side publication filtering.
   // ─── TIER 2: JSON file (FALLBACK) ───
   try {
     const r = await fetch('data/aktivitas-publik.json?t=' + Date.now());
@@ -4362,34 +4329,8 @@ function buildStatusBoard() {
 </script>
 <script>
 /* ══ Living Lab — Kartu Live compliance (Apr–Kini) baca Firestore sop_status/compliance — additive, graceful (locked 5 Jul 2026; repointed 6 Jul: reuse sop_status krn rules-nya sudah izinkan write, tak perlu publish rule baru) ══ */
-(async function loadLiveCompliance(){
-  try {
-    const { initializeApp, getApps } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
-    const { getFirestore, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
-    const { firebaseConfig } = await import('./firebase-config.js');
-    const existing = getApps().find(function(a){ return a.name === 'compliance'; });
-    const app = existing || initializeApp(firebaseConfig, 'compliance');
-    const db = getFirestore(app);
-    const snap = await getDoc(doc(db, 'sop_status', 'compliance'));
-    if (!snap.exists()) return;
-    const d = snap.data();
-    const yr = new Date().getFullYear();
-    if (d.year !== yr || typeof d.ytd_pct !== 'number') return;
-    const p = Math.max(0, Math.min(100, Math.round(d.ytd_pct)));
-    const pctEl = document.getElementById('live-comp-pct');
-    const barEl = document.getElementById('live-comp-bar');
-    const noteEl = document.getElementById('live-comp-note');
-    if (pctEl) pctEl.innerHTML = p + '<span style="font-size:1.2rem">%</span>';
-    if (barEl) barEl.style.width = p + '%';
-    if (noteEl) {
-      var stamp = 'terkini';
-      try { var dt = d.updated_at && d.updated_at.toDate ? d.updated_at.toDate() : null; if (dt) stamp = dt.toLocaleDateString('id-ID', {day:'numeric',month:'short',year:'numeric'}); } catch(e){}
-      var idEl = noteEl.querySelector('.lang-id'), enEl = noteEl.querySelector('.lang-en');
-      if (idEl) idEl.textContent = 'Live dari dashboard SOP Compliance · diperbarui ' + stamp + '.';
-      if (enEl) enEl.textContent = 'Live from the SOP Compliance dashboard · updated ' + stamp + '.';
-    }
-    console.log('[Live Compliance] ' + p + '% (year ' + d.year + ')');
-  } catch (e) { /* graceful: kartu Live tetap tampil state "Aktif" */ }
+(function heldCompliance(){
+ const note=document.getElementById('live-comp-note');if(note){const id=note.querySelector('.lang-id'),en=note.querySelector('.lang-en');if(id)id.textContent='Data operasional sedang diverifikasi; angka live belum ditampilkan.';if(en)en.textContent='Operational data is being verified; live figures are not displayed.';}
 })();
 </script>
 

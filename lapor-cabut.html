@@ -134,10 +134,11 @@ button.kirim:disabled{opacity:.5}
   <div class="hist" id="hist">Memuat…</div>
 </div>
 
+<script src="recovery/report-content.js"></script>
 <script type="module">
 // Load SDK separately: an unavailable CDN must not disable the local form/queue.
 let db = null, collection, getDocs, query, where, doc, runTransaction, arrayUnion, serverTimestamp;
-let sdkFlight = null;
+let sdkFlight = null;let cabutOperations=null,cabutSession=null;
 async function initDeliverySDK(){
   if (db) return true;
   if (sdkFlight) return sdkFlight;
@@ -149,7 +150,10 @@ async function initDeliverySDK(){
         import('./firebase-config.js')
       ]);
       ({ collection, getDocs, query, where, doc, runTransaction, arrayUnion, serverTimestamp } = firestoreSDK);
-      db = firestoreSDK.getFirestore(appSDK.initializeApp(config.firebaseConfig));
+      const app=appSDK.initializeApp(config.firebaseConfig);db = firestoreSDK.getFirestore(app);
+      const auth=await import('./recovery/authorized-reports.js');const ops=await import('./recovery/versioned-operations.js');
+      cabutSession=auth.createAuthorizedReports({app,db});cabutOperations=ops.createVersionedOperations({db,session:cabutSession});window.cabutOperations=cabutOperations;window.authorizedReports=cabutSession;auth.mountReportSessionControls(cabutSession);
+      cabutSession.observeSession(uid=>{document.getElementById('hist')?.replaceChildren();for(const id of ['pTot','pK1','pK2','pK3'])document.getElementById(id).textContent='–';document.getElementById('pUpah').textContent='Belum ada sesi terverifikasi';if(uid)void muatRiwayat();});
       return true;
     } catch(e) { console.warn('[cabut] SDK belum tersedia; laporan tetap di HP:', e); return false; }
     finally { sdkFlight = null; }
@@ -187,31 +191,25 @@ else $('gpsInfo').textContent = '📍 HP tidak mendukung lokasi';
 
 /* ---- kirim ---- */
 function siapkanIdentitas(entry){
-  if (!entry.id) entry.id = 'lap_cabut_' + (globalThis.crypto?.randomUUID?.() || (Date.now().toString(36) + '_' + Math.random().toString(36).slice(2)));
+  if(!entry.id){if(typeof crypto?.randomUUID!=='function')throw Error('secure-id-unavailable');entry.id='lap_cabut_'+crypto.randomUUID();}
   if (typeof entry.id !== 'string' || !entry.id || entry.id.includes('/')) throw new Error('ID laporan tidak valid');
   if (!entry.created_at) entry.created_at = new Date().toISOString();
   return entry;
 }
 async function kirimSatu(entry){
-  if (!db || typeof runTransaction !== 'function') throw new Error('SDK belum tersedia');
-  if (!entry.id || !entry.created_at) throw new Error('Identitas laporan belum disimpan');
-  const cid = 'cabut_' + entry.id, reportRef = doc(db, 'laporan', entry.id);
-  const logEntry = { id: cid, kebun: entry.kebun, jumlah: +entry.jumlah_pohon || 0, tgl: entry.tgl, metode: 'cabut', tali: 'merah', sakit: false,
-    kondisi: 'Tali Merah · Dicabut', catatan: `Borongan · ${entry.pekerja_nama||''} · ${entry.lokasi||''}`.trim(),
-    src_laporan: entry.id, dicek: false, pending: entry.pending || [], created_at: entry.created_at };
-  // Marker and log commit atomically. A retry after a lost ACK reads the marker,
-  // rather than overwriting verification or re-adding a log edited by the Wakif.
-  await runTransaction(db, async tx => {
-    const existing = await tx.get(reportRef);
-    if (existing.exists()) {
-      if (existing.data().cabut_id === cid) return;
-      throw new Error('ID sudah ada tanpa penanda log; perlu pemeriksaan');
-    }
-    tx.set(reportRef, { ...entry, status_verifikasi: 'masuk_log_belum_dicek', cabut_id: cid });
-    tx.update(doc(db, 'sop_status', 'pohon_cabut'), { data: arrayUnion(logEntry), updated_at: serverTimestamp(), updated_by: 'lapor_cabut', source: 'lapor-cabut.html arrayUnion' });
-  });
-  return entry.id;
+  if(!cabutOperations||!cabutSession?.sessionOwner())throw Error('Masuk akun yang disahkan; laporan tetap pending');
+  const owner=cabutSession.sessionOwner();
+  if(entry.owner_uid!==owner)throw Error('Pemilik pending berbeda/tidak diketahui; tidak diadopsi');
+  let operation=entry.operation;
+  if(!operation){
+    const {owner_uid,operation:previousOperation,...body}=entry;
+    operation=await cabutOperations.prepare('cabut','active',body,'Laporan cabut lapangan');
+    entry.operation=operation;await cabutQueueLock(()=>{if(cabutSession.sessionOwner()!==owner)throw Error('session-changed');const pending=antrian();const i=pending.findIndex(x=>x.id===entry.id);if(i<0)throw Error('pending-not-found');pending[i]=entry;simpanAntrian(pending);});
+  }
+  await cabutOperations.send(operation);return entry.id;
 }
+
+function cabutQueueLock(fn){if(!navigator.locks?.request)throw Error('exclusive-browser-lock-unavailable');return navigator.locks.request('wkkn-cabut-pending-v2',fn);}
 function antrian(){
   const value = JSON.parse(localStorage.getItem(QKEY) || '[]');
   if (!Array.isArray(value) || value.some(e => !e || typeof e !== 'object' || Array.isArray(e))) throw new Error('Antrian di HP tidak valid');
@@ -225,7 +223,7 @@ function tampilAntrian(){
   catch(e) { el.style.display = 'block'; el.textContent = '⚠️ Antrian di HP belum bisa dibaca. Jangan hapus data; minta bantuan.'; return; }
   if (!a.length) { el.style.display = 'none'; return; }
   el.style.display = 'block';
-  el.innerHTML = `⏳ <b>${a.length} laporan belum terkirim</b> (sinyal lemah). Akan dikirim otomatis saat ada sinyal.<br><button id="coba">Kirim sekarang</button>`;
+  el.innerHTML = `⏳ <b>${a.length} laporan belum terkirim</b> (belum ada konfirmasi server). Masuk akun yang disahkan; revisi server diperlukan.<br><button id="coba">Kirim sekarang</button>`;
   $('coba').onclick = kurasAntrian;
 }
 let cabutDrainPromise = null;
@@ -234,15 +232,14 @@ async function kurasAntrian(){
   cabutDrainPromise = (async () => {
     const acknowledged = [];
     try {
-      const a = antrian().map(siapkanIdentitas);
-      // Persist legacy IDs before attempting any network operation.
-      simpanAntrian(a);
+      const a = antrian();
+      // Never adopt or migrate unknown/foreign-owner legacy pending.
       for (const e of a) {
         try {
           const ack = await kirimSatu(e);
           if (ack !== e.id) throw new Error('Belum ada konfirmasi laporan');
           // Read current queue, not the snapshot: submissions can append during await.
-          simpanAntrian(antrian().filter(item => item.id !== e.id));
+          await cabutQueueLock(()=>{if(cabutSession?.sessionOwner()!==e.owner_uid)throw Error('session-changed');simpanAntrian(antrian().filter(item=>item.id!==e.id||workerReportContent(item)!==workerReportContent(e)));});
           acknowledged.push(e.id);
         } catch(err) { console.warn('[cabut] laporan tetap pending:', err); }
       }
@@ -260,21 +257,22 @@ window.addEventListener('online', pulihkanPengiriman);
 
 $('kirim').onclick = async () => {
   const err = $('err'); err.textContent = '';
-  const nama = $('nama').value.trim(), tgl = $('tgl').value, jumlah = parseInt(J.value) || 0;
+  const nama = $('nama').value.trim(), tgl = $('tgl').value, rawJumlah=J.value, jumlah=/^\d+$/.test(rawJumlah)?Number(rawJumlah):NaN;
   const salah = [];
   if (!nama) salah.push('isi nama');
   if (!tgl) salah.push('isi tanggal');
   if (!S.kebun) salah.push('pilih kebun');
-  if (jumlah < 1) salah.push('isi jumlah pohon');
+  if (!Number.isSafeInteger(jumlah)||jumlah < 1) salah.push('isi jumlah pohon');
   if (!$('lokasi').value.trim()) salah.push('tulis di bagian mana');
   if (salah.length) { err.textContent = 'Belum lengkap: ' + salah.join(', ') + '.'; return; }
-  try { localStorage.setItem(NKEY, nama); } catch(e){}
+  const submitTicket=cabutSession?.sessionTicket();if(!submitTicket){err.textContent='Masuk akun yang disahkan sebelum menyimpan laporan baru. Draft form tetap tersedia.';return;}
 
   const CEK = { tali_merah: 'hanya pohon bertali merah', akar_keluar: 'dicabut sampai akar', lubang_ditutup: 'lubang ditutup tanah', kayu_dibawa_keluar: 'kayu & akar dibawa keluar kebun' };
   const checklist = { tali_merah: $('c1').checked, akar_keluar: $('c2').checked, lubang_ditutup: $('c3').checked, kayu_dibawa_keluar: $('c4').checked };
   const pending = Object.keys(CEK).filter(k => !checklist[k]);
 
   const entry = {
+    owner_uid:cabutSession?.sessionOwner()||null,
     pelapor: PELAPOR, kategori: KATEGORI,
     tanggal: tgl, tgl,
     kebun: S.kebun, kebun_primary: S.kebun, kebun_list_str: S.kebun,
@@ -289,7 +287,7 @@ $('kirim').onclick = async () => {
   let ok = false;
   try {
     siapkanIdentitas(entry);
-    const a = antrian(); a.push(entry); simpanAntrian(a);
+    await cabutQueueLock(()=>{if(!cabutSession.sessionMatches(submitTicket))throw Error('session-changed');const a=antrian();if(a.some(x=>x.id===entry.id))throw Error('identity-conflict');a.push(entry);simpanAntrian(a);});
   } catch(e) {
     err.textContent = 'Gagal menyimpan di HP. Jangan tutup halaman; coba lagi atau minta bantuan.';
     $('done').style.display = 'none'; $('done').innerHTML = '';
@@ -302,7 +300,7 @@ $('kirim').onclick = async () => {
   const d = $('done'); d.style.display = 'block';
   const sisa = pending.length ? `<br><span style="color:#b45309">⚠️ Tercatat masih ada pekerjaan tersisa: <b>${pending.map(k => CEK[k]).join(', ')}</b>. Selesaikan sebelum dibayar.</span>` : '';
   d.innerHTML = (ok ? `✅ <b>Terkirim & sudah masuk catatan kebun.</b> ${jumlah} pohon di Kebun ${S.kebun.slice(1)}, ${tg(tgl)}. Terima kasih!`
-                    : `⏳ <b>Tersimpan di HP</b> — sinyal lemah, akan dikirim otomatis saat ada sinyal.`) + sisa;
+                    : `⏳ <b>Tersimpan di HP</b> — belum ada konfirmasi server. Izin akun dan revisi server harus sesuai; draft tidak diadopsi akun lain.`) + sisa;
   // kosongkan untuk laporan berikutnya (nama & tanggal dipertahankan)
   J.value = 0; $('lokasi').value = '';
   ['c1','c2','c3','c4'].forEach(i => $(i).checked = false);
@@ -312,20 +310,18 @@ $('kirim').onclick = async () => {
 
 /* ---- progres & riwayat (dibaca langsung dari Firestore) ---- */
 async function muatRiwayat(){
-  try {
-    const snap = await getDocs(query(collection(db, 'laporan'), where('kategori', '==', KATEGORI)));
-    const L = snap.docs.map(d => d.data()).sort((a,b) => String(b.created_at).localeCompare(String(a.created_at)));
-    const per = { K1:0, K2:0, K3:0 }; let tot = 0;
-    L.forEach(l => { const n = +l.jumlah_pohon || 0; tot += n; if (per[l.kebun] != null) per[l.kebun] += n; });
-    $('pTot').textContent = tot; $('pBar').style.width = Math.min(100, tot / PLAFON * 100) + '%';
-    $('pUpah').innerHTML = tot ? ('≈ <b>Rp ' + (tot*TARIF).toLocaleString('id-ID') + '</b><br>Rp 15.000 / pohon') : 'Rp 15.000 / pohon';
-    ['K1','K2','K3'].forEach(k => $('p'+k).textContent = per[k]);
-    $('hist').innerHTML = L.length ? L.slice(0, 10).map(l =>
-      `<div><span>${tg(l.tgl)} · K${String(l.kebun).slice(1)} · <b>${l.jumlah_pohon}</b> pohon · ${String(l.pekerja_nama||'').replace(/</g,'&lt;')}</span>
-       <span class="st ${l.status_verifikasi==='masuk_log'?'v':'w'}">${l.status_verifikasi==='masuk_log'?'✓ dicek':'menunggu cek'}</span></div>`).join('')
-      : '<span style="color:var(--muted)">Belum ada laporan.</span>';
-  } catch (e) { $('hist').textContent = 'Riwayat belum bisa dimuat (sinyal?).'; $('pTot').textContent = '–'; }
+  const ticket=cabutSession?.sessionTicket();if(!ticket)return;
+  try{
+    const snap=await getDocs(query(collection(db,'operation_events'),where('operation.kind','==','cabut')));
+    if(!cabutSession.sessionMatches(ticket))return;
+    const L=snap.docs.map(d=>({...d.data().operation.body,command_id:d.id})).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+    const per={K1:0,K2:0,K3:0,K4:0};let total=0;for(const l of L){total+=l.jumlah_pohon;per[l.kebun]+=l.jumlah_pohon;}
+    $('pTot').textContent=total;$('pBar').style.width=Math.min(100,total/PLAFON*100)+'%';$('pUpah').textContent='Laporan diterima bukan persetujuan atau bukti pembayaran.';
+    for(const k of ['K1','K2','K3'])$('p'+k).textContent=per[k];
+    $('hist').replaceChildren();for(const l of L.slice(0,10)){const row=document.createElement('div');row.textContent=tg(l.tanggal)+' · '+l.kebun+' · '+l.jumlah_pohon+' pohon · '+l.pekerja_nama+' · diterima; belum verifikasi/bayar';$('hist').append(row);}
+  }catch(e){if(cabutSession.sessionMatches(ticket)){$('hist').textContent='Riwayat dibatasi izin/sesi atau belum tersedia.';$('pTot').textContent='–';}}
 }
+
 tampilAntrian(); if (navigator.onLine) pulihkanPengiriman();
 </script>
 </body>

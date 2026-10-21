@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monitor v2 — Wakaf Produktif Kebun Kopi Ngantang</title>
+<script>
+window.privateViewEpoch=0;
+function privateViewLater(fn,ms,...args){const epoch=window.privateViewEpoch,ticket=window.authorizedReports?.sessionTicket();return window.setTimeout(()=>{if(epoch!==window.privateViewEpoch)return;if(ticket&&!window.authorizedReports?.sessionMatches(ticket))return;fn(...args);},ms);}
+</script>
+<script src="recovery/report-content.js"></script>
 <script src="recovery/entry-recovery.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -51,8 +56,7 @@
 #entry-recovery-banner{position:relative!important;z-index:1!important}
 #report-session-controls{position:relative!important;z-index:auto!important}
 @media(max-width:879px){#entry-recovery-banner{padding-left:64px!important}}
-
-  #sidebar{background:linear-gradient(180deg,var(--earth) 0%,#1a3030 100%);color:var(--cream);padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50;box-shadow:2px 0 12px rgba(0,0,0,.12)}
+#sidebar{background:linear-gradient(180deg,var(--earth) 0%,#1a3030 100%);color:var(--cream);padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50;box-shadow:2px 0 12px rgba(0,0,0,.12)}
   .sb-header{padding:18px 16px 14px;border-bottom:1px solid rgba(168,200,188,.15)}
   .sb-brand{font-size:9px;font-weight:700;letter-spacing:1.8px;color:var(--sage);margin-bottom:5px}
   .sb-title{font-size:15px;font-weight:800;color:var(--cream);line-height:1.25;margin-bottom:8px}
@@ -3905,8 +3909,7 @@ function toggleSidebar(force) {
 // ===== INIT =====
 function initApp() {
   // Load any saved entries from localStorage
-  const saved = localStorage.getItem('wkkn_v2_laporan');
-  STATE.laporan = saved ? JSON.parse(saved) : [...SAMPLE_DATA];
+  STATE.laporan = []; // Historical report cache preserved but not displayed before Auth.
 
   renderDashboard();
   renderLog();
@@ -4087,6 +4090,7 @@ function renderDashboard() {
 function renderActivityChart() {
   const ctx = document.getElementById('chart-activity');
   if (!ctx) return;
+  if(typeof Chart.getChart==='function') Chart.getChart(ctx)?.destroy();
   // Group by date
   const byDate = {};
   STATE.laporan.forEach(d => {
@@ -4150,6 +4154,7 @@ function togglePelaporMode(mode) {
 function renderPelaporChart() {
   const ctx = document.getElementById('chart-pelapor');
   if (!ctx) return;
+  if(typeof Chart.getChart==='function') Chart.getChart(ctx)?.destroy();
   if (window._pelaporChart) { try { window._pelaporChart.destroy(); } catch(e){} }
   // Filter laporan based on mode
   const filtered = _pelaporChartMode === 'aktif'
@@ -4228,7 +4233,7 @@ function _migrateLaporanIds() {
     }
   });
   if (migrated) {
-    localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+    /* Report read model is session-memory only; durable pending remains separate. */
     console.log('[Log Harian] Migrated', STATE.laporan.length, 'laporan with new IDs');
   }
 }
@@ -4346,8 +4351,12 @@ function renderLog() {
 
 // ============ EDIT LAPORAN (from Log Harian) ============
 let CURRENT_EDIT_LAPORAN_ID = null;
+let REPORT_EDIT_TIMER=null;
 
 function editLaporan(id) {
+  if(!window.reportReadSession?.active)return;
+  const readerGeneration=window.reportReadSession.generation;
+  const editorGeneration=window.reportEditorGeneration=(window.reportEditorGeneration||0)+1;
   const lap = STATE.laporan.find(l => l.id === id);
   if (!lap) { alert('Entry tidak ditemukan (mungkin sudah dihapus).'); return; }
   CURRENT_EDIT_LAPORAN_ID = id;
@@ -4356,8 +4365,11 @@ function editLaporan(id) {
   const formTab = document.querySelector('.sb-tab[data-panel="form"]');
   if (formTab) formTab.click();
 
-  // Populate fields setelah short delay (biar tab switch settle)
-  setTimeout(() => {
+  // A delayed reader edit cannot cross a session boundary.
+  if(REPORT_EDIT_TIMER!==null)clearTimeout(REPORT_EDIT_TIMER);
+  REPORT_EDIT_TIMER=privateViewLater(() => {
+    REPORT_EDIT_TIMER=null;
+    if(!window.reportReadSession?.active||window.reportReadSession.generation!==readerGeneration||window.reportEditorGeneration!==editorGeneration||CURRENT_EDIT_LAPORAN_ID!==id)return;
     document.getElementById('f-tgl').value = lap.tgl || '';
     if (typeof updateTglPreview === 'function') updateTglPreview();
 
@@ -4506,7 +4518,7 @@ async function deleteLaporan(id) {
   }
 
   STATE.laporan = STATE.laporan.filter(l => l.id !== id);
-  localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+  /* Report read model is session-memory only; durable pending remains separate. */
   // ⭐ 19 Jul 2026 — ATURAN TERPISAH (locked Wakif): hapus laporan TIDAK menghapus upah terkait.
   // Upah = record finansial independen (mungkin sudah dibayar). Kelola upah di tab Upah.
   // (Sebelumnya: cascade-delete upah 'belum' — dihapus per keputusan Wakif 19 Jul.)
@@ -5076,8 +5088,9 @@ function computeRainfallAlerts(kategori, rainfall_24h, rainfall_7d, cuaca_pagi, 
 
 function updateRainfallAlert() {
   const kategori = document.getElementById('f-kategori').value;
-  const r24 = +document.getElementById('f-rainfall-24h').value || 0;
-  const r7d = +document.getElementById('f-rainfall-7d').value || 0;
+  const rawR24=document.getElementById('f-rainfall-24h').value,rawR7=document.getElementById('f-rainfall-7d').value;
+  if([rawR24,rawR7].some(v=>v!==''&&(!/^\d+(?:\.\d+)?$/.test(v)||!Number.isFinite(Number(v))))){alert('Nilai angka tidak valid; form dipertahankan tanpa simpan.');return;}
+  const r24=rawR24===''?0:Number(rawR24),r7d=rawR7===''?0:Number(rawR7);
   const alerts = computeRainfallAlerts(kategori, r24, r7d, STATE.cuaca_pagi, STATE.cuaca_siang);
   const box = document.getElementById('rainfall-alert-box');
   if (!box) return;
@@ -5140,20 +5153,20 @@ function harvestDetailForm() {
   return Object.keys(detail).length > 0 ? detail : null;
 }
 
-function submitForm() {
-  if (CURRENT_EDIT_LAPORAN_ID) { alert('Edit dinonaktifkan selama pemulihan.'); return; }
+async function submitForm() {
+  if(CURRENT_EDIT_LAPORAN_ID){if(typeof window.submitReportCorrection==='function')return window.submitReportCorrection();alert('Koreksi belum tersedia; editor dipertahankan.');return;}
   const tgl = document.getElementById('f-tgl').value;
   const kategori = document.getElementById('f-kategori').value;
   const pohon = document.getElementById('f-pohon').value;
   const catatan = document.getElementById('f-catatan').value;
-  const r24 = +document.getElementById('f-rainfall-24h').value || 0;
-  const r7d = +document.getElementById('f-rainfall-7d').value || 0;
+  const rawR24=document.getElementById('f-rainfall-24h').value,rawR7=document.getElementById('f-rainfall-7d').value;
+  if([pohon,rawR24,rawR7].some(v=>v!==''&&(!/^\d+(?:\.\d+)?$/.test(v)||!Number.isFinite(Number(v))))){alert('Nilai angka tidak valid; form dipertahankan tanpa simpan.');return;}
+  const r24=rawR24===''?0:Number(rawR24),r7d=rawR7===''?0:Number(rawR7);
 
-  // Backward-compat: kalau bidang_list belum di-set tapi bidang ada (legacy single-select), sync
-  if (STATE.bidang && (!Array.isArray(STATE.bidang_list) || STATE.bidang_list.length === 0)) {
-    STATE.bidang_list = [STATE.bidang];
-  }
-  if (!STATE.pelapor || !STATE.bidang || !Array.isArray(STATE.bidang_list) || STATE.bidang_list.length === 0 || !kategori) {
+  // Legacy single-select normalization stays local until the complete batch is saved.
+  const entryBidangList = STATE.bidang && (!Array.isArray(STATE.bidang_list) || STATE.bidang_list.length === 0)
+    ? [STATE.bidang] : STATE.bidang_list;
+  if (!STATE.pelapor || !STATE.bidang || !Array.isArray(entryBidangList) || entryBidangList.length === 0 || !kategori) {
     alert('Field wajib belum lengkap: Pelapor, Kebun (minimal 1), Kategori');
     return;
   }
@@ -5164,7 +5177,7 @@ function submitForm() {
     const _nm = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor;
     // ⭐ 20 Jul 2026 (req Wakif — sering lupa): pesan tegas + konsekuensi jelas + fokuskan field durasi.
     alert('⚠️ DURASI KERJA BELUM DIPILIH untuk ' + _nm + '.\n\nTanpa durasi, UPAH TIDAK akan terhitung otomatis (bayaran pekerja jadi kosong).\n\nPilih dulu di "Durasi Kerja": 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
-    try { const _fd=document.getElementById('form-durasi'); if(_fd){ _fd.scrollIntoView({behavior:'smooth',block:'center'}); _fd.style.transition='box-shadow .3s'; _fd.style.boxShadow='0 0 0 3px #dc2626'; setTimeout(()=>{ if(_fd) _fd.style.boxShadow=''; }, 2200); } } catch(e){}
+    try { const _fd=document.getElementById('form-durasi'); if(_fd){ _fd.scrollIntoView({behavior:'smooth',block:'center'}); _fd.style.transition='box-shadow .3s'; _fd.style.boxShadow='0 0 0 3px #dc2626'; privateViewLater(()=>{ if(_fd) _fd.style.boxShadow=''; }, 2200); } } catch(e){}
     return;
   }
   // ⭐ 19 Jul 2026 — ANTI-DUPLIKASI entry laporan (req Wakif, casus dup historis):
@@ -5185,84 +5198,47 @@ function submitForm() {
   const hasHighAlert = climateAlerts.some(a => a.sev === 'tinggi');
   const compliance = hasHighAlert ? 'partial' : 'compliant';
 
-  // ===== EDIT MODE: kalau ada CURRENT_EDIT_LAPORAN_ID, update existing =====
-  if (CURRENT_EDIT_LAPORAN_ID) {
-    const idx = STATE.laporan.findIndex(l => l.id === CURRENT_EDIT_LAPORAN_ID);
-    if (idx >= 0) {
-      const oldEntry = STATE.laporan[idx];
-      // Multi-kebun fields (locked 26 Mei 2026 — parity PWA)
-      const kebunListArr = STATE.bidang_list.map(b => 'K' + b);
-      STATE.laporan[idx] = {
-        ...oldEntry,
-        tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
-        kebun_list: kebunListArr,                       // ['K1','K3'] — array form
-        kebun_primary: kebunListArr[0] || null,         // first for backward-compat display
-        kebun_list_str: kebunListArr.join('+'),         // 'K1+K3' — display-friendly
-        pohon: +pohon || 0, detail: catatan || '(no detail)',
-        durasi: STATE.durasi || null,
-        detail_form: harvestDetailForm() || oldEntry.detail_form,
-        rainfall_24h: r24, rainfall_7d: r7d,
-        compliance, alerts: alertMsgs,
-        last_edited_at: new Date().toISOString(),
-        // ⭐ v3.4 (23 Mei 2026): Pattern #10 Firestore sync fields
-        tanggal: tgl,  // mirror tgl untuk Firestore Rules compat
-        schema_version: '3.5',  // bump 3.5 = + kebun_list multi-select (26 Mei 2026)
-        src: oldEntry.src || 'wakif_form'
-      };
-      localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
-
-      // ⭐ Pattern #10 Firestore push edit (locked 23 Mei 2026) — fire-and-forget
-      if (typeof window.syncLaporanEntryToFirestore === 'function') {
-        window.syncLaporanEntryToFirestore(STATE.laporan[idx]).catch(e => {
-          console.warn('[Edit] Firestore sync failed (local saved):', e);
-        });
-      }
-      // Note: linked UPAH entry tidak auto-update — Adib bisa manual delete + re-create kalau pelapor/durasi berubah
-      const linkedUpah = (typeof UPAH_ITEMS !== 'undefined') ? UPAH_ITEMS.find(u =>
-        u.tgl === oldEntry.tgl && u.pelapor === oldEntry.pelapor && (u.src === 'auto_form' || u.src === 'auto_backfill')
-      ) : null;
-      const editWarning = linkedUpah ? `\n\n⚠️ Linked UPAH entry tidak auto-update. Kalau pelapor/durasi/dosis berubah, periksa manual di tab Upah Pekerja (entry ${formatTglShort(oldEntry.tgl)} · ${oldEntry.pelapor}).` : '';
-      const editId = CURRENT_EDIT_LAPORAN_ID;
-      CURRENT_EDIT_LAPORAN_ID = null;
-      if (typeof hideEditBanner === 'function') hideEditBanner();
-      alert(`✅ Entry updated (ID: ${editId.substring(0,15)}…)${editWarning}`);
-      resetForm();
-      renderDashboard();
-      renderLog();
+  let recoveryEntries;
+  try {
+    const extraCategories=typeof collectExtraKategori==='function'?collectExtraKategori(kategori):[];
+    const supported=[...document.querySelectorAll('#f-kategori option')].map(x=>x.value).filter(Boolean);
+    if(!supported.includes(kategori)||extraCategories.some(x=>!supported.includes(x)))throw Error('Kategori tidak dikenal; seluruh batch ditahan');
+    // Complete every identity before enqueue; UUID failure must not partially save a batch.
+    // Multi-kebun fields (locked 26 Mei 2026 — parity PWA Worker lapor.html)
+    const kebunListArr = entryBidangList.map(b => 'K' + b);
+    if (typeof crypto === 'undefined' || typeof crypto.randomUUID !== 'function') {
+      alert('UUID aman tidak tersedia; laporan belum disimpan, form tetap tersedia.');
       return;
     }
-    CURRENT_EDIT_LAPORAN_ID = null;
-    if (typeof hideEditBanner === 'function') hideEditBanner();
-  }
-
-  // Multi-kebun fields (locked 26 Mei 2026 — parity PWA Worker lapor.html)
-  const kebunListArr = STATE.bidang_list.map(b => 'K' + b);
-  const newEntry = {
-    id: 'lap_' + tgl.replace(/-/g,'') + '_' + Math.random().toString(36).substr(2,5),  // ⭐ v3.2: unique ID untuk edit/delete
-    tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
-    kebun_list: kebunListArr,                       // ['K1','K3'] — array form, multi-select aware
-    kebun_primary: kebunListArr[0] || null,         // first for backward-compat display
-    kebun_list_str: kebunListArr.join('+'),         // 'K1+K3' — display-friendly
-    pohon: +pohon || 0, detail: catatan || '(no detail)',
-    durasi: STATE.durasi || null,  // ⭐ v3.1: simpan durasi utk traceability + recovery
-    detail_form: harvestDetailForm(),  // ⭐ v3.3 (16 Mei 2026): capture all sub-fields per kategori
-    rainfall_24h: r24, rainfall_7d: r7d,
-    compliance, alerts: alertMsgs,
-    created_at: new Date().toISOString(),
-    // ⭐ v3.5 (26 Mei 2026): + kebun_list multi-select (parity PWA Worker)
-    // ⭐ v3.4 (23 Mei 2026): Pattern #10 Firestore Sync — fields untuk Rules compat + cross-browser sync
-    tanggal: tgl,                  // mirror tgl untuk Firestore Rules compat
-    schema_version: '3.5',
-    src: 'wakif_form'              // distinguish dari lapor_pwa (worker PWA)
-  };
-  const recoveryExtras = (typeof collectExtraKategori === 'function') ? collectExtraKategori(kategori) : [];
-  const recoveryEntries = [newEntry, ...recoveryExtras.map(kat => ({ ...newEntry,
-    id: 'lap_' + (crypto.randomUUID ? crypto.randomUUID() : Date.now() + '_' + Math.random().toString(36).slice(2)),
-    kategori: kat, src: 'wakif_form_multi' }))];
-  try { window.entryRecovery.enqueue(recoveryEntries); }
-  catch (e) { alert('Antrian gagal disimpan; form tetap tersedia. ' + e.message); return; }
+    const newEntry = {
+      id: 'lap_' + crypto.randomUUID(),  // Persisted in recovery queue before transport.
+      tgl, pelapor: STATE.pelapor, bidang: STATE.bidang, kategori,
+      kebun_list: kebunListArr,                       // ['K1','K3'] — array form, multi-select aware
+      kebun_primary: kebunListArr[0] || null,         // first for backward-compat display
+      kebun_list_str: kebunListArr.join('+'),         // 'K1+K3' — display-friendly
+      pohon: +pohon || 0, detail: catatan || '(no detail)',
+      durasi: STATE.durasi || null,  // ⭐ v3.1: simpan durasi utk traceability + recovery
+      detail_form: harvestDetailForm(),  // ⭐ v3.3 (16 Mei 2026): capture all sub-fields per kategori
+      rainfall_24h: r24, rainfall_7d: r7d,
+      compliance, alerts: alertMsgs,
+      created_at: new Date().toISOString(),
+      // ⭐ v3.5 (26 Mei 2026): + kebun_list multi-select (parity PWA Worker)
+      // ⭐ v3.4 (23 Mei 2026): Pattern #10 Firestore Sync — fields untuk Rules compat + cross-browser sync
+      tanggal: tgl,                  // mirror tgl untuk Firestore Rules compat
+      schema_version: '3.5',
+      src: 'wakif_form'              // distinguish dari lapor_pwa (worker PWA)
+    };
+    const recoveryExtras = extraCategories;
+    recoveryEntries = [newEntry, ...recoveryExtras.map(kat => ({ ...newEntry,
+      id: 'lap_' + crypto.randomUUID(),
+      kategori: kat, detail_form:null, src: 'wakif_form_multi' }))];
+    if(typeof window.validateStaffReport!=='function'||!recoveryEntries.every(window.validateStaffReport))throw Error('Isi laporan tidak sesuai kontrak; seluruh batch ditahan');
+    if(globalThis.navigator?.locks?.request)await window.entryRecovery.enqueueAtomic(recoveryEntries);
+    else throw Error('Browser lock unavailable; laporan belum disimpan');
+  } catch (e) { alert('Antrian gagal disimpan; laporan belum disimpan; form tetap tersedia. ' + (e?.message || 'Kesalahan pembuatan/antrian laporan.')); return; }
+  STATE.bidang_list = entryBidangList;
   STATE.laporan.unshift(...recoveryEntries);
-  try { localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan)); } catch(e) { console.warn(e); }
+  /* Report read model is session-memory only; durable pending remains separate. */
   alert('Laporan disimpan di antrian browser ini, belum dikonfirmasi cloud. Upah/bayar tidak dibuat. Jangan hapus data browser.');
   window.entryRecovery.drain().then(ids => {
     if (recoveryEntries.every(e => ids.includes(e.id)) && typeof showToast === 'function') showToast('Laporan dikonfirmasi cloud.', 'success');
@@ -5299,6 +5275,8 @@ function collectExtraKategori(primaryKat) {
 }
 
 function resetForm() {
+  window.reportEditorGeneration=(window.reportEditorGeneration||0)+1;
+  if(REPORT_EDIT_TIMER!==null){clearTimeout(REPORT_EDIT_TIMER);REPORT_EDIT_TIMER=null;}
   const _ekw = document.getElementById('extra-kategori-wrap'); if (_ekw) _ekw.innerHTML = '';
   document.querySelectorAll('#panel-form input, #panel-form textarea, #panel-form select').forEach(el => {
     if (el.type === 'date') el.value = new Date().toISOString().slice(0,10);
@@ -5344,9 +5322,14 @@ function generatePreview() {
   </div>`;
 }
 
-function exportCSV() {
+async function exportCSV() {
+  const filter=['filter-pelapor','filter-bidang','filter-kategori','filter-log-archive'].map(id=>document.getElementById(id)?.value||'');
+  try{return await window.privateReader.exportRead(['laporan','report_heads'],fresh=>{
+  if(JSON.stringify(filter)!==JSON.stringify(['filter-pelapor','filter-bidang','filter-kategori','filter-log-archive'].map(id=>document.getElementById(id)?.value||'')))throw Error('filter-changed');
+  const rows=window.decodePrivateReports(fresh.laporan,fresh.report_heads).filter(d=>(!filter[0]||d.pelapor===filter[0])&&(!filter[1]||d.bidang===filter[1]||d.kebun_list?.some(k=>String(k).replace(/[KkBb]/g,'')===filter[1]))&&(!filter[2]||d.kategori===filter[2])&&(filter[3]==='all'||filter[3]==='archived'?filter[3]==='all'||!!d.archived:!d.archived));
+  if (!window.reportReadSession?.active) { alert('Masuk akun staf terlebih dahulu; ekspor laporan ditahan.'); return; }
   let csv = 'Tanggal,Pelapor,Kebun,Kategori,Pohon,Detail,Compliance\n';
-  STATE.laporan.forEach(d => {
+  rows.forEach(d => {
     // Multi-kebun support: prefer kebun (joined string 'K1+K3') > kebun_list > bidang fallback
     let kebunStr = '';
     if (Array.isArray(d.kebun_list) && d.kebun_list.length > 0) kebunStr = d.kebun_list.join('+');
@@ -5362,6 +5345,7 @@ function exportCSV() {
   a.href = URL.createObjectURL(blob);
   a.download = `laporan_v2_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
+  });}catch(e){alert('Ekspor ditahan: '+e.message);}
 }
 
 // ===== ANGGARAN =====
@@ -5440,8 +5424,8 @@ if (storedVer !== UPAH_SCHEMA_VERSION) {
   console.warn('[Recovery] Upah cache preserved; migration disabled.');
   localStorage.setItem('wkkn_v2_upah_ver', UPAH_SCHEMA_VERSION);
 }
-let UPAH_ITEMS = JSON.parse(localStorage.getItem('wkkn_v2_upah') || '[]');
-UPAH_ITEMS = UPAH_ITEMS.filter(it => it.pelapor !== 'ANTO');
+let UPAH_ITEMS = JSON.parse(null /* historical private cache is not session authority */ || '[]');
+// Finance frozen: retain all historical workers and IDs exactly as cached.
 // PRODUCTION: empty default — diisi dari Distribusi Tugas tab
 
 // ⭐ 6 Juni 2026: Debounce Firestore push (prevent storm)
@@ -5464,7 +5448,7 @@ function saveUpah(forceImmediate) {
     return;
   }
   if (_saveUpahDebounceTimer) clearTimeout(_saveUpahDebounceTimer);
-  _saveUpahDebounceTimer = setTimeout(() => {
+  _saveUpahDebounceTimer = privateViewLater(() => {
     if (typeof window.syncUpahToFirestore === 'function') {
       window.syncUpahToFirestore().catch(e => console.warn('[saveUpah] Firestore push fail (local saved):', e));
     }
@@ -6186,6 +6170,8 @@ function markUnpaid(id) {
 
 // 1. BACKUP — Download full state ke JSON file (CRITICAL sebelum destructive ops)
 window.exportWkknBackup = function() {
+  alert('Backup lokal gabungan belum memiliki binding pemilik/snapshot lengkap; gunakan backup privat terverifikasi.');return;
+  if(!window.reportReadSession?.active){alert('Masuk akun terlebih dahulu; ekspor privat ditahan.');return;}
   try {
     const backup = {
       meta: {
@@ -6228,7 +6214,7 @@ window.exportWkknBackup = function() {
         }).catch(() => {});
       }
     } catch(e) {}
-    setTimeout(() => { try { document.body.removeChild(a); } catch(e) {} URL.revokeObjectURL(url); }, 2000);
+    privateViewLater(() => { try { document.body.removeChild(a); } catch(e) {} URL.revokeObjectURL(url); }, 2000);
     console.log('[Backup] ✓ Triggered download ' + filename + ' (' + (blob.size/1024).toFixed(1) + ' KB)');
     console.log('[Backup] 💡 Kalau Safari error "WebKitBlobResource error 1": clipboard fallback active, paste ke TextEdit save as .json');
     console.log('[Backup] Counts:', backup.counts);
@@ -6743,7 +6729,7 @@ function findBuktiForDate(pelapor, tgl) {
 // Adib tag tanggal yang LEGIT no-bukti via UI button. Format: ['YYYY-MM-DD', ...]
 const CAK_YIT_WHITELIST_LS_KEY = 'wkkn_cak_yit_no_bukti_whitelist';
 function getCakYitWhitelist() {
-  try { return JSON.parse(localStorage.getItem(CAK_YIT_WHITELIST_LS_KEY) || '[]'); }
+  try { return JSON.parse(null /* historical private cache is not session authority */ || '[]'); }
   catch(e) { return []; }
 }
 function setCakYitWhitelist(arr) {
@@ -6765,10 +6751,10 @@ function removeFromCakYitWhitelist(tgl) {
 window.RECONCILE_MATRIX = [];
 
 // Source 1: Compute Hak from Log Harian (STATE.laporan)
-function computeHakFromLaporan() {
-  if (typeof STATE === 'undefined' || !Array.isArray(STATE.laporan)) return {};
+function computeHakFromLaporan(reports=STATE.laporan) {
+  if (!Array.isArray(reports)) return {};
   const hakMap = {};   // pelapor → { tgl → { hak, aktivitas, durasi, laporan_ids } }
-  STATE.laporan.forEach(l => {
+  reports.forEach(l => {
     if (typeof TARIF_PEKERJA === 'undefined' || !TARIF_PEKERJA[l.pelapor]) return;  // ⭐ 2 Jul: data-driven gate (Pattern #12) — cover Yasir/Kamto, exclude pemanen
     if (!l.durasi || !l.tgl) return;
     const tarif = (typeof TARIF_PEKERJA !== 'undefined' && TARIF_PEKERJA[l.pelapor]) ? TARIF_PEKERJA[l.pelapor] : null;
@@ -6833,6 +6819,66 @@ const VERDICT_META = {
 };
 
 // Core function — build reconciliation matrix
+function buildPrivateReconcile(reports,wages,cash){
+  console.log('[Reconcile] Building matrix from 3 sources…');
+  const hakMap = computeHakFromLaporan(reports);
+  const whitelist = getCakYitWhitelist();
+  // Build UPAH index by tgl|pelapor
+  const upahByKey = new Map();
+  if (typeof wages !== 'undefined') {
+    wages.forEach(u => {
+      const key = `${u.tgl}|${u.pelapor}`;
+      if (!upahByKey.has(key)) upahByKey.set(key, []);
+      upahByKey.get(key).push(u);
+    });
+  }
+  // Build Cashflow index by linked UPAH id
+  const cashflowByUpahId = new Map();
+  if (typeof cash !== 'undefined') {
+    cash.forEach(cb => {
+      if (!cb.ref || typeof cb.ref !== 'string' || !cb.ref.startsWith('upah_')) return;
+      const idsInRef = cb.ref.replace(/^upah_/, '').split('·').map(s => +s.trim()).filter(Boolean);
+      idsInRef.forEach(uid => {
+        if (!cashflowByUpahId.has(uid)) cashflowByUpahId.set(uid, []);
+        cashflowByUpahId.get(uid).push(cb);
+      });
+    });
+  }
+  // Build matrix
+  const matrix = [];
+  Object.entries(hakMap).forEach(([pelapor, daysMap]) => {
+    Object.entries(daysMap).forEach(([tgl, hakInfo]) => {
+      const key = `${tgl}|${pelapor}`;
+      const upahArr = upahByKey.get(key) || [];
+      const firstUpah = upahArr[0] || null;
+      const cashflows = firstUpah ? (cashflowByUpahId.get(firstUpah.id) || []) : [];
+      const bukti = findBuktiForDate(pelapor, tgl);   // ⭐ 11 Juni 2026: check covered_dates array (bukti covers multiple work days)
+      const whitelisted = pelapor === 'YIT' && whitelist.includes(tgl);
+      const row = {
+        tgl, pelapor,
+        hak: hakInfo.hak,
+        aktivitas: hakInfo.aktivitas.join(' · '),
+        durasi: hakInfo.durasi,
+        laporan_ids: hakInfo.laporan_ids,
+        bukti: bukti || null,
+        upah: firstUpah,
+        upah_all: upahArr,   // detect multi UPAH for same key
+        cashflows,
+        whitelisted
+      };
+      row.verdict = computeVerdict(row);
+      matrix.push(row);
+    });
+  });
+  // Also detect ORPHAN CASHFLOW (cashflow exists, no Hak from Laporan)
+  // Skip for now (complex — UPAH might exist tanpa Laporan via auto-backfill)
+  // Sort matrix by tgl desc, pelapor
+  matrix.sort((a, b) => {
+    if (a.tgl !== b.tgl) return b.tgl.localeCompare(a.tgl);
+    return a.pelapor.localeCompare(b.pelapor);
+  });
+  return matrix;
+}
 window.runReconciliationAudit = function() {
   console.log('[Reconcile] Building matrix from 3 sources…');
   const hakMap = computeHakFromLaporan();
@@ -7081,8 +7127,11 @@ window.toggleReconciliationMode = function(checked) {
   }
 };
 
-window.exportReconcileCSV = function() {
-  const matrix = window.RECONCILE_MATRIX || [];
+window.exportReconcileCSV = async function() {
+  try{return await window.privateReader.exportRead(['laporan','report_heads','upah','cashbook'],fresh=>{
+  const wage=fresh.upah.find(x=>x.id==='active'),cash=fresh.cashbook.find(x=>x.id==='active');
+  if(!Array.isArray(wage?.data.data)||!Array.isArray(cash?.data.data))throw Error('reconcile-shape');
+  const matrix=buildPrivateReconcile(window.decodePrivateReports(fresh.laporan,fresh.report_heads),wage.data.data,cash.data.data);
   if (matrix.length === 0) { alert('Run reconciliation dulu'); return; }
   const headers = ['tgl','pelapor','aktivitas','hak_rp','bukti_file','upah_id','upah_status','cashflow_count','cashflow_total','verdict','whitelisted'];
   const rows = matrix.map(r => [
@@ -7103,8 +7152,9 @@ window.exportReconcileCSV = function() {
   a.href = url;
   a.download = `wkkn_reconcile_${new Date().toISOString().slice(0,10)}.csv`;
   document.body.appendChild(a); a.click();
-  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  privateViewLater(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
   if (typeof showToast === 'function') showToast(`📥 CSV ${matrix.length} rows downloaded`);
+  });}catch(e){alert('Ekspor ditahan: '+e.message);}
 };
 
 // Init reconcile tab UI — pause toggle reflect localStorage
@@ -7168,6 +7218,7 @@ function toggleAllPay(checkbox) {
 // pekerja ("mau dibayar sekarang atau dikumpulkan?"), BARU bayar, BARU Bukti Bayar (validasi lunas).
 // BUKAN bukti pembayaran — watermark jelas. Tidak mengubah status/cashbook apa pun (read-only).
 async function generateRekapUpah() {
+  alert('Berkas lokal belum terikat UID pemilik; ekspor/preview privat ditahan.');return;
   // ⭐ 22 Jul 2026: pakai TEMPLATE SAMA dgn Bukti Bayar (dual-mode) — per Wakif. Watermark BELUM DIBAYAR,
   // judul REKAPAN UPAH PEKERJA (JANGAN "tagihan" — pekerja=penerima hak, bukan yg ditagih; locked Wakif 22 Jul), tanpa TTD, box konfirmasi, tombol WA. Read-only.
   return generateBuktiBayar('rekap');
@@ -7175,6 +7226,7 @@ async function generateRekapUpah() {
 
 // ===== BUKTI BAYAR — Generate PNG receipt from selected items (Flow Y) =====
 async function generateBuktiBayar(mode) {
+  alert('Berkas lokal belum terikat UID pemilik; ekspor/preview privat ditahan.');return;
   const isRekap = (mode === 'rekap');   // ⭐ 22 Jul 2026: dual-mode — template SAMA utk Bukti Bayar & Rekapan Upah
   const checked = document.querySelectorAll('.upah-check:checked');
   if (checked.length === 0) {
@@ -7442,11 +7494,11 @@ async function generateBuktiBayar(mode) {
       img.onload = () => resolve();
       img.onerror = () => { console.warn('Image failed to load:', img.src); resolve(); };
       // Safety timeout — don't block forever if image is stuck
-      setTimeout(resolve, 3000);
+      privateViewLater(resolve, 3000);
     });
   }));
   // Small extra delay for fonts to settle
-  await new Promise(r => setTimeout(r, 150));
+  await new Promise(r => privateViewLater(r, 150));
 
   try {
     const canvas = await html2canvas(target, {
@@ -7532,7 +7584,7 @@ async function generateBuktiBayar(mode) {
         const blob = await (await fetch(img.src)).blob();
         btn.href = URL.createObjectURL(blob);
       } catch(e) { console.warn('blob convert fail — pakai data URL langsung', e); }
-      setTimeout(() => { if (btn) btn.click(); }, 400);
+      privateViewLater(() => { if (btn) btn.click(); }, 400);
     })();
   <\/script>
 </body>
@@ -7543,14 +7595,14 @@ async function generateBuktiBayar(mode) {
     win.document.close();
 
     // Show summary alert in parent window
-    setTimeout(() => {
+    privateViewLater(() => {
       alert('✅ BUKTI BAYAR BERHASIL DI-GENERATE\n\n' + summaryMsg + '\n\n💡 Bukti Bayar terbuka di tab baru. Download otomatis dicoba — kalau gagal, klik tombol "📥 Download PNG" atau klik kanan gambar → Save Image As.');
     }, 300);
   } catch (e) {
     console.error('html2canvas error:', e);
     alert('❌ Gagal generate Bukti Bayar.\n\nError: ' + (e.message || e) + '\n\nCek console untuk detail.');
   } finally {
-    setTimeout(() => {
+    privateViewLater(() => {
       if (wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
     }, 1500);
   }
@@ -7761,7 +7813,7 @@ const PANEN_GRADES = {
 let PANEN_DATA = [];
 (function loadPanenFromLS(){
   try {
-    const raw = localStorage.getItem(PANEN_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return;
     const parsed = JSON.parse(raw);
     // Additive version preservation: accept any version in PANEN_ADDITIVE_VERSIONS
@@ -7796,7 +7848,7 @@ function savePanenToLS() {
 let PANEN_LOTS_DATA = [];
 (function loadPanenLotsFromLS(){
   try {
-    const raw = localStorage.getItem(PANEN_LOTS_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return;
     const parsed = JSON.parse(raw);
     if (parsed.version === PANEN_LOTS_SCHEMA_VERSION && Array.isArray(parsed.data)) {
@@ -8023,17 +8075,24 @@ function submitPanenSortir4() {
   const batchId = document.getElementById('dlg-sortir4-batch-id').value;
   const entry = PANEN_DATA.find(e => e.id === batchId);
   if (!entry) { alert('Batch tidak ditemukan'); return; }
-  const m = parseFloat(document.getElementById('dlg-sortir4-merah').value) || 0;
-  const k = parseFloat(document.getElementById('dlg-sortir4-kuning').value) || 0;
-  const h = parseFloat(document.getElementById('dlg-sortir4-hijau').value) || 0;
-  const b = parseFloat(document.getElementById('dlg-sortir4-hitam').value) || 0;
+  const rawReadings = Object.fromEntries(['merah','kuning','hijau','hitam'].map(grade =>
+    [grade, document.getElementById('dlg-sortir4-'+grade).value]));
+  if (!Object.values(rawReadings).every(raw => typeof raw === 'string' && /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw.trim()) && Number.isFinite(Number(raw))))
+    return alert('Isi seluruh pengukuran kg dengan angka lengkap; nol harus ditulis 0, bukan kosong.');
+  const [m,k,h,b] = Object.values(rawReadings).map(Number);
+  if (!Number.isFinite(entry.cherry_kg) || entry.cherry_kg <= 0 || !Number.isFinite(entry.pengapung_kg) || entry.pengapung_kg < 0)
+    return alert('Cherry/pengapung belum tervalidasi; jangan anggap kosong sebagai nol.');
   const total = m + k + h + b;
-  const target = entry.cherry_kg - (entry.pengapung_kg || 0);
+  const target = entry.cherry_kg - entry.pengapung_kg;
   const pctDiff = target > 0 ? Math.abs((total - target) / target) * 100 : 0;
   if (pctDiff > 5) {
     if (!confirm(`Total 4-bucket (${total.toFixed(2)} kg) berbeda > 5% dari kg tenggelam (${target.toFixed(2)} kg). Tetap submit?`)) return;
   }
 
+  // Proposed fail-closed guard; cloud operations remain paused.
+  if (entry.has_split || PANEN_LOTS_DATA.some(l => l.parent_batch_id === batchId)) return alert('Batch sudah memiliki hasil sortir; rekonsiliasi, jangan buat lot ulang.');
+  if (![m,k,h,b,target,total].every(Number.isFinite) || [m,k,h,b].some(v => v < 0)) return alert('Berat harus finite dan tidak negatif.');
+  if (target <= 0 || Math.abs(total-target) > Number.EPSILON*Math.max(1,target)*8) return alert('Selisih timbang perlu review; angka aktual tidak diubah.');
   // Create lot child entries — skip bucket kalau kg = 0
   const buckets = [
     { grade: 'merah',  kg: m },
@@ -8073,6 +8132,7 @@ function submitPanenSortir4() {
     createdLots.push(lotId);
   });
 
+  entry.sortir_measurements_raw = {unit:'kg', readings:rawReadings, at:new Date().toISOString()};
   entry.has_split = true;
   entry.processing_stage = 'sortir_4warna';
   entry.last_modified_at = new Date().toISOString();
@@ -8182,11 +8242,13 @@ function submitSortir5Warna() {
   const batch = PANEN_DATA.find(e => e.id === batchId);
   if (!batch) { alert('Batch tidak ditemukan: ' + batchId); return; }
 
-  const meng = parseFloat(document.getElementById('sortir5-mengambang').value) || 0;
-  const k = parseFloat(document.getElementById('sortir5-kuning').value) || 0;
-  const h = parseFloat(document.getElementById('sortir5-hijau').value) || 0;
-  const b = parseFloat(document.getElementById('sortir5-hitam').value) || 0;
+  const rawReadings = Object.fromEntries(['mengambang','kuning','hijau','hitam'].map(grade =>
+    [grade, document.getElementById('sortir5-'+grade).value]));
+  if (!Object.values(rawReadings).every(raw => typeof raw === 'string' && /^(?:\d+(?:\.\d*)?|\.\d+)$/.test(raw.trim()) && Number.isFinite(Number(raw))))
+    return alert('Isi seluruh pengukuran kg dengan angka lengkap; nol harus ditulis 0, bukan kosong.');
+  const [meng,k,h,b] = Object.values(rawReadings).map(Number);
   const target = batch.cherry_kg;
+  if (!Number.isFinite(target) || target <= 0) return alert('Cherry mentah belum tervalidasi.');
   const m = parseFloat((target - meng - k - h - b).toFixed(2));  // Fase 2: Merah = sisa otomatis
   const total = meng + m + k + h + b;
 
@@ -8195,7 +8257,10 @@ function submitSortir5Warna() {
   if (meng === 0) { if (!confirm('🌀 Mengambang 0 kg? Biasanya selalu ada ceri ngambang saat sortir air. Tetap submit?')) return; }
   if (h === 0) { if (!confirm('🟩 Hijau 0 kg? Biasanya ada ceri muda kebawa. Tetap submit?')) return; }
 
+  if (batch.has_split || PANEN_LOTS_DATA.some(l => l.parent_batch_id === batchId)) return alert('Batch sudah memiliki hasil sortir; rekonsiliasi, jangan buat lot ulang.');
+  if (![meng,k,h,b,target,m].every(Number.isFinite) || [meng,k,h,b,m].some(v => v < 0) || target <= 0) return alert('Berat/satuan perlu review; angka aktual tidak diubah.');
   // Update parent batch
+  batch.sortir_measurements_raw = {unit:'kg', readings:rawReadings, at:new Date().toISOString()};
   batch.pengapung_kg = meng;
   batch.processing_stage = 'sortir_4warna';
   batch.has_split = true;
@@ -8325,7 +8390,7 @@ function openPanenJemurDialog(lot) {
     </div>
   </div>`;
   document.body.insertAdjacentHTML('beforeend', html);
-  setTimeout(() => { const el = document.getElementById('jemur-dried-kg'); if (el) el.focus(); }, 100);
+  privateViewLater(() => { const el = document.getElementById('jemur-dried-kg'); if (el) el.focus(); }, 100);
 }
 
 function submitPanenJemur(lotId) {
@@ -8378,6 +8443,7 @@ function openPanenLotSoldDialog(lot) {
 }
 
 function deletePanenLot(lotId) {
+  return alert('Penghapusan permanen lot ditahan; gunakan arsip/reversal dengan pemeriksaan relasi jemur/giling.');
   if (!confirm(`Hapus lot ${lotId}? Tidak bisa di-undo. Parent batch tidak berubah.`)) return;
   PANEN_LOTS_DATA = PANEN_LOTS_DATA.filter(l => l.lot_id !== lotId);
   savePanenLotsToLS();
@@ -8385,6 +8451,7 @@ function deletePanenLot(lotId) {
 }
 
 function deletePanenEntry(id) {
+  return alert('Penghapusan permanen batch ditahan; gunakan arsip/reversal dengan pemeriksaan lot dan jemur.');
   if (!confirm('Hapus batch ini? Tidak bisa di-undo.')) return;
   PANEN_DATA = PANEN_DATA.filter(e => e.id !== id);
   savePanenToLS();
@@ -8903,7 +8970,7 @@ function submitPanenAktual() {
   if (typeof showToast === 'function') showToast(`✅ Aktual tersimpan untuk batch ${batchId}. Lihat hasil komparasi di tabel di bawah ↓`, 'success');
   renderPanen();
   // v1.1 UX (21 Mei sore) — Auto-scroll ke tabel komparasi setelah submit, biar Adib tahu hasil tampil di mana
-  setTimeout(() => {
+  privateViewLater(() => {
     const tbody = document.getElementById('panen-komparasi-tbody');
     if (tbody) {
       tbody.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -8912,7 +8979,7 @@ function submitPanenAktual() {
       if (row) {
         row.style.transition = 'background-color 0.5s';
         row.style.backgroundColor = '#FEF3C7';
-        setTimeout(() => { row.style.backgroundColor = ''; }, 2000);
+        privateViewLater(() => { row.style.backgroundColor = ''; }, 2000);
       }
     }
   }, 300);
@@ -9099,7 +9166,7 @@ const SAMPLING_KONDISI_LABEL = {
 let PANEN_SAMPLING_DATA = [];
 (function loadPanenSamplingFromLS(){
   try {
-    const raw = localStorage.getItem(PANEN_SAMPLING_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return;
     const parsed = JSON.parse(raw);
     if (Array.isArray(parsed.data)) {
@@ -9833,7 +9900,7 @@ function openSamplingInput(pohonId) {
   if (existing) existing.remove();
   document.body.insertAdjacentHTML('beforeend', modalHtml);
   // Focus gram input untuk fast entry
-  setTimeout(() => { const el = document.getElementById('new-session-gram'); if (el) el.focus(); }, 100);
+  privateViewLater(() => { const el = document.getElementById('new-session-gram'); if (el) el.focus(); }, 100);
 }
 
 function closeSamplingInputModal() {
@@ -9897,7 +9964,7 @@ function addSamplingSession(pohonId) {
   if (typeof showToast === 'function') showToast(`✓ Sesi panen ${pohonId} (+${gram} g) tersimpan`, 'success');
   // Re-render + re-open modal dengan data terbaru
   renderPanenSampling();
-  setTimeout(() => openSamplingInput(pohonId), 200);
+  privateViewLater(() => openSamplingInput(pohonId), 200);
 }
 
 // Fase 4 (25 Jun 2026, ADR-025): EDIT sesi existing — isi dried/GB belakangan (time-delayed measurement)
@@ -9960,7 +10027,7 @@ function editSamplingSession(pohonId, sessionId) {
       </div>
     </div>`;
   document.body.insertAdjacentHTML('beforeend', html);
-  setTimeout(()=>{ if(typeof updateSamplingDriedVerdict==='function') updateSamplingDriedVerdict(); }, 50);   // ⭐ 3 Jul: init verdict
+  privateViewLater(()=>{ if(typeof updateSamplingDriedVerdict==='function') updateSamplingDriedVerdict(); }, 50);   // ⭐ 3 Jul: init verdict
 }
 
 function saveSamplingSessionEdit(pohonId, sessionId) {
@@ -10012,16 +10079,23 @@ function saveSamplingSessionEdit(pohonId, sessionId) {
   if (typeof showToast === 'function') showToast(`✓ Sesi ${pohonId} diperbarui`, 'success');
   const ov = document.getElementById('sampling-edit-modal-overlay'); if (ov) ov.remove();
   renderPanenSampling();
-  setTimeout(() => openSamplingInput(pohonId), 150);
+  privateViewLater(() => openSamplingInput(pohonId), 150);
 }
 
 // Fase 4b (25 Jun 2026, ADR-025): simpan FINAL per-pohon (dried + green bean otoritatif) sebagai marker entry type:'final'
 function saveSamplingFinal(pohonId) {
+  const rawFinal = ['final-dried-input','final-gb-input'].map(id => document.getElementById(id).value);
+  // Preserve the existing Indonesian gram convention; reject partial parse/junk before its legacy parser.
+  if (!rawFinal.every(raw => typeof raw === 'string' && /^(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(raw.trim())))
+    return alert('Isi pengukuran gram lengkap; gunakan koma untuk desimal kg dan tulis 0 secara eksplisit.');
   const baseline = SAMPLING_POHON_BASELINE.find(b => b.id === pohonId);
   const driedVal = parseGramInput(document.getElementById('final-dried-input').value);
   const gbVal = parseGramInput(document.getElementById('final-gb-input').value);
   const agg = aggregateSamplingPerPohon(pohonId);
   const totCherry = agg ? agg.total_gram : 0;
+  if ([driedVal,gbVal,totCherry].some(v => v != null && (!Number.isFinite(v) || v < 0))) return alert('Pengukuran harus finite dan tidak negatif.');
+  if (driedVal == null || gbVal == null || totCherry <= 0) return alert('Pengukuran/denominator belum lengkap; jangan anggap kosong sebagai nol.');
+  if (driedVal > totCherry || gbVal > driedVal) return alert('Selisih timbang perlu review; angka aktual tidak diubah.');
   // guard §5b
   if (driedVal && totCherry && driedVal > totCherry) { if (!confirm(`⚠ Dried FINAL (${driedVal} g) > total cherry (${totCherry} g) — kering kok > basah? Tetap simpan?`)) return; }
   if (gbVal && driedVal && gbVal > driedVal * 0.55) { if (!confirm(`⚠ Green bean FINAL (${gbVal} g) > 55% dried FINAL — rendemen tak wajar. Tetap simpan?`)) return; }
@@ -10030,17 +10104,19 @@ function saveSamplingFinal(pohonId) {
     rec = { id: 'final_' + pohonId, type: 'final', pohon_id: pohonId, kebun: baseline ? baseline.kebun : null, created_at: new Date().toISOString(), schema_version: '1.2' };
     PANEN_SAMPLING_DATA.push(rec);
   }
+  rec.final_measurements_raw = {convention:'gram; comma decimal kg; dot thousands', readings:rawFinal.slice()};
   rec.dried_final_gram = driedVal;
   rec.gb_final_gram = gbVal;
   rec.updated_at = new Date().toISOString();
   savePanenSamplingToLS();
   if (typeof showToast === 'function') showToast(`✓ Hasil Pascapanen ${pohonId} tersimpan`, 'success');
   renderPanenSampling();
-  setTimeout(() => openSamplingInput(pohonId), 120);
+  privateViewLater(() => openSamplingInput(pohonId), 120);
 }
 
 // Delete single session (multi-batch)
 function deleteSamplingSession(pohonId, sessionId) {
+  return alert('Penghapusan sesi ditahan; hubungan dried_covers/covered_by dan riwayat harus direview.');
   const idx = PANEN_SAMPLING_DATA.findIndex(e => e.id === sessionId);
   if (idx < 0) return alert('Sesi tidak ditemukan');
   if (!confirm(`Hapus sesi panen #${idx+1} ini?\n\nTanggal: ${PANEN_SAMPLING_DATA[idx].tgl}\nGram: ${PANEN_SAMPLING_DATA[idx].cherry_gram || PANEN_SAMPLING_DATA[idx].kg*1000} g\n\nLanjut?`)) return;
@@ -10048,7 +10124,7 @@ function deleteSamplingSession(pohonId, sessionId) {
   savePanenSamplingToLS();
   if (typeof showToast === 'function') showToast(`🗑 Sesi dihapus`, 'info');
   renderPanenSampling();
-  setTimeout(() => openSamplingInput(pohonId), 200);
+  privateViewLater(() => openSamplingInput(pohonId), 200);
 }
 
 // Toggle chart visibility (default collapsed per Adib UI minimalism)
@@ -10057,7 +10133,7 @@ function toggleSamplingChart() {
   if (!wrap) return;
   wrap.style.display = wrap.style.display === 'none' ? 'block' : 'none';
   if (wrap.style.display === 'block' && typeof renderPanenSamplingChart === 'function') {
-    setTimeout(renderPanenSamplingChart, 100);
+    privateViewLater(renderPanenSamplingChart, 100);
   }
 }
 
@@ -10672,7 +10748,7 @@ function openJualEventDialog() {
     const pv = document.getElementById('ju-preview'); if (pv) pv.textContent = (kg&&h) ? `Revenue: Rp ${(kg*h).toLocaleString('id-ID')}` : '';
   };
   ['ju-kg','ju-harga'].forEach(id => { const e=document.getElementById(id); if(e) e.oninput=upd; });
-  setTimeout(()=>{const el=document.getElementById('ju-kg');if(el)el.focus();},100);
+  privateViewLater(()=>{const el=document.getElementById('ju-kg');if(el)el.focus();},100);
 }
 
 function submitJualEvent() {
@@ -10730,7 +10806,7 @@ function openGilingEventDialog() {
     </div>
   </div>`;
   document.body.insertAdjacentHTML('beforeend', html);
-  setTimeout(()=>{const el=document.getElementById('gi-dried');if(el)el.focus();},100);
+  privateViewLater(()=>{const el=document.getElementById('gi-dried');if(el)el.focus();},100);
 }
 
 function submitGilingEvent() {
@@ -10854,7 +10930,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const tglSampEl = document.getElementById('panen-sampling-tgl');
   if (tglSampEl && typeof todayIso === 'function') tglSampEl.value = todayIso();
   const panenTab = document.querySelector('.sb-tab[data-panel="panen"]');
-  if (panenTab) panenTab.addEventListener('click', () => setTimeout(renderPanen, 100));
+  if (panenTab) panenTab.addEventListener('click', () => privateViewLater(renderPanen, 100));
 });
 
 // renderInventoryChart() DELETED 6 Juni 2026 (Adib request) — chart komposisi baseline 2023 / proyeksi / actual
@@ -11041,6 +11117,9 @@ function renderHeatmap() {
 function renderComplianceChart() {
   const ctx = document.getElementById('chart-compliance');
   if (!ctx) return;
+  // Session clearing re-renders this chart; dispose previous private dataset first.
+  if (typeof Chart.getChart === 'function') Chart.getChart(ctx)?.destroy();
+
   // PRODUCTION: compute compliance per kategori dari STATE.laporan
   const cats = {
     'pemupukan': ['pemupukan_kimia','pemupukan_organik'],
@@ -11236,7 +11315,7 @@ const DISTRIBUSI_LS_KEY = 'wkkn_v2_distribusi_pic';
 
 function loadDistribusiFromLS() {
   try {
-    const raw = localStorage.getItem(DISTRIBUSI_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return false;
     const parsed = JSON.parse(raw);
     if (parsed.version !== DISTRIBUSI_SCHEMA_VERSION) {
@@ -11751,7 +11830,7 @@ const MILESTONE_ADDITIVE_VERSIONS = ['3.0', '3.1'];  // additive upgrade — pre
 // Locked 25 Mei 2026 (Track A3): Adib bisa dismiss suggested candidates dari Suggested Panel
 // supaya tidak re-suggest. Signature: `${type}:${suggestedTitle}:${source.tgl}` stable enough.
 function getDismissedSignatures() {
-  try { return JSON.parse(localStorage.getItem('wkkn_v2_dismissed_suggest') || '[]'); }
+  try { return JSON.parse(null /* historical private cache is not session authority */ || '[]'); }
   catch(e) { return []; }
 }
 function getSuggestSignature(c) {
@@ -11799,7 +11878,7 @@ if (msStoredVer !== MILESTONE_SCHEMA_VERSION) {
   localStorage.setItem('wkkn_v2_ms_ver', MILESTONE_SCHEMA_VERSION);
   if (msIsAdditiveUpgrade) console.log('[Milestones] ✓ Additive schema upgrade ' + msStoredVer + ' → ' + MILESTONE_SCHEMA_VERSION + ' (data preserved)');
 }
-let MILESTONES = JSON.parse(localStorage.getItem('wkkn_v2_milestones') || '[]');
+let MILESTONES = JSON.parse(null /* historical private cache is not session authority */ || '[]');
 // Auto-backfill archive fields for existing entries (v3.0 → v3.1 additive migration)
 MILESTONES.forEach(m => {
   if (m.archived === undefined) m.archived = false;
@@ -12383,7 +12462,7 @@ function bcCopyPrompt() {
   const orig = btn.textContent;
   btn.textContent = '✓ Copied!';
   btn.style.background = 'var(--green)';
-  setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
+  privateViewLater(() => { btn.textContent = orig; btn.style.background = ''; }, 2000);
 }
 
 function bcSaveDraft() {
@@ -12696,6 +12775,7 @@ Format output: 3 section dengan header bold, ready untuk copy-paste ke form mile
 
 // ============ AGGREGATE DIALOG (Generate milestone draft from laporan harian) ============
 function openAggregateDlg() {
+  alert('Ekspor gabungan ke clipboard ditahan sampai sumber lengkap terikat sesi.');return;
   if (!STATE || !Array.isArray(STATE.laporan) || STATE.laporan.length === 0) {
     alert('Belum ada laporan harian di STATE.laporan. Tim lapangan perlu submit Form Input dulu.');
     return;
@@ -13104,7 +13184,7 @@ function _editPreviewTier(tierNum) {
     3: 'ms-bench-pct'                  // Tier 3: Alignment % (Benchmark B section)
   }[tierNum];
   if (!targetId) return;
-  setTimeout(() => {
+  privateViewLater(() => {
     const el = document.getElementById(targetId);
     if (!el) return;
     el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -13112,7 +13192,7 @@ function _editPreviewTier(tierNum) {
     const originalBg = el.style.background;
     el.style.transition = 'background 0.3s ease';
     el.style.background = '#FEF3C7';
-    setTimeout(() => { el.style.background = originalBg || ''; el.focus(); }, 1500);
+    privateViewLater(() => { el.style.background = originalBg || ''; el.focus(); }, 1500);
   }, 200);
 }
 
@@ -13232,7 +13312,7 @@ function findSuggestCandidates() {
 function findSuggestCandidatesAll() {
   // Same logic as findSuggestCandidates but skip dismissed filter
   // Trick: temporarily clear dismissed, run, restore
-  const lsBackup = localStorage.getItem('wkkn_v2_dismissed_suggest');
+  const lsBackup = null /* historical private cache is not session authority */;
   localStorage.setItem('wkkn_v2_dismissed_suggest', '[]');
   const all = findSuggestCandidates();
   if (lsBackup !== null) localStorage.setItem('wkkn_v2_dismissed_suggest', lsBackup);
@@ -13347,8 +13427,8 @@ function convertSuggestToMilestone(idx) {
 const GITHUB_REPO = 'adib-psych/wakaf-produktif';
 const GITHUB_FILE_PATH = 'data/aktivitas-publik.json';
 
-function buildExportData() {
-  const published = MILESTONES.filter(m => m.published);
+function buildExportData(items=MILESTONES) {
+  const published = items.filter(m => m.published);
   return {
     schema_version: MILESTONE_SCHEMA_VERSION,
     generated_at: new Date().toISOString(),
@@ -13377,12 +13457,14 @@ function buildExportData() {
 }
 
 // Manual download (fallback flow)
-function exportMilestonesJSON() {
-  const published = MILESTONES.filter(m => m.published);
+async function exportMilestonesJSON() {
+  try{return await window.privateReader.exportRead(['milestones'],fresh=>{
+  const items=fresh.milestones.find(x=>x.id==='active')?.data.data;if(!Array.isArray(items))throw Error('milestones-shape');
+  const published = items.filter(m => m.published);
   if (published.length === 0) {
     if (!confirm('Belum ada milestone published. Tetap export (file kosong)?')) return;
   }
-  const exportData = buildExportData();
+  const exportData = buildExportData(items);
   const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -13390,6 +13472,7 @@ function exportMilestonesJSON() {
   a.click();
   URL.revokeObjectURL(a.href);
   showToast(`📤 Exported ${published.length} milestones — save ke /data/aktivitas-publik.json + git push manual`);
+  });}catch(e){alert('Ekspor ditahan: '+e.message);}
 }
 
 // AUTO-PUSH via GitHub API (Opsi C)
@@ -13449,7 +13532,7 @@ async function publishAndPushToLive() {
     const commitURL = result.commit?.html_url || '';
 
     showToast(`✅ Live in ~2 min! Commit: ${result.commit?.sha?.substring(0,7) || ''}`);
-    setTimeout(() => {
+    privateViewLater(() => {
       alert(`🎉 Push SUCCESS!\n\n${published.length} milestones published.\nCommit: ${result.commit?.sha?.substring(0,7) || ''}\n${commitURL}\n\nLiving Lab akan update dalam ~2 menit (GitHub Pages auto-deploy).\n\nHard-refresh living-lab.html (Cmd+Shift+R) untuk lihat hasilnya.`);
     }, 500);
   } catch (e) {
@@ -13514,7 +13597,7 @@ if (sopStoredVer !== SOP_STATUS_VERSION) {
   }
   localStorage.setItem('wkkn_sop_status_ver', SOP_STATUS_VERSION);
 }
-let SOP_STATUS = JSON.parse(localStorage.getItem('wkkn_sop_status_v1') || '{}');
+let SOP_STATUS = JSON.parse(null /* historical private cache is not session authority */ || '{}');
 
 // ===== LIVING LAB SEED — Auto-populate SOP_STATUS from Living Lab data (15 Mei 2026) =====
 // Mapping era T.A. (RWI) Jan-Apr 2026 ke status SOP berdasarkan Living Lab observations.
@@ -13652,7 +13735,7 @@ function setSOPStatus(key, next) {
 
   // Auto-open progress slider modal kalau baru di-set ke sedang_berjalan
   if (next === 'sedang_berjalan') {
-    setTimeout(() => openProgressSliderModal(key), 100);
+    privateViewLater(() => openProgressSliderModal(key), 100);
   }
 }
 
@@ -13887,7 +13970,7 @@ function jumpToLogHarianFiltered(kategoriCsv, monthN, year) {
   closeLaporanRelatedModal();
   const logTab = document.querySelector('.sb-tab[data-panel="log"]');
   if (logTab) logTab.click();
-  setTimeout(() => {
+  privateViewLater(() => {
     const panel = document.getElementById('panel-log');
     if (panel) panel.scrollIntoView({behavior:'smooth', block:'start'});
   }, 200);
@@ -14553,7 +14636,7 @@ function navigateToMonthInKalender(bulanN) {
   // switch tab to kalender
   const tab = document.querySelector('.sb-tab[data-panel="kalender"]');
   if (tab) tab.click();
-  setTimeout(() => {
+  privateViewLater(() => {
     showBulanAktif(bulanN);
     document.getElementById('panel-kalender').scrollIntoView({behavior:'smooth', block:'start'});
   }, 100);
@@ -15796,7 +15879,7 @@ const CASHBOOK_SCHEMA_VERSION = '1.1';
 const cbStoredVer = localStorage.getItem('wkkn_v2_cashbook_ver');
 // Recovery: schema changes never erase the last browser copy.
 // Cloud remains authoritative; migration requires separately reconciled approval.
-let CASHBOOK = JSON.parse(localStorage.getItem('wkkn_v2_cashbook') || '[]');
+let CASHBOOK = JSON.parse(null /* historical private cache is not session authority */ || '[]');
 // PRODUCTION: empty default — diisi via Form Input + Tambah Transaksi di tab Laporan Keuangan
 // ⭐ 6 Juni 2026: Debounce Firestore push (mirror saveUpah pattern, prevent storm dari batch ops)
 // ⭐ 8 Juni 2026 (Task 1 fix): forceImmediate=true param untuk audit delete/merge
@@ -15812,7 +15895,7 @@ function saveCashbook(forceImmediate) {
     return;
   }
   if (_saveCashbookDebounceTimer) clearTimeout(_saveCashbookDebounceTimer);
-  _saveCashbookDebounceTimer = setTimeout(() => {
+  _saveCashbookDebounceTimer = privateViewLater(() => {
     if (typeof window.syncCashbookToFirestore === 'function') {
       window.syncCashbookToFirestore().catch(e => console.warn('[saveCashbook] Firestore push fail (local saved):', e));
     }
@@ -16022,7 +16105,7 @@ function applyCensus() {
   if (typeof renderDashPanenSummary==='function') renderDashPanenSummary();
   if (typeof renderPupuk==='function') renderPupuk();   // sensus bergeser → kebutuhan kompos ikut
 }
-if (typeof window!=='undefined') { window.applyCensus=applyCensus; document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{applyCensus();}catch(e){}},300)); }
+if (typeof window!=='undefined') { window.applyCensus=applyCensus; document.addEventListener('DOMContentLoaded',()=>privateViewLater(()=>{try{applyCensus();}catch(e){}},300)); }
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // PELACAK KOMPOS / PUPUK per KEBUN — 24 Agt 2026, permintaan Wakif
@@ -16057,7 +16140,7 @@ const PUPUK_SEED_6SEP = {
   blokir:   { K3:'Tanah belum dibalik — kerak abu Kelud masih menutup' },
   catatan:  { K4:'10 karung HABIS, tapi sebagian dipakai tanaman non-kopi & dibawa ke Malang — angka kg di pohon kopi K4 sebenarnya LEBIH KECIL dari yang tertulis' }
 };
-function loadPupukLS(){ try{ const v=JSON.parse(localStorage.getItem(PUPUK_LS)||'null'); if(v&&typeof v==='object') PUPUK_DATA=Object.assign(PUPUK_DATA,v); }catch(e){} }
+function loadPupukLS(){ try{ const v=JSON.parse(null /* historical private cache is not session authority */||'null'); if(v&&typeof v==='object') PUPUK_DATA=Object.assign(PUPUK_DATA,v); }catch(e){} }
 function savePupukLS(){ try{ localStorage.setItem(PUPUK_LS, JSON.stringify(PUPUK_DATA)); }catch(e){} }
 function seedPupukSekali(){
   if (PUPUK_DATA.seed6sep) return false;
@@ -16298,7 +16381,7 @@ const CABUT_TARGET = { K1:KEBUN_CENSUS.K1.M, K2:KEBUN_CENSUS.K2.M, K3:KEBUN_CENS
 const CABUT_KNAME = { K1:'Kebun 1', K2:'Kebun 2', K3:'Kebun 3', K4:'Kebun 4 · R.Wakif' };
 let CABUT_DATA = [];
 const CABUT_LS = 'wkkn_v2_cabut';
-function loadCabutLS(){ try{ const v=JSON.parse(localStorage.getItem(CABUT_LS)||'[]'); if(Array.isArray(v)) CABUT_DATA=v; }catch(e){} }
+function loadCabutLS(){ try{ const v=JSON.parse(null /* historical private cache is not session authority */||'[]'); if(Array.isArray(v)) CABUT_DATA=v; }catch(e){} }
 function saveCabutLS(){ try{ localStorage.setItem(CABUT_LS, JSON.stringify(CABUT_DATA)); }catch(e){} }
 /* ── Metode & kategori tali (ditambah 30 Jul 2026, permintaan Wakif) ──
    KENAPA metode WAJIB dibedakan — bukan sekadar istilah:
@@ -16471,6 +16554,7 @@ function renderCabutLog(){
     <div style="margin-top:16px">
       <div style="font-size:11px;font-weight:800;color:#7F1D1D;letter-spacing:.5px;margin-bottom:6px">📜 RIWAYAT CABUT / TEBANG (${CABUT_DATA.length})</div>
       ${CABUT_DATA.length? `<div class="table-wrap"><table style="width:100%;border-collapse:collapse;font-size:12px"><thead><tr style="background:#FEF2F2"><th style="padding:6px 8px;text-align:left">Tanggal</th><th style="padding:6px 8px;text-align:left">Kebun</th><th style="padding:6px 8px;text-align:right">Jumlah</th><th style="padding:6px 8px;text-align:left">Metode</th><th style="padding:6px 8px;text-align:left">Tali</th><th style="padding:6px 8px;text-align:left">Catatan</th><th></th></tr></thead><tbody>${rows}</tbody></table></div>`:'<div style="color:var(--mute);font-size:12px;font-style:italic">Belum ada catatan. Isi form di atas → tersimpan &amp; sinkron otomatis.</div>'}
+    <button type="button" onclick="newCabutReport()">Laporan cabut baru (bukan retry)</button>
     </div>`;
   const td=document.getElementById('cabut-tgl'); if(td&&!td.value) td.value=new Date().toISOString().slice(0,10);
 }
@@ -16503,7 +16587,7 @@ function deleteCabut(id){
 }
 if(typeof window!=='undefined'){ window.submitCabut=submitCabut; window.deleteCabut=deleteCabut; window.renderCabutLog=renderCabutLog; window.setCabutMetode=setCabutMetode; window._cabutRefreshDash=_cabutRefreshDash;
   window.startEditCabut=startEditCabut; window.cancelEditCabut=cancelEditCabut; window.saveEditCabut=saveEditCabut;
-  loadCabutLS(); document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{renderCabutLog();}catch(e){}},350)); }
+  loadCabutLS(); document.addEventListener('DOMContentLoaded',()=>privateViewLater(()=>{try{renderCabutLog();}catch(e){}},350)); }
 
 
 // ═══ Laporan harian BORONGAN cabut pohon (20 Sep 2026, permintaan Wakif) ═══
@@ -16594,6 +16678,7 @@ function verifikasiBorongan(id){
 function lihatFotoBorongan(id, i){
   const l = (window.CABUT_BORONGAN||[]).find(x => x.id === id); if (!l || !l.photos || !l.photos[i]) return;
   const o = document.createElement('div');
+  o.dataset.reportPrivateOverlay='true';
   o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:16px;cursor:zoom-out';
   o.innerHTML = `<img src="${l.photos[i].data_url}" style="max-width:100%;max-height:100%;border-radius:8px">`;
   o.onclick = () => o.remove(); document.body.appendChild(o);
@@ -16626,7 +16711,7 @@ if (typeof window!=='undefined'){ window.verifikasiBorongan=verifikasiBorongan; 
 // ═══════════════════════════════════════════════════════════════════════════
 let BENCHMARK_DATA = [];
 const BENCHMARK_LS = 'wkkn_v2_benchmark_eksternal';
-function loadBenchmarkLS(){ try{ const r=localStorage.getItem(BENCHMARK_LS); if(r){ const p=JSON.parse(r); if(Array.isArray(p)) BENCHMARK_DATA=p; } }catch(e){} }
+function loadBenchmarkLS(){ try{ const r=null /* historical private cache is not session authority */; if(r){ const p=JSON.parse(r); if(Array.isArray(p)) BENCHMARK_DATA=p; } }catch(e){} }
 function saveBenchmarkLS(){ try{ localStorage.setItem(BENCHMARK_LS, JSON.stringify(BENCHMARK_DATA)); }catch(e){} }
 function _bn(x){ const n=Number(x); return isNaN(n)?0:n; }
 function _fmtRp(n){ return 'Rp '+(_bn(n)).toLocaleString('id-ID'); }
@@ -16779,7 +16864,7 @@ function deleteBenchmark(id){
   if(typeof window.syncBenchmarkToFirestore==='function') window.syncBenchmarkToFirestore();
 }
 if(typeof window!=='undefined'){ window.submitBenchmark=submitBenchmark; window.editBenchmark=editBenchmark; window.deleteBenchmark=deleteBenchmark; window.renderBenchmarkLog=renderBenchmarkLog; window.recomputeBenchmarkDominant=recomputeBenchmarkDominant;
-  loadBenchmarkLS(); document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{try{renderBenchmarkLog();}catch(e){}},380)); }
+  loadBenchmarkLS(); document.addEventListener('DOMContentLoaded',()=>privateViewLater(()=>{try{renderBenchmarkLog();}catch(e){}},380)); }
 
 // Multi-kebun helper: return array of bidang indices [0..3] for an entry
 // Handles: kebun_list array, kebun string 'K1+K3', single bidang 'K1' / '1'
@@ -17323,7 +17408,7 @@ window.editBatchUpah = function(groupKey, parentRow) {
   if (!isExpanded && parentRow) {
     _toggleBatchGroup(groupKey, parentRow);
   }
-  setTimeout(() => {
+  privateViewLater(() => {
     alert('✏️ Batch expanded.\n\nEdit per item via tombol ✏️ di baris detail (↳) di bawah parent. Atau hapus batch dengan 🗑️ Hapus Batch di parent.');
   }, 150);
 };
@@ -17470,7 +17555,7 @@ function editTrx(id) {
   const titleEl = document.getElementById('trx-modal-title');
   if (titleEl) titleEl.textContent = '✏️ Edit Transaksi';
   populateKategoriDropdown();
-  setTimeout(() => {
+  privateViewLater(() => {
     if (t.kat) document.getElementById('trx-kat').value = t.kat;
   }, 50);  // populate dropdown async, then set value
   onTrxTipeChange();
@@ -17679,6 +17764,7 @@ async function saveNotaToIDB(file) {
 }
 
 function viewNota(id) {
+  alert('Berkas lokal belum terikat UID pemilik; ekspor/preview privat ditahan.');return;
   if (!notaDB) { alert('IndexedDB belum siap'); return; }
   const tx = notaDB.transaction(['nota'], 'readonly');
   const req = tx.objectStore('nota').get(id);
@@ -17706,6 +17792,7 @@ async function updateNotaStorageStatus() {
 }
 
 async function exportNotaZip() {
+  alert('Berkas lokal belum terikat UID pemilik; ekspor/preview privat ditahan.');return;
   if (!notaDB) await initNotaDB();
   // Load JSZip dynamically
   if (typeof JSZip === 'undefined') {
@@ -17718,6 +17805,7 @@ async function exportNotaZip() {
   }
 }
 async function doExportZip() {
+  alert('Berkas lokal belum terikat UID pemilik; ekspor/preview privat ditahan.');return;
   const tx = notaDB.transaction(['nota'], 'readonly');
   const req = tx.objectStore('nota').getAll();
   req.onsuccess = async () => {
@@ -17741,9 +17829,12 @@ async function doExportZip() {
   };
 }
 
-function exportCashbookCSV() {
+async function exportCashbookCSV() {
+  try{return await window.privateReader.exportRead(['cashbook'],fresh=>{
+  const active=fresh.cashbook.find(x=>x.id==='active');if(!active||!Array.isArray(active.data.data))throw Error('cashbook-shape');
+  const cash=active.data.data;
   const headers = ['Tgl','Tipe','Keterangan','Kategori RAB','Masuk','Keluar','Source','NotaID'];
-  const rows = CASHBOOK.map(t => [t.tgl,t.tipe,t.ket.replace(/"/g,'""'),t.kat||'',t.masuk,t.keluar,t.src,t.nota||''].map(v=>`"${v}"`).join(','));
+  const rows = cash.map(t => [t.tgl,t.tipe,t.ket.replace(/"/g,'""'),t.kat||'',t.masuk,t.keluar,t.src,t.nota||''].map(v=>`"${v}"`).join(','));
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -17752,6 +17843,7 @@ function exportCashbookCSV() {
   a.download = `cashbook_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
+  });}catch(e){alert('Ekspor ditahan: '+e.message);}
 }
 
 // ---------- AUTO-LINK: TANDAI DIBAYAR ----------
@@ -17848,7 +17940,7 @@ function cashbookHasUpahRef(upahId) {
 // ═══════════════════════════════════════════════════════════════════════════════
 let KASBON_DATA = [];
 const KASBON_LS = 'wkkn_v2_kasbon';
-function loadKasbonLS(){ try{ const v=JSON.parse(localStorage.getItem(KASBON_LS)||'[]'); if(Array.isArray(v)) KASBON_DATA=v; }catch(e){} }
+function loadKasbonLS(){ try{ const v=JSON.parse(null /* historical private cache is not session authority */||'[]'); if(Array.isArray(v)) KASBON_DATA=v; }catch(e){} }
 function saveKasbonLS(){ try{ localStorage.setItem(KASBON_LS, JSON.stringify(KASBON_DATA)); }catch(e){} }
 loadKasbonLS();
 function persistKasbon(){ saveKasbonLS(); if(typeof window.syncKasbonToFirestore==='function') window.syncKasbonToFirestore(); }
@@ -18401,7 +18493,7 @@ function showToast(msg) {
   }
   toast.textContent = msg;
   toast.style.opacity = '1';
-  setTimeout(() => { toast.style.opacity = '0'; }, 2800);
+  privateViewLater(() => { toast.style.opacity = '0'; }, 2800);
 }
 
 // ---------- INIT ----------
@@ -18420,7 +18512,7 @@ document.getElementById('tabs').addEventListener('click', (e) => {
   const tab = e.target.closest('.sb-tab');
   if (!tab) return;
   // Slight delay so existing listener runs first
-  setTimeout(() => {
+  privateViewLater(() => {
     if (tab.dataset.panel === 'rab') renderRAB();
     else if (tab.dataset.panel === 'keuangan') renderKeuangan();
   }, 10);
@@ -18644,74 +18736,11 @@ if (document.readyState === 'loading'){
   initFormHero();
 }
 
-// Auto-create UPAH entry dari Firestore-sourced laporan (reusable for Phase 1B sync)
-// Fixed 18 Mei 2026: dedupe filter broadened ke SEMUA auto-create + backfill sources.
-// ⭐ 6 Juni 2026 (L3 fix root cause Pak Kumpul 17 ghost entries + Cak Yit double-pay Rp 900K):
-//   Optional 2nd param `firestoreUpahMap` (Map keyed `tgl|pelapor` → UPAH entry).
-//   Jika provided, dedup pakai Firestore-authoritative state DULU (Opsi A) — eliminates
-//   race condition di mana local UPAH_ITEMS stale saat laporan listener fires sebelum
-//   UPAH onSnapshot catch up. Casus: Safari probe 1 Jun reveal local 37 vs Firestore 69
-//   entries (drift +32 ghost entries dari re-create cycle).
-//   Fallback: local UPAH_ITEMS check (defense-in-depth + supports sync callers).
+// Compatibility entry point retained for legacy callers; not a finance write door.
 function autoCreateUpahFromEntry(entry, firestoreUpahMap = null) {
-  if (typeof UPAH_ITEMS === 'undefined') return null;
-  // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA (data-driven). Hanya pekerja ber-tarif harian/borongan
-  // (YIT/KUMPUL/YASIR/KAMTO) yg auto-create upah. Pemanen (per-kg model pending) + WAKIF/ANTO sweat-equity = skip (manual).
-  if (!TARIF_PEKERJA[entry.pelapor]) return null;
-  if (!entry.durasi) return null;
-
-  // ⭐ Firestore-authoritative dedup (L3 fix 6 Juni 2026) — runs FIRST if map provided
-  if (firestoreUpahMap) {
-    const key = `${entry.tgl}|${entry.pelapor}`;
-    if (firestoreUpahMap.has(key)) {
-      const cloudExisting = firestoreUpahMap.get(key);
-      console.log('[autoCreateUpah] Skip — exists in Firestore for', entry.tgl, entry.pelapor, '(src:', cloudExisting.src, ', status:', cloudExisting.status, ')');
-      return null;
-    }
-  }
-
-  // Fallback: local UPAH_ITEMS dedup (defense-in-depth + supports sync callers like reprocessPendingEntries)
-  // Skip if any UPAH already exists for same tgl + pelapor (regardless of src)
-  // Previously filter cuma auto_form|auto_firestore → MISS auto_backfill duplikat (bug 18 Mei laporan Adib)
-  const existing = UPAH_ITEMS.find(u =>
-    u.tgl === entry.tgl && u.pelapor === entry.pelapor
-  );
-  if (existing) {
-    console.log('[autoCreateUpah] Skip — UPAH already exists (local) for', entry.tgl, entry.pelapor, '(src:', existing.src, ')');
-    return null;
-  }
-
-  const tarif = TARIF_PEKERJA[entry.pelapor];
-  if (!tarif) return null;
-  let satuan = entry.durasi;
-  let satuanLbl = '', model = 'harian', tarifVal = 0, qty = 1;
-  const aktivitasLbl = `${(entry.kategori || '').replace(/_/g,' ')} di Kebun ${entry.bidang}` +
-                      ((entry.pohon || entry.jumlah_pohon) ? ` (${entry.pohon || entry.jumlah_pohon} phn)` : '');
-
-  // Durasi mapping — accept all variants from lapor.html & Form Input (locked 17 Mei 2026)
-  if (entry.durasi === 'setengah_hari' || entry.durasi === '½_hari' || entry.durasi === 'half_day') {
-    satuanLbl = '½ hari'; tarifVal = tarif.setengah_hari;
-  } else if (entry.durasi === 'full_day' || entry.durasi === '1_hari' || entry.durasi === 'satu_hari' || entry.durasi === 'full') {
-    // 'satu_hari' = lapor.html chip data-val (line 701) — was missing, caused UPAH not link bug
-    satuanLbl = 'full day'; tarifVal = tarif.full_day;
-  } else if (entry.durasi === 'panjat_per_pohon' || entry.durasi === 'borongan') {
-    satuan = 'borongan_generic';
-    satuanLbl = 'borongan (set tarif manual)';
-    tarifVal = (typeof BORONGAN_PRESETS !== 'undefined' && BORONGAN_PRESETS.panjat_durian) || 20000;
-    model = 'borongan';
-    qty = +entry.pohon || +entry.jumlah_pohon || 1;
-  }
-
-  if (tarifVal <= 0) return null;
-  const newId = (UPAH_ITEMS.length > 0 ? Math.max(...UPAH_ITEMS.map(it => +it.id || 0)) : 0) + 1;
-  const upahEntry = {
-    id: newId, tgl: entry.tgl, pelapor: entry.pelapor, aktivitas: aktivitasLbl,
-    model, satuan, satuan_lbl: satuanLbl, qty, tarif: tarifVal, status: 'belum',
-    src: 'auto_firestore'  // tag: created via Firestore listener
-  };
-  UPAH_ITEMS.push(upahEntry);
-  if (typeof saveUpah === 'function') saveUpah();
-  return upahEntry;
+  // Finance UNWIRED: laporan arrival/retry/startup is read-only, never wage authority.
+  // No browser flag can reopen this gate; reconciliation needs a separately reviewed change.
+  return null;
 }
 
 // ====================================================================
@@ -18734,7 +18763,7 @@ const WORKER_DEFS = [
 const WORKER_ACTIVE_LS_KEY = 'wkkn_v2_worker_active';
 (function loadWorkerActiveFromLS(){
   try {
-    const raw = localStorage.getItem(WORKER_ACTIVE_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return;
     const stored = JSON.parse(raw);
     WORKER_DEFS.forEach(w => {
@@ -18778,7 +18807,7 @@ const WORKER_DEFS_CUSTOM_LS_KEY = 'wkkn_worker_defs_custom';
 // Load custom WORKER_DEFS dari localStorage saat page init (append ke default WORKER_DEFS array)
 (function loadCustomWorkerDefsFromLS(){
   try {
-    const raw = localStorage.getItem(WORKER_DEFS_CUSTOM_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return;
     const customList = JSON.parse(raw);
     if (!Array.isArray(customList)) return;
@@ -18947,7 +18976,7 @@ function populatePelaporSelects() {
 
 // Call on page init + setelah WORKER_DEFS changes (saveNewWorker, toggleWorkerActive)
 document.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => { populatePelaporSelects(); if (typeof rebuildNamaPekerja==='function') rebuildNamaPekerja(); }, 150);
+  privateViewLater(() => { populatePelaporSelects(); if (typeof rebuildNamaPekerja==='function') rebuildNamaPekerja(); }, 150);
 });
 
 function renderWorkersTab() {
@@ -19005,7 +19034,7 @@ function renderWorkersTab() {
         </div>
       </div>
       ${transitionNote}
-      <div style="background:#fafaf6;border:1.5px solid #ddd;border-radius:6px;padding:8px 10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;color:var(--earth);word-break:break-all;margin-bottom:8px;cursor:pointer" onclick="this.style.background='#fef3c7';setTimeout(()=>this.style.background='#fafaf6',300)" title="Klik untuk highlight">${url}</div>
+      <div style="background:#fafaf6;border:1.5px solid #ddd;border-radius:6px;padding:8px 10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;color:var(--earth);word-break:break-all;margin-bottom:8px;cursor:pointer" onclick="this.style.background='#fef3c7';privateViewLater(()=>this.style.background='#fafaf6',300)" title="Klik untuk highlight">${url}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
         <button class="btn btn-primary" onclick="copyWorkerUrl('${url}', this)" style="background:${w.color};color:#fff;font-size:11px;padding:6px 12px;flex:1">📋 Copy URL</button>
         <a href="${url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:6px 10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" title="Buka di tab baru untuk test">🔗 Open</a>
@@ -19026,11 +19055,12 @@ function renderWorkersTab() {
 }
 
 function copyWorkerUrl(url, btn) {
+  alert('Salin capability lama ditahan; token rute bukan izin akun.');return;
   navigator.clipboard.writeText(url).then(() => {
     const orig = btn.innerHTML;
     btn.innerHTML = '✓ Copied!';
     btn.style.background = '#15803d';
-    setTimeout(() => {
+    privateViewLater(() => {
       btn.innerHTML = orig;
       btn.style.background = '';
     }, 1800);
@@ -19042,11 +19072,11 @@ function copyWorkerUrl(url, btn) {
 document.addEventListener('DOMContentLoaded', () => {
   const distribusiTab = document.querySelector('.sb-tab[data-panel="distribusi"]');
   if (distribusiTab) {
-    distribusiTab.addEventListener('click', () => setTimeout(renderWorkersTab, 100));
+    distribusiTab.addEventListener('click', () => privateViewLater(renderWorkersTab, 100));
   }
   const complianceTab = document.querySelector('.sb-tab[data-panel="compliance"]');
   if (complianceTab) {
-    complianceTab.addEventListener('click', () => setTimeout(renderLateEntryQueue, 100));
+    complianceTab.addEventListener('click', () => privateViewLater(renderLateEntryQueue, 100));
   }
 });
 
@@ -19057,7 +19087,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Reviewed entries hidden via localStorage flag
 
 function getLateEntries() {
-  const reviewed = JSON.parse(localStorage.getItem('wkkn_late_entry_reviewed') || '[]');
+  const reviewed = JSON.parse(null /* historical private cache is not session authority */ || '[]');
   const late = [];
   (STATE.laporan || []).forEach(entry => {
     if (reviewed.includes(entry.id)) return;
@@ -19133,7 +19163,7 @@ function renderLateEntryQueue() {
 }
 
 function markLateEntryReviewed(entryId) {
-  const reviewed = JSON.parse(localStorage.getItem('wkkn_late_entry_reviewed') || '[]');
+  const reviewed = JSON.parse(null /* historical private cache is not session authority */ || '[]');
   if (!reviewed.includes(entryId)) {
     reviewed.push(entryId);
     localStorage.setItem('wkkn_late_entry_reviewed', JSON.stringify(reviewed));
@@ -19470,7 +19500,7 @@ window._upahIntentionalDeletesTimestamp = window._upahIntentionalDeletesTimestam
 // Restore intentional deletes from localStorage on page load (survive refresh)
 (function restoreIntentionalDeletes() {
   try {
-    const raw = localStorage.getItem(UPAH_INTENTIONAL_DELETES_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return;
     const arr = JSON.parse(raw);
     if (!Array.isArray(arr)) return;
@@ -19516,7 +19546,7 @@ function markUpahIntentionalDelete(ids) {
   persistUpahIntentionalDeletes();   // ⭐ persist to localStorage (survive refresh)
   console.log(`[UPAH IntentionalDeletes] 🚫 Marked ${ids.length} IDs as intentional delete (race protection 60s, persisted):`, ids);
   // Auto-cleanup expired entries (>60s) to prevent set bloat
-  setTimeout(() => {
+  privateViewLater(() => {
     const cutoff = Date.now() - UPAH_INTENTIONAL_DELETES_WINDOW_MS;
     let cleaned = 0;
     for (const [id, ts] of window._upahIntentionalDeletesTimestamp) {
@@ -19546,7 +19576,7 @@ window._cashbookIntentionalDeletesTimestamp = window._cashbookIntentionalDeletes
 
 (function restoreCashbookIntentionalDeletes() {
   try {
-    const raw = localStorage.getItem(CASHBOOK_INTENTIONAL_DELETES_LS_KEY);
+    const raw = null /* historical private cache is not session authority */;
     if (!raw) return;
     const arr = JSON.parse(raw);
     if (!Array.isArray(arr)) return;
@@ -19585,7 +19615,7 @@ function markCashbookIntentionalDelete(ids) {
   });
   persistCashbookIntentionalDeletes();
   console.log(`[Cashbook IntentionalDeletes] 🚫 Marked ${ids.length} IDs as intentional delete (race protection 60s, persisted):`, ids);
-  setTimeout(() => {
+  privateViewLater(() => {
     const cutoff = Date.now() - CASHBOOK_INTENTIONAL_DELETES_WINDOW_MS;
     let cleaned = 0;
     for (const [id, ts] of window._cashbookIntentionalDeletesTimestamp) {
@@ -19644,7 +19674,7 @@ function auditDeleteUpahDup(upahId) {
   if (typeof renderAntoLedger === 'function') renderAntoLedger();
   openAuditModal();
   // ⭐ Race detection — verify UPAH ID tidak resurrect post-listener-window
-  setTimeout(() => {
+  privateViewLater(() => {
     const stillPresent = UPAH_ITEMS.find(x => x.id === upahId);
     if (stillPresent) {
       console.error('[DeleteUpah] 🚨 T+2000ms REVERT DETECTED — ID', upahId, 'resurrected. Race protection FAILED.');
@@ -19710,11 +19740,11 @@ function auditMergeUpahDup(key) {
   openAuditModal();
   if (typeof showToast === 'function') showToast(`🔀 Merged · kept primary UPAH ${grp.primary.id} · ${dupIds.length} duplikat + ${deletedCb} cashbook dihapus`);
   // ⭐ Race detection — check UPAH_ITEMS state at T+600ms (post-debounce) + T+2000ms (post-listener-window)
-  setTimeout(() => {
+  privateViewLater(() => {
     const stillPresent = dupIds.filter(id => UPAH_ITEMS.find(u => u.id === id));
     console.log('[MergeUpah] T+600ms (post-debounce):', UPAH_ITEMS.length, 'entries · Dup IDs still present:', stillPresent);
   }, 600);
-  setTimeout(() => {
+  privateViewLater(() => {
     const stillPresent = dupIds.filter(id => UPAH_ITEMS.find(u => u.id === id));
     console.log('[MergeUpah] T+2000ms (post-listener-window):', UPAH_ITEMS.length, 'entries · Dup IDs still present:', stillPresent);
     if (stillPresent.length > 0) {
@@ -19800,7 +19830,7 @@ function loadOptObs() {
       OPT_OBSERVATIONS = [];
       return;
     }
-    const raw = localStorage.getItem('wkkn_v2_opt_obs');
+    const raw = null /* historical private cache is not session authority */;
     OPT_OBSERVATIONS = raw ? JSON.parse(raw) : [];
   } catch (e) {
     console.warn('[loadOptObs] parse fail, reset:', e);
@@ -20024,6 +20054,7 @@ function renderOptObsTable() {
 
 // ===== Detail View =====
 async function viewOptDetail(id) {
+  const privateTicket=window.privateReader?.ticket();if(!window.privateReader?.allowed('opt_observations'))return;
   const o = OPT_OBSERVATIONS.find(x => x.id === id);
   if (!o) { alert('Observasi tidak ditemukan'); return; }
   const KEBUN_LBL = { K1:'Kebun 1 (Atas)', K2:'Kebun 2 (Atas-Luas)', K3:'Kebun 3 (Bawah)', K4:'Kebun 4 (Rumah Wakif)', general:'Multi/Tidak Spesifik' };
@@ -20039,6 +20070,7 @@ async function viewOptDetail(id) {
     photoHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px">' +
       photoUrls.filter(p => p).map(p => `<button onclick="viewNota('${p.id}')" style="background:none;border:1.5px solid #ddd;border-radius:8px;cursor:pointer;padding:0;overflow:hidden;aspect-ratio:1"><img src="${p.url}" style="width:100%;height:100%;object-fit:cover;display:block"></button>`).join('') + '</div>';
   }
+  if(!window.privateReader?.matches(privateTicket))return;
   // AI section
   let aiHtml = '<div style="color:var(--mute);font-style:italic">Belum ada base analysis (AI). Klik "🤖 Base Analyze" di tabel.</div>';
   if (o.ai_status === 'analyzed') {
@@ -20280,39 +20312,169 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 <!-- Firebase Firestore Listener (Phase 1B) — Real-time sync dari Worker PWA submissions -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
-  import { getFirestore, collection, onSnapshot, query, orderBy, doc, deleteDoc as sdkDeleteDoc, getDoc, setDoc as sdkSetDoc, serverTimestamp, where, updateDoc as sdkUpdateDoc, runTransaction }
+  import { getFirestore, collection, onSnapshot as sdkOnSnapshot, query, orderBy, doc, deleteDoc as sdkDeleteDoc, getDoc as sdkGetDoc, setDoc as sdkSetDoc, serverTimestamp, where, updateDoc as sdkUpdateDoc, runTransaction }
     from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
+  import {createVersionedOperations} from './recovery/versioned-operations.js';
+  import {createCorrectionEditor} from './recovery/correction-editor.js';
+  import {createAuthorizedReports,reportForDisplay,mountReportSessionControls,validReportBody} from "./recovery/authorized-reports.js";
+  import {createPrivateReader} from './recovery/private-reader.js';
   try {
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);
+    const authorizedReports = createAuthorizedReports({app:fbApp,db});
+    window.authorizedReports=authorizedReports;window.validateStaffReport=validReportBody;
+
+    // All existing SDK callbacks (including singleton paths) share this lifecycle.
+    const nativeStorage=globalThis.localStorage;
+    const privateCacheKeys=new Set(['wkkn_v2_upah','wkkn_v2_cashbook','wkkn_v2_milestones','wkkn_sop_status_v1','wkkn_v2_panen_2026','wkkn_v2_panen_lots_2026','wkkn_v2_panen_sampling_2026','wkkn_v2_opt_obs','wkkn_v2_distribusi_pic','wkkn_sop_master_v1','wkkn_worker_defs_custom','wkkn_v2_pupuk','wkkn_v2_kasbon','wkkn_v2_cabut','wkkn_v2_benchmark_eksternal']);
+    const localStorage={getItem:k=>privateCacheKeys.has(k)?null:nativeStorage.getItem(k),setItem:(k,v)=>{if(!privateCacheKeys.has(k))nativeStorage.setItem(k,v);},removeItem:k=>{if(!privateCacheKeys.has(k))nativeStorage.removeItem(k);}};
+    const baseline={workers:structuredClone(WORKER_DEFS),pic:structuredClone(DISTRIBUSI_DATA),sop:structuredClone(SOP_AKTIVITAS_PER_BULAN),pupuk:structuredClone(PUPUK_DATA)};
+    const clearSingletonViews=()=>{
+      window.privateViewEpoch++;window.RECONCILE_MATRIX=[];STATE.laporan=[];if(window.reportReadSession){window.reportReadSession.active=false;window.reportReadSession.generation++;}try{renderLog();renderDashboard();}catch(e){}
+      UPAH_ITEMS=[];CASHBOOK=[];OPT_OBSERVATIONS=[];PANEN_DATA=[];PANEN_LOTS_DATA=[];PANEN_SAMPLING_DATA=[];MILESTONES=[];SOP_STATUS={};CABUT_DATA=[];BENCHMARK_DATA=[];KASBON_DATA=[];
+      WORKER_DEFS.splice(0,WORKER_DEFS.length,...structuredClone(baseline.workers));DISTRIBUSI_DATA=structuredClone(baseline.pic);PUPUK_DATA=structuredClone(baseline.pupuk);
+      Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(k=>delete SOP_AKTIVITAS_PER_BULAN[k]);Object.assign(SOP_AKTIVITAS_PER_BULAN,structuredClone(baseline.sop));
+      for(const timer of [_saveUpahDebounceTimer,typeof _saveCashbookDebounceTimer==='undefined'?null:_saveCashbookDebounceTimer])if(timer)clearTimeout(timer);
+      if(typeof Chart!=='undefined')for(const c of Object.values(Chart.instances||{}))try{c.destroy();}catch(e){}
+      document.querySelectorAll('[data-report-private-overlay],#entry-detail-modal').forEach(n=>n.remove());
+      document.querySelectorAll('[id*=modal],[id*=lightbox]').forEach(n=>{if(n.id==='login-overlay')return;n.style.display='none';n.querySelectorAll('input,textarea').forEach(x=>x.value='');});
+      for(const id of ['opt-detail-body','opt-expert-context','paid-modal-info','recover-modal-info','ms-preview-body','bc-draft-body']){const n=document.getElementById(id);if(n)n.replaceChildren();}
+      OPT_OBS_PENDING_PHOTOS=[];OPT_OBS_EDIT_ID=null;OPT_EXPERT_PENDING_ID=null;PENDING_PAY_ID=null;PENDING_PAY_IDS=null;
+      window.CABUT_BORONGAN=[];RECOVER_CANDIDATES=[];AUDIT_STATE={paid:[],unpaid:[],dup:[],orphan:[],upahDup:[],activeTab:'paid'};BC_SELECTED.clear();_picEditState=null;CURRENT_EDIT_MS_ID=null;CABUT_EDIT_ID=null;TRX_EDIT_ID=null;UPLOADED_FOTO_IDS=[];
+
+      for(const name of ['renderUpahTable','renderUpahSummary','renderCashbookTab','renderCashbook','renderRAB','renderOptObsTable','renderOPT','renderPanen','renderPanenLots','renderPanenSampling','renderMilestonesTable','renderMilestonesSummary','renderSOPKalender','renderSOPCompliance','renderWorkersTab','renderDistribusi','renderCabutLog','renderPupuk','renderKasbon','renderBenchmarkLog','renderUpahDup','renderUpahNoCashbook','renderUpahGap','renderReconcileMatrix','renderLateEntryQueue','populatePelaporSelects','populateFormPelaporRadio'])try{if(typeof window[name]==='function')window[name]();}catch(e){}
+    };
+    window.decodePrivateReports=(rows,heads=[])=>{const revisions=new Map(heads.map(h=>[h.id,h.data]));return rows.map(x=>{if(x.data.contract_version===1?x.data.report_id!==x.id:x.data.id!==x.id)throw Error('report-identity-conflict');const h=revisions.get(x.id);if(h&&(!h.body||h.body.id!==x.id||!Number.isSafeInteger(h.revision)||h.revision<2||h.owner_uid!==x.data.owner_uid))throw Error('correction-head-conflict');return normalizeWorkerEntry(h?{...h.body,correction_revision:h.revision}:reportForDisplay(x.data));}).filter(x=>x.kategori!=='cabut_borongan');};
+    const privateReader=createPrivateReader({session:authorizedReports,db,clear:clearSingletonViews});window.privateReader=privateReader;
+    const onSnapshot=(...args)=>privateReader.onSnapshot(...args),getDoc=ref=>privateReader.getDoc(ref);
+    const setTimeout=(...args)=>privateReader.later(...args);
+    const correctionHeads=new Map();
+    const versionedOperations=createVersionedOperations({db,session:authorizedReports});
+    // Per-tab durable editor slot: two tabs never overwrite each other's unsent draft.
+    let correctionTabId=sessionStorage.getItem('wkkn_correction_tab_id');
+    if(!navigator.locks?.request||!crypto?.randomUUID){
+      mountReportSessionControls(authorizedReports,document.getElementById('entry-recovery-banner')||document.body);
+      const unsupported=document.createElement('p');unsupported.id='report-browser-support';unsupported.setAttribute('role','alert');unsupported.textContent='Browser ini belum mendukung penguncian/ID aman. Pengiriman dan koreksi ditahan; input dan antrian tidak dihapus. Gunakan browser yang mendukung Web Locks lalu buka kembali.';document.getElementById('report-session-controls').append(unsupported);document.getElementById('report-signin').disabled=true;document.getElementById('report-signout').disabled=true;
+      throw Error('exclusive-editor-unavailable');
+    }
+    async function claimEditorSlot(id){return new Promise((resolve,reject)=>{navigator.locks.request('wkkn-editor-slot-'+id,{ifAvailable:true},lock=>{if(!lock){resolve(false);return;}resolve(true);return new Promise(release=>window.addEventListener('pagehide',release,{once:true}));}).catch(reject);});}
+    if(!correctionTabId||!await claimEditorSlot(correctionTabId)){correctionTabId=crypto.randomUUID();if(!await claimEditorSlot(correctionTabId))throw Error('editor-slot-collision');sessionStorage.setItem('wkkn_correction_tab_id',correctionTabId);}
+    let cabutLogFlight=null;
+    const cabutFormKey='wkkn_cabut_log_form_'+correctionTabId;
+    window.submitCabut=async()=>{
+      if(cabutLogFlight)return cabutLogFlight;
+      cabutLogFlight=(async()=>{try{
+        const ticket=authorizedReports.sessionTicket();if(!ticket)throw Error('sign-in-required');
+        const stored=localStorage.getItem(cabutFormKey);let saved=stored?JSON.parse(stored):null;
+        if(saved&&saved.owner_uid!==ticket.uid)throw Error('pending-owner');
+        if(!saved){const gv=id=>document.getElementById(id)?.value||'',raw=gv('cabut-jumlah');if(!/^\d+$/.test(raw)||!Number.isSafeInteger(Number(raw))||Number(raw)<1)throw Error('Jumlah pohon harus bilangan bulat positif');
+          const metode=gv('cabut-metode')||'cabut',tali=gv('cabut-tali')||'merah';if(!CABUT_METODE[metode]||!CABUT_TALI[tali])throw Error('Metode/tali tidak dikenal');
+          const body={id:'cabut_'+crypto.randomUUID(),kebun:gv('cabut-kebun'),jumlah:Number(raw),tgl:gv('cabut-tgl'),metode,tali,sakit:!!document.getElementById('cabut-sakit')?.checked,kondisi:'Tali '+CABUT_TALI[tali].label+' · '+CABUT_METODE[metode].label,catatan:gv('cabut-catatan').trim(),created_at:new Date().toISOString()};
+          saved={owner_uid:ticket.uid,body};localStorage.setItem(cabutFormKey,JSON.stringify(saved));
+        }
+        const op=await versionedOperations.prepare('cabut_log','staff_log',saved.body,'Catatan cabut/tebang staff');
+        const ack=await versionedOperations.send(op);if(!authorizedReports.sessionMatches(ticket))throw Error('session-changed');
+        if(!CABUT_DATA.some(x=>x.id===ack.body.id))CABUT_DATA.push(ack.body);
+        // Keep the last command bound to this form. An explicit New action starts a new entry.
+        renderCabutLog();_cabutRefreshDash();const notice=document.getElementById('cabut-err');if(notice){notice.setAttribute('role','status');notice.textContent='Laporan dikonfirmasi server. Submit adalah retry laporan ini; pilih Laporan cabut baru untuk entry berikutnya.';}return ack;
+      }catch(e){const err=document.getElementById('cabut-err');if(err)err.textContent='Belum dikonfirmasi: '+e.message+'; Submit mencoba command yang sama, bukan menambah laporan';return null;}})();
+      try{return await cabutLogFlight;}finally{cabutLogFlight=null;}
+    };
+    window.newCabutReport=()=>{if(cabutLogFlight)return;const raw=localStorage.getItem(cabutFormKey);if(raw){const saved=JSON.parse(raw);if(saved.owner_uid!==authorizedReports.sessionOwner())return;if(!confirm('Mulai laporan BARU, bukan retry laporan sebelumnya? Pending sebelumnya tetap disimpan.'))return;}localStorage.removeItem(cabutFormKey);renderCabutLog();};
+    const correctionEditor=createCorrectionEditor({operations:versionedOperations,session:authorizedReports,editorKey:'wkkn_correction_editor_v1_'+correctionTabId});
+    window.versionedOperations=versionedOperations;window.correctionEditor=correctionEditor;
+    const correctionControls=document.createElement('div');correctionControls.id='correction-controls';
+    correctionControls.innerHTML='<label>Alasan koreksi (audit, tanpa persetujuan bayar): <input id="correction-reason" maxlength="500"></label><button type="button" id="correction-retry">Coba ulang koreksi tersimpan</button><button type="button" id="correction-restore">Pulihkan draft koreksi akun ini</button><p id="correction-status" role="status">Koreksi memakai revisi server; original tetap utuh.</p>';
+    document.getElementById('panel-form').prepend(correctionControls);
+    const correctionStatus=msg=>{document.getElementById('correction-status').textContent=msg;};
+    const collector=()=>({tgl:document.getElementById('f-tgl').value,kategori:document.getElementById('f-kategori').value,pohon:document.getElementById('f-pohon').value,detail:document.getElementById('f-catatan').value,r24:document.getElementById('f-rainfall-24h').value,r7:document.getElementById('f-rainfall-7d').value,detail_form:harvestDetailForm(),pelapor:STATE.pelapor,bidang:STATE.bidang,kebun_list:(STATE.bidang_list||[]).map(b=>'K'+b),durasi:STATE.durasi||null});
+    let nativeBaseline=null;
+    const legacyOpen=window.editLaporan;
+    let correctionUiIntent=0;
+    const paintCorrection=(view,uiIntent)=>{
+      const ticket=authorizedReports.sessionTicket();if(!ticket)throw Error('sign-in-required');
+      // Display from exact server/draft body, not a stale normalized row.
+      const i=STATE.laporan.findIndex(x=>x.id===view.target);if(i<0)throw Error('Original belum dimuat');
+      STATE.laporan[i]={...view.draft};legacyOpen(view.target);
+      if(REPORT_EDIT_TIMER!==null){clearTimeout(REPORT_EDIT_TIMER);REPORT_EDIT_TIMER=null;}
+      const apply=()=>{
+        if(uiIntent!==correctionUiIntent||!authorizedReports.sessionMatches(ticket)||CURRENT_EDIT_LAPORAN_ID!==view.target)return;
+        document.getElementById('f-tgl').value=view.draft.tgl;document.getElementById('f-kategori').value=view.draft.kategori;
+        document.getElementById('f-pohon').value=view.draft.pohon;document.getElementById('f-catatan').value=view.draft.detail;
+        document.getElementById('f-rainfall-24h').value=view.draft.rainfall_24h;document.getElementById('f-rainfall-7d').value=view.draft.rainfall_7d;
+        STATE.pelapor=view.draft.pelapor;STATE.bidang=view.draft.bidang;STATE.bidang_list=view.draft.kebun_list.map(k=>k.slice(1));STATE.durasi=view.draft.durasi;
+        renderActivityForm();
+        for(const field of document.querySelectorAll('#activity-detail-form .field')){
+          const label=field.querySelector('.field-lbl')?.textContent.trim().replace(/\s+/g,' ').replace(/\s*\*\s*$/,'');
+          const value=view.draft.detail_form?.[label];if(value===undefined)continue;
+          const input=field.querySelector('input:not([type=radio]):not([type=checkbox]),select,textarea');
+          if(input)input.value=value;else field.querySelectorAll('.radio-pill').forEach(n=>n.classList.toggle('on',Array.isArray(value)?value.includes(n.textContent.trim()):value===n.textContent.trim()));
+        }
+        nativeBaseline=collector();document.getElementById('correction-reason').value=view.pending?.reason||view.reason||'';correctionStatus('Draft akun dipulihkan; original tetap utuh.');
+      };apply();
+    };
+    window.editLaporan=async id=>{const n=correctionUiIntent;try{const view=await correctionEditor.open(id);if(n!==correctionUiIntent)return;if(view.base.schema_version!=='3.5')throw Error('Hanya laporan staff milik akun ini');paintCorrection(view,n);}catch(e){if(n===correctionUiIntent)correctionStatus('Tidak dibuka: '+e.message);}};
+    const oldCancel=window.cancelEditLaporan;
+    window.cancelEditLaporan=()=>{correctionUiIntent++;correctionEditor.cancel();nativeBaseline=null;oldCancel();};
+    window.submitReportCorrection=async()=>{try{
+      if(!nativeBaseline)throw Error('Editor belum siap');const view=correctionEditor.view();if(!view||view.target!==CURRENT_EDIT_LAPORAN_ID)throw Error('editor-owner');
+      const now=collector(),body=JSON.parse(JSON.stringify(view.draft));
+      if(now.pelapor!==nativeBaseline.pelapor)body.pelapor=now.pelapor;
+      if(now.bidang!==nativeBaseline.bidang||JSON.stringify(now.kebun_list)!==JSON.stringify(nativeBaseline.kebun_list)){body.bidang=now.bidang;body.kebun_list=now.kebun_list;body.kebun_primary=now.kebun_list[0]||null;body.kebun_list_str=now.kebun_list.join('+');}
+      if(now.durasi!==nativeBaseline.durasi)body.durasi=now.durasi;
+      if(now.tgl!==nativeBaseline.tgl)body.tgl=body.tanggal=now.tgl;
+      if(now.kategori!==nativeBaseline.kategori)body.kategori=now.kategori;
+      if(now.pohon!==nativeBaseline.pohon){if(!/^\d+(?:\.\d+)?$/.test(now.pohon))throw Error('Jumlah pohon tidak valid');body.pohon=Number(now.pohon);}
+      if(now.detail!==nativeBaseline.detail)body.detail=now.detail;
+      if(now.r24!==nativeBaseline.r24){if(!/^\d+(?:\.\d+)?$/.test(now.r24))throw Error('Curah hujan tidak valid');body.rainfall_24h=Number(now.r24);}
+      if(now.r7!==nativeBaseline.r7){if(!/^\d+(?:\.\d+)?$/.test(now.r7))throw Error('Curah hujan tidak valid');body.rainfall_7d=Number(now.r7);}
+      if(JSON.stringify(now.detail_form)!==JSON.stringify(nativeBaseline.detail_form))body.detail_form=now.detail_form;
+      correctionEditor.edit(body);const ui=correctionUiIntent,ticket=authorizedReports.sessionTicket();const ack=await correctionEditor.save(document.getElementById('correction-reason').value);if(ui!==correctionUiIntent||!authorizedReports.sessionMatches(ticket))return null;nativeBaseline=collector();
+      const at=STATE.laporan.findIndex(x=>x.id===ack.target);if(at>=0)STATE.laporan[at]={...ack.body,correction_revision:ack.revision};renderLog();renderDashboard();correctionStatus('Koreksi diterima revisi '+ack.revision+'. Original/receipt tidak diubah; bukan persetujuan bayar.');return ack;
+    }catch(e){correctionStatus('Koreksi tetap draft/pending: '+e.message);return null;}};
+    document.getElementById('correction-retry').onclick=()=>{const ui=correctionUiIntent,ticket=authorizedReports.sessionTicket();void correctionEditor.retry().then(ack=>{if(ui!==correctionUiIntent||!authorizedReports.sessionMatches(ticket))return;const at=STATE.laporan.findIndex(x=>x.id===ack.target);if(at>=0)STATE.laporan[at]={...ack.body,correction_revision:ack.revision};renderLog();correctionStatus('Retry dikonfirmasi revisi '+ack.revision);}).catch(e=>{if(ui===correctionUiIntent)correctionStatus('Tetap pending: '+e.message);});};
+    let restoreFlight=null,restoreEditGeneration=0;
+    document.getElementById('panel-form').addEventListener('input',()=>{restoreEditGeneration++;});
+    document.getElementById('correction-restore').onclick=()=>{
+      if(restoreFlight)return;
+      document.getElementById('correction-restore').disabled=true;
+      const ui=correctionUiIntent,editGeneration=restoreEditGeneration,ticket=authorizedReports.sessionTicket();
+      const before=JSON.stringify(collector());
+      restoreFlight=Promise.resolve().then(async()=>{try{
+        if(!ticket)throw Error('sign-in-required');
+        const saved=correctionEditor.retained();if(!saved)throw Error('Tidak ada draft');
+        // Restore is a current authorized server read, not a cache/listener race or a rebase.
+        const original=await privateReader.getDoc(doc(db,'laporan',saved.target));
+        if(ui!==correctionUiIntent||!authorizedReports.sessionMatches(ticket))throw Error('editor-superseded');
+        if(editGeneration!==restoreEditGeneration||JSON.stringify(collector())!==before)throw Error('unsent-edit-restore-refused');
+        if(!original.exists()||original.data().owner_uid!==ticket.uid)throw Error('original-owner-required');
+        const view=correctionEditor.restore(saved);if(!view)throw Error('Tidak ada draft');
+        if(!STATE.laporan.some(x=>x.id===view.target))STATE.laporan.push(reportForDisplay(original.data()));
+        paintCorrection(view,ui);
+      }catch(e){if(ui===correctionUiIntent&&authorizedReports.sessionMatches(ticket))correctionStatus('Draft tidak dibuka: '+e.message);}
+      finally{restoreFlight=null;document.getElementById('correction-restore').disabled=false;}});
+    };
+    document.getElementById('panel-form').addEventListener('input',()=>{
+      const view=correctionEditor.view();if(!view||!nativeBaseline||CURRENT_EDIT_LAPORAN_ID!==view.target)return;
+      try{const now=collector(),body={...view.draft,detail:now.detail,tgl:now.tgl,tanggal:now.tgl,kategori:now.kategori,detail_form:now.detail_form,pelapor:now.pelapor,bidang:now.bidang,kebun_list:now.kebun_list,kebun_primary:now.kebun_list[0]||null,kebun_list_str:now.kebun_list.join('+'),durasi:now.durasi};
+       if(now.pohon!==''&&Number.isFinite(Number(now.pohon)))body.pohon=Number(now.pohon);
+       if(now.r24!==''&&Number.isFinite(Number(now.r24)))body.rainfall_24h=Number(now.r24);
+       if(now.r7!==''&&Number.isFinite(Number(now.r7)))body.rainfall_7d=Number(now.r7);
+       correctionEditor.edit(body);
+      }catch(e){correctionStatus('Draft belum tersimpan: '+e.message);}
+    });
+    authorizedReports.observeSession(()=>{correctionUiIntent++;correctionEditor.invalidate();nativeBaseline=null;});
+
     // Fail closed for every existing dashboard write door, including startup hooks.
     function blockedWrite() { throw new Error('Mode pemulihan: perubahan data bersama, bayar, hapus dan publikasi dinonaktifkan.'); }
     function updateDoc() { return Promise.reject(new Error('Mode pemulihan: edit dinonaktifkan.')); }
     function deleteDoc() { return Promise.reject(new Error('Mode pemulihan: hapus dinonaktifkan.')); }
-    function workerReportContent(value) {
-  if (value === null || typeof value !== 'object') return JSON.stringify(value);
-  if (Array.isArray(value)) return '[' + value.map(workerReportContent).join(',') + ']';
-  return '{' + Object.keys(value).sort().map(key => JSON.stringify(key) + ':' + workerReportContent(value[key])).join(',') + '}';
-}
     async function setDoc(ref, payload) {
       if (!ref.path.startsWith('laporan/')) return blockedWrite();
-      if (!payload.id || !payload.created_at) throw new Error('Identitas laporan wajib');
-      await runTransaction(db, async tx => {
-        const existing = await tx.get(ref);
-        if (existing.exists()) {
-          const old = existing.data();
-          if (old.id !== payload.id || old.created_at !== payload.created_at) throw new Error('Konflik identitas laporan');
-          // Transport timestamp is not submitted business content.
-          const { last_synced_at: oldSync, ...oldContent } = old;
-          const { last_synced_at: newSync, ...submittedContent } = payload;
-          if (workerReportContent(oldContent) !== workerReportContent(submittedContent)) throw new Error('Konflik isi laporan; tetap pending');
-          return; // Exact retry only; never overwrite divergent cloud content.
-        }
-        tx.set(ref, payload);
-      });
-      return payload.id;
+      const {last_synced_at,...body}=payload;
+      return authorizedReports.send(body);
     }
 
     // ⭐ Publish SOP Compliance YTD → Firestore sop_status/compliance (dibaca Living Lab kartu Live Apr–Kini) — locked 5 Jul 2026
@@ -20349,12 +20511,19 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     };
     // ⭐ Laporan harian BORONGAN cabut (20 Sep 2026) — dibaca terpisah, TIDAK masuk STATE.laporan
     //    (foto base64 akan memenuhi localStorage). Lihat renderBoronganPanel().
-    onSnapshot(query(collection(db, COLLECTIONS.laporan), where('kategori', '==', 'cabut_borongan')), (snap) => {
-      try {
-        window.CABUT_BORONGAN = snap.docs.map(d => ({ ...d.data(), id: d.id }));
-        if (typeof renderCabutLog === 'function') renderCabutLog();
-      } catch (e) { console.warn('[Borongan] render gagal:', e && e.message); }
-    }, (e) => console.warn('[Borongan] listener gagal:', e && e.message));
+    let _boronganUnsub=null;
+    const setupBoronganListener=()=>{
+      const generation=window.reportReadSession?.generation;
+      if(!window.reportReadSession?.active)return;
+      if(_boronganUnsub){try{_boronganUnsub();}catch(e){}}
+      _boronganUnsub=onSnapshot(query(collection(db,'operation_events'),where('operation.kind','in',['cabut','cabut_log'])),snap=>{
+        if(!window.reportReadSession?.active||generation!==window.reportReadSession.generation)return;
+        try{window.CABUT_BORONGAN=snap.docs.filter(d=>d.data().operation.kind==='cabut').map(d=>({...d.data().operation.body,command_id:d.id,accepted_revision:d.data().revision}));CABUT_DATA=snap.docs.filter(d=>d.data().operation.kind==='cabut_log').map(d=>({...d.data().operation.body}));if(typeof renderCabutLog==='function')renderCabutLog();}catch(e){console.warn('[Borongan] render gagal',e.message);}
+      },e=>{
+        if(!window.reportReadSession?.active||generation!==window.reportReadSession.generation)return;
+        if(e.code==='unauthenticated')authorizedReports.suspend();
+      });
+    };
     window.tandaiBoronganMasuk = async (id, cabutId, status) => {
       try {
         await updateDoc(doc(db, COLLECTIONS.laporan, id), { status_verifikasi: status || 'masuk_log', cabut_id: cabutId, verified_at: new Date().toISOString() });
@@ -20364,7 +20533,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       try {
         if (snap.exists() && Array.isArray(snap.data().data)) {
           CABUT_DATA = snap.data().data;
-          if (typeof saveCabutLS === 'function') saveCabutLS();
+          /* Session read model only; historical cache preserved. */
           if (typeof renderCabutLog === 'function') renderCabutLog();
           // angka "Terkini (live)" di Dashboard ikut ter-refresh saat data datang dari device lain
           if (typeof _cabutRefreshDash === 'function') _cabutRefreshDash();
@@ -20387,8 +20556,8 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       try {
         if (snap.exists() && snap.data().data && typeof snap.data().data === 'object') {
           PUPUK_DATA = Object.assign({ kg_karung:20, kg_karung_baru:36, kg_pohon:6, harga_karung:30000, terpakai:{}, stok:{}, blokir:{}, catatan:{}, kirim:0 }, snap.data().data);
-          if (typeof seedPupukSekali === 'function' && seedPupukSekali()) savePupukLS();
-          if (typeof savePupukLS === 'function') savePupukLS();
+          /* Session read model only; historical cache preserved. */
+          /* Session read model only; historical cache preserved. */
           if (typeof renderPupuk === 'function') renderPupuk();
         }
       } catch (e) {}
@@ -20409,7 +20578,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       try {
         if (snap.exists() && Array.isArray(snap.data().data)) {
           KASBON_DATA = snap.data().data;
-          if (typeof saveKasbonLS === 'function') saveKasbonLS();
+          /* Session read model only; historical cache preserved. */
           if (typeof renderKasbon === 'function') renderKasbon();
           if (typeof renderUpahSummary === 'function') renderUpahSummary();   // Kartu 3 ikut segar saat data datang dari perangkat lain
         }
@@ -20431,13 +20600,13 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       try {
         if (snap.exists() && Array.isArray(snap.data().data)) {
           BENCHMARK_DATA = snap.data().data;
-          if (typeof saveBenchmarkLS === 'function') saveBenchmarkLS();
+          /* Session read model only; historical cache preserved. */
           if (typeof renderBenchmarkLog === 'function') renderBenchmarkLog();
         }
       } catch (e) {}
     });
 
-    const q = query(collection(db, COLLECTIONS.laporan), orderBy('created_at', 'desc'));
+    const q = query(collection(db, COLLECTIONS.laporan)); // Both flat historical and wrapped entries; UI sorts dates.
 
     // Expose delete helper to global scope (locked 17 Mei 2026 — fix duplikasi-after-delete bug)
     // Tombstone tracking: entries di-delete locally TIDAK boleh re-add via listener race condition
@@ -20503,7 +20672,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     window.loadSOPMasterFromFirestore = async () => {
       // Auto-runs on page load. Fetch cloud SOP, cache to localStorage, override hardcoded.
       try {
-        const docSnap = await getDoc(doc(db, COLLECTIONS.sop_master, 'active'));
+        const ticket=privateReader.ticket();const docSnap = await getDoc(doc(db, COLLECTIONS.sop_master, 'active'));if(!privateReader.matches(ticket))return null;
         if (!docSnap.exists()) {
           console.log('[SOP Master] No cloud version yet — using hardcoded fallback. Adib bisa klik "🔄 Sync SOP" untuk push initial seed.');
           return null;
@@ -20538,7 +20707,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       } catch (e) {
         console.warn('[SOP Master] fetch failed, fallback to localStorage cache then hardcoded:', e.message);
         // Try localStorage cache
-        const cached = localStorage.getItem('wkkn_sop_master_v1');
+        const cached = null;
         if (cached) {
           try {
             const cachedData = JSON.parse(cached);
@@ -20584,7 +20753,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 
     window.loadDistribusiPicFromFirestore = async () => {
       try {
-        const docSnap = await getDoc(doc(db, 'distribusi_pic', 'active'));
+        const ticket=privateReader.ticket();const docSnap = await getDoc(doc(db, 'distribusi_pic', 'active'));if(!privateReader.matches(ticket))return null;
         if (!docSnap.exists()) {
           console.log('[Distribusi PIC] No cloud version yet, using localStorage/default');
           return null;
@@ -20603,7 +20772,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
             }
           });
           // Persist to LS
-          if (typeof saveDistribusiToLS === 'function') saveDistribusiToLS();
+          /* Session read model only; historical cache preserved. */
           console.log('[Distribusi PIC] ✓ Loaded from Firestore (overrides default)');
           // Re-render kalau tab sudah aktif
           if (typeof renderDistribusi === 'function') {
@@ -20658,7 +20827,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 
     window.loadMilestonesFromFirestore = async () => {
       try {
-        const docSnap = await getDoc(doc(db, 'milestones', 'active'));
+        const ticket=privateReader.ticket();const docSnap = await getDoc(doc(db, 'milestones', 'active'));if(!privateReader.matches(ticket))return null;
         if (!docSnap.exists()) {
           console.log('[Milestones] No cloud version yet — bootstrap di first publish (lihat seed step)');
           return null;
@@ -20714,6 +20883,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     // ===========================================================================
 
     function _makeStateSync(varName, lsKey, collection, getGlobal, setGlobal, getVer, renderFn) {
+      const cacheValue = cloud => ['PanenData','PanenLots','PanenSampling'].includes(varName) ? {version:cloud.version,data:cloud.data} : cloud.data;
       // Generic helper untuk DRY sync pattern across 7 states
       const syncFn = async () => {
         const data = getGlobal();
@@ -20741,7 +20911,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       };
       const loadFn = async () => {
         try {
-          const snap = await getDoc(doc(db, collection, 'active'));
+          const ticket=privateReader.ticket();const snap = await getDoc(doc(db, collection, 'active'));if(!privateReader.matches(ticket))return null;
           if (!snap.exists()) {
             console.log(`[${varName}] No cloud version yet, using local`);
             return null;
@@ -20762,7 +20932,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           }
           if (cloud.data !== undefined) {
             setGlobal(cloud.data);
-            try { localStorage.setItem(lsKey, JSON.stringify(cloud.data)); } catch(e) {}
+            try { localStorage.setItem(lsKey, JSON.stringify(cacheValue(cloud))); } catch(e) {}
             const sizeInfo = Array.isArray(cloud.data) ? `${cloud.data.length} entries` : 'object';
             console.log(`[${varName}] ✓ Loaded from Firestore (${sizeInfo})`);
             if (renderFn && typeof window[renderFn] === 'function') window[renderFn]();
@@ -20810,7 +20980,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
                 if (JSON.stringify(localData) === JSON.stringify(cloud.data)) return;
               } catch(e) { /* fall through to apply */ }
               setGlobal(cloud.data);
-              try { localStorage.setItem(lsKey, JSON.stringify(cloud.data)); } catch(e) {}
+              try { localStorage.setItem(lsKey, JSON.stringify(cacheValue(cloud))); } catch(e) {}
               const sizeInfo = Array.isArray(cloud.data) ? `${cloud.data.length} entries` : 'object';
               console.log(`[${varName}] 🔄 onSnapshot update — ${sizeInfo} (origin: ${cloud.updated_by || 'unknown'})`);
               if (renderFn && typeof window[renderFn] === 'function') window[renderFn]();
@@ -20916,13 +21086,13 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       };
       const { syncFn, loadFn, subscribeFn } = _makeStateSync('Upah', 'wkkn_v2_upah', 'upah',
         () => typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : null,
-        upahMergeSetter,  // ← merge-aware (replaces wipe-and-replace)
+        d=>{if(Array.isArray(d))UPAH_ITEMS=structuredClone(d);}, // session read model only
         () => typeof UPAH_SCHEMA_VERSION !== 'undefined' ? UPAH_SCHEMA_VERSION : '3.0',
         'renderUpahTable');
       window.syncUpahToFirestore = syncFn;
       window.loadUpahFromFirestore = loadFn;
       setTimeout(loadFn, 3000);
-      setTimeout(subscribeFn, 3500); // ⭐ 1 Jun 2026: continuous onSnapshot listener AFTER initial load
+      subscribeFn(); // ⭐ 1 Jun 2026: continuous onSnapshot listener AFTER initial load
     }
 
     // === CASHBOOK ===
@@ -20998,13 +21168,13 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       };
       const { syncFn, loadFn, subscribeFn } = _makeStateSync('Cashbook', 'wkkn_v2_cashbook', 'cashbook',
         () => typeof CASHBOOK !== 'undefined' ? CASHBOOK : null,
-        cashbookMergeSetter,   // ← replace wipe-and-replace with merge-aware
+        d=>{if(Array.isArray(d))CASHBOOK=structuredClone(d);}, // session read model only
         () => typeof CASHBOOK_SCHEMA_VERSION !== 'undefined' ? CASHBOOK_SCHEMA_VERSION : '1.1',
         'renderCashbookTab');
       window.syncCashbookToFirestore = syncFn;
       window.loadCashbookFromFirestore = loadFn;
       setTimeout(loadFn, 3200);
-      setTimeout(subscribeFn, 3700); // ⭐ 1 Jun 2026: continuous onSnapshot listener
+      subscribeFn(); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === OPT_OBSERVATIONS ===
@@ -21017,7 +21187,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncOPTToFirestore = syncFn;
       window.loadOPTFromFirestore = loadFn;
       setTimeout(loadFn, 3400);
-      setTimeout(subscribeFn, 3900); // ⭐ 1 Jun 2026: continuous onSnapshot listener
+      subscribeFn(); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === PANEN_DATA ===
@@ -21030,12 +21200,12 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncPanenDataToFirestore = syncFn;
       window.loadPanenDataFromFirestore = loadFn;
       setTimeout(loadFn, 3600);
-      setTimeout(subscribeFn, 4100); // ⭐ 1 Jun 2026: continuous onSnapshot listener
+      subscribeFn(); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === PANEN_LOTS_DATA ===
     {
-      const { syncFn, loadFn, subscribeFn } = _makeStateSync('PanenLots', 'wkkn_v2_panen_lots', 'panen_lots',
+      const { syncFn, loadFn, subscribeFn } = _makeStateSync('PanenLots', 'wkkn_v2_panen_lots_2026', 'panen_lots',
         () => typeof PANEN_LOTS_DATA !== 'undefined' ? PANEN_LOTS_DATA : null,
         (d) => { if (typeof PANEN_LOTS_DATA !== 'undefined' && Array.isArray(d)) { PANEN_LOTS_DATA.length = 0; d.forEach(x => PANEN_LOTS_DATA.push(x)); } },
         () => typeof PANEN_LOTS_SCHEMA_VERSION !== 'undefined' ? PANEN_LOTS_SCHEMA_VERSION : '1.0',
@@ -21043,7 +21213,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncPanenLotsToFirestore = syncFn;
       window.loadPanenLotsFromFirestore = loadFn;
       setTimeout(loadFn, 3800);
-      setTimeout(subscribeFn, 4300); // ⭐ 1 Jun 2026: continuous onSnapshot listener
+      subscribeFn(); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === PANEN_SAMPLING_DATA ===
@@ -21080,7 +21250,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncPanenSamplingToFirestore = syncFn;
       window.loadPanenSamplingFromFirestore = loadFn;
       setTimeout(loadFn, 4000);
-      setTimeout(subscribeFn, 4500); // ⭐ 1 Jun 2026: continuous onSnapshot listener
+      subscribeFn(); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === SOP_STATUS (object, not array) ===
@@ -21093,7 +21263,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       window.syncSOPStatusToFirestore = syncFn;
       window.loadSOPStatusFromFirestore = loadFn;
       setTimeout(loadFn, 4200);
-      setTimeout(subscribeFn, 4700); // ⭐ 1 Jun 2026: continuous onSnapshot listener
+      subscribeFn(); // ⭐ 1 Jun 2026: continuous onSnapshot listener
     }
 
     // === WORKER_DEFS_CUSTOM (9 Juni 2026 — Task 2 opsi A cross-device sync) ==========
@@ -21157,7 +21327,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           }
         });
         // Persist localStorage cache
-        if (typeof saveCustomWorkerDefsToLS === 'function') saveCustomWorkerDefsToLS();
+        /* Session read model only; historical cache preserved. */
         // Re-render UI yang depend on WORKER_DEFS
         if (typeof renderWorkersTab === 'function') renderWorkersTab();
         if (typeof renderDistribusi === 'function') renderDistribusi();
@@ -21170,7 +21340,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
 
       window.loadWorkerDefsCustomFromFirestore = async () => {
         try {
-          const snap = await getDoc(doc(db, 'worker_defs_custom', 'active'));
+          const ticket=privateReader.ticket();const snap = await getDoc(doc(db, 'worker_defs_custom', 'active'));if(!privateReader.matches(ticket))return null;
           if (!snap.exists()) {
             console.log('[WorkerDefsCustom] Firestore doc empty (no custom workers yet)');
             return;
@@ -21202,7 +21372,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       };
 
       setTimeout(() => window.loadWorkerDefsCustomFromFirestore(), 4400);
-      setTimeout(subscribeWorkerDefsCustom, 4900);
+      subscribeWorkerDefsCustom();
     }
 
     // ===========================================================================
@@ -21467,14 +21637,14 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
       }
       // Rainfall field bridge (locked 17 Mei 2026): lapor.html pakai rain_24h_mm/rain_7d_mm, dashboard expect rainfall_24h/rainfall_7d
       if (normalized.rain_24h_mm !== undefined && normalized.rainfall_24h === undefined) {
-        normalized.rainfall_24h = +normalized.rain_24h_mm || 0;
+        normalized.rainfall_24h = normalized.rain_24h_mm;
       }
       if (normalized.rain_7d_mm !== undefined && normalized.rainfall_7d === undefined) {
-        normalized.rainfall_7d = +normalized.rain_7d_mm || 0;
+        normalized.rainfall_7d = normalized.rain_7d_mm;
       }
       // Re-compute compliance (locked 17 Mei 2026): lapor.html ship 'pending' default,
       // dashboard compute via computeRainfallAlerts → set 'compliant' or 'partial'
-      if (normalized.compliance === 'pending' && typeof computeRainfallAlerts === 'function') {
+      if (normalized.compliance === 'pending' && normalized.rainfall_24h!=null && normalized.rainfall_7d!=null && typeof computeRainfallAlerts === 'function') {
         try {
           const alerts = computeRainfallAlerts(
             normalized.kategori,
@@ -21507,41 +21677,19 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           }
         });
         if (fixedCount > 0) {
-          localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+          /* Report read model is session-memory only; durable pending remains separate. */
           console.log(`[Migration] Fixed ${fixedCount} legacy entries with object detail`);
           if (typeof renderLog === 'function') renderLog();
         }
       }
     }
 
-    // Migration: re-process pending entries (locked 17 Mei 2026 · L3 fix 8 Juni 2026)
-    // (a) Re-compute compliance kalau masih 'pending'
-    // (b) Re-create UPAH linkages untuk YIT/KUMPUL yang belum punya UPAH entry
-    // ⭐ 8 Juni 2026 (Task 1 root cause Cashbook merge/delete ghost cascade):
-    //    Pre-fetch Firestore UPAH map BEFORE iterating laporan — eliminates ghost recreate dari
-    //    stale localStorage cache. Casus belli: Adib delete UPAH ID 42 di session prev, refresh
-    //    page → localStorage cache stale (52 entries) vs Firestore (52 — after delete) →
-    //    autoCreate sees gap in local → creates 2 ghost UPAH → cycle continues setiap refresh.
-    //    L3 fix di setupLaporanListener (line 16116-16128) sudah ada — sekarang apply ke reprocess.
+    // Reprocess pending report compliance only; finance reconstruction remains disabled.
     async function reprocessPendingEntries() {
       if (!Array.isArray(STATE.laporan)) return;
       let complianceFixed = 0;
-      let upahCreated = 0;
 
-      // ⭐ Pre-fetch Firestore UPAH map untuk Firestore-authoritative dedup (L3 pattern)
-      let firestoreUpahMap = null;
-      try {
-        const upahSnap = await getDoc(doc(db, 'upah', 'active'));
-        if (upahSnap.exists()) {
-          const upahData = upahSnap.data();
-          if (Array.isArray(upahData.data)) {
-            firestoreUpahMap = new Map(upahData.data.map(u => [`${u.tgl}|${u.pelapor}`, u]));
-            console.log(`[Migration reprocess] Pre-fetched Firestore UPAH map: ${firestoreUpahMap.size} entries (Firestore-auth dedup — prevents ghost recreate)`);
-          }
-        }
-      } catch (e) {
-        console.warn('[Migration reprocess] Firestore UPAH pre-fetch fail (fallback local — may create ghosts):', e.message || e);
-      }
+      // Finance UNWIRED: only report compliance is reprocessed; no finance reads or derivation.
 
       STATE.laporan.forEach(l => {
         // (a) Re-compute compliance
@@ -21557,22 +21705,15 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
             complianceFixed++;
           } catch (e) { /* keep pending */ }
         }
-        // (b) Re-create UPAH untuk pekerja ber-tarif (YIT/KUMPUL/YASIR/KAMTO) yang belum ter-link (Firestore-auth check FIRST)
-        // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA. Pemanen (per-kg pending) tidak auto-reprocess.
-        if (TARIF_PEKERJA[l.pelapor] && l.durasi && typeof autoCreateUpahFromEntry === 'function') {
-          const newUpah = autoCreateUpahFromEntry(l, firestoreUpahMap);  // ⭐ pass map → L3 dedup
-          if (newUpah) upahCreated++;
-        }
+        // Automatic wage reconstruction is disabled while finance is frozen.
       });
-      if (complianceFixed > 0 || upahCreated > 0) {
-        localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
-        console.log(`[Migration] reprocess: ${complianceFixed} compliance fixed, ${upahCreated} UPAH created`);
+      if (complianceFixed > 0) {
+        /* Report read model is session-memory only; durable pending remains separate. */
+        console.log(`[Migration] reprocess: ${complianceFixed} compliance fixed; finance frozen`);
         if (typeof renderLog === 'function') renderLog();
-        if (typeof renderUpahTable === 'function') renderUpahTable();
-        if (typeof renderUpahSummary === 'function') renderUpahSummary();
         if (typeof renderDashboard === 'function') renderDashboard();
       } else {
-        console.log(`[Migration] reprocess: no compliance/UPAH changes (Firestore-auth dedup blocked all candidates)`);
+        console.log('[Migration] reprocess: no compliance changes; finance frozen');
       }
     }
 
@@ -21592,42 +21733,29 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
         const _b = document.createElement('div');
         _b.id = 'recon-mode-banner';
         _b.style.cssText = 'position:sticky;top:0;z-index:9999;background:#8c2519;color:#fff;padding:10px 16px;font-size:12.5px;font-weight:600;display:flex;flex-wrap:wrap;gap:10px;align-items:center;box-shadow:0 2px 8px rgba(0,0,0,.25)';
-        _b.innerHTML = '⏸ <span>RECONCILIATION_MODE <b>AKTIF</b> — upah TIDAK terbentuk otomatis dari laporan. Matikan setelah audit selesai.</span>' +
+        _b.innerHTML = '⏸ <span>RECONCILIATION_MODE <b>AKTIF</b> — pemrosesan compliance ditunda. Finance tetap UNWIRED meskipun mode ini dimatikan.</span>' +
           '<button onclick="toggleReconciliationMode(false);document.getElementById(\'reconcile-pause-toggle\')&&(document.getElementById(\'reconcile-pause-toggle\').checked=false);this.parentNode.remove();" ' +
           'style="margin-left:auto;background:#fff;color:#8c2519;border:0;border-radius:6px;padding:6px 14px;font-size:11.5px;font-weight:700;cursor:pointer">▶ Matikan sekarang</button>';
         document.body.insertBefore(_b, document.body.firstChild);
       } catch (e) { /* non-fatal */ }
     }
 
-    // Listen for real-time changes — merge incoming worker submissions ke STATE.laporan + auto-create UPAH
+    // Listen for real-time changes — merge reports into the read model, never create wages.
     // ⭐ 1 Jun 2026: Wrapped dalam named function untuk auto-retry pada error (Safari Listen stream drop)
     let _laporanRetryCount = 0;
     const _LAPORAN_MAX_RETRY = 5;
     let _laporanUnsub = null;
     const setupLaporanListener = () => {
+      if(!window.reportReadSession?.active)return;
+      const sessionUid=_reportSessionUid;
+      const sessionGeneration=window.reportReadSession.generation;
       if (_laporanUnsub) { try { _laporanUnsub(); } catch(e) {} }
       _laporanUnsub = onSnapshot(q, async (snapshot) => {
+        if(!window.reportReadSession?.active||sessionUid!==_reportSessionUid||sessionGeneration!==window.reportReadSession.generation)return;
         let newCount = 0;
-        let upahCreatedCount = 0;
         let removedCount = 0;
 
-        // ⭐ 6 Juni 2026 (L3 fix): Pre-fetch Firestore UPAH state ONCE per listener fire
-        // Eliminates race condition di mana local UPAH_ITEMS stale → autoCreateUpah re-creates
-        // ghost entries (Pak Kumpul 17 ghost + Cak Yit double-pay Rp 900K casus belli).
-        // Cost: 1 Firestore read per listener fire (acceptable — listener fires sparingly).
-        let firestoreUpahMap = null;
-        try {
-          const upahSnap = await getDoc(doc(db, 'upah', 'active'));
-          if (upahSnap.exists()) {
-            const upahData = upahSnap.data();
-            if (Array.isArray(upahData.data)) {
-              firestoreUpahMap = new Map(upahData.data.map(u => [`${u.tgl}|${u.pelapor}`, u]));
-              console.log(`[Laporan Listener] Pre-fetched Firestore UPAH map: ${firestoreUpahMap.size} entries (authoritative dedup)`);
-            }
-          }
-        } catch (e) {
-          console.warn('[Laporan Listener] Firestore UPAH pre-fetch fail (fallback to local dedup):', e.message || e);
-        }
+        // Finance UNWIRED: incoming reports update the read model only, without finance reads.
 
         for (const change of snapshot.docChanges()) {
           const docId = change.doc.id;
@@ -21646,57 +21774,111 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
           if (change.type === 'added' || change.type === 'modified') {
             // ⭐ 20 Sep 2026: laporan borongan cabut punya jalur sendiri (panel Cabut/Tebang) —
             //    tidak masuk Log Harian, upah otomatis, maupun localStorage (fotonya besar).
-            if ((change.doc.data() || {}).kategori === 'cabut_borongan') continue;
+            if ((reportForDisplay(change.doc.data()) || {}).kategori === 'cabut_borongan') continue;
             // Skip if this docId was just locally deleted (race condition — Firestore hasn't propagated yet)
             if (window._deletedTombstones?.has(docId)) {
               console.log('[Listener] Skipping tombstoned entry:', docId);
               continue;
             }
-            const data = normalizeWorkerEntry(change.doc.data());
+            const revised=correctionHeads.get(docId);
+            const data = normalizeWorkerEntry(revised?{...revised.body,correction_revision:revised.revision}:reportForDisplay(change.doc.data()));
             const existingIdx = STATE.laporan.findIndex(l => l.id === data.id);
             if (existingIdx === -1) {
               STATE.laporan.unshift(data);
               newCount++;
-              if (typeof autoCreateUpahFromEntry === 'function') {
-                // ⭐ Pass Firestore-authoritative map untuk dedup (L3 fix)
-                const upahEntry = autoCreateUpahFromEntry(data, firestoreUpahMap);
-                if (upahEntry) upahCreatedCount++;
-              }
+              // Report receipt is not authorization to create wages.
             } else if (change.type === 'modified') {
               STATE.laporan[existingIdx] = { ...STATE.laporan[existingIdx], ...data };
             }
           }
         }
         if (newCount > 0 || removedCount > 0) {
-          localStorage.setItem('wkkn_v2_laporan', JSON.stringify(STATE.laporan));
+          /* Report read model is session-memory only; durable pending remains separate. */
           // Refresh views
           if (typeof renderDashboard === 'function') renderDashboard();
           if (typeof renderLog === 'function') renderLog();
-          if (upahCreatedCount > 0 && typeof renderUpah === 'function') renderUpah();
+
           // Show toast notification
           const toast = document.createElement('div');
           toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#2D8466;color:#fff;padding:14px 22px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.15);font-weight:600;z-index:9999;max-width:340px';
-          const upahLine = upahCreatedCount > 0 ? `<br><span style="font-size:11px;opacity:0.9">💰 ${upahCreatedCount} entry upah dibuat otomatis</span>` : '';
-          toast.innerHTML = `🔥 ${newCount} laporan baru dari worker${upahLine}`;
+          toast.innerHTML = `🔥 ${newCount} laporan baru dari worker`;
           document.body.appendChild(toast);
           setTimeout(() => toast.remove(), 6000);
-          console.log(`[Firestore Listener] +${newCount} entries, +${upahCreatedCount} upah auto-created`);
+          console.log(`[Firestore Listener] +${newCount} entries; finance frozen`);
         }
         _laporanRetryCount = 0; // reset on successful fire
       }, (err) => {
         console.error('[Firestore Listener] error:', err.message || err);
+        if(!window.reportReadSession?.active||sessionUid!==_reportSessionUid||sessionGeneration!==window.reportReadSession.generation)return;
+        if(err.code==='permission-denied'||err.code==='unauthenticated')return;
         // ⭐ 1 Jun 2026: Auto-retry dengan exponential backoff (Safari Listen stream drop)
         if (_laporanRetryCount < _LAPORAN_MAX_RETRY) {
           _laporanRetryCount++;
           const delay = 5000 * Math.pow(1.5, _laporanRetryCount - 1);
           console.log(`[Laporan] Retry onSnapshot in ${Math.round(delay/1000)}s (${_laporanRetryCount}/${_LAPORAN_MAX_RETRY})`);
-          setTimeout(setupLaporanListener, delay);
+          setTimeout(()=>{if(window.reportReadSession?.active&&sessionGeneration===window.reportReadSession.generation)setupLaporanListener();},delay);
         } else {
           console.error('[Laporan] onSnapshot MAX retry — fallback to window.onfocus rehydrate');
         }
       });
     };
-    setupLaporanListener();
+    window.reportReadSession={active:false,generation:0};
+    let _reportSessionUid=null;
+    const clearReportView=()=>{
+      STATE.laporan=[];
+      window.CABUT_BORONGAN=[];
+      for(const id of ['cabut-log-container','borongan-panel']){const node=document.getElementById(id);if(node)node.replaceChildren();}
+      document.querySelectorAll('[data-report-private-overlay]').forEach(n=>n.remove());
+      if(REPORT_EDIT_TIMER!==null){clearTimeout(REPORT_EDIT_TIMER);REPORT_EDIT_TIMER=null;}
+      if(CURRENT_EDIT_LAPORAN_ID!==null||!authorizedReports.sessionOwner()){
+        try{resetForm();}catch(e){}
+        CURRENT_EDIT_LAPORAN_ID=null;
+        for(const id of ['f-catatan','f-tgl','f-kategori','f-pohon','f-rainfall-24h','f-rainfall-7d']){const n=document.getElementById(id);if(n)n.value='';}
+        for(const k of ['pelapor','bidang','cuaca_pagi','cuaca_siang','durasi'])STATE[k]=null;STATE.bidang_list=[];
+      }
+      const banner=document.getElementById('edit-banner');if(banner)banner.remove();
+      // Dispose report-derived chart datasets before any clear/re-render transition.
+      if(typeof Chart!=='undefined'&&typeof Chart.getChart==='function'){
+        for(const id of ['chart-compliance','chart-activity','chart-pelapor']){
+          try{const canvas=document.getElementById(id);if(canvas)Chart.getChart(canvas)?.destroy();}catch(e){}
+        }
+      }
+      for(const fn of ['renderLog','renderDashboard','renderComplianceChart','renderDeviations','renderActivityChart','renderPelaporChart','renderAlerts']){
+        try{if(typeof window[fn]==='function')window[fn]();}catch(e){}
+      }
+      const detail=document.getElementById('entry-detail-modal');if(detail)detail.remove();
+    };
+    window.addEventListener('private-reader-stopped',()=>{correctionHeads.clear();clearReportView();});
+    const stopReportRead=()=>{
+      window.reportReadSession.active=false;window.reportReadSession.generation++;
+      if(_boronganUnsub){try{_boronganUnsub();}catch(e){} _boronganUnsub=null;}
+      if(_laporanUnsub){try{_laporanUnsub();}catch(e){} _laporanUnsub=null;}
+      clearReportView();
+    };
+    window.signOutReportSession=()=>authorizedReports.signOutSession();
+    authorizedReports.observeSession(uid=>{
+      if(uid===_reportSessionUid && window.reportReadSession.active)return;
+      stopReportRead();_reportSessionUid=uid;
+      if(uid){window.reportReadSession.active=true;setupLaporanListener();setupBoronganListener();}
+    });
+    let correctionHeadUnsub=null;
+    const setupCorrectionHeads=()=>{const uid=authorizedReports.sessionOwner();
+      if(correctionHeadUnsub){correctionHeadUnsub();correctionHeadUnsub=null;}
+      correctionHeads.clear();if(!uid)return;const gen=window.reportReadSession.generation;
+      correctionHeadUnsub=onSnapshot(collection(db,'report_heads'),snap=>{
+        if(!window.reportReadSession.active||gen!==window.reportReadSession.generation)return;
+        for(const d of snap.docs){const h=d.data();if(!h.body||h.body.id!==d.id)continue;correctionHeads.set(d.id,h);const i=STATE.laporan.findIndex(x=>x.id===d.id);if(i>=0)STATE.laporan[i]={...h.body,correction_revision:h.revision};}
+        renderLog();renderDashboard();
+      },()=>{});
+    };
+    authorizedReports.observeSession(setupCorrectionHeads);
+    window.addEventListener('private-reader-ready',()=>{
+      window.reportReadSession.active=privateReader.allowed('laporan');setupLaporanListener();setupBoronganListener();setupCorrectionHeads();
+      for(const name of ['SOPMaster','DistribusiPic','Milestones','Upah','Cashbook','OPT','PanenData','PanenLots','PanenSampling','SOPStatus','WorkerDefsCustom']){
+        const fn=window['load'+name+'FromFirestore'];if(fn)void fn();
+      }
+    });
+    mountReportSessionControls(authorizedReports,document.getElementById('entry-recovery-banner')||document.body);
 
     // ⭐ 1 Jun 2026: Window focus rehydrate — Safari sleep/wake + Listen stream drop recovery
     // Probe 1 Jun 2026 reveal Listen stream drop berulang ~1-2 jam interval di Safari.

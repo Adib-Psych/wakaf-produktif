@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#1F5F47">
 <meta name="description" content="Form lapor harian pekerja kebun kopi wakaf Ngantang">
-<link rel="manifest" href="demo/manifest.json">
+<link rel="manifest" href="worker-manifest.json">
 <link rel="icon" type="image/png" href="images/logo-wakaf-produktif-transparan.png">
 <title>Lapor Kebun NGT — Wakaf Produktif</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1199,10 +1199,15 @@ function openDB() {
 }
 
 async function queueSubmission(data) {
+  const originalSession=arguments[1];
+  const api=window.authorizedReports;
+  const owner=originalSession===undefined?(api?.sessionTicket?.()||{uid:api?.sessionOwner?.()||null}):originalSession;
   const db = await openDB();
+  if(owner?.uid ? (api?.sessionMatches ? !api.sessionMatches(owner) : api?.sessionOwner?.()!==owner.uid) : !!api?.sessionOwner?.())throw new Error('session-changed');
   const tx = db.transaction(DB_STORE, 'readwrite');
   const entry = {
     data,
+    owner_uid: owner?.uid || null,
     status: 'pending',
     submitted_at: new Date().toISOString(),
     retry_count: 0,
@@ -1237,7 +1242,9 @@ async function getPending() {
   });
 }
 
-// Canonical submitted content, independent of object key order. Arrays retain order.
+// Compatibility embedding: verbatim recovery/report-content.js canonical function.
+// Baseline controllers can cache this HTML but cannot serve the new shared asset.
+// Keep this shell self-contained through waiting/failed updates; equality is tested.
 function workerReportContent(value) {
   if (value === null || typeof value !== 'object') return JSON.stringify(value);
   if (Array.isArray(value)) return '[' + value.map(workerReportContent).join(',') + ']';
@@ -1255,6 +1262,8 @@ async function prepareQueuedSubmission(id) {
       try {
         const entry = req.result;
         if (!entry || entry.status !== 'pending' || !entry.data) throw new Error('Laporan pending tidak ditemukan');
+        const owner=window.authorizedReports?.sessionOwner?.();
+        if(!owner||entry.owner_uid!==owner)throw new Error('Pending pemilik lain/belum terikat');
         if (entry.data.id == null || entry.data.id === '') {
           // Never derive cloud identity from a device-local integer or timestamp.
           if (typeof crypto.randomUUID !== 'function') throw new Error('ID aman belum tersedia; laporan tetap pending');
@@ -2024,6 +2033,7 @@ function renderPhotos() {
    SUBMIT
    ============================================================ */
 async function submitForm() {
+  const originalSession=window.authorizedReports?.sessionTicket?.()||{uid:window.authorizedReports?.sessionOwner?.()||null};
   const tgl = document.getElementById('f-tgl').value;
   if (!tgl) { showToast('Tanggal wajib diisi', 'error'); return; }
   if (!Array.isArray(STATE.selected.kebun) || STATE.selected.kebun.length === 0) { showToast('Pilih minimal 1 kebun', 'error'); return; }
@@ -2124,7 +2134,7 @@ async function submitForm() {
     // 1. Queue to IndexedDB (safety net + queue tracking)
     // 2. If online + Firestore available → push IMMEDIATELY, mark as synced
     // 3. If offline / Firestore unavailable → entry stays pending, sync on next online
-    const localId = await queueSubmission(entry);
+    const localId = await queueSubmission(entry,originalSession);
     await refreshQueueBadge();
 
     let directSyncOk = false;
@@ -2210,9 +2220,14 @@ function closeQueue() {
   document.getElementById('queuePanel').classList.remove('on');
 }
 
+function ownedSubmissions(rows) {
+  const uid=window.authorizedReports?.sessionOwner?.();
+  return uid?rows.filter(x=>x.owner_uid===uid):[];
+}
+
 async function renderQueueList() {
   const list = document.getElementById('queueList');
-  const all = await getAllSubmissions();
+  const all = ownedSubmissions(await getAllSubmissions());
   if (!all.length) {
     list.innerHTML = `<div class="empty-queue"><div class="ic">📭</div>Belum ada laporan tersimpan.</div>`;
     return;
@@ -2258,7 +2273,11 @@ async function drainWorkerQueue() {
     const pending = await getPending();
     for (const item of pending) {
       try {
+        const invokingOwner=window.authorizedReports?.sessionOwner?.();
+        if(!invokingOwner||item.owner_uid!==invokingOwner)throw new Error('Pending pemilik lain/belum terikat');
         const prepared = await prepareQueuedSubmission(item.id);
+        const owner=window.authorizedReports?.sessionOwner?.();
+        if(!owner||prepared.owner_uid!==owner)throw new Error('Pending pemilik lain / belum terikat: ditahan tanpa mengubah riwayat.');
         const expectedId = prepared.data.id;
         const ack = await window.firestorePush(prepared.data, item.id);
         if (ack !== expectedId) throw new Error('Server belum mengonfirmasi ID laporan');
@@ -2293,7 +2312,7 @@ async function manualSync() {
 }
 
 async function exportToWA() {
-  const pending = await getPending();
+  const pending = ownedSubmissions(await getPending());
   if (!pending.length) {
     showToast('Tidak ada laporan pending', '');
     return;
@@ -2324,7 +2343,7 @@ async function maybeAutoSync() {
 function registerSW() {
   if (!('serviceWorker' in navigator)) return;
   // Use root scope so we can register sw at /demo/sw.js (relative)
-  navigator.serviceWorker.register('demo/sw.js', { scope: 'demo/' })
+  navigator.serviceWorker.register('worker-sw.js', { scope: './', updateViaCache: 'none' })
     .then(reg => console.log('[SW] registered', reg.scope))
     .catch(err => console.warn('[SW] register failed', err));
 }
@@ -2342,28 +2361,18 @@ document.addEventListener('DOMContentLoaded', init);
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
   try {
+    // Optional online transport: old controllers may lack this new asset offline.
+    // Keep IndexedDB/report shell usable; never substitute an unverified ACK.
+    const {createAuthorizedReports,mountReportSessionControls}=await import('./recovery/authorized-reports.js');
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);
     window.firestoreDB = db;
 
-    window.firestorePush = async (entryData, localId) => {
-      const docId = entryData.id;
-      if (typeof docId !== 'string' || !docId || docId.includes('/')) throw new Error('Identitas laporan tidak valid');
-      const docRef = doc(db, COLLECTIONS.laporan, docId);
-      await runTransaction(db, async tx => {
-        const existing = await tx.get(docRef);
-        if (existing.exists()) {
-          const old = existing.data();
-          const { synced_at, sync_source, ...submitted } = old;
-          if (workerReportContent(submitted) !== workerReportContent(entryData)) throw new Error('Konflik isi laporan; tetap pending');
-          // Exact submitted content only: uncertain/edited legacy records stay pending.
-          // Never overwrite remote edits to force an acknowledgement.
-          return;
-        }
-        tx.set(docRef, { ...entryData, synced_at: serverTimestamp(), sync_source: 'lapor_pwa_v1' });
-      });
-      return docId;
-    };
+    const authorizedReports=createAuthorizedReports({app:fbApp,db});
+    window.authorizedReports=authorizedReports;
+    mountReportSessionControls(authorizedReports);
+    authorizedReports.observeSession(()=>{const q=document.getElementById('queueList');if(q)q.replaceChildren();void renderQueueList().catch(()=>{});});
+    window.firestorePush = entryData => authorizedReports.send(entryData);
 
     console.log('[Firebase] ✅ Connected to Wakaf Ngantang Firestore');
 

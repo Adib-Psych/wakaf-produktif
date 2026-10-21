@@ -1,0 +1,2 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('fs');
+test('changed category/media transport receives new cache generation and failed install cleans candidate only',()=>{const s=fs.readFileSync('worker-sw.js','utf8');assert.match(s,/CACHE_PREFIX\+'v6'/);assert.match(s,/catch\(/);assert.match(s,/caches.delete\(CACHE_NAME\)/);assert(!s.includes('skipWaiting('));assert(!s.includes('clients.claim('));});
