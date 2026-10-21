@@ -96,7 +96,7 @@ export function createAuthorizedReports({app,db,storage=localStorage}) {
  }
  const current=()=>{if(stopped||!user||auth.currentUser?.uid!==user.uid)fail('sign-in-required');return {uid:user.uid,generation};};
  function same(s){if(stopped||!user||s.uid!==user.uid||s.generation!==generation||auth.currentUser?.uid!==s.uid)fail('session-changed');}
- function authorized(p,g,s){if(!p||!g||p.paused!==false||g.enabled!==true||g.uid!==s.uid||!['staff','worker','staff_entry'].includes(g.role)||g.writer_epoch!==p.writer_epoch||!Number.isSafeInteger(p.writer_epoch)||p.writer_epoch<1||!Number.isSafeInteger(g.grant_epoch)||g.grant_epoch<1)fail('permission-denied');}
+ function authorized(p,g,s){if(!keys(p,['paused','writer_epoch'])||!keys(g,['uid','enabled','role','worker_token','writer_epoch','grant_epoch'])||p.paused!==false||g.enabled!==true||g.uid!==s.uid||typeof g.worker_token!=='string'||!['staff','worker','staff_entry'].includes(g.role)||g.writer_epoch!==p.writer_epoch||!Number.isSafeInteger(p.writer_epoch)||p.writer_epoch<1||!Number.isSafeInteger(g.grant_epoch)||g.grant_epoch<1)fail('permission-denied');}
  function verified(r,c,s,e){if(!r||!c||!exact(r,c)||r.owner_uid!==s.uid||r.committed_revision!==1||!(r.committed_at instanceof Timestamp))fail('entry-conflict');const {owner_uid,committed_revision,committed_at,...saved}=r;if(!exact(saved,e))fail('entry-conflict');}
  async function send(body){
   if(!globalThis.navigator?.locks?.request)fail('exclusive-browser-lock-unavailable');

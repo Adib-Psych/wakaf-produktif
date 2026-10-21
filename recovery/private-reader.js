@@ -13,7 +13,7 @@ export function createPrivateReader({session,db,clear}){
   const paths=reader?['reader_policy/active','reader_grants/'+s.uid]:['entry_policy/active','entry_grants/'+s.uid];
   paths.forEach((path,i)=>{authorityOff.push(sdkSnapshot(doc(db,path),snap=>{
    if(!matches(t)||snap.metadata.fromCache)return;const d=snap.data();
-   const valid=reader?(i===0?d&&Object.keys(d).length===1&&d.reader_epoch===p.readerEpoch:d&&Object.keys(d).length===4&&d.uid===s.uid&&d.enabled===true&&d.reader_epoch===p.readerEpoch&&Array.isArray(d.collections)&&JSON.stringify(d.collections)===JSON.stringify(p.collections)):(d&&(i===0?d.paused===false&&d.writer_epoch===p.writerEpoch:d.uid===s.uid&&d.enabled===true&&['staff','staff_entry'].includes(d.role)&&d.role===p.role&&d.writer_epoch===p.writerEpoch&&d.grant_epoch===p.grantEpoch));
+   const valid=reader?(i===0?d&&Object.keys(d).length===1&&d.reader_epoch===p.readerEpoch:d&&Object.keys(d).length===4&&d.uid===s.uid&&d.enabled===true&&d.reader_epoch===p.readerEpoch&&Array.isArray(d.collections)&&JSON.stringify(d.collections)===JSON.stringify(p.collections)):(d&&(i===0?Object.keys(d).length===2&&Object.keys(d).every(k=>['paused','writer_epoch'].includes(k))&&d.paused===false&&Number.isSafeInteger(d.writer_epoch)&&d.writer_epoch===p.writerEpoch:Object.keys(d).length===6&&Object.keys(d).every(k=>['uid','enabled','role','worker_token','writer_epoch','grant_epoch'].includes(k))&&d.uid===s.uid&&d.enabled===true&&typeof d.worker_token==='string'&&['staff','staff_entry'].includes(d.role)&&d.role===p.role&&Number.isSafeInteger(d.writer_epoch)&&Number.isSafeInteger(d.grant_epoch)&&d.writer_epoch===p.writerEpoch&&d.grant_epoch===p.grantEpoch));
    if(!valid)stop();
   },()=>{if(matches(t))stop();}));});
  }

@@ -101,13 +101,13 @@ service cloud.firestore { match /databases/{database}/documents {
  function nextHead(d){let h=getAfter(headPath(d.operation)).data;return h.revision==d.revision && h.command_id==d.operation.command_id && h.owner_uid==request.auth.uid && h.body==d.operation.body;}
  match /operation_policy/{kind}{allow get:if request.auth!=null;allow list,write:if false;}
  match /operation_events/{cid}{
-  allow get:if live() && (grant().role=='staff' || !exists(/databases/$(database)/documents/operation_events/$(cid)) || resource.data.owner_uid==request.auth.uid);
+  allow get:if live() && grant().role!='staff_entry' && (grant().role=='staff' || !exists(/databases/$(database)/documents/operation_events/$(cid)) || resource.data.owner_uid==request.auth.uid);
   allow list:if live() && grant().role=='staff';
   allow create:if opRow(request.resource.data,cid) && !exists(/databases/$(database)/documents/operation_receipts/$(cid)) && getAfter(/databases/$(database)/documents/operation_receipts/$(cid)).data==request.resource.data && nextHead(request.resource.data);
   allow update,delete:if false;
  }
  match /operation_receipts/{cid}{
-  allow get:if live() && (!exists(/databases/$(database)/documents/operation_receipts/$(cid)) || resource.data.owner_uid==request.auth.uid || grant().role=='staff');
+  allow get:if live() && grant().role!='staff_entry' && (!exists(/databases/$(database)/documents/operation_receipts/$(cid)) || resource.data.owner_uid==request.auth.uid || grant().role=='staff');
   allow create:if request.auth!=null && !exists(/databases/$(database)/documents/operation_events/$(cid)) && getAfter(/databases/$(database)/documents/operation_events/$(cid)).data==request.resource.data && opPayload(request.resource.data.operation);
   allow list,update,delete:if false;
  }
