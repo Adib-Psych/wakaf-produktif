@@ -143,5 +143,24 @@ service cloud.firestore { match /databases/{database}/documents {
  match /reader_policy/active {allow get:if request.auth!=null;allow list,write:if false;}
  match /reader_grants/{uid} {allow get:if request.auth!=null && request.auth.uid==uid;allow list,write:if false;}
  match /{collection}/{id} {allow read:if collection in ["upah","cashbook","opt_observations","panen_data","panen_lots","panen_sampling","distribusi_pic","sop_master","worker_defs_custom","milestones","invoices","worker_tokens","workers","sop_status","laporan","operation_events","operation_receipts","report_heads","cabut_state","entry_receipts"] && allowedPrivateRead(collection);allow write:if false;}
+
+ // Separate unverified device intake. No private history or financial authority.
+ function devicePolicy(){return get(/databases/$(database)/documents/device_entry_policy/active).data;}
+ function deviceAuth(){return request.auth!=null && request.auth.token.firebase.sign_in_provider=='anonymous';}
+ function deviceLive(){let p=devicePolicy();return deviceAuth() && p.keys().hasOnly(['enabled','epoch','roster_version']) && p.keys().size()==3 && p.enabled==true && p.epoch is int && p.epoch>0 && p.roster_version is string;}
+ function deviceValid(d,rid){let p=devicePolicy();let roster=get(/databases/$(database)/documents/entry_roster/active).data;let b=d.submitted_body;return deviceLive() && d.keys().toSet()==['contract_version','report_id','command_id','writer_epoch','roster_version','submitted_body','owner_uid','committed_revision','committed_at'].toSet() && d.keys().size()==9 && d.contract_version is int && d.contract_version==1 && d.writer_epoch is int && d.committed_revision is int && d.report_id==rid && d.command_id==rid && d.owner_uid==request.auth.uid && d.writer_epoch==p.epoch && d.roster_version==p.roster_version && roster.version==p.roster_version && b.pelapor in roster.workers && roster.workers[b.pelapor].active==true && roster.workers[b.pelapor].retired==false && d.committed_revision==1 && d.committed_at==request.time && b.id==rid && b.detail is string && b.detail.size()<=100000 && body(b,{'role':'staff'});}
+ match /device_entry_policy/active {allow get:if deviceAuth();allow list,write:if false;}
+ match /entry_roster/active {allow get:if deviceLive();allow list,write:if false;}
+ match /device_reports/{rid}{
+  allow get:if deviceLive() && (!exists(/databases/$(database)/documents/device_reports/$(rid)) || resource.data.owner_uid==request.auth.uid);
+  allow list:if deviceLive() && resource.data.owner_uid==request.auth.uid;
+  allow create:if deviceValid(request.resource.data,rid) && !exists(/databases/$(database)/documents/device_receipts/$(rid)) && getAfter(/databases/$(database)/documents/device_receipts/$(rid)).data==request.resource.data;
+  allow update,delete:if false;
+ }
+ match /device_receipts/{rid}{
+  allow get:if deviceLive() && (!exists(/databases/$(database)/documents/device_receipts/$(rid)) || resource.data.owner_uid==request.auth.uid);
+  allow create:if deviceAuth() && !exists(/databases/$(database)/documents/device_reports/$(rid)) && getAfter(/databases/$(database)/documents/device_reports/$(rid)).data==request.resource.data;
+  allow list,update,delete:if false;
+ }
  match /{document=**}{allow read,write:if false;}
 }}
