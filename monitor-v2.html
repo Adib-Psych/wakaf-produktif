@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-report-entry="device">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monitor v2 — Wakaf Produktif Kebun Kopi Ngantang</title>
 <script>
+if(new URLSearchParams(location.search).get('entry')==='management'){document.documentElement.dataset.reportEntry='management';document.addEventListener('DOMContentLoaded',()=>{document.body.dataset.reportEntry='management';});}
 window.privateViewEpoch=0;
 function privateViewLater(fn,ms,...args){const epoch=window.privateViewEpoch,ticket=window.authorizedReports?.sessionTicket();return window.setTimeout(()=>{if(epoch!==window.privateViewEpoch)return;if(ticket&&!window.authorizedReports?.sessionMatches(ticket))return;fn(...args);},ms);}
 </script>
@@ -295,9 +296,18 @@ body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color
   .total-preview{background:var(--greenlt);padding:10px 12px;border-radius:8px;text-align:center;font-size:13px;color:var(--green);margin-top:6px}
   .total-preview strong{font-size:18px;color:var(--earth)}
 .freeze-tbl{max-height:440px;overflow:auto}.freeze-tbl thead th{position:sticky;top:0;z-index:2;background:var(--earth);color:#fff;box-shadow:0 1px 0 #ddd}
+
+body[data-report-entry="device"] [data-tier="wakif"],body[data-report-entry="device"] .sb-footer button{display:none!important}
+body[data-report-entry="device"] #log-tbody td:last-child,body[data-report-entry="device"] #panel-log th:last-child,body[data-report-entry="device"] #panel-log .table-wrap+p{display:none!important}
+body[data-report-entry="device"] .device-save-status{font-size:13px;color:#24543f;background:#e8f1ec;border-radius:7px;padding:10px 12px;margin-bottom:12px}
+body[data-report-entry="device"] #device-entry-recovery{padding:10px 12px;background:#fff1e8;color:#78350f;border-radius:7px;margin-bottom:12px}
+body[data-report-entry="device"] #device-entry-recovery[hidden]{display:none}
+body[data-report-entry="device"] #device-entry-recovery button,body[data-report-entry="device"] #entry-roster-retry{min-height:44px;padding:8px 14px;border:1px solid #2e604d;border-radius:7px;color:#203c34;background:white}
+body[data-report-entry="device"] .device-management{margin:20px 24px;font-size:12px}body[data-report-entry="device"] .device-management summary{min-height:44px;cursor:pointer}
+body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex;align-items:center}
 </style>
 </head>
-<body data-report-access="compact">
+<body data-report-access="compact" data-report-entry="device">
 
 <!-- ============ LOGIN OVERLAY ============ -->
 <div id="login-overlay">
@@ -558,7 +568,7 @@ body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color
             <div id="f-tgl-preview" style="font-size:12px;color:var(--moss);font-weight:700;margin-top:6px;letter-spacing:0.3px"></div>
           </div>
           <div class="field">
-            <label class="field-lbl">Kebun <span class="req">*</span> <small style="font-weight:400;color:var(--mute);font-size:10px">(boleh pilih >1 — parity PWA Worker)</small></label>
+            <label class="field-lbl">Kebun <span class="req">*</span> <small style="font-weight:400;color:var(--mute);font-size:10px">(boleh pilih lebih dari satu)</small></label>
             <div class="radio-row" id="form-bidang">
               <div class="radio-pill" data-val="1" onclick="setMultiKebun(this)">Kebun 1<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, kecil</small></div>
               <div class="radio-pill" data-val="2" onclick="setMultiKebun(this)">Kebun 2<br><small style="font-weight:400;color:var(--mute);font-size:10px">pinggir jalan, besar</small></div>
@@ -575,7 +585,7 @@ body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">2</span>Cuaca &amp; Curah Hujan <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px;margin-left:6px">📍 NGT ADJUST</span></div>
+        <div class="card-title"><span class="num">2</span>Cuaca &amp; Curah Hujan <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px;margin-left:6px">📍 Cuaca kebun</span></div>
         <div class="form-grid">
           <div class="field">
             <label class="field-lbl">Cuaca Pagi</label>
@@ -2785,7 +2795,7 @@ body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color
           </div>
         </div>
         <div style="margin-top:10px;font-size:11px;color:#c5d8d2;font-style:italic;line-height:1.7">
-          💡 Aktivitas dengan adjustment lokal: <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-style:normal;font-weight:700">📍 NGT ADJUST</span> = penyesuaian dari SOP nasional (mis. dolomit +25%) ·
+          💡 Aktivitas dengan adjustment lokal: <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-style:normal;font-weight:700">📍 Cuaca kebun</span> = penyesuaian dari SOP nasional (mis. dolomit +25%) ·
           <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-style:normal;font-weight:700">🌱 PHASE 2 INJECT</span> = aktivitas BARU di luar SOP nasional, dari deep-dive global metodologi 8 Mei 2026 (biochar, cover crops Arachis).
         </div>
       </div>
@@ -14739,11 +14749,11 @@ const SOP_AKTIVITAS_PER_BULAN = {
     warna: 'sand',
     aktivitas: [
       {t:'Estimasi produksi formal (sampling 30 pohon — 10/Kebun)', sop:'Robusta Edisi 2 hal 218', prio:'wajib', siapa:'Tim Atas Pohon / Tim Bawah Pohon', lokal:'<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi <strong>648 mdpl = kelas S3 (marginal-atas)</strong> Robusta + Excelsa rootstock optimization legacy. Naikkan target setelah 2-3 musim observasi data aktual.'},
-      {t:'Pemupukan akhir MH PARTIAL (mitigation only) — SP-36 + KCl saja per RAB Final 9 Mei', sop:'BRIN tabel + RAB Final 9 Mei', prio:'wajib', siapa:'Tim Bawah Pohon (arahan Tim Atas Pohon)', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn):</strong><br>• SP-36: <strong>80 g/phn</strong> (P — energy transfer untuk pengisian biji)<br>• KCl: <strong>100 g/phn</strong> (K — kualitas biji + pembesaran cherry)<br>• ❌ Urea SKIP (N dorong vegetatif, ganggu fase reproduktif Mei)<br>• ❌ Kieserit + Dolomit DEFER ke Nov MH siklus 2027<br><br><strong>📊 Total 915 phn aktual (Mei 2026):</strong><br>SP-36 = 80g × 915 = <strong>~73 kg (2 sak 50kg)</strong><br>KCl = 100g × 915 = <strong>~92 kg (2 sak 50kg)</strong><br>Estimasi biaya: SP-36 Rp 480K + KCl Rp 760K = <strong>Rp 1,24 jt</strong> (per RAB Final item 1.2 + 1.3)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm. Tutup tanah setelah aplikasi.', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Wakif decision — Mei = mitigation panen-saving only, full SOP applied Nov MH siklus 2027. Sub-dose Wahab Jan-Mar (~14g/phn) sudah di-bridge nutrient gap. <strong>⚠️ Adaptive trigger:</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso) — pencucian risk tinggi kalau hujan deras.'},
-      {t:'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT (full processing via penggilingan + Bonsari)', sop:'Robusta Edisi 2 hal 222-246 + RAB Final 9 Mei', prio:'wajib', siapa:'Wakif + tim', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pulper manual CUT dari RAB. Processing via jasa penggilingan lokal (~Rp 1.500/kg green bean) + specialty lot ke Bonsari Coffee.'},
+      {t:'Pemupukan akhir MH PARTIAL (mitigation only) — SP-36 + KCl saja per RAB Final 9 Mei', sop:'BRIN tabel + RAB Final 9 Mei', prio:'wajib', siapa:'Tim Bawah Pohon (arahan Tim Atas Pohon)', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn):</strong><br>• SP-36: <strong>80 g/phn</strong> (P — energy transfer untuk pengisian biji)<br>• KCl: <strong>100 g/phn</strong> (K — kualitas biji + pembesaran cherry)<br>• ❌ Urea SKIP (N dorong vegetatif, ganggu fase reproduktif Mei)<br>• ❌ Kieserit + Dolomit DEFER ke Nov MH siklus 2027<br><br><strong>📊 Total 915 phn aktual (Mei 2026):</strong><br>SP-36 = 80g × 915 = <strong>~73 kg (2 sak 50kg)</strong><br>KCl = 100g × 915 = <strong>~92 kg (2 sak 50kg)</strong><br>Estimasi biaya: SP-36 Rp 480K + KCl Rp 760K = <strong>Rp 1,24 jt</strong> (per RAB Final item 1.2 + 1.3)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm. Tutup tanah setelah aplikasi.', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> Wakif decision — Mei = mitigation panen-saving only, full SOP applied Nov MH siklus 2027. Sub-dose Wahab Jan-Mar (~14g/phn) sudah di-bridge nutrient gap. <strong>⚠️ Adaptive trigger:</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso) — pencucian risk tinggi kalau hujan deras.'},
+      {t:'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT (full processing via penggilingan + Bonsari)', sop:'Robusta Edisi 2 hal 222-246 + RAB Final 9 Mei', prio:'wajib', siapa:'Wakif + tim', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> Pulper manual CUT dari RAB. Processing via jasa penggilingan lokal (~Rp 1.500/kg green bean) + specialty lot ke Bonsari Coffee.'},
       {t:'Konfirmasi processing partner per lot (Bonsari/penggilingan lokal)', sop:'Q12 — Klarifikasi 8 Mei', prio:'wajib', siapa:'Wakif', lokal:'<strong>📍 Hybrid model:</strong> Specialty lot (premium) → Bonsari Coffee. Bulk → penggilingan lokal Pujon ~Rp 1.500/kg.'},
-      {t:'Pasang Brocap pilot di Kebun 4 (5 unit) — baseline monitoring', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Tim Bawah Pohon', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> Pilot 5 unit Kebun 4 saja (Rumah Wakif, ~10-15 pohon). Full deploy 50 unit Kebun 1-3 pindah ke <strong>Nov-Des 2026</strong> (4 bln post-panen, optimal per jurnal).'},
-      {t:'Moisture meter — DEFER ke Bonsari', sop:'SNI 01-2907-2008 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Wakif', lokal:'<strong>📍 NGT ADJUST 9 Mei:</strong> CUT dari RAB Siklus 2026. Pinjam akses moisture meter Bonsari atau anggaran tahun 2027.'},
+      {t:'Pasang Brocap pilot di Kebun 4 (5 unit) — baseline monitoring', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Tim Bawah Pohon', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> Pilot 5 unit Kebun 4 saja (Rumah Wakif, ~10-15 pohon). Full deploy 50 unit Kebun 1-3 pindah ke <strong>Nov-Des 2026</strong> (4 bln post-panen, optimal per jurnal).'},
+      {t:'Moisture meter — DEFER ke Bonsari', sop:'SNI 01-2907-2008 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Wakif', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> CUT dari RAB Siklus 2026. Pinjam akses moisture meter Bonsari atau anggaran tahun 2027.'},
       {t:'OPT monitoring intensif menjelang panen', sop:'Robusta Edisi 2 hal 160', prio:'wajib', siapa:'Wakif / Tim Atas Pohon'},
       {t:'Pembongkaran pisang (jika MWC NU sudah panen)', sop:'Robusta Edisi 2 hal 56', prio:'wajib', siapa:'Tim Bawah Pohon'}
     ]
@@ -15184,7 +15194,7 @@ function showBulanAktif(n, year) {
     return `<div style="display:grid;grid-template-columns:30px 1fr 160px;gap:12px;padding:11px;border-bottom:1px solid #eee;align-items:start">
       <div style="width:24px;height:24px;background:var(--moss);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:2px">${i+1}</div>
       <div>
-        <div style="font-weight:600;color:var(--earth);font-size:13px;margin-bottom:3px">${a.t}${a.phase2 ? ' <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">🌱 PHASE 2 INJECT</span>' : (a.lokal ? ' <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">📍 NGT ADJUST</span>' : '')}${topikBadge}</div>
+        <div style="font-weight:600;color:var(--earth);font-size:13px;margin-bottom:3px">${a.t}${a.phase2 ? ' <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">🌱 PHASE 2 INJECT</span>' : (a.lokal ? ' <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">📍 Cuaca kebun</span>' : '')}${topikBadge}</div>
         <div style="font-size:10px;color:var(--mute)">📖 ${a.sop} · ${siapaDisplay}</div>
         ${dosisRow}
         ${lokalRow}
@@ -20352,11 +20362,13 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     from "https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js";
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
+  import {mountDeviceEntry} from './recovery/device-entry.js';
   import {createVersionedOperations} from './recovery/versioned-operations.js';
   import {createCorrectionEditor} from './recovery/correction-editor.js';
   import {createAuthorizedReports,reportForDisplay,mountReportSessionControls,validReportBody} from "./recovery/authorized-reports.js";
   import {createPrivateReader} from './recovery/private-reader.js';
   try {
+    if(document.documentElement.dataset.reportEntry==='device'){await mountDeviceEntry(firebaseConfig);}else{
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);
     const authorizedReports = createAuthorizedReports({app:fbApp,db});
@@ -21904,6 +21916,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
     });
 
     console.log('[Firebase] ✅ Dashboard listener active (Wakaf Ngantang)');
+    }
   } catch (e) {
     console.error('[Firebase] dashboard init failed:', e);
   }

@@ -1,6 +1,17 @@
 /* Entry-only recovery: no payment, deletion, publication or singleton write authority. */
 (function () {
   'use strict';
+  if(document.body?.dataset?.reportEntry==='device'||document.documentElement?.dataset?.reportEntry==='device'){
+    for(const type of ['click','change','input','submit'])document.addEventListener(type,event=>{
+      const target=event.target,panel=target.closest?.('[id^="panel-"]');if(!panel)return;
+      const action=target.closest('button,input,select,textarea,a,[onclick]');if(!action)return;
+      const code=action.getAttribute('onclick')||'';
+      const unsafe=/edit|delete|hapus|bayar|paid|publish|sync|merge|void|restore|resetAll/i.test(code);
+      const allowed=['panel-form','panel-log'].includes(panel.id)&&!unsafe;
+      if(!allowed){event.preventDefault();event.stopImmediatePropagation();if(type==='click')alert('Fungsi pengelolaan ini tetap dilindungi. Hanya entry laporan perangkat dan riwayat sendiri.');}
+    },true);
+    return;
+  }
   // Preserve incident evidence before listeners or historical defaults can normalize it.
   for (const cacheKey of ['wkkn_v2_laporan','wkkn_v2_cashbook','wkkn_v2_upah','wkkn_v2_milestones','wkkn_sop_status_v1','wkkn_v2_opt_obs','wkkn_panen_data_v1','wkkn_panen_lots_v1','wkkn_panen_sampling_v1']) {
     try {
