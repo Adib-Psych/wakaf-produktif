@@ -132,14 +132,28 @@ export function mountReportSessionControls(api,host=document.body){
  const status=document.createElement('p');status.id='report-permission-status';status.setAttribute('role','status');
  const login=document.createElement('button');login.type='button';login.id='report-signin';login.textContent='Masuk akun Google';
  const exit=document.createElement('button');exit.type='button';exit.id='report-signout';exit.textContent='Keluar akun laporan';
+ const compact=document.body.dataset?.reportAccess==='compact';
+ let detailCopy;
+ if(compact){
+  login.textContent='Masuk dengan Google';exit.textContent='Keluar';
+  const details=document.createElement('details');details.id='report-access-details';
+  const summary=document.createElement('summary');summary.textContent='Detail akses';
+  detailCopy=document.createElement('p');details.append(summary,detailCopy);
+  panel.append(status,login,exit,details);
+ }
+ function show(message){
+  if(!compact){status.textContent=message;return;}
+  detailCopy.textContent=message.startsWith('Paket perbaikan')?'Masuk dengan akun yang disahkan. Izin entry diperiksa server; pembayaran dan keuangan tetap ditahan. Draft/pending tetap pada pemilik semula.':message;
+  status.textContent=message.startsWith('Paket perbaikan')?'Masuk untuk mengisi laporan.':message.startsWith('Entry laporan staf diizinkan')?'Akun terhubung · entry laporan diizinkan.':message.startsWith('Baca privat:')?'Akun terhubung · akses baca.':message.startsWith('Akun belum')?'Izin akun belum tersedia. Hubungi pengelola.':message.startsWith('Masuk belum')?'Masuk belum berhasil. Coba lagi.':message.startsWith('Keluar provider')?'Keluar belum selesai; akses tetap ditahan.':message;
+ }
  let serial=0;
- api.observeSession(uid=>{const n=++serial;status.textContent=uid?'Memeriksa izin server…':'Paket perbaikan terpasang. Entry/pembayaran dijeda; masuk akun yang disahkan untuk memeriksa lingkup baca. Pending tetap di pemilik semula.';
-  if(uid)void api.readPermissionStatus().then(p=>{if(n!==serial)return;status.textContent=p.ownReports===true&&p.write===true?'Entry laporan staf diizinkan server untuk akun ini; daftar pekerja harus selesai terverifikasi. Riwayat/ekspor hanya laporan akun ini. Pembayaran, keuangan dan operasi lain tetap ditahan.':`Baca privat: ${p.collections.join(", ")}; hanya-baca. Entry/operasi mengikuti izin server terpisah; bayar/publikasi tidak tersedia.`;}).catch(()=>{if(n===serial){status.textContent='Akun belum memiliki izin baca yang disahkan atau entry sedang dijeda. Tidak ada grant otomatis; draft/pending tetap utuh.';}});
+ api.observeSession(uid=>{const n=++serial;if(compact){login.hidden=!!uid;exit.hidden=!uid;}show(uid?'Memeriksa izin server…':'Paket perbaikan terpasang. Entry/pembayaran dijeda; masuk akun yang disahkan untuk memeriksa lingkup baca. Pending tetap di pemilik semula.');
+  if(uid)void api.readPermissionStatus().then(p=>{if(n!==serial)return;show(p.ownReports===true&&p.write===true?'Entry laporan staf diizinkan server untuk akun ini; daftar pekerja harus selesai terverifikasi. Riwayat/ekspor hanya laporan akun ini. Pembayaran, keuangan dan operasi lain tetap ditahan.':`Baca privat: ${p.collections.join(", ")}; hanya-baca. Entry/operasi mengikuti izin server terpisah; bayar/publikasi tidak tersedia.`);}).catch(()=>{if(n===serial){show('Akun belum memiliki izin baca yang disahkan atau entry sedang dijeda. Tidak ada grant otomatis; draft/pending tetap utuh.');}});
  });
- login.onclick=()=>{void api.signInSession().catch(()=>{status.textContent='Masuk belum berhasil atau digantikan keluar akun. Gunakan alur provider; tidak ada perubahan izin.';});};
- exit.onclick=()=>{void api.signOutSession().catch(()=>{status.textContent='Keluar provider belum selesai; tampilan dan pengiriman tetap ditahan.';});};
+ login.onclick=()=>{void api.signInSession().catch(()=>{show('Masuk belum berhasil atau digantikan keluar akun. Gunakan alur provider; tidak ada perubahan izin.');});};
+ exit.onclick=()=>{void api.signOutSession().catch(()=>{show('Keluar provider belum selesai; tampilan dan pengiriman tetap ditahan.');});};
  panel.style.cssText='position:sticky;top:0;z-index:100000;padding:10px;background:#fff;color:#16362b;border:1px solid #769b89';
- panel.append(status,login,exit);host.prepend(panel);return panel;
+ if(!compact)panel.append(status,login,exit);host.prepend(panel);return panel;
 }
 // Display normalization must never mutate the receipt-bound body.
 export function reportForDisplay(value){

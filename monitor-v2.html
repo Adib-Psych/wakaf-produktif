@@ -55,6 +55,21 @@ function privateViewLater(fn,ms,...args){const epoch=window.privateViewEpoch,tic
   /* Recovery controls stay in normal flow: fixed mobile navigation must remain reachable. */
 #entry-recovery-banner{position:relative!important;z-index:1!important}
 #report-session-controls{position:relative!important;z-index:auto!important}
+body[data-report-access="compact"] #entry-recovery-banner{padding:0!important;border:0!important;background:transparent!important;color:var(--earth)!important;margin-bottom:14px}
+body[data-report-access="compact"] #report-session-controls{display:flex;align-items:center;flex-wrap:wrap;gap:8px 14px;padding:10px 12px!important;background:#e8f1ec!important;border:1px solid #a8c8bc!important;border-radius:8px;color:#203c34!important;font-size:13px}
+body[data-report-access="compact"] #report-permission-status{flex:1 1 230px;min-width:0;margin:0;line-height:1.4}
+body[data-report-access="compact"] #report-session-controls button{min-height:44px;min-width:44px;padding:8px 14px;border:1px solid #2e604d;border-radius:7px;font:600 13px/1.3 inherit;cursor:pointer;background:#2e604d;color:white}
+body[data-report-access="compact"] #report-session-controls #report-signout{background:transparent;color:#203c34}
+body[data-report-access="compact"] #report-session-controls [hidden]{display:none!important}
+body[data-report-access="compact"] #report-access-details{flex:0 1 auto;font-size:12px}
+body[data-report-access="compact"] #report-access-details[open]{flex-basis:100%}
+body[data-report-access="compact"] #entry-recovery-guidance{font-size:12px;padding:4px 12px;color:#435a50}
+body[data-report-access="compact"] #entry-recovery-guidance summary,body[data-report-access="compact"] #report-access-details summary{cursor:pointer;min-height:44px;display:flex;align-items:center;text-decoration:underline}
+body[data-report-access="compact"] #report-access-details p{max-width:70ch;overflow-wrap:break-word}
+body[data-report-access="compact"] #report-session-controls :focus-visible,body[data-report-access="compact"] #entry-recovery-guidance summary:focus-visible{outline:3px solid #235d8d;outline-offset:3px}
+body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color:#8c2519}
+@media(max-width:879px){body[data-report-access="compact"] #report-session-controls{gap:4px 10px}body[data-report-access="compact"] #report-permission-status{flex-basis:100%}body[data-report-access="compact"] #main-content>.content-wrap{padding-top:64px}}
+
 @media(max-width:879px){#entry-recovery-banner{padding-left:64px!important}}
 #sidebar{background:linear-gradient(180deg,var(--earth) 0%,#1a3030 100%);color:var(--cream);padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50;box-shadow:2px 0 12px rgba(0,0,0,.12)}
   .sb-header{padding:18px 16px 14px;border-bottom:1px solid rgba(168,200,188,.15)}
@@ -282,7 +297,7 @@ function privateViewLater(fn,ms,...args){const epoch=window.privateViewEpoch,tic
 .freeze-tbl{max-height:440px;overflow:auto}.freeze-tbl thead th{position:sticky;top:0;z-index:2;background:var(--earth);color:#fff;box-shadow:0 1px 0 #ddd}
 </style>
 </head>
-<body>
+<body data-report-access="compact">
 
 <!-- ============ LOGIN OVERLAY ============ -->
 <div id="login-overlay">
