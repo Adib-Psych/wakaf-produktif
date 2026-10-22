@@ -88,7 +88,14 @@
     banner.id = 'entry-recovery-banner';
     banner.style.cssText = 'position:sticky;top:0;z-index:99999;padding:12px;background:#fff1e8;color:#78350f;border:2px solid #c2410c';
     banner.textContent = 'MODE PEMULIHAN: baca, entry dan koreksi laporan berizin server. Keuangan, bayar, hapus dan publikasi dinonaktifkan. Data cache belum tentu cloud terkini. Antrian belum terkirim tetap disimpan di browser ini; jangan hapus data browser.';
-    document.body.prepend(banner);
+    if(document.body.dataset?.reportAccess==='compact'){
+      const guidance=document.createElement('details');guidance.id='entry-recovery-guidance';
+      const summary=document.createElement('summary');summary.textContent='Panduan laporan & antrian';
+      try{const count=pending().length;if(count){summary.textContent=count+' laporan belum dikonfirmasi — jangan hapus data browser';guidance.open=true;}}catch(e){summary.textContent='Antrian perlu diperiksa — jangan hapus data browser';guidance.open=true;}
+      const copy=document.createElement('p');copy.textContent=banner.textContent;
+      guidance.append(summary,copy);banner.textContent='';banner.append(guidance);
+      (document.querySelector('#main-content > .content-wrap')||document.body).prepend(banner);
+    }else document.body.prepend(banner);
   });
   // Capture before existing inline handlers can mutate cached state.
   for (const type of ['click', 'change', 'input', 'submit']) document.addEventListener(type, event => {
