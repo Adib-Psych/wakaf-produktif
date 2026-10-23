@@ -5,9 +5,9 @@
     for(const type of ['click','change','input','submit'])document.addEventListener(type,event=>{
       const target=event.target,panel=target.closest?.('[id^="panel-"]');if(!panel)return;
       const action=target.closest('button,input,select,textarea,a,[onclick]');if(!action)return;
-      const code=action.getAttribute('onclick')||'';
+      const code=action.getAttribute('onclick')||action.getAttribute('onchange')||action.getAttribute('oninput')||'';
       const unsafe=/edit|delete|hapus|bayar|paid|publish|sync|merge|void|restore|resetAll/i.test(code);
-      const allowed=['panel-form','panel-log'].includes(panel.id)&&!unsafe;
+      const readOnly=/^(render|show|close|toggle|nav|navigate|jump|print|generateRekapUpah|exportCSV|exportCashbookCSV|exportReconcileCSV|exportMilestonesJSON|runReconciliationAudit|_toggleBatchGroup)/.test(code.trim())||!code;const owner=window.dashboardReadModel?.ownerActive();const allowed=!unsafe&&(['panel-form','panel-log'].includes(panel.id)||(owner&&readOnly));
       if(!allowed){event.preventDefault();event.stopImmediatePropagation();if(type==='click')alert('Fungsi pengelolaan ini tetap dilindungi. Hanya entry laporan perangkat dan riwayat sendiri.');}
     },true);
     return;
