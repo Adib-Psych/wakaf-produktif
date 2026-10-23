@@ -5,9 +5,9 @@
     for(const type of ['click','change','input','submit'])document.addEventListener(type,event=>{
       const target=event.target,panel=target.closest?.('[id^="panel-"]');if(!panel)return;
       const action=target.closest('button,input,select,textarea,a,[onclick]');if(!action)return;
-      const code=action.getAttribute('onclick')||'';
+      const code=action.getAttribute('onclick')||action.getAttribute('onchange')||action.getAttribute('oninput')||'';
       const unsafe=/edit|delete|hapus|bayar|paid|publish|sync|merge|void|restore|resetAll/i.test(code);
-      const allowed=['panel-form','panel-log'].includes(panel.id)&&!unsafe;
+      const readHandlers=new Set(['renderLog','renderUpahTable','renderCashbook','renderMilestonesTable','renderWorkersTab','renderLateEntryQueue','renderReconcileMatrix','renderPanenSamplingChart','renderPanenSamplingTable','showBulanAktif','showLaporanRelatedModal','showPhaseDetail','closeLaporanRelatedModal','closeOptDetailModal','closeAuditModal','navSOPYear','navigateToMonthInKalender','jumpToLogHarianFiltered','printKajian','generateRekapUpah','exportCSV','exportCashbookCSV','exportReconcileCSV','exportMilestonesJSON','runReconciliationAudit','_toggleBatchGroup','toggleRABKat','toggleSamplingChart','setSOPWheelView']);const handler=code.trim().match(/^([A-Za-z_$][\w$]*)\s*\(/)?.[1];const readOnly=!code||readHandlers.has(handler);const owner=window.dashboardReadModel?.ownerActive();const allowed=!unsafe&&(panel.id==='panel-form'||(owner?readOnly:panel.id==='panel-log'));
       if(!allowed){event.preventDefault();event.stopImmediatePropagation();if(type==='click')alert('Fungsi pengelolaan ini tetap dilindungi. Hanya entry laporan perangkat dan riwayat sendiri.');}
     },true);
     return;
