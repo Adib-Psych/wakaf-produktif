@@ -20363,7 +20363,8 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
   import {mountDeviceEntry} from './recovery/device-entry.js';
-  import {mountOwnerDashboard} from './recovery/owner-dashboard.js';
+  import {mountOperationalDashboard} from './recovery/operational-dashboard.js';
+  // Private account management remains optional at ?entry=management.
   import {createVersionedOperations} from './recovery/versioned-operations.js';
   import {createCorrectionEditor} from './recovery/correction-editor.js';
   import {createAuthorizedReports,reportForDisplay,mountReportSessionControls,validReportBody} from "./recovery/authorized-reports.js";
@@ -20490,7 +20491,8 @@ window.applyOwnerSnapshot=v=>{
  for(const name of ['renderLog','renderDashboard','renderUpahTable','renderUpahSummary','renderCashbookTab','renderCashbook','renderRAB','renderOptObsTable','renderOPT','renderPanen','renderPanenLots','renderPanenSampling','renderMilestonesTable','renderMilestonesSummary','renderSOPKalender','renderSOPCompliance','renderWorkersTab','renderDistribusi','renderCabutLog','renderPupuk','renderKasbon','renderBenchmarkLog','renderUpahDup','renderUpahNoCashbook','renderUpahGap','renderLateEntryQueue','populatePelaporSelects'])try{window[name]?.();}catch(e){window.ownerRenderErrors.push({name,error:e.message});console.warn('Panel belum dapat dirender:',name);}
 };
 
-await mountDeviceEntry(firebaseConfig);await mountOwnerDashboard(firebaseConfig);
+await mountOperationalDashboard(firebaseConfig);await mountDeviceEntry(firebaseConfig);
+// Returning default Google session is not required or read on the ordinary operational route.
 }else{
     const fbApp = initializeApp(firebaseConfig);
     const db = getFirestore(fbApp);

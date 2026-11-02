@@ -162,5 +162,8 @@ service cloud.firestore { match /databases/{database}/documents {
   allow create:if deviceAuth() && !exists(/databases/$(database)/documents/device_reports/$(rid)) && getAfter(/databases/$(database)/documents/device_reports/$(rid)).data==request.resource.data;
   allow list,update,delete:if false;
  }
+ // Minimal operational derivative, produced only by trusted publisher. Never raw records.
+ function operationalValid(d){return d.keys().hasOnly(['version','captured_at','freshness','rows','total']) && d.keys().size()==5 && d.version==1 && d.captured_at is string && d.freshness=='bounded-snapshot' && d.rows is list && d.total is int && d.total==d.rows.size();}
+ match /operational_snapshot/active {allow get:if operationalValid(resource.data);allow list,write:if false;}
  match /{document=**}{allow read,write:if false;}
 }}
