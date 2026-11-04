@@ -1,0 +1,23 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+// Execute the shipped mount/handler, not an extracted/reimplemented export function.
+async function harness(){
+ const events={},winEvents={},downloads=[],alerts=[];let boxes=[],loads=0,nextLoad,afterApply;
+ const source=fs.readFileSync(process.env.WAGE_EXPORT_SOURCE||path.join(__dirname,'../recovery/restored-dashboard.js'),'utf8').replace(/^import .*;\s*$/gm,'').replace(/export /g,'');
+ const node=()=>({style:{},dataset:{},children:[],prepend(){},append(){},setAttribute(){},querySelector(){return null;},querySelectorAll(){return [];},replaceChildren(){},addEventListener(){}});
+ const document={readyState:'complete',body:node(),createElement:tag=>tag==='a'?{click(){downloads.push(blobs.get(this.href));}}:node(),createTextNode:x=>x,querySelector:s=>s==='.content-wrap'?node():null,getElementById:id=>id==='tabs'?node():null,querySelectorAll:s=>s==='.upah-check'?boxes:s==='.upah-check:checked'?boxes.filter(x=>x.checked):[],addEventListener:(t,fn)=>events[t]=fn};
+ const wages=[{id:'one',tgl:'2000-01-02',pelapor:'SYNTHETIC',aktivitas:'lain',model:'harian',qty:1,tarif:120,status:'belum'},{id:'two',tgl:'2000-01-03',pelapor:'SYNTHETIC',aktivitas:'lain',model:'harian',qty:2,tarif:130,status:'belum'}];
+ const value=()=>({reports:[],upah:structuredClone(wages),cashbook:[],sop:[],sopStatus:[]});let blobs=new Map(),seq=0;
+ const window={normalizeOwnerReport:x=>x,spreadsheetCSVCell:x=>'"'+String(x??'').replaceAll('"','""')+'"',clearOwnerSnapshot(){boxes=[];},applyOwnerSnapshot(v){boxes=(v.upah||[]).map(x=>({dataset:{id:x.id},checked:false,matches:s=>s.split(',')[0]==='.upah-check'}));if(afterApply)queueMicrotask(afterApply);},addEventListener:(t,fn)=>winEvents[t]=fn};
+ const context={document,window,structuredClone,Date,Set,Error,Blob,URL:{createObjectURL:b=>{const id=String(++seq);blobs.set(id,b);return id;},revokeObjectURL(){}},alert:s=>alerts.push(s),setTimeout,queueMicrotask,setInterval(){},snapshotHealth:()=>({state:'unknown'})};
+ const mount=new vm.Script(source+'\nmountPrivateDashboard').runInNewContext(context);
+ await mount({}, {mode:'synthetic',load:async()=>{loads++;return nextLoad?nextLoad():value();}});
+ function change(id,checked){const b=boxes.find(x=>x.dataset.id===id);assert(b);b.checked=checked;events.change({target:b});}
+ return {window,downloads,alerts,wages,value,change,get loads(){return loads;},get boxes(){return boxes;},setLoad(fn){nextLoad=fn;},setAfterApply(fn){afterApply=fn;},async csv(){return downloads[0].text();}};
+}
+test('empty native wage selection refuses before revalidation and download',async()=>{const h=await harness();await h.window.generateRekapUpah();assert.equal(h.loads,1);assert.equal(h.downloads.length,0);});
+test('captured one-of-two selection survives expected clear/repaint with exact CSV',async()=>{const h=await harness();h.change('one',true);await h.window.generateRekapUpah();assert.equal(h.downloads.length,1);assert.equal(await h.csv(),'"ID","Tanggal","Pekerja","Aktivitas","Model","Qty","Tarif","Status tercatat"\n"one","2000-01-02","SYNTHETIC","lain","harian","1","120","belum"');});
+test('selected ID missing after delayed read refuses download',async()=>{const h=await harness();h.change('one',true);let release;h.setLoad(()=>new Promise(r=>release=r));const pending=h.window.generateRekapUpah();const v=h.value();v.upah=v.upah.filter(x=>x.id!=='one');release(v);await pending;assert.equal(h.downloads.length,0);});
+test('revoked delayed read refuses download',async()=>{const h=await harness();h.change('one',true);let refuse;h.setLoad(()=>new Promise((_,r)=>refuse=r));const pending=h.window.generateRekapUpah();refuse(Error('revoked'));await pending;assert.equal(h.downloads.length,0);assert.equal(h.window.reportReadSession.active,false);});
+test('changed native selection before asynchronous emission refuses rather than overrides intent',async()=>{const h=await harness();h.change('one',true);h.setAfterApply(()=>{h.change('one',false);h.change('two',true);});await h.window.generateRekapUpah();assert.equal(h.downloads.length,0);});
+test('lost selection before click refuses before revalidation',async()=>{const h=await harness();h.change('one',true);h.boxes.splice(0);await h.window.generateRekapUpah();assert.equal(h.loads,1);assert.equal(h.downloads.length,0);});
+test('lost captured checkbox on repaint refuses download',async()=>{const h=await harness();h.change('one',true);h.setAfterApply(()=>{h.boxes.splice(0,1);});await h.window.generateRekapUpah();assert.equal(h.downloads.length,0);});

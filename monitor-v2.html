@@ -2,10 +2,12 @@
 <html lang="id" data-report-entry="device">
 <head>
 <meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Monitor v2 — Wakaf Produktif Kebun Kopi Ngantang</title>
 <script>
 if(new URLSearchParams(location.search).get('entry')==='management'){document.documentElement.dataset.reportEntry='management';document.addEventListener('DOMContentLoaded',()=>{document.body.dataset.reportEntry='management';});}
+window.__ownerFragment=location.hash.startsWith('#owner=')?location.hash.slice(7):null;if(window.__ownerFragment)history.replaceState(null,'',location.pathname+location.search);
 window.privateViewEpoch=0;
 function privateViewLater(fn,ms,...args){const epoch=window.privateViewEpoch,ticket=window.authorizedReports?.sessionTicket();return window.setTimeout(()=>{if(epoch!==window.privateViewEpoch)return;if(ticket&&!window.authorizedReports?.sessionMatches(ticket))return;fn(...args);},ms);}
 </script>
@@ -69,9 +71,12 @@ body[data-report-access="compact"] #entry-recovery-guidance summary,body[data-re
 body[data-report-access="compact"] #report-access-details p{max-width:70ch;overflow-wrap:break-word}
 body[data-report-access="compact"] #report-session-controls :focus-visible,body[data-report-access="compact"] #entry-recovery-guidance summary:focus-visible{outline:3px solid #235d8d;outline-offset:3px}
 body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color:#8c2519}
+#owner-session-access{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+#owner-session-access>#report-session-controls{flex-basis:100%;min-width:0}
+#owner-session-access>a,#owner-session-access>button{display:inline-flex;align-items:center;min-height:44px;min-width:44px;max-width:100%;padding:8px 12px;border:1px solid #2e604d;border-radius:7px;background:white;color:#203c34;font-size:13px;line-height:1.3;white-space:normal}
 @media(max-width:879px){body[data-report-access="compact"] #report-session-controls{gap:4px 10px}body[data-report-access="compact"] #report-permission-status{flex-basis:100%}body[data-report-access="compact"] #main-content>.content-wrap{padding-top:64px}}
 
-@media(max-width:879px){#entry-recovery-banner{padding-left:64px!important}}
+@media(max-width:879px){#entry-recovery-banner{padding-left:64px!important}#operational-access{margin-top:64px!important}}
 #sidebar{background:linear-gradient(180deg,var(--earth) 0%,#1a3030 100%);color:var(--cream);padding:0;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:50;box-shadow:2px 0 12px rgba(0,0,0,.12)}
   .sb-header{padding:18px 16px 14px;border-bottom:1px solid rgba(168,200,188,.15)}
   .sb-brand{font-size:9px;font-weight:700;letter-spacing:1.8px;color:var(--sage);margin-bottom:5px}
@@ -126,6 +131,8 @@ body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color
      jadi 1200px menyisakan ±230px kosong di kiri-kanan dan memaksa kolom tabel berdesakan.
      box-sizing:border-box → padding 24px sudah termasuk di dalam angka ini. */
   .content-wrap{max-width:1600px;margin:0 auto;padding:18px 24px}
+  #filter-kategori{min-width:0;max-width:100%}
+  #restored-source-status{color:#626f6f!important}
   .panel{display:none}
   .panel.active{display:block}
 
@@ -170,6 +177,11 @@ body[data-report-access="compact"] #report-browser-support{flex-basis:100%;color
 
   /* KPI GRID */
   .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:10px}
+  /* Restored read: author display:grid must not override domain unavailability. */
+  body[data-restored-read="active"] .panel>[hidden],
+  body[data-restored-read="active"] #upah-summary-cards[hidden],
+  body[data-restored-read="active"] #distribusi-kpi[hidden],
+  body[data-restored-read="active"] #worker-cards-grid[hidden]{display:none!important}
   .kpi{background:#fff;border-radius:var(--r);padding:14px 16px;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);position:relative;overflow:hidden}
   /* Wide KPI row — for Burn Rate yang butuh nominal full Rupiah readable (locked 17 Mei 2026) */
   .kpi-wide{background:#fff;border-radius:var(--r);padding:16px 20px;box-shadow:var(--shadow);border:1px solid rgba(46,64,64,.08);margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap;border-top:3px solid var(--gold)}
@@ -4130,7 +4142,9 @@ function renderActivityChart() {
   // Group by date
   const byDate = {};
   STATE.laporan.forEach(d => {
-    byDate[d.tgl] = (byDate[d.tgl]||0) + (+d.pohon||1);
+    const known = (typeof d.pohon === 'number' || typeof d.pohon === 'string' && d.pohon.trim() !== '') && Number.isFinite(Number(d.pohon));
+    if (!Object.hasOwn(byDate, d.tgl)) byDate[d.tgl] = 0;
+    byDate[d.tgl] = !known || byDate[d.tgl] === null ? null : byDate[d.tgl] + Number(d.pohon);
   });
   const labels = Object.keys(byDate).sort();
   const values = labels.map(l => byDate[l]);
@@ -4374,7 +4388,7 @@ function renderLog() {
             if(d.src==='wakif_form_multi'&&!bits.some(b=>/multi/i.test(b))) bits.push('multi-aktivitas');
             return bits.length? '<span style="color:#5a7a6e">'+bits.slice(0,3).join(' · ')+'</span>' : '-';
           })()}</td>
-      <td><span class="pill ${d.compliance}">${d.compliance}</span></td>
+      <td><span class="pill ${d.compliance}">${d.compliance}</span>${d._provenance?'<small style="display:block">recorded-only · '+(['paired-original','paired-correction-chain','legacy-unreceipted'].includes(d._provenance.integrity)?d._provenance.integrity:'provenance-unavailable')+'</small>':''}</td>
       <td>${(d.alerts||[]).map(a=>'<span class="pill alert">'+a+'</span>').join('')||'<span style="color:#aaa">none</span>'}</td>
       <td style="white-space:nowrap">
         <button onclick="editLaporan('${d.id}')" style="background:var(--moss);color:#fff;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="Edit entry">✏️ Edit</button>
@@ -5368,13 +5382,21 @@ function generatePreview() {
   </div>`;
 }
 
+// Export-only transform: source values are never mutated. Actual finite numbers stay numeric.
+function spreadsheetCSVCell(value) {
+  if (typeof value === 'number' && Number.isFinite(value)) return String(value);
+  let text = String(value ?? '');
+  if (/^[\u0000-\u0020]*[=+@-]/.test(text) || /^[\t\r\n]/.test(text)) text = "'" + text;
+  return '"' + text.replace(/"/g, '""') + '"';
+}
+window.spreadsheetCSVCell = spreadsheetCSVCell;
 async function exportCSV() {
   const filter=['filter-pelapor','filter-bidang','filter-kategori','filter-log-archive'].map(id=>document.getElementById(id)?.value||'');
   try{return await window.privateReader.exportRead(['laporan','report_heads'],fresh=>{
   if(JSON.stringify(filter)!==JSON.stringify(['filter-pelapor','filter-bidang','filter-kategori','filter-log-archive'].map(id=>document.getElementById(id)?.value||'')))throw Error('filter-changed');
   const rows=window.decodePrivateReports(fresh.laporan,fresh.report_heads).filter(d=>(!filter[0]||d.pelapor===filter[0])&&(!filter[1]||d.bidang===filter[1]||d.kebun_list?.some(k=>String(k).replace(/[KkBb]/g,'')===filter[1]))&&(!filter[2]||d.kategori===filter[2])&&(filter[3]==='all'||filter[3]==='archived'?filter[3]==='all'||!!d.archived:!d.archived));
   if (!window.reportReadSession?.active) { alert('Masuk akun staf terlebih dahulu; ekspor laporan ditahan.'); return; }
-  let csv = 'Tanggal,Pelapor,Kebun,Kategori,Pohon,Detail,Compliance\n';
+  let csv = 'Tanggal,Pelapor,Kebun,Kategori,Pohon,Detail,Compliance,Provenance\n';
   rows.forEach(d => {
     // Multi-kebun support: prefer kebun (joined string 'K1+K3') > kebun_list > bidang fallback
     let kebunStr = '';
@@ -5384,7 +5406,7 @@ async function exportCSV() {
     else kebunStr = d.bidang ? `K${d.bidang}` : '';
     // Ensure detail is text (defensive against legacy [object Object])
     const detailStr = (typeof d.detail === 'object' && d.detail !== null) ? (d.catatan || '') : (d.detail || '');
-    csv += `${d.tgl},${d.pelapor},${kebunStr},${d.kategori},${d.pohon||0},"${detailStr.replace(/"/g,'""')}",${d.compliance}\n`;
+    csv += [d.tgl,d.pelapor,kebunStr,d.kategori,d.pohon??'',detailStr,d.compliance??'',d._provenance?d._provenance.status+' · '+d._provenance.integrity:'recorded-only · provenance-unavailable'].map(spreadsheetCSVCell).join(',')+'\n';
   });
   const blob = new Blob([csv], {type:'text/csv'});
   const a = document.createElement('a');
@@ -5398,6 +5420,8 @@ async function exportCSV() {
 function renderBudgetChart() {
   const ctx = document.getElementById('chart-budget');
   if (!ctx) return;
+  if(typeof Chart!=='undefined')Chart.getChart(ctx)?.destroy();
+  if(window.ownerCashbookKnown===false)return;
   // PRODUCTION: redirect ke RAB tab untuk data lengkap. Chart legacy tampilkan summary kategori basic dari Cashbook.
   let tk = 0, pupukOrg = 0, pupukAnorg = 0, opLain = 0;
   (typeof CASHBOOK !== 'undefined' ? CASHBOOK : []).forEach(t => {
@@ -17880,7 +17904,7 @@ async function exportCashbookCSV() {
   const active=fresh.cashbook.find(x=>x.id==='active');if(!active||!Array.isArray(active.data.data))throw Error('cashbook-shape');
   const cash=active.data.data;
   const headers = ['Tgl','Tipe','Keterangan','Kategori RAB','Masuk','Keluar','Source','NotaID'];
-  const rows = cash.map(t => [t.tgl,t.tipe,t.ket.replace(/"/g,'""'),t.kat||'',t.masuk,t.keluar,t.src,t.nota||''].map(v=>`"${v}"`).join(','));
+  const rows = cash.map(t => [t.tgl,t.tipe,t.ket,t.kat||'',t.masuk,t.keluar,t.src,t.nota||''].map(spreadsheetCSVCell).join(','));
   const csv = [headers.join(','), ...rows].join('\n');
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
@@ -20363,7 +20387,7 @@ Saya kirim ${validPhotos.length} foto gejala. Mohon analisa dan kasih hipotesis 
   import { firebaseConfig, COLLECTIONS } from "./firebase-config.js";
 
   import {mountDeviceEntry} from './recovery/device-entry.js';
-  import {mountOperationalDashboard} from './recovery/operational-dashboard.js';
+  import {mountRestoredDashboard} from './recovery/restored-dashboard.js';
   // Private account management remains optional at ?entry=management.
   import {createVersionedOperations} from './recovery/versioned-operations.js';
   import {createCorrectionEditor} from './recovery/correction-editor.js';
@@ -20475,23 +20499,25 @@ window.normalizeOwnerReport=function(data) {
 
 const ownerBaseline={workers:structuredClone(WORKER_DEFS),pic:structuredClone(DISTRIBUSI_DATA),sop:structuredClone(SOP_AKTIVITAS_PER_BULAN),pupuk:structuredClone(PUPUK_DATA)};
 window.clearOwnerSnapshot=()=>{
+ window.ownerCashbookKnown=false;
  window.privateViewEpoch++;STATE.laporan=[];UPAH_ITEMS=[];CASHBOOK=[];OPT_OBSERVATIONS=[];PANEN_DATA=[];PANEN_LOTS_DATA=[];PANEN_SAMPLING_DATA=[];MILESTONES=[];SOP_STATUS={};CABUT_DATA=[];BENCHMARK_DATA=[];KASBON_DATA=[];window.OWNER_INVOICES=[];WORKER_DEFS.splice(0,WORKER_DEFS.length,...structuredClone(ownerBaseline.workers));DISTRIBUSI_DATA=structuredClone(ownerBaseline.pic);PUPUK_DATA=structuredClone(ownerBaseline.pupuk);Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(k=>delete SOP_AKTIVITAS_PER_BULAN[k]);Object.assign(SOP_AKTIVITAS_PER_BULAN,structuredClone(ownerBaseline.sop));window.RECONCILE_MATRIX=[];
  if(typeof Chart!=='undefined')for(const chart of Object.values(Chart.instances||{}))try{chart.destroy();}catch(e){}
  document.querySelectorAll('[data-report-private-overlay],#entry-detail-modal').forEach(n=>n.remove());document.querySelectorAll('[id*=modal],[id*=lightbox]').forEach(n=>{if(n.id==='login-overlay')return;n.style.display='none';n.querySelectorAll('input,textarea').forEach(x=>x.value='');});
  for(const name of ['renderLog','renderDashboard','renderUpahTable','renderCashbookTab','renderPanen','renderPanenLots','renderPanenSampling','renderOPT','renderMilestonesTable','renderMilestonesSummary','renderCabutLog','renderKasbon','renderBenchmarkLog','renderDistribusi','renderWorkersTab','renderSOPKalender','renderSOPCompliance','renderPupuk','renderUpahGap','renderUpahDup','renderUpahNoCashbook','renderRAB','renderCashbook','renderReconcileMatrix','renderLateEntryQueue','populatePelaporSelects'])try{window[name]?.();}catch(e){}
 };
 window.applyOwnerSnapshot=v=>{
+ window.ownerCashbookKnown=Array.isArray(v.cashbook);
  window.ownerRenderErrors=[];
  document.querySelectorAll('[data-tier="wakif"]').forEach(n=>n.style.display='');
- window.privateViewEpoch++;STATE.laporan=structuredClone(v.reports.filter(x=>x.kategori!=='cabut_borongan'));
+ window.privateViewEpoch++;STATE.laporan=structuredClone(v.reports);
  UPAH_ITEMS=structuredClone(v.upah||[]);CASHBOOK=structuredClone(v.cashbook||[]);OPT_OBSERVATIONS=structuredClone(v.opt||[]);PANEN_DATA=structuredClone(v.panen||[]);PANEN_LOTS_DATA=structuredClone(v.lots||[]);PANEN_SAMPLING_DATA=structuredClone(v.sampling||[]);MILESTONES=structuredClone(v.milestones||[]);SOP_STATUS=structuredClone(v.sopStatus||{});CABUT_DATA=structuredClone(v.cabut||[]);BENCHMARK_DATA=structuredClone(v.benchmark||[]);KASBON_DATA=structuredClone(v.kasbon||[]);window.OWNER_INVOICES=structuredClone(v.invoices);
- if(v.pupuk)PUPUK_DATA=structuredClone(v.pupuk);if(v.pic)DISTRIBUSI_DATA=structuredClone(v.pic);
+ PUPUK_DATA=structuredClone(v.pupuk||{});DISTRIBUSI_DATA=structuredClone(v.pic||[]);Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(k=>delete SOP_AKTIVITAS_PER_BULAN[k]);for(let m=1;m<=12;m++)SOP_AKTIVITAS_PER_BULAN[m]={fase:'Sumber belum tercakup',aktivitas:[]};
  if(v.sop){Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(k=>delete SOP_AKTIVITAS_PER_BULAN[k]);Object.assign(SOP_AKTIVITAS_PER_BULAN,structuredClone(v.sop.aktivitas_per_bulan));}
- if(v.workers)for(const w of v.workers){const i=WORKER_DEFS.findIndex(x=>x.token===w.token);if(i<0)WORKER_DEFS.push(structuredClone(w));else WORKER_DEFS[i]=structuredClone(w);}
- for(const name of ['renderLog','renderDashboard','renderUpahTable','renderUpahSummary','renderCashbookTab','renderCashbook','renderRAB','renderOptObsTable','renderOPT','renderPanen','renderPanenLots','renderPanenSampling','renderMilestonesTable','renderMilestonesSummary','renderSOPKalender','renderSOPCompliance','renderWorkersTab','renderDistribusi','renderCabutLog','renderPupuk','renderKasbon','renderBenchmarkLog','renderUpahDup','renderUpahNoCashbook','renderUpahGap','renderLateEntryQueue','populatePelaporSelects'])try{window[name]?.();}catch(e){window.ownerRenderErrors.push({name,error:e.message});console.warn('Panel belum dapat dirender:',name);}
+ WORKER_DEFS.splice(0,WORKER_DEFS.length,...structuredClone(v.workers||[]));if(typeof rebuildNamaPekerja==='function')rebuildNamaPekerja();
+ for(const name of ['renderLog','renderDashboard','renderBudgetChart','renderUpahTable','renderUpahSummary','renderCashbookTab','renderCashbook','renderRAB','renderOptObsTable','renderOPT','renderPanen','renderPanenLots','renderPanenSampling','renderMilestonesTable','renderMilestonesSummary','renderSOPKalender','renderSOPCompliance','renderWorkersTab','renderDistribusi','renderCabutLog','renderPupuk','renderKasbon','renderBenchmarkLog','renderUpahDup','renderUpahNoCashbook','renderUpahGap','renderLateEntryQueue','populatePelaporSelects'])try{window[name]?.();}catch(e){window.ownerRenderErrors.push({name,error:e.message});console.warn('Panel belum dapat dirender:',name);}
 };
 
-await mountOperationalDashboard(firebaseConfig);await mountDeviceEntry(firebaseConfig);
+const restored=await mountRestoredDashboard(firebaseConfig);if(!restored?.privateMode)await mountDeviceEntry(firebaseConfig);
 // Returning default Google session is not required or read on the ordinary operational route.
 }else{
     const fbApp = initializeApp(firebaseConfig);
@@ -20585,7 +20611,7 @@ await mountOperationalDashboard(firebaseConfig);await mountDeviceEntry(firebaseC
           const input=field.querySelector('input:not([type=radio]):not([type=checkbox]),select,textarea');
           if(input)input.value=value;else field.querySelectorAll('.radio-pill').forEach(n=>n.classList.toggle('on',Array.isArray(value)?value.includes(n.textContent.trim()):value===n.textContent.trim()));
         }
-        nativeBaseline=collector();document.getElementById('correction-reason').value=view.pending?.reason||view.reason||'';correctionStatus('Draft akun dipulihkan; original tetap utuh.');
+        nativeBaseline=collector();document.getElementById('correction-reason').value=view.reason??view.pending?.reason??'';correctionStatus('Draft akun dipulihkan; original tetap utuh.');
       };apply();
     };
     window.editLaporan=async id=>{const n=correctionUiIntent;try{const view=await correctionEditor.open(id);if(n!==correctionUiIntent)return;if(view.base.schema_version!=='3.5')throw Error('Hanya laporan staff milik akun ini');paintCorrection(view,n);}catch(e){if(n===correctionUiIntent)correctionStatus('Tidak dibuka: '+e.message);}};
@@ -20635,7 +20661,7 @@ await mountOperationalDashboard(firebaseConfig);await mountDeviceEntry(firebaseC
        if(now.pohon!==''&&Number.isFinite(Number(now.pohon)))body.pohon=Number(now.pohon);
        if(now.r24!==''&&Number.isFinite(Number(now.r24)))body.rainfall_24h=Number(now.r24);
        if(now.r7!==''&&Number.isFinite(Number(now.r7)))body.rainfall_7d=Number(now.r7);
-       correctionEditor.edit(body);
+       correctionEditor.edit(body,document.getElementById('correction-reason').value);
       }catch(e){correctionStatus('Draft belum tersimpan: '+e.message);}
     });
     authorizedReports.observeSession(()=>{correctionUiIntent++;correctionEditor.invalidate();nativeBaseline=null;});
