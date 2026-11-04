@@ -1,6 +1,6 @@
 // Private read lifecycle only. Never grants writes, provisions identities, or uses durable caches.
 import {onSnapshot as sdkSnapshot,getDocFromServer,getDocsFromServer,collection,doc,query,where} from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-export const PRIVATE_COLLECTIONS=Object.freeze('upah cashbook opt_observations panen_data panen_lots panen_sampling distribusi_pic sop_master worker_defs_custom milestones invoices worker_tokens workers sop_status laporan operation_events operation_receipts report_heads cabut_state entry_receipts'.split(' '));
+export const PRIVATE_COLLECTIONS=Object.freeze('upah cashbook opt_observations panen_data panen_lots panen_sampling distribusi_pic sop_master worker_defs_custom milestones invoices worker_tokens workers sop_status laporan operation_events operation_receipts report_heads cabut_state entry_receipts device_reports device_receipts'.split(' '));
 export function createPrivateReader({session,db,clear}){
  let serial=0,scopes=new Set(),ready=false,loading=false,ownUid=null;const listeners=new Set(),timers=new Set(),waiters=new Set();let authorityOff=[],exportBusy=false;
  const collectionOf=r=>(r.path||r._query?.path?.canonicalString?.()||'').split('/')[0];
@@ -27,7 +27,7 @@ export function createPrivateReader({session,db,clear}){
   try{
    const t=ticket();if(!matches(t)||!Array.isArray(required)||new Set(required).size!==required.length||required.some(c=>!scopes.has(c)))throw Error('private-export-unavailable');
    const p=await session.readPermissionStatus();if(!matches(t)||required.some(c=>!p.collections.includes(c)))throw Error('private-export-unavailable');
-   const rows={};for(const c of required){const snap=await getDocsFromServer(scoped(collection(db,c)));if(!matches(t)||snap.metadata.fromCache||snap.metadata.hasPendingWrites)throw Error('private-export-not-server');rows[c]=snap.docs.map(d=>({id:d.id,data:d.data()}));}
+   const rows={};for(const c of required){if(c==='device_receipts'){if(!rows.device_reports)throw Error('device-reports-required');rows[c]=[];for(const r of rows.device_reports){const receipt=await getDocFromServer(doc(db,c,r.id));if(!matches(t)||receipt.metadata.fromCache||receipt.metadata.hasPendingWrites||!receipt.exists())throw Error('device-receipt-unavailable');rows[c].push({id:receipt.id,data:receipt.data()});}continue;}const snap=await getDocsFromServer(scoped(collection(db,c)));if(!matches(t)||snap.metadata.fromCache||snap.metadata.hasPendingWrites)throw Error('private-export-not-server');rows[c]=snap.docs.map(d=>({id:d.id,data:d.data()}));}
    const end=await session.readPermissionStatus();if(!matches(t)||JSON.stringify(end)!==JSON.stringify(p))throw Error('private-export-authority-changed');
    return await emit(rows);
   }finally{exportBusy=false;}

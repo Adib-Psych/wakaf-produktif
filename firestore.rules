@@ -136,9 +136,9 @@ service cloud.firestore { match /databases/{database}/documents {
    && g.keys().hasOnly(['uid','enabled','reader_epoch','collections']) && g.keys().size()==4
    && g.uid==request.auth.uid && g.enabled==true && g.enabled is bool
    && g.reader_epoch is int && g.reader_epoch==p.reader_epoch && g.collections is list
-   && g.collections.size()>0 && g.collections.size()<=20
+   && g.collections.size()>0 && g.collections.size()<=22
    && g.collections.toSet().size()==g.collections.size()
-   && g.collections.hasOnly(["upah","cashbook","opt_observations","panen_data","panen_lots","panen_sampling","distribusi_pic","sop_master","worker_defs_custom","milestones","invoices","worker_tokens","workers","sop_status","laporan","operation_events","operation_receipts","report_heads","cabut_state","entry_receipts"]) && collection in g.collections;
+   && g.collections.hasOnly(["upah","cashbook","opt_observations","panen_data","panen_lots","panen_sampling","distribusi_pic","sop_master","worker_defs_custom","milestones","invoices","worker_tokens","workers","sop_status","laporan","operation_events","operation_receipts","report_heads","cabut_state","entry_receipts","device_reports","device_receipts"]) && collection in g.collections;
  }
  match /reader_policy/active {allow get:if request.auth!=null;allow list,write:if false;}
  match /reader_grants/{uid} {allow get:if request.auth!=null && request.auth.uid==uid;allow list,write:if false;}
@@ -152,12 +152,14 @@ service cloud.firestore { match /databases/{database}/documents {
  match /device_entry_policy/active {allow get:if deviceAuth();allow list,write:if false;}
  match /entry_roster/active {allow get:if deviceLive();allow list,write:if false;}
  match /device_reports/{rid}{
+  allow get,list:if request.auth!=null && request.auth.token.firebase.sign_in_provider!='anonymous' && allowedPrivateRead('device_reports');
   allow get:if deviceLive() && (!exists(/databases/$(database)/documents/device_reports/$(rid)) || resource.data.owner_uid==request.auth.uid);
   allow list:if deviceLive() && resource.data.owner_uid==request.auth.uid;
   allow create:if deviceValid(request.resource.data,rid) && !exists(/databases/$(database)/documents/device_receipts/$(rid)) && getAfter(/databases/$(database)/documents/device_receipts/$(rid)).data==request.resource.data;
   allow update,delete:if false;
  }
  match /device_receipts/{rid}{
+  allow get:if request.auth!=null && request.auth.token.firebase.sign_in_provider!='anonymous' && allowedPrivateRead('device_receipts');
   allow get:if deviceLive() && (!exists(/databases/$(database)/documents/device_receipts/$(rid)) || resource.data.owner_uid==request.auth.uid);
   allow create:if deviceAuth() && !exists(/databases/$(database)/documents/device_reports/$(rid)) && getAfter(/databases/$(database)/documents/device_reports/$(rid)).data==request.resource.data;
   allow list,update,delete:if false;
