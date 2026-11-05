@@ -25,6 +25,8 @@ export async function mountOwnerSession(config){
  const reader=createPrivateReader({session,db,clear:()=>{revision++;model?.clear();}});
  document.body.dataset.reportAccess='compact';
  model=await mountPrivateDashboard(config,{mode:'authenticated-session',load:async()=>{const current=revision;const value=await readSessionSnapshot(reader);if(current!==revision)throw Error('Sesi berubah');return value;}});
+ // Fixed read-only destination; the fragment selects presentation, never grants access.
+ if(location.hash==='#anggaran')document.querySelector('.sb-tab[data-panel="anggaran"]')?.click();
  window.addEventListener('private-reader-ready',()=>void model.refresh());
  if(reader.allowed('laporan'))await model.refresh();
  const refresh=document.createElement('button');refresh.type='button';refresh.textContent='Muat ulang data privat';refresh.onclick=()=>void reader.refresh();host.append(refresh);
