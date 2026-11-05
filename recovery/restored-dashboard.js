@@ -44,5 +44,5 @@ export async function mountRestoredDashboard(config){
  if(window.__restorationAdapter)return mountPrivateDashboard(config,window.__restorationAdapter);
  if(window.__ownerFragment)return mountPrivateDashboard(config);
  if(new URLSearchParams(location.search).get('reader')==='owner')return (await import('./owner-session.js')).mountOwnerSession(config);
- const model=await mountOperationalDashboard(config);const link=document.createElement('a');link.href='?reader=owner';link.textContent='Baca detail pengelola (akun berizin)';document.getElementById('operational-access').append(link);return model;
+ const model=await mountOperationalDashboard(config);const link=document.createElement('a');link.href='?reader=owner#anggaran';link.textContent='Wakif · Upah Pekerja / detail pengelola (akun berizin)';document.getElementById('operational-access').append(link);return model;
 }
