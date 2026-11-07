@@ -2,14 +2,15 @@
    every operational value. No visual reordering, new status, or data substitutes. */
 :root {
   --earth: #432d38;
-  --moss: #74465f;
+  --moss: #5a9080; /* Existing semantic success consumers. */
+  --brand-plum: #74465f;
   --sage: #dfcbd7;
   --sand: #e4d9d2;
   --terra: #9b4f2e;
   --cream: #f8f4ef;
   --ink: #30282b;
   --mute: #70636a;
-  --cherry: #88435b;
+  --cherry: #c0392b; /* Existing danger/destructive consumers. */
   /* Preserve red/amber/green semantic states and grade colors. */
   --shadow: none;
   --shadow-soft: 0 2px 10px rgb(67 45 56 / 5%);
@@ -57,16 +58,16 @@ html, body {
 .sb-footer button { min-height: 44px; }
 #hamburger { width: 44px; height: 44px; box-shadow: none; border: 1px solid #775b6b; }
 .public-page-header { align-items: flex-start; gap: 20px; margin-bottom: 20px; padding-bottom: 18px; border-color: var(--harvest-line); }
-.public-page-eyebrow { color: var(--moss); letter-spacing: 1.3px; font-size: 10px; }
+.public-page-eyebrow { color: var(--brand-plum); letter-spacing: 1.3px; font-size: 10px; }
 .public-page-header h1 { font-size: clamp(24px, 2.2vw, 32px); letter-spacing: -.9px; line-height: 1.2; margin: 6px 0 8px; }
 #restored-source-status.public-source-status { color: #70636a !important; max-width: 85ch; }
-.public-entry-link { color: white; background: var(--moss); border-color: var(--moss); border-radius: 7px; padding: 11px 16px; }
+.public-entry-link { color: white; background: var(--brand-plum); border-color: var(--brand-plum); border-radius: 7px; padding: 11px 16px; }
 .public-entry-link:hover { color: white; background: var(--earth); }
 /* Keep the real freshness/status indicator's state-specific colors. */
 .public-source-status::before { background: #538269; }
 .card, .kpi, .kpi-wide { border: 1px solid var(--harvest-line); box-shadow: none; }
 .card { padding: var(--harvest-pad); margin-bottom: var(--harvest-gap); }
-.card-title { color: var(--moss); font-size: 12px; line-height: 1.5; letter-spacing: .5px; font-weight: 750; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.card-title { color: var(--brand-plum); font-size: 12px; line-height: 1.5; letter-spacing: .5px; font-weight: 750; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
 .card-title .num { width: 26px; height: 26px; min-width: 26px; font-size: 11px; border-radius: 6px; background: #ede1e8; color: #693d56; }
 .kpi-grid { gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: var(--harvest-gap); }
 .kpi { padding: 18px 16px; min-width: 0; border-radius: 8px; }
@@ -84,7 +85,7 @@ html, body {
 .harvest-eyebrow { color: #74465f; font-size: 10px; font-weight: 750; letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 6px; }
 .harvest-intro h2 { color: #432d38; font-size: clamp(22px, 2.3vw, 29px); font-weight: 750; letter-spacing: -.75px; line-height: 1.2; }
 .harvest-intro-note { color: #6a4337; font-size: 13px; line-height: 1.65; padding: 8px 0 8px 22px; border-left: 1px solid #d5b9c7; max-width: 65ch; }
-#panel-dashboard .harvest-summary-card { border-top: 3px solid var(--moss); background: #fffcfa; }
+#panel-dashboard .harvest-summary-card { border-top: 3px solid var(--brand-plum); background: #fffcfa; }
 .harvest-summary-card > .card-title { font-size: 13px; letter-spacing: .35px; }
 /* Style the existing renderer, not a copied chart or invented harvest metric. */
 #dash-panen-summary > div:nth-child(2) { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px !important; }
@@ -107,12 +108,12 @@ button { cursor: pointer; }
 a[href], a[onclick] { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; max-width: 100%; overflow-wrap: anywhere; }
 input:not([type="checkbox"]):not([type="radio"]), select, textarea { min-width: 0; max-width: 100%; }
 .btn { font-size: 13px; letter-spacing: 0; padding: 10px 16px; }
-.btn-primary { background: var(--moss); }
+.btn-primary { background: var(--brand-plum); }
 .btn-secondary { color: var(--earth); background: #fffaf6; border-color: #d5becd; }
 .radio-row { gap: 8px; }
 .radio-pill { border-color: #d6cbd1; border-radius: 7px; padding: 10px 12px; line-height: 1.4; font-size: 13px; }
 body[data-report-entry] .radio-pill { display: inline-flex; align-items: center; }
-.radio-pill.on { background: var(--moss) !important; border-color: var(--moss) !important; color: #fff !important; }
+.radio-pill.on { background: var(--brand-plum) !important; border-color: var(--brand-plum) !important; color: #fff !important; }
 .field { min-width: 0; }
 .field-lbl { font-size: 12px; line-height: 1.55; letter-spacing: 0; }
 .field :is(input, select, textarea) { border-color: #cfc0c9; font-size: 14px; line-height: 1.5; }
@@ -144,11 +145,11 @@ tr:nth-child(even) td { background: #faf7f9; }
 #panen-cumulative-kg { font-size: clamp(36px, 4vw, 52px) !important; font-variant-numeric: tabular-nums; letter-spacing: -1.5px; }
 #panel-panen > .card:has(> #panen-kpi-grid) { padding: 0; border: 0; background: transparent; }
 #panen-kpi-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); margin-bottom: 0; }
-#panel-panen .harvest-entry-card, #panel-panen .harvest-sort-card { background: #fffdfb !important; border: 1px solid #d7c1ce !important; border-top: 3px solid var(--moss) !important; }
+#panel-panen .harvest-entry-card, #panel-panen .harvest-sort-card { background: #fffdfb !important; border: 1px solid #d7c1ce !important; border-top: 3px solid var(--brand-plum) !important; }
 #panel-panen .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 16px; align-items: start; }
 #panel-panen .field :is(input:not([type="hidden"]), select, textarea) { width: 100%; }
 .harvest-sort-card > p, .harvest-pipeline-card > p { font-size: 12px !important; line-height: 1.65; max-width: 110ch; }
-#sortir5-mass-balance { background: #f5edf2 !important; border: 1px solid #d8c0ce !important; padding: 14px 16px !important; }
+#sortir5-mass-balance { padding: 14px 16px !important; }
 #panen-pipeline-funnel { min-width: 0; max-width: 100%; overflow-x: auto; }
 #panen-pipeline-funnel > * { min-width: 0; }
 /* Renderer may replace the old seven-cell funnel with a real matrix table. */
@@ -162,12 +163,12 @@ tr:nth-child(even) td { background: #faf7f9; }
 .harvest-batch-card th:nth-child(6), .harvest-batch-card th:nth-child(7) { min-width: 125px; }
 #panel-panen details > summary { align-content: center; line-height: 1.5; }
 /* Shared entry surface; Google mark and all account/queue states stay original. */
-#panel-form .entry-account-card { background: #faf5f8; border-color: #ddcbd6; border-top-color: var(--moss); color: var(--earth); margin-bottom: 16px; box-shadow: none; }
+#panel-form .entry-account-card { background: #faf5f8; border-color: #ddcbd6; border-top-color: var(--brand-plum); color: var(--earth); margin-bottom: 16px; box-shadow: none; }
 #panel-form .entry-account-card #device-entry-account-title { color: var(--earth); }
 #panel-form .entry-account-card .entry-account-note { color: var(--mute); }
 #panel-form .entry-account-card .entry-account-signout { color: var(--earth); border-color: #d5becd; }
 #panel-form .entry-account-card .device-save-status { color: #65545e; border-top-color: var(--harvest-line); }
-#panel-form .entry-account-card .entry-google-button:hover { background: #f5edf2; border-color: var(--moss); }
+#panel-form .entry-account-card .entry-google-button:hover { background: #f5edf2; border-color: var(--brand-plum); }
 #panel-form .card { padding: var(--harvest-pad); }
 #panel-form .form-grid { gap: 14px 16px; }
 #panel-form #form-bidang .radio-pill { font-size: 13px; }
@@ -175,11 +176,11 @@ tr:nth-child(even) td { background: #faf7f9; }
 #form-bidang .radio-pill.on small { color: #fff !important; }
 #panel-form .rainfall-grid { background: #faf3eb !important; border-color: #e4d3c1 !important; }
 #panel-form #activity-detail-form .form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-#panel-form button[onclick="addExtraKategori()"] { color: var(--moss) !important; background: #faf5f8 !important; border-color: #ba9bac !important; }
+#panel-form button[onclick="addExtraKategori()"] { color: var(--brand-plum) !important; background: #faf5f8 !important; border-color: #ba9bac !important; }
 .form-hero-banner .hero-dismiss-btn { width: 44px; height: 44px; }
 .form-hero-restore a { display: inline-block; min-height: 44px; padding: 10px 0; }
 body[data-report-access="compact"] #report-session-controls { background: #f5edf2 !important; border-color: #d7c1ce !important; color: var(--earth) !important; }
-body[data-report-access="compact"] #report-session-controls button { background: var(--moss); border-color: var(--moss); }
+body[data-report-access="compact"] #report-session-controls button { background: var(--brand-plum); border-color: var(--brand-plum); }
 body[data-report-access="compact"] #report-session-controls #report-signout { color: var(--earth); }
 #owner-session-access > a, #owner-session-access > button { color: var(--earth); border-color: #d7c1ce; }
 @media (min-width: 1200px) {
