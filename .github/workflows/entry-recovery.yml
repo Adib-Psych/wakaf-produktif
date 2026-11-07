@@ -39,3 +39,4 @@ jobs:
           recovery/node_modules/.bin/playwright install --with-deps chromium
           CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-held-release.cjs
           CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-worker-upgrade.cjs
+          CHROME_PATH=$(node tests/browser-path.cjs) node --test tests/account-session-runtime.browser.cjs

@@ -22,6 +22,13 @@ Updated: 7 November 2026. Active short handover; historical registers are eviden
 - Owner-approved Musim Panen direction: plum/coffee/clay styling, compact mosaic, existing harvest summary emphasized, harvest entry and log proportions aligned. Concept sample values/filters/charts are not installed. Only presentation markup and a new stylesheet change; every existing script and control contract stays identical. See [preservation and release scope](HARVEST-PRESENTATION.md).
 - Candidate: 347 offline regressions pass; same-fixture comparison preserves data, all 21 navigation destinations, 22 generated category templates, charts and report/selected-wage CSV. Two exact presentation deltas are documented rather than disguised as a raw strict-comparison pass. Populated 63-state scan and ten-width public-read/focus/hidden-state checks pass. Real Google login/staff ACK and original Safari acceptance remain separate outstanding checks.
 
+## Account/session repair
+
+- Observer-backed account identity is always available in the public header, with expandable email, entry readiness, switch-account and signout. The form mirrors identity separately from report/ACK status.
+- Google identity and entry permission are separate: denied/unavailable entry does not imply signed out. Popup refusal preserves an existing session; fixed allowlisted diagnostics replace generic errors. Failed signout holds entry explicitly. Stale observer/refresh completions cannot restore superseded readiness or overwrite a newer draft.
+- Existing queue, envelope, paired receipt/ACK, draft ownership and backend authorization checks are preserved; no grants, policies, Rules or business data change. See [scope and limits](SESSION-STATUS.md).
+- Genuine Google completion in the owner's browser and actual staff submission ACK remain unverified; synthetic callback tests do not claim those outcomes.
+
 ## Verification and outstanding activation
 
 - Candidate: 335 offline regressions passed; configured-source public/Google Rules emulator 32 passed; existing containment emulator passed; isolated browser failure/offline upgrade checks passed. These are not a genuine staff submission.
