@@ -4,6 +4,8 @@
   if(document.body?.dataset?.reportEntry==='device'||document.documentElement?.dataset?.reportEntry==='device'){
     for(const type of ['click','change','input','submit'])document.addEventListener(type,event=>{
       const target=event.target,panel=target.closest?.('[id^="panel-"]');if(!panel)return;
+      // Opening the native presentation disclosure grants no action authority.
+      if(type==='click'&&target.closest?.('details.row-actions > summary'))return;
       const action=target.closest('button,input,select,textarea,a,[onclick]');if(!action)return;
       const code=action.getAttribute('onclick')||action.getAttribute('onchange')||action.getAttribute('oninput')||'';
       if(type==='click'&&/^\s*(submitForm|submitCabut)\s*\(/.test(code)&&!window.authorizedReports?.sessionTicket?.()){event.preventDefault();event.stopImmediatePropagation();alert('Untuk entry, masuk dengan Google memakai email yang diizinkan. Semua data tetap dapat dibaca tanpa login.');document.getElementById?.('device-entry-signin')?.focus();return;}

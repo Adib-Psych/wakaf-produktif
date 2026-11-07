@@ -133,7 +133,8 @@ tr:nth-child(even) td { background: #faf7f9; }
 #panel-log th:nth-child(3), #panel-log th:nth-child(5) { width: 70px; }
 #panel-log th:nth-child(4) { width: 175px; }
 #panel-log th:nth-child(6) { min-width: 220px; }
-#panel-log th:nth-child(7), #panel-log th:nth-child(8) { min-width: 125px; }
+#panel-log th:nth-child(7) { min-width: 240px; }
+#panel-log th:nth-child(8) { min-width: 80px; }
 #panel-log td { overflow-wrap: break-word; }
 #panel-log td button, #panel-panen td button { margin: 2px; }
 /* Existing harvest form and log are distinct full-width modules; do not force
@@ -268,13 +269,13 @@ body[data-report-access="compact"] #report-session-controls #report-signout { co
 #panel-keuangan table:has(#cashbook-tbody) th:nth-child(5) { width: 160px; }
 #panel-keuangan table:has(#cashbook-tbody) th:nth-child(6) { width: 56px; text-align: center; }
 #panel-keuangan table:has(#cashbook-tbody) th:nth-child(7) { width: 64px; text-align: center; }
-#panel-keuangan table:has(#cashbook-tbody) th:nth-child(8) { width: 150px; }
+#panel-keuangan table:has(#cashbook-tbody) th:nth-child(8) { width: 72px; }
 #panel-keuangan table:has(#cashbook-tbody) td:nth-child(1),
 #panel-keuangan table:has(#cashbook-tbody) td:nth-child(5) { white-space: nowrap; overflow-wrap: normal; }
 #panel-keuangan table:has(#cashbook-tbody) td:nth-child(4) { text-align: center; }
 /* Inline nowrap on batch actions used to leak past the table's right edge. */
 #cashbook-tbody td:nth-child(8) { white-space: normal !important; }
-#cashbook-tbody td:nth-child(8) button { display: block; width: 100%; margin: 4px 0 !important; }
+#cashbook-tbody td:nth-child(8) button { margin: 2px !important; }
 #cashbook-tbody tr[onclick] { background: #f5edf2 !important; border-top-color: var(--sage) !important; }
 #cashbook-tbody tr[onclick] td:nth-child(3) { color: var(--brand-plum) !important; }
 #cashbook-tbody tr[onclick] td:nth-child(3) > span:last-child { background: var(--sage) !important; color: var(--earth) !important; }
@@ -302,9 +303,9 @@ body[data-report-access="compact"] #report-session-controls #report-signout { co
 #panel-milestones table:has(#ms-tbody) th:nth-child(7) { width: 150px !important; }
 #ms-tbody td:last-child { white-space: normal !important; }
 #ms-tbody td:last-child button { margin: 3px !important; }
-#panel-log table:has(#log-tbody) { min-width: 1160px; }
+#panel-log table:has(#log-tbody) { min-width: 1200px; }
 #panel-log table:has(#log-tbody) th:nth-child(6) { min-width: 310px; }
-#panel-log table:has(#log-tbody) th:nth-child(8) { min-width: 90px; }
+#panel-log table:has(#log-tbody) th:nth-child(8) { min-width: 80px; }
 #cabut-log-container table { table-layout: fixed; min-width: 1000px; }
 #cabut-log-container th:nth-child(1) { width: 140px; }
 #cabut-log-container th:nth-child(2) { width: 120px; }
@@ -328,3 +329,20 @@ body[data-report-access="compact"] #report-session-controls #report-signout { co
 #panen-batch-tbody td { vertical-align: middle; }
 #panen-batch-tbody td:last-child { white-space: normal !important; }
 #panen-batch-tbody td:last-child button { margin: 3px !important; }
+
+/* Compact reading state: normal compliance fits two deliberate lines. */
+#panel-log table:has(#log-tbody) th:nth-child(7) { min-width: 240px; width: 240px; }
+#log-tbody td:nth-child(7) small { white-space: nowrap; overflow-wrap: normal; line-height: 1.35; margin-top: 3px; }
+#panel-log table:has(#log-tbody) th, #log-tbody td,
+#panel-keuangan table th, #panel-keuangan table td { padding: 7px 10px; line-height: 1.4; }
+#log-tbody td:nth-child(7) .pill { padding-top: 2px; padding-bottom: 2px; }
+/* Native disclosure, in flow: no overlay clipping, no new write capability. */
+.row-actions { display: inline-block; vertical-align: middle; text-align: left; }
+.row-actions > summary { display: flex; align-items: center; justify-content: center; width: 44px; min-height: 44px; padding: 0; list-style: none; border: 1px solid var(--harvest-line); border-radius: 6px; color: var(--brand-plum); background: #faf7f9; cursor: pointer; font-size: 22px; line-height: 1; }
+.row-actions > summary::-webkit-details-marker { display: none; }
+.row-actions-content { display: none; }
+.row-actions[open] { min-width: 130px; }
+.row-actions[open] .row-actions-content { display: flex; flex-wrap: wrap; gap: 4px; padding-top: 6px; }
+.row-actions-content button { min-width: 44px; min-height: 44px; }
+#cashbook-tbody td:has(> .row-actions[open]) { white-space: normal !important; }
+#panel-keuangan table:has(#cashbook-tbody):has(.row-actions[open]) th:last-child { width: 160px; }
