@@ -3,7 +3,8 @@ import {initializeApp,getApps} from 'https://www.gstatic.com/firebasejs/10.13.0/
 import {getFirestore,collection,getDocsFromServer} from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 import {OWNER_READ_COLLECTIONS,validateOwnerSnapshot} from './owner-dashboard.js';
 import {mountPrivateDashboard} from './restored-dashboard.js';
-export const PUBLIC_READ_COLLECTIONS=Object.freeze([...OWNER_READ_COLLECTIONS]);
+const wageSources=['wage_entitlements','wage_processing','wage_worker_bindings'];
+export const PUBLIC_READ_COLLECTIONS=Object.freeze([...OWNER_READ_COLLECTIONS,...wageSources]);
 const reportSources=['laporan','report_heads','entry_receipts','operation_events','operation_receipts','device_reports','device_receipts'];
 const domainSources={upah:'upah',cashbook:'cashbook',opt:'opt_observations',panen:'panen_data',lots:'panen_lots',sampling:'panen_sampling',benchmark:'panen_sampling',pic:'distribusi_pic',workers:'worker_defs_custom',milestones:'milestones',sopStatus:'sop_status',cabut:'sop_status',kasbon:'sop_status',pupuk:'sop_status',sop:'sop_master',invoices:'invoices'};
 function decodeReports(rows,lastReports=new Map()){
@@ -33,6 +34,13 @@ export function createPublicReader({readCollection,timeoutMs=15000}){
   if(unavailable.length&&previous.reports){value.reports=structuredClone(previous.reports);domains.reports={state:'stale',unavailable,rejected:decoded.rejected,retained:decoded.retained};}
   else{value.reports=decoded.reports;domains.reports={state:unavailable.length||decoded.rejected?'partial':decoded.reports.length?'available':'empty',unavailable,rejected:decoded.rejected,retained:decoded.retained};if(!unavailable.length&&!decoded.rejected)previous.reports=structuredClone(value.reports);}
   for(const [key,c]of Object.entries(domainSources))domains[key]={state:['stale','error'].includes(collections[c].state)?collections[c].state:value[key]==null?'missing':Array.isArray(value[key])&&!value[key].length?'empty':'available',sources:[c]};
+  // Display aliases only. Literal pelapor/report IDs and persisted source objects remain untouched.
+  const aliases=new Map(value.wageBindings.flatMap(b=>[[b.id,b.name],[b.legacy_token,b.name]]));
+  value.reports=value.reports.map(r=>aliases.has(r.pelapor)?{...r,display_name:aliases.get(r.pelapor)}:r);
+  if(value.workers!==null||value.wageBindings.length){value.workers=(value.workers||[]).map(w=>aliases.has(w.token)?{...w,nama:aliases.get(w.token)}:w);for(const b of value.wageBindings)if(!value.workers.some(w=>w.token===b.id)){const old=value.workers.find(w=>w.token===b.legacy_token);value.workers.push({...old,token:b.id,nama:b.name,active:false,retired:true,display_alias:true});}}
+  for(const wage of value.wageEntitlements){if(aliases.has(wage.pelapor))continue;const label=wage.name||wage.worker;if(!value.workers)value.workers=[];if(!value.workers.some(w=>w.token===wage.pelapor))value.workers.push({token:wage.pelapor,nama:label,active:false,retired:true,display_alias:true});}
+  const wageFailures=['upah',...wageSources].filter(c=>['stale','error'].includes(collections[c].state));
+  domains.upah={state:wageFailures.length?(wageFailures.some(c=>collections[c].state==='error')?'error':'stale'):value.upah==null?'missing':value.upah.length?'available':'empty',sources:['upah',...wageSources],unavailable:wageFailures};
   const errors=PUBLIC_READ_COLLECTIONS.filter(c=>['stale','error'].includes(collections[c].state));if(decoded.rejected)errors.push('reports:invalid-rows');
   value.raw=structuredClone(rows);
   value.missing=Object.keys(domains).filter(k=>value[k]==null);

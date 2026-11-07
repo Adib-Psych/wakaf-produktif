@@ -1,0 +1,3 @@
+const {test}=require('node:test');const a=require('node:assert/strict'),fs=require('node:fs');
+for(const file of ['firestore.rules','recovery/firestore.production.rules'])test(file+' only exposes automatic entitlement read, never broad financial write',()=>{const s=fs.readFileSync(file,'utf8');a.match(s,/publicCollection in \['wage_entitlements','wage_processing','wage_worker_bindings'/);a.match(s,/match \/\{document=\*\*\}\{allow read,write:if false;\}/);a.doesNotMatch(s,/match \/wage_policy.*allow (?:read|write):if true/);a.doesNotMatch(s,/match \/wage_entitlements.*allow write:if true/);});
+test('deployed-source companions stay identical',()=>a.equal(fs.readFileSync('firestore.rules','utf8'),fs.readFileSync('recovery/firestore.production.rules','utf8')));

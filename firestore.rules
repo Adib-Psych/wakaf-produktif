@@ -168,6 +168,6 @@ service cloud.firestore { match /databases/{database}/documents {
  function operationalValid(d){return d.keys().hasOnly(['version','captured_at','freshness','rows','total']) && d.keys().size()==5 && d.version==1 && d.captured_at is string && d.freshness=='bounded-snapshot' && d.rows is list && d.total is int && d.total==d.rows.size();}
  match /operational_snapshot/active {allow get:if operationalValid(resource.data);allow list,write:if false;}
  // Public transparency is independent of write grants. Capability stores are excluded.
- match /{publicCollection}/{id}{allow read:if publicCollection in ['laporan','report_heads','entry_receipts','operation_events','operation_receipts','device_reports','device_receipts','cabut_state','upah','cashbook','opt_observations','panen_data','panen_lots','panen_sampling','distribusi_pic','sop_master','worker_defs_custom','milestones','invoices','workers','sop_status'];allow write:if false;}
+ match /{publicCollection}/{id}{allow read:if publicCollection in ['wage_entitlements','wage_processing','wage_worker_bindings','laporan','report_heads','entry_receipts','operation_events','operation_receipts','device_reports','device_receipts','cabut_state','upah','cashbook','opt_observations','panen_data','panen_lots','panen_sampling','distribusi_pic','sop_master','worker_defs_custom','milestones','invoices','workers','sop_status'];allow write:if false;}
  match /{document=**}{allow read,write:if false;}
 }}
