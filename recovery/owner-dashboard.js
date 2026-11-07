@@ -7,10 +7,27 @@ import {authority} from './owner-report-authority.js';
 export const OWNER_READ_COLLECTIONS=Object.freeze('laporan report_heads upah cashbook opt_observations panen_data panen_lots panen_sampling distribusi_pic sop_master worker_defs_custom milestones invoices workers sop_status operation_events operation_receipts cabut_state entry_receipts device_reports device_receipts'.split(' '));
 const clone=x=>structuredClone(x),exact=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 export function decodeOwnerReports(rows,heads=[]){const revisions=new Map(heads.map(x=>[x.id,x.data]));return rows.map(x=>{const raw=reportForDisplay(x.data);if(raw.id!==undefined&&raw.id!==x.id)throw Error('Identitas laporan tidak cocok');const h=revisions.get(x.id);if(h&&(!h.body||h.body.id!==x.id||!Number.isSafeInteger(h.revision)||h.revision<2||h.owner_uid!==x.data.owner_uid))throw Error('Revisi laporan tidak cocok');return window.normalizeOwnerReport({...clone(h?h.body:raw),id:x.id,...(h?{correction_revision:h.revision}:{})});});}
+// Backend-created direct documents; never infer tariffs or write financial records here.
+function decodeWageDocuments(rows){
+ const text=x=>typeof x==='string'&&x.trim().length>0;
+ const date=x=>typeof x==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(x)&&!Number.isNaN(Date.parse(x+'T00:00:00Z'))&&new Date(x+'T00:00:00Z').toISOString().slice(0,10)===x;
+ const entitlements=(rows.wage_entitlements||[]).map(({id,data:d})=>{
+  if(!d||!text(id)||d.id!==id||!text(d.pelapor)||!date(d.tgl)||d.model!=='harian'||d.qty!==1||!['setengah_hari','full_day'].includes(d.satuan)||typeof d.tarif!=='number'||!Number.isFinite(d.tarif)||d.tarif<=0||d.status!=='belum'||!Array.isArray(d.sources)||!d.sources.length||d.sources.some(x=>!text(x)&&!(x&&['laporan','device_reports'].includes(x.lane)&&text(x.report_id)&&Number.isSafeInteger(x.revision)&&x.revision>=1))||!text(d.name||d.worker)||('eligible' in d&&typeof d.eligible!=='boolean'))throw Error('Format hak upah server tidak sesuai');
+  return clone(d);
+ });
+ const days=new Set();for(const d of entitlements){const k=d.pelapor+'|'+d.tgl;if(days.has(k))throw Error('Hak upah server ganda');days.add(k);}
+ const processing=(rows.wage_processing||[]).map(({id,data:d})=>{if(!d||!text(id)||!['unresolved','created','existing'].includes(d.status)||typeof d.reason!=='string'||!text(d.report_id)||!(date(d.tgl)||(d.status==='unresolved'&&d.tgl===null))||!(text(d.worker)||(d.status==='unresolved'&&d.worker===null)))throw Error('Format pemrosesan upah tidak sesuai');return {...clone(d),id};});
+ const bindings=(rows.wage_worker_bindings||[]).map(({id,data:d})=>{if(!d||!/^w_[a-f0-9]{24}$/.test(id)||!text(d.legacy_token)||!text(d.name))throw Error('Format identitas upah tidak sesuai');return {...clone(d),id};});
+ const tokens=new Set();for(const b of bindings){if(tokens.has(b.legacy_token))throw Error('Identitas upah ganda');tokens.add(b.legacy_token);}
+ return {entitlements,processing,bindings};
+}
 export function validateOwnerSnapshot(rows){
  const data=(c,id='active')=>{const row=rows[c]?.find(x=>x.id===id);if(!row)return null;return clone(row.data);};
  const singleton=(c,id='active',kind='array')=>{const d=data(c,id);if(!d)return null;const v=d.data;if(kind==='array'?!Array.isArray(v):!v||typeof v!=='object'||Array.isArray(v))throw Error('Format sumber '+c+' tidak sesuai');return v;};
  const result={reports:authority(Object.fromEntries(['laporan','report_heads','entry_receipts','operation_events','operation_receipts','device_reports','device_receipts'].map(c=>[c,rows[c]||[]]))).map(window.normalizeOwnerReport),upah:singleton('upah'),cashbook:singleton('cashbook'),opt:singleton('opt_observations'),panen:singleton('panen_data'),lots:singleton('panen_lots'),sampling:singleton('panen_sampling'),benchmark:singleton('panen_sampling','benchmark_eksternal'),pic:singleton('distribusi_pic'),workers:singleton('worker_defs_custom'),milestones:singleton('milestones'),sopStatus:singleton('sop_status','active','object'),cabut:singleton('sop_status','pohon_cabut'),kasbon:singleton('sop_status','kasbon'),pupuk:singleton('sop_status','pupuk','object'),sop:data('sop_master'),invoices:clone(rows.invoices),raw:clone(rows)};
+ const wages=decodeWageDocuments(rows);
+ result.wageEntitlements=wages.entitlements;result.wageProcessing=wages.processing;result.wageBindings=wages.bindings;
+ if(rows.wage_entitlements&&(result.upah!==null||wages.entitlements.length)){const canonical=t=>wages.bindings.find(b=>b.id===t)?.legacy_token||t,old=result.upah||[],keys=new Set(old.filter(x=>x&&!x.voided_duplicate).map(x=>canonical(x.pelapor)+'|'+x.tgl));result.upah=[...old,...wages.entitlements.filter(x=>x.eligible===true&&!wages.processing.some(p=>p.id===x.id&&p.status==='unresolved')&&!keys.has(canonical(x.pelapor)+'|'+x.tgl)).map(x=>({...x,satuan:x.satuan==='full_day'?'full':x.satuan}))];}
  if(result.sop){const months=result.sop.aktivitas_per_bulan;if(!months||typeof months!=='object')throw Error('Format SOP master tidak sesuai');const mapped={};for(const [key,value] of Object.entries(months)){const month=key.replace(/^bulan_/,'');if(!/^(?:[1-9]|1[0-2])$/.test(month)||mapped[month]||!value||typeof value.fase!=='string'||!Array.isArray(value.aktivitas))throw Error('Format bulan SOP tidak sesuai');mapped[month]=clone(value);}if(Object.keys(mapped).length!==12)throw Error('SOP bulanan belum lengkap');result.sop.aktivitas_per_bulan=mapped;}
  result.missing=Object.entries(result).filter(([k,v])=>v===null).map(([k])=>k);return result;
 }

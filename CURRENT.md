@@ -8,7 +8,15 @@ Updated: 7 November 2026. Active short handover; historical registers are eviden
 - Entry requires verified Google authentication AND an explicitly approved enabled account grant. Google login alone does not authorize writes. Restore valid sessions; ask for login when attempting entry, not reading.
 - Publish coherent tested changes promptly through GitHub/Pages. Preserve integrity checks, pending ownership, receipt ACK and correction history. No fabricated production submissions.
 
-## Current application change
+## Wage/October repair — latest scope
+
+- Worker activity cards join exact commissioned opaque IDs to legacy tokens for display/aggregation. October business dates count toward the same worker; persisted report identities and timestamps are not rewritten.
+- Public reading adds direct entitlement, processing and exact-worker binding collections alongside the unchanged historical wage ledger. Ineligible or unresolved entitlements are not payable; source failures remain explicit.
+- Normal manual wage-creation invitations are removed; selected-record recap is still an export. Paid daily roster entries require a supported duration. Partial queue success distinguishes acknowledged reports from those still pending.
+- **Owner declined billing activation. Ongoing Cloud Functions automatic processing is not installed.** `wage-backend/` is staged and tested only; root Firebase config deliberately contains no Functions deployment target. No recurring personal-server processor or browser financial writer is substituted.
+- Finite October recovery applied and independently read back: 11 unpaid entitlements totaling IDR 550,000; Nardi 21 October remains unresolved because duration is missing. All 225 preexisting documents, including 190 historical wages and cashbook, retained exact data/updateTimes. No payment was made. See [activation boundary](WAGE-RECOVERY.md). Frontend publication still requires its own served-source/browser readbacks; candidate tests alone are not live verification.
+
+## Earlier application changes (historical release evidence)
 
 - Default monitor reads existing Firestore dashboard collections directly, without authentication or the bounded `operational_snapshot` derivative. Refresh every 60 seconds and on reconnect; source reads are bounded.
 - Per-domain failures distinguish unavailable/partial/stale data from confirmed empty. Last-known valid data is retained; exports refuse incomplete/stale required sources.

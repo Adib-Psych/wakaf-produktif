@@ -1,0 +1,6 @@
+const {Timestamp}=require('firebase-admin/firestore');
+const worker='w_000000000000000000000001';
+const policy={contract_version:1,workers:{[worker]:{legacy_token:'TEST_WORKER',name:'Synthetic worker',half_day:50000,full_day:100000,effective_from:'2026-10-01'},TEST_WORKER:{legacy_token:'TEST_WORKER',name:'Synthetic worker',half_day:50000,full_day:100000,effective_from:'2026-10-01'}}};
+function body(id='lap_test',overrides={}) {return {id,tgl:'2026-10-19',tanggal:'2026-10-19',pelapor:worker,bidang:'K1',kategori:'babat_rumput',kebun_list:['K1'],kebun_primary:'K1',kebun_list_str:'K1',pohon:0,detail:'synthetic isolated test',durasi:'setengah_hari',detail_form:null,rainfall_24h:0,rainfall_7d:0,compliance:'',alerts:[],created_at:'2026-10-19T05:00:00Z',schema_version:'3.5',src:'wakif_form',...overrides};}
+function pair(id='lap_test',overrides={},lane='device_reports') {return {contract_version:1,report_id:id,command_id:id,writer_epoch:1,...(lane==='device_reports'?{roster_version:'test-v1'}:{grant_epoch:1}),submitted_body:body(id,overrides),owner_uid:'synthetic-private-owner',committed_revision:1,committed_at:new Timestamp(1792386000,123456789)};}
+module.exports={worker,policy,body,pair};

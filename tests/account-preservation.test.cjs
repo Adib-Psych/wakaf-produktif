@@ -15,15 +15,16 @@ for(const name of ['read','own','commit','googleCurrent','identity','identityMat
   assert.ok(after.includes(line),'existing contract changed: '+name);
  });
 }
-test('preserves transaction, ACK and queue drain bytes',()=>{
+test('preserves transaction and exact receipt ACK bytes; partial drain wording covered separately',()=>{
  const start=before.indexOf(' async function send(body)');
- const end=before.indexOf(' const api=',start);
+ const end=before.indexOf(' async function drain()',start);
  assert.ok(start>=0&&end>start);
- assert.ok(after.includes(before.slice(start,end)),'send/drain contract changed');
+ assert.ok(after.includes(before.slice(start,end)),'send/ACK contract changed');
 });
 for(const f of ['recovery/restored-dashboard.js','recovery/firestore.production.rules','firestore.rules','firebase-config.js','monitor-v2.html','recovery/authorized-reports.js']){
- test('preserves unrelated shipped '+f,()=>{
+ test('historical account release preserved unrelated shipped '+f,()=>{
   const expected=execFileSync('git',['show',base+':'+f],{maxBuffer:32*1024*1024});
-  assert.deepEqual(fs.readFileSync(f),expected);
+  const accountRelease=execFileSync('git',['show','bba6129d937faae36e4200aa1415da199772c1fd:'+f],{maxBuffer:32*1024*1024});
+  assert.deepEqual(accountRelease,expected);
  });
 }

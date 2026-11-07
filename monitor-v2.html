@@ -705,7 +705,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
               <div class="radio-pill" data-val="full_day" onclick="setRadio('form-durasi',this)">☀️ Full Day</div>
               <div class="radio-pill" data-val="panjat_per_pohon" onclick="setRadio('form-durasi',this)">📦 Borongan</div>
             </div>
-            <div style="font-size:10px;color:var(--mute);margin-top:4px">Wajib untuk pekerja ber-tarif harian (auto-link ke Upah Pekerja). Borongan = pekerjaan per-output (panjat durian, rorak, lubang lamtoro, dll).</div>
+            <div style="font-size:10px;color:var(--mute);margin-top:4px">Pekerja harian saat ini: pilih Setengah Hari atau Full Day. Durasi dicatat pada laporan; laporan tersimpan bukan bukti hak upah telah terbentuk. Borongan memerlukan konfirmasi terpisah.</div>
           </div>
           <div class="field">
             <label class="field-lbl">Jumlah Pohon Dikerjakan</label>
@@ -765,7 +765,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
 
       <div class="card">
         <div class="card-title"><span class="num">3</span>Summary Upah Pekerja — Tunggakan per Nama</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pembayaran tidak selalu harian — bisa per batch / per group item pekerjaan. Tracker di bawah memungkinkan tandai item terbayar satu per satu atau batch. <strong>Hanya pekerja dengan tunggakan yang tampil di sini</strong> — kalau nama tidak muncul, berarti semua upahnya sudah lunas.</p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:12px">Pembayaran tidak selalu harian — bisa per batch / per group item pekerjaan. Tracker di bawah memungkinkan tandai item terbayar satu per satu atau batch. <strong>Hanya pekerja dengan tunggakan yang tampil di sini</strong> — nama yang tidak tampil bukan bukti bahwa seluruh hak upah sudah terbentuk atau lunas. Periksa status pemrosesan di bawah.</p>
         <div class="kpi-grid" id="upah-summary-cards"></div>
       </div>
 
@@ -806,8 +806,6 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
           <button class="btn btn-primary" onclick="batchPay()">💸 Bayar Tercentang (batch)</button>
           <button class="btn" onclick="generateBuktiBayar()" style="background:linear-gradient(135deg,#1F5F47,#5a9080);color:#fff;font-weight:700" title="Pilih item lunas via checkbox → generate Bukti Bayar PNG (download + share WA)">📄 Bukti Bayar (dari Pilihan)</button>
           <button class="btn" onclick="upahArchiveSelected()" style="background:#f4f4f0;color:#4a4030;border:1.5px solid #8B8579;font-size:11px" title="Arsipkan upah LUNAS tercentang — disembunyikan dari Tab Upah. Cashbook + audit trail tidak terpengaruh.">📦 Archive Lunas Tercentang</button>
-          <button class="btn btn-secondary" onclick="openDlg()">+ Tambah Item</button>
-          <button class="btn" onclick="openRecoverDlg()" style="background:#FFF4D6;color:#8B6914;border:1.5px solid #D4AF37">🔄 Recover Entry Lama</button>
           <button class="btn" onclick="openAuditModal()" style="background:#d4a017;color:#fff;font-weight:700;font-size:11px" title="Buka Audit &amp; Cleanup Sync — cek konsistensi UPAH ↔ Buku Kas: siapa sudah dibayar, duplikat, dan yang lunas tapi kas keluarnya belum tercatat">🔍 Audit Sync</button>
         </div>
         <div class="table-wrap">
@@ -4335,7 +4333,7 @@ function renderLog() {
     // ⭐ 28 Jul 2026: warna pill derive dari WORKER_DEFS.color (SUMBER SAMA dgn halaman Tim).
     // Casus Adib: sejak Christo & pemanen masuk, semua pekerja baru jatuh ke fallback 'role-yit'
     // (oranye Cak Yit) → warna Log ≠ warna kartu Tim = membingungkan. Peta statis 6 veteran DIHAPUS.
-    const _pill = workerPillHtml(d.pelapor, roleMap[d.pelapor] ? roleMap[d.pelapor][0] : null);
+    const _pill = workerPillHtml(d.pelapor, d.display_name || (roleMap[d.pelapor] ? roleMap[d.pelapor][0] : null));
     // Pohon display: prefer top-level d.pohon, fallback ke detail_form sub-field kalau ada (jumlah pohon, qty pohon, dll)
     let pohonDisp = '<span style="color:#bbb">-</span>';
     let pohonTitle = '';
@@ -5243,10 +5241,12 @@ async function submitForm() {
   // ⭐ 2 Jul 2026 (Pattern #12): gate by TARIF_PEKERJA (data-driven), bukan hardcode.
   // UPDATE 19 Jul 2026: pemanen MAKMIS/HARNI/CHRISTO kini BER-TARIF (model harian locked Wakif 50K/100K)
   // → durasi WAJIB juga untuk pemanen (auto-link upah aktif). Hanya WAKIF/ANTO (sweat-equity) durasi opsional.
-  if (TARIF_PEKERJA[STATE.pelapor] && !STATE.durasi) {
+  // Current opaque roster entries are paid daily workers. Legacy sweat-equity remains optional.
+  const opaquePaidWorker = /^w_[a-f0-9]{24}$/.test(STATE.pelapor);
+  if ((opaquePaidWorker && !['setengah_hari','full_day'].includes(STATE.durasi)) || (TARIF_PEKERJA[STATE.pelapor] && !STATE.durasi)) {
     const _nm = (typeof NAMA_PEKERJA!=='undefined' && NAMA_PEKERJA[STATE.pelapor]) || STATE.pelapor;
     // ⭐ 20 Jul 2026 (req Wakif — sering lupa): pesan tegas + konsekuensi jelas + fokuskan field durasi.
-    alert('⚠️ DURASI KERJA BELUM DIPILIH untuk ' + _nm + '.\n\nTanpa durasi, UPAH TIDAK akan terhitung otomatis (bayaran pekerja jadi kosong).\n\nPilih dulu di "Durasi Kerja": 🌅 Setengah Hari · ☀️ Full Day · 📦 Borongan');
+    alert('⚠️ DURASI KERJA belum sesuai untuk ' + _nm + '.\n\nPilih durasi kerja yang didukung untuk pencatatan hak upah: 🌅 Setengah Hari atau ☀️ Full Day.');
     try { const _fd=document.getElementById('form-durasi'); if(_fd){ _fd.scrollIntoView({behavior:'smooth',block:'center'}); _fd.style.transition='box-shadow .3s'; _fd.style.boxShadow='0 0 0 3px #dc2626'; privateViewLater(()=>{ if(_fd) _fd.style.boxShadow=''; }, 2200); } } catch(e){}
     return;
   }
@@ -5495,6 +5495,7 @@ const NAMA_PEKERJA = { YIT:'Cak Yit', KUMPUL:'Pak Kumpul' };
 // (semua pekerja, aktif + arsip). Dipanggil di init + tiap render upah supaya selalu fresh.
 function rebuildNamaPekerja() {
   if (typeof WORKER_DEFS !== 'undefined') WORKER_DEFS.forEach(w => { if (w && w.token) NAMA_PEKERJA[w.token] = w.nama; });
+  for(const b of window.ownerWageSnapshot?.wageBindings||[]){NAMA_PEKERJA[b.id]=b.name;NAMA_PEKERJA[b.legacy_token]=b.name;}
 }
 
 // Schema v3.0 — production clean (no sample data)
@@ -5562,6 +5563,7 @@ function calcTotal(item) {
 function workerPillHtml(token, nameOverride) {
   const wd = (typeof WORKER_DEFS !== 'undefined') ? WORKER_DEFS.find(w => w.token === token) : null;
   const nm = nameOverride
+    || (window.ownerWageSnapshot?.wageBindings||[]).find(b=>b.id===token||b.legacy_token===token)?.name
     || (wd && wd.nama)
     || (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[token])
     || token || '?';
@@ -5721,65 +5723,28 @@ function createAllCashbookFromUpah() {
 }
 
 function renderUpahGap() {
-  const wrap = document.getElementById('upah-gap-wrap');
-  const body = document.getElementById('upah-gap-body');
-  if (!wrap || !body) return;
-  let nDup = 0;
-  try { nDup = renderUpahDup(); } catch (e) { console.warn('[renderUpahDup]', e); }
-  let nNoCb = 0;
-  try { nNoCb = renderUpahNoCashbook(); } catch (e) { console.warn('[renderUpahNoCashbook]', e); }
-  nDup += nNoCb;   // ikut menyalakan kartu 'Upah Perlu Perhatian'
-  if (typeof STATE === 'undefined' || !Array.isArray(STATE.laporan) || typeof TARIF_PEKERJA === 'undefined') {
-    body.innerHTML = ''; wrap.style.display = nDup ? '' : 'none'; return;
+  const wrap=document.getElementById('upah-gap-wrap'),body=document.getElementById('upah-gap-body');
+  if(!wrap||!body)return;
+  let other=0;try{other+=renderUpahDup()||0;other+=renderUpahNoCashbook()||0;}catch(e){console.warn('[renderUpahGap]',e);}
+  const wageHost=typeof window==='undefined'?globalThis:window;
+  const snapshot=wageHost.ownerWageSnapshot||{},bindings=snapshot.wageBindings||[];
+  const canonical=token=>bindings.find(b=>b.id===token)?.legacy_token||token;
+  const name=token=>bindings.find(b=>b.id===token||b.legacy_token===token)?.name||((typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[token])||token);
+  const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const keys=new Set((typeof UPAH_ITEMS==='undefined'?[]:UPAH_ITEMS).filter(u=>u&&!u.voided_duplicate).map(u=>canonical(u.pelapor)+'|'+u.tgl));
+  const pending=new Map();
+  for(const p of snapshot.wageProcessing||[]){const key=canonical(p.worker)+'|'+p.tgl;if(p.status==='unresolved'||!keys.has(key))pending.set(key,{worker:p.worker,tgl:p.tgl,reason:p.status==='unresolved'?'Belum terselesaikan: '+p.reason:'Menunggu hak upah server tersedia'});}
+  for(const l of (typeof STATE==='undefined'?[]:STATE.laporan||[])){
+    if(!l||!l.pelapor)continue;
+    const token=canonical(l.pelapor),tgl=l.tgl||l.tanggal,key=token+'|'+tgl;
+    if(!tgl||keys.has(key)||pending.has(key))continue;
+    if(!/^w_[a-f0-9]{24}$/.test(l.pelapor)&&!bindings.some(b=>b.id===l.pelapor||b.legacy_token===l.pelapor)&&!(typeof TARIF_PEKERJA!=='undefined'&&TARIF_PEKERJA[token]))continue;
+    pending.set(key,{worker:l.pelapor,tgl,reason:['setengah_hari','full_day'].includes(l.durasi)?'Hak upah dari laporan belum terbentuk — menunggu pemrosesan':'Belum terselesaikan: durasi kerja perlu dikonfirmasi'});
   }
-  const upahKeys = new Set((typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : [])
-    .filter(u => u && !u.voided_duplicate).map(u => `${u.pelapor}|${u.tgl}`));
-  const seen = new Set(); const gaps = [];
-  STATE.laporan.forEach(l => {
-    if (!l || !l.pelapor) return;
-    const tgl = l.tgl || l.tanggal; if (!tgl) return;
-    if (!TARIF_PEKERJA[l.pelapor]) return;          // WAKIF/ANTO sweat-equity = memang tanpa upah
-    const key = `${l.pelapor}|${tgl}`;
-    if (upahKeys.has(key) || seen.has(key)) return;
-    seen.add(key); gaps.push({ l, tgl });
-  });
-  if (!gaps.length) { body.innerHTML = ''; wrap.style.display = nDup ? '' : 'none'; return; }
-  wrap.style.display = '';
-  gaps.sort((a, b) => String(a.tgl).localeCompare(String(b.tgl)));
-  const nm = t => (typeof NAMA_PEKERJA !== 'undefined' && NAMA_PEKERJA[t]) ? NAMA_PEKERJA[t] : t;
-  const isFullDur = d => (d === 'full_day' || d === '1_hari' || d === 'satu_hari' || d === 'full');
-  let est = 0, siap = 0;
-  gaps.forEach(g => {
-    const tp = TARIF_PEKERJA[g.l.pelapor];
-    if (g.l.durasi) { siap++; est += isFullDur(g.l.durasi) ? tp.full_day : tp.setengah_hari; }
-  });
-  const rows = gaps.map(g => {
-    const l = g.l, uid = `${l.pelapor}-${g.tgl}`.replace(/[^A-Za-z0-9-]/g, '');
-    const kat = String(l.kategori || '-').replace(/_/g, ' ');
-    const keb = (l.bidang || l.kebun) ? `Kebun ${l.bidang || l.kebun}` : '—';
-    const noDur = !l.durasi;
-    const durSel = `<select id="gapdur-${uid}" style="padding:5px 7px;border:1.5px solid ${noDur ? '#e67e22' : '#ddd'};border-radius:5px;font-size:11px">
-        <option value="setengah_hari"${!noDur && !isFullDur(l.durasi) ? ' selected' : ''}>½ hari</option>
-        <option value="full_day"${!noDur && isFullDur(l.durasi) ? ' selected' : ''}>1 hari penuh</option>
-      </select>`;
-    return `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:9px 11px;border:1px solid #f0e0cc;border-radius:8px;background:${noDur ? '#fffaf3' : '#fff'};margin-bottom:6px">
-      <span style="font-weight:700;font-size:12px;color:var(--earth);min-width:0">${formatTgl ? formatTgl(g.tgl) : g.tgl}</span>
-      <span style="font-size:12px;font-weight:600">${nm(l.pelapor)}</span>
-      <span style="font-size:11px;color:var(--mute)">${kat} · ${keb}</span>
-      ${noDur ? '<span style="font-size:10px;font-weight:700;color:#b45309;background:#fef3c7;padding:2px 7px;border-radius:99px">⚠️ durasi kosong saat entry</span>' : ''}
-      <span style="margin-left:auto;display:flex;gap:6px;align-items:center">
-        ${durSel}
-        <button class="btn btn-primary" style="padding:5px 11px;font-size:11px" onclick="createUpahFromGap('${l.pelapor}','${g.tgl}','${uid}')">➕ Buat Upah</button>
-      </span>
-    </div>`;
-  }).join('');
-  body.innerHTML = `<div style="font-size:12px;font-weight:800;color:#8c4a13;letter-spacing:.5px;margin-bottom:4px">📋 LAPORAN BELUM JADI UPAH — ${gaps.length} hari</div>
-    <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Hari kerja ini <strong>sudah tercatat di Log Harian</strong> tapi upahnya belum pernah terbentuk — biasanya karena durasi kerja kosong saat entry, atau dashboard sedang tertutup waktu laporan masuk. Selama masih tampil di sini, <strong>hak upah pekerja belum masuk hitungan</strong>.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px;padding:9px 12px;background:#fff5e6;border-radius:8px;border:1px solid #f0d0a0">
-      <span style="font-size:12px;font-weight:700;color:#8c4a13">${gaps.length} hari kerja belum berupah</span>
-      <span style="font-size:11px;color:#8c4a13">≈ ${typeof fmtRpShort === 'function' ? fmtRpShort(est) : est} (dari ${siap} yang durasinya sudah terisi)</span>
-      ${siap > 0 ? `<button class="btn btn-primary" style="margin-left:auto;padding:6px 13px;font-size:11px;background:#e67e22" onclick="createAllUpahGaps()">⚡ Buat semua yang durasinya sudah ada (${siap})</button>` : ''}
-    </div>${rows}`;
+  const health=snapshot._meta?.domains||{},incomplete=['upah','reports'].some(k=>['stale','error','partial','missing'].includes(health[k]?.state));
+  wageHost.ownerWageAttention={pending:pending.size,incomplete};
+  body.innerHTML=(incomplete?'<p role="status">Sumber upah/laporan belum lengkap atau belum dapat dikonfirmasi. Status pelunasan keseluruhan belum diketahui.</p>':'')+(pending.size?'<p><strong>'+pending.size+' hari kerja belum terselesaikan / menunggu hak upah.</strong> Hak upah dari laporan belum terbentuk atau belum terselesaikan. <strong>Otomatisasi backend belum aktif.</strong> Belum termasuk total upah tercatat.</p>'+[...pending.values()].sort((a,b)=>String(a.tgl||'').localeCompare(String(b.tgl||''))).map(p=>'<div style="padding:9px 11px;border:1px solid #f0e0cc;border-radius:8px;margin-bottom:6px"><strong>'+esc(!p.tgl?'Tanggal kerja belum diketahui':typeof formatTgl==='function'?formatTgl(p.tgl):p.tgl)+' · '+esc(name(p.worker))+'</strong> — '+esc(p.reason)+'</div>').join(''):'');
+  wrap.style.display=other||pending.size||incomplete?'':'none';
 }
 
 function createUpahFromGap(pelapor, tgl, uid, silent) {
@@ -5931,7 +5896,7 @@ function renderUpahSummary() {
         + tok.map(t => `&nbsp;&nbsp;• ${(typeof NAMA_PEKERJA!=='undefined'&&NAMA_PEKERJA[t])||t} <b>${fmtRpShort(kasbonSisaPekerja(t))}</b>`).join('<br>')
         + '</div>';
     }
-    c.innerHTML = '<div style="grid-column:1/-1;width:100%;padding:18px 20px;text-align:center;color:var(--green);font-weight:600;font-size:13px;background:#f0f9f4;border:1px solid #cce8d8;border-radius:10px">✅ Semua upah pekerja sudah lunas — tidak ada tunggakan saat ini</div>' + sisaKb;
+    c.innerHTML = '<div style="grid-column:1/-1;width:100%;padding:18px 20px;text-align:center;color:var(--green);font-weight:600;font-size:13px;background:#f0f9f4;border:1px solid #cce8d8;border-radius:10px">Tidak ada tunggakan pada item upah yang sudah tercatat. Periksa pemrosesan dan kesehatan sumber sebelum menyimpulkan pelunasan keseluruhan.</div>' + sisaKb;
     return;
   }
   let html = tunggakanEntries.map(([k,s]) => {
@@ -6035,7 +6000,7 @@ function renderUpahTable() {
       : `<span class="pill alert">⏳ Belum</span>`;
     const rowStyle = isArchived ? 'opacity:0.6;background:#fafaf7' : '';
     // Checkbox available for ALL items: belum (batch pay) + lunas (bukti bayar generation)
-    const checkbox = `<input type="checkbox" class="upah-check" data-id="${it.id}" data-status="${it.status}" title="${isLunas ? (isArchived ? 'Centang untuk restore archive' : 'Centang untuk include di Bukti Bayar atau Archive') : 'Centang untuk batch pay'}">`;
+    const checkbox = `<input type="checkbox" class="upah-check" data-id="${it.id}" data-status="${it.status}" title="Pilih untuk rekap upah tercatat">`;
     // Action: pakai inline group (Bayar/Batal/Archive)
     let actionBtns = '';
     if (!isLunas) {
@@ -6052,7 +6017,7 @@ function renderUpahTable() {
       <td style="font-size:11px;white-space:nowrap">${formatTgl(it.tgl)}</td>
       <td>${workerPillHtml(it.pelapor)}</td>
       <td>${modelBadge}</td>
-      <td style="font-size:11px;max-width:220px">${it.aktivitas}</td>
+      <td style="font-size:11px;max-width:220px">${it.aktivitas||'Hak upah tercatat dari laporan'}</td>
       <td><strong>${it.qty}</strong></td>
       <td style="font-size:10px;color:var(--mute)">${it.satuan_lbl||it.satuan}</td>
       <td>${fmtRpShort(it.tarif)}</td>
@@ -19063,19 +19028,18 @@ function renderWorkersTab() {
   const grid = document.getElementById('worker-cards-grid');
   if (!grid) return;
 
-  // Compute last_active per worker dari STATE.laporan
-  const lastActiveMap = {};
+  // Join identities only through exact owner bindings; persisted reports stay untouched.
+  const bindings = window.ownerWageSnapshot?.wageBindings || [];
+  const canonical = token => bindings.find(b => b.id === token)?.legacy_token || token;
+  const lastActiveMap = Object.create(null);
   if (Array.isArray(STATE.laporan)) {
     STATE.laporan.forEach(entry => {
-      const pelapor = entry.pelapor;
+      const pelapor = canonical(entry.pelapor);
       const tgl = entry.tgl || entry.tanggal;
-      if (!pelapor || !tgl) return;
-      if (!lastActiveMap[pelapor] || tgl > lastActiveMap[pelapor].tgl) {
-        lastActiveMap[pelapor] = { tgl, count: 0 };
-      }
-    });
-    STATE.laporan.forEach(entry => {
-      if (lastActiveMap[entry.pelapor]) lastActiveMap[entry.pelapor].count++;
+      if (!pelapor) return;
+      const activity = lastActiveMap[pelapor] || (lastActiveMap[pelapor] = { tgl: null, count: 0 });
+      activity.count++;
+      if (tgl && (!activity.tgl || tgl > activity.tgl)) activity.tgl = tgl;
     });
   }
 
@@ -19088,7 +19052,8 @@ function renderWorkersTab() {
   // (Sebelumnya filter w.active => paused hilang tanpa jejak + tombol Aktifkan jadi dead code.)
   grid.innerHTML = WORKER_DEFS.filter(w => !w.retired).map(w => {
     const url = `${baseUrl}?w=${w.token}`;
-    const lastActive = lastActiveMap[w.token];
+    const activity = lastActiveMap[canonical(w.token)];
+    const lastActive = activity?.tgl ? activity : null;
     const daysSince = lastActive ? Math.round((Date.now() - new Date(lastActive.tgl).getTime()) / 86400000) : null;
     const lastActiveText = lastActive
       ? `${formatTglShort(lastActive.tgl)} (${daysSince === 0 ? 'hari ini' : daysSince + ' hari lalu'}) · ${lastActive.count} entries total`
@@ -20510,6 +20475,7 @@ window.normalizeOwnerReport=function(data) {
 const ownerBaseline={workers:structuredClone(WORKER_DEFS),pic:structuredClone(DISTRIBUSI_DATA),sop:structuredClone(SOP_AKTIVITAS_PER_BULAN),pupuk:structuredClone(PUPUK_DATA)};
 window.clearOwnerSnapshot=()=>{
  window.ownerCashbookKnown=false;
+ window.ownerWageSnapshot=null;window.ownerWageAttention=null;
  window.privateViewEpoch++;STATE.laporan=[];UPAH_ITEMS=[];CASHBOOK=[];OPT_OBSERVATIONS=[];PANEN_DATA=[];PANEN_LOTS_DATA=[];PANEN_SAMPLING_DATA=[];MILESTONES=[];SOP_STATUS={};CABUT_DATA=[];BENCHMARK_DATA=[];KASBON_DATA=[];window.OWNER_INVOICES=[];WORKER_DEFS.splice(0,WORKER_DEFS.length,...structuredClone(ownerBaseline.workers));DISTRIBUSI_DATA=structuredClone(ownerBaseline.pic);PUPUK_DATA=structuredClone(ownerBaseline.pupuk);Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(k=>delete SOP_AKTIVITAS_PER_BULAN[k]);Object.assign(SOP_AKTIVITAS_PER_BULAN,structuredClone(ownerBaseline.sop));window.RECONCILE_MATRIX=[];
  if(typeof Chart!=='undefined')for(const chart of Object.values(Chart.instances||{}))try{chart.destroy();}catch(e){}
  document.querySelectorAll('[data-report-private-overlay],#entry-detail-modal').forEach(n=>n.remove());document.querySelectorAll('[id*=modal],[id*=lightbox]').forEach(n=>{if(n.id==='login-overlay')return;n.style.display='none';n.querySelectorAll('input,textarea').forEach(x=>x.value='');});
@@ -20517,6 +20483,7 @@ window.clearOwnerSnapshot=()=>{
 };
 window.applyOwnerSnapshot=v=>{
  window.ownerCashbookKnown=Array.isArray(v.cashbook);
+ window.ownerWageSnapshot=structuredClone({wageProcessing:v.wageProcessing||[],wageBindings:v.wageBindings||[],_meta:v._meta||{}});
  window.ownerRenderErrors=[];
  document.querySelectorAll('[data-tier="wakif"]').forEach(n=>n.style.display='');
  window.privateViewEpoch++;STATE.laporan=structuredClone(v.reports);

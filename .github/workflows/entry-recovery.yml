@@ -30,6 +30,14 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
         run: npm run test:rules
+      - name: Install staged wage processor dependencies (no deploy)
+        working-directory: wage-backend
+        run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Staged wage processor regressions (demo Firestore only)
+        working-directory: wage-backend
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: ../recovery/node_modules/.bin/firebase emulators:exec --only firestore --project demo-wakaf-wages --config firebase.test.json 'node --test test/*.test.cjs'
       - name: Public-read and Google-write rules (demo project only)
         env:
           TMPDIR: ${{ runner.temp }}
