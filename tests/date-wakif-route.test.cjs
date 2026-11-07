@@ -10,12 +10,9 @@ test('operational log uses original Indonesian date formatter without wrapping',
  assert.equal(body.children[0].children[0].text,'Sen, 26 Okt 2026');
  assert.match(source,/#log-tbody td:first-child\{white-space:nowrap\}/);
 });
-test('default restored route advertises wages through authorized reader, not management',async()=>{
- const link={},host={append:n=>assert.equal(n,link)},model={privateMode:false};
- const source=read('restored-dashboard.js').replace(/^import .*;\s*$/gm,'').replace(/export /g,'');
- const context={window:{},location:{search:''},URLSearchParams,document:{createElement:()=>link,getElementById:()=>host},mountOperationalDashboard:async()=>model};
- const fn=vm.runInNewContext(source+';mountRestoredDashboard;',context);assert.equal(await fn({}),model);
- assert.equal(link.href,'?reader=owner#anggaran');assert.match(link.textContent,/Wakif.*Upah Pekerja.*akun berizin/);
+test('default restored route provides full public wages without a privileged reader redirect',()=>{
+ const source=read('restored-dashboard.js'),route=source.slice(source.indexOf('export async function mountRestoredDashboard'));
+ assert.match(route,/mountPublicDashboard\(config\)/);assert.doesNotMatch(route,/link.href=.*reader=owner/);
 });
 test('owner wage destination opens actual anggaran panel without granting read authority',async()=>{
  let clicks=0,refreshes=0;const host={append(){}},source=read('owner-session.js').replace(/^import .*;\s*$/gm,'').replace(/export /g,'');

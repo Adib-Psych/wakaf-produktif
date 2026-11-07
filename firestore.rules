@@ -1,12 +1,12 @@
-// UNCOMMISSIONED production-compatible candidate. No production deployment or identity approval implied.
-// No anonymous raw-private reads. Public pages use existing static projection/fallback.
-// Entry and operation policies must remain paused/disabled until separate reopening authority.
+// Public dashboard reads; writes require verified Google plus explicit enabled UID grant.
+// Grants/policies are server-managed; no identity approval implied by deploying Rules.
 rules_version = '2';
 service cloud.firestore { match /databases/{database}/documents {
  function policy(){return get(/databases/$(database)/documents/entry_policy/active).data;}
  function grant(){return get(/databases/$(database)/documents/entry_grants/$(request.auth.uid)).data;}
+ function googleWriter(){return request.auth!=null && request.auth.token.firebase.sign_in_provider=='google.com' && request.auth.token.email_verified==true;}
  function authority(p,g){
- return request.auth != null && p.keys().hasOnly(['paused','writer_epoch']) && p.paused is bool && p.paused == false && p.writer_epoch is int && p.writer_epoch>0 && g.keys().size()==6 && g.keys().hasOnly(['uid','enabled','role','worker_token','writer_epoch','grant_epoch']) && g.grant_epoch is int && g.grant_epoch>0 && g.worker_token is string && g.uid == request.auth.uid && g.enabled == true && g.writer_epoch == p.writer_epoch && g.role in ['staff','worker','staff_entry'];
+ return googleWriter() && p.keys().hasOnly(['paused','writer_epoch']) && p.paused is bool && p.paused == false && p.writer_epoch is int && p.writer_epoch>0 && g.keys().size()==6 && g.keys().hasOnly(['uid','enabled','role','worker_token','writer_epoch','grant_epoch']) && g.grant_epoch is int && g.grant_epoch>0 && g.worker_token is string && g.uid == request.auth.uid && g.enabled == true && g.writer_epoch == p.writer_epoch && g.role in ['staff','worker','staff_entry'];
  }
  function live(){return request.auth!=null && authority(policy(),grant());}
  function calendar(d){return d is string && (d.matches('^[0-9]{4}-((01|03|05|07|08|10|12)-(0[1-9]|[12][0-9]|3[01])|(04|06|09|11)-(0[1-9]|[12][0-9]|30)|02-(0[1-9]|1[0-9]|2[0-8]))$') || d.matches('^([0-9]{2}(0[48]|[2468][048]|[13579][26])|([02468][048]|[13579][26])00)-02-29$'));}
@@ -146,7 +146,7 @@ service cloud.firestore { match /databases/{database}/documents {
 
  // Separate unverified device intake. No private history or financial authority.
  function devicePolicy(){return get(/databases/$(database)/documents/device_entry_policy/active).data;}
- function deviceAuth(){return request.auth!=null && request.auth.token.firebase.sign_in_provider=='anonymous';}
+ function deviceAuth(){return googleWriter() && live();}
  function deviceLive(){let p=devicePolicy();return deviceAuth() && p.keys().hasOnly(['enabled','epoch','roster_version']) && p.keys().size()==3 && p.enabled==true && p.epoch is int && p.epoch>0 && p.roster_version is string;}
  function deviceValid(d,rid){let p=devicePolicy();let roster=get(/databases/$(database)/documents/entry_roster/active).data;let b=d.submitted_body;return deviceLive() && d.keys().toSet()==['contract_version','report_id','command_id','writer_epoch','roster_version','submitted_body','owner_uid','committed_revision','committed_at'].toSet() && d.keys().size()==9 && d.contract_version is int && d.contract_version==1 && d.writer_epoch is int && d.committed_revision is int && d.report_id==rid && d.command_id==rid && d.owner_uid==request.auth.uid && d.writer_epoch==p.epoch && d.roster_version==p.roster_version && roster.version==p.roster_version && b.pelapor in roster.workers && roster.workers[b.pelapor].active==true && roster.workers[b.pelapor].retired==false && d.committed_revision==1 && d.committed_at==request.time && b.id==rid && b.detail is string && b.detail.size()<=100000 && body(b,{'role':'staff'});}
  match /device_entry_policy/active {allow get:if deviceAuth();allow list,write:if false;}
@@ -167,5 +167,7 @@ service cloud.firestore { match /databases/{database}/documents {
  // Minimal operational derivative, produced only by trusted publisher. Never raw records.
  function operationalValid(d){return d.keys().hasOnly(['version','captured_at','freshness','rows','total']) && d.keys().size()==5 && d.version==1 && d.captured_at is string && d.freshness=='bounded-snapshot' && d.rows is list && d.total is int && d.total==d.rows.size();}
  match /operational_snapshot/active {allow get:if operationalValid(resource.data);allow list,write:if false;}
+ // Public transparency is independent of write grants. Capability stores are excluded.
+ match /{publicCollection}/{id}{allow read:if publicCollection in ['laporan','report_heads','entry_receipts','operation_events','operation_receipts','device_reports','device_receipts','cabut_state','upah','cashbook','opt_observations','panen_data','panen_lots','panen_sampling','distribusi_pic','sop_master','worker_defs_custom','milestones','invoices','workers','sop_status'];allow write:if false;}
  match /{document=**}{allow read,write:if false;}
 }}

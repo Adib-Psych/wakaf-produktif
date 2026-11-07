@@ -4489,12 +4489,12 @@ function validEntryRoster(data){
   seen.add(w.token);return {...w};
  });
 }
-function entryRosterAllows(token){return entryRoster.status==='ready'&&window.privateReader?.matches(entryRoster.ticket)&&entryRoster.rows.some(w=>w.token===token&&w.active===true&&w.retired!==true);}
+function entryRosterAllows(token){return entryRoster.status==='ready'&&window.authorizedReports?.sessionMatches(entryRoster.ticket)&&entryRoster.rows.some(w=>w.token===token&&w.active===true&&w.retired!==true);}
 function populateFormPelaporRadio() {
  const container=document.getElementById('form-pelapor');if(!container)return;
  container.replaceChildren();let status=document.getElementById('entry-roster-status');
  if(!status){status=document.createElement('p');status.id='entry-roster-status';status.setAttribute('role','status');container.after(status);const retry=document.createElement('button');retry.id='entry-roster-retry';retry.type='button';retry.textContent='Muat ulang daftar pekerja';retry.onclick=()=>{if(typeof window.loadWorkerDefsCustomFromFirestore==='function')void window.loadWorkerDefsCustomFromFirestore();else holdEntryRoster();};status.after(retry);}
- const ready=entryRoster.status==='ready'&&window.privateReader?.matches(entryRoster.ticket);
+ const ready=entryRoster.status==='ready'&&window.authorizedReports?.sessionMatches(entryRoster.ticket);
  const rows=ready?entryRoster.rows.filter(w=>w.active===true&&w.retired!==true):[];
  status.textContent=ready?(rows.length?'Daftar pekerja dari server untuk sesi ini.':'Daftar server terverifikasi tidak memiliki pekerja aktif; entry ditahan.'):(entryRoster.status==='loading'?'Memuat daftar pekerja dari server…':'Daftar pekerja terkini belum tersedia/izin belum disahkan. Entry ditahan; draft dan pending tidak dihapus.');
  if(ready&&STATE.pelapor&&!rows.some(w=>w.token===STATE.pelapor))status.textContent+=' Pilihan draft sebelumnya tidak aktif/tidak tersedia; pilih pekerja yang disahkan sebelum entry baru.';
@@ -20517,7 +20517,8 @@ window.applyOwnerSnapshot=v=>{
  for(const name of ['renderLog','renderDashboard','renderBudgetChart','renderUpahTable','renderUpahSummary','renderCashbookTab','renderCashbook','renderRAB','renderOptObsTable','renderOPT','renderPanen','renderPanenLots','renderPanenSampling','renderMilestonesTable','renderMilestonesSummary','renderSOPKalender','renderSOPCompliance','renderWorkersTab','renderDistribusi','renderCabutLog','renderPupuk','renderKasbon','renderBenchmarkLog','renderUpahDup','renderUpahNoCashbook','renderUpahGap','renderLateEntryQueue','populatePelaporSelects'])try{window[name]?.();}catch(e){window.ownerRenderErrors.push({name,error:e.message});console.warn('Panel belum dapat dirender:',name);}
 };
 
-const restored=await mountRestoredDashboard(firebaseConfig);if(!restored?.privateMode)await mountDeviceEntry(firebaseConfig);
+void mountDeviceEntry(firebaseConfig).catch(()=>{const n=document.getElementById('device-entry-status');if(n)n.textContent='Entry belum siap; baca publik tetap tersedia.';});
+const restored=await mountRestoredDashboard(firebaseConfig);
 // Returning default Google session is not required or read on the ordinary operational route.
 }else{
     const fbApp = initializeApp(firebaseConfig);

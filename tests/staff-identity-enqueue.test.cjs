@@ -12,7 +12,7 @@ function harness(options = {}) {
   const fields = {'f-tgl': '2026-01-01', 'f-kategori': 'lain', 'f-catatan': 'synthetic body'};
   const c = vm.createContext({
     navigator:{locks:{request:async(_k,fn)=>fn()}},
-    window: {validateStaffReport:()=>true,addEventListener() {},privateReader:{matches:()=>true},authorizedReports:{sessionOwner:()=> 'synthetic-owner'}}, document: {querySelectorAll:()=>[{value:'lain'},{value:'panen'}],addEventListener() {}, getElementById: id => ({value: fields[id] || ''})},
+    window: {validateStaffReport:()=>true,addEventListener() {},authorizedReports:{sessionMatches:()=>true,sessionOwner:()=> 'synthetic-owner'}}, document: {querySelectorAll:()=>[{value:'lain'},{value:'panen'}],addEventListener() {}, getElementById: id => ({value: fields[id] || ''})},
     localStorage: {getItem: k => storage.get(k) ?? null, setItem: (k, v) => {calls.writes.push({k, v}); if (options.storageFailure && k === key) throw Error('synthetic disk full'); storage.set(k, v);}},
     console: {warn() {}}, alert: s => calls.alerts.push(s), confirm: () => true,
     crypto: options.noCrypto ? undefined : {randomUUID: () => {calls.uuid++; if (calls.uuid === options.throwAt) throw Error('synthetic entropy failure'); return options.uuid || randomUUID();}},
