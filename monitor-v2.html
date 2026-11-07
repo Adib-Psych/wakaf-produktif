@@ -318,6 +318,8 @@ body[data-report-entry="device"] #device-entry-recovery button,body[data-report-
 body[data-report-entry="device"] .device-management{margin:20px 24px;font-size:12px}body[data-report-entry="device"] .device-management summary{min-height:44px;cursor:pointer}
 body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex;align-items:center}
 </style>
+<link rel="stylesheet" href="recovery/public-presentation.css">
+<link rel="stylesheet" href="recovery/entry-login.css">
 </head>
 <body data-report-access="compact" data-report-entry="device">
 
@@ -618,14 +620,14 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
             </div>
           </div>
         </div>
-        <div class="form-grid" style="margin-top:12px;background:#fff8e6;padding:12px;border-radius:8px;border-left:3px solid var(--gold)">
+        <div class="form-grid rainfall-grid" style="margin-top:12px;background:#fff8e6;padding:12px;border-radius:8px;border-left:3px solid var(--gold)">
           <div class="field">
             <label class="field-lbl">Curah hujan 24 jam terakhir (mm) <small style="color:var(--mute);font-weight:400">— observasi atau BMKG</small></label>
-            <input type="number" id="f-rainfall-24h" min="0" step="0.5" placeholder="cth: 0 cerah, 5 gerimis, 25 hujan deras" oninput="updateRainfallAlert()">
+            <input type="number" id="f-rainfall-24h" min="0" step="0.5" placeholder="Contoh: 5" aria-label="Curah hujan 24 jam terakhir dalam milimeter" oninput="updateRainfallAlert()">
           </div>
           <div class="field">
             <label class="field-lbl">Curah hujan 7 hari terakhir (mm) <small style="color:var(--mute);font-weight:400">— total minggu ini</small></label>
-            <input type="number" id="f-rainfall-7d" min="0" step="1" placeholder="cth: 50 ringan, 100 sedang, 200+ deras" oninput="updateRainfallAlert()">
+            <input type="number" id="f-rainfall-7d" min="0" step="1" placeholder="Contoh: 100" aria-label="Curah hujan 7 hari terakhir dalam milimeter" oninput="updateRainfallAlert()">
           </div>
           <div class="field" style="grid-column:1/-1">
             <label class="field-lbl">Sumber data hujan</label>
@@ -4496,7 +4498,7 @@ function populateFormPelaporRadio() {
  if(!status){status=document.createElement('p');status.id='entry-roster-status';status.setAttribute('role','status');container.after(status);const retry=document.createElement('button');retry.id='entry-roster-retry';retry.type='button';retry.textContent='Muat ulang daftar pekerja';retry.onclick=()=>{if(typeof window.loadWorkerDefsCustomFromFirestore==='function')void window.loadWorkerDefsCustomFromFirestore();else holdEntryRoster();};status.after(retry);}
  const ready=entryRoster.status==='ready'&&window.authorizedReports?.sessionMatches(entryRoster.ticket);
  const rows=ready?entryRoster.rows.filter(w=>w.active===true&&w.retired!==true):[];
- status.textContent=ready?(rows.length?'Daftar pekerja dari server untuk sesi ini.':'Daftar server terverifikasi tidak memiliki pekerja aktif; entry ditahan.'):(entryRoster.status==='loading'?'Memuat daftar pekerja dari server…':'Daftar pekerja terkini belum tersedia/izin belum disahkan. Entry ditahan; draft dan pending tidak dihapus.');
+ status.textContent=ready?(rows.length?'Daftar pekerja dari server untuk sesi ini.':'Daftar server terverifikasi tidak memiliki pekerja aktif; entry ditahan.'):(entryRoster.status==='loading'?'Memuat daftar pekerja dari server…':'Masuk dengan akun berizin untuk memilih pelapor. Draft tetap tersimpan.');
  if(ready&&STATE.pelapor&&!rows.some(w=>w.token===STATE.pelapor))status.textContent+=' Pilihan draft sebelumnya tidak aktif/tidak tersedia; pilih pekerja yang disahkan sebelum entry baru.';
  for(const w of rows){const button=document.createElement('div');button.className='radio-pill';button.dataset.val=w.token;button.textContent=(w.icon||'👷')+' '+w.nama;button.onclick=()=>{if(entryRosterAllows(w.token))setRadio('form-pelapor',button);};if(STATE.pelapor===w.token)button.classList.add('on');container.append(button);}
 }

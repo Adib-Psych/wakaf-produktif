@@ -1,0 +1,41 @@
+/* Existing green operational shell; presentation only, no data/auth contract changes. */
+.public-page-header{display:flex;align-items:center;justify-content:space-between;gap:20px;margin:0 0 22px;padding:2px 0 18px;border-bottom:1px solid #d8e2dc}
+.public-page-eyebrow{font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase;color:#547466}
+.public-page-header h1{font-family:inherit;font-size:25px;font-weight:750;letter-spacing:-.6px;line-height:1.2;color:var(--earth);margin:5px 0 8px}
+#restored-source-status.public-source-status{font-size:12px!important;line-height:1.5;margin:0;max-width:650px;color:#52665c!important}
+.public-source-status::before{content:'';display:inline-block;width:7px;height:7px;border-radius:50%;background:#538269;margin-right:7px}
+.public-source-status[data-health=loading]::before{background:#7b8790}
+.public-source-status[data-health=partial]::before,.public-source-status[data-health=stale]::before{background:#ae692e}
+.public-source-status[data-health=error]::before{background:#ba4a39}
+.public-entry-link{flex-shrink:0;border:1px solid #b4c8bc;border-radius:8px;min-height:44px;padding:10px 16px;background:#fff;color:#244f3b;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.public-entry-link:hover{background:#eaf2ec}
+.public-entry-link:focus-visible,#panel-form :is(input,select,textarea,button,[onclick]):focus-visible{outline:3px solid #5e927c;outline-offset:3px}
+.domain-status{font-size:13px;line-height:1.6;color:#764c29;background:#fff5e9;border:1px solid #ead7c0;border-radius:8px;padding:10px 14px;margin:0 0 14px}
+.domain-status[hidden]{display:none!important}
+#panel-form .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 24px;align-items:start}
+#panel-form .field{min-width:0;gap:8px}
+#panel-form .field-lbl{font-size:12px;line-height:1.6;letter-spacing:0}
+#panel-form .field-lbl small{display:block;font-size:11px!important}
+#panel-form .field :is(input:not([type=checkbox]):not([type=radio]),select,textarea){min-width:0;max-width:100%;width:100%;min-height:44px;box-sizing:border-box;font-size:14px;line-height:1.5}
+#panel-form .radio-row{gap:8px}
+body[data-report-entry=device] #panel-form .radio-pill{justify-content:center;min-height:44px;line-height:1.4;padding:9px 12px}
+body[data-report-entry=device] #form-bidang{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+body[data-report-entry=device] #form-bidang .radio-pill{display:flex;flex-direction:column;align-items:flex-start;gap:3px;border-radius:9px}
+#form-bidang .radio-pill br{display:none}
+#form-bidang .radio-pill small{display:block;font-size:11px!important}
+#form-bidang .radio-pill.on small{color:#fff!important}
+#entry-roster-status{font-size:12px;line-height:1.6;color:#637268;margin:0}
+#entry-roster-retry{align-self:flex-start;margin-top:2px;font-size:12px;cursor:pointer}
+#panel-form .rainfall-grid{background:#f4f7f2!important;border:1px solid #d8e2d4!important;padding:16px!important}
+#panel-form .card-title{line-height:1.6;flex-wrap:wrap;letter-spacing:1px}
+#panel-form .table-wrap{max-width:100%;border:1px solid #dbe3dd;border-radius:8px}
+#panel-form table{min-width:640px;line-height:1.5}
+#panel-form th,#panel-form td{padding:12px;vertical-align:top}
+#panel-form table :is(input:not([type=checkbox]):not([type=radio]),select){min-height:44px;max-width:100%;min-width:88px;box-sizing:border-box;border:1px solid #bfcfc5;border-radius:6px;padding:8px;font:inherit}
+#panel-form .form-hero-restore{margin:0 0 14px;text-align:left}
+#panel-form .form-hero-banner img{object-fit:contain;background:#fafcf9}
+#panel-form .form-hero-banner .hero-hint{position:static;display:block;border-radius:0;text-align:center;padding:9px}
+#panel-form .form-hero-banner .hero-dismiss-btn{width:44px;height:44px}
+@media(min-width:1400px){#panel-form>.card:first-of-type .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.public-page-header{align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}.public-page-header h1{font-size:22px}.public-entry-link{width:100%}#panel-form .form-grid{grid-template-columns:minmax(0,1fr);gap:18px}#panel-form .card{padding:16px}#panel-form .card-title{letter-spacing:.5px}#panel-form .radio-row{gap:7px}#panel-form .field-lbl{font-size:13px}}
+@media print{.public-entry-link{display:none}.public-page-header{margin-bottom:12px}}
