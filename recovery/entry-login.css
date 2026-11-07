@@ -1,0 +1,138 @@
+/* Account entry only: public dashboard reading does not depend on this card. */
+#panel-form .entry-account-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  min-width: 0;
+  margin: 0 0 24px;
+  padding: 20px;
+  border: 1px solid #ceded5;
+  border-top: 3px solid #2e604d;
+  border-radius: 12px;
+  background: #f6faf7;
+  color: #203c34;
+  box-shadow: 0 2px 8px rgb(32 60 52 / 4%);
+}
+#panel-form .entry-account-card[hidden],
+#panel-form .entry-account-card [hidden] { display: none !important; }
+#panel-form .entry-account-card #device-entry-account-title {
+  margin: 0 0 8px;
+  color: #203c34;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0;
+  text-transform: none;
+}
+#panel-form .entry-account-card .entry-account-note {
+  max-width: 58ch;
+  margin: 0 0 16px;
+  color: #4c6259;
+  font-size: 13px;
+  line-height: 1.6;
+}
+#panel-form .entry-account-card .entry-account-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+#panel-form .entry-account-card button {
+  box-sizing: border-box;
+  min-height: 44px;
+  min-width: 44px;
+  max-width: 100%;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: normal;
+}
+#panel-form .entry-account-card .entry-google-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border: 1px solid #747775;
+  background: #fff;
+  color: #1f1f1f;
+  letter-spacing: .1px;
+}
+#panel-form .entry-account-card .entry-google-button:hover {
+  border-color: #2e604d;
+  background: #eef4f0;
+  box-shadow: 0 1px 3px rgb(32 60 52 / 12%);
+}
+#panel-form .entry-account-card .entry-google-button:active { background: #e4ede7; }
+#panel-form .entry-account-card .entry-google-icon,
+#panel-form .entry-account-card .entry-google-icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+}
+#panel-form .entry-account-card .entry-account-signout {
+  margin-top: 12px;
+  padding: 9px 12px;
+  border: 1px solid #c3d2c9;
+  background: transparent;
+  color: #365848;
+  font-size: 13px;
+}
+#panel-form .entry-account-card .entry-account-signout:hover { background: #e8f1ec; }
+#panel-form .entry-account-card button:focus-visible,
+#panel-form .entry-account-card summary:focus-visible {
+  outline: 3px solid #2e604d;
+  outline-offset: 3px;
+}
+#panel-form .entry-account-card .device-save-status {
+  margin: 16px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid #d8e3dc;
+  color: #42594e;
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+#panel-form .entry-account-card #device-entry-recovery {
+  margin-top: 14px;
+  padding: 12px;
+  border: 1px solid #e4d2a4;
+  border-radius: 8px;
+  background: #fff8e6;
+  color: #634b16;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+#panel-form .entry-account-card #device-entry-recovery summary {
+  min-height: 44px;
+  align-content: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+#panel-form .entry-account-card #device-entry-retry {
+  padding: 9px 12px;
+  border: 1px solid #8b6914;
+  background: #fff;
+  color: #634b16;
+}
+/* Use desktop width instead of stacking the account introduction. */
+@media (min-width: 760px) {
+  #panel-form .entry-account-card { display: grid; grid-template-columns: minmax(0,1fr) auto; column-gap: 28px; row-gap: 6px; padding: 18px 20px; }
+  #panel-form .entry-account-card #device-entry-account-title { grid-column: 1; grid-row: 1; margin: 0; }
+  #panel-form .entry-account-card .entry-account-note { grid-column: 1; grid-row: 2; max-width: none; margin: 0; }
+  #panel-form .entry-account-card .entry-account-actions { grid-column: 2; grid-row: 1 / 3; align-self: center; }
+  #panel-form .entry-account-card .entry-account-secondary { grid-column: 2; grid-row: 3; justify-self: end; }
+  #panel-form .entry-account-card .entry-account-secondary:has(> [hidden]) { display: none; }
+  #panel-form .entry-account-card .entry-account-signout { margin-top: 0; }
+  #panel-form .entry-account-card .device-save-status { grid-column: 1 / -1; margin: 8px 0 0; padding: 9px 0 0; border-radius: 0; background: transparent; }
+  #panel-form .entry-account-card #device-entry-recovery { grid-column: 1 / -1; }
+}
+@media (max-width: 480px) {
+  #panel-form .entry-account-card { padding: 16px; margin-bottom: 20px; }
+  #panel-form .entry-account-card .entry-google-button { width: 100%; }
+  #panel-form .entry-account-card .entry-account-actions { width: 100%; }
+}
