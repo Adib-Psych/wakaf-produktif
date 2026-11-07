@@ -12,7 +12,7 @@
 .public-entry-link:focus-visible,#panel-form :is(input,select,textarea,button,[onclick]):focus-visible{outline:3px solid #5e927c;outline-offset:3px}
 .domain-status{font-size:13px;line-height:1.6;color:#764c29;background:#fff5e9;border:1px solid #ead7c0;border-radius:8px;padding:10px 14px;margin:0 0 14px}
 .domain-status[hidden]{display:none!important}
-#panel-form .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 24px;align-items:start}
+#panel-form .form-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 20px;align-items:start}
 #panel-form .field{min-width:0;gap:8px}
 #panel-form .field-lbl{font-size:12px;line-height:1.6;letter-spacing:0}
 #panel-form .field-lbl small{display:block;font-size:11px!important}
@@ -22,7 +22,10 @@ body[data-report-entry=device] #panel-form .radio-pill{justify-content:center;mi
 body[data-report-entry=device] #form-bidang{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 body[data-report-entry=device] #form-bidang .radio-pill{display:flex;flex-direction:column;align-items:flex-start;gap:3px;border-radius:9px}
 #form-bidang .radio-pill br{display:none}
-#form-bidang .radio-pill small{display:block;font-size:11px!important}
+#form-bidang .radio-pill small{display:block;font-size:12px!important;color:#52665c!important}
+#panel-form #form-bidang .radio-pill{font-size:14px}
+#panel-form .field:has(#form-durasi)>div:last-child{font-size:12px!important;line-height:1.5;color:#52665c!important}
+#panel-form button[onclick="addExtraKategori()"]{min-height:44px;font-size:12px!important;line-height:1.5}
 #form-bidang .radio-pill.on small{color:#fff!important}
 #entry-roster-status{font-size:12px;line-height:1.6;color:#637268;margin:0}
 #entry-roster-retry{align-self:flex-start;margin-top:2px;font-size:12px;cursor:pointer}
@@ -36,6 +39,17 @@ body[data-report-entry=device] #form-bidang .radio-pill{display:flex;flex-direct
 #panel-form .form-hero-banner img{object-fit:contain;background:#fafcf9}
 #panel-form .form-hero-banner .hero-hint{position:static;display:block;border-radius:0;text-align:center;padding:9px}
 #panel-form .form-hero-banner .hero-dismiss-btn{width:44px;height:44px}
-@media(min-width:1400px){#panel-form>.card:first-of-type .form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+/* Compact through grouping, not smaller text or clipped controls. DOM order stays intact. */
+#panel-form .card{padding:20px;margin-bottom:14px}
+#panel-form .card-title{margin-bottom:14px}
+#panel-form #form-bidang-preview:empty{display:none}
+#panel-form #extra-kategori-wrap:empty{display:none}
+@media(min-width:1200px){
+  #panel-form>.card:has(#f-tgl)>.form-grid{grid-template-columns:1.1fr .8fr 1.4fr 1fr}
+  #panel-form .rainfall-grid{grid-template-columns:.8fr .8fr 2fr;gap:14px 20px}
+  #panel-form .rainfall-grid>.field:last-child{grid-column:auto!important}
+  #panel-form>.card:has(#f-kategori)>.form-grid{grid-template-columns:1.3fr 1.2fr .7fr}
+  #panel-form #activity-detail-form .form-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
 @media(max-width:600px){.public-page-header{align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:16px}.public-page-header h1{font-size:22px}.public-entry-link{width:100%}#panel-form .form-grid{grid-template-columns:minmax(0,1fr);gap:18px}#panel-form .card{padding:16px}#panel-form .card-title{letter-spacing:.5px}#panel-form .radio-row{gap:7px}#panel-form .field-lbl{font-size:13px}}
 @media print{.public-entry-link{display:none}.public-page-header{margin-bottom:12px}}
