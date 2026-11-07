@@ -1,35 +1,31 @@
 # Wakaf — current working information
 
-Updated: 7 November 2026. This is the active short handover; older registers remain historical evidence, not a queue to replay.
+Updated: 7 November 2026. Active short handover; historical registers are evidence, not a queue to replay.
 
 ## Owner decisions
 
-- Consolidate current information; avoid spending context/credits repeatedly reading the full history.
-- Migration priority: complete live data visibility and stable functions without repeated login/access barriers. Page-specific access design follows stabilization. Full public read and unrestricted anonymous write are different consequences and require an explicit implementation decision; no production security policy has changed in this documentation release.
-- Publish each coherent tested change promptly to GitHub and Pages so Panji can inspect progress. A code commit is not a database backup or proof of data delivery.
+- PUBLIC TRANSPARENCY: everyone may read complete dashboard operational data, staff reports and financial detail without login. Credentials/signing capabilities are not dashboard data.
+- Entry requires verified Google authentication AND an explicitly approved enabled account grant. Google login alone does not authorize writes. Restore valid sessions; ask for login when attempting entry, not reading.
+- Publish coherent tested changes promptly through GitHub/Pages. Preserve integrity checks, pending ownership, receipt ACK and correction history. No fabricated production submissions.
 
-## Verified baseline
+## Current application change
 
-The previous application release was PR12, merge `424fbe809f73cb0be460b82d1c4264d2d5af86b6`. On 7 November its public monitor HTML matched the Git version; Pages was successful. This documentation release changes no application/runtime/database policy.
+- Default monitor reads existing Firestore dashboard collections directly, without authentication or the bounded `operational_snapshot` derivative. Refresh every 60 seconds and on reconnect; source reads are bounded.
+- Per-domain failures distinguish unavailable/partial/stale data from confirmed empty. Last-known valid data is retained; exports refuse incomplete/stale required sources.
+- Google entry uses separate persistent authentication; logout and denied grants do not clear public data. Anonymous queues remain owned by their original identity and are not adopted or replayed.
+- `firebase.json` deploys `recovery/firestore.production.rules`. Its byte-identical root companion `firestore.rules` is retained for existing tests. Public get/list applies only to dashboard collections, not grants, worker tokens or capabilities. Writes retain schema/receipt validation plus Google and explicit-grant enforcement.
 
-## Open operator outcomes
+## Verification and outstanding activation
 
-1. Resolve the owner's reported missing wages on the actual route/filter/source path. The prior date/navigation repair did not prove this outcome.
-2. Verify a genuine staff report through server acknowledgement, reload and the appropriate shared reader, without manufacturing production submissions or replaying an uncertain one.
-3. Replace the public bounded snapshot with actual cross-device freshness under the existing supported provider/cost model. Refreshing the same snapshot is not live ingestion.
-4. Align the no-email reading/access model with the owner's request; do not call a restricted summary equivalent to complete private reading.
-
-## Known system boundaries
-
-- Historical diagnoses found both a missing device lane and a category omitted by a reader adapter. Missing display alone is not evidence of lost storage.
-- The general no-email reader currently loads `operational_snapshot/active`; private reading follows another path. These are current implementation facts, not the requested final access design.
-- The May/June manual's Mac/osascript push, Safari prohibition, hard-refresh test plan and localStorage-only finance map are no longer governing instructions. Recover their history from Git only if needed.
-- Preserve data-integrity checks, source dates, pending queues and correction history while simplifying access. Do not mix identity validation with duplicate prevention or silently remove both.
+- Candidate: 335 offline regressions passed; configured-source public/Google Rules emulator 32 passed; existing containment emulator passed; isolated browser failure/offline upgrade checks passed. These are not a genuine staff submission.
+- Production preflight found no `entry_grants` and no `entry_policy/active`. A reader grant is not write approval. Writer activation therefore requires the owner-approved identities to be established and explicitly provisioned; no roles are guessed. Public read installation is independent.
+- Candidate browser exercised the ordinary route without a login, including failed-read warnings, with no runtime exceptions. Production read activation and served-byte/browser acceptance must be checked after release, not inferred from CI.
+- Owner's original browser acceptance and genuine staff report → server ACK → reload → shared reader remain outstanding. Do not manufacture business reports for testing.
 
 ## Inspection
 
 - Application: https://adib-psych.github.io/wakaf-produktif/monitor-v2.html
-- Public work status: https://adib-psych.github.io/wakaf-produktif/status-pekerjaan.html
+- Work status: https://adib-psych.github.io/wakaf-produktif/status-pekerjaan.html
 - Source: https://github.com/Adib-Psych/wakaf-produktif
 
-Executor: Thar Lay/server. Existing Luna/Mac sources are unchanged. No business records or secrets are included in this public handover; no new Luna/Mac or Drive synchronization.
+Executor/source: Thar Lay/server worktree. Output: GitHub source and Pages after verified publication, Firestore Rules after separate verified deployment. Luna/Mac and Drive have not been synchronized or modified by this release. No secrets or business-record copies are included in this handover.

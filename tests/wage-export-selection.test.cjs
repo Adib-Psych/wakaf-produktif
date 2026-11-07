@@ -8,7 +8,8 @@ async function harness(){
  const wages=[{id:'one',tgl:'2000-01-02',pelapor:'SYNTHETIC',aktivitas:'lain',model:'harian',qty:1,tarif:120,status:'belum'},{id:'two',tgl:'2000-01-03',pelapor:'SYNTHETIC',aktivitas:'lain',model:'harian',qty:2,tarif:130,status:'belum'}];
  const value=()=>({reports:[],upah:structuredClone(wages),cashbook:[],sop:[],sopStatus:[]});let blobs=new Map(),seq=0;
  const window={normalizeOwnerReport:x=>x,spreadsheetCSVCell:x=>'"'+String(x??'').replaceAll('"','""')+'"',clearOwnerSnapshot(){boxes=[];},applyOwnerSnapshot(v){boxes=(v.upah||[]).map(x=>({dataset:{id:x.id},checked:false,matches:s=>s.split(',')[0]==='.upah-check'}));if(afterApply)queueMicrotask(afterApply);},addEventListener:(t,fn)=>winEvents[t]=fn};
- const context={document,window,structuredClone,Date,Set,Error,Blob,URL:{createObjectURL:b=>{const id=String(++seq);blobs.set(id,b);return id;},revokeObjectURL(){}},alert:s=>alerts.push(s),setTimeout,queueMicrotask,setInterval(){},snapshotHealth:()=>({state:'unknown'})};
+ const {domainWarning,requireFreshPublicData}=await import('../recovery/public-health.mjs');
+ const context={domainWarning,requireFreshPublicData,document,window,structuredClone,Date,Set,Error,Blob,URL:{createObjectURL:b=>{const id=String(++seq);blobs.set(id,b);return id;},revokeObjectURL(){}},alert:s=>alerts.push(s),setTimeout,queueMicrotask,setInterval(){},snapshotHealth:()=>({state:'unknown'})};
  const mount=new vm.Script(source+'\nmountPrivateDashboard').runInNewContext(context);
  await mount({}, {mode:'synthetic',load:async()=>{loads++;return nextLoad?nextLoad():value();}});
  function change(id,checked){const b=boxes.find(x=>x.dataset.id===id);assert(b);b.checked=checked;events.change({target:b});}
