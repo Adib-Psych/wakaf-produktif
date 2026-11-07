@@ -18,8 +18,8 @@ Updated: 7 November 2026. Active short handover; historical registers are eviden
 ## Verification and outstanding activation
 
 - Candidate: 335 offline regressions passed; configured-source public/Google Rules emulator 32 passed; existing containment emulator passed; isolated browser failure/offline upgrade checks passed. These are not a genuine staff submission.
-- Production preflight found no `entry_grants` and no `entry_policy/active`. A reader grant is not write approval. Writer activation therefore requires the owner-approved identities to be established and explicitly provisioned; no roles are guessed. Public read installation is independent.
-- Candidate browser exercised the ordinary route without a login, including failed-read warnings, with no runtime exceptions. Production read activation and served-byte/browser acceptance must be checked after release, not inferred from CI.
+- Production activation verified: one explicitly owner-approved genuine Google staff identity has an enabled `staff_entry` grant; `entry_policy/active` is unpaused with matching epoch. The grant and policy were created atomically with absent guards after independent review. No owner-management, payment or historical-mutation privileges were added; no business records were written.
+- PR14 is live; configured production Rules match deployed bytes and 18 served frontend dependencies match the merge. A fresh signed-out production browser reads 213 reports, 190 wage rows and 153 cash rows without source/runtime errors, including after staff activation.
 - Owner's original browser acceptance and genuine staff report → server ACK → reload → shared reader remain outstanding. Do not manufacture business reports for testing.
 
 ## Inspection
