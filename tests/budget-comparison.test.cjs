@@ -1,0 +1,15 @@
+'use strict';
+const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm');
+const html=fs.readFileSync('monitor-v2.html','utf8');
+const code=html.slice(html.indexOf('function renderBudgetChart()'),html.indexOf('// ===== UPAH PAYMENT TRACKER'));
+function run({known=true,plan=true,book=true}={}){
+ let chart=null;const nodes={'chart-budget':{},'budget-comparison-note':{textContent:''},'budget-comparison-key':{innerHTML:''}};
+ class Chart{constructor(ctx,c){chart=c;}static getChart(){return{destroy(){}};}}
+ const context={Chart,window:{ownerCashbookKnown:known},document:{getElementById:id=>nodes[id],documentElement:{}},getComputedStyle:()=>({getPropertyValue:k=>({'--brand-plum':'#74465f','--terra':'#9b4f2e','--sage':'#dfcbd7','--mute':'#70636a','--harvest-line':'#e4d9df'}[k]||'')}),fmtRpShort:n=>'Rp '+n};
+ if(book)context.CASHBOOK=[{kat:'3.1',keluar:70,tgl:'2026-05-01'},{kat:'4.1',keluar:30,tgl:'2026-10-01'},{kat:'2.1',keluar:20},{kat:'1.2',keluar:10},{kat:'8.1',keluar:7},{kat:'',keluar:3}];
+ if(plan)context.RAB_DATA={'2026':{periode:'Mei 2026 → Sep 2026',kategori:[{id:'1',items:[{qty:2,hf:100}]},{id:'2',items:[{qty:1,hf:300}]},{id:'3',items:[{qty:2,hf:400}]},{id:'4',items:[{qty:1,hf:100}]},{id:'5',items:[{qty:1,hf:30}]},{id:'8',items:[{qty:1,hf:20}]}]},'2027':{kategori:[{id:'3',items:[{qty:1,hf:999999}]}]}};
+ vm.runInNewContext(code+';renderBudgetChart();',context);return {chart,nodes};
+}
+test('budget comparison has two unstacked datasets, same category groups and Musim Panen palette',()=>{const {chart,nodes}=run();assert.equal(chart.data.datasets.length,2);assert.deepEqual(Array.from(chart.data.datasets[0].data),[900,300,200,50]);assert.deepEqual(Array.from(chart.data.datasets[1].data),[100,20,10,10]);assert.equal(chart.data.datasets[0].backgroundColor,'#dfcbd7');assert.equal(chart.data.datasets[1].backgroundColor,'#74465f');assert.equal(chart.options.indexAxis,'y');assert.equal(chart.options.scales.x.stacked,false);assert.match(nodes['budget-comparison-note'].textContent,/Mei 2026 → Sep 2026/);assert.match(nodes['budget-comparison-note'].textContent,/seluruh catatan/);assert.match(chart.data.labels[0],/👷/);assert.match(chart.data.labels[1],/♻/);});
+test('unknown cashbook or missing plan cannot appear as a zero-valued comparison',()=>{for(const options of [{known:false},{plan:false},{book:false}]){const {chart,nodes}=run(options);assert.equal(chart,null);assert.match(nodes['budget-comparison-note'].textContent,/belum tersedia|belum dapat/);}});
+test('wage centering remains scoped and no payment authority changes are part of this presentation',()=>{assert.match(html,/#panel-anggaran table td\{text-align:center!important;vertical-align:middle!important\}/);assert.doesNotMatch(code,/runTransaction|setDoc|syncUpah|saveCashbook/);});
