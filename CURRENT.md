@@ -19,7 +19,8 @@ Updated: 7 November 2026. Active short handover; historical registers are eviden
 
 - Public header contains a concise freshness/availability notice, not collection names, raw error codes or repeated diagnostics. Unavailable/stale data is still disclosed; backend metadata and export freshness guards are preserved.
 - Google entry has a labelled account card and logo, separate sign-out action and explicit public-reading note. Form controls align in a responsive two-column grid; garden labels, rainfall controls and input tables are spaced consistently.
-- Candidate: 342 offline tests pass; read-only Chromium at 1440px/390px confirms public data remains present, no runtime errors or page overflow, Google card renders and hidden sign-out remains hidden. Real Google login/staff ACK and original Safari acceptance are separate outstanding checks.
+- Owner-approved Musim Panen direction: plum/coffee/clay styling, compact mosaic, existing harvest summary emphasized, harvest entry and log proportions aligned. Concept sample values/filters/charts are not installed. Only presentation markup and a new stylesheet change; every existing script and control contract stays identical. See [preservation and release scope](HARVEST-PRESENTATION.md).
+- Candidate: 347 offline regressions pass; same-fixture comparison preserves data, all 21 navigation destinations, 22 generated category templates, charts and report/selected-wage CSV. Two exact presentation deltas are documented rather than disguised as a raw strict-comparison pass. Populated 63-state scan and ten-width public-read/focus/hidden-state checks pass. Real Google login/staff ACK and original Safari acceptance remain separate outstanding checks.
 
 ## Verification and outstanding activation
 

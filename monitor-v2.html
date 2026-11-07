@@ -320,6 +320,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
 </style>
 <link rel="stylesheet" href="recovery/public-presentation.css">
 <link rel="stylesheet" href="recovery/entry-login.css">
+<link rel="stylesheet" href="recovery/harvest-presentation.css">
 </head>
 <body data-report-access="compact" data-report-entry="device">
 
@@ -440,6 +441,13 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
 
     <!-- ============ DASHBOARD ============ -->
     <div class="panel active" id="panel-dashboard">
+      <div class="harvest-intro">
+        <div class="harvest-intro-heading">
+          <p class="harvest-eyebrow">Konteks kebun · Musim Panen</p>
+          <h2>Petik → sortir → olah</h2>
+        </div>
+        <p class="harvest-intro-note">Setiap tahap memiliki catatan beratnya sendiri: cherry saat petik, hasil sortir per varian, lalu hasil pengolahan. Baca sesuai tahapnya, bukan sebagai berat yang sama.</p>
+      </div>
       <div class="kpi-grid">
         <div class="kpi"><div class="kpi-num" id="kpi-laporan">—</div><div class="kpi-lbl">Total Laporan (30 hari)</div><div class="kpi-trend" id="kpi-laporan-trend">Belum ada data</div></div>
         <div class="kpi"><div class="kpi-num" id="kpi-pohon">—</div><div class="kpi-lbl">Pohon Dikerjakan</div><div class="kpi-trend" id="kpi-pohon-trend">Belum ada data</div></div>
@@ -458,7 +466,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       </div>
 
       <!-- Panen Tahun Ini + Pohon per Kebun (27 Jun 2026) -->
-      <div class="card" data-tier="wakif">
+      <div class="card harvest-summary-card" data-tier="wakif">
         <div class="card-title"><span class="num">🍒</span>Panen Tahun Ini + Pohon per Kebun</div>
         <div id="dash-panen-summary"></div>
       </div>
@@ -1429,7 +1437,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
     <div class="panel" id="panel-panen">
 
       <!-- Hero Banner -->
-      <div class="card" style="background:linear-gradient(135deg,#c14b3a 0%,#8c2519 100%);color:#fff;border:0;padding:24px 28px">
+      <div class="card harvest-season-card" style="background:linear-gradient(135deg,#c14b3a 0%,#8c2519 100%);color:#fff;border:0;padding:24px 28px">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px">
           <div style="flex:1;min-width:280px">
             <div style="font-size:11px;letter-spacing:2.5px;color:#FBBF24;font-weight:800;margin-bottom:6px">☕ PANEN 2026 · DAILY TRACKER</div>
@@ -1455,7 +1463,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       </div>
 
       <!-- Submit Form (Inline Card) -->
-      <div class="card" style="background:#FAFCFB;border:2px dashed var(--moss)">
+      <div class="card harvest-entry-card" style="background:#FAFCFB;border:2px dashed var(--moss)">
         <div class="card-title"><span class="num">+</span>Submit Panen Hari Ini</div>
         <div class="form-grid">
           <div class="field">
@@ -1526,7 +1534,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       <!-- Added 24 Mei 2026 per request Wakif — inline form right    -->
       <!-- setelah Submit Panen. Mengambang + 4-warna sejajar.        -->
       <!-- ────────────────────────────────────────────────────────── -->
-      <div class="card" style="background:#FAFCFB;border:2px dashed var(--moss)">
+      <div class="card harvest-sort-card" style="background:#FAFCFB;border:2px dashed var(--moss)">
         <div class="card-title"><span class="num">2</span>📥 Input Hasil Sortir Cherry (5-Varian)</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Pilih batch panen yang akan disortir, lalu input kg per varian. <strong>Pengapung/Mengambang</strong> = defect (tidak jadi lot child, tracked sebagai loss di parent batch). <strong>Merah/Kuning/Hijau/Hitam</strong> = create lot child per grade dengan Lot ID auto-generated.</p>
 
@@ -1595,7 +1603,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       <!-- ────────────────────────────────────────────────────────── -->
       <!-- CHAPTER 3: Processing Pipeline (visual flow)               -->
       <!-- ────────────────────────────────────────────────────────── -->
-      <div class="card">
+      <div class="card harvest-pipeline-card">
         <div class="card-title"><span class="num">3</span>🏭 Processing Pipeline — Cherry → Green Bean</div>
         <p style="font-size:11.5px;color:var(--mute);margin-bottom:12px">Matriks <strong>est vs aktual per warna</strong> — auto dari Sortir (cherry) + Catat Jemur (dried) + Catat Giling (green bean), nol re-entry. <strong>Δ = discrepancy</strong> → kalibrasi rendemen kebun. Ratio tervalidasi Robusta NGT: cherry→dried ×0,44 · dried→GB ×0,444 · cherry→GB ×0,196.</p>
         <div id="panen-pipeline-funnel" style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px"></div>
@@ -1604,7 +1612,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       <!-- ────────────────────────────────────────────────────────── -->
       <!-- CHAPTER 4: Batch Tracker Tabel                             -->
       <!-- ────────────────────────────────────────────────────────── -->
-      <div class="card">
+      <div class="card harvest-batch-card">
         <div class="card-title"><span class="num">4</span>📋 Batch Tracker — Riwayat Panen</div>
         <div class="table-wrap freeze-tbl">
           <table style="font-size:11.5px;width:100%">
