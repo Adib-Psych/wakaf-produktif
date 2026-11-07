@@ -1,4 +1,21 @@
 /* Account entry only: public dashboard reading does not depend on this card. */
+.entry-header-account { position: relative; min-width: 0; margin-left: auto; color: #4d3546; }
+.entry-header-account [hidden] { display: none !important; }
+.entry-header-account button { min-height: 44px; min-width: 44px; max-width: 100%; padding: 10px 12px; border: 1px solid #d8c9cc; border-radius: 8px; background: #fffaf5; color: #4d3546; font: inherit; cursor: pointer; }
+.entry-header-account button:focus-visible { outline: 3px solid #b96b4f; outline-offset: 3px; }
+#device-account-trigger { max-width: 330px; font-size: 13px; text-align: left; overflow-wrap: anywhere; }
+#device-account-panel { position: absolute; right: 0; top: calc(100% + 8px); z-index: 100; width: 300px; max-width: calc(100vw - 40px); padding: 18px; border: 1px solid #d8c9cc; border-radius: 10px; background: #fffaf5; box-shadow: 0 10px 28px #4d354624; overflow-wrap: anywhere; }
+#device-account-panel p { font-size: 13px; line-height: 1.5; margin: 8px 0 12px; }
+#device-account-panel button { display: block; width: 100%; margin-top: 8px; text-align: left; }
+#device-account-email { color: #6d5143; }
+#device-account-notice, #panel-form #device-entry-auth-notice { color: #894d37; }
+#panel-form #device-entry-permission, #panel-form #device-entry-auth-notice { grid-column: 1 / -1; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; margin: 6px 0; }
+#panel-form .entry-account-secondary { display: flex; flex-wrap: wrap; gap: 8px; }
+@media (max-width: 480px) {
+ .entry-header-account { width: 100%; margin-left: 0; }
+ #device-account-trigger { width: 100%; max-width: none; }
+ #device-account-panel { width: 100%; max-width: 100%; box-sizing: border-box; }
+}
 #panel-form .entry-account-card {
   box-sizing: border-box;
   width: 100%;
