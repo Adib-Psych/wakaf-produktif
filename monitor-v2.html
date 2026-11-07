@@ -762,8 +762,10 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       </div>
 
       <div class="card">
-        <div class="card-title"><span class="num">2</span>Burn Rate vs Plan (visual)</div>
-        <div class="chart-wrap"><canvas id="chart-budget"></canvas></div>
+        <div class="card-title"><span class="num">2</span>Rencana Anggaran vs Aktual</div>
+        <p id="budget-comparison-note" class="budget-comparison-note" role="status">Memuat sumber perbandingan…</p>
+        <div class="chart-wrap budget-comparison-chart"><canvas id="chart-budget" role="img" aria-label="Perbandingan RAB Final 2026 dan pengeluaran aktual per kategori" aria-describedby="budget-comparison-note"></canvas></div>
+        <details class="budget-comparison-method"><summary>Cakupan perbandingan</summary><p>Aktual mencakup seluruh pengeluaran buku kas yang tersedia, termasuk di luar periode rencana—bukan burn rate bulanan. Operasional lain mencakup kategori selain tenaga kerja dan pupuk, termasuk tanpa kategori. Nilai ini bukan seluruh hak upah belum dibayar.</p></details>
       </div>
 
       <div class="card">
@@ -5434,29 +5436,49 @@ function renderBudgetChart() {
   const ctx = document.getElementById('chart-budget');
   if (!ctx) return;
   if(typeof Chart!=='undefined')Chart.getChart(ctx)?.destroy();
-  if(window.ownerCashbookKnown===false)return;
-  // PRODUCTION: redirect ke RAB tab untuk data lengkap. Chart legacy tampilkan summary kategori basic dari Cashbook.
-  let tk = 0, pupukOrg = 0, pupukAnorg = 0, opLain = 0;
-  (typeof CASHBOOK !== 'undefined' ? CASHBOOK : []).forEach(t => {
-    if (!t.kat) { opLain += (t.keluar || 0); return; }
-    const top = t.kat.split('.')[0];
-    if (top === '3' || top === '4') tk += t.keluar || 0;
-    else if (top === '2') pupukOrg += t.keluar || 0;
-    else if (top === '1') pupukAnorg += t.keluar || 0;
-    else opLain += t.keluar || 0;
-  });
+  const note = document.getElementById('budget-comparison-note');
+  const unavailable = message => { if(note)note.textContent=message; };
+  if(window.ownerCashbookKnown!==true || typeof CASHBOOK==='undefined' || !Array.isArray(CASHBOOK)) {
+    unavailable('Aktual buku kas belum dapat dikonfirmasi; perbandingan belum tersedia.'); return;
+  }
+  if(typeof RAB_DATA==='undefined' || !Array.isArray(RAB_DATA['2026']?.kategori)) {
+    unavailable('Rencana RAB Final 2026 belum tersedia; perbandingan belum dapat ditampilkan.'); return;
+  }
+  // Match the existing four cashbook groups; never alter transactions or RAB values.
+  const groups = [0,0,0,0], planned = [0,0,0,0];
+  const groupOf = id => id==='3'||id==='4'?0:id==='2'?1:id==='1'?2:3;
+  for(const category of RAB_DATA['2026'].kategori) {
+    for(const item of category.items) {
+      if(!Number.isFinite(item.qty)||!Number.isFinite(item.hf)) {
+        unavailable('Nilai RAB Final belum dapat dikonfirmasi; perbandingan belum tersedia.'); return;
+      }
+      planned[groupOf(category.id)] += item.qty * item.hf;
+    }
+  }
+  for(const transaction of CASHBOOK) {
+    const amount = transaction.keluar ?? 0;
+    if(!Number.isFinite(amount)) { unavailable('Nilai aktual buku kas belum dapat dikonfirmasi; perbandingan belum tersedia.'); return; }
+    groups[groupOf((transaction.kat||'').split('.')[0])] += amount;
+  }
+  if(note)note.textContent='RAB Final 2026: '+RAB_DATA['2026'].periode+'. Aktual: seluruh catatan buku kas, termasuk di luar periode rencana.';
+  const style = getComputedStyle(document.documentElement);
+  const color = token => style.getPropertyValue(token).trim();
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Tenaga Kerja', 'Pupuk Organik', 'Pupuk Anorganik', 'Operasional Lain'],
+      labels: ['👷 Tenaga Kerja', '♻️ Pupuk Organik', '⚗️ Pupuk Anorganik', '🧰 Operasional Lain'],
       datasets: [
-        { label: 'Aktual Cashbook (Rp)', data: [tk, pupukOrg, pupukAnorg, opLain], backgroundColor: '#5a9080' }
+        { label: 'Rencana · RAB Final 2026 (Rp)', data: planned, backgroundColor: color('--sage'), borderColor: color('--brand-plum'), borderWidth: 1, borderRadius: 4 },
+        { label: 'Aktual · Buku Kas (Rp)', data: groups, backgroundColor: color('--brand-plum'), borderColor: color('--earth'), borderWidth: 1, borderRadius: 4 }
       ]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: ctx => fmtRpShort(ctx.raw) } } },
-      scales: { y: { beginAtZero: true, ticks: { callback: v => 'Rp ' + (v/1000).toFixed(0) + 'K' } } }
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: {color:color('--mute'),boxWidth:14,padding:16} }, tooltip: { callbacks: { label: context => context.dataset.label+': '+fmtRpShort(context.raw) } } },
+      scales: {
+        x: { stacked: false, beginAtZero: true, grid:{color:color('--harvest-line')}, ticks: { color:color('--mute'), callback: value => 'Rp '+(value/1000000).toLocaleString('id-ID',{maximumFractionDigits:1})+' jt' } },
+        y: { stacked: false, grid:{display:false}, ticks:{color:color('--ink'),font:{size:11}} }
+      }
     }
   });
 }

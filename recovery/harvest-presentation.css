@@ -162,6 +162,15 @@ tr:nth-child(even) td { background: #faf7f9; }
 .harvest-batch-card th:nth-child(5) { min-width: 180px; }
 .harvest-batch-card th:nth-child(6), .harvest-batch-card th:nth-child(7) { min-width: 125px; }
 #panel-panen details > summary { align-content: center; line-height: 1.5; }
+/* Budget comparison keeps plan/actual legible in the Musim Panen palette. */
+#panel-anggaran .budget-comparison-note { color: var(--mute); font-size: 12px; line-height: 1.6; margin: -2px 0 12px; }
+#panel-anggaran .budget-comparison-chart { height: 300px; }
+#panel-anggaran .budget-comparison-method { color: var(--mute); font-size: 12px; margin-top: 10px; }
+#panel-anggaran .budget-comparison-method summary { color: var(--brand-plum); cursor: pointer; min-height: 32px; padding: 6px 0; }
+#panel-anggaran .budget-comparison-method p { margin-top: 6px; }
+@media (max-width: 640px) {
+  #panel-anggaran .budget-comparison-chart { height: 340px; }
+}
 /* Shared entry surface; Google mark and all account/queue states stay original. */
 #panel-form .entry-account-card { background: #faf5f8; border-color: #ddcbd6; border-top-color: var(--brand-plum); color: var(--earth); margin-bottom: 16px; box-shadow: none; }
 #panel-form .entry-account-card #device-entry-account-title { color: var(--earth); }
