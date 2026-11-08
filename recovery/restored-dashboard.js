@@ -51,7 +51,11 @@ export async function mountPrivateDashboard(config,{load,mode='private-capabilit
     restoreWages(ids);const sourceGeneration=generation;
     const assertCurrent=()=>{if(revision!==wageSelectionRevision||sourceGeneration!==generation||!window.reportReadSession?.active)throw Error('Pilihan/sumber berubah; buat ulang dokumen');exactBoxes();};
     const d=buildPayrollDocument({value:v,selected:ids,mode,names:window.payrollDocumentNames?.()||{}});
-    await renderPayrollPNG(d,{assertCurrent,preview});
+    if(d.mode==='rekap'){
+     const paid=d.rows.filter(r=>r.status==='lunas').length;
+     if(paid&&!confirm(`${paid} dari ${d.rows.length} item terpilih SUDAH lunas.\n\nRekapan akan mencantumkan status setiap item; item lunas hanya riwayat, bukan permintaan bayar ulang. Dokumen ini BUKAN bukti pembayaran. Lanjut?`)){preview?.close();return;}
+    }
+    assertCurrent();await renderPayrollPNG(d,{assertCurrent,preview});
    });
   }catch(e){preview?.close();alert('Dokumen ditahan — '+(e.message||'sumber perlu dimuat ulang')+'. Tidak ada pembayaran atau saldo yang diubah.');}
  }
