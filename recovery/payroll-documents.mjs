@@ -159,9 +159,8 @@ export function payrollDocumentHTML(d){
     const statusIco = it.status==='lunas'?'✓ Lunas':'⏳ Belum dibayar';
     const rowBg = i % 2 === 0 ? '#fafbfa' : '#ffffff';
     // Activity description with inline qty/tarif detail
-    // Harian: drop qty prefix (each row = 1 unit by definition), normalize "full day" → "1 hari"
-    // Borongan: keep qty prefix (qty bisa > 1, mis. 5 pohon durian)
-    const qtyDisplay = it.model==='harian'?it.duration:`${it.qty}× ${it.duration}`;
+    // Preserve the compact unit daily row, but show every non-unit multiplier.
+    const qtyDisplay = it.model==='harian'&&it.qty===1?it.duration:`${it.qty}× ${it.duration}`;
     const aktDesc = `<span style="color:#2e4040;font-weight:600">${escape(it.activity)}</span> <span style="color:#6b7878;font-size:11px">· ${statusIco} ${escape(qtyDisplay)} · Rp ${it.tariff.toLocaleString('id-ID')}</span>`;
     const details = `${multi?`<br><b>${escape(it.name)}</b>`:''}${multiFund?`<br>Sumber dana: ${escape(it.fundLabel)}`:''}${!isRekap&&new Set(items.map(r=>r.paymentDate)).size>1?`<br>Tanggal bayar: ${escape(it.paymentDate)}`:''}`;
     return `<tr style="background:${rowBg}">

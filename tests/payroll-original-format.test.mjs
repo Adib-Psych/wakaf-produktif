@@ -51,4 +51,11 @@ test('mixed recap distinguishes outstanding wages from total and estimates only 
  const d=buildPayrollDocument({value:v,selected:[7,8]});assert.equal(d.total,100000);assert.equal(d.estimatedDeduction,20000);
  const html=payrollDocumentHTML(d);assert.match(html,/Belum dibayar: Rp 50.000/);assert.match(html,/Lunas: Rp 50.000/);assert.match(html,/Rp 30.000/);
 });
+test('daily wage quantity multipliers remain visible for accepted non-unit quantities',()=>{
+ for(const qty of [0.5,2])for(const mode of ['rekap','proof']){
+  const v=structuredClone(value);Object.assign(v.upah[0],{qty,tarif:100000,satuan:'full day',...(mode==='proof'?{status:'lunas',bayar_tgl:'2026-11-08'}:{})});
+  const d=buildPayrollDocument({value:v,selected:[7],mode});const html=payrollDocumentHTML(d);
+  assert.match(html,new RegExp(`${qty}× 1 hari`));assert.equal(d.total,qty*100000);
+ }
+});
 export {value};
