@@ -21,7 +21,7 @@ jobs:
           distribution: temurin
           java-version: '21'
       - name: Offline source regressions
-        run: node --test tests/*.test.cjs operations/tests/*.test.cjs
+        run: node --test tests/*.test.cjs tests/*.test.mjs operations/tests/*.test.cjs
       - name: Payroll contract and coherent reader regressions
         run: node --test recovery/payroll-*.test.mjs recovery/payroll-reader-behavior.test.cjs
       - name: Install isolated emulator test dependencies
@@ -61,3 +61,16 @@ jobs:
           CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-worker-upgrade.cjs
           CHROME_PATH=$(node tests/browser-path.cjs) node --test tests/account-session-runtime.browser.cjs
           CHROME_PATH=$(node tests/browser-path.cjs) node --test recovery/payroll-dialog.browser.cjs recovery/payroll-batch.browser.cjs recovery/payroll-fund-reporting.test.cjs
+      - name: Integrated dashboard, public controls and real PNG artifacts (network blocked)
+        env:
+          WAKAF_EVIDENCE: ${{ runner.temp }}/wakaf-payroll-phone
+          UI_CONSOLIDATION_EVIDENCE: ${{ runner.temp }}/wakaf-ui
+        run: |
+          export CHROME_PATH=$(node tests/browser-path.cjs)
+          export HTML2CANVAS_PATH="$PWD/recovery/node_modules/html2canvas/dist/html2canvas.min.js"
+          node tests/dashboard-popup-focus.browser.cjs
+          node tests/dashboard-ui-consolidation.browser.cjs
+          node tests/public-controls.browser.cjs
+          node tests/payroll-outputs.browser.cjs
+          PAYROLL_DESKTOP=1 WAKAF_EVIDENCE="${{ runner.temp }}/wakaf-payroll-desktop" node tests/payroll-outputs.browser.cjs
+          PAYROLL_WIDTH=320 WAKAF_EVIDENCE="${{ runner.temp }}/wakaf-payroll-320" node tests/payroll-outputs.browser.cjs

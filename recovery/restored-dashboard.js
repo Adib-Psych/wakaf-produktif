@@ -1,3 +1,5 @@
+import {buildPayrollDocument,payrollID,renderPayrollPNG,openPayrollPreview} from './payroll-documents.mjs';
+import {showPublicOptDetail} from './opt-public-detail.mjs';
 import {domainWarning,requireFreshPublicData} from './public-health.mjs';
 import {publicReadStatus,publicDomainNotice} from './public-presentation.mjs';
 import {bindPublicRefresh} from './public-refresh.mjs';
@@ -38,7 +40,24 @@ export async function mountPrivateDashboard(config,{load,mode='private-capabilit
  const rawExport=reader.exportRead.bind(reader);reader.exportRead=async emit=>{lastAttempt=new Date().toISOString();try{const value=await rawExport(emit);readFailed=false;lastSuccess=new Date().toISOString();showHealth();return value;}catch(e){readFailed=true;showHealth();throw e;}};
  const mapping={laporan:'reports',report_heads:'reports',upah:'upah',cashbook:'cashbook',panen_data:'panen',panen_lots:'lots',panen_sampling:'sampling',opt_observations:'opt',milestones:'milestones',sop_status:'sopStatus',worker_defs_custom:'workers'};
  window.privateReader={allowed:c=>!!snapshot&&snapshot[mapping[c]||c]!=null,matches:()=>!!snapshot,exportRead:async(required,emit)=>reader.exportRead(v=>{requireFreshPublicData(v,required.map(c=>mapping[c]||c));if(required.some(c=>v[mapping[c]||c]==null))throw Error('Sumber ekspor belum tersedia');const out={};for(const c of required)out[c]=c==='report_heads'?[]:c==='laporan'?v.reports.map(x=>({id:x.id,data:x})):c==='upah'?[{id:'active',data:{data:v.upah}}]:c==='cashbook'?[{id:'active',data:{data:v.cashbook}}]:v[mapping[c]||c];return emit(out);})};window.decodePrivateReports=rows=>rows.map(x=>structuredClone(x.data));
- window.generateRekapUpah=async()=>{const selected=wageSelection(),selectionRevision=wageSelectionRevision;try{if(!selected.length||selected.some(id=>typeof id!=='string'||!id)||new Set(selected).size!==selected.length||selected.some(id=>[...document.querySelectorAll('.upah-check')].filter(x=>x.dataset.id===id&&x.checked).length!==1))throw Error('Pilihan tidak valid');await reader.exportRead(v=>{requireFreshPublicData(v,['upah']);if(!Array.isArray(v.upah)||selected.some(id=>v.upah.filter(x=>String(x.id)===id).length!==1))throw Error('Pilihan sudah tidak tersedia');const boxes=[...document.querySelectorAll('.upah-check')];if(selectionRevision!==wageSelectionRevision||selected.some(id=>boxes.filter(x=>x.dataset.id===id).length!==1))throw Error('Pilihan sudah berubah');restoreWages(selected);const rows=v.upah.filter(x=>selected.includes(String(x.id)));const cell=window.spreadsheetCSVCell;const csv=[['ID','Tanggal','Pekerja','Aktivitas','Model','Qty','Tarif','Status tercatat'],...rows.map(x=>[x.id,x.tgl,v.wageBindings?.find(b=>b.id===x.pelapor||b.legacy_token===x.pelapor)?.name||x.name||x.worker||x.pelapor,x.aktivitas,x.model,x.qty,x.tarif,x.status])].map(r=>r.map(cell).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='rekap-upah-tercatat.csv';a.click();URL.revokeObjectURL(a.href);});}catch{alert('Ekspor ditahan — sumber perlu dimuat ulang.');}};
+ async function payrollOutput(mode){
+  const selected=wageSelection(),revision=wageSelectionRevision;let preview=null;
+  try{
+   const ids=[...new Set(selected.map(payrollID))];if(!ids.length)throw Error('Pilih item upah terlebih dahulu');
+   const exactBoxes=()=>{const boxes=[...document.querySelectorAll('.upah-check')];if(ids.some(id=>boxes.filter(x=>x.dataset.id===id&&x.checked).length!==1))throw Error('Pilihan berubah atau tidak tersedia');};
+   exactBoxes();preview=openPayrollPreview();await reader.exportRead(async v=>{
+    if(revision!==wageSelectionRevision)throw Error('Pilihan sudah berubah');
+    const boxes=[...document.querySelectorAll('.upah-check')];if(ids.some(id=>boxes.filter(x=>x.dataset.id===id).length!==1))throw Error('Pilihan tidak tersedia setelah baca ulang');
+    restoreWages(ids);const sourceGeneration=generation;
+    const assertCurrent=()=>{if(revision!==wageSelectionRevision||sourceGeneration!==generation||!window.reportReadSession?.active)throw Error('Pilihan/sumber berubah; buat ulang dokumen');exactBoxes();};
+    const d=buildPayrollDocument({value:v,selected:ids,mode,names:window.payrollDocumentNames?.()||{}});
+    await renderPayrollPNG(d,{assertCurrent,preview});
+   });
+  }catch(e){preview?.close();alert('Dokumen ditahan — '+(e.message||'sumber perlu dimuat ulang')+'. Tidak ada pembayaran atau saldo yang diubah.');}
+ }
+ window.generateRekapUpah=()=>payrollOutput('rekap');
+ window.generateBuktiBayar=mode=>payrollOutput(mode==='rekap'?'rekap':'proof');
+ window.viewOptDetail=id=>{const rows=snapshot?.opt;if(!Array.isArray(rows))return;const matches=rows.filter(row=>row.id===id);if(matches.length!==1){alert('Observasi tidak tersedia atau identitas tidak unik.');return;}showPublicOptDetail(matches[0]);};
  // Owner read has no entry or finance-write authority; the ordinary route retains the device collector.
  model.refresh=()=>reader.read().catch(()=>{});await model.refresh();
  if(mode==='public-live'){

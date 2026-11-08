@@ -10,9 +10,19 @@
       if(window.payrollRecording?.allowsAction(action))return;
       const code=action.getAttribute('onclick')||action.getAttribute('onchange')||action.getAttribute('oninput')||'';
       if(type==='click'&&/^\s*(submitForm|submitCabut)\s*\(/.test(code)&&!window.authorizedReports?.sessionTicket?.()){event.preventDefault();event.stopImmediatePropagation();alert('Untuk entry, masuk dengan Google memakai email yang diizinkan. Semua data tetap dapat dibaca tanpa login.');document.getElementById?.('device-entry-signin')?.focus();return;}
-      const unsafe=/edit|delete|hapus|bayar|paid|publish|sync|merge|void|restore|resetAll/i.test(code);
+      // Only the exact read-only payroll output invocations bypass the payment-word guard.
+      if(type==='click'&&panel.id==='panel-anggaran'&&window.dashboardReadModel?.ownerActive()&&/^\s*generate(?:RekapUpah|BuktiBayar)\(\s*\)\s*;?\s*$/.test(code))return;
+      // These literal presentation calls only change filters or open bundled documentation.
+      // Do not trust the first function name of a compound inline handler.
+      const publicPresentation=/^\s*(?:togglePelaporMode\('(aktif|all)'\)|switchRABCycle\('(2026|2027)'\)|renderBatchCuration\(\)|setRadio\('panen-lot-filter-(grade|stage)',this\);renderPanenLotsTable\(\)|window\.open\(kajianUrl\('(alat\/index\.html|kajian\/(sanitasi-tunggak|manajemen-residu|soil-amendment-sekam|biochar-drum|pengolahan-tanah)\.html)'\),'_blank'\))\s*;?\s*$/;
+      if(type==='click'&&window.dashboardReadModel?.ownerActive()&&publicPresentation.test(code))return;
+      if(type==='click'&&panel.id==='panel-opt'&&window.dashboardReadModel?.ownerActive()&&/^viewOptDetail\('[A-Za-z0-9_-]{1,120}'\)$/.test(code))return;
+      if(type==='click'&&window.dashboardReadModel?.ownerActive()&&/^(?:openAuditModal\(\)|switchAuditTab\('(paid|unpaid|dup|upahdup|orphan)'\))$/.test(code))return;
+      if((type==='change'||type==='input')&&window.dashboardReadModel?.ownerActive()&&code==='renderBatchCuration()')return;
+      if(window.dashboardReadModel?.ownerActive()&&((type==='click'&&/^(?:bcResetFilters|bcSelectAll|bcClearSelection|closeAddWorkerModal)\(\)$/.test(code))||(type==='change'&&/^(?:bcMasterToggle\(\)|bcToggleEntry\('[A-Za-z0-9_-]{1,120}'\))$/.test(code))||(type==='input'&&code==='updateSortir5Total()')))return;
+      const unsafe=/edit|delete|hapus|bayar|paid|publish|sync|merge|void|restore|resetAll/i.test(code)||(/^\s*generate(?:RekapUpah|BuktiBayar)\s*\(/.test(code)&&!/^\s*generate(?:RekapUpah|BuktiBayar)\(\s*\)\s*;?\s*$/.test(code));
       const readHandlers=new Set(['renderLog','renderUpahTable','renderCashbook','renderMilestonesTable','renderWorkersTab','renderLateEntryQueue','renderReconcileMatrix','renderPanenSamplingChart','renderPanenSamplingTable','showBulanAktif','showLaporanRelatedModal','showPhaseDetail','closeLaporanRelatedModal','closeOptDetailModal','closeAuditModal','navSOPYear','navigateToMonthInKalender','jumpToLogHarianFiltered','printKajian','generateRekapUpah','exportCSV','exportCashbookCSV','exportReconcileCSV','exportMilestonesJSON','runReconciliationAudit','_toggleBatchGroup','toggleRABKat','toggleSamplingChart','setSOPWheelView']);const handler=code.trim().match(/^([A-Za-z_$][\w$]*)\s*\(/)?.[1];const readOnly=!code||readHandlers.has(handler);const owner=window.dashboardReadModel?.ownerActive();const allowed=!unsafe&&(panel.id==='panel-form'||(owner?readOnly:panel.id==='panel-log'));
-      if(!allowed){event.preventDefault();event.stopImmediatePropagation();if(type==='click')alert('Fungsi pengelolaan ini tetap dilindungi. Hanya entry laporan perangkat dan riwayat sendiri.');}
+      if(!allowed){event.preventDefault();event.stopImmediatePropagation();if(type==='click')alert('Fungsi pengelolaan ini tetap dilindungi. Data dan dokumen upah dapat dibaca tanpa login; perubahan memerlukan jalur berizin.');}
     },true);
     return;
   }
