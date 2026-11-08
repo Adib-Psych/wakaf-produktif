@@ -20,7 +20,7 @@ test('private K4 and mixed funds remain explicit with subtotals and escaped work
  const v=source([wage({name:'Nardi <img onerror=alert(1)>',aktivitas:'A & B'}),wage({id:'private',fund:'K4',pelapor:'PRIVATE',name:'Private',tarif:50000})]);const d=api.buildPayrollDocument({value:v,selected:[7,'private']});assert.deepEqual(d.funds,{K1_K3:100000,K4:50000});assert.equal(d.rows[1].fundLabel,'Pribadi K4');const html=api.payrollDocumentHTML(d);assert.match(html,/Campuran/);assert.match(html,/Pribadi K4/);assert.match(html,/Wakaf K1–K3/);assert.match(html,/&lt;img/);assert.doesNotMatch(html,/<img onerror/);
 });
 test('proof preserves only confirmed kasbon deductions; partial shared deduction refuses instead of overcounting',()=>{
- const v=source([wage({status:'lunas'}),wage({id:'other',status:'lunas'})]);v.kasbon=[{id:'kb',pelapor:'NARDI',tgl:'2026-09-01',jumlah:50000,potongan:[{tgl:'2026-10-04',jumlah:25000,upah_ids:[7,'other']}]}];
+ const v=source([wage({status:'lunas',bayar_tgl:'2026-10-04'}),wage({id:'other',status:'lunas',bayar_tgl:'2026-10-04'})]);v.kasbon=[{id:'kb',pelapor:'NARDI',tgl:'2026-09-01',jumlah:50000,terpotong:25000,potongan:[{tgl:'2026-10-04',jumlah:25000,upah_ids:[7,'other']}]}];
  assert.throws(()=>api.buildPayrollDocument({value:v,selected:[7],mode:'proof'}),/potongan|kasbon/i);
  const before=JSON.stringify(v),d=api.buildPayrollDocument({value:v,selected:[7,'other'],mode:'proof'});assert.equal(d.deductions,25000);assert.equal(d.net,175000);assert.equal(JSON.stringify(v),before);assert.match(api.payrollDocumentHTML(d),/Potongan kasbon tercatat/);
  const rekap=api.buildPayrollDocument({value:source(),selected:[7]});assert.equal(rekap.deductions,0);

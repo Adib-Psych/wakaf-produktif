@@ -33,7 +33,7 @@ export function buildPayrollDocument({value,selected,mode='rekap',generatedAt=ne
   return {id,date:w.tgl,name,fund,fundLabel:fundLabel(fund),activity:text(w.aktivitas)||'Pekerjaan tercatat',duration,qty:w.qty,tariff:w.tarif,total,paymentDate:mode==='proof'?(text(w.bayar_tgl)||'Tidak tercatat'):null};
  }).sort((a,b)=>String(a.date).localeCompare(String(b.date))||a.id.localeCompare(b.id));
  const funds=rows.reduce((out,r)=>{out[r.fund]=(out[r.fund]||0)+r.total;return out;},{});
- const total=rows.reduce((n,r)=>n+r.total,0);let deductions=0,estimatedDeduction=0;
+ const total=rows.reduce((n,r)=>n+r.total,0);let deductions=0,estimatedDeduction=0;const allocations=[];
  if(!Number.isSafeInteger(total))throw Error('Total upah tidak valid');
  if(!Array.isArray(value.kasbon))throw Error('Source kasbon belum tersedia');
  if(mode==='proof')for(const k of value.kasbon){
@@ -43,6 +43,10 @@ export function buildPayrollDocument({value,selected,mode='rekap',generatedAt=ne
    const linked=[...new Set(p.upah_ids.map(payrollID))];if(!linked.some(id=>ids.includes(id)))continue;
    if(!linked.every(id=>ids.includes(id))||!Number.isSafeInteger(p.jumlah)||p.jumlah<=0)throw Error('Pilih seluruh upah pada jejak potongan kasbon; alokasi parsial tidak tercatat');
    if(linked.some(id=>value.upah.find(w=>payrollID(w.id)===id)?.pelapor!==k.pelapor))throw Error('Pekerja pada potongan kasbon tidak cocok');
+   const wages=linked.map(id=>value.upah.find(w=>payrollID(w.id)===id));
+   if(!calendar(p.tgl)||wages.some(w=>w.bayar_tgl!==p.tgl||(w.fund||'K1_K3')!==(wages[0].fund||'K1_K3'))||p.jumlah>wages.reduce((n,w)=>n+w.qty*w.tarif,0))throw Error('Tanggal/dana/alokasi potongan kasbon tidak konsisten');
+   if(!Number.isSafeInteger(k.jumlah)||!Number.isSafeInteger(k.terpotong)||k.terpotong<0||k.terpotong>k.jumlah||k.potongan.some(x=>!Number.isSafeInteger(x.jumlah)||x.jumlah<=0)||k.potongan.reduce((n,x)=>n+x.jumlah,0)!==k.terpotong)throw Error('Saldo dan jejak potongan kasbon tidak konsisten');
+   allocations.push({ids:linked,amount:p.jumlah});
    deductions+=p.jumlah;
   }
  }
@@ -56,12 +60,17 @@ export function buildPayrollDocument({value,selected,mode='rekap',generatedAt=ne
   const linked=cashIDs(c);if(!linked.every(id=>ids.includes(id)))throw Error('Pilih seluruh upah pada buku kas gabungan');
   const wages=linked.map(id=>value.upah.find(w=>payrollID(w.id)===id));
   if(mode==='rekap'||wages.some(w=>!w||w.status!=='lunas')||!Number.isSafeInteger(c.keluar)||c.keluar<0||c.masuk!==0||wages.some(w=>w.bayar_tgl&&w.bayar_tgl!==c.tgl)||(c.fund||'K1_K3')!==(wages[0].fund||'K1_K3')||wages.some(w=>(w.fund||'K1_K3')!==(c.fund||'K1_K3')))throw Error('Upah dan buku kas tidak konsisten');
+  if(!calendar(c.tgl)||new Set(linked).size!==linked.length||wages.some(w=>w.pelapor!==wages[0].pelapor))throw Error('Alokasi buku kas gabungan tidak tercatat');
+  const related=allocations.filter(a=>a.ids.some(id=>linked.includes(id)));
+  if(related.some(a=>!a.ids.every(id=>linked.includes(id))))throw Error('Alokasi potongan antar buku kas tidak tercatat');
+  if(c.keluar!==wages.reduce((n,w)=>n+w.qty*w.tarif,0)-related.reduce((n,a)=>n+a.amount,0))throw Error('Nilai kas dan potongan per kelompok tidak konsisten');
  }
  if(linkedCash.length){
   const linked=linkedCash.flatMap(cashIDs);if(new Set(linked).size!==linked.length)throw Error('Buku kas pembayaran duplikat');
-  const gross=linked.reduce((n,id)=>n+rows.find(r=>r.id===id).total,0);
-  if(linkedCash.reduce((n,c)=>n+c.keluar,0)!==gross-deductions)throw Error('Nilai kas dan potongan tidak konsisten');
+  if(allocations.some(a=>!a.ids.every(id=>linked.includes(id))))throw Error('Buku kas untuk potongan terpilih tidak lengkap');
  }
+ if(allocations.some(a=>allocations.some(b=>a!==b&&a.ids.some(id=>b.ids.includes(id))&&(a.ids.length!==b.ids.length||!a.ids.every(id=>b.ids.includes(id))))))throw Error('Alokasi potongan tumpang tindih tidak tercatat');
+ for(const row of rows){const related=allocations.filter(a=>a.ids.includes(row.id));const connected=[...new Set(related.flatMap(a=>a.ids))];if(connected.length&&related.reduce((n,a)=>n+a.amount,0)>rows.filter(r=>connected.includes(r.id)).reduce((n,r)=>n+r.total,0))throw Error('Potongan kasbon melebihi kelompok upah');}
  if(deductions>total)throw Error('Potongan kasbon melebihi upah');
  return {mode,rows,funds,total,deductions,estimatedDeduction,net:total-deductions,generatedAt,filename:mode==='rekap'?'REKAP-UPAH.png':'BUKTI-UPAH.png'};
 }
