@@ -22,6 +22,8 @@ jobs:
           java-version: '21'
       - name: Offline source regressions
         run: node --test tests/*.test.cjs operations/tests/*.test.cjs
+      - name: Payroll contract and coherent reader regressions
+        run: node --test recovery/payroll-*.test.mjs recovery/payroll-reader-behavior.test.cjs
       - name: Install isolated emulator test dependencies
         working-directory: recovery
         run: npm install --ignore-scripts --package-lock=false --no-audit --no-fund
@@ -38,6 +40,16 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
         run: ../recovery/node_modules/.bin/firebase emulators:exec --only firestore --project demo-wakaf-wages --config firebase.test.json 'node --test test/*.test.cjs'
+      - name: Payroll capability rules (demo project only)
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: node recovery/payroll.rules.test.cjs
+      - name: Payroll transactional client (demo project only)
+        env:
+          TMPDIR: ${{ runner.temp }}
+        run: node recovery/payroll-client-run.cjs
+
+
       - name: Public-read and Google-write rules (demo project only)
         env:
           TMPDIR: ${{ runner.temp }}

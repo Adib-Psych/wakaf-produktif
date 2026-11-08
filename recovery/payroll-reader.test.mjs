@@ -1,0 +1,2 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';
+test('public reader fetches payroll state and paired events, projecting after validated wages',()=>{const s=fs.readFileSync(new URL('public-reader.js',import.meta.url),'utf8');assert.match(s,/payroll_states/);assert.match(s,/payroll_events/);assert.match(s,/projectPayroll\(/);assert.match(s,/payroll-events-unconfirmed/);});
