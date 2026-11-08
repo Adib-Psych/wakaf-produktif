@@ -183,10 +183,11 @@ service cloud.firestore { match /databases/{database}/documents {
   return w is map && string(w.id)==wid && w.status=='belum'
    && !w.keys().hasAny(['bayar_tgl','bayar_source','paid_date','source','payment_id','bayar_ref','cashbook_id'])
    && (!('voided_duplicate' in w)||w.voided_duplicate==false) && (!('eligible' in w)||w.eligible==true)
-   && (!('fund' in w)||w.fund=='K1_K3') && w.tarif is int && w.tarif>0 && w.qty is number && w.qty>0 && w.tarif*w.qty<=9007199254740991 && int(w.tarif*w.qty)==w.tarif*w.qty
+   && (!('fund' in w)||w.fund in ['K1_K3','K4']) && w.tarif is int && w.tarif>0 && w.qty is number && w.qty>0 && w.tarif*w.qty<=9007199254740991 && int(w.tarif*w.qty)==w.tarif*w.qty
    && t.keys().toSet()==['enabled','wage'].toSet() && t.enabled==true && t.wage==w
-   && ((exists(/databases/$(database)/documents/upah/active) && w in get(/databases/$(database)/documents/upah/active).data.data)
-    || (exists(/databases/$(database)/documents/wage_entitlements/$(wid)) && w==get(/databases/$(database)/documents/wage_entitlements/$(wid)).data && w.eligible==true));
+   && (exists(/databases/$(database)/documents/wage_entitlements/$(wid))
+    ? (w==get(/databases/$(database)/documents/wage_entitlements/$(wid)).data && w.eligible==true)
+    : (exists(/databases/$(database)/documents/upah/active) && w in get(/databases/$(database)/documents/upah/active).data.data));
  }
  function payrollDate(d){
   let parts=d.split('-');
@@ -203,7 +204,7 @@ service cloud.firestore { match /databases/{database}/documents {
    && d.wage_id==wid && wid.matches('^[A-Za-z0-9_-]{1,120}$') && d.event_id is string && d.event_id.matches('^[A-Za-z0-9_-]{1,120}$')
    && d.owner_uid==request.auth.uid && d.committed_at==request.time && d.revision is int && d.revision>0 && d.reason is string && d.reason.size()<=500
    && payrollOriginal(d.wage,wid) && payrollTransition(d,wid)
-   && (d.status=='lunas' ? (d.paid_date is string && payrollDate(d.paid_date) && d.source=='wakif') : (d.status=='belum' && d.paid_date==null && d.source==null));
+   && (d.status=='lunas' ? (d.paid_date is string && payrollDate(d.paid_date) && d.source==(('fund' in d.wage && d.wage.fund=='K4')?'pribadi':'wakif')) : (d.status=='belum' && d.paid_date==null && d.source==null));
  }
  match /payroll_policy/active {allow get:if request.auth!=null;allow list,write:if false;}
  match /payroll_grants/{uid} {allow get:if request.auth!=null && request.auth.uid==uid;allow list,write:if false;}

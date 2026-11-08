@@ -40,4 +40,27 @@ test('projection accepts only the canonical full_day UI display alias',()=>{cons
 for(const [label,extra]of Object.entries({'extra key':{amount:12},'bad predecessor':{predecessor:'unexpected'},'missing predecessor':{revision:2,predecessor:null},'empty reason':{revision:2,predecessor:'old',status:'belum',paid_date:null,source:null,reason:''}}))test('projection rejects malformed '+label,()=>assert.throws(()=>api.projectPayroll({upah:[wage],cashbook:[],states:[{...api.buildPayrollState(input()),...extra}]})));
 test('builder admits same WIB business day while UTC is still previous day',t=>{t.mock.timers.enable({apis:['Date'],now:Date.parse('2026-11-08T18:00:00Z')});assert.equal(api.buildPayrollState(input({paidDate:'2026-11-09'})).paid_date,'2026-11-09');assert.throws(()=>api.buildPayrollState(input({paidDate:'2026-11-10'})));});
 test('projection preserves typed source identity instead of numeric-string coercion',()=>{const s=api.buildPayrollState(input());assert.throws(()=>api.projectPayroll({upah:[{...wage,id:'7'}],cashbook:[],states:[s]}),/altered/);});
-test('Anto source and K4 wages remain HOLD',()=>{assert.throws(()=>api.buildPayrollState(input({source:'anto'})));assert.throws(()=>api.buildPayrollState(input({wage:{...wage,fund:'K4'}})));assert.throws(()=>api.projectPayroll({upah:[wage],cashbook:[],states:[{...api.buildPayrollState(input()),source:'anto'}]}));});
+test('Anto remains unsupported; each original fund requires its exact payment source',()=>{assert.throws(()=>api.buildPayrollState(input({source:'anto'})));assert.throws(()=>api.buildPayrollState(input({wage:{...wage,fund:'K4'},source:'wakif'})));assert.throws(()=>api.buildPayrollState(input({source:'pribadi'})));assert.throws(()=>api.projectPayroll({upah:[wage],cashbook:[],states:[{...api.buildPayrollState(input()),source:'anto'}]}));});
+test('exact eligible K4 original records private payment, partitioned cash and audited cancellation',()=>{
+ const privateWage={...wage,id:'private_wage',fund:'K4',eligible:true,satuan:'full_day'},before=structuredClone(privateWage);
+ const state=api.buildPayrollState(input({wage:privateWage,source:'pribadi'}));
+ assert.deepEqual(state.wage,before);assert.equal(state.source,'pribadi');
+ const result=api.projectPayroll({upah:[privateWage],cashbook:[],states:[state]});
+ assert.equal(result.upah[0].fund,'K4');assert.equal(result.upah[0].bayar_source,'pribadi');assert.equal(result.cashbook.length,1);
+ assert.deepEqual(result.cashbook[0],{id:'cb_payroll_private_wage',tgl:'2026-10-02',tipe:'bayar_upah',kat:'3.2',ket:'Upah TEST_WORKER — 2026-10-01',masuk:0,keluar:100000,src:'payroll',nota:null,ref:'upah_private_wage',fund:'K4'});
+ const cancelled=api.buildPayrollState(input({wage:privateWage,previous:state,status:'belum',paidDate:null,source:null,reason:'Incorrect private payment record',eventId:'private_cancel'}));
+ assert.equal(cancelled.predecessor,state.event_id);assert.equal(cancelled.revision,2);assert.deepEqual(cancelled.wage,before);
+ assert.deepEqual(api.projectPayroll({upah:[privateWage],cashbook:[],states:[cancelled]}).cashbook,[]);
+ assert.deepEqual(privateWage,before);
+});
+test('nonprivate derived row shape stays unchanged',()=>{
+ const result=api.projectPayroll({upah:[wage],cashbook:[],states:[api.buildPayrollState(input())]});
+ assert.deepEqual(result.cashbook[0],{id:'cb_payroll_7',tgl:'2026-10-02',tipe:'bayar_upah',kat:'3.2',ket:'Upah TEST_WORKER — 2026-10-01',masuk:0,keluar:100000,src:'payroll',nota:null,ref:'upah_7'});
+});
+test('private projection rejects wrong source and changed original fund or identity',()=>{
+ const privateWage={...wage,fund:'K4',eligible:true},state=api.buildPayrollState(input({wage:privateWage,source:'pribadi'}));
+ assert.throws(()=>api.projectPayroll({upah:[privateWage],cashbook:[],states:[{...state,source:'wakif'}]}),/paid state/);
+ for(const w of [{...privateWage,fund:'K1_K3'},{...privateWage,id:'7'}])assert.throws(()=>api.projectPayroll({upah:[w],cashbook:[],states:[state]}),/altered/);
+ assert.throws(()=>api.buildPayrollState(input({wage:{...privateWage,eligible:false},source:'pribadi'})),/original/);
+ for(const fund of ['K4 ', 'k4', 'other'])assert.throws(()=>api.buildPayrollState(input({wage:{...wage,fund},source:'pribadi'})),/original/);
+});

@@ -93,6 +93,36 @@ test('server entitlement is used without mutating canonical full_day source',asy
  const before=await inspect(),client=await mount();await client.record(paid({id:entitlement.id}));const after=await inspect();
  assert.deepEqual(after.payroll_states[0].data.wage,entitlement);assertUnchangedSources(before,after);
 });
+for(const origin of ['legacy','entitlement'])test('K4 '+origin+' actual SDK records private payment, survives lost ACK and public reload, then cancels',async()=>{
+ const w={...(origin==='legacy'?wage:entitlement),fund:'K4',eligible:true};
+ await seed({[origin==='legacy'?'upah/active':'wage_entitlements/'+w.id]:origin==='legacy'?{data:[w]}:w,['payroll_targets/'+w.id]:{enabled:true,wage:w}});
+ UPAH_ITEMS=UPAH_ITEMS.map(x=>x.id===w.id?w:x);
+ const before=await inspect();let lose=true;
+ const client=await mount({hooks:{beforeReadback:()=>{if(lose){lose=false;throw Error('synthetic private lost ACK');}}}}),input=paid({id:w.id,source:'pribadi'});
+ await assert.rejects(client.record(input),/synthetic private lost ACK/);
+ const committed=await inspect();assert.equal(committed.payroll_events.length,1);assert.deepEqual(committed.payroll_states[0].data.wage,w);assert.equal(committed.payroll_states[0].data.source,'pribadi');
+ const reloaded=await mount();assert.equal(await reloaded.record(input),committed.payroll_events[0].id);assert.deepEqual(await inspect(),committed);
+ window.normalizeOwnerReport=x=>x;
+ const {createPublicReader}=await import(await loadBrowserModule(path.join(__dirname,'public-reader.js'))),db=env.unauthenticatedContext().firestore();
+ const reload=async()=>{const reader=createPublicReader({readCollection:async name=>(await sdk.getDocsFromServer(sdk.collection(db,name))).docs.map(d=>({id:d.id,data:d.data()}))});try{return await reader.read();}finally{reader.stop();}};
+ const result=await reload();assert.ok(!result._meta.errors.includes('payroll-events-unconfirmed'));assert.equal(result._meta.domains.cashbook.state,'available');
+ const projected=result.upah.find(x=>String(x.id)===w.id);assert.equal(projected.status,'lunas');assert.equal(projected.fund,'K4');assert.equal(projected.bayar_source,'pribadi');
+ assert.equal(result.cashbook.length,baseCash.length+1);assert.equal(result.cashbook.find(x=>x.ref==='upah_'+w.id).fund,'K4');assert.deepEqual(result.cashbook.filter(x=>x.fund!=='K4'),baseCash);
+ UPAH_ITEMS=UPAH_ITEMS.map(x=>x.id===w.id?{...w,status:'lunas',payroll_revision:1}:x);
+ await reloaded.record(paid({id:w.id,status:'belum',paidDate:null,source:null,reason:'Synthetic private correction'}));
+ const after=await inspect(),cancelled=await reload();assert.equal(after.payroll_events.length,2);assert.deepEqual(after.payroll_events.find(e=>e.id===committed.payroll_events[0].id),committed.payroll_events[0]);
+ assert.equal(after.payroll_states[0].data.predecessor,committed.payroll_events[0].id);assert.equal(after.payroll_states[0].data.source,null);assert.deepEqual(after.payroll_states[0].data.wage,w);
+ assert.equal(cancelled.upah.find(x=>String(x.id)===w.id).status,'belum');assert.deepEqual(cancelled.cashbook,baseCash);assertUnchangedSources(before,after);
+});
+test('untrusted displayed K4 fund cannot block a trusted Wakaf original payment',async()=>{UPAH_ITEMS[0]={...wage,fund:'K4'};const client=await mount();await client.record(paid());assert.deepEqual((await inspect()).payroll_states[0].data.wage,wage);});
+for(const kind of ['private with wakif','Wakaf with pribadi','forged input fund','changed trusted target fund'])test('actual SDK refuses wrong original fund/source '+kind,async()=>{
+ let input=paid({source:'pribadi'});
+ if(kind==='private with wakif'){const w={...wage,fund:'K4',eligible:true};await seed({'upah/active':{data:[w]},['payroll_targets/'+w.id]:{enabled:true,wage:w}});UPAH_ITEMS[0]=w;input=paid();}
+ if(kind==='forged input fund'){UPAH_ITEMS[0]={...wage,fund:'K4'};input.fund='K4';}
+ if(kind==='changed trusted target fund')await seed({['payroll_targets/'+wage.id]:{enabled:true,wage:{...wage,fund:'K4'}}});
+ const before=await inspect(),client=await mount();await assert.rejects(client.record(input));assert.equal(client.sets.length,0);assert.deepEqual(await inspect(),before);assert.equal(localStorage.getItem('wkkn_payroll_intent_v1_'+UID),null);
+});
+test('unsupported payment source is rejected before a transaction',async()=>{const client=await mount();await assert.rejects(client.record(paid({source:'anto'})));assert.equal(client.transactions,0);assertNoPayroll(await inspect());});
 for(const kind of ['missing user','anonymous','unverified','non-Google','mismatched ticket'])test('local identity rejects '+kind,async()=>{
  const client=await mount();
  if(kind==='missing user')client.auth.currentUser=null;
