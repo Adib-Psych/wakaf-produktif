@@ -324,6 +324,8 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
 <link rel="stylesheet" href="recovery/public-presentation.css">
 <link rel="stylesheet" href="recovery/entry-login.css">
 <link rel="stylesheet" href="recovery/harvest-presentation.css">
+<link rel="stylesheet" href="recovery/dashboard-ui-consolidation.css">
+<script defer src="recovery/dashboard-ui-consolidation.js"></script>
 <script defer src="recovery/table-actions.js"></script>
 </head>
 <body data-report-access="compact" data-report-entry="device">
@@ -5569,6 +5571,8 @@ function saveUpah(forceImmediate) {
   }, 500);
 }
 
+// Read-only documents resolve names from the same worker registry, never raw opaque tokens.
+window.payrollDocumentNames = () => ({...NAMA_PEKERJA});
 function calcTotal(item) {
   return item.qty * item.tarif;
 }
@@ -20088,6 +20092,10 @@ function renderOptObsTable() {
   // Sort desc by tgl
   const sorted = [...OPT_OBSERVATIONS].sort((a,b) => (b.tgl || '').localeCompare(a.tgl || ''));
   tbody.innerHTML = sorted.map(o => {
+    if(typeof o.id!=='string'||! /^[A-Za-z0-9_-]{1,120}$/.test(o.id))return '<tr><td colspan="7">Identitas observasi tidak valid; detail ditahan.</td></tr>';
+    const optText=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    // Escape a derived presentation copy; never normalize or mutate the recorded source.
+    o={...o,...Object.fromEntries(['kebun','keterangan','ai_error','ai_hypothesis','ai_treatment','ai_confidence','expert_name'].map(k=>[k,optText(o[k])]))};
     const fotoCount = (o.foto || []).length;
     // AI status badge
     let aiBadge = '';
@@ -20128,7 +20136,7 @@ function renderOptObsTable() {
       </tr>`;
     }
     return `<tr>
-      <td style="white-space:nowrap">${formatTglShort(o.tgl)}</td>
+      <td style="white-space:nowrap">${optText(formatTglShort(o.tgl))}</td>
       <td><span style="font-size:11px;font-weight:700">${KEBUN_LBL[o.kebun] || o.kebun}</span></td>
       <td style="text-align:center">${fotoCount > 0 ? `<button onclick="viewOptDetail('${o.id}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="${fotoCount} foto — klik detail">🖼️ ${fotoCount}</button>` : '<span style="color:#bbb">—</span>'}</td>
       <td style="font-size:11px;max-width:240px">${(o.keterangan || '<em style="color:#bbb">—</em>').substring(0,80)}${(o.keterangan || '').length > 80 ? '…' : ''}</td>
