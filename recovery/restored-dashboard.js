@@ -1,5 +1,7 @@
 import {domainWarning,requireFreshPublicData} from './public-health.mjs';
 import {publicReadStatus,publicDomainNotice} from './public-presentation.mjs';
+import {bindPublicRefresh} from './public-refresh.mjs';
+// Public reads are on-demand: no full-collection idle polling.
 // Legacy operational-dashboard.js remains available only as a historical bounded-snapshot tool.
 import {createPrivateReader,snapshotHealth} from './private-capability.mjs';
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
@@ -38,7 +40,12 @@ export async function mountPrivateDashboard(config,{load,mode='private-capabilit
  window.privateReader={allowed:c=>!!snapshot&&snapshot[mapping[c]||c]!=null,matches:()=>!!snapshot,exportRead:async(required,emit)=>reader.exportRead(v=>{requireFreshPublicData(v,required.map(c=>mapping[c]||c));if(required.some(c=>v[mapping[c]||c]==null))throw Error('Sumber ekspor belum tersedia');const out={};for(const c of required)out[c]=c==='report_heads'?[]:c==='laporan'?v.reports.map(x=>({id:x.id,data:x})):c==='upah'?[{id:'active',data:{data:v.upah}}]:c==='cashbook'?[{id:'active',data:{data:v.cashbook}}]:v[mapping[c]||c];return emit(out);})};window.decodePrivateReports=rows=>rows.map(x=>structuredClone(x.data));
  window.generateRekapUpah=async()=>{const selected=wageSelection(),selectionRevision=wageSelectionRevision;try{if(!selected.length||selected.some(id=>typeof id!=='string'||!id)||new Set(selected).size!==selected.length||selected.some(id=>[...document.querySelectorAll('.upah-check')].filter(x=>x.dataset.id===id&&x.checked).length!==1))throw Error('Pilihan tidak valid');await reader.exportRead(v=>{requireFreshPublicData(v,['upah']);if(!Array.isArray(v.upah)||selected.some(id=>v.upah.filter(x=>String(x.id)===id).length!==1))throw Error('Pilihan sudah tidak tersedia');const boxes=[...document.querySelectorAll('.upah-check')];if(selectionRevision!==wageSelectionRevision||selected.some(id=>boxes.filter(x=>x.dataset.id===id).length!==1))throw Error('Pilihan sudah berubah');restoreWages(selected);const rows=v.upah.filter(x=>selected.includes(String(x.id)));const cell=window.spreadsheetCSVCell;const csv=[['ID','Tanggal','Pekerja','Aktivitas','Model','Qty','Tarif','Status tercatat'],...rows.map(x=>[x.id,x.tgl,v.wageBindings?.find(b=>b.id===x.pelapor||b.legacy_token===x.pelapor)?.name||x.name||x.worker||x.pelapor,x.aktivitas,x.model,x.qty,x.tarif,x.status])].map(r=>r.map(cell).join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='rekap-upah-tercatat.csv';a.click();URL.revokeObjectURL(a.href);});}catch{alert('Ekspor ditahan — sumber perlu dimuat ulang.');}};
  // Owner read has no entry or finance-write authority; the ordinary route retains the device collector.
- window.addEventListener('online',()=>reader.read().catch(()=>{}));model.refresh=()=>reader.read().catch(()=>{});await model.refresh();if(!isFixture){setInterval(model.refresh,60000);setInterval(showHealth,1000);}
+ model.refresh=()=>reader.read().catch(()=>{});await model.refresh();
+ if(mode==='public-live'){
+  const refreshButton=document.createElement('button');refreshButton.type='button';refreshButton.className='public-entry-link';refreshButton.textContent='Perbarui data';refreshButton.id='public-refresh-data';
+  const refreshNote=document.createElement('p');refreshNote.className='public-source-status';refreshNote.textContent='Pembaruan otomatis dimatikan untuk menghemat kuota. Tekan Perbarui data untuk mengambil data terbaru.';refreshNote.setAttribute('role','status');heading.append(refreshNote);header.append(refreshButton);
+  bindPublicRefresh({button:refreshButton,note:refreshNote,read:()=>reader.read()});
+ }else{window.addEventListener('online',()=>reader.read().catch(()=>{}));if(!isFixture){setInterval(model.refresh,60000);setInterval(showHealth,1000);}}
  model.clear=()=>{reader.invalidate?.();clear();};
  document.getElementById('tabs').addEventListener('click',()=>queueMicrotask(markUnknown));return model;
 }
