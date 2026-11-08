@@ -68,6 +68,7 @@ jobs:
         run: |
           export CHROME_PATH=$(node tests/browser-path.cjs)
           export HTML2CANVAS_PATH="$PWD/recovery/node_modules/html2canvas/dist/html2canvas.min.js"
+          node tests/dashboard-popup-focus.browser.cjs
           node tests/dashboard-ui-consolidation.browser.cjs
           node tests/public-controls.browser.cjs
           node tests/payroll-outputs.browser.cjs

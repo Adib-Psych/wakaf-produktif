@@ -26,8 +26,8 @@
         close.textContent = 'Tutup foto'; close.onclick = () => root.click();
         root.append(close);
       }
-      if (visible(root) && !opened.has(root)) {
-        opened.set(root, document.activeElement);
+      if (visible(root) && (!opened.has(root) || !root.contains(document.activeElement))) {
+        if (!opened.has(root)) opened.set(root, document.activeElement);
         root.querySelector('.dashboard-popup-media-close').focus({preventScroll: true});
       } else if (!visible(root) && opened.has(root)) {
         const previous = opened.get(root); opened.delete(root);
@@ -128,9 +128,13 @@
   }
   function start() {
     refresh();
-    new MutationObserver(() => {
+    new MutationObserver(records => {
+      // Class-driven lightboxes must notify just like style-driven overlays.
+      // Ignore idempotent decoration mutations to avoid a perpetual RAF loop.
+      if (!records.some(record => record.type !== 'attributes' ||
+          record.oldValue !== record.target.getAttribute(record.attributeName))) return;
       if (!scheduled) { scheduled = true; requestAnimationFrame(refresh); }
-    }).observe(document.body, {subtree: true, childList: true, attributes: true, attributeFilter: ['style', 'open']});
+    }).observe(document.body, {subtree: true, childList: true, attributes: true, attributeOldValue: true, attributeFilter: ['style', 'open', 'class']});
     document.addEventListener('keydown', event => {
       if (event.key !== 'Tab' || document.querySelector('dialog[open]')) return;
       const roots = [...document.querySelectorAll('.dashboard-popup')].filter(visible);
