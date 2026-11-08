@@ -15,7 +15,7 @@ async function fixture(width,run){
  try{
   await page.route('**/*',route=>{
    const pathname=new URL(route.request().url()).pathname;
-   const assets={'/payroll-ui.mjs':'text/javascript','/entry-recovery.js':'text/javascript','/harvest-presentation.css':'text/css'};
+   const assets={'/payroll-batch.mjs':'text/javascript','/payroll-ui.mjs':'text/javascript','/entry-recovery.js':'text/javascript','/harvest-presentation.css':'text/css'};
    if(assets[pathname])return route.fulfill({contentType:assets[pathname],body:fs.readFileSync(path.join(__dirname,pathname),'utf8')});
    if(pathname!=='/')return route.abort();
    return route.fulfill({contentType:'text/html',body:`<!doctype html><html data-report-entry="device"><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/harvest-presentation.css"><style>body{margin:0;padding:24px}label{display:inline-flex;align-items:center}input,select,textarea{width:auto;padding:8px;border:1px solid #999}button{padding:6px;background:#ddd;border:1px solid #999}table{width:100%}td{padding:10px}#fixture-unrelated{background:rgb(221,221,221)}</style></head><body data-report-entry="device"><h1>Musim Panen · Uji pencatatan</h1><button id="fixture-unrelated">Tombol dashboard</button><div id="panel-anggaran"><button onclick="batchPay()">Batch</button><button id="legacy" onclick="confirmPaid()">Legacy</button><table><tbody id="upah-tbody"></tbody></table></div><button id="device-entry-signin">Google</button><script>
@@ -99,7 +99,7 @@ for(const width of widths){
   await page.locator('#legacy').click();
   assert.equal(await page.evaluate(()=>legacyWrites),0);
   assert.equal(await page.evaluate(()=>alerts.length),1);
-  assert.equal(await page.locator('button[onclick="batchPay()"]').isDisabled(),true);
+  assert.equal(await page.locator('[data-payroll-action="batch"]').isEnabled(),true);
  }));
 }
 for(const width of [1440,390,320]){

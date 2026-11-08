@@ -14,6 +14,12 @@ One transaction updates payroll_states and creates an identical immutable payrol
 
 This read projection is required for payroll-aware reporting: original legacy singleton cashbook alone does not contain new derived rows. Do not let an old privileged writer copy a projected array into a base singleton. Revoke/reconcile targets before privileged cash, wage or advance edits. This is not an automatic wage-generation release.
 
+## Checked-item recording
+
+“Bayar tercentang batch” confirms the selected unpaid rows with one editable actual-payment date and note. Fresh single and batch dialogs default to today's WIB date; existing recovery dates are never overwritten. K4 and Wakaf amounts are summarized separately, with sources derived from each original wage rather than selected freely.
+
+The batch is sequential, not an all-or-nothing transaction. Each item requires the same verified paired server acknowledgement as single-row recording. An account-bound durable plan retains exact IDs and inputs, confirmed progress and uncertain event identity. Failure stops the remainder; continuation requires explicit operator action, never an automatic reload retry. Previously confirmed items must not create replacement events. Login changes cannot adopt another operator's plan. Do not clear browser storage to resolve uncertainty.
+
 ## Verification
 
 `node --test tests/*.test.cjs operations/tests/*.test.cjs recovery/payroll-*.test.mjs recovery/payroll-reader-behavior.test.cjs`
