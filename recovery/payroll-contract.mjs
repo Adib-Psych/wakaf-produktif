@@ -6,7 +6,7 @@ const canonical=x=>Array.isArray(x)?x.map(canonical):x&&typeof x==='object'?Obje
 const calendar=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)&&Number.isFinite(Date.parse(d+'T00:00:00Z'))&&new Date(d+'T00:00:00Z').toISOString().slice(0,10)===d;
 const paymentKeys=['bayar_tgl','bayar_source','paid_date','source','payment_id','bayar_ref','cashbook_id'];
 function original(w){
- if(!w||!id(w.id)||w.status!=='belum'||('fund' in w&&w.fund!=='K1_K3')||w.voided_duplicate===true||('eligible' in w&&w.eligible!==true)||paymentKeys.some(k=>k in w)||!Number.isSafeInteger(w.tarif)||w.tarif<=0||typeof w.qty!=='number'||!Number.isFinite(w.qty)||w.qty<=0||!Number.isSafeInteger(w.tarif*w.qty))throw Error('Unsupported original wage');
+ if(!w||!id(w.id)||w.status!=='belum'||('fund' in w&&!['K1_K3','K4'].includes(w.fund))||w.voided_duplicate===true||('eligible' in w&&w.eligible!==true)||paymentKeys.some(k=>k in w)||!Number.isSafeInteger(w.tarif)||w.tarif<=0||typeof w.qty!=='number'||!Number.isFinite(w.qty)||w.qty<=0||!Number.isSafeInteger(w.tarif*w.qty))throw Error('Unsupported original wage');
 }
 export function buildPayrollState({wage,previous=null,status,paidDate=null,source=null,reason='',eventId,uid,stamp}){
  original(wage);
@@ -16,7 +16,7 @@ export function buildPayrollState({wage,previous=null,status,paidDate=null,sourc
  const before=previous?.status||wage.status;
  if(!((before==='belum'&&status==='lunas')||(previous&&before==='lunas'&&status==='belum')))throw Error('Unsupported transition (legacy cancellation denied)');
  if(typeof reason!=='string'||reason.length>500||(status==='belum'&&!text(reason)))throw Error('Cancellation reason required');
- if(status==='lunas'?(!calendar(paidDate)||paidDate>new Date(Date.now()+7*60*60*1000).toISOString().slice(0,10)||source!=='wakif'):(paidDate!==null||source!==null))throw Error('Invalid payment date or source');
+ if(status==='lunas'?(!calendar(paidDate)||paidDate>new Date(Date.now()+7*60*60*1000).toISOString().slice(0,10)||source!==(wage.fund==='K4'?'pribadi':'wakif')):(paidDate!==null||source!==null))throw Error('Invalid payment date or source');
  return {wage_id:String(wage.id),wage:structuredClone(wage),revision:previous?previous.revision+1:1,predecessor:previous?previous.event_id:null,event_id:eventId,status,paid_date:paidDate,source,reason,owner_uid:uid,committed_at:stamp};
 }
 // Pass ORIGINAL wages and base cashbook only. Never re-project already-derived rows.
@@ -35,9 +35,9 @@ export function projectPayroll({upah,cashbook,states}){
   const out=wages.find(x=>String(x.id)===wid);out.status=state.status;out.payroll_revision=state.revision;out.payroll_event_id=state.event_id;
   if(out.satuan==='full_day')out.satuan='full';
   if(state.status==='lunas'){
-   if(!calendar(state.paid_date)||state.source!=='wakif')throw Error('Malformed paid state');
+   if(!calendar(state.paid_date)||state.source!==(w.fund==='K4'?'pribadi':'wakif'))throw Error('Malformed paid state');
    out.bayar_tgl=state.paid_date;out.bayar_source=state.source;
-   cash.push({id:'cb_payroll_'+wid,tgl:state.paid_date,tipe:'bayar_upah',kat:w.model==='borongan'?'4.1':w.pelapor==='YIT'?'3.1':'3.2',ket:'Upah '+(w.name||w.worker||w.pelapor)+' — '+(w.aktivitas||w.tgl),masuk:0,keluar:w.tarif*w.qty,src:'payroll',nota:null,ref:'upah_'+wid});
+   cash.push({id:'cb_payroll_'+wid,tgl:state.paid_date,tipe:'bayar_upah',kat:w.model==='borongan'?'4.1':w.pelapor==='YIT'?'3.1':'3.2',ket:'Upah '+(w.name||w.worker||w.pelapor)+' — '+(w.aktivitas||w.tgl),masuk:0,keluar:w.tarif*w.qty,src:'payroll',nota:null,ref:'upah_'+wid,...(w.fund==='K4'?{fund:'K4'}:{})});
   }else if(state.paid_date!==null||state.source!==null||!text(state.reason)||state.revision<2)throw Error('Malformed cancellation');
  }
  return {upah:wages,cashbook:cash};

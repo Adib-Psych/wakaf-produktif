@@ -1134,6 +1134,13 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
         <p style="font-size:10px;color:var(--mute);margin-top:8px"><strong>Source legend:</strong> ✏️ Manual · 🔗 Auto-link dari Upah Pekerja. <em>Saldo column dihapus (menunggu pemasukan pertama biar tidak minus). Entry historis era T.A. Anto 1-18 Mei 2026 tetap tampil sebagai pengeluaran biasa.</em></p>
       </div>
 
+      <section class="card" id="k4-private-accounting" aria-labelledby="k4-private-title">
+        <h3 class="card-title" id="k4-private-title">K4 pribadi · Pembayaran upah aktual</h3>
+        <p style="font-size:12px;color:var(--mute)">Dana pribadi terpisah; tidak mengurangi Kas Wakif dan tidak masuk aktual RAB Wakaf. Riwayat pekerjaan dan kontrol pembayaran tetap tersedia di Upah Pekerja.</p>
+        <strong id="total-k4-private-payments">Rp. 0,-</strong>
+        <div class="table-wrap"><table style="font-size:11.5px"><thead><tr><th>Tanggal bayar</th><th>Keterangan</th><th>Dana</th><th style="text-align:right">Dibayar aktual</th></tr></thead><tbody id="k4-private-cashbook-tbody"></tbody></table></div>
+      </section>
+
       <!-- ============ SECTION 3 — KAS MAS ANTO REMOVED 8 Juni 2026 ============ -->
       <!-- Petty Cash Anto card DELETED per Adib instruction (Action #7 comprehensive Anto cleanup).
            Historis Rp 500K transfer_anto entries tetap tersimpan di CASHBOOK array & ter-render
@@ -4107,7 +4114,7 @@ function renderDashboard() {
   // PRODUCTION: Burn Rate dinamis dari CASHBOOK + RAB Final total
   if (typeof CASHBOOK !== 'undefined' && typeof RAB_DATA !== 'undefined') {
     let totalKeluar = 0;
-    CASHBOOK.forEach(t => {
+    cashbookForFund().forEach(t => {
       if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah' || t.tipe === 'transfer_anto') {
         totalKeluar += t.keluar || 0;
       }
@@ -5456,12 +5463,12 @@ function renderBudgetChart() {
       planned[groupOf(category.id)] += item.qty * item.hf;
     }
   }
-  for(const transaction of CASHBOOK) {
+  for(const transaction of cashbookForFund()) {
     const amount = transaction.keluar ?? 0;
     if(!Number.isFinite(amount)) { unavailable('Nilai aktual buku kas belum dapat dikonfirmasi; perbandingan belum tersedia.'); return; }
     groups[groupOf((transaction.kat||'').split('.')[0])] += amount;
   }
-  if(note)note.textContent='RAB Final 2026: '+RAB_DATA['2026'].periode+'. Aktual: seluruh catatan buku kas, termasuk di luar periode rencana.';
+  if(note)note.textContent='RAB Final 2026: '+RAB_DATA['2026'].periode+'. Aktual: catatan buku kas Wakaf, termasuk di luar periode rencana; K4 pribadi terpisah.';
   const style = getComputedStyle(document.documentElement);
   const color = token => style.getPropertyValue(token).trim();
   new Chart(ctx, {
@@ -6043,7 +6050,7 @@ function renderUpahTable() {
       <td style="font-size:11px;white-space:nowrap">${formatTgl(it.tgl)}</td>
       <td>${workerPillHtml(it.pelapor)}</td>
       <td>${modelBadge}</td>
-      <td style="font-size:11px;max-width:220px">${it.aktivitas||'Hak upah tercatat dari laporan'}</td>
+      <td style="font-size:11px;max-width:220px">${it.aktivitas||'Hak upah tercatat dari laporan'}${it.fund === 'K4' ? '<div class="pill" title="Dana pribadi terpisah, bukan beban kas Wakaf">K4 pribadi</div>' : ''}</td>
       <td><strong>${it.qty}</strong></td>
       <td style="font-size:10px;color:var(--mute)">${it.satuan_lbl||it.satuan}</td>
       <td>${fmtRpShort(it.tarif)}</td>
@@ -16024,10 +16031,16 @@ function reviewOnlyPanen2025Migration() {
   console.log('[Seed v4.0 Musyarakah Formula LOCKED] Panen 2025 backfill updated: Saldo Pool Operasional Rp 9.417.671 (proyeksi cair 30 Sep 2026). Pakai formula final 27 Mei 2026 (X% 10,02%, term Hak Wakif/Komitmen Sedekah/Invest Kebun Wakaf). Liability Hak Wakif Rp 3,94 jt tracked separately (carry-over sampai BEP).');
 }
 
+// Reporting view only: keep the complete shared ledger for payment history,
+// reconciliation and persistence. Legacy untagged cash remains Wakaf cash.
+function cashbookForFund(fund = 'K1_K3', rows = CASHBOOK) {
+  return rows.filter(t => fund === 'K4' ? t.fund === 'K4' : t.fund !== 'K4');
+}
+
 // ---------- COMPUTE SALDO ----------
 function computeSaldo() {
   let kasWakif = 0, antoIn = 0, antoOut = 0;
-  CASHBOOK.forEach(t => {
+  cashbookForFund().forEach(t => {
     if (t.tipe === 'masuk') kasWakif += t.masuk;
     else if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah') kasWakif -= t.keluar;
     else if (t.tipe === 'transfer_anto') { kasWakif -= t.keluar; antoIn += t.keluar; }
@@ -16060,7 +16073,7 @@ function getKategoriTotal(cycle, katId) {
 function getKategoriAktual(katId) {
   // Sum cashbook entries where kat starts with katId. (e.g. kat 1 → 1.1, 1.2, ...)
   let total = 0;
-  CASHBOOK.forEach(t => {
+  cashbookForFund().forEach(t => {
     if (!t.kat) return;
     const topKat = t.kat.split('.')[0];
     if (topKat === katId) total += t.keluar;
@@ -16069,7 +16082,7 @@ function getKategoriAktual(katId) {
 }
 function getItemAktual(itemKode) {
   let total = 0;
-  CASHBOOK.forEach(t => {
+  cashbookForFund().forEach(t => {
     if (t.kat === itemKode) total += t.keluar;
   });
   return total;
@@ -17149,7 +17162,7 @@ function renderKeuangan() {
     const now = new Date();
     const ym = now.toISOString().slice(0,7);
     let masukBln = 0, keluarBln = 0;
-    CASHBOOK.forEach(t => {
+    cashbookForFund().forEach(t => {
       if (!t.tgl.startsWith(ym)) return;
       if (t.tipe === 'masuk') masukBln += t.masuk;
       else if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah' || t.tipe === 'transfer_anto') keluarBln += t.keluar;
@@ -17166,7 +17179,7 @@ function renderKeuangan() {
 
 function populateCashbookFilters() {
   // Bulan
-  const bulanSet = new Set(CASHBOOK.map(t => t.tgl.slice(0,7)));
+  const bulanSet = new Set(cashbookForFund().map(t => t.tgl.slice(0,7)));
   const selBln = document.getElementById('filter-cb-bulan');
   const cur = selBln.value;
   selBln.innerHTML = '<option value="">Semua Bulan</option>' + Array.from(bulanSet).sort().reverse().map(b => `<option value="${b}" ${b===cur?'selected':''}>${b}</option>`).join('');
@@ -17181,13 +17194,20 @@ function populateCashbookFilters() {
 }
 
 function renderCashbook() {
+  const wakafCash = cashbookForFund();
+  const privatePayments = cashbookForFund('K4').filter(t => t.tipe === 'bayar_upah');
+  const privateTotal = document.getElementById('total-k4-private-payments');
+  if (privateTotal) privateTotal.textContent = fmtRp(privatePayments.reduce((sum,t) => sum + (t.keluar || 0),0));
+  const privateBody = document.getElementById('k4-private-cashbook-tbody');
+  const esc = value => String(value ?? '').replace(/[&<>"']/g,c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  if (privateBody) privateBody.innerHTML = privatePayments.slice().sort((a,b) => b.tgl.localeCompare(a.tgl)).map(t => `<tr><td>${esc(formatTglShort(t.tgl))}</td><td>${esc(t.ket)}</td><td>K4 pribadi</td><td style="text-align:right">${fmtRp(t.keluar)}</td></tr>`).join('') || '<tr><td colspan="4">Belum ada pembayaran upah K4 pribadi tercatat.</td></tr>';
   // === NEW 4-section architecture (locked 17 Mei 2026 per Adib redesign) ===
   // Compute aggregates per category — show TOTAL only, no negative saldo.
-  const allMasuk = CASHBOOK.filter(t => t.tipe === 'masuk');
+  const allMasuk = wakafCash.filter(t => t.tipe === 'masuk');
   const totalMasuk = allMasuk.reduce((s, t) => s + (t.masuk || 0), 0);
-  const totalTransferAnto = CASHBOOK.filter(t => t.tipe === 'transfer_anto').reduce((s, t) => s + (t.keluar || 0), 0);
-  const totalBayarPekerja = CASHBOOK.filter(t => t.tipe === 'bayar_upah').reduce((s, t) => s + (t.keluar || 0), 0);
-  const totalBelanjaLain = CASHBOOK.filter(t => t.tipe === 'keluar_langsung').reduce((s, t) => s + (t.keluar || 0), 0);
+  const totalTransferAnto = wakafCash.filter(t => t.tipe === 'transfer_anto').reduce((s, t) => s + (t.keluar || 0), 0);
+  const totalBayarPekerja = wakafCash.filter(t => t.tipe === 'bayar_upah').reduce((s, t) => s + (t.keluar || 0), 0);
+  const totalBelanjaLain = wakafCash.filter(t => t.tipe === 'keluar_langsung').reduce((s, t) => s + (t.keluar || 0), 0);
   const totalPengeluaran = totalTransferAnto + totalBayarPekerja + totalBelanjaLain;
 
   // Section 1: total uang masuk
@@ -17253,7 +17273,7 @@ function renderCashbook() {
   const fKat = document.getElementById('filter-cb-kat').value;
   const fTipe = document.getElementById('filter-cb-tipe').value;
   // Filter to pengeluaran kas wakif only (exclude masuk + keluar_anto — those have own sections)
-  const filtered = CASHBOOK.filter(t => {
+  const filtered = wakafCash.filter(t => {
     // Only include pengeluaran kas wakif: transfer_anto, bayar_upah, keluar_langsung
     if (!['transfer_anto', 'bayar_upah', 'keluar_langsung'].includes(t.tipe)) return false;
     if (fBln && !t.tgl.startsWith(fBln)) return false;
@@ -17529,7 +17549,7 @@ function renderAntoLedger() {
   // Fix: early return if target DOM missing. Function preserved untuk backward-compat parser paths.
   const tbody = document.getElementById('anto-tbody');
   if (!tbody) return;
-  const antoTrx = CASHBOOK.filter(t => t.tipe === 'transfer_anto' || t.tipe === 'keluar_anto')
+  const antoTrx = cashbookForFund().filter(t => t.tipe === 'transfer_anto' || t.tipe === 'keluar_anto')
     .sort((a,b) => a.tgl.localeCompare(b.tgl));
   let run = 0;
   // Compute totals for Section 3 KPI cards
@@ -17903,7 +17923,7 @@ async function doExportZip() {
 async function exportCashbookCSV() {
   try{return await window.privateReader.exportRead(['cashbook'],fresh=>{
   const active=fresh.cashbook.find(x=>x.id==='active');if(!active||!Array.isArray(active.data.data))throw Error('cashbook-shape');
-  const cash=active.data.data;
+  const cash=cashbookForFund('K1_K3',active.data.data);
   const headers = ['Tgl','Tipe','Keterangan','Kategori RAB','Masuk','Keluar','Source','NotaID'];
   const rows = cash.map(t => [t.tgl,t.tipe,t.ket,t.kat||'',t.masuk,t.keluar,t.src,t.nota||''].map(spreadsheetCSVCell).join(','));
   const csv = [headers.join(','), ...rows].join('\n');
@@ -17911,7 +17931,7 @@ async function exportCashbookCSV() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `cashbook_${new Date().toISOString().slice(0,10)}.csv`;
+  a.download = `cashbook_wakaf_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
   URL.revokeObjectURL(url);
   });}catch(e){alert('Ekspor ditahan: '+e.message);}
