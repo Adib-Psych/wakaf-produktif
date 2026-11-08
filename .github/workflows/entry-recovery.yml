@@ -60,4 +60,4 @@ jobs:
           CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-held-release.cjs
           CHROME_PATH=$(node tests/browser-path.cjs) node tests/browser-worker-upgrade.cjs
           CHROME_PATH=$(node tests/browser-path.cjs) node --test tests/account-session-runtime.browser.cjs
-          CHROME_PATH=$(node tests/browser-path.cjs) node --test recovery/payroll-dialog.browser.cjs recovery/payroll-fund-reporting.test.cjs
+          CHROME_PATH=$(node tests/browser-path.cjs) node --test recovery/payroll-dialog.browser.cjs recovery/payroll-batch.browser.cjs recovery/payroll-fund-reporting.test.cjs
