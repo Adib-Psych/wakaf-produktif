@@ -22,7 +22,8 @@ function harness({user=null,records={},seed={}}={}){
  const auth={currentUser:user};let observer,authError;
  const localStorage=storage(seed),sessionStorage=storage();
  const snap=value=>({data:()=>value,exists:()=>value!==undefined});
- const ctx={console,document,localStorage,sessionStorage,queueMicrotask,crypto:{randomUUID:()=> 'test-slot'},navigator:{locks:{request:async(name,options,fn)=>typeof options==='function'?options():fn({})}},workerReportContent:JSON.stringify,
+ // Payroll mounting is isolated here; real payroll client/emulator and UI suites cover it.
+ const ctx={mountPayrollRecording:()=>{},console,document,localStorage,sessionStorage,queueMicrotask,crypto:{randomUUID:()=> 'test-slot'},navigator:{locks:{request:async(name,options,fn)=>typeof options==='function'?options():fn({})}},workerReportContent:JSON.stringify,
  initializeApp:(config,name)=>(calls.apps.push(name),{name}),getAuth:()=>auth,getFirestore:()=>({}),browserLocalPersistence:{kind:'local'},setPersistence:async(a,p)=>calls.persistence.push(p),
  signInAnonymously:async()=>{calls.anonymous++;throw Error('anonymous sign-in forbidden');},GoogleAuthProvider:class {},signInWithPopup:async()=>{calls.popup++;return {user:auth.currentUser};},signOut:async()=>{auth.currentUser=null;await observer(null);},onAuthStateChanged:(a,fn,error)=>{observer=fn;authError=error;queueMicrotask(()=>void Promise.resolve(fn(a.currentUser)).catch(()=>{}));return ()=>{};},
  doc:(db,c,id)=>c+'/'+id,collection:(db,c)=>c,query:(...q)=>q,where:(...q)=>q,getDocFromServer:async path=>{calls.reads.push(path);if(records[path] instanceof Error)throw records[path];return snap(records[path]);},getDocsFromServer:async()=>({docs:[]}),

@@ -3,7 +3,9 @@ import {initializeApp,getApps} from 'https://www.gstatic.com/firebasejs/10.13.0/
 import {getFirestore,collection,getDocsFromServer} from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
 import {OWNER_READ_COLLECTIONS,validateOwnerSnapshot} from './owner-dashboard.js';
 import {mountPrivateDashboard} from './restored-dashboard.js';
-const wageSources=['wage_entitlements','wage_processing','wage_worker_bindings'];
+import {projectPayroll} from './payroll-contract.mjs';
+const payrollSources=['payroll_states','payroll_events'];
+const wageSources=['wage_entitlements','wage_processing','wage_worker_bindings',...payrollSources];
 export const PUBLIC_READ_COLLECTIONS=Object.freeze([...OWNER_READ_COLLECTIONS,...wageSources]);
 const reportSources=['laporan','report_heads','entry_receipts','operation_events','operation_receipts','device_reports','device_receipts'];
 const domainSources={upah:'upah',cashbook:'cashbook',opt:'opt_observations',panen:'panen_data',lots:'panen_lots',sampling:'panen_sampling',benchmark:'panen_sampling',pic:'distribusi_pic',workers:'worker_defs_custom',milestones:'milestones',sopStatus:'sop_status',cabut:'sop_status',kasbon:'sop_status',pupuk:'sop_status',sop:'sop_master',invoices:'invoices'};
@@ -42,6 +44,17 @@ export function createPublicReader({readCollection,timeoutMs=15000}){
   const wageFailures=['upah',...wageSources].filter(c=>['stale','error'].includes(collections[c].state));
   domains.upah={state:wageFailures.length?(wageFailures.some(c=>collections[c].state==='error')?'error':'stale'):value.upah==null?'missing':value.upah.length?'available':'empty',sources:['upah',...wageSources],unavailable:wageFailures};
   const errors=PUBLIC_READ_COLLECTIONS.filter(c=>['stale','error'].includes(collections[c].state));if(decoded.rejected)errors.push('reports:invalid-rows');
+  try{
+   if(['upah','cashbook',...wageSources].some(c=>['stale','error'].includes(collections[c].state)))throw Error('payroll-events-unconfirmed');
+   const states=(rows.payroll_states||[]).map(r=>r.data);
+   for(const state of states){const event=(rows.payroll_events||[]).find(r=>r.id===state.event_id);if(!event||state.wage_id!==String(state.wage?.id)||globalThis.workerReportContent(state)!==globalThis.workerReportContent(event.data))throw Error('payroll-events-unconfirmed');}
+   const projected=projectPayroll({upah:value.upah,cashbook:value.cashbook,states});value.upah=projected.upah;value.cashbook=projected.cashbook;
+   previous.payroll={upah:structuredClone(value.upah),cashbook:structuredClone(value.cashbook)};
+  }catch{
+   errors.push('payroll-events-unconfirmed');const state=previous.payroll?'stale':'error';domains.upah={...domains.upah,state};domains.cashbook={...domains.cashbook,state};
+   value.payrollUnavailable=true;
+   if(previous.payroll){value.upah=structuredClone(previous.payroll.upah);value.cashbook=structuredClone(previous.payroll.cashbook);}else{value.upah=null;value.cashbook=null;}
+  }
   value.raw=structuredClone(rows);
   value.missing=Object.keys(domains).filter(k=>value[k]==null);
   if(stopped)throw Error('reader-stopped');

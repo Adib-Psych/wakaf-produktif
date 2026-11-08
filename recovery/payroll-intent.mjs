@@ -1,0 +1,8 @@
+// Account-bound uncertain command identity. Never silently discard or adopt another account's intent.
+const canon=x=>JSON.stringify(x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,x[k]])):x);
+export function payrollIntentStore(storage,newId){
+ const key=uid=>'wkkn_payroll_intent_v1_'+uid;
+ function read(uid){const raw=storage.getItem(key(uid));if(raw===null)return null;const c=JSON.parse(raw);if(c.uid!==uid||!c.input||typeof c.eventId!=='string'||!/^pe_[A-Za-z0-9_-]+$/.test(c.eventId)||!(c.expectedRevision===null||(Number.isSafeInteger(c.expectedRevision)&&c.expectedRevision>=0)))throw Error('Catatan belum pasti perlu diperiksa; jangan hapus data browser');return c;}
+ function persist(c){const s=JSON.stringify(c);storage.setItem(key(c.uid),s);if(storage.getItem(key(c.uid))!==s)throw Error('Identitas pencatatan belum tersimpan; pengiriman ditahan');}
+ return {obtain(uid,input){const prior=read(uid);if(prior){if(canon(prior.input)!==canon(input))throw Error('Ada pencatatan belum pasti; periksa dan ulangi isian sebelumnya sebelum membuat perubahan lain');return prior;}const c={uid,input:structuredClone(input),eventId:newId(),expectedRevision:null};persist(c);return c;},revision(c,value){const prior=read(c.uid);if(!prior||prior.eventId!==c.eventId)throw Error('Identitas pencatatan berubah');if(c.expectedRevision!==null&&c.expectedRevision!==value)throw Error('Status berubah pada perangkat lain; periksa data terbaru');c.expectedRevision=value;persist(c);},confirm(c){const prior=read(c.uid);if(!prior||prior.eventId!==c.eventId)throw Error('Identitas pencatatan berubah');storage.removeItem(key(c.uid));if(storage.getItem(key(c.uid))!==null)throw Error('Konfirmasi belum tersimpan pada perangkat');},read};
+}
