@@ -1,5 +1,7 @@
 # Backup/recovery kit — credential independent, not commissioned
 
+**Cadangan harian yang berjalan (resep resmi v2, 9 Nov 2026):** `cadangan_harian.py` — cakupan, kode keluar, pemasangan dan pemulihan aman di `CADANGAN_HARIAN.md`. Kit di bawah ini tetap belum dioperasikan.
+
 Existing selected destination remains private Drive Backup Sistem Wakaf. ADIB primary, PANJI backup; Adib alone approves access. No new ACL, upload, production schedule or capture is performed by this kit. Manual USB/key custody is not a prerequisite.
 
 Run from repository root:
