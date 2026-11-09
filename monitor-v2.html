@@ -4117,7 +4117,7 @@ function renderDashboard() {
     let totalKeluar = 0;
     cashbookForFund().forEach(t => {
       if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah' || t.tipe === 'transfer_anto') {
-        totalKeluar += keluarWakaf(t);
+        totalKeluar += ((Number.isSafeInteger(t.porsi_k4) && t.porsi_k4 > 0 && t.porsi_k4 <= (t.keluar || 0)) ? (t.keluar || 0) - t.porsi_k4 : (t.keluar || 0));
       }
     });
     // Total RAB — acuan Siklus 2026 (per Wakif 27 Jun 2026): % penyerapan vs siklus berjalan, bukan 2-siklus
@@ -16306,25 +16306,21 @@ function getKategoriTotal(cycle, katId) {
 }
 // QC T4 (9 Nov 2026): beberapa baris kas Wakaf memuat porsi K4 (dana pribadi) yang menurut catatannya
 // "dikurangkan saat menyusun laporan wakaf". Field porsi_k4 (angka asli `keluar` TIDAK diubah) dipakai
-// hanya untuk serapan RAB Wakaf; saldo kas tetap memakai arus kas bank yang sebenarnya.
-function keluarWakaf(t) {
-  const out = t.keluar || 0, k4 = t.porsi_k4;
-  return (Number.isSafeInteger(k4) && k4 > 0 && k4 <= out) ? out - k4 : out;
-}
+// hanya untuk serapan RAB Wakaf (ditulis sebaris di tiap fungsi); saldo kas tetap memakai arus kas bank.
 function getKategoriAktual(katId) {
   // Sum cashbook entries where kat starts with katId. (e.g. kat 1 → 1.1, 1.2, ...)
   let total = 0;
   cashbookForFund().forEach(t => {
     if (!t.kat) return;
     const topKat = t.kat.split('.')[0];
-    if (topKat === katId) total += keluarWakaf(t);
+    if (topKat === katId) total += ((Number.isSafeInteger(t.porsi_k4) && t.porsi_k4 > 0 && t.porsi_k4 <= (t.keluar || 0)) ? (t.keluar || 0) - t.porsi_k4 : (t.keluar || 0));
   });
   return total;
 }
 function getItemAktual(itemKode) {
   let total = 0;
   cashbookForFund().forEach(t => {
-    if (t.kat === itemKode) total += keluarWakaf(t);
+    if (t.kat === itemKode) total += ((Number.isSafeInteger(t.porsi_k4) && t.porsi_k4 > 0 && t.porsi_k4 <= (t.keluar || 0)) ? (t.keluar || 0) - t.porsi_k4 : (t.keluar || 0));
   });
   return total;
 }
