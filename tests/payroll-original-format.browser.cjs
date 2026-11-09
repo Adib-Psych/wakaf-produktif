@@ -50,7 +50,7 @@ let server,browser,base;const result={checks:[],errors:[],renders:[],legacyHarne
     result.checks.push(name+' actual html2canvas PNG download + screenshot');
    }
    const original=result.renders.find(x=>x.name===`original-${mode}-${size}`).metrics,restored=result.renders.find(x=>x.name===`restored-${mode}-${size}`).metrics;
-   assert.equal(restored.root.width,original.root.width);assert.equal(restored.logo.height,108);assert.deepEqual(restored.col,original.col);assert.deepEqual(restored.th.map(x=>[x.text,x.width,x.background]),original.th.map(x=>[x.text,x.width,x.background]));assert.equal(restored.rows,original.rows);assert.equal(restored.signatureImages,0);result.checks.push(mode+' '+size+' legacy frame/logo/columns/header palette/grouping comparison');
+   assert.equal(restored.root.width,original.root.width);assert.equal(restored.logo.height,108);assert.deepEqual(restored.col,original.col);assert.deepEqual(restored.th.map(x=>[x.text,x.width,x.height,x.font]),original.th.map(x=>[x.text,x.width,x.height,x.font]));assert.equal(restored.header.width,original.header.width);assert.equal(restored.header.height,original.header.height);assert.equal(restored.root.font,original.root.font);assert.equal(restored.root.color,'rgb(48, 40, 43)');assert.equal(restored.header.background,'rgb(255, 255, 255)');assert.equal(restored.root.border,'3px solid rgb(116, 70, 95)');assert.equal(restored.rows,original.rows);assert.equal(restored.signatureImages,0);result.checks.push(mode+' '+size+' legacy frame/logo/columns/header geometry/grouping preserved; approved C palette intentionally differs');
   }
   await context.close();
  }

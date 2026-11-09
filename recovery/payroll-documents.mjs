@@ -87,8 +87,8 @@ export function openPayrollPreview(win=globalThis.window){
 }
 function fillPreview(preview,d,href){
  if(!preview||preview.closed)return;
- const doc=preview.document;doc.title=d.filename;doc.body.replaceChildren();doc.body.style.cssText='margin:0;background:#2e4040;color:#fff;font:14px Arial,sans-serif';
- const bar=doc.createElement('header');bar.style.cssText='padding:16px;position:sticky;top:0;background:#1F5F47;display:flex;gap:12px;flex-wrap:wrap;align-items:center';
+ const doc=preview.document;doc.title=d.filename;doc.body.replaceChildren();doc.body.style.cssText='margin:0;background:#30282b;color:#fff;font:14px Arial,sans-serif';
+ const bar=doc.createElement('header');bar.style.cssText='padding:16px;position:sticky;top:0;background:#74465f;display:flex;gap:12px;flex-wrap:wrap;align-items:center';
  const title=doc.createElement('strong');title.textContent=d.mode==='rekap'?'Rekapan upah — BUKAN bukti pembayaran':'Bukti pembayaran — catatan server';
  const download=doc.createElement('a');download.id='payroll-download';download.href=href;download.download=d.filename;download.textContent='Download PNG';download.style.color='#fff';
  const print=doc.createElement('button');print.id='payroll-print';print.textContent='Print';print.onclick=()=>preview.print();
@@ -157,51 +157,51 @@ export function payrollDocumentHTML(d){
     const subtotal = it.total;
     const tglStr = documentDate(it.date);
     const statusIco = it.status==='lunas'?'✓ Lunas':'⏳ Belum dibayar';
-    const rowBg = i % 2 === 0 ? '#fafbfa' : '#ffffff';
+    const rowBg = i % 2 === 0 ? '#faf9f8' : '#ffffff';
     // Activity description with inline qty/tarif detail
     // Preserve the compact unit daily row, but show every non-unit multiplier.
     const qtyDisplay = it.model==='harian'&&it.qty===1?it.duration:`${it.qty}× ${it.duration}`;
-    const aktDesc = `<span style="color:#2e4040;font-weight:600">${escape(it.activity)}</span> <span style="color:#6b7878;font-size:11px">· ${statusIco} ${escape(qtyDisplay)} · Rp ${it.tariff.toLocaleString('id-ID')}</span>`;
+    const aktDesc = `<span style="color:#30282b;font-weight:600">${escape(it.activity)}</span> <span style="color:#70636a;font-size:11px">· ${statusIco} ${escape(qtyDisplay)} · Rp ${it.tariff.toLocaleString('id-ID')}</span>`;
     const details = `${multi?`<br><b>${escape(it.name)}</b>`:''}${multiFund?`<br>Sumber dana: ${escape(it.fundLabel)}`:''}${!isRekap&&new Set(items.map(r=>r.paymentDate)).size>1?`<br>Tanggal bayar: ${escape(it.paymentDate)}`:''}`;
     return `<tr style="background:${rowBg}">
-      <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;color:#2e4040;white-space:nowrap;vertical-align:middle"><span style="color:#5a9080;font-weight:700;display:inline-block;width:22px">${i+1}.</span><span style="font-weight:600">${tglStr}</span></td>
-      <td style="padding:9px 12px;border-bottom:1px solid #e8dec8;font-size:12px;line-height:1.45;vertical-align:middle">${aktDesc}${details}</td>
-      <td style="padding:9px 12px;text-align:right;border-bottom:1px solid #e8dec8;font-size:12.5px;font-weight:700;color:#2e4040;white-space:nowrap;vertical-align:middle">Rp ${subtotal.toLocaleString('id-ID')}</td>
+      <td style="padding:9px 12px;border-bottom:1px solid #e4d9df;font-size:12px;color:#30282b;white-space:nowrap;vertical-align:middle"><span style="color:#70636a;font-weight:700;display:inline-block;width:22px">${i+1}.</span><span style="font-weight:600">${tglStr}</span></td>
+      <td style="padding:9px 12px;border-bottom:1px solid #e4d9df;font-size:12px;line-height:1.45;vertical-align:middle">${aktDesc}${details}</td>
+      <td style="padding:9px 12px;text-align:right;border-bottom:1px solid #e4d9df;font-size:12.5px;font-weight:700;color:#30282b;white-space:nowrap;vertical-align:middle">Rp ${subtotal.toLocaleString('id-ID')}</td>
     </tr>`;
   }).join('');
 
  return `
-    <div id="payroll-document-render" style="position:relative;width:800px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#2e4040;border:3px solid #1F5F47;box-shadow:inset 0 0 0 1px #ffffff, inset 0 0 0 2px #D4AF37, 0 4px 12px rgba(0,0,0,.1);box-sizing:content-box">
-      ${isRekap?`<div style="position:absolute;top:46%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font-size:52px;font-weight:900;color:rgba(217,119,6,.13);white-space:nowrap;pointer-events:none;z-index:5">${watermark}</div>`:''}
+    <div id="payroll-document-render" style="position:relative;width:800px;background:#ffffff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;color:#30282b;border:3px solid #74465f;box-shadow:inset 0 0 0 1px #ffffff, inset 0 0 0 2px #e4d9df, 0 4px 12px rgba(0,0,0,.1);box-sizing:content-box">
+      ${isRekap?`<div style="position:absolute;top:46%;left:50%;transform:translate(-50%,-50%) rotate(-18deg);font-size:52px;font-weight:900;color:rgba(116,70,95,.09);white-space:nowrap;pointer-events:none;z-index:5">${watermark}</div>`:''}
       <!-- HEADER — Professional letterhead style -->
-      <div style="background:#f5f0e6;padding:22px 32px 16px;border-bottom:4px solid #1F5F47;position:relative">
+      <div style="background:#ffffff;padding:22px 32px 16px;border-bottom:4px solid #74465f;position:relative">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:20px">
           <img src="images/logo-wakaf-produktif-3x1.png" style="height:108px;width:auto;max-width:480px;display:block;flex-shrink:0" alt="Logo Wakaf Produktif Kebun Kopi Ngantang">
           <div style="text-align:right;flex-shrink:0;max-width:280px">
-            <div style="font-size:9px;font-weight:800;color:#1F5F47;letter-spacing:2.5px;margin-bottom:6px">— DOKUMEN RESMI —</div>
-            <div style="font-size:11px;color:#6b7878;line-height:1.55;font-style:italic">Wakaf produktif berbasis kebun kopi<br>untuk amal jariyah berkelanjutan</div>
-            <div style="margin-top:8px;padding-top:6px;border-top:1px solid #d4c8a8;font-size:9px;color:#8b6914;letter-spacing:.5px;font-weight:600">📍 Ngantang, Malang · Jawa Timur</div>
+            <div style="font-size:9px;font-weight:800;color:#74465f;letter-spacing:2.5px;margin-bottom:6px">— DOKUMEN RESMI —</div>
+            <div style="font-size:11px;color:#70636a;line-height:1.55;font-style:italic">Wakaf produktif berbasis kebun kopi<br>untuk amal jariyah berkelanjutan</div>
+            <div style="margin-top:8px;padding-top:6px;border-top:1px solid #e4d9df;font-size:9px;color:#70636a;letter-spacing:.5px;font-weight:600">📍 Ngantang, Malang · Jawa Timur</div>
           </div>
         </div>
-        <div style="margin-top:14px;padding-top:12px;border-top:2px dashed #D4AF37;display:flex;align-items:center;justify-content:space-between;gap:14px">
-          <div style="font-size:19px;font-weight:800;color:${isRekap?'#b45309':'#1F5F47'};letter-spacing:1.8px">${isRekap?'REKAPAN UPAH PEKERJA':'BUKTI PEMBAYARAN UPAH'}</div>
-          <div style="font-size:10px;color:#6b7878;letter-spacing:.6px;font-weight:600;text-align:right;line-height:1.4">No. Bukti<br><span style="font-family:'Courier New',monospace;color:#2e4040;font-size:11px;font-weight:700">${escape(nomorBukti)}</span></div>
+        <div style="margin-top:14px;padding-top:12px;border-top:2px dashed #e4d9df;display:flex;align-items:center;justify-content:space-between;gap:14px">
+          <div style="font-size:19px;font-weight:800;color:${isRekap?'#74465f':'#74465f'};letter-spacing:1.8px">${isRekap?'REKAPAN UPAH PEKERJA':'BUKTI PEMBAYARAN UPAH'}</div>
+          <div style="font-size:10px;color:#70636a;letter-spacing:.6px;font-weight:600;text-align:right;line-height:1.4">No. Bukti<br><span style="font-family:'Courier New',monospace;color:#30282b;font-size:11px;font-weight:700">${escape(nomorBukti)}</span></div>
         </div>
       </div>
 
       <!-- INFO BOX — 1x3 grid since No. Bukti moved to header -->
       <div style="padding:22px 32px 0">
-        <div style="background:#f5f0e6;padding:14px 18px;border-radius:8px;border-left:4px solid #c14b3a;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 18px;font-size:13px">
-          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">${isRekap?'TANGGAL REKAP':'TANGGAL BAYAR TERCATAT'}</div><div style="color:#2e4040;font-weight:700">${escape(isRekap?todayLbl:paymentDates)}</div></div>
-          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#2e4040;font-weight:800;font-size:15px">${escape(namaPenerima)}</div></div>
-          <div><div style="color:#6b7878;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">${isRekap?'STATUS':'SUMBER DANA'}</div><div style="color:${isRekap?'#b45309':'#2e4040'};font-weight:700">${escape(isRekap?statusLabel:sumberDana)}</div></div>
+        <div style="background:#ffffff;padding:14px 18px;border-radius:8px;border-left:4px solid #432d38;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px 18px;font-size:13px">
+          <div><div style="color:#70636a;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">${isRekap?'TANGGAL REKAP':'TANGGAL BAYAR TERCATAT'}</div><div style="color:#30282b;font-weight:700">${escape(isRekap?todayLbl:paymentDates)}</div></div>
+          <div><div style="color:#70636a;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">PENERIMA</div><div style="color:#30282b;font-weight:800;font-size:15px">${escape(namaPenerima)}</div></div>
+          <div><div style="color:#70636a;font-size:10px;letter-spacing:1.2px;font-weight:700;margin-bottom:3px">${isRekap?'STATUS':'SUMBER DANA'}</div><div style="color:${isRekap?'#74465f':'#30282b'};font-weight:700">${escape(isRekap?statusLabel:sumberDana)}</div></div>
         </div>
       </div>
 
-      <div style="margin:10px 32px 0;font-size:10.5px;color:#6b7878;line-height:1.55">Sumber dana: ${Object.keys(d.funds).length>1?'Campuran — ':''}${Object.entries(d.funds).map(([f,n])=>escape(fundLabel(f))+': '+money(n)).join(' · ')}${isRekap&&paid?`<br>Lunas: ${money(total-outstanding)} · Belum dibayar: ${money(outstanding)}`:''}</div>
+      <div style="margin:10px 32px 0;font-size:10.5px;color:#70636a;line-height:1.55">Sumber dana: ${Object.keys(d.funds).length>1?'Campuran — ':''}${Object.entries(d.funds).map(([f,n])=>escape(fundLabel(f))+': '+money(n)).join(' · ')}${isRekap&&paid?`<br>Lunas: ${money(total-outstanding)} · Belum dibayar: ${money(outstanding)}`:''}</div>
       <!-- ITEMS TABLE -->
       <div style="padding:18px 32px 8px">
-        <div style="font-size:11px;font-weight:800;color:#5a9080;letter-spacing:1.5px;margin-bottom:8px">📋 RINCIAN PEKERJAAN (${items.length} ITEM)</div>
+        <div style="font-size:11px;font-weight:800;color:#70636a;letter-spacing:1.5px;margin-bottom:8px">📋 RINCIAN PEKERJAAN (${items.length} ITEM)</div>
         <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06);table-layout:fixed">
           <colgroup>
             <col style="width:200px">
@@ -209,24 +209,24 @@ export function payrollDocumentHTML(d){
             <col style="width:130px">
           </colgroup>
           <thead>
-            <tr style="background:#a8c8bc;color:#2e4040">
-              <th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">NO &amp; TANGGAL</th>
-              <th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">AKTIVITAS</th>
-              <th style="padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">SUBTOTAL</th>
+            <tr style="background:#ece7e9;color:#30282b">
+              <th style="background:inherit;color:inherit;padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">NO &amp; TANGGAL</th>
+              <th style="background:inherit;color:inherit;padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">AKTIVITAS</th>
+              <th style="background:inherit;color:inherit;padding:11px 12px;font-size:11px;text-align:center;letter-spacing:.5px">SUBTOTAL</th>
             </tr>
           </thead>
           <tbody>${itemRowsHTML}</tbody>
           <tfoot>
-            <tr style="background:#fff4d6">
+            <tr style="background:#f5f2f3">
               <td colspan="3" style="padding:14px 14px">
                 <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap">
                   <div style="flex:1;min-width:240px">
-                    <div style="font-size:9px;font-weight:800;color:#8b6914;letter-spacing:1.5px;margin-bottom:3px">— TERBILANG —</div>
-                    <div style="font-size:12.5px;color:#2e4040;font-style:italic;font-weight:600;line-height:1.45">${terbilangRupiah(total)}</div>
+                    <div style="font-size:9px;font-weight:800;color:#70636a;letter-spacing:1.5px;margin-bottom:3px">— TERBILANG —</div>
+                    <div style="font-size:12.5px;color:#30282b;font-style:italic;font-weight:600;line-height:1.45">${terbilangRupiah(total)}</div>
                   </div>
                   <div style="text-align:right;flex-shrink:0">
-                    <div style="font-size:11px;font-weight:800;color:#8b6914;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">${kasbonInfo.total?'Total Hak Upah':(isRekap?'Total Upah':'Total Upah Tercatat')}</div>
-                    <div style="font-size:22px;font-weight:800;color:#c14b3a;white-space:nowrap;letter-spacing:.3px">Rp ${total.toLocaleString('id-ID')}</div>
+                    <div style="font-size:11px;font-weight:800;color:#70636a;letter-spacing:.8px;margin-bottom:3px;text-transform:uppercase">${kasbonInfo.total?'Total Hak Upah':(isRekap?'Total Upah':'Total Upah Tercatat')}</div>
+                    <div style="font-size:22px;font-weight:800;color:#432d38;white-space:nowrap;letter-spacing:.3px">Rp ${total.toLocaleString('id-ID')}</div>
                   </div>
                 </div>
               </td>
@@ -238,60 +238,60 @@ export function payrollDocumentHTML(d){
       <!-- POTONGAN KASBON — only supported recorded/estimated allocations -->
       ${kasbonInfo.total?`
       <div style="margin:14px 32px 0">
-        <div style="font-size:11px;font-weight:800;color:#9a3412;letter-spacing:1.5px;margin-bottom:8px">${isRekap?'💵 PERKIRAAN POTONGAN KASBON':'💵 POTONGAN KASBON TERCATAT'}</div>
+        <div style="font-size:11px;font-weight:800;color:#854027;letter-spacing:1.5px;margin-bottom:8px">${isRekap?'− PERKIRAAN POTONGAN KASBON':'− POTONGAN KASBON TERCATAT'}</div>
         <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.06)">
           <tbody>
-            ${kasbonInfo.rincian.map(r=>`<tr style="background:#fff7ed">
-              <td style="padding:9px 14px;font-size:12px;color:#7c2d12;border-bottom:1px solid #fde3c7">${escape(r.tgl?documentDate(r.tgl):'Alokasi terpilih')}${r.nama?` · <b>${escape(r.nama)}</b>`:''}<div style="font-size:11px;color:#9a3412;font-style:italic">${escape(r.keperluan||'—')}</div></td>
-              <td style="padding:9px 14px;font-size:13px;font-weight:700;color:#9a3412;text-align:right;white-space:nowrap;border-bottom:1px solid #fde3c7">− Rp ${r.jumlah.toLocaleString('id-ID')}</td>
+            ${kasbonInfo.rincian.map(r=>`<tr style="background:#fbf3ec">
+              <td style="padding:9px 14px;font-size:12px;color:#854027;border-bottom:1px solid #e8cfc1">${escape(r.tgl?documentDate(r.tgl):'Alokasi terpilih')}${r.nama?` · <b>${escape(r.nama)}</b>`:''}<div style="font-size:11px;color:#854027;font-style:italic">${escape(r.keperluan||'—')}</div></td>
+              <td style="padding:9px 14px;font-size:13px;font-weight:700;color:#854027;text-align:right;white-space:nowrap;border-bottom:1px solid #e8cfc1">− Rp ${r.jumlah.toLocaleString('id-ID')}</td>
             </tr>`).join('')}
-            <tr style="background:#e8f1ec">
-              <td style="padding:12px 14px;font-size:12px;font-weight:800;color:#2e4040;letter-spacing:.5px">${isRekap?'PERKIRAAN DITERIMA SETELAH POTONGAN':'NETO TERCATAT (SETELAH POTONGAN KASBON)'}</td>
-              <td style="padding:12px 14px;font-size:19px;font-weight:800;color:#166534;text-align:right;white-space:nowrap">Rp ${((isRekap?outstanding:total)-kasbonInfo.total).toLocaleString('id-ID')}</td>
+            <tr style="background:#f5f2f3">
+              <td style="padding:12px 14px;font-size:12px;font-weight:800;color:#30282b;letter-spacing:.5px">${isRekap?'PERKIRAAN DITERIMA SETELAH POTONGAN':'NETO TERCATAT (SETELAH POTONGAN KASBON)'}</td>
+              <td style="padding:12px 14px;font-size:19px;font-weight:800;color:#432d38;text-align:right;white-space:nowrap">Rp ${((isRekap?outstanding:total)-kasbonInfo.total).toLocaleString('id-ID')}</td>
             </tr>
           </tbody>
         </table>
-        <div style="margin-top:7px;font-size:10.5px;color:#6b7878;line-height:1.6;font-style:italic">
+        <div style="margin-top:7px;font-size:10.5px;color:#70636a;line-height:1.6;font-style:italic">
           ${isRekap?'Perkiraan potongan kasbon — estimasi saja, bukan potongan aktual. Hanya upah belum dibayar yang diperhitungkan.':'Potongan kasbon tercatat sesuai jejak pembayaran terpilih. Bukan pernyataan serah-terima baru.'}
         </div>
       </div>`:''}
 
       <!-- DOA (bukti) / KONFIRMASI (rekap) SECTION -->
       ${isRekap?`
-      <div style="margin:16px 32px 0;padding:16px 22px;background:#fffbeb;border-radius:8px;border:1.5px dashed #d97706;font-size:12.5px;color:#92400e;line-height:1.7">
+      <div style="margin:16px 32px 0;padding:16px 22px;background:#fbf3ec;border-radius:8px;border:1.5px dashed #9b4f2e;font-size:12.5px;color:#854027;line-height:1.7">
         ${recapTerms}<br>
         ⚠️ Dokumen ini <b>rekapan hak upah — BUKAN bukti pembayaran</b>. Bukti Bayar resmi diterbitkan terpisah setelah upah diserahkan.
       </div>`:`
-      <div style="margin:16px 32px 0;padding:18px 22px;background:#e8f1ec;border-radius:8px;border-left:4px solid #5a9080;text-align:center">
-        <div style="font-size:13px;line-height:1.7;color:#2e4040;font-style:italic">Terima kasih atas kerja keras dan amanahnya. Semoga rezeki ini barakah dan menguatkan keluarga.</div>
-        <div style="margin-top:10px;font-size:15px;font-weight:700;color:#5a9080;letter-spacing:.5px">Barakallahu fiikum.</div>
+      <div style="margin:16px 32px 0;padding:18px 22px;background:#f5f2f3;border-radius:8px;border-left:4px solid #70636a;text-align:center">
+        <div style="font-size:13px;line-height:1.7;color:#30282b;font-style:italic">Terima kasih atas kerja keras dan amanahnya. Semoga rezeki ini barakah dan menguatkan keluarga.</div>
+        <div style="margin-top:10px;font-size:15px;font-weight:700;color:#70636a;letter-spacing:.5px">Barakallahu fiikum.</div>
       </div>`}
 
       <!-- SIGNATURE SECTION — manual placeholders, omitted in recap -->
       ${isRekap?'<div style="height:14px"></div>':`
       <div style="padding:24px 32px 6px;display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:12px">
         <div style="text-align:center">
-          <div style="color:#6b7878;margin-bottom:6px">Hormat kami,</div>
+          <div style="color:#70636a;margin-bottom:6px">Hormat kami,</div>
           <div style="height:54px"></div>
-          <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">Mas Tito (Adib Asrori)</div>
-          <div style="color:#6b7878;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
+          <div style="border-top:1.5px solid #30282b;padding-top:8px;font-weight:800;color:#30282b;font-size:13px">Mas Tito (Adib Asrori)</div>
+          <div style="color:#70636a;font-size:11px;margin-top:2px">Wakif &amp; Program Director</div>
         </div>
         <div style="text-align:center">
-          <div style="color:#6b7878;margin-bottom:6px">Penerima,</div>
+          <div style="color:#70636a;margin-bottom:6px">Penerima,</div>
           <div style="height:54px"></div>
-          <div style="border-top:1.5px solid #2e4040;padding-top:8px;font-weight:800;color:#2e4040;font-size:13px">${escape(namaPenerima)}</div>
-          <div style="color:#6b7878;font-size:11px;margin-top:2px">Pekerja Lapangan</div>
+          <div style="border-top:1.5px solid #30282b;padding-top:8px;font-weight:800;color:#30282b;font-size:13px">${escape(namaPenerima)}</div>
+          <div style="color:#70636a;font-size:11px;margin-top:2px">Pekerja Lapangan</div>
         </div>
       </div>
 
       <!-- Manual signature / server-record scope -->
-      <div style="margin:0 32px 18px;padding:9px 14px;background:#fff8e6;border-radius:6px;border:1px solid #f0e0a0;font-size:10px;color:#8b6914;text-align:center;font-style:italic;line-height:1.55">
+      <div style="margin:0 32px 18px;padding:9px 14px;background:#faf9f8;border-radius:6px;border:1px solid #e4d9df;font-size:10px;color:#70636a;text-align:center;font-style:italic;line-height:1.55">
         Tanda tangan manual bila diperlukan. Catatan pembayaran server, bukan pengesahan tanda tangan atau pernyataan penerimaan uang.
       </div>`}
 
       <!-- FOOTER -->
-      <div style="background:#2e4040;color:#a8c8bc;padding:11px 32px;font-size:10px;text-align:center;letter-spacing:.5px;line-height:1.5">
-        🌱 <strong style="color:#ffffff">Wakaf Produktif Kebun Kopi Ngantang</strong> · Dokumen dari monitor-v2 · ${escape(todayLbl)}<br>Tanggal pembuatan dokumen: ${escape(d.generatedAt)}
+      <div style="background:#30282b;color:#ece7e9;padding:11px 32px;font-size:10px;text-align:center;letter-spacing:.5px;line-height:1.5">
+        • <strong style="color:#ffffff">Wakaf Produktif Kebun Kopi Ngantang</strong> · Dokumen dari monitor-v2 · ${escape(todayLbl)}<br>Tanggal pembuatan dokumen: ${escape(d.generatedAt)}
       </div>
     </div>
   `;
