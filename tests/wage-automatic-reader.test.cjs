@@ -48,3 +48,9 @@ test('unresolved aggregate holds eligible entitlement while retaining raw docume
  assert.deepEqual(JSON.parse(JSON.stringify(v.upah)),[legacy,{...approved.data,satuan:'full'}]);assert.equal(v.wageEntitlements.length,2);assert.deepEqual(JSON.parse(JSON.stringify(v.raw.wage_processing)),processing);assert.deepEqual(JSON.parse(JSON.stringify(v.raw.wage_entitlements)),[held,approved]);assert.equal(v.wageProcessing.length,3);
 });
 module.exports={load,row,opaque,entitlement};
+
+test('QC S1: activity of an automatic entitlement comes from its source report, generic text only when unknown',async()=>{
+ const c=await load(),v=await c.createPublicReader({readCollection:async name=>name==='upah'?[row('active',{data:[]})]:name==='laporan'?[row('report_1',{id:'report_1',pelapor:'YIT',tgl:'2026-10-02',kategori:'babat_rumput',detail:'Babat piringan K1',created_at:'2026-10-02T09:00:00Z'})]:name==='wage_entitlements'?[entitlement(),entitlement('wage_2',{tgl:'2026-10-03',sources:['unknown_report']})]:emptyPayrollSources[name]||[]}).read();
+ assert.equal(v.upah.find(x=>x.id==='wage_1').aktivitas,'babat rumput — Babat piringan K1');
+ assert.equal(v.upah.find(x=>x.id==='wage_2').aktivitas,undefined);
+});
