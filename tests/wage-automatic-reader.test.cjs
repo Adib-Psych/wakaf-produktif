@@ -56,3 +56,8 @@ test('QC S1: activity of an automatic entitlement is a display map from its sour
  // Baris upah tidak boleh berubah: proyeksi payroll membandingkannya persis dengan payroll_states.
  assert.equal(v.upah.find(x=>x.id==='wage_1').aktivitas,undefined);
 });
+
+test('QC S1: form placeholder "(no detail)" is not shown as activity text',async()=>{
+ const c=await load(),v=await c.createPublicReader({readCollection:async name=>name==='upah'?[row('active',{data:[]})]:name==='laporan'?[row('report_1',{id:'report_1',pelapor:'YIT',tgl:'2026-10-02',kategori:'lain',detail:'(no detail)',created_at:'2026-10-02T09:00:00Z'})]:name==='wage_entitlements'?[entitlement()]:emptyPayrollSources[name]||[]}).read();
+ assert.equal(v.wageActivity.wage_1,'lain-lain');
+});
