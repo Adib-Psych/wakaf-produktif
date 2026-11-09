@@ -21,18 +21,19 @@ function decodeWageDocuments(rows){
  const tokens=new Set();for(const b of bindings){if(tokens.has(b.legacy_token))throw Error('Identitas upah ganda');tokens.add(b.legacy_token);}
  return {entitlements,processing,bindings};
 }
-// QC S1 (9 Nov 2026): aktivitas hak upah otomatis diambil dari laporan sumbernya (kategori — detail).
-// Hanya mengisi baris tanpa aktivitas yang punya sources; upah lama tidak disentuh.
-export function enrichWageActivity(upah,reports){
- if(!Array.isArray(upah)||!Array.isArray(reports))return upah;
+// QC S1 (9 Nov 2026, hotfix): aktivitas hak upah otomatis dari laporan sumbernya (kategori — detail).
+// HANYA peta tampilan {id: teks}. Baris upah TIDAK boleh diubah: proyeksi payroll membandingkan baris
+// upah persis dengan salinan di payroll_states, dan pencatatan bayar menyalin baris itu.
+export function wageActivityMap(upah,reports){
+ const out={};if(!Array.isArray(upah)||!Array.isArray(reports))return out;
  const byId=new Map(reports.map(r=>[r.id,r]));
- return upah.map(x=>{
-  if(!x||x.aktivitas||!Array.isArray(x.sources))return x;
+ for(const x of upah){
+  if(!x||x.aktivitas||!Array.isArray(x.sources))continue;
   const parts=[];
   for(const s of x.sources){const r=byId.get(typeof s==='string'?s:s?.report_id);if(!r)continue;const k=typeof r.kategori==='string'?r.kategori.replaceAll('_',' ').trim():'';const d=typeof r.detail==='string'?r.detail.trim():'';const t=[k,d].filter(Boolean).join(' — ');if(t&&!parts.includes(t))parts.push(t);}
-  const all=parts.join(' · ');
-  return all?{...x,aktivitas:all.length>160?all.slice(0,157)+'…':all}:x;
- });
+  const all=parts.join(' · ');if(all)out[String(x.id)]=all.length>160?all.slice(0,157)+'…':all;
+ }
+ return out;
 }
 export function validateOwnerSnapshot(rows){
  const data=(c,id='active')=>{const row=rows[c]?.find(x=>x.id===id);if(!row)return null;return clone(row.data);};
@@ -42,7 +43,7 @@ export function validateOwnerSnapshot(rows){
  result.wageEntitlements=wages.entitlements;result.wageProcessing=wages.processing;result.wageBindings=wages.bindings;
  if(rows.wage_entitlements&&(result.upah!==null||wages.entitlements.length)){const canonical=t=>wages.bindings.find(b=>b.id===t)?.legacy_token||t,old=result.upah||[],keys=new Set(old.filter(x=>x&&!x.voided_duplicate).map(x=>canonical(x.pelapor)+'|'+x.tgl));result.upah=[...old,...wages.entitlements.filter(x=>x.eligible===true&&!wages.processing.some(p=>p.id===x.id&&p.status==='unresolved')&&!keys.has(canonical(x.pelapor)+'|'+x.tgl)).map(x=>({...x,satuan:x.satuan==='full_day'?'full':x.satuan}))];}
  if(result.sop){const months=result.sop.aktivitas_per_bulan;if(!months||typeof months!=='object')throw Error('Format SOP master tidak sesuai');const mapped={};for(const [key,value] of Object.entries(months)){const month=key.replace(/^bulan_/,'');if(!/^(?:[1-9]|1[0-2])$/.test(month)||mapped[month]||!value||typeof value.fase!=='string'||!Array.isArray(value.aktivitas))throw Error('Format bulan SOP tidak sesuai');mapped[month]=clone(value);}if(Object.keys(mapped).length!==12)throw Error('SOP bulanan belum lengkap');result.sop.aktivitas_per_bulan=mapped;}
- result.upah=enrichWageActivity(result.upah,result.reports);
+ result.wageActivity=wageActivityMap(result.upah,result.reports);
  result.missing=Object.entries(result).filter(([k,v])=>v===null).map(([k])=>k);return result;
 }
 export async function mountOwnerDashboard(config){
