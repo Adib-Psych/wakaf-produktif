@@ -6,7 +6,7 @@ const {policy,pair,body}=require('./fixtures.cjs');
 const {sapu,rencana,dengar,hariIniJakarta}=require('../nightly.cjs');
 const enabled=!!process.env.FIRESTORE_EMULATOR_HOST;
 const app=enabled?initializeApp({projectId:'demo-wakaf-wages'},'nightly-tests'):null;
-const db=app?getFirestore(app):null;
+const db=app?getFirestore(app,'uji-malam'):null;   // basis data terpisah: berkas uji lain menghapus (default) secara paralel
 const hari=t=>({tgl:t,tanggal:t});
 async function seed(id,overrides={},{lane='device_reports',receipt=true}={}){const v=pair(id,overrides,lane);await db.doc(lane+'/'+id).set(v);if(receipt)await db.doc((lane==='device_reports'?'device_receipts':'entry_receipts')+'/'+id).set(v);return v;}
 async function ukuran(c){return (await db.collection(c).get()).size;}
