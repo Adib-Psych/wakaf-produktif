@@ -9,7 +9,11 @@ Read `CURRENT.md`, then only the source and tests needed for the named task. Do 
 ## Delivery
 
 - Preserve and improve the existing dashboard, not rebuild it. Restore the original analytical hierarchy and ordinary operator controls.
-- Executor: Thar Lay/server. Query Luna/Mac over SSH/Tailscale only for evidence available there. Routine operation must not depend on either agent or the owner's laptop.
+- Roles (owner decision 9 Nov 2026, ADR-049; full text: Luna `Documents/Claude/Alat Claude/Mandat Kerja Claude dan Hermes 9Nov2026.md`):
+  - **Claude** is the only party that changes the "recipe": architecture, code, formulas, Firestore rules, rulebooks, SOP/calendar content, data packages and QC. Code changes arrive as PRs on fresh `main`.
+  - **Hermes (Thar Lay/server)** runs operations: posts owner-approved data packages through the supported writer with exact read-back, runs scheduled routines (backups, periodic wage reconciliation per ADR-048, health checks), merges Claude PRs whose required checks pass without editing their content, and files findings as GitHub Issues labelled `keluhan`. Hermes does not author code, rules, formulas, SOP content or presentation changes.
+  - Reserved for the owner: payments, deletions, exposing personal data or worker names publicly, enabling billing/new costs, new business decisions.
+- Query Luna/Mac over SSH/Tailscale only for evidence available there. Routine operation must not depend on the owner's laptop.
 - Use fresh main, one integration owner, scoped edits/tests, branch and PR. Publish each tested coherent change promptly so Panji can inspect GitHub. Require applicable exact-head checks before merge and verify the Pages deployment/served bytes. Never push straight to main as an obsolete Mac workaround.
 - API/CLI for administration; isolated server browser for UI evidence. Do not disturb the owner's browser or clear drafts/pending state. Owner hard-refresh is not the technical test plan.
 - Match gates to the change: visual regression for CSS/date/navigation; source membership/filter/render/freshness for readers; validation/idempotency/ACK/rollback for writers and access policy. Whole-system certification is not a prerequisite for an unrelated safe patch.
