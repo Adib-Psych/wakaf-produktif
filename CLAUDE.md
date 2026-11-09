@@ -17,6 +17,7 @@ Read `CURRENT.md`, then only the source and tests needed for the named task. Do 
 - Use fresh main, one integration owner, scoped edits/tests, branch and PR. Publish each tested coherent change promptly so Panji can inspect GitHub. Require applicable exact-head checks before merge and verify the Pages deployment/served bytes. Never push straight to main as an obsolete Mac workaround.
 - API/CLI for administration; isolated server browser for UI evidence. Do not disturb the owner's browser or clear drafts/pending state. Owner hard-refresh is not the technical test plan.
 - Match gates to the change: visual regression for CSS/date/navigation; source membership/filter/render/freshness for readers; validation/idempotency/ACK/rollback for writers and access policy. Whole-system certification is not a prerequisite for an unrelated safe patch.
+- **Production-data gate (owner decision 9 Nov 2026, Mandat Kerja §5):** any PR touching wages, cash, budget, or how they are read must, before the PR is opened, run the whole dashboard against production data read-only (Firestore writes blocked) and compare Upah/Kas row counts and budget KPI with the pre-change values; record the result in the PR description. Hermes does not merge such a PR without that record. Never attach display fields to wage/cash rows: payroll projection compares them exactly with `payroll_states` (regression PR #40, fixed by PR #41).
 
 ## Current owner objective
 
