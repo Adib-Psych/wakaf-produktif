@@ -1,5 +1,17 @@
 # Server-only automatic unpaid wage entitlements
 
+## Rutinitas malam (ADR-050, 9 Nov 2026) — jalur yang DIPAKAI
+
+Karena Cloud Functions tidak dipasang (billing ditolak), pembentukan hak upah berjalan sebagai sapuan terjadwal `nightly.cjs` yang memanggil `processCreated` yang sama. Hermes menjadwalkannya setiap malam di Thar Lay dengan Application Default Credentials miliknya (di luar repo).
+
+- `node nightly.cjs --project wakaf-ngantang` — rencana saja (bawaan). `--terapkan` untuk memproses, `--keluaran <json>` untuk bukti.
+- Memproses laporan **modern** (berkontrak) di `device_reports`/`device_receipts` dan `laporan`/`entry_receipts` yang belum punya `wage_processing/report_v1_<lane>_<id>`, serta mengulang otomatis `unresolved` beralasan `pair_missing`.
+- **Tidak membayar.** Tidak menyentuh `payroll_*`, `cashbook`, `upah`. Hak upah lahir `status:'belum'`; pembayaran tetap atas permintaan pekerja (± tiap 10 hari kerja).
+- Laporan **legacy** (tanpa kontrak) tidak pernah diterima otomatis; yang bertanggal ≥ `effective_from` dilaporkan sebagai *menunggu atestasi* (jalur finite dengan pin hash pemilik).
+- `unresolved` lain (durasi kosong/konflik, dana campur, koreksi) tidak diulang otomatis; diulang hanya dengan `--ulang-unresolved` atas keputusan Claude/pemilik.
+- Kode keluar: `0` bersih · `3` ada yang ditahan atau menunggu atestasi → Hermes membuka Keluhan · `1` galat.
+- Uji: `test/nightly.test.cjs` (emulator, ikut langkah CI wage processor).
+
 This directory is a separate Firebase Functions Node 22 codebase. **Staged only: the owner denied billing activation, so Cloud Functions production deployment is blocked and automatic processing is not installed.** It does not deploy itself and provides no remote HTTP/callable/Admin endpoint. The publisher owns Rules, policy commissioning and separately authorized finite historical reconciliation. Do not enable billing/APIs, deploy resources or replace this boundary with client financial write authority. No production records or identities are included.
 
 ## Integration contract
