@@ -1,6 +1,13 @@
 'use strict';
 /*
- * PEMBENTUKAN HAK UPAH MALAM HARI — ADR-050 (Wakif, 9 Nov 2026)
+ * PEMBENTUKAN HAK UPAH — SAAT ENTRY + SAPUAN MALAM — ADR-050 (Wakif, 9 Nov 2026)
+ *
+ * Revisi Wakif 9 Nov 12.12 NPT: hak upah dibentuk SAAT ADA ENTRY, bukan menunggu malam.
+ *   --dengar  : proses tetap di Thar Lay yang memantau koleksi laporan; setiap entry baru
+ *               langsung diproses (jeda 3 detik supaya laporan + tanda terima lengkap).
+ *               Saat mulai, ia menjalankan sapuan penuh dulu (mengejar yang terlewat).
+ *   sapuan malam (tanpa --dengar) tetap dijadwalkan sebagai jaring pengaman bila
+ *               pendengar sempat mati, dan untuk catatan "N hari tanpa laporan".
  *
  * Cloud Functions (index.cjs) tidak dipasang karena billing ditolak pemilik. Penggantinya
  * adalah sapuan terjadwal yang memanggil processCreated() yang SAMA untuk setiap laporan
@@ -20,6 +27,7 @@
  *     --ulang-unresolved diberikan atas keputusan Claude/pemilik.
  *
  * PEMAKAIAN (Hermes, Thar Lay):
+ *   node nightly.cjs --project wakaf-ngantang --dengar     # layanan tetap (dijalankan ulang otomatis bila keluar)
  *   node nightly.cjs --project wakaf-ngantang              # rencana saja (bawaan)
  *   node nightly.cjs --project wakaf-ngantang --terapkan   # memproses
  *   Opsi: --keluaran <berkas.json>  --ulang-unresolved
@@ -73,6 +81,33 @@ async function sapu(db,{terapkan=false,ulangUnresolved=false}={}){
  return {...r,terapkan,hasil,ringkas:{diproses:hasil.length,dibuat,sudah_ada:ada,ditahan:ditahan.length,menunggu_atestasi:r.menunggu_atestasi.length,ditahan_lama:r.ditahan_lama.length},kode:perluTinjau?3:0};
 }
 
+// ------------------------------------------------------------------ pendengar entry
+function dengar(db,{log=console.log,onHasil=()=>{},jeda=3000,onPutus=()=>{}}={}){
+ const antre=new Map(),subs=[];
+ const proses=async(lane,id)=>{
+  try{const x=await processCreated(db,lane,id);const h={lane,id,status:x.status,alasan:x.reason,wage:x.worker&&x.tgl?`wage_v1_${x.worker}_${x.tgl}`:null};log(`[entry] ${lane}/${id}: ${h.status} (${h.alasan})${h.wage?' -> '+h.wage:''}`);onHasil(h);}
+  catch(e){log(`[entry] GALAT ${lane}/${id}: ${e.message}`);onHasil({lane,id,status:'galat',alasan:e.message});}
+ };
+ for(const [lane,pasangan] of Object.entries(PASANGAN))for(const col of [lane,pasangan]){
+  let awal=true;
+  subs.push(db.collection(col).onSnapshot(snap=>{
+   if(awal){awal=false;return;}                       // keadaan awal sudah ditangani sapuan saat mulai
+   for(const ch of snap.docChanges()){
+    if(ch.type!=='added')continue;
+    const id=ch.doc.id,v=ch.doc.data()||{};
+    if(!ID.test(id))continue;
+    if(!Object.hasOwn(v,'contract_version')){
+     if(col===lane){log(`[entry] ${lane}/${id}: laporan format lama — menunggu atestasi pemilik, tidak diproses otomatis`);onHasil({lane,id,status:'menunggu_atestasi'});}
+     continue;
+    }
+    const k=lane+'/'+id;clearTimeout(antre.get(k));
+    antre.set(k,setTimeout(()=>{antre.delete(k);proses(lane,id);},jeda));
+   }
+  },e=>{log(`[entry] pendengar ${col} putus: ${e.message}`);onPutus(e);}));
+ }
+ return ()=>{subs.forEach(u=>u());antre.forEach(clearTimeout);antre.clear();};
+}
+
 function hariIniJakarta(now=new Date()){return new Date(now.getTime()+7*3600e3).toISOString().slice(0,10);}
 
 async function main(argv=process.argv.slice(2)){
@@ -83,6 +118,15 @@ async function main(argv=process.argv.slice(2)){
  const {getFirestore}=require('firebase-admin/firestore');
  const app=initializeApp(process.env.FIRESTORE_EMULATOR_HOST?{projectId:project||'demo-wakaf-wages'}:{projectId:project,credential:applicationDefault()},'upah-malam');
  const db=getFirestore(app);
+ if(arg('--dengar')){
+  const awal=await sapu(db,{terapkan:true});
+  console.log(`[mulai] sapuan pengejar: diproses ${awal.ringkas.diproses}, dibuat ${awal.ringkas.dibuat}, ditahan ${awal.ringkas.ditahan}, menunggu atestasi ${awal.ringkas.menunggu_atestasi}`);
+  return await new Promise(selesai=>{
+   const stop=dengar(db,{onPutus:()=>{stop();selesai(1);}});
+   console.log('[mulai] mendengarkan entry baru (device_reports, device_receipts, laporan, entry_receipts)…');
+   for(const sig of ['SIGTERM','SIGINT'])process.once(sig,()=>{stop();selesai(0);});
+  });
+ }
  const out=await sapu(db,{terapkan:arg('--terapkan'),ulangUnresolved:arg('--ulang-unresolved')});
  const s=out.ringkas,hari=hariIniJakarta();
  const jeda=out.laporan_terakhir?Math.round((Date.parse(hari)-Date.parse(out.laporan_terakhir))/864e5):null;
@@ -99,5 +143,5 @@ async function main(argv=process.argv.slice(2)){
  return out.kode;
 }
 
-module.exports={rencana,sapu,hariIniJakarta};
+module.exports={rencana,sapu,dengar,hariIniJakarta};
 if(require.main===module)main().then(c=>process.exit(c),e=>{console.error('GALAT:',e.message);process.exit(1);});

@@ -1,8 +1,11 @@
 # Server-only automatic unpaid wage entitlements
 
-## Rutinitas malam (ADR-050, 9 Nov 2026) — jalur yang DIPAKAI
+## Pembentukan hak upah saat entry + sapuan malam (ADR-050, 9 Nov 2026) — jalur yang DIPAKAI
 
-Karena Cloud Functions tidak dipasang (billing ditolak), pembentukan hak upah berjalan sebagai sapuan terjadwal `nightly.cjs` yang memanggil `processCreated` yang sama. Hermes menjadwalkannya setiap malam di Thar Lay dengan Application Default Credentials miliknya (di luar repo).
+Karena Cloud Functions tidak dipasang (billing ditolak), `nightly.cjs` memanggil `processCreated` yang sama dari Thar Lay dengan Application Default Credentials Hermes (di luar repo). Atas arahan Wakif (9 Nov), hak upah dibentuk **saat ada entry**:
+
+- `node nightly.cjs --project wakaf-ngantang --dengar` — layanan tetap: sapuan pengejar saat mulai, lalu memantau `device_reports`, `device_receipts`, `laporan`, `entry_receipts`; entry baru diproses ±3 detik kemudian. Keluar kode 1 bila pemantauan putus → penyelia Hermes menjalankan ulang. Biaya baca: satu kali keadaan awal (±250 dokumen) per sambungan, sesudahnya hanya perubahan — jauh di bawah kuota Spark.
+- Sapuan malam (tanpa `--dengar`) tetap dijadwalkan sebagai jaring pengaman dan untuk catatan *N hari tanpa laporan*.
 
 - `node nightly.cjs --project wakaf-ngantang` — rencana saja (bawaan). `--terapkan` untuk memproses, `--keluaran <json>` untuk bukti.
 - Memproses laporan **modern** (berkontrak) di `device_reports`/`device_receipts` dan `laporan`/`entry_receipts` yang belum punya `wage_processing/report_v1_<lane>_<id>`, serta mengulang otomatis `unresolved` beralasan `pair_missing`.

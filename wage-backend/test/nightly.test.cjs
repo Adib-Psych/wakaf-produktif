@@ -3,7 +3,7 @@ const assert=require('node:assert/strict');
 const {initializeApp,deleteApp}=require('firebase-admin/app');
 const {getFirestore}=require('firebase-admin/firestore');
 const {policy,pair,body}=require('./fixtures.cjs');
-const {sapu,rencana,hariIniJakarta}=require('../nightly.cjs');
+const {sapu,rencana,dengar,hariIniJakarta}=require('../nightly.cjs');
 const enabled=!!process.env.FIRESTORE_EMULATOR_HOST;
 const app=enabled?initializeApp({projectId:'demo-wakaf-wages'},'nightly-tests'):null;
 const db=app?getFirestore(app):null;
@@ -69,4 +69,33 @@ test('tidak pernah menyentuh pembayaran, kas, atau upah lama',{skip:!enabled},as
 
 test('tanggal Jakarta dipakai untuk catatan jeda laporan',()=>{
  assert.equal(hariIniJakarta(new Date('2026-11-09T18:30:00Z')),'2026-11-10');
+});
+
+async function tunggu(fn,ms=8000){const t=Date.now();while(Date.now()-t<ms){const v=await fn();if(v)return v;await new Promise(r=>setTimeout(r,100));}return null;}
+
+test('pendengar: entry baru langsung membentuk hak upah tanpa menunggu malam',{skip:!enabled},async()=>{
+ const hasil=[];const stop=dengar(db,{jeda:200,log:()=>{},onHasil:h=>hasil.push(h)});
+ try{
+  await new Promise(r=>setTimeout(r,500));
+  await seed('lap_live',hari('2026-11-10'));
+  const w=await tunggu(async()=>(await db.doc('wage_entitlements/wage_v1_TEST_WORKER_2026-11-10').get()).data());
+  assert.ok(w,'hak upah terbentuk');assert.equal(w.status,'belum');
+  assert.equal(hasil.filter(h=>h.id==='lap_live'&&h.status==='created').length,1,'diproses sekali walau laporan + tanda terima tiba bersamaan');
+ }finally{stop();}
+});
+
+test('pendengar: tanda terima menyusul ikut memulihkan; format lama hanya dilaporkan',{skip:!enabled},async()=>{
+ const hasil=[];const stop=dengar(db,{jeda:200,log:()=>{},onHasil:h=>hasil.push(h)});
+ try{
+  await new Promise(r=>setTimeout(r,500));
+  const v=await seed('lap_susul',hari('2026-11-11'),{receipt:false});
+  await tunggu(async()=>hasil.find(h=>h.id==='lap_susul'));
+  assert.equal(hasil.find(h=>h.id==='lap_susul').alasan,'pair_missing');
+  await db.doc('device_receipts/lap_susul').set(v);
+  assert.ok(await tunggu(async()=>(await db.doc('wage_entitlements/wage_v1_TEST_WORKER_2026-11-11').get()).data()));
+  await db.doc('laporan/lap_formlama').set(body('lap_formlama',hari('2026-11-12')));
+  assert.ok(await tunggu(async()=>hasil.find(h=>h.id==='lap_formlama')));
+  assert.equal(hasil.find(h=>h.id==='lap_formlama').status,'menunggu_atestasi');
+  assert.equal((await db.doc('wage_processing/report_v1_laporan_lap_formlama').get()).exists,false);
+ }finally{stop();}
 });
