@@ -2794,10 +2794,9 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       <div class="card" style="background:#fff8e5;border-left:4px solid #d4a017;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
         <div>
           <div style="font-size:13px;font-weight:700;color:#8B6914">☁️ SOP Master Sync — Single Source of Truth</div>
-          <div style="font-size:11px;color:var(--mute);margin-top:2px">Sync SOP_AKTIVITAS_PER_BULAN ke Firestore (sop_master/active). Future: worker form & dashboard fetch dari cloud → 1 buku, edit sekali → semua update.</div>
+          <div style="font-size:11px;color:var(--mute);margin-top:2px">Kalender dibaca dari cloud (sop_master/active). Isi kalender hanya diubah lewat paket data yang sudah diputus Wakif (Mandat Kerja, ADR-049). Tombol "Sync SOP ke Cloud" dicabut 9 Nov 2026 karena dapat menimpa cloud dengan salinan statis.</div>
         </div>
         <div style="display:flex;gap:6px">
-          <button class="btn btn-primary" onclick="window.syncSOPMasterToFirestore && window.syncSOPMasterToFirestore()" style="background:#d4a017;color:#fff;font-weight:700;font-size:12px;padding:8px 14px">🔄 Sync SOP ke Cloud</button>
           <button class="btn btn-secondary" onclick="window.loadSOPMasterFromFirestore && window.loadSOPMasterFromFirestore().then(d => alert(d ? '✓ Loaded cloud version' : 'No cloud version yet — klik Sync dulu'))" style="font-size:12px;padding:8px 12px">📥 Re-fetch</button>
         </div>
       </div>

@@ -2,9 +2,14 @@
 
 Updated: 7 November 2026. Active short handover; historical registers are evidence, not a queue to replay.
 
+## Agent roles — 9 November 2026 (ADR-049)
+
+Claude changes code, rules, formulas, SOP content and data packages (code via PR); Hermes posts approved packages, runs routines, merges passing Claude PRs and files `keluhan` issues. See `CLAUDE.md` › Delivery.
+
 ## Owner decisions
 
 - PUBLIC TRANSPARENCY: everyone may read complete dashboard operational data, staff reports and financial detail without login. Credentials/signing capabilities are not dashboard data.
+  - **Open conflict (QC 9 Nov, S8):** Luna `Wakaf Produktif/CLAUDE.md` §2 no. 21 says public pages carry no worker names, while worker advance (kasbon) purposes are currently public. Awaiting the owner's decision; do not change either until decided.
 - Entry requires verified Google authentication AND an explicitly approved enabled account grant. Google login alone does not authorize writes. Restore valid sessions; ask for login when attempting entry, not reading.
 - Publish coherent tested changes promptly through GitHub/Pages. Preserve integrity checks, pending ownership, receipt ACK and correction history. No fabricated production submissions.
 
