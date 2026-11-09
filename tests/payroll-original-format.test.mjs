@@ -6,7 +6,7 @@ test('restores sourced July dual-mode letterhead, frame, info grid, fixed column
  for(const mode of ['rekap','proof']){
   const v=structuredClone(value);if(mode==='proof')Object.assign(v.upah[0],{status:'lunas',bayar_tgl:'2026-11-08'});
   const html=payrollDocumentHTML(buildPayrollDocument({value:v,selected:[7],mode,generatedAt:'2026-11-09T02:00:00Z'}));
-  for(const part of ['box-sizing:content-box','inset 0 0 0 2px #D4AF37','height:108px','— DOKUMEN RESMI —','border-top:2px dashed #D4AF37','grid-template-columns:1fr 1fr 1fr','width:200px','width:130px','NO &amp; TANGGAL','AKTIVITAS','SUBTOTAL','— TERBILANG —','Lima Puluh Ribu Rupiah','background:#a8c8bc','background:#fff4d6','background:#2e4040'])assert.ok(html.includes(part),`missing legacy template anchor: ${part}`);
+  for(const part of ['box-sizing:content-box','inset 0 0 0 2px #e4d9df','height:108px','— DOKUMEN RESMI —','border-top:2px dashed #e4d9df','grid-template-columns:1fr 1fr 1fr','width:200px','width:130px','NO &amp; TANGGAL','AKTIVITAS','SUBTOTAL','— TERBILANG —','Lima Puluh Ribu Rupiah','background:#ece7e9','background:#f5f2f3','background:#30282b'])assert.ok(html.includes(part),`missing original template / selected C palette anchor: ${part}`);
   if(mode==='rekap'){assert.match(html,/BELUM DIBAYAR/);assert.match(html,/dikumpulkan dulu/);}
   else {assert.match(html,/Barakallahu fiikum/);assert.match(html,/Hormat kami/);assert.match(html,/Penerima,/);assert.match(html,/Tanda tangan manual/);assert.doesNotMatch(html,/signature-|auto-generated|sudah menerima|telah menerima/);}
  }
