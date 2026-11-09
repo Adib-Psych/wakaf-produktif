@@ -31,7 +31,7 @@ export function buildPayrollDocument({value,selected,mode='rekap',generatedAt=ne
   const name=text(value.wageBindings?.find(b=>b.id===w.pelapor||b.legacy_token===w.pelapor)?.name)||text(w.name)||text(w.worker)||text(names[w.pelapor]);if(!name)throw Error('Nama pekerja belum tersedia');
   const unit=text(w.satuan_lbl)||text(w.satuan);
   const duration=({'full_day':'1 hari',full:'1 hari','full day':'1 hari',setengah_hari:'½ hari',half:'½ hari'})[unit]||unit?.replaceAll('_',' ')||'Durasi tidak tercatat';
-  return {id,date:w.tgl,name,workerKey:w.pelapor,model:w.model,status:w.status,fund,fundLabel:fundLabel(fund),activity:text(w.aktivitas)||'Pekerjaan tercatat',duration,qty:w.qty,tariff:w.tarif,total,paymentDate:w.status==='lunas'?(text(w.bayar_tgl)||'Tidak tercatat'):null};
+  return {id,date:w.tgl,name,workerKey:w.pelapor,model:w.model,status:w.status,fund,fundLabel:fundLabel(fund),activity:text(w.aktivitas)||text(value.wageActivity?.[String(w.id)])||'Pekerjaan tercatat',duration,qty:w.qty,tariff:w.tarif,total,paymentDate:w.status==='lunas'?(text(w.bayar_tgl)||'Tidak tercatat'):null};
  }).sort((a,b)=>String(a.date).localeCompare(String(b.date))||a.id.localeCompare(b.id));
  const funds=rows.reduce((out,r)=>{out[r.fund]=(out[r.fund]||0)+r.total;return out;},{});
  const total=rows.reduce((n,r)=>n+r.total,0);let deductions=0,estimatedDeduction=0;const allocations=[],deductionDetails=[];

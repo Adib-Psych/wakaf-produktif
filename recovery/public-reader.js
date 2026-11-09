@@ -1,7 +1,7 @@
 // Public read-only adapter. Uses existing server collections and owner validation, never Auth or writes.
 import {initializeApp,getApps} from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js';
 import {getFirestore,collection,getDocsFromServer} from 'https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore.js';
-import {OWNER_READ_COLLECTIONS,validateOwnerSnapshot,enrichWageActivity} from './owner-dashboard.js';
+import {OWNER_READ_COLLECTIONS,validateOwnerSnapshot,wageActivityMap} from './owner-dashboard.js';
 import {mountPrivateDashboard} from './restored-dashboard.js';
 import {projectPayroll} from './payroll-contract.mjs';
 const payrollSources=['payroll_states','payroll_events'];
@@ -40,7 +40,7 @@ export function createPublicReader({readCollection,timeoutMs=15000}){
   const aliases=new Map(value.wageBindings.flatMap(b=>[[b.id,b.name],[b.legacy_token,b.name]]));
   value.reports=value.reports.map(r=>aliases.has(r.pelapor)?{...r,display_name:aliases.get(r.pelapor)}:r);
   if(value.workers!==null||value.wageBindings.length){value.workers=(value.workers||[]).map(w=>aliases.has(w.token)?{...w,nama:aliases.get(w.token)}:w);for(const b of value.wageBindings)if(!value.workers.some(w=>w.token===b.id)){const old=value.workers.find(w=>w.token===b.legacy_token);value.workers.push({...old,token:b.id,nama:b.name,active:false,retired:true,display_alias:true,legacy_token:b.legacy_token});}}
-  value.upah=enrichWageActivity(value.upah,value.reports);
+  value.wageActivity=wageActivityMap(value.upah,value.reports);
   for(const wage of value.wageEntitlements){if(aliases.has(wage.pelapor))continue;const label=wage.name||wage.worker;if(!value.workers)value.workers=[];if(!value.workers.some(w=>w.token===wage.pelapor))value.workers.push({token:wage.pelapor,nama:label,active:false,retired:true,display_alias:true});}
   const wageFailures=['upah',...wageSources].filter(c=>['stale','error'].includes(collections[c].state));
   domains.upah={state:wageFailures.length?(wageFailures.some(c=>collections[c].state==='error')?'error':'stale'):value.upah==null?'missing':value.upah.length?'available':'empty',sources:['upah',...wageSources],unavailable:wageFailures};

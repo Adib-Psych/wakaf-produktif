@@ -6064,7 +6064,7 @@ function renderUpahTable() {
       <td style="font-size:11px;white-space:nowrap">${formatTgl(it.tgl)}</td>
       <td>${workerPillHtml(it.pelapor)}</td>
       <td>${modelBadge}</td>
-      <td style="font-size:11px;max-width:220px">${it.aktivitas||'Hak upah tercatat dari laporan'}${it.fund === 'K4' ? '<div class="pill" title="Dana pribadi terpisah, bukan beban kas Wakaf">K4 pribadi</div>' : ''}</td>
+      <td style="font-size:11px;max-width:220px">${it.aktivitas||(window.WAGE_ACTIVITY&&window.WAGE_ACTIVITY[String(it.id)])||'Hak upah tercatat dari laporan'}${it.fund === 'K4' ? '<div class="pill" title="Dana pribadi terpisah, bukan beban kas Wakaf">K4 pribadi</div>' : ''}</td>
       <td><strong>${it.qty}</strong></td>
       <td style="font-size:10px;color:var(--mute)">${it.satuan_lbl||it.satuan}</td>
       <td>${fmtRpShort(it.tarif)}</td>
@@ -20773,7 +20773,7 @@ window.applyOwnerSnapshot=v=>{
  window.ownerWageSnapshot=structuredClone({wageProcessing:v.wageProcessing||[],wageBindings:v.wageBindings||[],_meta:v._meta||{}});
  window.ownerRenderErrors=[];
  document.querySelectorAll('[data-tier="wakif"]').forEach(n=>n.style.display='');
- window.privateViewEpoch++;STATE.laporan=structuredClone(v.reports);
+ window.privateViewEpoch++;STATE.laporan=structuredClone(v.reports);window.WAGE_ACTIVITY=structuredClone(v.wageActivity||{});
  UPAH_ITEMS=structuredClone(v.upah||[]);CASHBOOK=structuredClone(v.cashbook||[]);OPT_OBSERVATIONS=structuredClone(v.opt||[]);PANEN_DATA=structuredClone(v.panen||[]);PANEN_LOTS_DATA=structuredClone(v.lots||[]);PANEN_SAMPLING_DATA=structuredClone(v.sampling||[]);MILESTONES=structuredClone(v.milestones||[]);SOP_STATUS=structuredClone(v.sopStatus||{});CABUT_DATA=structuredClone(v.cabut||[]);BENCHMARK_DATA=structuredClone(v.benchmark||[]);KASBON_DATA=structuredClone(v.kasbon||[]);window.OWNER_INVOICES=structuredClone(v.invoices);
  PUPUK_DATA=structuredClone(v.pupuk||{});DISTRIBUSI_DATA=structuredClone(v.pic||[]);Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(k=>delete SOP_AKTIVITAS_PER_BULAN[k]);for(let m=1;m<=12;m++)SOP_AKTIVITAS_PER_BULAN[m]={fase:'Sumber belum tercakup',aktivitas:[]};
  if(v.sop){Object.keys(SOP_AKTIVITAS_PER_BULAN).forEach(k=>delete SOP_AKTIVITAS_PER_BULAN[k]);Object.assign(SOP_AKTIVITAS_PER_BULAN,structuredClone(v.sop.aktivitas_per_bulan));}
