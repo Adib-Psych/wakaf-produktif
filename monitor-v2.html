@@ -825,7 +825,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
             <tbody id="upah-tbody"></tbody>
           </table>
         </div>
-        <p style="font-size:10px;color:var(--mute);margin-top:10px">Tarif per pekerja (update 3 Agt 2026): <strong>Mas Kamto</strong> (atas) Rp 60K ½ · Rp 120K full · <strong>Pak Yasir</strong> (bawah) Rp 50K ½ · Rp 100K full · <strong>Pemanen</strong> (Mba Harmi · Mak Mis · Christo, harian locked 19 Jul) Rp 50K ½ · Rp 100K full · <strong>Lek Nardi</strong> Rp 50K ½ · Rp 100K full <em>(dikoreksi 3 Agt 2026 dari 60K — salah entri)</em> · borongan: panjat durian Rp 20K/pohon · build rorak Rp 30K/unit · tanam lamtoro Rp 5K/lubang. <em>(Historis: Cak Yit 60/120 · Pak Kumpul 50/100 — s/d 22 Jun 2026.)</em> Detail → tab Distribusi Tugas.</p>
+        <p style="font-size:10px;color:var(--mute);margin-top:10px">Tarif harian per peran: <strong>Tim Atas Pohon</strong> Rp 60K ½ · Rp 120K full · <strong>Tim Bawah Pohon dan pemanen harian</strong> Rp 50K ½ · Rp 100K full · borongan: cabut tali merah Rp 15K/pohon × jumlah aktual (keputusan Wakif 26 Sep 2026) · panjat durian Rp 20K/pohon · build rorak Rp 30K/unit · tanam lamtoro Rp 5K/lubang. Nama pekerja tidak dicantumkan di sini (ADR-034); tarif per orang tetap tercatat di riwayat upah.</p>
       </div>
 
       <div class="card">
@@ -2578,7 +2578,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
       <!-- ============ CARD 3 — HEATMAP (existing, pindah ke bawah 17 Mei 2026) ============ -->
       <div class="card">
         <div class="card-title"><span class="num">3</span>📊 OPT Heatmap (Per Kebun × Minggu)</div>
-        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Visualisasi pengamatan 5-pohon-diagonal mingguan dari Form Input kategori <strong>OPT Monitoring</strong> (Cak Yit/Pak Kumpul scout, Wakif verifikasi). Alert: PBKo &gt;5% warning · &gt;10% action. <em>Berbeda dari Observasi Lapangan di atas — Heatmap = data terstruktur mingguan, Observasi = ad-hoc foto gejala.</em></p>
+        <p style="font-size:11px;color:var(--mute);margin-bottom:10px">Visualisasi pengamatan 5-pohon-diagonal mingguan dari Form Input kategori <strong>OPT Monitoring</strong> (Tim Lapangan mengamati, Wakif verifikasi). Alert: PBKo &gt;5% warning · &gt;10% action. <em>Berbeda dari Observasi Lapangan di atas — Heatmap = data terstruktur mingguan, Observasi = ad-hoc foto gejala.</em></p>
         <div id="heatmap"></div>
       </div>
     </div>
@@ -2607,7 +2607,7 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
           <button class="btn btn-primary" onclick="openAddWorkerModal()" style="background:#2E5C4F">➕ Tambah Pekerja Baru</button>
         </div>
 
-        <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = simple worker code (KUMPUL/YIT) — no revoke yet.</p>
+        <p style="font-size:11px;color:var(--mute);margin-top:14px;font-style:italic">💡 <strong>Revoke flow</strong> (Phase 2): kalau HP hilang, klik 🚫 Revoke → token regenerate, URL lama stop work. Saat ini token = kode pekerja sederhana — belum bisa dicabut.</p>
 
         <!-- ⭐ MODAL: Tambah Pekerja Baru (Task C3 8 Juni 2026) -->
         <div id="add-worker-modal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;padding:20px">
@@ -11125,7 +11125,7 @@ function renderHeatmap() {
     c.innerHTML = `<div style="padding:40px 20px;text-align:center;color:var(--mute);background:#fafaf7;border-radius:8px;border:2px dashed #ddd">
       <div style="font-size:32px;margin-bottom:10px">🐛📊</div>
       <div style="font-size:14px;font-weight:700;color:var(--earth);margin-bottom:6px">Belum Ada Pengamatan OPT</div>
-      <div style="font-size:11px;line-height:1.5">Heatmap akan auto-populate saat tim lapangan (Cak Yit / Pak Kumpul / Wakif) mulai input laporan kategori <strong>"OPT Monitoring (5-pohon-diagonal)"</strong> via tab Form Input.<br>Per BRIN: pengamatan mingguan, alert PBKo &gt;5%.</div>
+      <div style="font-size:11px;line-height:1.5">Heatmap akan auto-populate saat Tim Lapangan atau Wakif mulai input laporan kategori <strong>"OPT Monitoring (5-pohon-diagonal)"</strong> via tab Form Input.<br>Per BRIN: pengamatan mingguan, alert PBKo &gt;5%.</div>
     </div>`;
     return;
   }
@@ -11285,7 +11285,7 @@ const PIC_REGISTRY = {
   BRIN:   {name: 'Tim BRIN',         short: 'BRIN',            pool: 'verifikasi', css: 'role-tosin',  active: true},
   TA:     {name: 'Tenaga Ahli',      short: 'TA',              pool: 'verifikasi', css: 'role-tosin',  active: true},
   // Out permanen (Mas Anto — OUT permanen per 19 Mei 2026, preserved untuk backfill historis)
-  ANTO:   {name: 'Mas Anto',         short: 'Anto (historis)', pool: 'out',       css: 'role-anto',   active: false, note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026'},
+  ANTO:   {name: 'Koordinator Lapangan (s/d 19 Mei 2026)', short: 'Koordinator Lapangan (s/d 19 Mei)', pool: 'out',       css: 'role-anto',   active: false, note: 'OUT permanen per 19 Mei 2026 — preserved untuk backfill historis 1-18 Mei 2026'},
   // Legacy backward-compat (untuk parse data lama)
   WAKIF:  {name: 'Adib (Wakif)',     short: 'Adib',            pool: 'verifikasi', css: 'bidang-1',    active: true, alias_of: 'ADIB'},
   // Legacy code (kept for migratePIC backward-compat): jangan render di UI manapun.
@@ -11463,12 +11463,13 @@ function renderDistribusi() {
   const kpiC = document.getElementById('distribusi-kpi');
   if (!kpiC) return;
   let totalAct = 0;
-  const counts = {YIT:0, KUMPUL:0, TIM:0, ADIB:0, HENDY:0, BRIN:0, TA:0};
+  const counts = {TIM_ATAS:0, TIM_BAWAH:0, TIM:0, ADIB:0, HENDY:0, BRIN:0, TA:0};
   DISTRIBUSI_DATA.forEach(f => {
     f.aktivitas.forEach(a => {
       totalAct++;
       // Count from exec array
-      (Array.isArray(a.exec) ? a.exec : []).forEach(k => {
+      (Array.isArray(a.exec) ? a.exec : []).forEach(k0 => {
+        const k = (PIC_REGISTRY[k0] && PIC_REGISTRY[k0].role_alias) || k0;   // token orang lama → peran
         if (counts[k] !== undefined) counts[k]++;
       });
       // Count from verif array
@@ -11481,9 +11482,9 @@ function renderDistribusi() {
   kpiC.innerHTML = `
     <div class="kpi"><div class="kpi-num">${DISTRIBUSI_DATA.length}</div><div class="kpi-lbl">Fase Fenologi</div></div>
     <div class="kpi"><div class="kpi-num">${totalAct}</div><div class="kpi-lbl">Aktivitas Per Tahun</div></div>
-    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#8c4a18">${counts.YIT}</div><div class="kpi-lbl">🪜 Cak Yit</div></div>
-    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#5b4690">${counts.KUMPUL}</div><div class="kpi-lbl">🌱 Pak Kumpul</div></div>
-    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#2e7d5e">${counts.TIM}</div><div class="kpi-lbl">👥 Tim Ad-Hoc</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#8c4a18">${counts.TIM_ATAS}</div><div class="kpi-lbl">🪜 Tim Atas Pohon</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#5b4690">${counts.TIM_BAWAH}</div><div class="kpi-lbl">🌱 Tim Bawah Pohon</div></div>
+    <div class="kpi"><div class="kpi-num" style="font-size:18px;color:#2e7d5e">${counts.TIM}</div><div class="kpi-lbl">👥 Tim Lapangan</div></div>
     <div class="kpi"><div class="kpi-num" style="font-size:18px;color:var(--gold)">${counts.ADIB + counts.HENDY}</div><div class="kpi-lbl">🔒 Adib + Hendy (verif)</div></div>
   `;
 
@@ -11629,7 +11630,7 @@ const ERA_LABELS = {
   },
   active_full: {
     label: '👥 Tim Self-Managed (full)',
-    desc: 'Tim self-managed Mei 2026 (1-16 Mei) — Anto/Yit/Kumpul aktif penuh',
+    desc: 'Tim self-managed Mei 2026 — koordinator lapangan, Tim Atas Pohon dan Tim Bawah Pohon aktif (nama pekerja tidak dicantumkan, ADR-034)',
     bg: '#D1FAE5', border: '#10B981', color: '#065F46'
   },
   active_post_transition: {
@@ -15646,7 +15647,7 @@ function renderComplianceAnalysis() {
         <div style="font-size:11px;font-weight:800;color:#1F5F47;letter-spacing:.8px;margin-bottom:8px;text-transform:uppercase">💡 Konteks &amp; Recommendation</div>
         <div style="font-size:12px;line-height:1.75;color:#2e4040">
           <div style="margin-bottom:8px"><strong style="color:#8b6914">1. Pre-T0 era T.A. RWI (Jan-Apr 2026):</strong> Tenaga Ahli pakai protokol berbeda dari SOP Robusta Edisi 2 (BRIN + Kementan). Premium brands (NPK Yaramila, Karate Plus Boron, Fish Extract) ≠ BRIN spec (Urea + SP-36 + KCl + Kieserit + Dolomit). Substituted = 50% credit per methodology.</div>
-          <div style="margin-bottom:8px"><strong style="color:#8b6914">2. T0 (Mei 2026+):</strong> SOP nasional formally adopted. Compliance akan naik organik saat tim lapangan (Cak Yit, Pak Kumpul) eksekusi wajib items per bulan + Wakif mark status via SOP Kalender harian.</div>
+          <div style="margin-bottom:8px"><strong style="color:#8b6914">2. T0 (Mei 2026+):</strong> SOP nasional formally adopted. Compliance akan naik organik saat Tim Lapangan mengeksekusi item wajib per bulan + Wakif mark status via SOP Kalender harian.</div>
           <div style="margin-bottom:8px"><strong style="color:#8b6914">3. Target realistic year-end 2026:</strong> 60-80% kalau seluruh wajib items Mei-Des terpenuhi. Saat ini ${pct}% = baseline organik yang akan tumbuh seiring siklus berjalan.</div>
           <div><strong style="color:#8b6914">4. Action sekarang:</strong> <a href="#" onclick="document.querySelector('.sb-tab[data-panel=kalender]').click();return false;" style="color:#c14b3a;font-weight:700;text-decoration:underline">Buka tab SOP Kalender</a> → klik bulan <strong>${namaBulanFull[m.currentMonth]}</strong> → mark status setiap item (Belum → Sudah → Tidak Sesuai → N/A) sesuai progress lapangan harian. Tiap update auto-recompute score di sini.</div>
         </div>
