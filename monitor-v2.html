@@ -4117,7 +4117,7 @@ function renderDashboard() {
     let totalKeluar = 0;
     cashbookForFund().forEach(t => {
       if (t.tipe === 'keluar_langsung' || t.tipe === 'bayar_upah' || t.tipe === 'transfer_anto') {
-        totalKeluar += t.keluar || 0;
+        totalKeluar += keluarWakaf(t);
       }
     });
     // Total RAB — acuan Siklus 2026 (per Wakif 27 Jun 2026): % penyerapan vs siklus berjalan, bukan 2-siklus
@@ -4267,7 +4267,8 @@ function renderAlerts() {
   const wkStartStr = wkStart.toISOString().slice(0,10);
   const recentReports = reports.filter(r => r.tgl >= wkStartStr);
   if (reports.length === 0) {
-    alerts.push({sev:'warn', ico:'📝', msg:'<strong>Belum ada laporan harian</strong> — mulai input via tab Form Input untuk mengisi data baseline kebun.'});
+    // QC S5 (9 Nov 2026): daftar kosong di tampilan ini ≠ belum ada laporan di cloud (laporan privat baru termuat sesudah Perbarui data / masuk akun).
+    alerts.push({sev:'info', ico:'📝', msg:'<strong>Laporan harian belum termuat di tampilan ini</strong> — tekan <em>Perbarui data</em> atau masuk akun berizin. Ini bukan berarti belum ada laporan.'});
   } else if (recentReports.length === 0) {
     alerts.push({sev:'warn', ico:'📅', msg:'<strong>Belum ada laporan minggu ini</strong> — tim lapangan reminder untuk input laporan harian.'});
   }
@@ -4410,7 +4411,7 @@ function renderLog() {
             if(d.src==='wakif_form_multi'&&!bits.some(b=>/multi/i.test(b))) bits.push('multi-aktivitas');
             return bits.length? '<span style="color:#5a7a6e">'+bits.slice(0,3).join(' · ')+'</span>' : '-';
           })()}</td>
-      <td><span class="pill ${d.compliance}">${d.compliance}</span>${d._provenance?'<small style="display:block">recorded-only · '+(['paired-original','paired-correction-chain','legacy-unreceipted'].includes(d._provenance.integrity)?d._provenance.integrity:'provenance-unavailable')+'</small>':''}</td>
+      <td>${d.compliance?`<span class="pill ${d.compliance}">${d.compliance}</span>`:'<span class="pill" title="Laporan ini tidak membawa status compliance (mis. borongan)">—</span>'}${d._provenance?(()=>{const raw=['paired-original','paired-correction-chain','legacy-unreceipted'].includes(d._provenance.integrity)?d._provenance.integrity:'provenance-unavailable';const lbl={'paired-original':'tercatat · tanda terima cocok','paired-correction-chain':'tercatat · sudah dikoreksi','legacy-unreceipted':'tercatat · format lama tanpa tanda terima','provenance-unavailable':'tercatat · asal belum terbaca'}[raw];return '<small style="display:block;color:var(--mute)" title="'+raw+'">'+lbl+'</small>';})():''}</td>
       <td>${(d.alerts||[]).map(a=>'<span class="pill alert">'+a+'</span>').join('')||'<span style="color:#aaa">none</span>'}</td>
       <td style="white-space:nowrap">
         <button onclick="editLaporan('${d.id}')" style="background:var(--moss);color:#fff;border:0;border-radius:4px;padding:4px 8px;font-size:10px;cursor:pointer;margin-right:3px" title="Edit entry">✏️ Edit</button>
@@ -5596,6 +5597,16 @@ function calcTotal(item) {
 // kartu Tim sudah pakai warna masing-masing dari WORKER_DEFS.color.
 // ATURAN: warna & ikon pekerja SELALU derive dari WORKER_DEFS — JANGAN pernah hardcode per token.
 // ============================================================================
+// QC S4 (9 Nov 2026): alias tampilan (ID samaran w_… dari laporan perangkat) mengikuti status pekerja aslinya,
+// supaya pekerja AKTIF tidak berlabel "(arsip)" di Log Harian.
+function _workerArsip(wd){
+  if (!wd) return false;
+  if (wd.display_alias && wd.legacy_token && typeof WORKER_DEFS !== 'undefined') {
+    const real = WORKER_DEFS.find(x => x.token === wd.legacy_token && !x.display_alias);
+    if (real) return !real.active;
+  }
+  return !wd.active;
+}
 function workerPillHtml(token, nameOverride) {
   const wd = (typeof WORKER_DEFS !== 'undefined') ? WORKER_DEFS.find(w => w.token === token) : null;
   const nm = nameOverride
@@ -5605,7 +5616,7 @@ function workerPillHtml(token, nameOverride) {
     || token || '?';
   const ico = (wd && wd.icon) ? wd.icon + ' ' : '';
   const col = (wd && wd.color) || '#6b7280';
-  const arsip = (wd && !wd.active) ? ' <span style="opacity:.65;font-weight:400">(arsip)</span>' : '';
+  const arsip = _workerArsip(wd) ? ' <span style="opacity:.65;font-weight:400">(arsip)</span>' : '';
   return `<span class="pill" style="background:${col}1f;color:${col};border:1px solid ${col}40;white-space:nowrap" title="${String(nm).replace(/"/g,'')}">${ico}${nm}${arsip}</span>`;
 }
 
@@ -5939,7 +5950,7 @@ function renderUpahSummary() {
     const cls = 'warn';   // semua yang tampil = ada tunggakan
     const _wd = (typeof WORKER_DEFS!=='undefined') ? WORKER_DEFS.find(x=>x.token===k) : null;
     const ico = (_wd && _wd.icon) ? _wd.icon : '🌱';
-    const arsip = (_wd && !_wd.active) ? ' <span style="font-size:9px;color:var(--mute);font-weight:400">(arsip)</span>' : '';
+    const arsip = _workerArsip(_wd) ? ' <span style="font-size:9px;color:var(--mute);font-weight:400">(arsip)</span>' : '';
     const _tpc = (typeof TARIF_PEKERJA !== 'undefined' && TARIF_PEKERJA[k]) ? TARIF_PEKERJA[k].full_day : 0;
     const harianDaysLine = formatDaysLine(s.harianFull, s.harianHalf, s.harianLainRp, s.harianLainCount, _tpc);
     const lunasDaysLine = formatDaysLine(s.harianFullLunas, s.harianHalfLunas, s.harianLainRpLunas, s.harianLainCountLunas, _tpc);
@@ -16293,20 +16304,27 @@ function getKategoriTotal(cycle, katId) {
   });
   return { nasional, lokal, final };
 }
+// QC T4 (9 Nov 2026): beberapa baris kas Wakaf memuat porsi K4 (dana pribadi) yang menurut catatannya
+// "dikurangkan saat menyusun laporan wakaf". Field porsi_k4 (angka asli `keluar` TIDAK diubah) dipakai
+// hanya untuk serapan RAB Wakaf; saldo kas tetap memakai arus kas bank yang sebenarnya.
+function keluarWakaf(t) {
+  const out = t.keluar || 0, k4 = t.porsi_k4;
+  return (Number.isSafeInteger(k4) && k4 > 0 && k4 <= out) ? out - k4 : out;
+}
 function getKategoriAktual(katId) {
   // Sum cashbook entries where kat starts with katId. (e.g. kat 1 → 1.1, 1.2, ...)
   let total = 0;
   cashbookForFund().forEach(t => {
     if (!t.kat) return;
     const topKat = t.kat.split('.')[0];
-    if (topKat === katId) total += t.keluar;
+    if (topKat === katId) total += keluarWakaf(t);
   });
   return total;
 }
 function getItemAktual(itemKode) {
   let total = 0;
   cashbookForFund().forEach(t => {
-    if (t.kat === itemKode) total += t.keluar;
+    if (t.kat === itemKode) total += keluarWakaf(t);
   });
   return total;
 }
@@ -19332,7 +19350,7 @@ function renderWorkersTab() {
     // Inactive (transisi) styling
     const inactiveCardStyle = w.active ? '' : 'background:#FAFAFA;border-style:dashed;opacity:0.85';
     const inactiveBadge = w.active ? '' :
-      `<span style="background:#FBBF24;color:#78350F;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px">🟡 TRANSISI</span>`;
+      `<span style="background:#FBBF24;color:#78350F;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;margin-left:6px" title="Nonaktif sementara — bisa diaktifkan kembali">⏸ NONAKTIF</span>`;
     const reactivateBtn = w.active
       ? `<button onclick="toggleWorkerActive('${w.token}')" class="btn btn-secondary" style="font-size:10px;padding:5px 10px;border-color:var(--mute);color:var(--mute)" title="Tandai sebagai transisi (sweat equity pause)">⏸ Pause</button>`
       : `<button onclick="toggleWorkerActive('${w.token}')" class="btn btn-primary" style="background:#15803d;color:#fff;font-size:10px;padding:5px 12px" title="Aktifkan kembali — masuk ke PIC dropdown + Form Input">▶ Aktifkan kembali</button>`;

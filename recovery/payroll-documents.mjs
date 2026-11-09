@@ -80,7 +80,8 @@ export function buildPayrollDocument({value,selected,mode='rekap',generatedAt=ne
  const dateKey=['year','month','day'].map(t=>dateParts.find(p=>p.type===t).value).join('');
  const workerKeys=[...new Set(rows.map(r=>r.workerKey))],code=workerKeys.length===1&&/^[A-Za-z0-9_-]{1,120}$/.test(String(workerKeys[0]))?String(workerKeys[0]):'MULTI';
  const documentNumber=`${mode==='rekap'?'REKAP':'BUKTI'}-NGT-${dateKey}-${code}-${String(clock.getTime()).slice(-4)}`;
- return {mode,rows,funds,total,deductions,estimatedDeduction,deductionDetails,net:total-deductions,generatedAt,documentNumber,filename:documentNumber+'.png'};
+ const workerNames=[...new Set(rows.map(r=>r.name))];
+ return {mode,rows,funds,total,deductions,estimatedDeduction,deductionDetails,net:total-deductions,generatedAt,documentNumber,filename:documentNumber+'.png',workerNames};
 }
 export function openPayrollPreview(win=globalThis.window){
  try{const preview=win?.open('','_blank','width=900,height=1200,scrollbars=yes');if(preview){preview.document.title='Dokumen upah — memeriksa data';preview.document.body.textContent='Memeriksa data server dan membuat PNG…';}return preview;}catch{return null;}
@@ -96,7 +97,11 @@ function fillPreview(preview,d,href){
  const image=doc.createElement('img');image.id='payroll-preview-image';image.src=href;image.alt=title.textContent;image.style.cssText='display:block;max-width:100%;height:auto;margin:20px auto;background:white';
  const hint=doc.createElement('p');hint.textContent='PNG diunduh otomatis. Jika belum tersimpan, tekan Download PNG; lampirkan gambarnya saat mengirim WhatsApp.';hint.style.padding='0 16px';
  const style=doc.createElement('style');style.textContent='@media print{header,p{display:none}body{background:white!important}img{margin:0!important;max-width:100%!important}}';
- bar.append(title,download,print,wa);doc.body.append(style,bar,hint,image);
+ bar.append(title,download,print,wa);
+ // QC S2 (9 Nov 2026): dokumen berisi lebih dari satu pekerja diberi peringatan jelas — jangan dikirim ke satu pekerja.
+ const multi=(d.workerNames||[]).length>1?doc.createElement('p'):null;
+ if(multi){multi.id='payroll-multi-worker';multi.textContent='⚠️ Dokumen ini memuat '+d.workerNames.length+' pekerja ('+d.workerNames.join(', ')+'). Untuk dikirim ke pekerja, buat satu dokumen per pekerja agar upah pekerja lain tidak ikut terlihat.';multi.style.cssText='margin:12px 16px 0;padding:10px 14px;background:#fff4d6;color:#5c3d00;border-radius:6px;font-weight:700';}
+ doc.body.append(style,bar,...(multi?[multi]:[]),hint,image);
 }
 export async function renderPayrollPNG(d,{document=globalThis.document,html2canvas=globalThis.html2canvas,assertCurrent=()=>{},preview=null}={}){
  if(typeof html2canvas!=='function')throw Error('Pustaka PNG belum tersedia; periksa koneksi lalu coba lagi');
