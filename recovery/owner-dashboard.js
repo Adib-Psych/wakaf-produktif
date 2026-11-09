@@ -30,7 +30,7 @@ export function wageActivityMap(upah,reports){
  for(const x of upah){
   if(!x||x.aktivitas||!Array.isArray(x.sources))continue;
   const parts=[];
-  for(const s of x.sources){const r=byId.get(typeof s==='string'?s:s?.report_id);if(!r)continue;const k=typeof r.kategori==='string'?r.kategori.replaceAll('_',' ').trim():'';const d=typeof r.detail==='string'?r.detail.trim():'';const t=[k,d].filter(Boolean).join(' — ');if(t&&!parts.includes(t))parts.push(t);}
+  for(const s of x.sources){const r=byId.get(typeof s==='string'?s:s?.report_id);if(!r)continue;const k0=typeof r.kategori==='string'?r.kategori.replaceAll('_',' ').trim():'',k=k0==='lain'?'lain-lain':k0;const d0=typeof r.detail==='string'?r.detail.trim():'',d=d0==='(no detail)'?'':d0;const t=[k,d].filter(Boolean).join(' — ');if(t&&!parts.includes(t))parts.push(t);}
   const all=parts.join(' · ');if(all)out[String(x.id)]=all.length>160?all.slice(0,157)+'…':all;
  }
  return out;
