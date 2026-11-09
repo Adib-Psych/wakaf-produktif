@@ -14562,7 +14562,7 @@ function getPhaseComplianceMetrics() {
                            (currentYear === ACTIVE_MONITORING_START.year && m >= ACTIVE_MONITORING_START.month);
     if (inActiveWindow) phases[ph].activeMonths.push(m);
     SOP_AKTIVITAS_PER_BULAN[bulanN].aktivitas.forEach((a, i) => {
-      if (a.prio === 'larangan') return;
+      if (a.prio === 'larangan' || a.prio === 'riwayat') return; // riwayat: ADR-047/Tahap 1, tidak dihitung
       if (!inActiveWindow) return;
       phases[ph].total++;
       const key = `${bulanN}-${i}`;
@@ -14648,7 +14648,7 @@ function getComplianceMetrics() {
     const m = +bulanN;
     SOP_AKTIVITAS_PER_BULAN[bulanN].aktivitas.forEach((a, i) => {
       // Skip larangan items — they're "STOP" not actionable
-      if (a.prio === 'larangan') return;
+      if (a.prio === 'larangan' || a.prio === 'riwayat') return; // riwayat: ADR-047/Tahap 1, tidak dihitung
 
       // Pre-project months (tahun pertama, sebelum Mei): skip dari total, tag N/A info
       if (isFirstYear && m < projectStartMonth) {
@@ -14741,34 +14741,109 @@ const FENOLOGI = [
 ];
 
 const SOP_AKTIVITAS_PER_BULAN = {
-  1: { // Januari
-    fase: 'Off-season Akhir (Pre-Bloom)',
-    warna: 'sage',
-    aktivitas: [
-      {t:'Pemangkasan ringan wiwilan (4 mgg sekali)', sop:'Robusta Edisi 2 hal 122-135', prio:'rutin', siapa:'Tim Atas Pohon'},
-      {t:'Pemupukan akhir MH ½ dosis (BRIN tabel umur 5-10 thn) — DUAL BASELINE', sop:'BRIN 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Tim Bawah Pohon', dosis:'<strong>RUMUS UNIVERSAL: dosis_BRIN(g/phn) × jumlah_pohon_aktual = total_kg</strong><br>BRIN ½ dosis akhir MH per pohon: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g · Dolomit ~125g (NGT +25%)<br><br><strong>📅 Jan 2026 — Pre-selection (~915 phn aktual):</strong> Urea 137 kg (2,7 sak) · SP-36 73 kg (1,5 sak) · KCl 92 kg (1,8 sak) · Kieserit 46 kg (1 sak) · Dolomit 114 kg (2,3 sak)<br><strong>📅 Jan 2027+ — Post-selection (target 750 phn ideal):</strong> Urea 113 kg (2,3 sak) · SP-36 60 kg (1,2 sak) · KCl 75 kg (1,5 sak) · Kieserit 38 kg (0,75 sak) · Dolomit 94 kg (1,9 sak)', lokal:'<strong>Aturan workflow:</strong> Sebelum Nov 2026 = pakai jumlah pohon aktual (~915, scale up dari 750 baseline). Setelah Nov 2026 (post-selection) = pakai 750 phn baseline ATAU jumlah final hasil seleksi (update di CLAUDE.md).<br><strong>Kieserit BARU per BRIN 9 Mei</strong> — sumber Mg+S larut cepat (komplemen Dolomit). Cek BMKG Karangploso 7 hari sebelum aplikasi — TUNDA jika hujan deras &gt;100mm/minggu (pencucian).'},
-      {t:'Sanitasi gulma piringan', sop:'Robusta Edisi 2 hal 145', prio:'rutin', siapa:'Tim Bawah Pohon'},
-      {t:'OPT monitoring 5-pohon-diagonal mingguan', sop:'Robusta Edisi 2 hal 155', prio:'wajib', siapa:'Wakif / Tim Atas Pohon', lokal:'<strong>Ngantang fokus:</strong> Cercospora bercak daun (kondisi lembab tinggi) + jamur akar Rigidoporus + PBKo. Frekuensi sebulan 4× saat MH (vs SOP standar mingguan).'}
+  1: {
+    "fase": "Off-season Akhir (Pre-Bloom)",
+    "warna": "sage",
+    "aktivitas": [
+      {
+        "t": "Pemangkasan ringan wiwilan (4 mgg sekali)",
+        "sop": "Robusta Edisi 2 hal 122-135",
+        "prio": "rutin",
+        "siapa": "Tim Atas Pohon"
+      },
+      {
+        "t": "Persiapan pupuk kimia aplikasi 2 (Mar–Apr): cek stok Urea dan KCl — TIDAK ada pemupukan kimia di Januari",
+        "sop": "ADR-041 · ADR-043 (keputusan Wakif 8 Nov 2026)",
+        "prio": "rencana",
+        "siapa": "Wakif + tim",
+        "dosis": "Aplikasi 2 dipindah ke Mar–Apr (lihat bulan 3). Siapkan Urea dan KCl untuk pohon lama dan bibit K3 yang sudah tertanam.",
+        "lokal": ""
+      },
+      {
+        "t": "Sanitasi gulma piringan",
+        "sop": "Robusta Edisi 2 hal 145",
+        "prio": "rutin",
+        "siapa": "Tim Bawah Pohon"
+      },
+      {
+        "t": "OPT monitoring 5-pohon-diagonal mingguan",
+        "sop": "Robusta Edisi 2 hal 155",
+        "prio": "wajib",
+        "siapa": "Wakif / Tim Atas Pohon",
+        "lokal": "<strong>Ngantang fokus:</strong> Cercospora bercak daun (kondisi lembab tinggi) + jamur akar Rigidoporus + PBKo. Frekuensi sebulan 4× saat MH (vs SOP standar mingguan)."
+      }
     ]
   },
   2: {
-    fase: 'Persiapan Pembungaan',
-    warna: 'sage',
-    aktivitas: [
-      {t:'Pemangkasan ringan wiwilan', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Tim Atas Pohon'},
-      {t:'Mulsa untuk simpan kelembapan', sop:'Robusta Edisi 2 hal 117', prio:'rekomendasi', siapa:'Tim Bawah Pohon'},
-      {t:'OPT monitoring intensif (PBKo aktif)', sop:'Robusta Edisi 2 hal 161', prio:'wajib', siapa:'Wakif / Tim Atas Pohon'},
-      {t:'Persiapan pemupukan akhir MH', sop:'Robusta Edisi 2 hal 111', prio:'rencana', siapa:'Wakif + tim'}
+    "fase": "Persiapan Pembungaan",
+    "warna": "sage",
+    "aktivitas": [
+      {
+        "t": "Pemangkasan ringan wiwilan",
+        "sop": "Robusta Edisi 2 hal 130",
+        "prio": "rutin",
+        "siapa": "Tim Atas Pohon"
+      },
+      {
+        "t": "Mulsa untuk simpan kelembapan",
+        "sop": "Robusta Edisi 2 hal 117",
+        "prio": "rekomendasi",
+        "siapa": "Tim Bawah Pohon"
+      },
+      {
+        "t": "OPT monitoring intensif (PBKo aktif)",
+        "sop": "Robusta Edisi 2 hal 161",
+        "prio": "wajib",
+        "siapa": "Wakif / Tim Atas Pohon"
+      },
+      {
+        "t": "Persiapan pemupukan akhir MH",
+        "sop": "Robusta Edisi 2 hal 111",
+        "prio": "rencana",
+        "siapa": "Wakif + tim"
+      },
+      {
+        "t": "Tanam bibit K3 gelombang berikut + penyiraman bibit",
+        "prio": "wajib",
+        "siapa": "Tim Bawah Pohon",
+        "sop": "ADR-040 butir 5 · ADR-042",
+        "dosis": "Titik yang sudah ≥ 1 bulan sejak dicampur; pupuk kandang matang 5 kg per lubang tanam.",
+        "lokal": "Perkiraan Feb–Apr 2027; titik yang belum tercampur sampai Maret ditunda ke musim hujan 2027. Siram di titik dekat sumber air bila hujan berkurang."
+      }
     ]
   },
   3: {
-    fase: 'Pembungaan',
-    warna: 'sand',
-    aktivitas: [
-      {t:'⚠️ HINDARI pemangkasan berat (mengganggu bunga)', sop:'Robusta Edisi 2 hal 130', prio:'larangan', siapa:'Tim'},
-      {t:'Pemupukan akhir MH ½ dosis BRIN — komplemen ½ awal MH (siklus 2027 onwards)', sop:'BRIN tabel 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Tim Bawah Pohon (arahan Tim Atas Pohon)', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn, ½ dosis akhir MH):</strong><br>• Urea: <strong>150 g/phn</strong>  • SP-36: <strong>80 g/phn</strong>  • KCl: <strong>100 g/phn</strong>  • Kieserit: <strong>50 g/phn</strong>  • Dolomit: ~125 g/phn (NGT +25%)<br><br><strong>📊 Mar 2027+ — Post-selection (target 750 phn ideal):</strong><br>Urea ~113 kg (2,3 sak) · SP-36 ~60 kg (1,2 sak) · KCl ~75 kg (1,5 sak) · Kieserit ~38 kg (0,75 sak) · Dolomit ~94 kg (1,9 sak)<br><br><strong>📊 Backup pre-selection (~915 phn) jika seleksi belum 100%:</strong><br>Urea ~137 kg (2,7 sak) · SP-36 ~73 kg (1,5 sak) · KCl ~92 kg (1,8 sak) · Kieserit ~46 kg (1 sak) · Dolomit ~114 kg (2,3 sak)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm.<br><br><em>⚠️ Catatan Mar 2026 (lewat): masuk era sub-dose Wahab — bukan BRIN. Item ini valid Mar 2027+.</em>', lokal:'<strong>Ngantang adaptive:</strong> La Nina prolonged → MH bisa lanjut sampai Mei. <strong>Trigger</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso). Dolomit +25% sama seperti aplikasi awal MH (Andisol acidic Ngantang). <strong>Kieserit BARU per BRIN tabel 9 Mei</strong> — Mg+S larut cepat, komplemen Dolomit slow-release.'},
-      {t:'Penyemprotan Cercospora prevention (3 mgg sekali)', sop:'Robusta Edisi 2 hal 175', prio:'rekomendasi', siapa:'Tim Bawah Pohon', dosis:'Ekstrak daun cengkeh 1L + air 14L per ronde · 70% volume ke bawah daun + surfaktan', lokal:'<strong>Ngantang frekuensi:</strong> ikut SOP Edisi 2 = <strong>per 3 minggu</strong> (revised 16 Mei 2026). <em>Override ke 2 minggu sempat dipertimbangkan karena asumsi curah hujan tinggi 2.500+ mm/thn, tapi ditunda sampai ada (a) data rainfall &amp; RH aktual lapangan via fitur auto-prefill weather Form Input (sedang dibangun — fetch otomatis berbasis GPS + tanggal, pekerja tidak input manual), atau (b) advice formal dari TA/BRIN.</em>'},
-      {t:'Dokumentasi kerontokan bunga', sop:'Robusta Edisi 2 hal 282', prio:'wajib', siapa:'Tim Atas Pohon / Tim Bawah Pohon'}
+    "fase": "Pembungaan",
+    "warna": "sand",
+    "aktivitas": [
+      {
+        "t": "⚠️ HINDARI pemangkasan berat (mengganggu bunga)",
+        "sop": "Robusta Edisi 2 hal 130",
+        "prio": "larangan",
+        "siapa": "Tim"
+      },
+      {
+        "t": "Pemupukan kimia aplikasi 2 (akhir musim hujan, Mar–Apr) — pohon lama + bibit K3",
+        "sop": "ADR-027 · ADR-041 · ADR-044 (keputusan Wakif 8 Nov 2026)",
+        "prio": "wajib",
+        "siapa": "Tim Bawah Pohon",
+        "dosis": "Pohon lama (Hijau + Biru): Urea 62,5 g + KCl 43,75 g per pohon — kebutuhan sama dengan aplikasi 1 (wakaf 668: 41,8 / 29,2 kg; K4 244: 15,3 / 10,7 kg). Bibit K3 yang sudah tertanam: Urea 20 g + KCl 15 g per bibit (115 bibit: 2,3 / 1,7 kg). SP-36, Kieserit dan dolomit TIDAK dipakai.",
+        "lokal": "Cara pohon lama sama dengan aplikasi 1. Cara aplikasi untuk bibit belum ditetapkan dalam keputusan — konfirmasi ke Wakif sebelum Maret. Tunda bila hujan sangat deras (aturan kalender lama)."
+      },
+      {
+        "t": "Penyemprotan Cercospora prevention (3 mgg sekali)",
+        "sop": "Robusta Edisi 2 hal 175",
+        "prio": "rekomendasi",
+        "siapa": "Tim Bawah Pohon",
+        "dosis": "Ekstrak daun cengkeh 1L + air 14L per ronde · 70% volume ke bawah daun + surfaktan",
+        "lokal": "<strong>Ngantang frekuensi:</strong> ikut SOP Edisi 2 = <strong>per 3 minggu</strong> (revised 16 Mei 2026). <em>Override ke 2 minggu sempat dipertimbangkan karena asumsi curah hujan tinggi 2.500+ mm/thn, tapi ditunda sampai ada (a) data rainfall &amp; RH aktual lapangan via fitur auto-prefill weather Form Input (sedang dibangun — fetch otomatis berbasis GPS + tanggal, pekerja tidak input manual), atau (b) advice formal dari TA/BRIN.</em>"
+      },
+      {
+        "t": "Dokumentasi kerontokan bunga",
+        "sop": "Robusta Edisi 2 hal 282",
+        "prio": "wajib",
+        "siapa": "Tim Atas Pohon / Tim Bawah Pohon"
+      }
     ]
   },
   4: {
@@ -14781,17 +14856,65 @@ const SOP_AKTIVITAS_PER_BULAN = {
     ]
   },
   5: {
-    fase: 'Pentil Besar (PRE-PANEN)',
-    warna: 'sand',
-    aktivitas: [
-      {t:'Estimasi produksi formal (sampling 30 pohon — 10/Kebun)', sop:'Robusta Edisi 2 hal 218', prio:'wajib', siapa:'Tim Atas Pohon / Tim Bawah Pohon', lokal:'<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi <strong>648 mdpl = kelas S3 (marginal-atas)</strong> Robusta + Excelsa rootstock optimization legacy. Naikkan target setelah 2-3 musim observasi data aktual.'},
-      {t:'Pemupukan akhir MH PARTIAL (mitigation only) — SP-36 + KCl saja per RAB Final 9 Mei', sop:'BRIN tabel + RAB Final 9 Mei', prio:'wajib', siapa:'Tim Bawah Pohon (arahan Tim Atas Pohon)', dosis:'<strong>📐 Per pohon (BRIN tabel umur 5-10 thn):</strong><br>• SP-36: <strong>80 g/phn</strong> (P — energy transfer untuk pengisian biji)<br>• KCl: <strong>100 g/phn</strong> (K — kualitas biji + pembesaran cherry)<br>• ❌ Urea SKIP (N dorong vegetatif, ganggu fase reproduktif Mei)<br>• ❌ Kieserit + Dolomit DEFER ke Nov MH siklus 2027<br><br><strong>📊 Total 915 phn aktual (Mei 2026):</strong><br>SP-36 = 80g × 915 = <strong>~73 kg (2 sak 50kg)</strong><br>KCl = 100g × 915 = <strong>~92 kg (2 sak 50kg)</strong><br>Estimasi biaya: SP-36 Rp 480K + KCl Rp 760K = <strong>Rp 1,24 jt</strong> (per RAB Final item 1.2 + 1.3)<br><br><strong>🔧 Cara aplikasi:</strong> Parit lingkar 30-50 cm dari batang, dalam 2-5 cm. Tutup tanah setelah aplikasi.', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> Wakif decision — Mei = mitigation panen-saving only, full SOP applied Nov MH siklus 2027. Sub-dose Wahab Jan-Mar (~14g/phn) sudah di-bridge nutrient gap. <strong>⚠️ Adaptive trigger:</strong> tunggu 7 hari kering atau curah hujan &lt;30mm/minggu sebelum aplikasi (cek BMKG Karangploso) — pencucian risk tinggi kalau hujan deras.'},
-      {t:'Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT (full processing via penggilingan + Bonsari)', sop:'Robusta Edisi 2 hal 222-246 + RAB Final 9 Mei', prio:'wajib', siapa:'Wakif + tim', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> Pulper manual CUT dari RAB. Processing via jasa penggilingan lokal (~Rp 1.500/kg green bean) + specialty lot ke Bonsari Coffee.'},
-      {t:'Konfirmasi processing partner per lot (Bonsari/penggilingan lokal)', sop:'Q12 — Klarifikasi 8 Mei', prio:'wajib', siapa:'Wakif', lokal:'<strong>📍 Hybrid model:</strong> Specialty lot (premium) → Bonsari Coffee. Bulk → penggilingan lokal Pujon ~Rp 1.500/kg.'},
-      {t:'Pasang Brocap pilot di Kebun 4 (5 unit) — baseline monitoring', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Tim Bawah Pohon', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> Pilot 5 unit Kebun 4 saja (Rumah Wakif, ~10-15 pohon). Full deploy 50 unit Kebun 1-3 pindah ke <strong>Nov-Des 2026</strong> (4 bln post-panen, optimal per jurnal).'},
-      {t:'Moisture meter — DEFER ke Bonsari', sop:'SNI 01-2907-2008 + RAB Final 9 Mei', prio:'rekomendasi', siapa:'Wakif', lokal:'<strong>📍 Cuaca kebun 9 Mei:</strong> CUT dari RAB Siklus 2026. Pinjam akses moisture meter Bonsari atau anggaran tahun 2027.'},
-      {t:'OPT monitoring intensif menjelang panen', sop:'Robusta Edisi 2 hal 160', prio:'wajib', siapa:'Wakif / Tim Atas Pohon'},
-      {t:'Pembongkaran pisang (jika MWC NU sudah panen)', sop:'Robusta Edisi 2 hal 56', prio:'wajib', siapa:'Tim Bawah Pohon'}
+    "fase": "Pentil Besar (PRE-PANEN)",
+    "warna": "sand",
+    "aktivitas": [
+      {
+        "t": "Estimasi produksi formal (sampling 30 pohon — 10/Kebun)",
+        "sop": "Robusta Edisi 2 hal 218",
+        "prio": "wajib",
+        "siapa": "Tim Atas Pohon / Tim Bawah Pohon",
+        "lokal": "<strong>Ngantang target konservatif:</strong> 0,4 kg/pohon × 915 = <strong>366 kg/thn</strong> sebagai default expectations (bukan 1,2 kg optimistis). Justifikasi: elevasi <strong>648 mdpl = kelas S3 (marginal-atas)</strong> Robusta + Excelsa rootstock optimization legacy. Naikkan target setelah 2-3 musim observasi data aktual."
+      },
+      {
+        "t": "[RIWAYAT Mei 2026] Pemupukan parsial SP-36 + KCl (mitigasi pra-panen 2026) — tidak berulang 2027",
+        "sop": "RAB Final 9 Mei 2026 (riwayat) · ADR-043",
+        "prio": "riwayat",
+        "siapa": "—",
+        "dosis": "",
+        "lokal": ""
+      },
+      {
+        "t": "Persiapan infrastruktur panen (lantai jemur, terpal) — pulper CUT (full processing via penggilingan + Bonsari)",
+        "sop": "Robusta Edisi 2 hal 222-246 + RAB Final 9 Mei",
+        "prio": "wajib",
+        "siapa": "Wakif + tim",
+        "lokal": "<strong>📍 Cuaca kebun 9 Mei:</strong> Pulper manual CUT dari RAB. Processing via jasa penggilingan lokal (~Rp 1.500/kg green bean) + specialty lot ke Bonsari Coffee."
+      },
+      {
+        "t": "Konfirmasi processing partner per lot (Bonsari/penggilingan lokal)",
+        "sop": "Q12 — Klarifikasi 8 Mei",
+        "prio": "wajib",
+        "siapa": "Wakif",
+        "lokal": "<strong>📍 Hybrid model:</strong> Specialty lot (premium) → Bonsari Coffee. Bulk → penggilingan lokal Pujon ~Rp 1.500/kg."
+      },
+      {
+        "t": "[RIWAYAT Mei 2026] Pilot Brocap K4 (5 unit) — hasil kurang maksimal, Brocap tidak dipakai lagi",
+        "sop": "ADR-047 (keputusan Wakif 8 Nov 2026)",
+        "prio": "riwayat",
+        "siapa": "—",
+        "lokal": "",
+        "dosis": ""
+      },
+      {
+        "t": "Moisture meter — DEFER ke Bonsari",
+        "sop": "SNI 01-2907-2008 + RAB Final 9 Mei",
+        "prio": "rekomendasi",
+        "siapa": "Wakif",
+        "lokal": "<strong>📍 Cuaca kebun 9 Mei:</strong> CUT dari RAB Siklus 2026. Pinjam akses moisture meter Bonsari atau anggaran tahun 2027."
+      },
+      {
+        "t": "OPT monitoring intensif menjelang panen",
+        "sop": "Robusta Edisi 2 hal 160",
+        "prio": "wajib",
+        "siapa": "Wakif / Tim Atas Pohon"
+      },
+      {
+        "t": "Pembongkaran pisang (jika MWC NU sudah panen)",
+        "sop": "Robusta Edisi 2 hal 56",
+        "prio": "wajib",
+        "siapa": "Tim Bawah Pohon"
+      }
     ]
   },
   6: {
@@ -14850,28 +14973,115 @@ const SOP_AKTIVITAS_PER_BULAN = {
     ]
   },
   11: {
-    fase: 'Awal Musim Hujan',
-    warna: 'sage',
-    v2_apply: true,
-    aktivitas: [
-      {t:'Pemupukan awal MH ½ dosis (BRIN tabel umur 5-10 thn) — DUAL BASELINE', sop:'BRIN 9 Mei 2026 + Robusta Edisi 2 hal 111', prio:'wajib', siapa:'Tim Bawah Pohon (arahan Tim Atas Pohon)', topik_v2:'C', dosis:'<strong>RUMUS UNIVERSAL: dosis_BRIN(g/phn) × jumlah_pohon_aktual = total_kg</strong><br>BRIN ½ dosis awal MH per pohon: Urea 150g · SP-36 80g · KCl 100g · Kieserit 50g · Dolomit ~125g (NGT +25%)<br><br><strong>📅 Nov 2025 (lewat) — Pre-selection (~915 phn):</strong> historical reference<br><strong>📅 Nov 2026+ — Post-selection (target 750 phn ideal):</strong> Urea 113 kg (2,3 sak) · SP-36 60 kg (1,2 sak) · KCl 75 kg (1,5 sak) · Kieserit 38 kg (0,75 sak) · Dolomit 94 kg (1,9 sak)<br><strong>⚠️ Kalau seleksi belum 100% selesai Nov 2026:</strong> pakai jumlah pohon aktual transition (mungkin 800-850), scale dosis proporsional naik dari baseline 750.', lokal:'<strong>Aturan workflow:</strong> Sebelum Nov 2026 = pakai jumlah pohon aktual (~915). Setelah Nov 2026 = pakai 750 phn baseline ATAU jumlah final hasil seleksi (update di CLAUDE.md).<br><strong>Kieserit BARU per BRIN tabel 9 Mei</strong> + La Nina prolonged → MH bisa mulai lebih awal/akhir Okt. Monitor BMKG Karangploso, aplikasi setelah rainfall pattern stabil.'},
-      {t:'Mulsa untuk konservasi kelembapan', sop:'Robusta Edisi 2 hal 117', prio:'rekomendasi', siapa:'Tim Bawah Pohon', topik_v2:'I'},
-      {t:'🪤 Brocap trap FULL DEPLOY (50 unit Kebun 1-3 + refill Kebun 4) — 4 bln post-panen optimal', sop:'Wiryadiputra & Cilas 2009 + RAB Final 9 Mei', prio:'wajib', siapa:'Tim Bawah Pohon', topik_v2:'M', dosis:'50 unit × Rp 25K + atraktan 50 kapsul × Rp 25K = ~Rp 2,5 jt total', lokal:'<strong>📍 NGT TIMING (post Adib decision 9 Mei):</strong> Pasang Nov-Des 2026 = 4 bulan setelah panen Jul-Sep 2026 (per jurnal Wiryadiputra & Cilas 2009). Tangkap PBKo dewasa generasi pertama yang keluar dari buah jatuh/mumifikasi → cegah re-infestasi siklus 2027. Pasang ketinggian 0,6-1,2 m, density 25 unit/ha. Pilot Kebun 4 Mei sudah memberikan baseline data.'},
-      {t:'Tanam Arachis pintoi (kacang hias) — pilot Kebun 4 Rumah Wakif', sop:'Phase 2 Inject — CIFOR-ICRAF agroforestry 2024', prio:'rekomendasi', siapa:'Tim Bawah Pohon', phase2:true, lokal:'<strong>PENYESUAIAN DARI SOP — bukan SOP nasional.</strong> "Kacang hias" = istilah lokal untuk Arachis pintoi (kacang merambat berbunga kuning). Pilot 250 stek di Kebun 4 (~Rp 100-200rb). Manfaat: N gratis dari udara (kurangi Urea 30-50%), suppress gulma 60-90% di tahun 2-3, mengurangi babat rumput. Bibit dicarikan tim lapangan. Lihat panduan: <code>SOP/Penjelasan_Biochar_CoverCrops_A4.pdf</code>'},
-      {t:'Build rorak (kondisi optimal saat tanah lembab)', sop:'Robusta Edisi 2 hal 149', prio:'rekomendasi', siapa:'Tim Bawah Pohon', topik_v2:'L'},
-      {t:'Tanam jahe di Kebun 3 (dibiayai pekerja sendiri)', sop:'Notulen 1-2 Mei', prio:'wajib', siapa:'Tim Bawah Pohon'},
-      {t:'Sanitasi gulma menyeluruh', sop:'Robusta Edisi 2 hal 145', prio:'wajib', siapa:'Tim Bawah Pohon'}
+    "fase": "Awal Musim Hujan",
+    "warna": "sage",
+    "v2_apply": true,
+    "aktivitas": [
+      {
+        "t": "Pemupukan kimia aplikasi 1 (awal musim hujan) — pohon lama Hijau + Biru",
+        "sop": "ADR-027 · ADR-040 butir 4 · ADR-041 (keputusan Wakif 8 Nov 2026)",
+        "prio": "wajib",
+        "siapa": "Tim Bawah Pohon",
+        "topik_v2": "C",
+        "dosis": "Per pohon lama (Hijau + Biru; Merah tidak dipupuk): Urea 62,5 g + KCl 43,75 g. SP-36, Kieserit dan dolomit TIDAK dipakai. Kebutuhan per aplikasi: K1 128 pohon Urea 8,0 kg / KCl 5,6 kg · K2 391: 24,4 / 17,1 kg · K3 149: 9,3 / 6,5 kg · wakaf 668: 41,8 / 29,2 kg · K4 244 (dana pribadi, tidak masuk laporan wakaf): 15,3 / 10,7 kg.",
+        "lokal": "Waktu: Nov–Des 2026 saat tanah basah. Cara: alur busur terputus (dua alur pendek, dilarang lingkaran penuh), dalam 5–10 cm, lebar 20–30 cm, minimal 50 cm dari batang, tembus tanah asli; pupuk tidak ditabur di atas mulsa; alur ditutup tanah. Basis pohon: sensus Hijau + Biru 20 Agt 2026; hitung ulang bila sensus bergeser."
+      },
+      {
+        "t": "Mulsa untuk konservasi kelembapan",
+        "sop": "Robusta Edisi 2 hal 117",
+        "prio": "rekomendasi",
+        "siapa": "Tim Bawah Pohon",
+        "topik_v2": "I"
+      },
+      {
+        "t": "[RIWAYAT] Brocap trap — tidak dipakai (pilot kurang efektif)",
+        "sop": "ADR-047 (keputusan Wakif 8 Nov 2026; menggantikan ADR-043 butir 1)",
+        "prio": "riwayat",
+        "siapa": "—",
+        "topik_v2": "M",
+        "dosis": "",
+        "lokal": ""
+      },
+      {
+        "t": "[RIWAYAT] Arachis pintoi pilot K4 — dihentikan (kurang representatif; tanaman sudah dimatikan)",
+        "sop": "ADR-047 (keputusan Wakif 8 Nov 2026)",
+        "prio": "riwayat",
+        "siapa": "—",
+        "phase2": true,
+        "lokal": "",
+        "dosis": ""
+      },
+      {
+        "t": "Build rorak (kondisi optimal saat tanah lembab)",
+        "sop": "Robusta Edisi 2 hal 149",
+        "prio": "rekomendasi",
+        "siapa": "Tim Bawah Pohon",
+        "topik_v2": "L"
+      },
+      {
+        "t": "[RIWAYAT] Tanam jahe K3 oleh Pak Kumpul — tidak berlaku sejak Pak Kumpul keluar 22 Jun 2026",
+        "sop": "ADR-043 (keputusan Wakif 8 Nov 2026)",
+        "prio": "riwayat",
+        "siapa": "—",
+        "dosis": "",
+        "lokal": ""
+      },
+      {
+        "t": "Sanitasi gulma menyeluruh",
+        "sop": "Robusta Edisi 2 hal 145",
+        "prio": "wajib",
+        "siapa": "Tim Bawah Pohon"
+      },
+      {
+        "t": "Persiapan titik tanam baru K3: gali, lalu campur dolomit dan tutup (putaran terpisah)",
+        "prio": "wajib",
+        "siapa": "Tim Bawah Pohon",
+        "sop": "ADR-040 · ADR-042 (keputusan Wakif 8 Nov 2026)",
+        "dosis": "Lubang 60×60×60 cm, tanah atas dan bawah dipisah. Putaran campur: dolomit ≈ 0,83 kg per titik (satu gayung; maksimal 1 kg; 100 kg dibagi jumlah titik final) DIADUK MERATA ke tanah galian, bukan ditabur di dasar lubang; tanah dikembalikan menggunduk, patok di tengah. CATAT tanggal campur per kelompok titik.",
+        "lokal": "Hanya K3 (±115 titik; jumlah = patok untuk tanaman baru). Gelombang awal: titik dekat jalur air, tidak pernah tergenang, jauh dari K3-P01. Sisa stok dolomit disimpan bila titik kurang dari 100."
+      }
     ]
   },
   12: {
-    fase: 'Off-Season Awal',
-    warna: 'sage',
-    v2_apply: true,
-    aktivitas: [
-      {t:'Monitoring infiltrasi rorak setelah hujan', sop:'Robusta Edisi 2 hal 149', prio:'rutin', siapa:'Tim Atas Pohon', topik_v2:'L'},
-      {t:'Pemangkasan ringan (cabang sakit/non-produktif)', sop:'Robusta Edisi 2 hal 130', prio:'rutin', siapa:'Tim Atas Pohon', topik_v2:'I'},
-      {t:'OPT monitoring (Cercospora aktif di musim lembab)', sop:'Robusta Edisi 2 hal 175', prio:'wajib', siapa:'Wakif / Tim Atas Pohon', topik_v2:'N'},
-      {t:'Review tahunan + planning Kebun/blok prioritas', sop:'—', prio:'rutin', siapa:'Wakif + tim Ahli'}
+    "fase": "Off-Season Awal",
+    "warna": "sage",
+    "v2_apply": true,
+    "aktivitas": [
+      {
+        "t": "Monitoring infiltrasi rorak setelah hujan",
+        "sop": "Robusta Edisi 2 hal 149",
+        "prio": "rutin",
+        "siapa": "Tim Atas Pohon",
+        "topik_v2": "L"
+      },
+      {
+        "t": "Pemangkasan ringan (cabang sakit/non-produktif)",
+        "sop": "Robusta Edisi 2 hal 130",
+        "prio": "rutin",
+        "siapa": "Tim Atas Pohon",
+        "topik_v2": "I"
+      },
+      {
+        "t": "OPT monitoring (Cercospora aktif di musim lembab)",
+        "sop": "Robusta Edisi 2 hal 175",
+        "prio": "wajib",
+        "siapa": "Wakif / Tim Atas Pohon",
+        "topik_v2": "N"
+      },
+      {
+        "t": "Review tahunan + planning Kebun/blok prioritas",
+        "sop": "—",
+        "prio": "rutin",
+        "siapa": "Wakif + tim Ahli"
+      },
+      {
+        "t": "Tanam bibit K3 — hanya titik yang sudah ≥ 1 bulan sejak dicampur dolomit",
+        "prio": "wajib",
+        "siapa": "Tim Bawah Pohon",
+        "sop": "ADR-040 · ADR-042 (keputusan Wakif 8 Nov 2026)",
+        "dosis": "Lubang kecil seukuran polybag di tengah gundukan; aduk pupuk kandang matang 5 kg dengan tanahnya; tanam bibit klon BP 358/SA 237.",
+        "lokal": "Masa tunggu dihitung dari TANGGAL CAMPUR, bukan tanggal gali. Bila dicampur pekan 9 Nov, gelombang awal paling cepat ±pertengahan Des 2026. Siram bila hujan berkurang."
+      }
     ]
   }
 };
@@ -15129,7 +15339,8 @@ function showBulanAktif(n, year) {
     'rekomendasi':{bg:'var(--orangelt)',fg:'var(--orange)',label:'REKOMENDASI'},
     'rutin':{bg:'var(--greenlt)',fg:'var(--green)',label:'RUTIN'},
     'larangan':{bg:'#fde2dc',fg:'#c0392b',label:'⚠️ LARANGAN'},
-    'rencana':{bg:'#f0f0f5',fg:'#666',label:'RENCANA'}
+    'rencana':{bg:'#f0f0f5',fg:'#666',label:'RENCANA'},
+    'riwayat':{bg:'#ececec',fg:'#777',label:'RIWAYAT'}
   };
 
   // SOP v2.1 transition banner — show kalau bulan ini apply SOP Trifecta v2.1 (Oct 2026+)
@@ -15161,7 +15372,7 @@ function showBulanAktif(n, year) {
   ic.innerHTML = monthBanner + v2Banner + picSummary + sop.aktivitas.map((a,i) => {
     const p = prioMap[a.prio] || prioMap['rutin'];
     const dosisRow = a.dosis
-      ? `<div style="margin-top:8px;padding:8px 10px;background:#fdf6e3;border-left:3px solid var(--gold);border-radius:6px;font-size:11px;color:var(--earth);line-height:1.5"><strong style="color:var(--gold)">📐 Dosis untuk 915 pohon:</strong> ${a.dosis}</div>`
+      ? `<div style="margin-top:8px;padding:8px 10px;background:#fdf6e3;border-left:3px solid var(--gold);border-radius:6px;font-size:11px;color:var(--earth);line-height:1.5"><strong style="color:var(--gold)">📐 Dosis:</strong> ${a.dosis}</div>`
       : '';
     // SOP v2.1 topik badge
     const topikBadge = (a.topik_v2 && SOP_V2_TOPIK[a.topik_v2])
@@ -15180,7 +15391,7 @@ function showBulanAktif(n, year) {
     // Status dropdown (replaced cycle button 19 Mei 2026 sore — per Adib: native select untuk pick langsung)
     // Skip dropdown for 'larangan' items (compliance check otomatis)
     let statusBtn = '';
-    if (a.prio !== 'larangan') {
+    if (a.prio !== 'larangan' && a.prio !== 'riwayat') {
       const sopKey = `${n}-${i}`;
       const status = getSOPStatus(sopKey);
       const sv = STATUS_VISUAL[status];
@@ -15212,12 +15423,14 @@ function showBulanAktif(n, year) {
         </select>
         ${progressBtn ? '<div>' + progressBtn + '</div>' : ''}
         ${noteHint}`;
+    } else if (a.prio === 'riwayat') {
+      statusBtn = '<div style="font-size:10px;color:var(--mute);font-style:italic;margin-top:5px">📜 Riwayat — tidak dihitung compliance</div>';
     } else {
       statusBtn = '<div style="font-size:10px;color:var(--red);font-style:italic;margin-top:5px">🚫 Compliance check (otomatis)</div>';
     }
 
     // Laporan related badge (auto-link Log Harian → SOP Kalender, 19 Mei 2026 sore)
-    const laporanBadge = (typeof renderLaporanBadgeForSOP === 'function' && a.prio !== 'larangan')
+    const laporanBadge = (typeof renderLaporanBadgeForSOP === 'function' && a.prio !== 'larangan' && a.prio !== 'riwayat')
       ? renderLaporanBadgeForSOP(a, n, year)
       : '';
 
@@ -15227,7 +15440,7 @@ function showBulanAktif(n, year) {
       ? `<span style="color:var(--moss);font-weight:600" title="Dari Distribusi Tugas (auto-sync)">${picTextFromDist}</span>`
       : `<span title="Default SOP — Adib bisa edit via Distribusi Tugas">👤 ${a.siapa}</span>`;
 
-    return `<div style="display:grid;grid-template-columns:30px 1fr 160px;gap:12px;padding:11px;border-bottom:1px solid #eee;align-items:start">
+    return `<div style="display:grid;grid-template-columns:30px 1fr 160px;gap:12px;padding:11px;border-bottom:1px solid #eee;align-items:start${a.prio === 'riwayat' ? ';opacity:.55' : ''}">
       <div style="width:24px;height:24px;background:var(--moss);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;margin-top:2px">${i+1}</div>
       <div>
         <div style="font-weight:600;color:var(--earth);font-size:13px;margin-bottom:3px">${a.t}${a.phase2 ? ' <span style="background:#dde9e3;color:#1f5f47;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">🌱 PHASE 2 INJECT</span>' : (a.lokal ? ' <span style="background:#fde2dc;color:#c14b3a;padding:2px 6px;border-radius:3px;font-size:9px;font-weight:700;letter-spacing:.5px">📍 Cuaca kebun</span>' : '')}${topikBadge}</div>
@@ -15537,7 +15750,7 @@ function showPhaseDetail(phaseKey) {
     const inActiveWindow = m >= ACTIVE_MONITORING_START.month || (new Date()).getFullYear() > ACTIVE_MONITORING_START.year;
     if (!inActiveWindow) return;
     SOP_AKTIVITAS_PER_BULAN[bulanN].aktivitas.forEach((a, i) => {
-      if (a.prio === 'larangan') return;
+      if (a.prio === 'larangan' || a.prio === 'riwayat') return; // riwayat: ADR-047/Tahap 1, tidak dihitung
       const key = `${bulanN}-${i}`;
       const s = SOP_STATUS[key];
       const status = s ? s.status : 'belum';
