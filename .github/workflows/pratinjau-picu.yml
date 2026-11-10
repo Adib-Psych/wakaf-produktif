@@ -1,0 +1,17 @@
+name: Pratinjau — picu terbit
+# ADR-053. Setiap perubahan pada PR claude/* memicu terbit ulang dari main, supaya pratinjau/pr-N/ ikut diperbarui
+# atau dihapus saat PR ditutup. Pekerjaan ini hanya memanggil workflow_dispatch; tidak membaca atau menjalankan isi PR.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed, ready_for_review, converted_to_draft]
+permissions:
+  actions: write
+jobs:
+  picu:
+    if: vars.PAGES_LEWAT_ACTIONS == 'ya' && github.event.pull_request.head.repo.full_name == github.repository && startsWith(github.event.pull_request.head.ref, 'claude/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run terbitkan-pages.yml --ref main --repo "$GITHUB_REPOSITORY"
