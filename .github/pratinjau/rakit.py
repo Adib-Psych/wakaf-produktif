@@ -133,6 +133,11 @@ def rakit(args):
                 '<title>Pratinjau</title><body style="font:15px/1.6 system-ui,sans-serif;margin:24px">'
                 '<h1 style="font-size:20px">Pratinjau terbuka</h1><ul>' + baris + '</ul>'
                 '<p style="color:#555">Data live hanya-baca. Semua penulisan diblokir. ADR-053.</p></body>')
+    # Tanda terbit: membuktikan situs yang tersaji berasal dari run Actions ini, bukan build cabang lama
+    # dengan byte yang sama (keluhan #46). Dibaca oleh pekerjaan `periksa`.
+    with open(os.path.join(keluar, 'pratinjau', 'TERBIT.json'), 'w', encoding='utf-8') as f:
+        json.dump({'main': dasar_sha, 'run': os.environ.get('GITHUB_RUN_ID', 'lokal'), 'dibuat': hasil['dibuat'],
+                   'pratinjau': [p['pr'] for p in hasil['pratinjau']]}, f, ensure_ascii=False)
     hasil['ukuran_mb'] = round(ukuran_mb(keluar), 1)
     if hasil['ukuran_mb'] > BATAS_MB:
         raise SystemExit('situs %.0f MB melebihi batas %d MB — tutup PR pratinjau yang tidak dipakai' % (hasil['ukuran_mb'], BATAS_MB))

@@ -27,7 +27,7 @@ Uji: `.github/pratinjau/test_rakit.py` (perakitan, byte main identik) dan `tests
 1. Pastikan PR ini sudah ada di `main`.
 2. Ubah sumber Pages: Settings → Pages → Source = **GitHub Actions**.
 3. Setel variabel repo `PAGES_LEWAT_ACTIONS=ya`.
-4. Jalankan `gh workflow run terbitkan-pages.yml --ref main`. Tunggu sampai pekerjaan `periksa` hijau: berkas tersaji harus sama byte dengan `main`.
+4. Jalankan `gh workflow run terbitkan-pages.yml --ref main`. Tunggu sampai pekerjaan `periksa` hijau: `pratinjau/TERBIT.json` yang tersaji harus memuat nomor run ini (bukti situs berasal dari Actions, bukan build cabang lama), lalu berkas tersaji harus sama byte dengan `main`.
 
 **Pemulihan.** Sumber Pages dikembalikan ke "Deploy from a branch: main / (root)", lalu variabel diset `tidak`. Situs kembali terbit seperti sebelum ADR-053.
 

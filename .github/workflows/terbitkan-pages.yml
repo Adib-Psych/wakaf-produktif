@@ -58,6 +58,21 @@ jobs:
           URL: ${{ needs.terbit.outputs.page_url }}
         run: |
           set -u
+          # 1) Tunggu sampai situs tersaji benar-benar dari run ini. Berkas main saja tidak cukup: build cabang
+          #    lama dengan commit yang sama menghasilkan byte yang sama (keluhan #46).
+          ok=0
+          for i in $(seq 1 40); do
+            run=$(curl -fsSL -H 'Cache-Control: no-cache' "${URL%/}/pratinjau/TERBIT.json?v=$GITHUB_RUN_ID-$i" 2>/dev/null \
+                  | python3 -c 'import json,sys; print(json.load(sys.stdin).get("run",""))' 2>/dev/null || true)
+            if [ "$run" = "$GITHUB_RUN_ID" ]; then ok=1; echo "COCOK  pratinjau/TERBIT.json run $run (percobaan $i)"; break; fi
+            sleep 15
+          done
+          if [ $ok != 1 ]; then
+            echo "BEDA   pratinjau/TERBIT.json belum dari run $GITHUB_RUN_ID sesudah 10 menit (terakhir: '${run:-kosong}')"
+            curl -sS -o /dev/null -D - "${URL%/}/pratinjau/TERBIT.json?v=$GITHUB_RUN_ID-diag" | head -20 || true
+            exit 1
+          fi
+          # 2) Byte tersaji = byte main.
           for f in monitor-v2.html lapor.html index.html status-pekerjaan.html recovery/owner-dashboard.js; do
             mau=$(sha256sum "$f" | cut -d' ' -f1); ok=0
             for i in $(seq 1 20); do
@@ -67,4 +82,5 @@ jobs:
             done
             if [ $ok = 1 ]; then echo "COCOK  $f"; else echo "BEDA   $f (main $mau, tersaji $dapat)"; exit 1; fi
           done
-          curl -fsSL "${URL%/}/pratinjau/" >/dev/null && echo "COCOK  pratinjau/ tersedia"
+          # 3) Indeks pratinjau tersedia (dengan pemecah cache, supaya 404 lama di CDN tidak terbaca).
+          curl -fsSL -H 'Cache-Control: no-cache' "${URL%/}/pratinjau/?v=$GITHUB_RUN_ID" >/dev/null && echo "COCOK  pratinjau/ tersedia"
