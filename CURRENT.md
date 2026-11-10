@@ -6,6 +6,10 @@ Updated: 7 November 2026. Active short handover; historical registers are eviden
 
 Claude changes code, rules, formulas, SOP content and data packages (code via PR); Hermes posts approved packages, runs routines, merges passing Claude PRs and files `keluhan` issues. See `CLAUDE.md` › Delivery.
 
+## Preview lane — 10 November 2026 (ADR-053)
+
+Changes to the live site are reviewed on `pratinjau/pr-N/` before merge. `.github/workflows/terbitkan-pages.yml` publishes `main` byte-for-byte at the site root plus one preview per open `claude/*` PR. Previews read live data, block every write, and namespace browser storage away from the live site. The workflow stays dormant until the Pages source is switched to GitHub Actions and the repository variable `PAGES_LEWAT_ACTIONS=ya` is set. Procedure and rollback: `.github/pratinjau/README.md`. Review PRs stay Draft with no `antrian-hermes` marker until the owner says final.
+
 ## Owner decisions
 
 - PUBLIC TRANSPARENCY: everyone may read complete dashboard operational data, staff reports and financial detail without login. Credentials/signing capabilities are not dashboard data.

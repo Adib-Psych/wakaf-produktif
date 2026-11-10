@@ -1,0 +1,70 @@
+name: Terbitkan Pages (live + pratinjau)
+# ADR-053. Menerbitkan main apa adanya di akar situs, plus pratinjau/pr-N/ untuk setiap PR claude/* yang terbuka.
+# Tidak aktif sampai variabel repo PAGES_LEWAT_ACTIONS = "ya" dan sumber Pages diubah ke "GitHub Actions".
+# Selalu berjalan di konteks main; isi PR hanya disalin sebagai data, tidak pernah dijalankan.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pull-requests: read
+  pages: write
+  id-token: write
+concurrency:
+  group: terbitkan-pages
+  cancel-in-progress: true
+jobs:
+  rakit:
+    if: vars.PAGES_LEWAT_ACTIONS == 'ya' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Rakit main + pratinjau
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 -B .github/pratinjau/rakit.py --keluar "$RUNNER_TEMP/situs" | tee "$RUNNER_TEMP/rakit.json"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/situs
+  terbit:
+    needs: rakit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4
+  periksa:
+    # Bukti byte yang tersaji = byte di main (CLAUDE.md: verifikasi deployment/served bytes).
+    needs: terbit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Bandingkan berkas tersaji dengan main
+        env:
+          URL: ${{ needs.terbit.outputs.page_url }}
+        run: |
+          set -u
+          for f in monitor-v2.html lapor.html index.html status-pekerjaan.html recovery/owner-dashboard.js; do
+            mau=$(sha256sum "$f" | cut -d' ' -f1); ok=0
+            for i in $(seq 1 20); do
+              dapat=$(curl -fsSL -H 'Cache-Control: no-cache' "${URL%/}/$f?v=$GITHUB_SHA-$i" | sha256sum | cut -d' ' -f1 || true)
+              if [ "$dapat" = "$mau" ]; then ok=1; break; fi
+              sleep 15
+            done
+            if [ $ok = 1 ]; then echo "COCOK  $f"; else echo "BEDA   $f (main $mau, tersaji $dapat)"; exit 1; fi
+          done
+          curl -fsSL "${URL%/}/pratinjau/" >/dev/null && echo "COCOK  pratinjau/ tersedia"
