@@ -65,7 +65,7 @@ class UjiRakit(unittest.TestCase):
 
     def test_pratinjau_hanya_claude_repo_ini(self):
         dirs = sorted(os.listdir(os.path.join(self.keluar, 'pratinjau')))
-        self.assertEqual(dirs, ['index.html', 'pr-7'])
+        self.assertEqual(dirs, ['TERBIT.json', 'index.html', 'pr-7'])
         info = json.loads(baca(os.path.join(self.keluar, 'pratinjau/pr-7/PRATINJAU.json')))
         self.assertEqual(info['sha'], self.sha_pr)
         self.assertTrue(info['draft'])
@@ -89,6 +89,13 @@ class UjiRakit(unittest.TestCase):
         g = os.path.join(self.keluar, 'pratinjau/pr-7/images/gallery')
         self.assertEqual(os.listdir(g), ['baru.jpg'])
         self.assertTrue(os.path.exists(os.path.join(self.keluar, 'pratinjau/pr-7/images/logo.png')))
+
+    def test_tanda_terbit(self):
+        tanda = json.loads(baca(os.path.join(self.keluar, 'pratinjau/TERBIT.json')))
+        main_sha = subprocess.run(['git', '-C', self.repo, 'rev-parse', 'main'], capture_output=True, text=True).stdout.strip()
+        self.assertEqual(tanda['main'], main_sha)
+        self.assertEqual(tanda['run'], os.environ.get('GITHUB_RUN_ID', 'lokal'))
+        self.assertEqual(tanda['pratinjau'], [7])
 
     def test_utf8_utuh(self):
         t = baca(os.path.join(self.keluar, 'index.html'))
