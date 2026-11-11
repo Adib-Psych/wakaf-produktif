@@ -12,6 +12,13 @@ function canonical(x){if(x===null||typeof x!=='object')return JSON.stringify(x);
 const canonicalHash=x=>createHash('sha256').update(canonical(x),'utf8').digest('hex');
 const wageId=(token,date)=>`wage_v1_${token}_${date}`;
 const reportKey=(lane,id)=>`report_v1_${lane}_${id}`;
+// ADR-054 (keluhan #48): a device-only detail amendment changes wording only. Every wage-relevant field
+// (worker, date, duration, plots, category, ...) must equal the original, so it never needs wage review.
+function detailOnlyHead(head,body,owner){
+ if(!exactKeys(head,'revision command_id owner_uid body')||!positive(head.revision)||head.revision<2||head.owner_uid!==owner||!obj(head.body)||!obj(body))return false;
+ const {detail:a,...lockedA}=body,{detail:b,...lockedB}=head.body;
+ return equal(lockedA,lockedB)&&typeof b==='string'&&b.trim().length>0;
+}
 function policyValid(p){
  if(!obj(p)||p.contract_version!==1||!obj(p.workers)||!Object.keys(p.workers).length)return false;
  if(Object.keys(p).some(k=>!['contract_version','workers','legacy_report_hashes'].includes(k)))return false;
@@ -66,7 +73,8 @@ async function processCreated(db,lane,id,{acceptLegacy=false}={}){
   for(const [i,e] of entries.entries()){
    const error=e.legacy?legacyReason(e.lane,e.id,e.value,receipts[i].data(),p,acceptLegacy):original(e.lane,e.id,e.value,receipts[i].data());
    if(error){reason||=error;continue;}
-   if(heads[i].exists)reason||='correction_requires_review';
+   const deviceOnly=e.lane==='device_reports'&&!entries.some(x=>x.lane==='laporan'&&x.id===e.id);
+   if(heads[i].exists&&!(deviceOnly&&detailOnlyHead(heads[i].data(),e.body,e.value?.owner_uid)))reason||='correction_requires_review';
    sources.push({lane:e.lane,report_id:e.id,revision:1,...(e.legacy?{attestation:'policy-sha256',body_hash:canonicalHash(e.value)}:{})});
   }
   const unitOf=d=>d==='satu_hari'?'full_day':d;
@@ -99,4 +107,4 @@ async function processCreated(db,lane,id,{acceptLegacy=false}={}){
   return result;
  });
 }
-module.exports={processCreated,wageId,canonical,canonicalHash,policyValid,original};
+module.exports={processCreated,wageId,canonical,canonicalHash,policyValid,original,detailOnlyHead};

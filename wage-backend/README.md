@@ -17,6 +17,17 @@ Karena Cloud Functions tidak dipasang (billing ditolak), `nightly.cjs` memanggil
 
 This directory is a separate Firebase Functions Node 22 codebase. **Staged only: the owner denied billing activation, so Cloud Functions production deployment is blocked and automatic processing is not installed.** It does not deploy itself and provides no remote HTTP/callable/Admin endpoint. The publisher owns Rules, policy commissioning and separately authorized finite historical reconciliation. Do not enable billing/APIs, deploy resources or replace this boundary with client financial write authority. No production records or identities are included.
 
+## Koreksi detail laporan perangkat (ADR-054, keluhan #48, 11 Nov 2026)
+
+`koreksi-detail.cjs` adalah penulis resmi untuk satu hal: mengganti teks `detail` laporan yang hanya ada di jalur perangkat, atas paket yang disusun Claude dan disetujui pemilik (`paket/*.json`).
+
+- `node koreksi-detail.cjs --project wakaf-ngantang --paket paket/<berkas>.json` — uji kering (bawaan), tidak menulis.
+- Tambah `--tulis --keluaran <hasil.json>` untuk menulis. Satu transaksi per laporan: `operation_events/<cid>` + `operation_receipts/<cid>` (identik) + `report_heads/<id>` revisi 2, jenis `device_detail`. Laporan asli dan tanda terimanya tidak disentuh.
+- Pagar: hash teks detail lama harus cocok; laporan harus pasangan asli yang sah dan tidak ada di jalur `laporan`; hanya koreksi pertama (revisi 1→2); `command_id` tetap per laporan sehingga aman diulang (`sudah`). Baca ulang dari server memeriksa kepala, event = kwitansi, detail baru, dan potret hak upah sebelum = sesudah.
+- Pemroses upah tidak meminta review untuk kepala yang hanya mengubah `detail`; kepala yang mengubah kolom lain tetap `correction_requires_review`.
+- Kode keluar: `0` bersih · `3` ada item berhenti (Hermes membuka Keluhan) · `1` galat.
+- Uji: `test/koreksi-detail.test.cjs` (emulator) dan `../tests/koreksi-detail-perangkat.test.cjs` (pembaca).
+
 ## Integration contract
 
 Add `functions: {source: "wage-backend", codebase: "wages", runtime: "nodejs22"}` to the root Firebase config. Four v2 Firestore `onDocumentCreated` exports watch `device_reports`, `device_receipts`, `laporan`, `entry_receipts`. Receipt handlers use the corresponding report lane. Each event rereads current authoritative documents inside a transaction; retries never use event timestamps or host-clock ordering. `FUNCTION_REGION` selects the trigger region, default `asia-southeast2` (Jakarta); publisher must confirm the Firestore-compatible region before any future reviewed deployment. Set this at discovery/deploy as well as runtime. No cron/browser dependency. Existing documents require an explicitly finite Admin invocation, not startup replay.
