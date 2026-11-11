@@ -8,7 +8,7 @@ const {processCreated,detailOnlyHead}=require('../processor.cjs');
 const {jalankan,commandId,sha256}=require('../koreksi-detail.cjs');
 const enabled=!!process.env.FIRESTORE_EMULATOR_HOST;
 const app=enabled?initializeApp({projectId:'demo-wakaf-wages'},'koreksi-detail-tests'):null;
-const db=app?getFirestore(app):null;
+const db=app?getFirestore(app,'uji-koreksi-detail'):null;   // basis data terpisah: berkas uji lain menghapus (default) secara paralel
 const wid='wage_v1_TEST_WORKER_2026-10-19';
 const panjang='synthetic isolated test';
 async function seed(id='lap_test',overrides={},lane='device_reports'){const v=pair(id,overrides,lane),b=db.batch();b.set(db.doc(lane+'/'+id),v);b.set(db.doc((lane==='device_reports'?'device_receipts':'entry_receipts')+'/'+id),v);await b.commit();return v;}
