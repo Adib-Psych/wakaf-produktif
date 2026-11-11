@@ -6,6 +6,10 @@ Updated: 7 November 2026. Active short handover; historical registers are eviden
 
 Claude changes code, rules, formulas, SOP content and data packages (code via PR); Hermes posts approved packages, runs routines, merges passing Claude PRs and files `keluhan` issues. See `CLAUDE.md` › Delivery.
 
+## Device-report detail amendment — 11 November 2026 (ADR-054, keluhan #48)
+
+A report that exists only in the device lane (`device_reports` + `device_receipts`) may have its `detail` text amended through `wage-backend/koreksi-detail.cjs` (dry run by default, `--tulis` to write). Each amendment is one transaction that creates `operation_events/<cid>`, an identical `operation_receipts/<cid>` and `report_heads/<id>` at revision 2 with kind `device_detail`; the original report stays untouched. Code locks every field except `detail`: the reader (`recovery/owner-report-authority.js`) rejects any other change, and the wage processor treats a detail-only head as needing no review, so wage entitlements stay identical. Report packages handed to Hermes must carry the exact `detail` text from Claude or the owner; Hermes keeps its audit notes in its own log or the amendment `reason`, never in `detail`.
+
 ## Preview lane — 10 November 2026 (ADR-053)
 
 Changes to the live site are reviewed on `pratinjau/pr-N/` before merge. `.github/workflows/terbitkan-pages.yml` publishes `main` byte-for-byte at the site root plus one preview per open `claude/*` PR. Previews read live data, block every write, and namespace browser storage away from the live site. The workflow stays dormant until the Pages source is switched to GitHub Actions and the repository variable `PAGES_LEWAT_ACTIONS=ya` is set. Procedure and rollback: `.github/pratinjau/README.md`. Review PRs stay Draft with no `antrian-hermes` marker until the owner says final.
