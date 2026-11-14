@@ -1,0 +1,65 @@
+name: Periksa tayang = main
+# Usulan 4 (14 Nov 2026). Sesudah GitHub Pages membangun main, cocokkan SHA-256 berkas yang tayang
+# dengan isi commit. Bila tetap beda sesudah ±10 menit, atau build Pages gagal, buka Keluhan.
+# Hanya membaca situs; satu-satunya tulisan adalah issue berlabel keluhan.
+on:
+  page_build:
+  workflow_dispatch:
+    inputs:
+      commit:
+        description: SHA commit yang diharapkan tayang (kosong = main)
+        required: false
+permissions:
+  contents: read
+  issues: write
+concurrency:
+  group: periksa-tayang
+  cancel-in-progress: false
+jobs:
+  periksa:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 50
+      - name: Tentukan commit
+        id: c
+        env:
+          BUILD_COMMIT: ${{ github.event.build.commit }}
+          BUILD_STATUS: ${{ github.event.build.status }}
+          INPUT_COMMIT: ${{ inputs.commit }}
+        run: |
+          c="${BUILD_COMMIT:-${INPUT_COMMIT:-$(git rev-parse HEAD)}}"
+          git cat-file -e "$c^{commit}" 2>/dev/null || git fetch -q --depth=50 origin "$c"
+          echo "commit=$c" >> "$GITHUB_OUTPUT"
+          echo "status=${BUILD_STATUS:-manual}" >> "$GITHUB_OUTPUT"
+      - name: Build Pages gagal
+        if: steps.c.outputs.status == 'errored'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          C: ${{ steps.c.outputs.commit }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" --label keluhan \
+            --title "Keluhan: build GitHub Pages gagal untuk ${C:0:7}" \
+            --body "Workflow periksa-tayang menerima page_build berstatus errored untuk commit \`$C\`. Situs mungkin masih menayangkan versi lama. Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          exit 1
+      - name: Bandingkan SHA-256 tayang vs commit
+        if: steps.c.outputs.status != 'errored'
+        id: p
+        env:
+          C: ${{ steps.c.outputs.commit }}
+        run: |
+          set +e
+          python3 -B .github/periksa-tayang/periksa.py "$C" --percobaan 10 --jeda 60 | tee hasil.json
+          echo "kode=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+      - name: Buka Keluhan bila beda
+        if: steps.p.outputs.kode == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          C: ${{ steps.c.outputs.commit }}
+        run: |
+          gh issue create --repo "$GITHUB_REPOSITORY" --label keluhan \
+            --title "Keluhan: situs tayang tidak sama dengan ${C:0:7}" \
+            --body "$(printf 'Berkas yang tayang di Pages berbeda dari commit `%s` sesudah 10 kali percobaan (±10 menit).\n\n```json\n%s\n```\n\nRun: %s' "$C" "$(cat hasil.json)" "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID")"
+          exit 1
