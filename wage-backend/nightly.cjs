@@ -19,8 +19,11 @@
  *     tanpa wage_processing/report_v1_<lane>_<id>  -> diproses
  *   · catatan unresolved beralasan pair_missing (tanda terima menyusul) -> diproses ulang
  * YANG TIDAK DILAKUKAN
- *   · TIDAK membayar, tidak menyentuh payroll_*, cashbook, atau upah lama.
+ *   · TIDAK membayar, tidak menyentuh payroll_states/events, cashbook, atau upah lama.
  *     Hak upah lahir berstatus 'belum'; pembayaran tetap atas permintaan pekerja.
+ *   · 14 Nov 2026: sesudah hak upah terbentuk, IZIN BAYAR (payroll_targets) dibuat lewat
+ *     izin-bayar.cjs bila semua syarat protokol lolos (termasuk kasbon lunas). Yang tidak
+ *     lolos ditahan dan ikut kode 3 → Keluhan. Sapuan juga mengejar hak upah tanpa izin.
  *   · TIDAK menerima laporan legacy (tanpa kontrak). Itu butuh atestasi hash pemilik
  *     (jalur finite). Laporan legacy sesudah tanggal berlaku hanya DILAPORKAN.
  *   · TIDAK mengulang unresolved lain (konflik durasi, dana campur, dsb.) kecuali
@@ -36,6 +39,7 @@
  * KODE KELUAR: 0 bersih · 3 ada yang ditahan/menunggu atestasi (catat Keluhan) · 1 galat.
  */
 const {processCreated}=require('./processor.cjs');
+const {buatIzin,sapuIzin}=require('./izin-bayar.cjs');
 
 const PASANGAN={device_reports:'device_receipts',laporan:'entry_receipts'};
 const ID=/^lap_[A-Za-z0-9_-]{1,96}$/;
@@ -77,15 +81,18 @@ async function sapu(db,{terapkan=false,ulangUnresolved=false}={}){
  if(terapkan)for(const p of r.proses){const x=await processCreated(db,p.lane,p.id);hasil.push({...p,status:x.status,alasan:x.reason,wage:x.worker&&x.tgl?`wage_v1_${x.worker}_${x.tgl}`:null});}
  const dibuat=hasil.filter(h=>h.status==='created').length,ada=hasil.filter(h=>h.status==='existing').length;
  const ditahan=hasil.filter(h=>h.status==='unresolved');
- const perluTinjau=ditahan.length+r.menunggu_atestasi.length;
- return {...r,terapkan,hasil,ringkas:{diproses:hasil.length,dibuat,sudah_ada:ada,ditahan:ditahan.length,menunggu_atestasi:r.menunggu_atestasi.length,ditahan_lama:r.ditahan_lama.length},kode:perluTinjau?3:0};
+ const izin=await sapuIzin(db,{tulis:terapkan});
+ const perluTinjau=ditahan.length+r.menunggu_atestasi.length+izin.ringkas.ditahan;
+ return {...r,terapkan,hasil,izin_bayar:izin.hasil,ringkas:{diproses:hasil.length,dibuat,sudah_ada:ada,ditahan:ditahan.length,menunggu_atestasi:r.menunggu_atestasi.length,ditahan_lama:r.ditahan_lama.length,izin_dibuat:izin.ringkas.dibuat,izin_akan_dibuat:izin.ringkas.akan_dibuat,izin_ditahan:izin.ringkas.ditahan},kode:perluTinjau?3:0};
 }
 
 // ------------------------------------------------------------------ pendengar entry
 function dengar(db,{log=console.log,onHasil=()=>{},jeda=3000,onPutus=()=>{}}={}){
  const antre=new Map(),subs=[];
  const proses=async(lane,id)=>{
-  try{const x=await processCreated(db,lane,id);const h={lane,id,status:x.status,alasan:x.reason,wage:x.worker&&x.tgl?`wage_v1_${x.worker}_${x.tgl}`:null};log(`[entry] ${lane}/${id}: ${h.status} (${h.alasan})${h.wage?' -> '+h.wage:''}`);onHasil(h);}
+  try{const x=await processCreated(db,lane,id);const h={lane,id,status:x.status,alasan:x.reason,wage:x.worker&&x.tgl?`wage_v1_${x.worker}_${x.tgl}`:null};log(`[entry] ${lane}/${id}: ${h.status} (${h.alasan})${h.wage?' -> '+h.wage:''}`);
+   if(h.wage&&x.reason==='eligible'){const z=await buatIzin(db,h.wage);h.izin=z;log(`[izin] ${h.wage}: ${z.status}${z.alasan?' ('+z.alasan+')':''}`);}
+   onHasil(h);}
   catch(e){log(`[entry] GALAT ${lane}/${id}: ${e.message}`);onHasil({lane,id,status:'galat',alasan:e.message});}
  };
  for(const [lane,pasangan] of Object.entries(PASANGAN))for(const col of [lane,pasangan]){
@@ -135,8 +142,10 @@ async function main(argv=process.argv.slice(2)){
  if(s.ditahan)console.log('Ditahan: '+out.hasil.filter(h=>h.status==='unresolved').map(h=>`${h.id} (${h.alasan})`).join(', '));
  if(s.menunggu_atestasi)console.log(`Laporan legacy menunggu atestasi pemilik: ${s.menunggu_atestasi} (tidak diproses otomatis)`);
  if(s.ditahan_lama)console.log(`Unresolved lama yang tidak diulang otomatis: ${s.ditahan_lama}`);
+ console.log(`Izin bayar: ${out.terapkan?'dibuat '+s.izin_dibuat:'akan dibuat '+s.izin_akan_dibuat} · ditahan ${s.izin_ditahan}`);
+ if(s.izin_ditahan)console.log('Izin ditahan: '+out.izin_bayar.filter(h=>h.status==='ditahan').map(h=>`${h.id} (${h.alasan})`).join(', '));
  console.log(`Laporan terakhir bertanggal ${out.laporan_terakhir||'-'}${jeda!==null&&jeda>7?` — CATATAN: ${jeda} hari tanpa laporan baru`:''}`);
- console.log('Pembayaran: tidak disentuh (atas permintaan pekerja).');
+ console.log('Pembayaran: tidak dicatat otomatis (atas permintaan pekerja); hanya izin bayar yang disiapkan.');
  const p=nilai('--keluaran');
  if(p)require('node:fs').writeFileSync(p,JSON.stringify({...out,hari_jakarta:hari},null,1));
  const {deleteApp}=require('firebase-admin/app');await deleteApp(app);
