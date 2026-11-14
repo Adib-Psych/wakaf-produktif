@@ -26,6 +26,8 @@ jobs:
         run: python3 -B -W error::ResourceWarning -m unittest recovery/backup/test_cadangan_harian.py
       - name: Report-stopped alarm (offline, no production)
         run: python3 -B -W error::ResourceWarning -m unittest operations/alarm/test_alarm_laporan_berhenti.py
+      - name: Live-equals-main checker (offline)
+        run: python3 -B -W error::ResourceWarning .github/periksa-tayang/test_periksa.py
       - name: Preview site assembly (offline, ADR-053)
         run: python3 -B -W error::ResourceWarning .github/pratinjau/test_rakit.py
       - name: Payroll contract and coherent reader regressions
