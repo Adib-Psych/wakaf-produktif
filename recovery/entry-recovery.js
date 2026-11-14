@@ -16,6 +16,8 @@
       // Do not trust the first function name of a compound inline handler.
       const publicPresentation=/^\s*(?:togglePelaporMode\('(aktif|all)'\)|switchRABCycle\('(2026|2027)'\)|renderBatchCuration\(\)|setRadio\('panen-lot-filter-(grade|stage)',this\);renderPanenLotsTable\(\)|window\.open\(kajianUrl\('(alat\/index\.html|kajian\/(sanitasi-tunggak|manajemen-residu|soil-amendment-sekam|biochar-drum|pengolahan-tanah)\.html)'\),'_blank'\))\s*;?\s*$/;
       if(type==='click'&&window.dashboardReadModel?.ownerActive()&&publicPresentation.test(code))return;
+      // 14 Nov 2026: buka/tutup grup pembayaran upah hanya menampilkan baris yang sudah ter-render; tanpa wewenang tulis.
+      if(type==='click'&&panel.id==='panel-keuangan'&&/^_toggleBatchGroup\('[A-Za-z0-9_]{1,200}', this\)$/.test(code))return;
       if(type==='click'&&panel.id==='panel-opt'&&window.dashboardReadModel?.ownerActive()&&/^viewOptDetail\('[A-Za-z0-9_-]{1,120}'\)$/.test(code))return;
       if(type==='click'&&window.dashboardReadModel?.ownerActive()&&/^(?:openAuditModal\(\)|switchAuditTab\('(paid|unpaid|dup|upahdup|orphan)'\))$/.test(code))return;
       if((type==='change'||type==='input')&&window.dashboardReadModel?.ownerActive()&&code==='renderBatchCuration()')return;
