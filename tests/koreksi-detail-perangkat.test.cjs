@@ -57,3 +57,10 @@ test('kolom aktivitas Upah memakai detail ringkas',async()=>{
  const c=await load();const map=c.wageActivityMap([{id:'w1',sources:[{report_id:body.id}]}],v.reports);
  assert.ok(map.w1.endsWith(' — '+corrected.detail));assert.ok(!map.w1.includes('Hermes'));
 });
+
+test('Log Harian punya label untuk setiap jenis integritas yang dikeluarkan pembaca',()=>{
+ const html=fs.readFileSync(path.join(root,'monitor-v2.html'),'utf8'),auth=fs.readFileSync(path.join(root,'recovery/owner-report-authority.js'),'utf8');
+ const emitted=[...new Set(auth.match(/'(?:paired|legacy)-[a-z-]+'/g).map(x=>x.slice(1,-1)))];
+ assert.ok(emitted.includes('paired-detail-correction-chain'));
+ for(const v of emitted)assert.ok(html.includes(`'${v}':'tercatat`),'label hilang: '+v);
+});
