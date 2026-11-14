@@ -1,10 +1,14 @@
 # Wakaf — current working information
 
-Updated: 7 November 2026. Active short handover; historical registers are evidence, not a queue to replay.
+Updated: 14 November 2026. Active short handover; historical registers are evidence, not a queue to replay.
 
 ## Agent roles — 9 November 2026 (ADR-049)
 
 Claude changes code, rules, formulas, SOP content and data packages (code via PR); Hermes posts approved packages, runs routines, merges passing Claude PRs and files `keluhan` issues. See `CLAUDE.md` › Delivery.
+
+## Legacy worker link retired — 14 November 2026
+
+`lapor.html?w=<TOKEN>` no longer shows its form: it explains that reports are filed on the dashboard and links to `monitor-v2.html#isi-laporan` (the hash opens the entry form; entry still needs a Google account with an enabled grant). Its IndexedDB queue and send code are unchanged so older pending reports are preserved. `ambil-antrian.html` (PR #54) reads that queue read-only on the worker's own device and shares it by WhatsApp text or a JSON file. Worker cards now show and copy the single dashboard link; "Tambah Pekerja" no longer writes `worker_defs_custom`, because `entry_roster` is the only roster that can report (changes go through an owner-approved package). Trigger: Christo's report filed through the old link on 13–14 Nov never reached the server.
 
 ## Device-report detail amendment — 11 November 2026 (ADR-054, keluhan #48)
 
