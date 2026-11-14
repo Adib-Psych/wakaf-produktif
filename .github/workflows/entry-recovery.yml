@@ -24,6 +24,8 @@ jobs:
         run: node --test tests/*.test.cjs tests/*.test.mjs operations/tests/*.test.cjs
       - name: Daily backup recipe (offline, no production)
         run: python3 -B -W error::ResourceWarning -m unittest recovery/backup/test_cadangan_harian.py
+      - name: Report-stopped alarm (offline, no production)
+        run: python3 -B -W error::ResourceWarning -m unittest operations/alarm/test_alarm_laporan_berhenti.py
       - name: Preview site assembly (offline, ADR-053)
         run: python3 -B -W error::ResourceWarning .github/pratinjau/test_rakit.py
       - name: Payroll contract and coherent reader regressions
