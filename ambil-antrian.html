@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1F5F47">
+<meta name="robots" content="noindex">
+<title>Ambil Laporan Tersimpan — Lapor NGT</title>
+<link rel="icon" type="image/png" href="images/logo-wakaf-produktif-transparan.png">
+<style>
+:root{--hijau:#1F5F47;--hijau-tua:#0A3D2C;--hijau-pucat:#E8F4ED;--garis:#D4E4DA;--teks:#0F1F19;--abu:#64746B;--amber:#F59E0B;--wa:#25D366;--putih:#fff}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--teks);background:#F4F9F5;line-height:1.5}
+header{background:linear-gradient(135deg,var(--hijau-tua),var(--hijau));color:#fff;padding:18px 16px 16px}
+header h1{margin:0;font-size:20px}
+header p{margin:6px 0 0;font-size:13.5px;opacity:.92}
+main{max-width:760px;margin:0 auto;padding:14px 12px 40px}
+.kotak{background:var(--putih);border:1px solid var(--garis);border-radius:12px;padding:14px;margin-bottom:12px}
+.aman{background:var(--hijau-pucat);border-left:4px solid var(--hijau);font-size:13.5px}
+.aman b{color:var(--hijau-tua)}
+.ringkas{font-size:15px;font-weight:700}
+.tombol{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+button,a.btn{min-height:46px;padding:10px 14px;border-radius:10px;border:0;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;flex:1 1 200px}
+.wa{background:var(--wa);color:#fff}.simpan{background:var(--hijau);color:#fff}.sekunder{background:#fff;color:var(--hijau);border:1.5px solid var(--hijau)}
+.entri h2{font-size:16px;margin:0 0 6px}
+.lencana{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:999px;margin-left:6px;vertical-align:middle}
+.pending{background:var(--amber);color:#fff}.terkirim{background:#cfe9db;color:var(--hijau-tua)}
+dl{display:grid;grid-template-columns:minmax(110px,34%) 1fr;gap:4px 10px;margin:8px 0 0;font-size:14px}
+dt{color:var(--abu)}dd{margin:0;word-break:break-word;white-space:pre-wrap}
+.foto{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.foto img{width:88px;height:88px;object-fit:cover;border-radius:8px;border:1px solid var(--garis)}
+details summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font-weight:700;color:var(--hijau)}
+.kosong{text-align:center;color:var(--abu);font-size:15px;padding:24px 10px}
+.galat{background:#fff1e8;border-left:4px solid #c2410c;color:#7c2d12}
+footer{font-size:12px;color:var(--abu);text-align:center;margin-top:18px}
+@media (min-width:900px){main{max-width:900px}dl{grid-template-columns:200px 1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🛟 Ambil Laporan Tersimpan</h1>
+  <p>Untuk laporan dari link lama <b>Lapor NGT</b> yang belum terkirim ke dashboard.</p>
+</header>
+<main>
+  <div class="kotak aman" role="note">
+    <b>Halaman ini hanya membaca.</b> Laporan di HP ini tidak dikirim, diubah, atau dihapus. Kirim isinya ke Pak Adib lewat WhatsApp atau simpan berkasnya, lalu laporan dimasukkan ke dashboard oleh pengelola.<br>
+    <b>Jangan hapus data browser atau aplikasi Lapor NGT</b> sampai Pak Adib mengonfirmasi laporan sudah masuk.
+  </div>
+  <div id="status" class="kotak" role="status" aria-live="polite">Membaca laporan yang tersimpan di HP ini…</div>
+  <div id="aksi" class="kotak" hidden>
+    <div id="ringkas" class="ringkas"></div>
+    <div class="tombol">
+      <button id="btn-wa" class="wa" type="button">📤 Kirim ke WhatsApp Pak Adib</button>
+      <button id="btn-simpan" class="simpan" type="button">💾 Simpan berkas (beserta foto)</button>
+    </div>
+    <p style="font-size:12.5px;color:var(--abu);margin:8px 0 0">WhatsApp hanya membawa teks. Bila ada foto atau rekaman suara, kirim juga berkasnya.</p>
+  </div>
+  <div id="daftar"></div>
+  <footer>Wakaf Produktif · Kebun Kopi Ngantang</footer>
+</main>
+<script>
+'use strict';
+// Read-only rescue for the legacy Lapor NGT queue (lapor_ngt_db / pending_submissions).
+// Never writes, deletes or sends to Firestore. Opening without a version never upgrades
+// an existing database; an absent database is not created when indexedDB.databases() exists.
+const DB_NAME='lapor_ngt_db',DB_STORE='pending_submissions';
+const KATEGORI={pemupukan_organik:'Pupuk Organik (kompos)',pemupukan_kimia:'Pupuk Kimia / Anorganik',pemangkasan:'Pemangkasan',babat_rumput:'Babat Rumput',penyemprotan:'Penyemprotan OPT',panen:'Panen',sortasi_buah:'Sortasi Buah',penjemuran:'Penjemuran',build_rorak:'Buat Rorak',kompos_kulit_kopi:'Kompos Kulit Kopi',tanam_penaung:'Tanam Penaung',inventarisasi_pohon:'Inventarisasi Pohon',opt_monitoring:'OPT Monitoring',brocap_management:'Brocap Management',soil_test:'Soil Test',topgraft_robusta:'Sambung Pucuk Robusta',bokashi_production:'Bokashi Production',arachis_management:'Arachis',biochar_pyrolysis:'Biochar',pisang_management:'Pisang',komunikasi_stakeholder:'Komunikasi Stakeholder',lain:'Lainnya'};
+const el=id=>document.getElementById(id);
+const teks=v=>v==null||v===''?'—':String(v);
+const durasi=v=>({setengah_hari:'½ hari',satu_hari:'1 hari',full_day:'1 hari'}[v]||teks(v).replace(/_/g,' '));
+let semua=[];
+
+async function adaDB(){
+  if(typeof indexedDB==='undefined')throw Error('Browser ini tidak mendukung penyimpanan laporan.');
+  if(typeof indexedDB.databases==='function'){const list=await indexedDB.databases();return list.some(d=>d.name===DB_NAME);}
+  return null; // unknown: fall back to the exact schema lapor.html creates
+}
+function bukaDB(tanpaBuat){
+  return new Promise((resolve,reject)=>{
+    const req=tanpaBuat?indexedDB.open(DB_NAME):indexedDB.open(DB_NAME,1);
+    req.onupgradeneeded=e=>{const db=e.target.result;if(!db.objectStoreNames.contains(DB_STORE)){const os=db.createObjectStore(DB_STORE,{keyPath:'id',autoIncrement:true});os.createIndex('status','status');os.createIndex('submitted_at','submitted_at');}};
+    req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);
+  });
+}
+function bacaSemua(db){
+  return new Promise((resolve,reject)=>{
+    if(!db.objectStoreNames.contains(DB_STORE)){resolve([]);return;}
+    const req=db.transaction(DB_STORE,'readonly').objectStore(DB_STORE).getAll();
+    req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);
+  });
+}
+function baris(dl,label,nilai){const dt=document.createElement('dt');dt.textContent=label;const dd=document.createElement('dd');dd.textContent=teks(nilai);dl.append(dt,dd);}
+function detailTeks(d){if(!d||typeof d!=='object')return '';return Object.entries(d).filter(([k,v])=>!k.startsWith('_')&&v!==''&&v!=null&&!(Array.isArray(v)&&!v.length)).map(([k,v])=>k+': '+(Array.isArray(v)?v.join(', '):v)).join('\n');}
+function kartu(item){
+  const d=item.data||{},pending=item.status!=='synced';
+  const box=document.createElement('article');box.className='kotak entri';
+  const h=document.createElement('h2');h.textContent=`${teks(d.tanggal||d.tgl)} · ${KATEGORI[d.kategori]||teks(d.kategori)}`;
+  const lb=document.createElement('span');lb.className='lencana '+(pending?'pending':'terkirim');lb.textContent=pending?'belum terkirim':'sudah terkirim';h.append(lb);box.append(h);
+  const dl=document.createElement('dl');
+  baris(dl,'Pelapor',d.pelapor_name||d.pelapor);
+  baris(dl,'Kebun',d.kebun_list_str||(Array.isArray(d.kebun)?d.kebun.join(', '):d.kebun));
+  if(d.blok)baris(dl,'Lokasi',d.blok);
+  baris(dl,'Durasi',durasi(d.durasi));
+  baris(dl,'Jumlah pekerja',d.jumlah_pekerja);
+  baris(dl,'Jumlah pohon',d.jumlah_pohon);
+  const det=detailTeks(d.detail);if(det)baris(dl,'Rincian',det);
+  baris(dl,'Catatan',d.catatan);
+  baris(dl,'Foto / suara',`${(d.photos||[]).length} foto · ${(d.voice_notes||[]).length} rekaman`);
+  baris(dl,'Diisi pada',item.submitted_at?new Date(item.submitted_at).toLocaleString('id-ID'):d.created_at);
+  box.append(dl);
+  if((d.photos||[]).length){const f=document.createElement('div');f.className='foto';for(const p of d.photos){if(typeof p?.data_url==='string'&&p.data_url.startsWith('data:image/')){const img=document.createElement('img');img.src=p.data_url;img.alt='Foto laporan';f.append(img);}}box.append(f);}
+  return box;
+}
+function teksWA(list){
+  const nama=list[0]?.data?.pelapor_name||list[0]?.data?.pelapor||'';
+  const out=[`📋 Laporan tersimpan Lapor NGT${nama?' — '+nama:''}`,`Belum terkirim: ${list.length} laporan`,''];
+  list.forEach((it,i)=>{const d=it.data||{};
+    out.push(`${i+1}. ${teks(d.tanggal||d.tgl)} · ${d.kebun_list_str||teks(d.kebun)} · ${KATEGORI[d.kategori]||teks(d.kategori)}`);
+    out.push(`   Durasi: ${durasi(d.durasi)} · Pekerja: ${teks(d.jumlah_pekerja)} · Pohon: ${teks(d.jumlah_pohon)}`);
+    const det=detailTeks(d.detail);if(det)out.push('   '+det.replace(/\n/g,'\n   '));
+    if(d.catatan)out.push(`   Catatan: ${d.catatan}`);
+    if((d.photos||[]).length||(d.voice_notes||[]).length)out.push(`   Lampiran: ${(d.photos||[]).length} foto, ${(d.voice_notes||[]).length} rekaman (ada di berkas)`);
+    out.push(`   Diisi: ${it.submitted_at||d.created_at||'—'}`);out.push('');});
+  out.push('— Dikirim dari halaman Ambil Laporan Tersimpan (hanya baca)');
+  return out.join('\n');
+}
+async function simpanBerkas(list){
+  const isi={sumber:'lapor_ngt_db/pending_submissions',diambil_pada:new Date().toISOString(),catatan:'Salinan hanya-baca dari HP pelapor; antrian asli tidak diubah.',laporan:list.map(it=>({local_id:it.id,status:it.status,owner_uid:it.owner_uid??null,submitted_at:it.submitted_at??null,data:it.data}))};
+  const nama=`laporan-tersimpan-${(list[0]?.data?.pelapor||'lapor').toLowerCase()}-${new Date().toISOString().slice(0,10)}.json`;
+  const blob=new Blob([JSON.stringify(isi,null,1)],{type:'application/json'});
+  try{const file=new File([blob],nama,{type:'application/json'});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:'Laporan tersimpan Lapor NGT'});return;}}catch(e){if(e?.name==='AbortError')return;}
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=nama;document.body.append(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},1500);
+}
+async function mulai(){
+  const status=el('status');
+  try{
+    const ada=await adaDB();
+    if(ada===false){status.innerHTML='<div class="kosong">📭 Tidak ada laporan tersimpan di browser ini.<br><br>Bila laporan diisi lewat ikon <b>Lapor NGT</b> di layar HP, buka ikon itu lalu ketuk tautan <b>🛟 Ambil laporan tersimpan</b>.</div>';return;}
+    const db=await bukaDB(ada===true);
+    semua=(await bacaSemua(db)).sort((a,b)=>String(b.submitted_at||'').localeCompare(String(a.submitted_at||'')));db.close();
+    const belum=semua.filter(x=>x.status!=='synced'),sudah=semua.filter(x=>x.status==='synced');
+    if(!semua.length){status.innerHTML='<div class="kosong">📭 Tidak ada laporan tersimpan di browser ini.</div>';return;}
+    status.textContent=belum.length?`Ditemukan ${belum.length} laporan yang belum terkirim.`:'Semua laporan di HP ini sudah tercatat terkirim.';
+    const daftar=el('daftar');belum.forEach(it=>daftar.append(kartu(it)));
+    if(sudah.length){const det=document.createElement('details');det.className='kotak';const s=document.createElement('summary');s.textContent=`Laporan yang sudah terkirim (${sudah.length})`;det.append(s);sudah.forEach(it=>det.append(kartu(it)));daftar.append(det);}
+    if(belum.length){el('aksi').hidden=false;el('ringkas').textContent=`${belum.length} laporan belum terkirim`;
+      el('btn-wa').onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(teksWA(belum)),'_blank');
+      el('btn-simpan').onclick=()=>simpanBerkas(belum);}
+  }catch(e){status.className='kotak galat';status.textContent='Laporan belum bisa dibaca: '+(e?.message||e)+'. Jangan hapus data browser; hubungi Pak Adib.';}
+}
+mulai();
+</script>
+</body>
+</html>
