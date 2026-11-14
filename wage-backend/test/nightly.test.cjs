@@ -10,7 +10,7 @@ const db=app?getFirestore(app,'uji-malam'):null;   // basis data terpisah: berka
 const hari=t=>({tgl:t,tanggal:t});
 async function seed(id,overrides={},{lane='device_reports',receipt=true}={}){const v=pair(id,overrides,lane);await db.doc(lane+'/'+id).set(v);if(receipt)await db.doc((lane==='device_reports'?'device_receipts':'entry_receipts')+'/'+id).set(v);return v;}
 async function ukuran(c){return (await db.collection(c).get()).size;}
-beforeEach(async()=>{if(!enabled)return;for(const c of await db.listCollections())await db.recursiveDelete(c);await db.doc('wage_policy/active').set(policy);await db.doc('upah/active').set({data:[]});});
+beforeEach(async()=>{if(!enabled)return;for(const c of await db.listCollections())await db.recursiveDelete(c);await db.doc('wage_policy/active').set(policy);await db.doc('upah/active').set({data:[]});await db.doc('cashbook/active').set({data:[]});});
 after(async()=>{if(app)await deleteApp(app);});
 
 test('rencana saja tidak menulis apa pun',{skip:!enabled},async()=>{
@@ -58,13 +58,17 @@ test('laporan legacy tidak pernah diterima otomatis; sesudah tanggal berlaku dil
  assert.equal(r.kode,3);assert.equal(await ukuran('wage_entitlements'),0);assert.equal(await ukuran('wage_processing'),0);
 });
 
-test('tidak pernah menyentuh pembayaran, kas, atau upah lama',{skip:!enabled},async()=>{
- const lama=[{id:1,pelapor:'X',tgl:'2026-09-01',status:'lunas',tarif:50000}];
- await db.doc('upah/active').set({data:lama});
+test('tidak pernah mencatat pembayaran, mengubah kas, atau upah lama; hanya menyiapkan izin bayar',{skip:!enabled},async()=>{
+ const lama=[{id:1,pelapor:'X',tgl:'2026-09-01',status:'lunas',tarif:50000}],kas=[{id:'k1',ket:'Beli pupuk',keluar:10000}];
+ await db.doc('upah/active').set({data:lama});await db.doc('cashbook/active').set({data:kas});
  await seed('lap_e',hari('2026-11-07'));
- await sapu(db,{terapkan:true});
- for(const c of ['payroll_states','payroll_events','cashbook'])assert.equal(await ukuran(c),0,c);
+ const r=await sapu(db,{terapkan:true});
+ for(const c of ['payroll_states','payroll_events'])assert.equal(await ukuran(c),0,c);
  assert.deepEqual((await db.doc('upah/active').get()).data().data,lama);
+ assert.deepEqual((await db.doc('cashbook/active').get()).data().data,kas);
+ assert.equal(r.ringkas.izin_dibuat,1);assert.equal(r.kode,0);
+ const t=(await db.doc('payroll_targets/wage_v1_TEST_WORKER_2026-11-07').get()).data();
+ assert.deepEqual(t,{enabled:true,wage:(await db.doc('wage_entitlements/wage_v1_TEST_WORKER_2026-11-07').get()).data()});
 });
 
 test('tanggal Jakarta dipakai untuk catatan jeda laporan',()=>{
@@ -81,6 +85,7 @@ test('pendengar: entry baru langsung membentuk hak upah tanpa menunggu malam',{s
   const w=await tunggu(async()=>(await db.doc('wage_entitlements/wage_v1_TEST_WORKER_2026-11-10').get()).data());
   assert.ok(w,'hak upah terbentuk');assert.equal(w.status,'belum');
   assert.equal(hasil.filter(h=>h.id==='lap_live'&&h.status==='created').length,1,'diproses sekali walau laporan + tanda terima tiba bersamaan');
+  assert.ok(await tunggu(async()=>(await db.doc('payroll_targets/wage_v1_TEST_WORKER_2026-11-10').get()).exists),'izin bayar ikut dibuat');
  }finally{stop();}
 });
 
