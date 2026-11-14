@@ -17530,7 +17530,19 @@ function renderCashbook() {
   const srcLabel = {
     manual:    { icon: '✏️', desc: 'Manual input via Tambah Transaksi' },
     autolink:  { icon: '🔗', desc: 'Auto-linked dari UPAH Pekerja (lunas)' },
-    anto:      { icon: '🏦', desc: 'Petty Cash Mas Anto' }
+    anto:      { icon: '🏦', desc: 'Petty Cash Mas Anto' },
+    payroll:   { icon: '🧾', desc: 'Pembayaran tercatat lewat izin bayar (payroll) — batalkan per hari di tab Upah Pekerja' }
+  };
+  // 14 Nov 2026: tanggal kerja baris payroll diambil dari hak upah yang ditautkan (ref upah_<id>), tampilan saja.
+  const _payrollWorkDate = t => {
+    const wid = (t.ref || '').replace(/^upah_/, '');
+    const u = (typeof UPAH_ITEMS !== 'undefined' ? UPAH_ITEMS : []).find(x => String(x.id) === wid);
+    const m = (t.ket || '').match(/(\d{4}-\d{2}-\d{2})\s*$/);
+    return (u && u.tgl) || (m ? m[1] : null);
+  };
+  const _payrollKet = t => {
+    const d = _payrollWorkDate(t);
+    return d ? (t.ket || '').replace(/\d{4}-\d{2}-\d{2}\s*$/, '') .replace(/—\s*$/, '— kerja ' + formatTglShort(d)) : (t.ket || '');
   };
 
   // Helper: render-time rename Bidang → Kebun untuk konsistensi naming (locked 17 Mei 2026)
@@ -17558,6 +17570,21 @@ function renderCashbook() {
   const groups = [];
   const groupIndex = {};
   filtered.forEach(t => {
+    // 14 Nov 2026: pembayaran jalur izin bayar (src payroll) dikelompokkan per tanggal bayar + pekerja + dana,
+    // sama seperti batch lama. Display-only: baris CASHBOOK tidak diubah atau diberi field tambahan.
+    if (t.src === 'payroll' && t.tipe === 'bayar_upah') {
+      const pel = _extractBatchPelapor(t.ket);
+      if (pel) {
+        const key = `${t.tgl}|${t.tipe}|${t.kat || '?'}|${pel}|payroll|${t.fund || 'K1_K3'}`;
+        if (!groupIndex[key]) {
+          const group = { type: 'batch', key, pelapor: pel, tag: 'payroll', entries: [] };
+          groups.push(group);
+          groupIndex[key] = group;
+        }
+        groupIndex[key].entries.push(t);
+        return;
+      }
+    }
     if (!_isBatchAutolink(t)) {
       groups.push({ type: 'single', entries: [t] });
       return;
@@ -17585,7 +17612,8 @@ function renderCashbook() {
     // 29 Mei 2026: Unlock Edit/Hapus for batch children (manual cleanup mode per Adib)
     // Auto-link normally locked, but children of expandable batch need manual override
     // saat Pattern #10 sync bug damage. deleteUpahLinkedTrx revert linked UPAH juga.
-    const allowManualOverride = isManual || opts.isChild;
+    // 14 Nov 2026: baris payroll tetap terkunci walau anak grup — pembatalan hanya lewat jalur payroll di tab Upah.
+    const allowManualOverride = isManual || (opts.isChild && t.src !== 'payroll');
     const editFn = isManual ? `editTrx('${t.id}')` : `editTrx('${t.id}')`;  // edit OK for both
     const deleteFn = (t.ref && t.ref.startsWith('upah_')) ? `deleteUpahLinkedTrx('${t.id}')` : `deleteTrx('${t.id}')`;
     const actionBtns = allowManualOverride
@@ -17597,7 +17625,7 @@ function renderCashbook() {
     return `<tr ${childClass}>
       <td style="${indent}">${opts.isChild ? '↳ ' : ''}${formatTglShort(t.tgl)}</td>
       <td style="${opts.isChild ? 'font-size:11px' : ''}">${tipeLabel[t.tipe] || t.tipe}</td>
-      <td style="${opts.isChild ? 'font-size:11px;color:#5a5a5a' : ''}">${renameKebun(t.ket)}</td>
+      <td style="${opts.isChild ? 'font-size:11px;color:#5a5a5a' : ''}">${renameKebun(t.src === 'payroll' ? _payrollKet(t) : t.ket)}</td>
       <td>${t.kat ? `<code style="font-size:10px;background:var(--cream);padding:2px 5px;border-radius:3px">${t.kat}</code>` : '<span style="color:#bbb">—</span>'}</td>
       <td style="text-align:right;color:${t.keluar>0?'var(--cherry)':'#bbb'};font-weight:600;${opts.isChild ? 'font-size:11px' : ''}">${t.keluar > 0 ? fmtRp(t.keluar) : '—'}</td>
       <td style="text-align:center">${t.nota ? `<button onclick="viewNota('${t.nota}')" style="background:none;border:0;cursor:pointer;font-size:14px" title="Lihat nota">📎</button>` : '<span style="color:#ddd">—</span>'}</td>
@@ -17612,8 +17640,16 @@ function renderCashbook() {
     const hasBatchTag = g.entries.some(e => /·batch\]/.test(e.ket || ''));
     const hasSingleTag = g.entries.some(e => /\[(lgs|via Anto)\]/.test(e.ket || ''));
     const tagSuffix = (hasBatchTag && hasSingleTag) ? ' (batch + single)' : (hasBatchTag ? '·batch' : '');
-    const tagBadge = g.tag === 'anto' ? `🏦 via Anto${tagSuffix}` : `💼 lgs${tagSuffix}`;
-    const dateRange = (() => {
+    const isPayroll = g.tag === 'payroll';
+    const tagBadge = isPayroll ? '🧾 izin bayar' : (g.tag === 'anto' ? `🏦 via Anto${tagSuffix}` : `💼 lgs${tagSuffix}`);
+    const dateRange = isPayroll ? (() => {
+      // 14 Nov 2026: rentang tanggal KERJA dari hak upah tertaut, urut naik (display-only).
+      const ds = [...new Set(g.entries.map(_payrollWorkDate).filter(Boolean))].sort();
+      const short = d => formatTglShort(d).split(',').slice(1).join(',').trim();
+      if (ds.length === 0) return '';
+      if (ds.length === 1) return ` — 1 hari kerja (${short(ds[0])})`;
+      return ` — ${ds.length} hari kerja (${short(ds[0])} … ${short(ds[ds.length-1])})`;
+    })() : (() => {
       const dates = g.entries
         .map(e => { const m = (e.ket || '').match(/\((\w+, \d+ \w+)\)/); return m ? m[1] : null; })
         .filter(Boolean);
@@ -17638,11 +17674,12 @@ function renderCashbook() {
       <td>${firstKat ? `<code style="font-size:10px;background:var(--cream);padding:2px 5px;border-radius:3px">${firstKat}</code>` : '<span style="color:#bbb">—</span>'}</td>
       <td style="text-align:right;color:var(--cherry);font-weight:800;font-size:13px">${fmtRp(total)}</td>
       <td style="text-align:center"><span style="color:#bbb;font-size:10px">${g.entries.filter(e => e.nota).length} / ${g.entries.length} nota</span></td>
-      <td style="text-align:center" title="Auto-linked batch dari UPAH Pekerja"><span style="font-size:13px">🔗</span></td>
-      <td style="text-align:center;white-space:nowrap">
-        <button onclick="event.stopPropagation();editBatchUpah('${groupKey}', this)" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Expand batch + edit per item">✏️ Edit</button>
+      <td style="text-align:center" title="${isPayroll ? 'Pembayaran lewat izin bayar (payroll)' : 'Auto-linked batch dari UPAH Pekerja'}"><span style="font-size:13px">${isPayroll ? '🧾' : '🔗'}</span></td>
+      <td style="text-align:center;white-space:nowrap">${isPayroll
+        ? `<span style="font-size:10px;color:#bbb;cursor:help" title="Pembayaran jalur izin bayar. Batalkan per hari lewat tab Upah Pekerja (↺ Batal), bukan dari Laporan Keuangan.">🔒 locked</span>`
+        : `        <button onclick="event.stopPropagation();editBatchUpah('${groupKey}', this)" style="background:#e6f0ec;color:#1f5f47;border:1px solid #b5cfc1;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600;margin-right:3px" title="Expand batch + edit per item">✏️ Edit</button>
         <button onclick="event.stopPropagation();deleteBatchUpah('${entryIds}','${g.pelapor}',${g.entries.length},${totalRp})" style="background:#fde2dc;color:#8c2519;border:1px solid #e9b5ab;padding:3px 7px;border-radius:4px;font-size:10px;cursor:pointer;font-weight:600" title="Hapus seluruh batch (revert ${g.entries.length} UPAH ke belum + delete cashbook)">🗑️ Hapus Batch</button>
-      </td>
+      `}</td>
     </tr>`;
   }
 
