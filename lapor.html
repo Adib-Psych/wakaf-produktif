@@ -86,6 +86,13 @@ body { padding-bottom: env(safe-area-inset-bottom); }
   border-radius: 10px; max-width: 340px; font-size: 14px;
 }
 .error-page .hint b { color: var(--euca-primary); }
+.retired-page h1 { color: var(--euca-primary); }
+body.lapor-pensiun #report-session-controls { display: none !important; }
+body.lapor-pensiun .toast:not(.on) { visibility: hidden; }
+.retired-page .aksi { display:flex; flex-direction:column; gap:10px; width:100%; max-width:340px; margin-top:18px; }
+.retired-page .aksi a { min-height:48px; display:flex; align-items:center; justify-content:center; border-radius:10px; font-weight:700; font-size:15px; text-decoration:none; padding:10px 14px; }
+.retired-page .aksi .utama { background:var(--euca-primary); color:var(--white); }
+.retired-page .aksi .kedua { background:var(--white); color:var(--euca-primary); border:1.5px solid var(--euca-primary); }
 
 /* ===== HEADER (sticky) ===== */
 .header {
@@ -587,6 +594,20 @@ dialog .modal-actions button {
 </div>
 
 <!-- ============================================================
+     RETIRED LINK (14 Nov 2026) — jalur lama tidak lagi mengirim laporan
+     ============================================================ -->
+<div id="retiredPage" class="error-page retired-page" role="main">
+  <div class="icon">↪️</div>
+  <h1>Link ini sudah diganti</h1>
+  <p>Laporan harian sekarang diisi lewat <b>dashboard Wakaf Produktif</b>, masuk dengan akun Google yang sudah diizinkan Pak Adib, lalu pilih nama Anda di formulir.</p>
+  <div class="aksi">
+    <a class="utama" href="monitor-v2.html#isi-laporan">📝 Buka formulir laporan</a>
+    <a class="kedua" href="ambil-antrian.html">🛟 Ambil laporan lama yang belum terkirim</a>
+  </div>
+  <div class="hint">Laporan yang dulu diisi lewat link ini <b>tetap tersimpan di HP</b>. Jangan hapus data browser sampai Pak Adib mengonfirmasi laporan sudah masuk.</div>
+</div>
+
+<!-- ============================================================
      MAIN APP
      ============================================================ -->
 <div id="app" class="app hidden">
@@ -799,6 +820,8 @@ dialog .modal-actions button {
 /* ============================================================
    CONSTANTS & CONFIG
    ============================================================ */
+// 14 Nov 2026: entry resmi lewat monitor-v2.html#isi-laporan (akun Google + izin).
+const LAPOR_LAMA_PENSIUN = true;
 const WORKER_MAP = {
   // OUT 22 Jun 2026 — preserve untuk backfill historis (active:false => PWA tolak entry baru, dokumen lama tetap ter-attribute).
   KUMPUL: { name: 'Pak Kumpul', tarif: { setengah_hari: 50000, satu_hari: 100000 }, active: false, transition_note: 'OUT 22 Jun 2026 — diganti Pak Yasir' },
@@ -1356,9 +1379,15 @@ async function init() {
   STATE.workerName  = WORKER_MAP[tokenRaw].name;
   STATE.workerActive = WORKER_MAP[tokenRaw].active !== false;  // default true
 
-  // 2. Show app, hide error
-  document.getElementById('app').classList.remove('hidden');
-  document.getElementById('submitBar').classList.remove('hidden');
+  // 2. 14 Nov 2026: jalur lama dipensiunkan. Formulir tidak ditampilkan supaya tidak ada laporan baru
+  // yang tertahan di HP; antrian lama tetap utuh dan bisa diambil lewat ambil-antrian.html.
+  if (LAPOR_LAMA_PENSIUN) {
+    document.body.classList.add('lapor-pensiun');
+    document.getElementById('retiredPage').classList.add('on');
+  } else {
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('submitBar').classList.remove('hidden');
+  }
 
   // 3. Brand + greeting
   document.getElementById('workerName').textContent = STATE.workerName;

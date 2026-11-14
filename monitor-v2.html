@@ -2648,7 +2648,8 @@ body[data-report-entry="device"] .radio-pill{min-height:44px;display:inline-flex
               <div>
                 <label style="font-size:11px;font-weight:700;color:var(--earth);display:block;margin-bottom:4px">Token PWA (auto-generate, editable)</label>
                 <input type="text" id="aw-token" placeholder="cth: SUKMA" maxlength="20" style="width:100%;padding:9px 11px;border:1.5px solid #ddd;border-radius:6px;font-size:13px;font-family:'SF Mono',Monaco,monospace;text-transform:uppercase">
-                <p style="font-size:10px;color:var(--mute);margin-top:4px;font-style:italic">Auto-uppercase. PWA URL: <code style="background:#fafaf0;padding:1px 5px;border-radius:3px">lapor.html?w=&lt;TOKEN&gt;</code>. Unique per worker.</p>
+                <p style="font-size:10px;color:var(--mute);margin-top:4px;font-style:italic">Auto-uppercase. Unique per worker.</p>
+                <p id="aw-roster-note" style="font-size:11px;color:#78350F;background:#FEF3C7;border-left:3px solid #D97706;padding:8px 10px;border-radius:5px;margin-top:8px;line-height:1.5">Sejak 14 Nov 2026 pekerja baru ditambahkan lewat <b>daftar pelapor resmi</b> yang diatur pengelola, supaya ia langsung bisa mengirim laporan dari dashboard. Formulir ini tidak lagi menyimpan pekerja dan tidak lagi membuat link <code>lapor.html?w=</code>.</p>
               </div>
             </div>
             <div style="margin-top:18px;padding-top:12px;border-top:1px solid #eee;display:flex;gap:8px;justify-content:flex-end">
@@ -19184,6 +19185,9 @@ function awAutoToken() {
 }
 
 async function saveNewWorker() {
+  // 14 Nov 2026: entry_roster (Google + izin) adalah satu-satunya daftar pelapor.
+  // Menulis worker_defs_custom/WORKER_DEFS di sini membuat pekerja yang tidak bisa melapor.
+  alert('Penambahan pekerja kini lewat daftar pelapor resmi (entry roster) yang diatur pengelola, supaya pekerja baru langsung bisa mengirim laporan dari dashboard.\n\nKirim nama, peran, dan tarifnya ke Claude untuk disiapkan sebagai paket. Formulir ini tidak menyimpan apa pun.');return;
   const nama = (document.getElementById('aw-nama').value || '').trim();
   const role = (document.getElementById('aw-role').value || '').trim();
   const icon = (document.getElementById('aw-icon').value || '👷').trim();
@@ -19326,7 +19330,8 @@ function renderWorkersTab() {
     });
   }
 
-  const baseUrl = window.location.origin + (window.location.pathname.includes('/monitor-v2.html') ? window.location.pathname.replace('/monitor-v2.html', '/lapor.html') : '/lapor.html');
+  // 14 Nov 2026: link lama lapor.html?w=<TOKEN> dipensiunkan; satu tautan resmi untuk semua pekerja.
+  const entryUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'monitor-v2.html#isi-laporan';
 
   // ⭐ 27 Jun 2026: Grid tampilkan pekerja AKTIF + di-PAUSE (transisi, reversible) — sembunyikan
   // HANYA yang RETIRED permanen (KUMPUL/YIT/ANTO, retired:true, never return). Pause (active:false,
@@ -19334,7 +19339,7 @@ function renderWorkersTab() {
   // preserved di WORKER_DEFS + lapor.html PWA URL functional untuk backfill historis.
   // (Sebelumnya filter w.active => paused hilang tanpa jejak + tombol Aktifkan jadi dead code.)
   grid.innerHTML = WORKER_DEFS.filter(w => !w.retired).map(w => {
-    const url = `${baseUrl}?w=${w.token}`;
+    const url = entryUrl;
     const activity = lastActiveMap[canonical(w.token)];
     const lastActive = activity?.tgl ? activity : null;
     const daysSince = lastActive ? Math.round((Date.now() - new Date(lastActive.tgl).getTime()) / 86400000) : null;
@@ -19362,10 +19367,11 @@ function renderWorkersTab() {
         </div>
       </div>
       ${transitionNote}
-      <div style="background:#fafaf6;border:1.5px solid #ddd;border-radius:6px;padding:8px 10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;color:var(--earth);word-break:break-all;margin-bottom:8px;cursor:pointer" onclick="this.style.background='#fef3c7';privateViewLater(()=>this.style.background='#fafaf6',300)" title="Klik untuk highlight">${url}</div>
+      <div style="font-size:10.5px;color:var(--mute);margin-bottom:4px">Tautan isi laporan (sama untuk semua pekerja): masuk akun Google berizin, lalu pilih nama di formulir.</div>
+      <div style="background:#fafaf6;border:1.5px solid #ddd;border-radius:6px;padding:8px 10px;font-family:'SF Mono',Monaco,monospace;font-size:11px;color:var(--earth);word-break:break-all;margin-bottom:8px;cursor:pointer;user-select:all" onclick="this.style.background='#fef3c7';privateViewLater(()=>this.style.background='#fafaf6',300)" title="Klik untuk highlight">${url}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-        <button class="btn btn-primary" onclick="copyWorkerUrl('${url}', this)" style="background:${w.color};color:#fff;font-size:11px;padding:6px 12px;flex:1">📋 Copy URL</button>
-        <a href="${url}" target="_blank" class="btn btn-secondary" style="font-size:11px;padding:6px 10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" title="Buka di tab baru untuk test">🔗 Open</a>
+        <button class="btn btn-primary" onclick="copyWorkerUrl('${url}', this)" style="background:${w.color};color:#fff;font-size:11px;padding:6px 12px;flex:1">📋 Salin tautan</button>
+        <a href="${url}" target="_blank" rel="noopener" class="btn btn-secondary" style="font-size:11px;padding:6px 10px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center" title="Buka formulir isi laporan di tab baru">🔗 Buka</a>
         ${reactivateBtn}
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:10.5px">
@@ -19383,7 +19389,8 @@ function renderWorkersTab() {
 }
 
 function copyWorkerUrl(url, btn) {
-  alert('Salin capability lama ditahan; token rute bukan izin akun.');return;
+  // Tautan dashboard publik, bukan izin: izin entry tetap akun Google + grant.
+  if (!navigator.clipboard?.writeText) { alert('Salin manual tautan ini:\n' + url); return; }
   navigator.clipboard.writeText(url).then(() => {
     const orig = btn.innerHTML;
     btn.innerHTML = '✓ Copied!';
@@ -19392,7 +19399,7 @@ function copyWorkerUrl(url, btn) {
       btn.innerHTML = orig;
       btn.style.background = '';
     }, 1800);
-  }).catch(e => alert('Failed to copy: ' + e.message));
+  }).catch(() => alert('Salin manual tautan ini:\n' + url));
 }
 
 // Trigger render Workers section + Distribusi pas tab "Tim & Distribusi Tugas" dibuka
@@ -22336,6 +22343,10 @@ const restored=await mountRestoredDashboard(firebaseConfig);
   } catch (e) {
     console.error('[Firebase] dashboard init failed:', e);
   }
+</script>
+<script>
+// 14 Nov 2026: tautan resmi pekerja monitor-v2.html#isi-laporan langsung membuka formulir isi laporan.
+(function(){if(location.hash!=='#isi-laporan')return;let tries=0;const open=()=>{const tab=document.querySelector('#tabs .sb-tab[data-panel="form"]'),card=document.getElementById('device-entry-account');if(tab&&card){tab.click();card.scrollIntoView({block:'start'});return;}if(++tries<40)setTimeout(open,250);};if(document.readyState==='complete')open();else window.addEventListener('load',open,{once:true});})();
 </script>
 </body>
 </html>
